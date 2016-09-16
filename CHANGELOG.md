@@ -1,5 +1,5 @@
 # Change Log
-## [Unreleased]
+## [1.0.0] - 2016-09-17
 ### Added
 - Desktop user interface for GNU/Linux and Windows.
 
