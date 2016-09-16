@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Name=Tremotesf
+Icon=harbour-tremotesf
+Exec=harbour-tremotesf %u
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;

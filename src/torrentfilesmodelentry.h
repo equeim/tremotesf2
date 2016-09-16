@@ -1,0 +1,136 @@
+/*
+ * Tremotesf
+ * Copyright (C) 2015-2016 Alexey Rochev <equeim@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef TREMOTESF_TORRENTFILESMODELENTRY_H
+#define TREMOTESF_TORRENTFILESMODELENTRY_H
+
+#include <memory>
+
+#include <QObject>
+#include <QString>
+#include <QVariantList>
+
+namespace tremotesf
+{
+    class TorrentFilesModelEntryEnums : public QObject
+    {
+        Q_OBJECT
+        Q_ENUMS(WantedState)
+        Q_ENUMS(Priority)
+    public:
+        enum WantedState
+        {
+            Wanted,
+            Unwanted,
+            MixedWanted
+        };
+
+        enum Priority
+        {
+            LowPriority = -1,
+            NormalPriority,
+            HighPriority,
+            MixedPriority
+        };
+    };
+
+    class TorrentFilesModelDirectory;
+
+    class TorrentFilesModelEntry
+    {
+    public:
+        TorrentFilesModelEntry() = default;
+        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
+
+        int row() const;
+        TorrentFilesModelDirectory* parentDirectory() const;
+        QString name() const;
+        virtual bool isDirectory() const = 0;
+
+        virtual long long size() const = 0;
+        virtual long long completedSize() const = 0;
+        virtual float progress() const = 0;
+
+        virtual TorrentFilesModelEntryEnums::WantedState wantedState() const = 0;
+        virtual void setWanted(bool wanted) = 0;
+
+        virtual TorrentFilesModelEntryEnums::Priority priority() const = 0;
+        QString priorityString() const;
+        virtual void setPriority(TorrentFilesModelEntryEnums::Priority priority) = 0;
+    private:
+        int mRow;
+        TorrentFilesModelDirectory* mParentDirectory;
+        QString mName;
+    };
+
+    class TorrentFilesModelDirectory : public TorrentFilesModelEntry
+    {
+    public:
+        TorrentFilesModelDirectory() = default;
+        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
+
+        bool isDirectory() const override;
+        long long size() const override;
+        long long completedSize() const override;
+        float progress() const override;
+        TorrentFilesModelEntryEnums::WantedState wantedState() const override;
+        void setWanted(bool wanted) override;
+        TorrentFilesModelEntryEnums::Priority priority() const override;
+        void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
+
+        const QList<std::shared_ptr<TorrentFilesModelEntry>>& children() const;
+        void addChild(const std::shared_ptr<TorrentFilesModelEntry>& child);
+        void clearChildren();
+        QVariantList childrenIds() const;
+    private:
+        QList<std::shared_ptr<TorrentFilesModelEntry>> mChildren;
+    };
+
+    class TorrentFilesModelFile : public TorrentFilesModelEntry
+    {
+    public:
+        explicit TorrentFilesModelFile(int row,
+                                       TorrentFilesModelDirectory* parentDirectory,
+                                       const QString& name,
+                                       int id);
+
+        bool isDirectory() const override;
+        long long size() const override;
+        long long completedSize() const override;
+        float progress() const override;
+        TorrentFilesModelEntryEnums::WantedState wantedState() const override;
+        void setWanted(bool wanted) override;
+        TorrentFilesModelEntryEnums::Priority priority() const override;
+        void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
+
+        int id() const;
+        void setSize(long long size);
+        void setCompletedSize(long long completedSize);
+    private:
+        int mRow;
+        TorrentFilesModelDirectory* mParentDirectory;
+        QString mName;
+        long long mSize;
+        long long mCompletedSize;
+        TorrentFilesModelEntryEnums::WantedState mWantedState;
+        TorrentFilesModelEntryEnums::Priority mPriority;
+        int mId;
+    };
+}
+
+#endif // TREMOTESF_TORRENTFILESMODELENTRY_H

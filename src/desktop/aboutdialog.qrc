@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translators.html</file>
+    </qresource>
+</RCC>

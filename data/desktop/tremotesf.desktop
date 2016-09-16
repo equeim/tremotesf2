@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Tremotesf
+Categories=Network
+Icon=tremotesf
+Exec=tremotesf %U
+StartupNotify=false
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;

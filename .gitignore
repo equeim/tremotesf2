@@ -1,0 +1,4 @@
+build*
+*.list
+*.pro.user
+RPMS
