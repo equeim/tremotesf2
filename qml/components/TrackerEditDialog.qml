@@ -24,6 +24,7 @@ Dialog {
     property int trackerId: -1
     property alias announce: textField.text
 
+    allowedOrientations: defaultAllowedOrientations
     canAccept: !textField.errorHighlight
 
     onAccepted: {

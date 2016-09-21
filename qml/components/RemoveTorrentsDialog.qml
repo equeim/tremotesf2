@@ -22,6 +22,7 @@ import Sailfish.Silica 1.0
 Dialog {
     property var ids
 
+    allowedOrientations: defaultAllowedOrientations
     onAccepted: rpc.removeTorrents(ids, deleteFilesSwitch.checked)
 
     Column {
