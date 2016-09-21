@@ -70,11 +70,11 @@ SOURCES = $$PWD/main.cpp \
           $$PWD/utils.cpp
 
 sailfishos {
-    HEADERS += $$PWD/sailfish/directorycontentmodel.h \
-               $$PWD/sailfish/selectionmodel.h
+    HEADERS += $$PWD/sailfishos/directorycontentmodel.h \
+               $$PWD/sailfishos/selectionmodel.h
 
-    SOURCES += $$PWD/sailfish/directorycontentmodel.cpp \
-               $$PWD/sailfish/selectionmodel.cpp
+    SOURCES += $$PWD/sailfishos/directorycontentmodel.cpp \
+               $$PWD/sailfishos/selectionmodel.cpp
 } else {
     HEADERS += $$PWD/desktop/aboutdialog.h \
                $$PWD/desktop/accounteditdialog.h \

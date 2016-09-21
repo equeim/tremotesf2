@@ -47,8 +47,8 @@
 #include "trackersmodel.h"
 #include "utils.h"
 
-#include "sailfish/directorycontentmodel.h"
-#include "sailfish/selectionmodel.h"
+#include "sailfishos/directorycontentmodel.h"
+#include "sailfishos/selectionmodel.h"
 
 Q_DECLARE_METATYPE(QModelIndexList)
 Q_DECLARE_METATYPE(tremotesf::TorrentFilesModelEntryEnums::Priority)
