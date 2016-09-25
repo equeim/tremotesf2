@@ -46,7 +46,6 @@ namespace tremotesf
     Torrent::Torrent(int id, const QVariantMap& torrentMap, Rpc* rpc)
         : mId(id),
           mHashString(torrentMap.value("hashString").toString()),
-          mName(torrentMap.value("name").toString()),
           mAddedDate(QDateTime::fromTime_t(torrentMap.value("addedDate").toUInt())),
           mFilesEnabled(false),
           mPeersEnabled(false),
@@ -443,6 +442,8 @@ namespace tremotesf
 
     void Torrent::update(const QVariantMap& torrentMap)
     {
+        mName = torrentMap.value("name").toString();
+
         mErrorString = torrentMap.value("errorString").toString();
         mQueuePosition = torrentMap.value("queuePosition").toInt();
 

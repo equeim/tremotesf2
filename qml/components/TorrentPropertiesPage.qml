@@ -27,6 +27,8 @@ Page {
     property var torrent
 
     function update() {
+        pageHeader.title = torrent.name
+
         progressLabel.value = qsTranslate("tremotesf", "%1 of %2 (%3)")
         .arg(Utils.formatByteSize(torrent.completedSize))
         .arg(Utils.formatByteSize(torrent.sizeWhenDone))
@@ -112,7 +114,7 @@ Page {
             }
 
             PageHeader {
-                Component.onCompleted: title = torrent.name
+                id: pageHeader
             }
 
             Grid {

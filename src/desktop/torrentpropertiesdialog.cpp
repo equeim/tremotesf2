@@ -57,8 +57,6 @@ namespace tremotesf
           mTorrent(torrent),
           mRpc(rpc)
     {
-        setWindowTitle(mTorrent->name());
-
         auto layout = new QVBoxLayout(this);
 
         auto messageWidget = new KMessageWidget(this);
@@ -156,6 +154,8 @@ namespace tremotesf
         resizer->addWidgetsFromLayout(infoGroupBoxLayout);
 
         auto update = [=]() {
+            setWindowTitle(mTorrent->name());
+
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
                                     .arg(Utils::formatByteSize(mTorrent->completedSize()))
                                     .arg(Utils::formatByteSize(mTorrent->sizeWhenDone()))
