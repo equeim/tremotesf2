@@ -1,10 +1,19 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+#### Sailfish OS
+- Peers page now shows clients of peers.
+
+### Changed
+- Update data immediately after getting response from server when performing some actions on torrents (adding, starting/pausing, removing, checking, moving in queue).
+
 ### Fixed
+- Update torrent name when it is changed on server (e.g. after retrieving torrent metadata if torrent was added by magnet link).
+
 #### Desktop
-- Don't hide main window on startup if tray icon is disabled
-- Fix showing temporary window if main window is hidden on startup
+- Don't hide main window on startup if tray icon is disabled.
+- Fix showing temporary window if main window is hidden on startup.
 
 ## [1.0.0] - 2016-09-17
 ### Added
