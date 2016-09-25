@@ -91,11 +91,21 @@ Page {
                         }
                     }
 
-                    Label {
+                    Column {
                         anchors.right: parent.right
-                        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-                        font.pixelSize: Theme.fontSizeExtraSmall
-                        text: Utils.formatProgress(modelData.progress)
+
+                        Label {
+                            anchors.right: parent.right
+                            color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            text: Utils.formatProgress(modelData.progress)
+                        }
+
+                        Label {
+                            color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            text: modelData.client
+                        }
                     }
                 }
             }
