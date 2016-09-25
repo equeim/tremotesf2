@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     app.setWindowIcon(QIcon::fromTheme("tremotesf"));
     app.setQuitOnLastWindowClosed(false);
 #endif
-    qApp->setApplicationVersion("1.0");
+    qApp->setApplicationVersion("1.1.0");
 
     QCommandLineParser parser;
 #ifdef TREMOTESF_SAILFIDHOS

@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.1.0] - 2016-09-25
 ### Added
 #### Sailfish OS
 - Peers page now shows clients of peers.
