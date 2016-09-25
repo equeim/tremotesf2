@@ -224,7 +224,8 @@ namespace tremotesf
                                            lowPriorityFiles,
                                            bandwidthPriority,
                                            start);
-                        });
+                        },
+                        [=]() { updateData(); });
         } else {
             qDebug() << "Error reading torrent file:" << file.errorString();
         }
@@ -248,34 +249,41 @@ namespace tremotesf
                                        downloadDirectory,
                                        bandwidthPriority,
                                        start);
-                    });
+                    },
+                    [=]() { updateData(); });
     }
 
 
     void Rpc::startTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("torrent-start", {{"ids", ids}}), [=]() {
-                startTorrents(ids);
-            });
+            postRequest(makeRequestData("torrent-start", {{"ids", ids}}),
+                        [=]() {
+                            startTorrents(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::startTorrentsNow(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("torrent-start-now", {{"ids", ids}}), [=]() {
-                startTorrentsNow(ids);
-            });
+            postRequest(makeRequestData("torrent-start-now", {{"ids", ids}}),
+                        [=]() {
+                            startTorrentsNow(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::pauseTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("torrent-stop", {{"ids", ids}}), [=]() {
-                pauseTorrents(ids);
-            });
+            postRequest(makeRequestData("torrent-stop", {{"ids", ids}}),
+                        [=]() {
+                            pauseTorrents(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
@@ -285,53 +293,64 @@ namespace tremotesf
             postRequest(makeRequestData("torrent-remove", {{"ids", ids},
                                                            {"delete-local-data", deleteFiles}}),
                         [=]() {
-                removeTorrents(ids, deleteFiles);
-            });
+                            removeTorrents(ids, deleteFiles);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::checkTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("torrent-verify", {{"ids", ids}}), [=]() {
-                checkTorrents(ids);
-            });
+            postRequest(makeRequestData("torrent-verify", {{"ids", ids}}),
+                        [=]() {
+                            checkTorrents(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::moveTorrentsToTop(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("queue-move-top", {{"ids", ids}}), [=]() {
-                moveTorrentsToTop(ids);
-            });
+            postRequest(makeRequestData("queue-move-top", {{"ids", ids}}),
+                        [=]() {
+                            moveTorrentsToTop(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::moveTorrentsUp(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("queue-move-up", {{"ids", ids}}), [=]() {
-                moveTorrentsUp(ids);
-            });
+            postRequest(makeRequestData("queue-move-up", {{"ids", ids}}),
+                        [=]() {
+                            moveTorrentsUp(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::moveTorrentsDown(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("queue-move-down", {{"ids", ids}}), [=]() {
-                moveTorrentsDown(ids);
-            });
+            postRequest(makeRequestData("queue-move-down", {{"ids", ids}}),
+                        [=]() {
+                            moveTorrentsDown(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
     void Rpc::moveTorrentsToBottom(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData("queue-move-bottom", {{"ids", ids}}), [=]() {
-                moveTorrentsToBottom(ids);
-            });
+            postRequest(makeRequestData("queue-move-bottom", {{"ids", ids}}),
+                        [=]() {
+                            moveTorrentsToBottom(ids);
+                        },
+                        [=]() { updateData(); });
         }
     }
 
@@ -698,7 +717,9 @@ namespace tremotesf
         }
     }
 
-    QNetworkReply* Rpc::postRequest(const QByteArray& data, const std::function<void()>& callAfterNewId)
+    QNetworkReply* Rpc::postRequest(const QByteArray& data,
+                                    const std::function<void()>& callAfterNewId,
+                                    const std::function<void()>& callIfSuccess)
     {
         QNetworkRequest request(mServerUrl);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -713,7 +734,14 @@ namespace tremotesf
                     if (!checkSessionId(reply)) {
                         callAfterNewId();
                     } else {
-                        checkReplyError(reply);
+                        if (checkReplyError(reply)) {
+                            const QVariant parseResult(QJsonDocument::fromJson(reply->readAll()).toVariant());
+                            if (checkParseResult(parseResult) &&
+                                    callIfSuccess &&
+                                    parseResult.toMap().value("result").toString() == "success") {
+                                callIfSuccess();
+                            }
+                        }
                     }
                 }
                 reply->deleteLater();

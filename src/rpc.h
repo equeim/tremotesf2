@@ -137,7 +137,9 @@ namespace tremotesf
         void updateData();
 
         void onAuthenticationRequired(QNetworkReply*, QAuthenticator* authenticator);
-        QNetworkReply* postRequest(const QByteArray& data, const std::function<void()>& callAfterNewId = nullptr);
+        QNetworkReply* postRequest(const QByteArray& data,
+                                   const std::function<void()>& callAfterNewId = nullptr,
+                                   const std::function<void()>& callIfSuccess = nullptr);
         bool checkSessionId(const QNetworkReply* reply);
         bool checkReplyError(const QNetworkReply* reply);
         bool checkParseResult(const QVariant& result);
