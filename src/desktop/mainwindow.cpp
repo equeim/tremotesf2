@@ -92,7 +92,9 @@ namespace tremotesf
         mSplitter->setChildrenCollapsible(false);
 
         mSideBar = new MainWindowSideBar(mRpc, mTorrentsProxyModel);
-        mSideBar->setVisible(Settings::instance()->isSideBarVisible());
+        if (!Settings::instance()->isSideBarVisible()) {
+            mSideBar->hide();
+        }
         mSplitter->addWidget(mSideBar);
 
         mTorrentsView = new TorrentsView(mTorrentsProxyModel, this);
@@ -113,7 +115,9 @@ namespace tremotesf
         setupToolBar();
 
         setStatusBar(new MainWindowStatusBar(mRpc));
-        statusBar()->setVisible(Settings::instance()->isStatusBarVisible());
+        if (!Settings::instance()->isStatusBarVisible()) {
+            statusBar()->hide();
+        }
 
         setupMenuBar();
         setupTrayIcon();
@@ -674,7 +678,9 @@ namespace tremotesf
     {
         mToolBar = new QToolBar(this);
         mToolBar->setContextMenuPolicy(Qt::CustomContextMenu);
-        mToolBar->setVisible(Settings::instance()->isToolBarVisible());
+        if (!Settings::instance()->isToolBarVisible()) {
+            mToolBar->hide();
+        }
         addToolBar(Settings::instance()->toolBarArea(), mToolBar);
 
         mToolBar->addAction(mConnectAction);
