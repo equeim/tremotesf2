@@ -71,7 +71,7 @@ namespace tremotesf
     MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& arguments)
         : mIpcServer(ipcServer),
           mRpc(new Rpc(this)),
-          mTrayIcon(nullptr)
+          mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme("tremotesf-tray-icon", windowIcon()), this))
     {
         setWindowTitle("Tremotesf");
 
@@ -222,7 +222,7 @@ namespace tremotesf
 
     void MainWindow::showIfNeeded()
     {
-        if (!(Settings::instance()->startMinimized() && mTrayIcon && QSystemTrayIcon::isSystemTrayAvailable())) {
+        if (!(Settings::instance()->startMinimized() && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
         }
     }
@@ -710,7 +710,6 @@ namespace tremotesf
 
     void MainWindow::setupTrayIcon()
     {
-        mTrayIcon = new QSystemTrayIcon(QIcon::fromTheme("tremotesf-tray-icon", qApp->windowIcon()), this);
         mTrayIcon->setContextMenu(mFileMenu);
         mTrayIcon->setToolTip(mRpc->statusString());
 
