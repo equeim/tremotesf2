@@ -1,4 +1,11 @@
 # Change Log
+
+## [Unreleased]
+### Fixed
+#### Desktop
+- Don't hide main window on startup if tray icon is disabled
+- Fix showing temporary window if main window is hidden on startup
+
 ## [1.0.0] - 2016-09-17
 ### Added
 - Desktop user interface for GNU/Linux and Windows.
