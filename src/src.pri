@@ -27,6 +27,7 @@ HEADERS = $$PWD/accounts.h \
           $$PWD/baseproxymodel.h \
           $$PWD/basetorrentfilesmodel.h \
           $$PWD/ipcserver.h \
+          $$PWD/jsonparser.h \
           $$PWD/localtorrentfilesmodel.h \
           $$PWD/torrentsmodel.h \
           $$PWD/rpc.h \
@@ -52,6 +53,7 @@ SOURCES = $$PWD/main.cpp \
           $$PWD/baseproxymodel.cpp \
           $$PWD/basetorrentfilesmodel.cpp \
           $$PWD/ipcserver.cpp \
+          $$PWD/jsonparser.cpp \
           $$PWD/localtorrentfilesmodel.cpp \
           $$PWD/torrentsmodel.cpp \
           $$PWD/serversettings.cpp \

@@ -37,6 +37,7 @@
 #endif
 
 #include "accounts.h"
+#include "jsonparser.h"
 #include "serversettings.h"
 #include "serverstats.h"
 #include "settings.h"
@@ -634,21 +635,25 @@ namespace tremotesf
         QNetworkReply* reply = mNetwork->post(request, data);
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
-            if (mStatus != Status::Disconnected) {
+            if (mStatus != Disconnected) {
                 if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
                         reply->hasRawHeader(sessionIdHeader)) {
                     mSessionId = reply->rawHeader(sessionIdHeader);
                     postRequest(data, callOnSuccess);
                 } else if (reply->error() == QNetworkReply::NoError) {
                     if (callOnSuccess) {
-                        const QVariant parseResult(QJsonDocument::fromJson(reply->readAll())
-                                                   .toVariant());
-                        if (parseResult.isNull()) {
-                            setError(ParseError);
-                            setStatus(Disconnected);
-                        } else {
-                            callOnSuccess(parseResult);
-                        }
+                        auto parser = new JsonParser(reply->readAll(), this);
+                        QObject::connect(parser, &JsonParser::done, [=](const QVariant& parseResult) {
+                            parser->deleteLater();
+                            if (mStatus != Disconnected) {
+                                if (parseResult.isNull()) {
+                                    setError(ParseError);
+                                    setStatus(Disconnected);
+                                } else {
+                                    callOnSuccess(parseResult);
+                                }
+                            }
+                        });
                     }
                 } else {
                     if (reply->error() == QNetworkReply::OperationCanceledError) {
