@@ -29,7 +29,7 @@ namespace tremotesf
 {
     namespace
     {
-        const QString name("tremotesf");
+        const QString name(QStringLiteral("tremotesf"));
 
         void sendMessage(const QByteArray& message)
         {
@@ -67,12 +67,12 @@ namespace tremotesf
                     emit pinged();
                 } else {
                     const QVariantMap map(QJsonDocument::fromJson(message).toVariant().toMap());
-                    if (map.contains("files") && map.contains("urls")) {
-                        const QStringList files(map.value("files").toStringList());
+                    if (map.contains("files") && map.contains(QStringLiteral("urls"))) {
+                        const QStringList files(map.value(QStringLiteral("files")).toStringList());
                         if (!files.isEmpty()) {
                             emit filesReceived(files);
                         }
-                        const QStringList urls(map.value("urls").toStringList());
+                        const QStringList urls(map.value(QStringLiteral("urls")).toStringList());
                         if (!urls.isEmpty()) {
                             emit urlsReceived(urls);
                         }
@@ -113,7 +113,7 @@ namespace tremotesf
     void IpcServer::ping()
     {
         qDebug() << "Pinging";
-        return sendMessage("ping");
+        sendMessage(QByteArrayLiteral("ping"));
     }
 
     void IpcServer::sendArguments(const QStringList& arguments)
@@ -121,8 +121,8 @@ namespace tremotesf
         qDebug() << "Sending arguments";
         const ArgumentsParseResult result(parseArguments(arguments));
         sendMessage(QJsonDocument::fromVariant(QVariantMap {
-                                                   {"files", result.files},
-                                                   {"urls", result.urls}
+                                                   {QStringLiteral("files"), result.files},
+                                                   {QStringLiteral("urls"), result.urls}
                                                }).toJson());
     }
 }

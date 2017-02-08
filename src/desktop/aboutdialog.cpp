@@ -36,6 +36,16 @@
 
 namespace tremotesf
 {
+    namespace
+    {
+        const QString aboutPageText(QStringLiteral("<p>\u00a9 2015-2016 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>"
+                                                   "<p><a href=\"https://github.com/equeim/tremotesf\">https://github.com/equeim/tremotesf2</a></p>"));
+
+        const QString authorText(QStringLiteral("Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
+                                                "<br/>"
+                                                "<i>%1</i>"));
+    }
+
     AboutDialog::AboutDialog(QWidget* parent)
         : QDialog(parent)
     {
@@ -45,15 +55,14 @@ namespace tremotesf
 
         auto titleWidget = new KTitleWidget(this);
         titleWidget->setPixmap(qApp->windowIcon(), KTitleWidget::ImageLeft);
-        titleWidget->setText(QString("Tremotesf %1").arg(qApp->applicationVersion()));
+        titleWidget->setText(QStringLiteral("Tremotesf %1").arg(qApp->applicationVersion()));
         layout->addWidget(titleWidget);
 
         auto tabWidget = new QTabWidget(this);
 
         auto aboutPage = new QWidget(this);
         auto aboutPageLayout = new QVBoxLayout(aboutPage);
-        auto aboutPageLabel = new QLabel("<p>\u00a9 2015-2016 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>"
-                                         "<p><a href=\"https://github.com/equeim/tremotesf\">https://github.com/equeim/tremotesf2</a></p>");
+        auto aboutPageLabel = new QLabel(aboutPageText);
         QObject::connect(aboutPageLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
         aboutPageLayout->addWidget(aboutPageLabel);
 
@@ -61,9 +70,7 @@ namespace tremotesf
 
         auto authorsPage = new QWidget(this);
         auto authorsPageLayout = new QVBoxLayout(authorsPage);
-        auto authorLabel = new QLabel(QString("Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
-                                              "<br/>"
-                                              "<i>%1</i>").arg(qApp->translate("tremotesf", "Maintainer")));
+        auto authorLabel = new QLabel(authorText.arg(qApp->translate("tremotesf", "Maintainer")));
         QObject::connect(authorLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
         authorsPageLayout->addWidget(authorLabel);
         authorsPageLayout->addStretch();

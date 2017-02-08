@@ -39,6 +39,12 @@
 
 namespace tremotesf
 {
+    namespace
+    {
+        const QString editIconName(QStringLiteral("document-properties"));
+        const QString removeIconName(QStringLiteral("list-remove"));
+    }
+
     AccountsDialog::AccountsDialog(QWidget* parent)
         : QDialog(parent)
     {
@@ -66,9 +72,9 @@ namespace tremotesf
         QObject::connect(mAccountsView, &QListView::customContextMenuRequested, this, [=](const QPoint& pos) {
             if (mAccountsView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
-                QAction* editAction = contextMenu.addAction(QIcon::fromTheme("document-properties"), qApp->translate("tremotesf", "&Edit..."));
+                QAction* editAction = contextMenu.addAction(QIcon::fromTheme(editIconName), qApp->translate("tremotesf", "&Edit..."));
                 QObject::connect(editAction, &QAction::triggered, this, &AccountsDialog::showEditDialogs);
-                QAction* removeAction = contextMenu.addAction(QIcon::fromTheme("list-remove"), qApp->translate("tremotesf", "&Remove"));
+                QAction* removeAction = contextMenu.addAction(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "&Remove"));
                 QObject::connect(removeAction, &QAction::triggered, this, &AccountsDialog::removeAccounts);
                 contextMenu.exec(QCursor::pos());
             }
@@ -77,7 +83,7 @@ namespace tremotesf
 
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout, 0, 1, 2, 1);
-        auto addAccountButton = new QPushButton(QIcon::fromTheme("list-add"), qApp->translate("tremotesf", "Add..."), this);
+        auto addAccountButton = new QPushButton(QIcon::fromTheme(QStringLiteral("list-add")), qApp->translate("tremotesf", "Add..."), this);
         QObject::connect(addAccountButton, &QPushButton::clicked, this, [=]() {
             auto dialog = new AccountEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -89,11 +95,11 @@ namespace tremotesf
             dialog->show();
         });
         buttonsLayout->addWidget(addAccountButton);
-        auto editButton = new QPushButton(QIcon::fromTheme("document-properties"), qApp->translate("tremotesf", "Edit..."), this);
+        auto editButton = new QPushButton(QIcon::fromTheme(editIconName), qApp->translate("tremotesf", "Edit..."), this);
         editButton->setEnabled(false);
         QObject::connect(editButton, &QPushButton::clicked, this, &AccountsDialog::showEditDialogs);
         buttonsLayout->addWidget(editButton);
-        auto removeButton = new QPushButton(QIcon::fromTheme("list-remove"), qApp->translate("tremotesf", "Remove"), this);
+        auto removeButton = new QPushButton(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "Remove"), this);
         removeButton->setEnabled(false);
         QObject::connect(removeButton, &QPushButton::clicked, this, &AccountsDialog::removeAccounts);
         buttonsLayout->addWidget(removeButton);

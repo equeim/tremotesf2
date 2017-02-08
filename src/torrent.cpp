@@ -30,23 +30,23 @@ namespace tremotesf
 {
     namespace
     {
-        const QString downloadSpeedLimitedKey("downloadLimited");
-        const QString downloadSpeedLimitKey("downloadLimit");
-        const QString uploadSpeedLimitedKey("uploadLimited");
-        const QString uploadSpeedLimitKey("uploadLimit");
-        const QString ratioLimitModeKey("seedRatioMode");
-        const QString ratioLimitKey("seedRatioLimit");
-        const QString peersLimitKey("peer-limit");
-        const QString honorSessionLimitsKey("honorsSessionLimits");
-        const QString bandwidthPriorityKey("bandwidthPriority");
-        const QString idleSeedingLimitModeKey("seedIdleMode");
-        const QString idleSeedingLimitKey("seedRatioLimit");
+        const QString downloadSpeedLimitedKey(QStringLiteral("downloadLimited"));
+        const QString downloadSpeedLimitKey(QStringLiteral("downloadLimit"));
+        const QString uploadSpeedLimitedKey(QStringLiteral("uploadLimited"));
+        const QString uploadSpeedLimitKey(QStringLiteral("uploadLimit"));
+        const QString ratioLimitModeKey(QStringLiteral("seedRatioMode"));
+        const QString ratioLimitKey(QStringLiteral("seedRatioLimit"));
+        const QString peersLimitKey(QStringLiteral("peer-limit"));
+        const QString honorSessionLimitsKey(QStringLiteral("honorsSessionLimits"));
+        const QString bandwidthPriorityKey(QStringLiteral("bandwidthPriority"));
+        const QString idleSeedingLimitModeKey(QStringLiteral("seedIdleMode"));
+        const QString idleSeedingLimitKey(QStringLiteral("seedRatioLimit"));
     }
 
     Torrent::Torrent(int id, const QVariantMap& torrentMap, Rpc* rpc)
         : mId(id),
-          mHashString(torrentMap.value("hashString").toString()),
-          mAddedDate(QDateTime::fromTime_t(torrentMap.value("addedDate").toUInt())),
+          mHashString(torrentMap.value(QStringLiteral("hashString")).toString()),
+          mAddedDate(QDateTime::fromTime_t(torrentMap.value(QStringLiteral("addedDate")).toUInt())),
           mFilesEnabled(false),
           mPeersEnabled(false),
           mRpc(rpc)
@@ -364,8 +364,8 @@ namespace tremotesf
     void Torrent::setFilesWanted(const QVariantList &files, bool wanted)
     {
         mRpc->setTorrentProperty(mId,
-                                 wanted ? "files-wanted"
-                                        : "files-unwanted",
+                                 wanted ? QStringLiteral("files-wanted")
+                                        : QStringLiteral("files-unwanted"),
                                  files);
     }
 
@@ -395,17 +395,17 @@ namespace tremotesf
 
     void Torrent::addTracker(const QString& announce)
     {
-        mRpc->setTorrentProperty(mId, "trackerAdd", QVariantList {announce});
+        mRpc->setTorrentProperty(mId, QStringLiteral("trackerAdd"), QVariantList {announce});
     }
 
     void Torrent::setTracker(int trackerId, const QString& announce)
     {
-        mRpc->setTorrentProperty(mId, "trackerReplace", QVariantList {trackerId, announce});
+        mRpc->setTorrentProperty(mId, QStringLiteral("trackerReplace"), QVariantList {trackerId, announce});
     }
 
     void Torrent::removeTrackers(const QVariantList& ids)
     {
-        mRpc->setTorrentProperty(mId, "trackerRemove", ids);
+        mRpc->setTorrentProperty(mId, QStringLiteral("trackerRemove"), ids);
     }
 
     bool Torrent::isPeersEnabled() const
@@ -442,39 +442,39 @@ namespace tremotesf
 
     void Torrent::update(const QVariantMap& torrentMap)
     {
-        mName = torrentMap.value("name").toString();
+        mName = torrentMap.value(QStringLiteral("name")).toString();
 
-        mErrorString = torrentMap.value("errorString").toString();
-        mQueuePosition = torrentMap.value("queuePosition").toInt();
+        mErrorString = torrentMap.value(QStringLiteral("errorString")).toString();
+        mQueuePosition = torrentMap.value(QStringLiteral("queuePosition")).toInt();
 
-        mTotalSize = torrentMap.value("totalSize").toLongLong();
-        mCompletedSize = torrentMap.value("haveValid").toLongLong();
-        mLeftUntilDone = torrentMap.value("leftUntilDone").toLongLong();
-        mSizeWhenDone = torrentMap.value("sizeWhenDone").toLongLong();
-        mPercentDone = torrentMap.value("percentDone").toFloat();
-        mRecheckProgress = torrentMap.value("recheckProgress").toFloat();
-        mEta = torrentMap.value("eta").toInt();
+        mTotalSize = torrentMap.value(QStringLiteral("totalSize")).toLongLong();
+        mCompletedSize = torrentMap.value(QStringLiteral("haveValid")).toLongLong();
+        mLeftUntilDone = torrentMap.value(QStringLiteral("leftUntilDone")).toLongLong();
+        mSizeWhenDone = torrentMap.value(QStringLiteral("sizeWhenDone")).toLongLong();
+        mPercentDone = torrentMap.value(QStringLiteral("percentDone")).toFloat();
+        mRecheckProgress = torrentMap.value(QStringLiteral("recheckProgress")).toFloat();
+        mEta = torrentMap.value(QStringLiteral("eta")).toInt();
 
-        mDownloadSpeed = torrentMap.value("rateDownload").toLongLong();
-        mUploadSpeed = torrentMap.value("rateUpload").toLongLong();
+        mDownloadSpeed = torrentMap.value(QStringLiteral("rateDownload")).toLongLong();
+        mUploadSpeed = torrentMap.value(QStringLiteral("rateUpload")).toLongLong();
 
         mDownloadSpeedLimited = torrentMap.value(downloadSpeedLimitedKey).toBool();
         mDownloadSpeedLimit = mRpc->serverSettings()->kibiBytes(torrentMap.value(downloadSpeedLimitKey).toInt());
         mUploadSpeedLimited = torrentMap.value(uploadSpeedLimitedKey).toBool();
         mUploadSpeedLimit = mRpc->serverSettings()->kibiBytes(torrentMap.value(uploadSpeedLimitKey).toInt());
 
-        mTotalDownloaded = torrentMap.value("downloadedEver").toLongLong();
-        mTotalUploaded = torrentMap.value("uploadedEver").toLongLong();
-        mRatio = torrentMap.value("uploadRatio").toFloat();
+        mTotalDownloaded = torrentMap.value(QStringLiteral("downloadedEver")).toLongLong();
+        mTotalUploaded = torrentMap.value(QStringLiteral("uploadedEver")).toLongLong();
+        mRatio = torrentMap.value(QStringLiteral("uploadRatio")).toFloat();
         mRatioLimitMode = static_cast<RatioLimitMode>(torrentMap.value(ratioLimitModeKey).toInt());
         mRatioLimit = torrentMap.value(ratioLimitKey).toFloat();
 
-        mSeeders = torrentMap.value("peersSendingToUs").toInt();
-        mLeechers = torrentMap.value("peersGettingFromUs").toInt();
+        mSeeders = torrentMap.value(QStringLiteral("peersSendingToUs")).toInt();
+        mLeechers = torrentMap.value(QStringLiteral("peersGettingFromUs")).toInt();
 
         const bool stalled = (mSeeders == 0 && mLeechers == 0);
-        if (torrentMap.value("error").toInt() == 0) {
-            switch (torrentMap.value("status").toInt()) {
+        if (torrentMap.value(QStringLiteral("error")).toInt() == 0) {
+            switch (torrentMap.value(QStringLiteral("status")).toInt()) {
             case 0:
                 mStatus = Paused;
                 break;
@@ -510,13 +510,13 @@ namespace tremotesf
 
         mPeersLimit = torrentMap.value(peersLimitKey).toInt();
 
-        const int activityDate = torrentMap.value("activityDate").toInt();
+        const int activityDate = torrentMap.value(QStringLiteral("activityDate")).toInt();
         if (activityDate > 0) {
             mActivityDate.setTime_t(activityDate);
         } else {
             mActivityDate = QDateTime();
         }
-        const int doneDate = torrentMap.value("doneDate").toInt();
+        const int doneDate = torrentMap.value(QStringLiteral("doneDate")).toInt();
         if (doneDate > 0) {
             mDoneDate.setTime_t(doneDate);
         } else {
@@ -527,22 +527,22 @@ namespace tremotesf
         mBandwidthPriority = static_cast<Priority>(torrentMap.value(bandwidthPriorityKey).toInt());
         mIdleSeedingLimitMode = static_cast<IdleSeedingLimitMode>(torrentMap.value(idleSeedingLimitModeKey).toInt());
         mIdleSeedingLimit = torrentMap.value(idleSeedingLimitKey).toInt();
-        mDownloadDirectory = torrentMap.value("downloadDir").toString();
-        mCreator = torrentMap.value("creator").toString();
+        mDownloadDirectory = torrentMap.value(QStringLiteral("downloadDir")).toString();
+        mCreator = torrentMap.value(QStringLiteral("creator")).toString();
 
-        const int creationDate = torrentMap.value("dateCreated").toInt();
+        const int creationDate = torrentMap.value(QStringLiteral("dateCreated")).toInt();
         if (creationDate > 0) {
             mCreationDate.setTime_t(creationDate);
         } else {
             mCreationDate = QDateTime();
         }
 
-        mComment = torrentMap.value("comment").toString();
+        mComment = torrentMap.value(QStringLiteral("comment")).toString();
 
         QList<std::shared_ptr<Tracker>> trackers;
-        for (const QVariant trackerVariant : torrentMap.value("trackerStats").toList()) {
+        for (const QVariant& trackerVariant : torrentMap.value(QStringLiteral("trackerStats")).toList()) {
             const QVariantMap trackerMap(trackerVariant.toMap());
-            const int id = trackerMap.value("id").toInt();
+            const int id = trackerMap.value(QStringLiteral("id")).toInt();
 
             std::shared_ptr<Tracker> tracker;
             for (const std::shared_ptr<Tracker>& existingTracker : mTrackers) {
@@ -570,8 +570,8 @@ namespace tremotesf
     void Torrent::updateFiles(const QVariantMap &torrentMap)
     {
         mFilesUpdated = true;
-        QVariantList files(torrentMap.value("files").toList());
-        const QVariantList filesStats(torrentMap.value("fileStats").toList());
+        QVariantList files(torrentMap.value(QStringLiteral("files")).toList());
+        const QVariantList filesStats(torrentMap.value(QStringLiteral("fileStats")).toList());
         for (int i = 0, max = files.size(); i < max; ++i) {
             files[i] = files.at(i).toMap().unite(filesStats.at(i).toMap());
         }
@@ -581,6 +581,6 @@ namespace tremotesf
     void Torrent::updatePeers(const QVariantMap& torrentMap)
     {
         mPeersUpdated = true;
-        emit peersUpdated(torrentMap.value("peers").toList());
+        emit peersUpdated(torrentMap.value(QStringLiteral("peers")).toList());
     }
 }

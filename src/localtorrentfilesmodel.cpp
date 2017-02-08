@@ -291,11 +291,11 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> LocalTorrentFilesModel::roleNames() const
     {
-        return {{NameRole, "name"},
-                {IsDirectoryRole, "isDirectory"},
-                {SizeRole, "size"},
-                {WantedStateRole, "wantedState"},
-                {PriorityRole, "priority"}};
+        return {{NameRole, QByteArrayLiteral("name")},
+                {IsDirectoryRole, QByteArrayLiteral("isDirectory")},
+                {SizeRole, QByteArrayLiteral("size")},
+                {WantedStateRole, QByteArrayLiteral("wantedState")},
+                {PriorityRole, QByteArrayLiteral("priority")}};
     }
 #endif
 }

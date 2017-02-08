@@ -25,45 +25,45 @@ namespace tremotesf
 {
     namespace
     {
-        const QString downloadDirectoryKey("download-dir");
-        const QString trashTorrentFilesKey("trash-original-torrent-files");
-        const QString startAddedTorrentsKey("start-added-torrents");
-        const QString renameIncompleteFilesKey("rename-partial-files");
-        const QString incompleteDirectoryEnabledKey("incomplete-dir-enabled");
-        const QString incompleteDirectoryKey("incomplete-dir");
+        const QString downloadDirectoryKey(QStringLiteral("download-dir"));
+        const QString trashTorrentFilesKey(QStringLiteral("trash-original-torrent-files"));
+        const QString startAddedTorrentsKey(QStringLiteral("start-added-torrents"));
+        const QString renameIncompleteFilesKey(QStringLiteral("rename-partial-files"));
+        const QString incompleteDirectoryEnabledKey(QStringLiteral("incomplete-dir-enabled"));
+        const QString incompleteDirectoryKey(QStringLiteral("incomplete-dir"));
 
-        const QString ratioLimitedKey("seedRatioLimited");
-        const QString ratioLimitKey("seedRatioLimit");
-        const QString idleSeedingLimitedKey("idle-seeding-limit-enabled");
-        const QString idleSeedingLimitKey("idle-seeding-limit");
+        const QString ratioLimitedKey(QStringLiteral("seedRatioLimited"));
+        const QString ratioLimitKey(QStringLiteral("seedRatioLimit"));
+        const QString idleSeedingLimitedKey(QStringLiteral("idle-seeding-limit-enabled"));
+        const QString idleSeedingLimitKey(QStringLiteral("idle-seeding-limit"));
 
-        const QString downloadQueueEnabledKey("download-queue-enabled");
-        const QString downloadQueueSizeKey("download-queue-size");
-        const QString seedQueueEnabledKey("seed-queue-enabled");
-        const QString seedQueueSizeKey("seed-queue-size");
-        const QString idleQueueLimitedKey("queue-stalled-enabled");
-        const QString idleQueueLimitKey("queue-stalled-minutes");
+        const QString downloadQueueEnabledKey(QStringLiteral("download-queue-enabled"));
+        const QString downloadQueueSizeKey(QStringLiteral("download-queue-size"));
+        const QString seedQueueEnabledKey(QStringLiteral("seed-queue-enabled"));
+        const QString seedQueueSizeKey(QStringLiteral("seed-queue-size"));
+        const QString idleQueueLimitedKey(QStringLiteral("queue-stalled-enabled"));
+        const QString idleQueueLimitKey(QStringLiteral("queue-stalled-minutes"));
 
-        const QString downloadSpeedLimitedKey("speed-limit-down-enabled");
-        const QString downloadSpeedLimitKey("speed-limit-down");
-        const QString uploadSpeedLimitedKey("speed-limit-up-enabled");
-        const QString uploadSpeedLimitKey("speed-limit-up");
-        const QString alternativeSpeedLimitsEnabledKey("alt-speed-enabled");
-        const QString alternativeDownloadSpeedLimitKey("alt-speed-down");
-        const QString alternativeUploadSpeedLimitKey("alt-speed-up");
-        const QString alternativeSpeedLimitsScheduledKey("alt-speed-time-enabled");
-        const QString alternativeSpeedLimitsBeginTimeKey("alt-speed-time-begin");
-        const QString alternativeSpeedLimitsEndTimeKey("alt-speed-time-end");
-        const QString alternativeSpeedLimitsDaysKey("alt-speed-time-day");
+        const QString downloadSpeedLimitedKey(QStringLiteral("speed-limit-down-enabled"));
+        const QString downloadSpeedLimitKey(QStringLiteral("speed-limit-down"));
+        const QString uploadSpeedLimitedKey(QStringLiteral("speed-limit-up-enabled"));
+        const QString uploadSpeedLimitKey(QStringLiteral("speed-limit-up"));
+        const QString alternativeSpeedLimitsEnabledKey(QStringLiteral("alt-speed-enabled"));
+        const QString alternativeDownloadSpeedLimitKey(QStringLiteral("alt-speed-down"));
+        const QString alternativeUploadSpeedLimitKey(QStringLiteral("alt-speed-up"));
+        const QString alternativeSpeedLimitsScheduledKey(QStringLiteral("alt-speed-time-enabled"));
+        const QString alternativeSpeedLimitsBeginTimeKey(QStringLiteral("alt-speed-time-begin"));
+        const QString alternativeSpeedLimitsEndTimeKey(QStringLiteral("alt-speed-time-end"));
+        const QString alternativeSpeedLimitsDaysKey(QStringLiteral("alt-speed-time-day"));
 
-        const QString peerPortKey("peer-port");
-        const QString randomPortEnabledKey("peer-port-random-on-start");
-        const QString portForwardingEnabledKey("port-forwarding-enabled");
+        const QString peerPortKey(QStringLiteral("peer-port"));
+        const QString randomPortEnabledKey(QStringLiteral("peer-port-random-on-start"));
+        const QString portForwardingEnabledKey(QStringLiteral("port-forwarding-enabled"));
 
-        const QString encryptionModeKey("encryption");
-        const QString encryptionModeAllowed("tolerated");
-        const QString encryptionModePreferred("preferred");
-        const QString encryptionModeRequired("required");
+        const QString encryptionModeKey(QStringLiteral("encryption"));
+        const QString encryptionModeAllowed(QStringLiteral("tolerated"));
+        const QString encryptionModePreferred(QStringLiteral("preferred"));
+        const QString encryptionModeRequired(QStringLiteral("required"));
 
         QString encryptionModeString(ServerSettings::EncryptionMode mode)
         {
@@ -78,12 +78,12 @@ namespace tremotesf
             return QString();
         }
 
-        const QString utpEnabledKey("utp-enabled");
-        const QString pexEnabledKey("pex-enabled");
-        const QString dhtEnabledKey("dht-enabled");
-        const QString lpdEnabledKey("lpd-enabled");
-        const QString maximumPeersPerTorrentKey("peer-limit-per-torrent");
-        const QString maximumPeersGloballyKey("peer-limit-global");
+        const QString utpEnabledKey(QStringLiteral("utp-enabled"));
+        const QString pexEnabledKey(QStringLiteral("pex-enabled"));
+        const QString dhtEnabledKey(QStringLiteral("dht-enabled"));
+        const QString lpdEnabledKey(QStringLiteral("lpd-enabled"));
+        const QString maximumPeersPerTorrentKey(QStringLiteral("peer-limit-per-torrent"));
+        const QString maximumPeersGloballyKey(QStringLiteral("peer-limit-global"));
     }
 
     ServerSettings::ServerSettings(Rpc* rpc, QObject *parent)
@@ -610,10 +610,14 @@ namespace tremotesf
 
     void ServerSettings::update(const QVariantMap& serverSettings)
     {
-        mRpcVersion = serverSettings.value("rpc-version").toInt();
-        mMinimumRpcVersion = serverSettings.value("rpc-version-minimum").toInt();
+        mRpcVersion = serverSettings.value(QStringLiteral("rpc-version")).toInt();
+        mMinimumRpcVersion = serverSettings.value(QStringLiteral("rpc-version-minimum")).toInt();
 
-        mUsingDecimalUnits = (serverSettings.value("units").toMap().value("speed-bytes").toInt() == 1000);
+        mUsingDecimalUnits = (serverSettings
+                              .value(QStringLiteral("units"))
+                              .toMap()
+                              .value(QStringLiteral("speed-bytes"))
+                              .toInt() == 1000);
 
         mDownloadDirectory = serverSettings.value(downloadDirectoryKey).toString();
         mTrashTorrentFiles = serverSettings.value(trashTorrentFilesKey).toBool();

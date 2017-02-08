@@ -29,28 +29,28 @@ namespace tremotesf
     {
         Settings* instancePointer = nullptr;
 
-        const QString connectOnStartupKey("connectOnStartup");
-        const QString notificationOnDisconnectingKey("notificationOnDisconnecting");
-        const QString notificationOnAddingTorrentKey("notificationOnAddingTorrent");
-        const QString notificationOfFinishedTorrentsKey("notificationOfFinishedTorrents");
+        const QString connectOnStartupKey(QStringLiteral("connectOnStartup"));
+        const QString notificationOnDisconnectingKey(QStringLiteral("notificationOnDisconnecting"));
+        const QString notificationOnAddingTorrentKey(QStringLiteral("notificationOnAddingTorrent"));
+        const QString notificationOfFinishedTorrentsKey(QStringLiteral("notificationOfFinishedTorrents"));
 #ifdef TREMOTESF_SAILFISHOS
-        const QString torrentsSortOrderKey("torrentsSortOrder");
-        const QString torrentsSortRoleKey("torrentsSortRole");
+        const QString torrentsSortOrderKey(QStringLiteral("torrentsSortOrder"));
+        const QString torrentsSortRoleKey(QStringLiteral("torrentsSortRole"));
 #else
-        const QString showTrayIconKey("showTrayIcon");
-        const QString startMinimizedKey("startMinimized");
-        const QString mainWindowGeometryKey("mainWindowGeometry");
-        const QString toolButtonStyleKey("toolButtonStyle");
-        const QString toolBarVisibleKey("toolBarVisible");
-        const QString toolBarAreaKey("toolBarArea");
-        const QString sideBarVisibleKey("sideBarVisible");
-        const QString splitterStateKey("splitterState");
-        const QString statusBarVisibleKey("statusBarVisible");
-        const QString localTorrentFilesViewHeaderStateKey("localTorrentFilesViewHeaderState");
-        const QString torrentsViewHeaderStateKey("torrentsViewHeaderState");
-        const QString torrentFilesViewHeaderStateKey("torrentFilesViewHeaderState");
-        const QString trackersViewHeaderStateKey("trackersViewHeaderState");
-        const QString peersViewHeaderStateKey("peersViewHeaderState");
+        const QString showTrayIconKey(QStringLiteral("showTrayIcon"));
+        const QString startMinimizedKey(QStringLiteral("startMinimized"));
+        const QString mainWindowGeometryKey(QStringLiteral("mainWindowGeometry"));
+        const QString toolButtonStyleKey(QStringLiteral("toolButtonStyle"));
+        const QString toolBarVisibleKey(QStringLiteral("toolBarVisible"));
+        const QString toolBarAreaKey(QStringLiteral("toolBarArea"));
+        const QString sideBarVisibleKey(QStringLiteral("sideBarVisible"));
+        const QString splitterStateKey(QStringLiteral("splitterState"));
+        const QString statusBarVisibleKey(QStringLiteral("statusBarVisible"));
+        const QString localTorrentFilesViewHeaderStateKey(QStringLiteral("localTorrentFilesViewHeaderState"));
+        const QString torrentsViewHeaderStateKey(QStringLiteral("torrentsViewHeaderState"));
+        const QString torrentFilesViewHeaderStateKey(QStringLiteral("torrentFilesViewHeaderState"));
+        const QString trackersViewHeaderStateKey(QStringLiteral("trackersViewHeaderState"));
+        const QString peersViewHeaderStateKey(QStringLiteral("peersViewHeaderState"));
 #endif
     }
 

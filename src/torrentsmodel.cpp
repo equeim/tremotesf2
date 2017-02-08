@@ -337,13 +337,13 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> TorrentsModel::roleNames() const
     {
-        return {{NameRole, "name"},
-                {StatusRole, "status"},
-                {TotalSizeRole, "totalSize"},
-                {PercentDoneRole, "percentDone"},
-                {EtaRole, "eta"},
-                {RatioRole, "ratio"},
-                {AddedDateRole, "addedDate"}};
+        return {{NameRole, QByteArrayLiteral("name")},
+                {StatusRole, QByteArrayLiteral("status")},
+                {TotalSizeRole, QByteArrayLiteral("totalSize")},
+                {PercentDoneRole, QByteArrayLiteral("percentDone")},
+                {EtaRole, QByteArrayLiteral("eta")},
+                {RatioRole, QByteArrayLiteral("ratio")},
+                {AddedDateRole, QByteArrayLiteral("addedDate")}};
     }
 #endif
 

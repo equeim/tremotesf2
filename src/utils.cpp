@@ -194,14 +194,14 @@ namespace tremotesf
 
     QString Utils::license()
     {
-        QFile licenseFile(":/LICENSE");
+        QFile licenseFile(QStringLiteral(":/LICENSE"));
         licenseFile.open(QFile::ReadOnly);
         return licenseFile.readAll();
     }
 
     QString Utils::translators()
     {
-        QFile translatorsFile(":/translators.html");
+        QFile translatorsFile(QStringLiteral(":/translators.html"));
         translatorsFile.open(QFile::ReadOnly);
         return translatorsFile.readAll();
     }
@@ -209,14 +209,14 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QString Utils::sdcardPath()
     {
-        QFile mtab("/etc/mtab");
+        QFile mtab(QStringLiteral("/etc/mtab"));
         if (mtab.open(QIODevice::ReadOnly)) {
-            const QStringList mmcblk1p1(QString(mtab.readAll()).split('\n').filter("/dev/mmcblk1p1"));
+            const QStringList mmcblk1p1(QString(mtab.readAll()).split('\n').filter(QStringLiteral("/dev/mmcblk1p1")));
             if (!mmcblk1p1.isEmpty()) {
                 return mmcblk1p1.first().split(' ').at(1);
             }
         }
-        return "/media/sdcard";
+        return QStringLiteral("/media/sdcard");
     }
 
     void Utils::registerTypes()
@@ -290,15 +290,15 @@ namespace tremotesf
 #else
         static const QString iconsPath(ICONS_PATH);
 #endif // Q_OS_WIN
-        static const QString active(QString("%1/active.png").arg(iconsPath));
-        static const QString checking(QString("%1/checking.png").arg(iconsPath));
-        static const QString downloading(QString("%1/downloading.png").arg(iconsPath));
-        static const QString errored(QString("%1/errored.png").arg(iconsPath));
-        static const QString paused(QString("%1/paused.png").arg(iconsPath));
-        static const QString queued(QString("%1/queued.png").arg(iconsPath));
-        static const QString seeding(QString("%1/seeding.png").arg(iconsPath));
-        static const QString stalledDownloading(QString("%1/stalled-downloading.png").arg(iconsPath));
-        static const QString stalledSeeding(QString("%1/stalled-seeding.png").arg(iconsPath));
+        static const QString active(QStringLiteral("%1/active.png").arg(iconsPath));
+        static const QString checking(QStringLiteral("%1/checking.png").arg(iconsPath));
+        static const QString downloading(QStringLiteral("%1/downloading.png").arg(iconsPath));
+        static const QString errored(QStringLiteral("%1/errored.png").arg(iconsPath));
+        static const QString paused(QStringLiteral("%1/paused.png").arg(iconsPath));
+        static const QString queued(QStringLiteral("%1/queued.png").arg(iconsPath));
+        static const QString seeding(QStringLiteral("%1/seeding.png").arg(iconsPath));
+        static const QString stalledDownloading(QStringLiteral("%1/stalled-downloading.png").arg(iconsPath));
+        static const QString stalledSeeding(QStringLiteral("%1/stalled-seeding.png").arg(iconsPath));
 
         switch (icon) {
         case ActiveIcon:

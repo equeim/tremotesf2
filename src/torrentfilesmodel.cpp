@@ -37,9 +37,9 @@ namespace tremotesf
     {
         void updateFile(TorrentFilesModelFile* file, const QVariantMap& fileMap)
         {
-            file->setSize(fileMap.value("length").toLongLong());
-            file->setCompletedSize(fileMap.value("bytesCompleted").toLongLong());
-            file->setWanted(fileMap.value("wanted").toBool());
+            file->setSize(fileMap.value(QStringLiteral("length")).toLongLong());
+            file->setCompletedSize(fileMap.value(QStringLiteral("bytesCompleted")).toLongLong());
+            file->setWanted(fileMap.value(QStringLiteral("wanted")).toBool());
             file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileMap.value("priority").toInt()));
         }
 
@@ -325,13 +325,13 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> TorrentFilesModel::roleNames() const
     {
-        return {{NameRole, "name"},
-                {IsDirectoryRole, "isDirectory"},
-                {CompletedSizeRole, "completedSize"},
-                {SizeRole, "size"},
-                {ProgressRole, "progress"},
-                {WantedStateRole, "wantedState"},
-                {PriorityRole, "priority"}};
+        return {{NameRole, QByteArrayLiteral("name")},
+                {IsDirectoryRole, QByteArrayLiteral("isDirectory")},
+                {CompletedSizeRole, QByteArrayLiteral("completedSize")},
+                {SizeRole, QByteArrayLiteral("size")},
+                {ProgressRole, QByteArrayLiteral("progress")},
+                {WantedStateRole, QByteArrayLiteral("wantedState")},
+                {PriorityRole, QByteArrayLiteral("priority")}};
     }
 #endif
 }

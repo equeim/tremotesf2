@@ -145,8 +145,8 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> AllTrackersModel::roleNames() const
     {
-            return {{TrackerRole, "tracker"},
-                    {TorrentsRole, "torrents"}};
+            return {{TrackerRole, QByteArrayLiteral("tracker")},
+                    {TorrentsRole, QByteArrayLiteral("torrents")}};
     }
 #endif
 

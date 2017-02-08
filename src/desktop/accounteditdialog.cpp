@@ -48,7 +48,7 @@ namespace tremotesf
             setWindowTitle(qApp->translate("tremotesf", "Add Account"));
 
             mPortSpinBox->setValue(9091);
-            mApiPathLineEdit->setText("/transmission/rpc");
+            mApiPathLineEdit->setText(QStringLiteral("/transmission/rpc"));
             mHttpsGroupBox->setChecked(false);
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
@@ -108,12 +108,12 @@ namespace tremotesf
         formLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mNameLineEdit = new QLineEdit(this);
-        mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^\\S.*"), this));
+        mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("^\\S.*")), this));
         QObject::connect(mNameLineEdit, &QLineEdit::textChanged, this, &AccountEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Name:"), mNameLineEdit);
 
         mAddressLineEdit = new QLineEdit(this);
-        mAddressLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^\\S+"), this));
+        mAddressLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("^\\S+")), this));
         QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, &AccountEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Address:"), mAddressLineEdit);
 

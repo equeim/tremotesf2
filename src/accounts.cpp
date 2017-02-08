@@ -27,18 +27,18 @@ namespace tremotesf
 {
     namespace
     {
-        const QString versionKey("version");
-        const QString currentAccountKey("current");
-        const QString addressKey("address");
-        const QString portKey("port");
-        const QString apiPathKey("apiPath");
-        const QString httpsKey("https");
-        const QString localCertificateKey("localCertificate");
-        const QString authenticationKey("authentication");
-        const QString usernameKey("username");
-        const QString passwordKey("password");
-        const QString updateIntervalKey("updateInterval");
-        const QString timeoutKey("timeout");
+        const QString versionKey(QStringLiteral("version"));
+        const QString currentAccountKey(QStringLiteral("current"));
+        const QString addressKey(QStringLiteral("address"));
+        const QString portKey(QStringLiteral("port"));
+        const QString apiPathKey(QStringLiteral("apiPath"));
+        const QString httpsKey(QStringLiteral("https"));
+        const QString localCertificateKey(QStringLiteral("localCertificate"));
+        const QString authenticationKey(QStringLiteral("authentication"));
+        const QString usernameKey(QStringLiteral("username"));
+        const QString passwordKey(QStringLiteral("password"));
+        const QString updateIntervalKey(QStringLiteral("updateInterval"));
+        const QString timeoutKey(QStringLiteral("timeout"));
 
         Accounts* instancePointer = nullptr;
     }
@@ -56,7 +56,7 @@ namespace tremotesf
     {
         QSettings settings;
         if (settings.value(versionKey).toInt() != 1) {
-            QSettings accountsSettings(qApp->organizationName(), "accounts");
+            QSettings accountsSettings(qApp->organizationName(), QStringLiteral("accounts"));
             if (accountsSettings.childGroups().isEmpty()) {
                 for (const QString& group : settings.childGroups()) {
                     settings.beginGroup(group);
@@ -67,7 +67,7 @@ namespace tremotesf
                     accountsSettings.setValue(apiPathKey, settings.value(apiPathKey));
                     accountsSettings.setValue(httpsKey, settings.value(httpsKey));
                     if (settings.value(localCertificateKey).toBool()) {
-                        const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation, QString("%1.pem").arg(group)));
+                        const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("%1.pem").arg(group)));
                         if (!localCertificatePath.isEmpty()) {
                             QFile file(localCertificatePath);
                             if (file.open(QFile::ReadOnly)) {
@@ -84,7 +84,7 @@ namespace tremotesf
                     accountsSettings.endGroup();
                     settings.endGroup();
                 }
-                accountsSettings.setValue(currentAccountKey, settings.value("currentAccount"));
+                accountsSettings.setValue(currentAccountKey, settings.value(QStringLiteral("currentAccount")));
             }
             settings.clear();
             settings.setValue(versionKey, 1);

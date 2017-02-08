@@ -201,18 +201,18 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> AccountsModel::roleNames() const
     {
-        return {{NameRole, "name"},
-                {IsCurrentRole, "current"},
-                {AddressRole, "address"},
-                {PortRole, "port"},
-                {ApiPathRole, "apiPath"},
-                {HttpsRole, "https"},
-                {LocalCertificateRole, "localCertificate"},
-                {AuthenticationRole, "authentication"},
-                {UsernameRole, "username"},
-                {PasswordRole, "password"},
-                {UpdateIntervalRole, "updateInterval"},
-                {TimeoutRole, "timeout"}};
+        return {{NameRole, QByteArrayLiteral("name")},
+                {IsCurrentRole, QByteArrayLiteral("current")},
+                {AddressRole, QByteArrayLiteral("address")},
+                {PortRole, QByteArrayLiteral("port")},
+                {ApiPathRole, QByteArrayLiteral("apiPath")},
+                {HttpsRole, QByteArrayLiteral("https")},
+                {LocalCertificateRole, QByteArrayLiteral("localCertificate")},
+                {AuthenticationRole, QByteArrayLiteral("authentication")},
+                {UsernameRole, QByteArrayLiteral("username")},
+                {PasswordRole, QByteArrayLiteral("password")},
+                {UpdateIntervalRole, QByteArrayLiteral("updateInterval")},
+                {TimeoutRole, QByteArrayLiteral("timeout")}};
     }
 #endif
 

@@ -37,16 +37,16 @@ int main(int argc, char** argv)
 #else
     QApplication app(argc, argv);
     app.setOrganizationName(app.applicationName());
-    app.setWindowIcon(QIcon::fromTheme("tremotesf"));
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("tremotesf")));
     app.setQuitOnLastWindowClosed(false);
 #endif
-    qApp->setApplicationVersion("1.1.0");
+    qApp->setApplicationVersion(QStringLiteral("1.1.0"));
 
     QCommandLineParser parser;
 #ifdef TREMOTESF_SAILFIDHOS
-    parser.addPositionalArgument("torrent", "Torrent file or URL");
+    parser.addPositionalArgument(QStringLiteral("torrent"), QStringLiteral("Torrent file or URL"));
 #else
-    parser.addPositionalArgument("torrents", "Torrent files or URLs");
+    parser.addPositionalArgument(QStringLiteral("torrents"), QStringLiteral("Torrent files or URLs"));
 #endif
     parser.addHelpOption();
     parser.addVersionOption();
@@ -69,12 +69,12 @@ int main(int argc, char** argv)
     tremotesf::IpcServer ipcServer;
 
     QTranslator qtTranslator;
-    qtTranslator.load(QLocale(), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    qtTranslator.load(QLocale(), QStringLiteral("qt"), QStringLiteral("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     qApp->installTranslator(&qtTranslator);
 
     QTranslator appTranslator;
 #ifdef Q_OS_WIN
-    appTranslator.load(QLocale().name(), QString("%1/translations").arg(app.applicationDirPath()));
+    appTranslator.load(QLocale().name(), QStringLiteral("%1/translations").arg(app.applicationDirPath()));
 #else
     appTranslator.load(QLocale().name(), TRANSLATIONS_PATH);
 #endif
@@ -85,11 +85,11 @@ int main(int argc, char** argv)
 
     tremotesf::Utils::registerTypes();
 
-    view->rootContext()->setContextProperty("ipcServer", &ipcServer);
+    view->rootContext()->setContextProperty(QStringLiteral("ipcServer"), &ipcServer);
 
     tremotesf::ArgumentsParseResult result(tremotesf::IpcServer::parseArguments(arguments));
-    view->rootContext()->setContextProperty("files", result.files);
-    view->rootContext()->setContextProperty("urls", result.urls);
+    view->rootContext()->setContextProperty(QStringLiteral("files"), result.files);
+    view->rootContext()->setContextProperty(QStringLiteral("urls"), result.urls);
 
     view->setSource(SailfishApp::pathTo("qml/main.qml"));
     view->show();

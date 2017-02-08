@@ -36,7 +36,7 @@ namespace tremotesf
     DirectoryContentModel::DirectoryContentModel()
         : mComponentCompleted(false),
           mDirectory(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)),
-          mParentDirectory("/home"),
+          mParentDirectory(QStringLiteral("/home")),
           mShowFiles(true)
     {
 
@@ -128,9 +128,9 @@ namespace tremotesf
 
     QHash<int, QByteArray> DirectoryContentModel::roleNames() const
     {
-        return {{PathRole, "path"},
-                {NameRole, "name"},
-                {DirectoryRole, "directory"}};
+        return {{PathRole, QByteArrayLiteral("path")},
+                {NameRole, QByteArrayLiteral("name")},
+                {DirectoryRole, QByteArrayLiteral("directory")}};
     }
 
     void DirectoryContentModel::loadDirectory()

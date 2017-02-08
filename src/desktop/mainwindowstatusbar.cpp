@@ -44,7 +44,7 @@ namespace tremotesf
         layout->setContentsMargins(8, 4, 8, 4);
 
         mNoAccountsErrorImage = new QLabel(this);
-        mNoAccountsErrorImage->setPixmap(QIcon::fromTheme("dialog-error").pixmap(16, 16));
+        mNoAccountsErrorImage->setPixmap(QIcon::fromTheme(QStringLiteral("dialog-error")).pixmap(16, 16));
         mNoAccountsErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mNoAccountsErrorImage);
 
@@ -61,7 +61,7 @@ namespace tremotesf
         layout->addWidget(mSecondSeparator);
 
         mDownloadSpeedImage = new QLabel(this);
-        mDownloadSpeedImage->setPixmap(QIcon::fromTheme("go-down").pixmap(16, 16));
+        mDownloadSpeedImage->setPixmap(QIcon::fromTheme(QStringLiteral("go-down")).pixmap(16, 16));
         mDownloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mDownloadSpeedImage);
 
@@ -72,7 +72,7 @@ namespace tremotesf
         layout->addWidget(mThirdSeparator);
 
         mUploadSpeedImage = new QLabel(this);
-        mUploadSpeedImage->setPixmap(QIcon::fromTheme("go-up").pixmap(16, 16));
+        mUploadSpeedImage->setPixmap(QIcon::fromTheme(QStringLiteral("go-up")).pixmap(16, 16));
         mUploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mUploadSpeedImage);
 
@@ -135,7 +135,7 @@ namespace tremotesf
     void MainWindowStatusBar::updateAccountLabel()
     {
         if (Accounts::instance()->hasAccounts()) {
-            mAccountLabel->setText(QString("%1 (%2)").arg(Accounts::instance()->currentAccountName()).arg(Accounts::instance()->currentAccountAddress()));
+            mAccountLabel->setText(QStringLiteral("%1 (%2)").arg(Accounts::instance()->currentAccountName()).arg(Accounts::instance()->currentAccountAddress()));
         } else {
             mAccountLabel->setText(qApp->translate("tremotesf", "No accounts"));
         }
