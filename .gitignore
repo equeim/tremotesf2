@@ -1,4 +1,5 @@
 build*
 *.list
 *.pro.user
+*.pro.user.*
 RPMS
