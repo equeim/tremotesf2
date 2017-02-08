@@ -27,34 +27,35 @@ namespace tremotesf
     class Tracker
     {
     public:
+        enum Status
+        {
+            Inactive,
+            Active,
+            Queued,
+            Updating,
+            Error
+        };
+
         explicit Tracker(int id, const QVariantMap& trackerMap);
 
         int id() const;
         const QString& announce() const;
         const QString& site() const;
 
-        QString status() const;
-        bool error() const;
+        Status status() const;
+        QString statusString() const;
+
         int peers() const;
         int nextUpdate() const;
 
         void update(const QVariantMap& trackerMap);
     private:
-        enum Status
-        {
-            Inactive,
-            Waiting,
-            Queued,
-            Active
-        };
-
         int mId;
         QString mAnnounce;
         QString mSite;
 
         Status mStatus;
-        bool mError;
-        QString mMessage;
+        QString mErrorMessage;
         int mPeers;
         int mNextUpdate;
     };

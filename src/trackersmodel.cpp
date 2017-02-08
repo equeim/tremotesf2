@@ -52,10 +52,10 @@ namespace tremotesf
             return tracker->id();
         case AnnounceRole:
             return tracker->announce();
-        case StatusRole:
-            return tracker->status();
+        case StatusStringRole:
+            return tracker->statusString();
         case ErrorRole:
-            return tracker->error();
+            return (tracker->status() == Tracker.Error);
         case PeersRole:
             return tracker->peers();
         case NextUpdateRole:
@@ -67,7 +67,7 @@ namespace tremotesf
             case AnnounceColumn:
                 return tracker->announce();
             case StatusColumn:
-                return tracker->status();
+                return tracker->statusString();
             case PeersColumn:
                 return tracker->peers();
             case NextUpdateColumn:
@@ -153,7 +153,7 @@ namespace tremotesf
     {
         return {{IdRole, QByteArrayLiteral("id")},
                 {AnnounceRole, QByteArrayLiteral("announce")},
-                {StatusRole, QByteArrayLiteral("status")},
+                {StatusStringRole, QByteArrayLiteral("statusString")},
                 {ErrorRole, QByteArrayLiteral("error")},
                 {PeersRole, QByteArrayLiteral("peers")},
                 {NextUpdateRole, QByteArrayLiteral("nextUpdate")}};

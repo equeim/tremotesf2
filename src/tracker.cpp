@@ -47,29 +47,32 @@ namespace tremotesf
         return mSite;
     }
 
-    QString Tracker::status() const
+    Tracker::Status Tracker::status() const
     {
-        if (mError && !mMessage.isEmpty()) {
-            return qApp->translate("tremotesf", "Error: %1").arg(mMessage);
-        }
+        return mStatus;
+    }
 
+    QString Tracker::statusString() const
+    {
         switch (mStatus) {
         case Inactive:
             return qApp->translate("tremotesf", "Inactive");
-        case Waiting:
+        case Active:
             return qApp->translate("tremotesf", "Active", "Tracker status");
         case Queued:
             return qApp->translate("tremotesf", "Queued");
-        case Active:
+        case Updating:
             return qApp->translate("tremotesf", "Updating");
+        case Error:
+        {
+            if (mErrorMessage.isEmpty()) {
+                return qApp->translate("tremotesf", "Error");
+            }
+            return qApp->translate("tremotesf", "Error: %1").arg(mErrorMessage);
+        }
         }
 
         return QString();
-    }
-
-    bool Tracker::error() const
-    {
-        return mError;
     }
 
     int Tracker::peers() const
@@ -84,7 +87,7 @@ namespace tremotesf
 
     void Tracker::update(const QVariantMap& trackerMap)
     {
-        mAnnounce = trackerMap.value("announce").toString();
+        mAnnounce = trackerMap.value(QStringLiteral("announce")).toString();
 
         const QUrl url(mAnnounce);
         mSite = url.host();
@@ -93,14 +96,31 @@ namespace tremotesf
             mSite = mSite.mid(mSite.lastIndexOf('.', -topLevelDomain.size() - 1) + 1);
         }
 
-        mStatus = static_cast<Status>(trackerMap.value("announceState").toInt());
-        mError = !trackerMap.value("lastAnnounceSucceeded").toBool();
-        mMessage = trackerMap.value("lastAnnounceResult").toString();
-        mPeers = trackerMap.value("lastAnnouncePeerCount").toInt();
-        if (mStatus == Waiting) {
-            mNextUpdate = QDateTime::currentDateTime().secsTo(QDateTime::fromTime_t(trackerMap.value("nextAnnounceTime").toInt()));
+        const bool scrapeError = (!trackerMap.value(QStringLiteral("lastScrapeSucceeded")).toBool() &&
+                                  trackerMap.value(QStringLiteral("lastScrapeTime")).toInt() != 0);
+
+        const bool announceError = (!trackerMap.value(QStringLiteral("lastAnnounceSucceeded")).toBool() &&
+                                    trackerMap.value(QStringLiteral("lastAnnounceTime")).toInt() != 0);
+
+        if (scrapeError || announceError) {
+            mStatus = Error;
+            if (scrapeError) {
+                mErrorMessage = trackerMap.value(QStringLiteral("lastScrapeResult")).toString();
+            } else {
+                mErrorMessage = trackerMap.value(QStringLiteral("lastAnnounceResult")).toString();
+            }
         } else {
+            mStatus = static_cast<Status>(trackerMap.value(QStringLiteral("announceState")).toInt());
+            mErrorMessage.clear();
+        }
+
+        mPeers = trackerMap.value(QStringLiteral("lastAnnouncePeerCount")).toInt();
+
+        const int time = trackerMap.value(QStringLiteral("nextAnnounceTime")).toInt();
+        if (time == -1) {
             mNextUpdate = -1;
+        } else {
+            mNextUpdate = QDateTime::currentDateTime().secsTo(QDateTime::fromTime_t(time));
         }
     }
 }

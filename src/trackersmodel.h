@@ -39,7 +39,7 @@ namespace tremotesf
         {
             IdRole,
             AnnounceRole,
-            StatusRole,
+            StatusStringRole,
             ErrorRole,
             PeersRole,
             NextUpdateRole

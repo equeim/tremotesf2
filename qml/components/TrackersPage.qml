@@ -143,7 +143,7 @@ Page {
                         }
                         font.pixelSize: Theme.fontSizeExtraSmall
                         color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-                        text: modelData.status
+                        text: modelData.statusString
                         truncationMode: TruncationMode.Fade
                     }
 
