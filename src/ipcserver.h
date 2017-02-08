@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef TREMOTESF_IPCSERVER_H
+#define TREMOTESF_IPCSERVER_H
+
 #include <QLocalServer>
 
 namespace tremotesf
@@ -42,3 +45,5 @@ namespace tremotesf
         void urlsReceived(const QStringList& urls);
     };
 }
+
+#endif // TREMOTESF_IPCSERVER_H
