@@ -162,8 +162,8 @@ Page {
                     width: parent.width
                     font.pixelSize: Theme.fontSizeExtraSmall
                     color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-                    text: (modelData.nextUpdate === -1) ? String()
-                                                        : qsTranslate("tremotesf", "Next update after %1").arg(Utils.formatEta(modelData.nextUpdate))
+                    text: (modelData.nextUpdate < 0) ? String()
+                                                     : qsTranslate("tremotesf", "Next update after %1").arg(Utils.formatEta(modelData.nextUpdate))
                     visible: text
                     truncationMode: TruncationMode.Fade
                 }

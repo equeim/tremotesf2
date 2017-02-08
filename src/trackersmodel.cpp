@@ -55,7 +55,7 @@ namespace tremotesf
         case StatusStringRole:
             return tracker->statusString();
         case ErrorRole:
-            return (tracker->status() == Tracker.Error);
+            return (tracker->status() == Tracker::Error);
         case PeersRole:
             return tracker->peers();
         case NextUpdateRole:

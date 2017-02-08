@@ -635,7 +635,7 @@ namespace tremotesf
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
             if (mStatus != Status::Disconnected) {
-                if (reply->error() == QNetworkReply::ContentConflictError &&
+                if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
                         reply->hasRawHeader(sessionIdHeader)) {
                     mSessionId = reply->rawHeader(sessionIdHeader);
                     postRequest(data, callOnSuccess);
