@@ -175,6 +175,12 @@ namespace tremotesf
         Settings::instance()->setTrackersViewHeaderState(mTrackersView->header()->saveState());
     }
 
+    void TrackersViewWidget::setTorrent(Torrent *torrent)
+    {
+        mTorrent = torrent;
+        mModel->setTorrent(torrent);
+    }
+
     void TrackersViewWidget::addTracker()
     {
         auto dialog = new TrackerEditDialog(QString(), this);

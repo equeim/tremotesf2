@@ -66,6 +66,11 @@ namespace tremotesf
 
     }
 
+    TorrentFilesModelDirectory::~TorrentFilesModelDirectory()
+    {
+        qDeleteAll(mChildren);
+    }
+
     bool TorrentFilesModelDirectory::isDirectory() const
     {
         return true;
@@ -74,7 +79,7 @@ namespace tremotesf
     long long TorrentFilesModelDirectory::size() const
     {
         long long bytes = 0;
-        for (const std::shared_ptr<TorrentFilesModelEntry>& child : mChildren) {
+        for (const TorrentFilesModelEntry* child : mChildren) {
             bytes += child->size();
         }
         return bytes;
@@ -83,7 +88,7 @@ namespace tremotesf
     long long TorrentFilesModelDirectory::completedSize() const
     {
         long long bytes = 0;
-        for (const std::shared_ptr<TorrentFilesModelEntry>& child : mChildren) {
+        for (const TorrentFilesModelEntry* child : mChildren) {
             bytes += child->completedSize();
         }
         return bytes;
@@ -111,7 +116,7 @@ namespace tremotesf
 
     void TorrentFilesModelDirectory::setWanted(bool wanted)
     {
-        for (std::shared_ptr<TorrentFilesModelEntry>& child : mChildren) {
+        for (TorrentFilesModelEntry* child : mChildren) {
             child->setWanted(wanted);
         }
     }
@@ -129,45 +134,57 @@ namespace tremotesf
 
     void TorrentFilesModelDirectory::setPriority(TorrentFilesModelEntryEnums::Priority priority)
     {
-        for (std::shared_ptr<TorrentFilesModelEntry>& child : mChildren) {
+        for (TorrentFilesModelEntry* child : mChildren) {
             child->setPriority(priority);
         }
     }
 
-    const QList<std::shared_ptr<TorrentFilesModelEntry>>& TorrentFilesModelDirectory::children() const
+    const QList<TorrentFilesModelEntry*>& TorrentFilesModelDirectory::children() const
     {
         return mChildren;
     }
 
-    void TorrentFilesModelDirectory::addChild(const std::shared_ptr<TorrentFilesModelEntry>& child)
+    void TorrentFilesModelDirectory::addChild(TorrentFilesModelEntry* child)
     {
         mChildren.append(child);
     }
 
     void TorrentFilesModelDirectory::clearChildren()
     {
+        qDeleteAll(mChildren);
         mChildren.clear();
     }
 
     QVariantList TorrentFilesModelDirectory::childrenIds() const
     {
         QVariantList ids;
-        for (const std::shared_ptr<TorrentFilesModelEntry>& child : mChildren) {
+        for (const TorrentFilesModelEntry* child : mChildren) {
             if (child->isDirectory()) {
-                ids.append(static_cast<TorrentFilesModelDirectory*>(child.get())->childrenIds());
+                ids.append(static_cast<const TorrentFilesModelDirectory*>(child)->childrenIds());
             } else {
-                ids.append(static_cast<TorrentFilesModelFile*>(child.get())->id());
+                ids.append(static_cast<const TorrentFilesModelFile*>(child)->id());
             }
         }
         return ids;
     }
 
+    bool TorrentFilesModelDirectory::isChanged() const
+    {
+        for (TorrentFilesModelEntry* child : mChildren) {
+            if (child->isChanged()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     TorrentFilesModelFile::TorrentFilesModelFile(int row,
                                                  TorrentFilesModelDirectory* parentDirectory,
+                                                 int id,
                                                  const QString& name,
-                                                 int id)
+                                                 long long size)
         : TorrentFilesModelEntry(row, parentDirectory, name),
-          mSize(0),
+          mSize(size),
           mCompletedSize(0),
           mWantedState(TorrentFilesModelEntryEnums::Unwanted),
           mPriority(TorrentFilesModelEntryEnums::NormalPriority),
@@ -206,10 +223,15 @@ namespace tremotesf
 
     void TorrentFilesModelFile::setWanted(bool wanted)
     {
+        TorrentFilesModelEntryEnums::WantedState wantedState;
         if (wanted) {
-            mWantedState = TorrentFilesModelEntryEnums::Wanted;
+            wantedState = TorrentFilesModelEntryEnums::Wanted;
         } else {
-            mWantedState = TorrentFilesModelEntryEnums::Unwanted;
+            wantedState = TorrentFilesModelEntryEnums::Unwanted;
+        }
+        if (wantedState != mWantedState) {
+            mWantedState = wantedState;
+            mChanged = true;
         }
     }
 
@@ -220,7 +242,19 @@ namespace tremotesf
 
     void TorrentFilesModelFile::setPriority(TorrentFilesModelEntryEnums::Priority priority)
     {
-        mPriority = priority;
+        if (priority != mPriority) {
+            mPriority = priority;
+        }
+    }
+
+    bool TorrentFilesModelFile::isChanged() const
+    {
+        return mChanged;
+    }
+
+    void TorrentFilesModelFile::setChanged(bool changed)
+    {
+        mChanged = changed;
     }
 
     int TorrentFilesModelFile::id() const
@@ -235,6 +269,9 @@ namespace tremotesf
 
     void TorrentFilesModelFile::setCompletedSize(long long completedSize)
     {
-        mCompletedSize = completedSize;
+        if (completedSize != mCompletedSize) {
+            mCompletedSize = completedSize;
+            mChanged = true;
+        }
     }
 }

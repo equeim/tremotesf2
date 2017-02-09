@@ -47,10 +47,10 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesView::TorrentFilesView(Torrent* torrent, QWidget* parent)
+    TorrentFilesView::TorrentFilesView(TorrentFilesModel *model, QWidget* parent)
         : BaseTreeView(parent),
           mLocalFile(false),
-          mModel(new TorrentFilesModel(torrent, this)),
+          mModel(model),
           mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, this))
     {
         init();

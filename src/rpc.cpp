@@ -105,6 +105,16 @@ namespace tremotesf
         return mTorrents;
     }
 
+    Torrent* Rpc::torrentByHash(const QString &hash) const
+    {
+        for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
+            if (torrent->hashString() == hash) {
+                return torrent.get();
+            }
+        }
+        return nullptr;
+    }
+
     bool Rpc::isConnected() const
     {
         return (mStatus == Connected);

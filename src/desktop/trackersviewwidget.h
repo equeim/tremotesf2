@@ -33,6 +33,7 @@ namespace tremotesf
     public:
         explicit TrackersViewWidget(Torrent* torrent, QWidget* parent = nullptr);
         ~TrackersViewWidget();
+        void setTorrent(Torrent* torrent);
     private:
         void addTracker();
         void showEditDialogs();

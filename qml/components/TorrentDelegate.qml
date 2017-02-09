@@ -41,7 +41,8 @@ ListItem {
         ContextMenu {
             MenuItem {
                 text: qsTranslate("tremotesf", "Properties")
-                onClicked: pageStack.push("TorrentPropertiesPage.qml", {"torrent": torrent})
+                onClicked: pageStack.push("TorrentPropertiesPage.qml", {"torrentHash": torrent.hashString,
+                                                                        "torrent": torrent})
             }
             MenuItem {
                 id: startMenuItem
@@ -83,7 +84,8 @@ ListItem {
         if (selectionPanel.openPanel) {
             selectionModel.select(model.index)
         } else {
-            pageStack.push("TorrentPropertiesPage.qml", {"torrent": torrent})
+            pageStack.push("TorrentPropertiesPage.qml", {"torrentHash": torrent.hashString,
+                                                         "torrent": torrent})
         }
     }
 

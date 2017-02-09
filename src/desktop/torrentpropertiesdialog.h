@@ -19,15 +19,20 @@
 #ifndef TREMOTESF_TORRENTPROPERTIESDIALOG_H
 #define TREMOTESF_TORRENTPROPERTIESDIALOG_H
 
+#include <functional>
 #include <QDialog>
 
 class QTabWidget;
+class KMessageWidget;
 
 namespace tremotesf
 {
     class BaseTreeView;
+    class PeersModel;
     class Rpc;
     class Torrent;
+    class TorrentFilesModel;
+    class TrackersViewWidget;
 
     class TorrentPropertiesDialog : public QDialog
     {
@@ -36,13 +41,25 @@ namespace tremotesf
         ~TorrentPropertiesDialog();
         QSize sizeHint() const override;
     private:
-        void setupDetailsTab(QTabWidget* tabWidget);
-        void setupPeersTab(QTabWidget* tabWidget);
-        void setupLimitsTab(QTabWidget* tabWidget);
+        void setupDetailsTab();
+        void setupPeersTab();
+        void setupLimitsTab();
     private:
+        void setTorrent(Torrent* torrent);
+
         Torrent* mTorrent;
-        Rpc* mRpc;
+        Rpc *const mRpc;
+
+        KMessageWidget* mMessageWidget;
+        QTabWidget* mTabWidget;
+
+        std::function<void()> mUpdateDetailsTab;
+        TorrentFilesModel* mFilesModel;
+        TrackersViewWidget* mTrackersViewWidget;
         BaseTreeView* mPeersView;
+        PeersModel* mPeersModel;
+
+        std::function<void()> mUpdateLimitsTab;
     };
 }
 

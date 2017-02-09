@@ -361,6 +361,16 @@ namespace tremotesf
         return mFilesUpdated;
     }
 
+    const QVariantList& Torrent::files() const
+    {
+        return mFiles;
+    }
+
+    const QVariantList& Torrent::filesStats() const
+    {
+        return mFileStats;
+    }
+
     void Torrent::setFilesWanted(const QVariantList &files, bool wanted)
     {
         mRpc->setTorrentProperty(mId,
@@ -569,13 +579,10 @@ namespace tremotesf
 
     void Torrent::updateFiles(const QVariantMap &torrentMap)
     {
+        mFiles = torrentMap.value(QStringLiteral("files")).toList();
+        mFileStats = torrentMap.value(QStringLiteral("fileStats")).toList();
         mFilesUpdated = true;
-        QVariantList files(torrentMap.value(QStringLiteral("files")).toList());
-        const QVariantList filesStats(torrentMap.value(QStringLiteral("fileStats")).toList());
-        for (int i = 0, max = files.size(); i < max; ++i) {
-            files[i] = files.at(i).toMap().unite(filesStats.at(i).toMap());
-        }
-        emit filesUpdated(files);
+        emit filesUpdated(mFiles, mFileStats);
     }
 
     void Torrent::updatePeers(const QVariantMap& torrentMap)

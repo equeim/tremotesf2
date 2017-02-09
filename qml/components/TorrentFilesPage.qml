@@ -25,7 +25,7 @@ import harbour.tremotesf 1.0
 Page {
     id: torrentFilesPage
 
-    property var torrent
+    property var torrent: torrentPropertiesPage.torrent
 
     allowedOrientations: defaultAllowedOrientations
 
@@ -312,19 +312,20 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                enabled: torrent
+                enabled: filesModel.loaded
                 text: qsTranslate("tremotesf", "Select")
                 onClicked: selectionPanel.show()
             }
         }
 
-        ViewPlaceholder {
-            enabled: !filesModel.loaded
-            text: qsTranslate("tremotesf", "Loading")
+        BusyIndicator {
+            anchors.centerIn: parent
+            size: BusyIndicatorSize.Large
+            running: filesModel.loading
         }
 
         ViewPlaceholder {
-            enabled: filesModel.loaded && !listView.count
+            enabled: !filesModel.loading && !listView.count
             text: qsTranslate("tremotesf", "No files")
         }
 

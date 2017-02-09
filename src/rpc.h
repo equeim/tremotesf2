@@ -79,6 +79,7 @@ namespace tremotesf
         ServerStats* serverStats() const;
 
         const QList<std::shared_ptr<Torrent>>& torrents() const;
+        Q_INVOKABLE tremotesf::Torrent* torrentByHash(const QString& hash) const;
 
         bool isConnected() const;
         Status status() const;

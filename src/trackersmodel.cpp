@@ -117,15 +117,16 @@ namespace tremotesf
 
     void TrackersModel::setTorrent(Torrent* torrent)
     {
-        if (torrent && !mTorrent) {
+        if (torrent != mTorrent) {
             mTorrent = torrent;
-            update();
-            QObject::connect(mTorrent, &Torrent::updated, this, &TrackersModel::update);
-            QObject::connect(mTorrent, &Torrent::destroyed, this, [=]() {
+            if (mTorrent) {
+                update();
+                QObject::connect(mTorrent, &Torrent::updated, this, &TrackersModel::update);
+            } else {
                 beginResetModel();
                 mTrackers.clear();
                 endResetModel();
-            });
+            }
         }
     }
 

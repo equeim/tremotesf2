@@ -24,9 +24,59 @@ import harbour.tremotesf 1.0
 Page {
     id: torrentLimitsPage
 
-    property var torrent
+    property var torrent: torrentPropertiesPage.torrent
+    property bool updating: false
+
+    function update() {
+        if (!torrent) {
+            return
+        }
+
+        updating = true
+
+        globalLimitsSwitch.checked = torrent.honorSessionLimits
+
+        downloadSpeedLimitSwitch.checked = torrent.downloadSpeedLimited
+        downloadSpeedLimitField.text = torrent.downloadSpeedLimit
+
+        uploadSpeedLimitSwitch.checked = torrent.uploadSpeedLimited
+        uploadSpeedLimitField.text = torrent.uploadSpeedLimit
+
+        priorityComboBox.currentIndex = (1 - torrent.bandwidthPriority)
+
+        switch (torrent.ratioLimitMode) {
+        case Torrent.GlobalRatioLimit:
+            ratioLimitComboBox.currentIndex = 0
+            break
+        case Torrent.SingleRatioLimit:
+            ratioLimitComboBox.currentIndex = 2
+            break
+        case Torrent.UnlimitedRatio:
+            ratioLimitComboBox.currentIndex = 1
+        }
+        ratioLimitField.text = torrent.ratioLimit.toLocaleString(Qt.locale(), 'f', 2)
+
+        switch (torrent.idleSeedingLimitMode) {
+        case Torrent.GlobalIdleSeedingLimit:
+            idleSeedingComboBox.currentIndex = 0
+            break
+        case Torrent.SingleIdleSeedingLimit:
+            idleSeedingComboBox.currentIndex = 2
+            break
+        case Torrent.UnlimitedIdleSeeding:
+            idleSeedingComboBox.currentIndex = 1
+        }
+        idleSeedingField.text = torrent.idleSeedingLimit
+
+        peersLimitField.text = torrent.peersLimit
+
+        updating = false
+    }
 
     allowedOrientations: defaultAllowedOrientations
+
+    onTorrentChanged: update()
+    Component.onCompleted: update()
 
     SilicaFlickable {
         anchors.fill: parent
@@ -49,24 +99,21 @@ Page {
             }
 
             TextSwitch {
+                id: globalLimitsSwitch
                 enabled: torrent
                 text: qsTranslate("tremotesf", "Honor global limits")
                 onClicked: torrent.honorSessionLimits = checked
-                Component.onCompleted: checked = torrent.honorSessionLimits
             }
 
             TextSwitch {
                 id: downloadSpeedLimitSwitch
-
                 enabled: torrent
                 text: qsTranslate("tremotesf", "Download")
                 onClicked: torrent.downloadSpeedLimited = checked
-
-                Component.onCompleted: checked = torrent.downloadSpeedLimited
             }
 
             TextField {
-                property bool completed: false
+                id: downloadSpeedLimitField
 
                 anchors {
                     left: parent.left
@@ -76,6 +123,7 @@ Page {
                 visible: downloadSpeedLimitSwitch.checked
 
                 enabled: torrent
+                opacity: enabled ? 1.0 : 0.4
 
                 label: qsTranslate("tremotesf", "KiB/s")
                 placeholderText: label
@@ -88,29 +136,21 @@ Page {
                 }
 
                 onTextChanged: {
-                    if (completed) {
+                    if (!updating) {
                         torrent.downloadSpeedLimit = text
                     }
-                }
-
-                Component.onCompleted: {
-                    text = torrent.downloadSpeedLimit
-                    completed = true
                 }
             }
 
             TextSwitch {
                 id: uploadSpeedLimitSwitch
-
                 enabled: torrent
                 text: qsTranslate("tremotesf", "Upload")
                 onClicked: torrent.uploadSpeedLimited = checked
-
-                Component.onCompleted: checked = torrent.uploadSpeedLimited
             }
 
             TextField {
-                property bool completed: false
+                id: uploadSpeedLimitField
 
                 anchors {
                     left: parent.left
@@ -120,6 +160,7 @@ Page {
                 visible: uploadSpeedLimitSwitch.checked
 
                 enabled: torrent
+                opacity: enabled ? 1.0 : 0.4
 
                 label: qsTranslate("tremotesf", "KiB/s")
                 placeholderText: label
@@ -132,18 +173,15 @@ Page {
                 }
 
                 onTextChanged: {
-                    if (completed) {
+                    if (!updating) {
                         torrent.uploadSpeedLimit = text
                     }
-                }
-
-                Component.onCompleted: {
-                    text = torrent.uploadSpeedLimit
-                    completed = true
                 }
             }
 
             ComboBox {
+                id: priorityComboBox
+
                 enabled: torrent
                 label: qsTranslate("tremotesf", "Torrent priority")
                 menu: ContextMenu {
@@ -162,8 +200,6 @@ Page {
                         onClicked: torrent.bandwidthPriority = Torrent.LowPriority
                     }
                 }
-
-                Component.onCompleted: currentIndex = (1 - torrent.bandwidthPriority)
             }
 
             SectionHeader {
@@ -191,23 +227,10 @@ Page {
                         onClicked: torrent.ratioLimitMode = Torrent.SingleRatioLimit
                     }
                 }
-
-                Component.onCompleted: {
-                    switch (torrent.ratioLimitMode) {
-                    case Torrent.GlobalRatioLimit:
-                        currentIndex = 0
-                        break
-                    case Torrent.SingleRatioLimit:
-                        currentIndex = 2
-                        break
-                    case Torrent.UnlimitedRatio:
-                        currentIndex = 1
-                    }
-                }
             }
 
             TextField {
-                property bool completed: false
+                id: ratioLimitField
 
                 anchors {
                     left: parent.left
@@ -217,6 +240,7 @@ Page {
                 visible: ratioLimitComboBox.currentIndex === 2
 
                 enabled: torrent
+                opacity: enabled ? 1.0 : 0.4
 
                 label: qsTranslate("tremotesf", "Ratio limit")
                 placeholderText: label
@@ -229,14 +253,9 @@ Page {
                 }
 
                 onTextChanged: {
-                    if (completed) {
+                    if (!updating) {
                         torrent.ratioLimit = Number.fromLocaleString(Qt.locale(), text)
                     }
-                }
-
-                Component.onCompleted: {
-                    text = torrent.ratioLimit.toLocaleString(Qt.locale(), 'f', 2)
-                    completed = true
                 }
             }
 
@@ -261,23 +280,10 @@ Page {
                         onClicked: torrent.idleSeedingLimitMode = Torrent.SingleIdleSeedingLimit
                     }
                 }
-
-                Component.onCompleted: {
-                    switch (torrent.idleSeedingLimitMode) {
-                    case Torrent.GlobalIdleSeedingLimit:
-                        currentIndex = 0
-                        break
-                    case Torrent.SingleIdleSeedingLimit:
-                        currentIndex = 2
-                        break
-                    case Torrent.UnlimitedIdleSeeding:
-                        currentIndex = 1
-                    }
-                }
             }
 
             TextField {
-                property bool completed: false
+                id: idleSeedingField
 
                 anchors {
                     left: parent.left
@@ -287,8 +293,11 @@ Page {
                 visible: idleSeedingComboBox.currentIndex === 2
 
                 enabled: torrent
+                opacity: enabled ? 1.0 : 0.4
+
                 label: qsTranslate("tremotesf", "min")
                 placeholderText: label
+
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 0
@@ -296,14 +305,9 @@ Page {
                 }
 
                 onTextChanged: {
-                    if (completed) {
+                    if (!updating) {
                         torrent.idleSeedingLimit = text
                     }
-                }
-
-                Component.onCompleted: {
-                    text = torrent.idleSeedingLimit
-                    completed = true
                 }
             }
 
@@ -312,12 +316,16 @@ Page {
             }
 
             TextField {
-                property bool completed: false
+                id: peersLimitField
 
                 width: parent.width
+
                 enabled: torrent
+                opacity: enabled ? 1.0 : 0.4
+
                 label: qsTranslate("tremotesf", "Maximum peers")
                 placeholderText: label
+
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 0
@@ -325,14 +333,9 @@ Page {
                 }
 
                 onTextChanged: {
-                    if (completed) {
+                    if (!updating) {
                         torrent.peersLimit = text
                     }
-                }
-
-                Component.onCompleted: {
-                    text = torrent.peersLimit
-                    completed = true
                 }
             }
         }

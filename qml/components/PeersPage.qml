@@ -24,7 +24,7 @@ import harbour.tremotesf 1.0
 Page {
     id: peersPage
 
-    property var torrent
+    property var torrent: torrentPropertiesPage.torrent
 
     allowedOrientations: defaultAllowedOrientations
 

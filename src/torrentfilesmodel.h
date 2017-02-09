@@ -24,6 +24,8 @@
 
 #include "basetorrentfilesmodel.h"
 
+class QThread;
+
 namespace tremotesf
 {
     class Torrent;
@@ -34,6 +36,7 @@ namespace tremotesf
         Q_ENUMS(Role)
         Q_PROPERTY(tremotesf::Torrent* torrent READ torrent WRITE setTorrent)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
+        Q_PROPERTY(bool loading READ isLoading NOTIFY loadingChanged)
     public:
 #ifdef TREMOTESF_SAILFISHOS
         enum Role
@@ -71,7 +74,9 @@ namespace tremotesf
 
         Torrent* torrent() const;
         void setTorrent(Torrent* torrent);
+
         bool isLoaded() const;
+        bool isLoading() const;
 
         Q_INVOKABLE void setFileWanted(const QModelIndex& index, bool wanted) override;
         Q_INVOKABLE void setFilesWanted(const QModelIndexList& indexes, bool wanted) override ;
@@ -82,11 +87,26 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
+        void update(const QVariantList& files, const QVariantList& fileStats);
+        void createTree(const QVariantList& files, const QVariantList& fileStats);
+        void resetTree();
+        void updateTree(const QVariantList& files, const QVariantList& fileStats, bool emitSignal);
+
+        void setLoaded(bool loaded);
+        void setLoading(bool loading);
+
         Torrent* mTorrent;
         bool mLoaded;
-        QMap<QString, TorrentFilesModelFile*> mFiles;
+        bool mLoading;
+        QList<TorrentFilesModelFile*> mFiles;
+        QThread* mWorkerThread;
+        bool mCreatingTree;
+        bool mResetAfterCreate;
+        bool mUpdateAfterCreate;
     signals:
+        void requestTreeCreation(const QVariantList& files, const QVariantList& fileStats);
         void loadedChanged();
+        void loadingChanged();
     };
 }
 

@@ -19,8 +19,6 @@
 #ifndef TREMOTESF_TORRENTFILESMODELENTRY_H
 #define TREMOTESF_TORRENTFILESMODELENTRY_H
 
-#include <memory>
-
 #include <QObject>
 #include <QString>
 #include <QVariantList>
@@ -56,6 +54,7 @@ namespace tremotesf
     public:
         TorrentFilesModelEntry() = default;
         explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
+        virtual ~TorrentFilesModelEntry() = default;
 
         int row() const;
         TorrentFilesModelDirectory* parentDirectory() const;
@@ -72,6 +71,8 @@ namespace tremotesf
         virtual TorrentFilesModelEntryEnums::Priority priority() const = 0;
         QString priorityString() const;
         virtual void setPriority(TorrentFilesModelEntryEnums::Priority priority) = 0;
+
+        virtual bool isChanged() const = 0;
     private:
         int mRow;
         TorrentFilesModelDirectory* mParentDirectory;
@@ -83,6 +84,7 @@ namespace tremotesf
     public:
         TorrentFilesModelDirectory() = default;
         explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
+        ~TorrentFilesModelDirectory() override;
 
         bool isDirectory() const override;
         long long size() const override;
@@ -93,12 +95,14 @@ namespace tremotesf
         TorrentFilesModelEntryEnums::Priority priority() const override;
         void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
 
-        const QList<std::shared_ptr<TorrentFilesModelEntry>>& children() const;
-        void addChild(const std::shared_ptr<TorrentFilesModelEntry>& child);
+        const QList<TorrentFilesModelEntry*>& children() const;
+        void addChild(TorrentFilesModelEntry* child);
         void clearChildren();
         QVariantList childrenIds() const;
+
+        bool isChanged() const override;
     private:
-        QList<std::shared_ptr<TorrentFilesModelEntry>> mChildren;
+        QList<TorrentFilesModelEntry*> mChildren;
     };
 
     class TorrentFilesModelFile : public TorrentFilesModelEntry
@@ -106,8 +110,9 @@ namespace tremotesf
     public:
         explicit TorrentFilesModelFile(int row,
                                        TorrentFilesModelDirectory* parentDirectory,
+                                       int id,
                                        const QString& name,
-                                       int id);
+                                       long long size);
 
         bool isDirectory() const override;
         long long size() const override;
@@ -117,6 +122,9 @@ namespace tremotesf
         void setWanted(bool wanted) override;
         TorrentFilesModelEntryEnums::Priority priority() const override;
         void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
+
+        bool isChanged() const override;
+        void setChanged(bool changed);
 
         int id() const;
         void setSize(long long size);
@@ -130,6 +138,8 @@ namespace tremotesf
         TorrentFilesModelEntryEnums::WantedState mWantedState;
         TorrentFilesModelEntryEnums::Priority mPriority;
         int mId;
+
+        bool mChanged;
     };
 }
 

@@ -22,11 +22,23 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 Page {
-    id: torrentProperiesPage
+    id: torrentPropertiesPage
 
+    property string torrentHash
     property var torrent
 
+    function updateTorrent() {
+        var newTorrent = rpc.torrentByHash(torrentHash)
+        if (newTorrent !== torrent) {
+            torrent = newTorrent
+        }
+    }
+
     function update() {
+        if (!torrent) {
+            return
+        }
+
         pageHeader.title = torrent.name
 
         progressLabel.value = qsTranslate("tremotesf", "%1 of %2 (%3)")
@@ -52,7 +64,13 @@ Page {
 
     allowedOrientations: defaultAllowedOrientations
 
+    onTorrentChanged: update()
     Component.onCompleted: update()
+
+    Connections {
+        target: rpc
+        onTorrentsUpdated: updateTorrent()
+    }
 
     Connections {
         target: torrent
@@ -110,7 +128,7 @@ Page {
             width: parent.width
 
             TorrentRemovedHeader {
-                torrent: torrentProperiesPage.torrent
+                torrent: torrentPropertiesPage.torrent
             }
 
             PageHeader {
@@ -131,25 +149,25 @@ Page {
                 GridButton {
                     enabled: torrent
                     text: qsTranslate("tremotesf", "Files")
-                    onClicked: pageStack.push("TorrentFilesPage.qml", {"torrent": torrent})
+                    onClicked: pageStack.push(Qt.createComponent("TorrentFilesPage.qml"))
                 }
 
                 GridButton {
                     enabled: torrent
                     text: qsTranslate("tremotesf", "Trackers")
-                    onClicked: pageStack.push("TrackersPage.qml", {"torrent": torrent})
+                    onClicked: pageStack.push(Qt.createComponent("TrackersPage.qml"))
                 }
 
                 GridButton {
                     enabled: torrent
                     text: qsTranslate("tremotesf", "Peers")
-                    onClicked: pageStack.push("PeersPage.qml", {"torrent": torrent})
+                    onClicked: pageStack.push(Qt.createComponent("PeersPage.qml"))
                 }
 
                 GridButton {
                     enabled: torrent
                     text: qsTranslate("tremotesf", "Limits")
-                    onClicked: pageStack.push("TorrentLimitsPage.qml", {"torrent": torrent})
+                    onClicked: pageStack.push(Qt.createComponent("TorrentLimitsPage.qml"))
                 }
             }
 
@@ -223,7 +241,7 @@ Page {
 
             InteractiveDetailItem {
                 label: qsTranslate("tremotesf", "Hash")
-                Component.onCompleted: value = torrent.hashString
+                value: torrentHash
             }
 
             DetailItem {

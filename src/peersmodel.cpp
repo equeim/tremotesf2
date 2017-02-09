@@ -162,59 +162,60 @@ namespace tremotesf
             return;
         }
 
-        mTorrent = torrent;
+        if (torrent != mTorrent) {
+            mTorrent = torrent;
 
-        QObject::connect(mTorrent, &Torrent::peersUpdated, this, [=](const QVariantList& peers) {
-            QStringList addresses;
-            for (const QVariant& peer : peers) {
-                addresses.append(peer.toMap().value(QStringLiteral("address")).toString());
-            }
-
-            for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                if (!addresses.contains(mPeers.at(i)->address)) {
-                    beginRemoveRows(QModelIndex(), i, i);
-                    mPeers.removeAt(i);
-                    endRemoveRows();
-                    i--;
-                    max--;
-                }
-            }
-
-            for (const QVariant& peerVariant : peers) {
-                const QVariantMap peerMap(peerVariant.toMap());
-                const QString address(peerMap.value(QStringLiteral("address")).toString());
-                int row = -1;
-                for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                    if (mPeers.at(i)->address == address) {
-                        row = i;
-                        break;
+            if (mTorrent) {
+                QObject::connect(mTorrent, &Torrent::peersUpdated, this, [=](const QVariantList& peers) {
+                    QStringList addresses;
+                    for (const QVariant& peer : peers) {
+                        addresses.append(peer.toMap().value(QStringLiteral("address")).toString());
                     }
-                }
-                if (row == -1) {
-                    row = mPeers.size();
-                    beginInsertRows(QModelIndex(), row, row);
-                    mPeers.append(std::make_shared<Peer>(peerMap));
-                    endInsertRows();
-                } else {
-                    mPeers.at(row)->update(peerMap);
-                    emit dataChanged(index(row, 0), index(row, columnCount() - 1));
-                }
+
+                    for (int i = 0, max = mPeers.size(); i < max; ++i) {
+                        if (!addresses.contains(mPeers.at(i)->address)) {
+                            beginRemoveRows(QModelIndex(), i, i);
+                            mPeers.removeAt(i);
+                            endRemoveRows();
+                            i--;
+                            max--;
+                        }
+                    }
+
+                    for (const QVariant& peerVariant : peers) {
+                        const QVariantMap peerMap(peerVariant.toMap());
+                        const QString address(peerMap.value(QStringLiteral("address")).toString());
+                        int row = -1;
+                        for (int i = 0, max = mPeers.size(); i < max; ++i) {
+                            if (mPeers.at(i)->address == address) {
+                                row = i;
+                                break;
+                            }
+                        }
+                        if (row == -1) {
+                            row = mPeers.size();
+                            beginInsertRows(QModelIndex(), row, row);
+                            mPeers.append(std::make_shared<Peer>(peerMap));
+                            endInsertRows();
+                        } else {
+                            mPeers.at(row)->update(peerMap);
+                            emit dataChanged(index(row, 0), index(row, columnCount() - 1));
+                        }
+                    }
+
+                    if (!mLoaded) {
+                        mLoaded = true;
+                        emit loadedChanged();
+                    }
+                });
+
+                mTorrent->setPeersEnabled(true);
+            } else {
+                beginResetModel();
+                mPeers.clear();
+                endResetModel();
             }
-
-            if (!mLoaded) {
-                mLoaded = true;
-                emit loadedChanged();
-            }
-        });
-
-        QObject::connect(mTorrent, &Torrent::destroyed, this, [this](){
-            beginResetModel();
-            mPeers.clear();
-            endResetModel();
-            mTorrent = nullptr;
-        });
-
-        mTorrent->setPeersEnabled(true);
+        }
     }
 
     bool PeersModel::isLoaded() const

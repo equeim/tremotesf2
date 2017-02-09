@@ -37,7 +37,7 @@ namespace tremotesf
         }
 
         if (row >= 0 && row < parentDirectory->children().size()) {
-            return createIndex(row, column, parentDirectory->children().at(row).get());
+            return createIndex(row, column, parentDirectory->children().at(row));
         }
         return QModelIndex();
     }
@@ -70,13 +70,14 @@ namespace tremotesf
 
     void BaseTorrentFilesModel::updateDirectoryChildren(const TorrentFilesModelDirectory* directory)
     {
-        const QList<std::shared_ptr<TorrentFilesModelEntry>>& children = directory->children();
-        emit dataChanged(createIndex(0, 0, children.first().get()),
-                         createIndex(children.size() - 1, columnCount() - 1, children.last().get()));
-
-        for (const std::shared_ptr<TorrentFilesModelEntry>& entry : children) {
-            if (entry->isDirectory()) {
-                updateDirectoryChildren(static_cast<TorrentFilesModelDirectory*>(entry.get()));
+        const int lastColumn = columnCount() - 1;
+        for (TorrentFilesModelEntry* child : directory->children()) {
+            if (child->isChanged()) {
+                emit dataChanged(createIndex(child->row(), 0, child),
+                                 createIndex(child->row(), lastColumn, child));
+                if (child->isDirectory()) {
+                    updateDirectoryChildren(static_cast<const TorrentFilesModelDirectory*>(child));
+                }
             }
         }
     }

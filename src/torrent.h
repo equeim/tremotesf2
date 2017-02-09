@@ -189,6 +189,8 @@ namespace tremotesf
         bool isFilesEnabled() const;
         void setFilesEnabled(bool enabled);
         bool isFilesUpdated() const;
+        const QVariantList& files() const;
+        const QVariantList& filesStats() const;
 
         void setFilesWanted(const QVariantList& files, bool wanted);
         void setFilesPriority(const QVariantList& files, TorrentFilesModelEntryEnums::Priority priority);
@@ -257,6 +259,8 @@ namespace tremotesf
 
         bool mFilesEnabled;
         bool mFilesUpdated;
+        QVariantList mFiles;
+        QVariantList mFileStats;
 
         bool mPeersEnabled;
         bool mPeersUpdated;
@@ -266,7 +270,7 @@ namespace tremotesf
         Rpc* mRpc;
     signals:
         void updated();
-        void filesUpdated(const QVariantList& files);
+        void filesUpdated(const QVariantList& files, const QVariantList& fileStats);
         void peersUpdated(const QVariantList& peers);
         void limitsEdited();
     };
