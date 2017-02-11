@@ -29,7 +29,7 @@ Dialog {
 
     onAccepted: rpc.addTorrentLink(torrentLinkTextField.text,
                                    downloadDirectoryItem.text,
-                                   priorityComboBox.currentIndex,
+                                   1 - priorityComboBox.currentIndex,
                                    startSwitch.checked)
 
     TorrentFileParser {
