@@ -30,7 +30,6 @@ namespace tremotesf
 {
     FileSelectionWidget::FileSelectionWidget(bool directory,
                                              const QString& filter,
-                                             bool autoSetText,
                                              QWidget* parent)
         : QWidget(parent)
     {
@@ -56,11 +55,7 @@ namespace tremotesf
             dialog->setAttribute(Qt::WA_DeleteOnClose);
 
             QObject::connect(dialog, &QFileDialog::accepted, this, [=]() {
-                if (autoSetText) {
-                    mLineEdit->setText(dialog->selectedFiles().first());
-                } else {
-                    emit fileSelected(dialog->selectedFiles().first());
-                }
+                mLineEdit->setText(dialog->selectedFiles().first());
             });
 
 #ifdef Q_OS_WIN

@@ -30,10 +30,6 @@ Dialog {
     property alias showFiles: directoryContentModel.showFiles
     property alias nameFilters: directoryContentModel.nameFilters
 
-    property bool automaticAccept: true
-
-    signal fileSelected()
-
     allowedOrientations: defaultAllowedOrientations
     canAccept: showFiles ? filePath : true
 
@@ -91,11 +87,7 @@ Dialog {
                     directoryContentModel.directory = model.path
                 } else {
                     fileSelectionDialog.filePath = model.path
-                    if (automaticAccept) {
-                        accept()
-                    } else {
-                        fileSelected()
-                    }
+                    accept()
                 }
             }
         }

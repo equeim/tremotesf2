@@ -20,36 +20,50 @@
 #include <QVariantList>
 #include <QVariantMap>
 
+class QThread;
+
 namespace tremotesf
 {
     class TorrentFileParser : public QObject
     {
         Q_OBJECT
+        Q_ENUMS(Error)
         Q_PROPERTY(QString filePath READ filePath WRITE setFilePath)
-        Q_PROPERTY(bool error READ error NOTIFY done)
-        Q_PROPERTY(QVariantMap result READ result NOTIFY done)
+        Q_PROPERTY(bool loaded READ isLoaded NOTIFY done)
+        Q_PROPERTY(Error error READ error NOTIFY done)
+        Q_PROPERTY(QString errorString READ errorString NOTIFY done)
+        Q_PROPERTY(QByteArray fileData READ fileData)
     public:
+        enum Error
+        {
+            NoError,
+            WrongMimeType,
+            ReadingError,
+            ParsingError
+        };
+
         explicit TorrentFileParser(const QString& filePath = QString(), QObject* parent = nullptr);
+        ~TorrentFileParser();
 
         const QString& filePath() const;
         void setFilePath(const QString& path);
 
-        bool error() const;
-
-        const QVariantMap& result() const;
+        bool isLoaded() const;
+        Error error() const;
+        QString errorString() const;
+        const QByteArray& fileData() const;
+        const QVariantMap& parseResult() const;
     private:
-        QVariant parseVariant();
-        QVariantMap parseMap();
-        QVariantList parseList();
-        QString parseString();
-        qint64 parseInt();
+        QThread* mWorkerThread;
 
         QString mFilePath;
-        QByteArray mData;
-        int mIndex;
-        bool mError;
-        QVariantMap mResult;
+        Error mError;
+        bool mLoaded;
+
+        QByteArray mFileData;
+        QVariantMap mParseResult;
     signals:
+        void requestParse(const QString& filePath);
         void done();
     };
 }

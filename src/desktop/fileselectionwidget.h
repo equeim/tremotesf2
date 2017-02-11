@@ -32,7 +32,6 @@ namespace tremotesf
     public:
         explicit FileSelectionWidget(bool directory,
                                      const QString& filter,
-                                     bool autoSetText,
                                      QWidget* parent = nullptr);
 
         QLineEdit* lineEdit() const;
@@ -40,8 +39,6 @@ namespace tremotesf
     private:
         QLineEdit* mLineEdit;
         QPushButton* mSelectionButton;
-    signals:
-        void fileSelected(const QString& filePath);
     };
 }
 

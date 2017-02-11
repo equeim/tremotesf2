@@ -23,15 +23,108 @@
 #include <QStyle>
 #endif
 
+#include <QThread>
+
+#include <QDebug>
+
+#include "torrentfileparser.h"
 #include "torrentfilesmodelentry.h"
 #include "utils.h"
 
 namespace tremotesf
 {
-    LocalTorrentFilesModel::LocalTorrentFilesModel(const QVariantMap& parseResult, QObject* parent)
-        : BaseTorrentFilesModel(parent)
+    namespace
     {
-        setParseResult(parseResult);
+        class TreeCreationWorker : public QObject
+        {
+            Q_OBJECT
+        public:
+            explicit TreeCreationWorker(TorrentFilesModelDirectory* rootDirectory,
+                                        QList<TorrentFilesModelFile*>& files)
+                : mRootDirectory(rootDirectory),
+                  mFiles(files) { }
+
+            void createTree(const QVariantMap& parseResult)
+            {
+                mRootDirectory->clearChildren();
+                mFiles.clear();
+
+                const QVariantMap infoMap(parseResult.value(QStringLiteral("info")).toMap());
+                if (infoMap.contains(QStringLiteral("files"))) {
+                    auto torrentDirectory = new TorrentFilesModelDirectory(0,
+                                                                           mRootDirectory,
+                                                                           infoMap.value(QStringLiteral("name")).toString());
+                    mRootDirectory->addChild(torrentDirectory);
+
+                    const QVariantList files(infoMap.value(QStringLiteral("files")).toList());
+                    for (int fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
+                        const QVariantMap fileMap(files.at(fileIndex).toMap());
+
+                        TorrentFilesModelDirectory* currentDirectory = static_cast<TorrentFilesModelDirectory*>(torrentDirectory);
+                        const QStringList pathParts(fileMap.value(QStringLiteral("path")).toStringList());
+                        for (int partIndex = 0, partsCount = pathParts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
+                            const QString& part = pathParts.at(partIndex);
+                            if (partIndex == lastPartIndex) {
+                                auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
+                                                                           currentDirectory,
+                                                                           fileIndex,
+                                                                           part,
+                                                                           fileMap.value(QStringLiteral("length")).toLongLong());
+                                childFile->setWanted(true);
+                                childFile->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
+                                currentDirectory->addChild(childFile);
+                                mFiles.append(childFile);
+                            } else {
+                                TorrentFilesModelEntry* found = currentDirectory->childrenHash().value(part);
+                                if (found) {
+                                    currentDirectory = static_cast<TorrentFilesModelDirectory*>(found);
+                                } else {
+                                    auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
+                                                                                         currentDirectory,
+                                                                                         part);
+                                    currentDirectory->addChild(childDirectory);
+                                    currentDirectory = childDirectory;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    auto file = new TorrentFilesModelFile(0,
+                                                          mRootDirectory,
+                                                          0,
+                                                          infoMap.value(QStringLiteral("name")).toString(),
+                                                          infoMap.value(QStringLiteral("length")).toLongLong());
+                    file->setWanted(true);
+                    file->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
+                    mRootDirectory->addChild(file);
+                    mFiles.append(file);
+                }
+
+                emit done();
+            }
+
+        private:
+            TorrentFilesModelDirectory *const mRootDirectory;
+            QList<TorrentFilesModelFile*>& mFiles;
+        signals:
+            void done();
+        };
+    }
+
+    LocalTorrentFilesModel::LocalTorrentFilesModel(const QVariantMap& parseResult, QObject* parent)
+        : BaseTorrentFilesModel(parent),
+          mWorkerThread(new QThread(this)),
+          mLoaded(false)
+    {
+        if (!parseResult.isEmpty()) {
+            load(parseResult);
+        }
+    }
+
+    LocalTorrentFilesModel::~LocalTorrentFilesModel()
+    {
+        mWorkerThread->quit();
+        mWorkerThread->wait();
     }
 
     int LocalTorrentFilesModel::columnCount(const QModelIndex&) const
@@ -138,71 +231,14 @@ namespace tremotesf
     }
 #endif
 
-    void LocalTorrentFilesModel::setParseResult(const QVariantMap& result)
+    void LocalTorrentFilesModel::load(TorrentFileParser *parser)
     {
-        beginResetModel();
+        load(parser->parseResult());
+    }
 
-        mRootDirectory->clearChildren();
-        mFiles.clear();
-
-        const QVariantMap infoMap(result.value("info").toMap());
-        if (infoMap.contains("files")) {
-            const std::shared_ptr<TorrentFilesModelEntry> torrentDirectory(std::make_shared<TorrentFilesModelDirectory>(0,
-                                                                                                                        mRootDirectory.get(),
-                                                                                                                        infoMap.value("name").toString()));
-            mRootDirectory->addChild(torrentDirectory);
-
-            const QVariantList files(infoMap.value("files").toList());
-            for (int fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
-                const QVariantMap fileMap(files.at(fileIndex).toMap());
-
-                TorrentFilesModelDirectory* currentDirectory = static_cast<TorrentFilesModelDirectory*>(torrentDirectory.get());
-                const QStringList pathParts(fileMap.value("path").toStringList());
-                for (int partIndex = 0, partsCount = pathParts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
-                    const QString& part = pathParts.at(partIndex);
-                    if (partIndex == lastPartIndex) {
-                        std::shared_ptr<TorrentFilesModelFile> childFile(std::make_shared<TorrentFilesModelFile>(currentDirectory->children().size(),
-                                                                                                                 currentDirectory,
-                                                                                                                 part,
-                                                                                                                 fileIndex));
-                        childFile->setSize(fileMap.value("length").toLongLong());
-                        childFile->setWanted(true);
-                        childFile->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
-                        currentDirectory->addChild(childFile);
-                        mFiles.append(childFile.get());
-                    } else {
-                        bool found = false;
-                        for (const std::shared_ptr<TorrentFilesModelEntry>& child : currentDirectory->children()) {
-                            if (child->isDirectory() && child->name() == part) {
-                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(child.get());
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found) {
-                            const std::shared_ptr<TorrentFilesModelEntry> childDirectory(std::make_shared<TorrentFilesModelDirectory>(currentDirectory->children().size(),
-                                                                                                                                      currentDirectory,
-                                                                                                                                      part));
-                            currentDirectory->addChild(childDirectory);
-                            currentDirectory = static_cast<TorrentFilesModelDirectory*>(childDirectory.get());
-                        }
-                    }
-                }
-            }
-        } else {
-            std::shared_ptr<TorrentFilesModelFile> file(std::make_shared<TorrentFilesModelFile>(0,
-                                                                                                mRootDirectory.get(),
-                                                                                                infoMap.value("name").toString(),
-                                                                                                0));
-            file->setSize(infoMap.value("length").toLongLong());
-            file->setWanted(true);
-            file->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
-            mRootDirectory->addChild(file);
-            mFiles.append(file.get());
-        }
-
-        endResetModel();
+    bool LocalTorrentFilesModel::isLoaded() const
+    {
+        return mLoaded;
     }
 
     QVariantList LocalTorrentFilesModel::wantedFiles() const
@@ -295,7 +331,28 @@ namespace tremotesf
                 {IsDirectoryRole, QByteArrayLiteral("isDirectory")},
                 {SizeRole, QByteArrayLiteral("size")},
                 {WantedStateRole, QByteArrayLiteral("wantedState")},
-                {PriorityRole, QByteArrayLiteral("priority")}};
+            {PriorityRole, QByteArrayLiteral("priority")}};
     }
 #endif
+
+    void LocalTorrentFilesModel::load(const QVariantMap& parseResult)
+    {
+        beginResetModel();
+
+        auto worker = new TreeCreationWorker(mRootDirectory.get(), mFiles);
+        worker->moveToThread(mWorkerThread);
+        QObject::connect(mWorkerThread, &QThread::finished, worker, &QObject::deleteLater);
+        QObject::connect(this, &LocalTorrentFilesModel::requestTreeCreation, worker, &TreeCreationWorker::createTree);
+        QObject::connect(worker, &TreeCreationWorker::done, this, [=]() {
+            endResetModel();
+            mLoaded = true;
+            emit loadedChanged();
+            mWorkerThread->quit();
+        });
+        mWorkerThread->start();
+
+        emit requestTreeCreation(parseResult);
+    }
 }
+
+#include "localtorrentfilesmodel.moc"

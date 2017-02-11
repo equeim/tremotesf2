@@ -22,6 +22,10 @@
 #include <QFile>
 #include <QLocale>
 
+#include "torrentfileparser.h"
+
+Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
+
 #ifdef TREMOTESF_SAILFISHOS
 #include <QModelIndexList>
 #include <qqml.h>
@@ -38,7 +42,6 @@
 #include "settings.h"
 #include "statusfilterstats.h"
 #include "torrent.h"
-#include "torrentfileparser.h"
 #include "torrentfilesmodel.h"
 #include "torrentfilesmodelentry.h"
 #include "torrentfilesproxymodel.h"
@@ -206,21 +209,11 @@ namespace tremotesf
         return translatorsFile.readAll();
     }
 
-#ifdef TREMOTESF_SAILFISHOS
-    QString Utils::sdcardPath()
-    {
-        QFile mtab(QStringLiteral("/etc/mtab"));
-        if (mtab.open(QIODevice::ReadOnly)) {
-            const QStringList mmcblk1p1(QString(mtab.readAll()).split('\n').filter(QStringLiteral("/dev/mmcblk1p1")));
-            if (!mmcblk1p1.isEmpty()) {
-                return mmcblk1p1.first().split(' ').at(1);
-            }
-        }
-        return QStringLiteral("/media/sdcard");
-    }
-
     void Utils::registerTypes()
     {
+        qRegisterMetaType<TorrentFileParser::Error>();
+
+#ifdef TREMOTESF_SAILFISHOS
         qRegisterMetaType<QModelIndexList>();
         qRegisterMetaType<tremotesf::TorrentFilesModelEntryEnums::Priority>();
 
@@ -281,6 +274,20 @@ namespace tremotesf
                                         [](QQmlEngine*, QJSEngine*) -> QObject* {
             return new tremotesf::Utils();
         });
+#endif // TREMOTESF_SAILFISHOS
+    }
+
+#ifdef TREMOTESF_SAILFISHOS
+    QString Utils::sdcardPath()
+    {
+        QFile mtab(QStringLiteral("/etc/mtab"));
+        if (mtab.open(QIODevice::ReadOnly)) {
+            const QStringList mmcblk1p1(QString(mtab.readAll()).split('\n').filter(QStringLiteral("/dev/mmcblk1p1")));
+            if (!mmcblk1p1.isEmpty()) {
+                return mmcblk1p1.first().split(' ').at(1);
+            }
+        }
+        return QStringLiteral("/media/sdcard");
     }
 #else
     QString Utils::statusIconPath(Utils::StatusIcon icon)

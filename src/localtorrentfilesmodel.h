@@ -24,11 +24,16 @@
 
 #include "basetorrentfilesmodel.h"
 
+class QThread;
+
 namespace tremotesf
 {
+    class TorrentFileParser;
+
     class LocalTorrentFilesModel : public BaseTorrentFilesModel
     {
         Q_OBJECT
+        Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
         Q_PROPERTY(QVariantList wantedFiles READ wantedFiles)
         Q_PROPERTY(QVariantList unwantedFiles READ unwantedFiles)
         Q_PROPERTY(QVariantList highPriorityFiles READ highPriorityFiles)
@@ -54,9 +59,9 @@ namespace tremotesf
             ColumnCount
         };
 #endif
-
-        LocalTorrentFilesModel() = default;
-        explicit LocalTorrentFilesModel(const QVariantMap& parseResult, QObject* parent = nullptr);
+        explicit LocalTorrentFilesModel(const QVariantMap& parseResult = QVariantMap(),
+                                        QObject* parent = nullptr);
+        ~LocalTorrentFilesModel();
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
@@ -66,7 +71,9 @@ namespace tremotesf
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 #endif
 
-        Q_INVOKABLE void setParseResult(const QVariantMap& result);
+        Q_INVOKABLE void load(tremotesf::TorrentFileParser* parser);
+
+        bool isLoaded() const;
 
         QVariantList wantedFiles() const;
         QVariantList unwantedFiles() const;
@@ -83,7 +90,14 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
+        void load(const QVariantMap& parseResult);
+
         QList<TorrentFilesModelFile*> mFiles;
+        QThread* mWorkerThread;
+        bool mLoaded;
+    signals:
+        void requestTreeCreation(const QVariantMap& parseResult);
+        void loadedChanged();
     };
 }
 

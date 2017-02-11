@@ -45,10 +45,11 @@ namespace tremotesf
         static QString license();
         static QString translators();
 
+        static void registerTypes();
+
 #ifdef TREMOTESF_SAILFISHOS
         Q_PROPERTY(QString sdcardPath READ sdcardPath)
         static QString sdcardPath();
-        static void registerTypes();
 #else
         enum StatusIcon
         {

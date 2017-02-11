@@ -22,64 +22,77 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 Dialog {
-    property alias filePath: torrentFileItem.text
-    property var parseResult
+    id: addTorrentFileDialog
+
+    property string filePath
 
     allowedOrientations: defaultAllowedOrientations
-    canAccept: downloadDirectoryItem.text
+    canAccept: filesModel.loaded && downloadDirectoryItem.text
 
-    onAccepted: rpc.addTorrentFile(filePath,
+    onAccepted: rpc.addTorrentFile(parser.fileData,
                                    downloadDirectoryItem.text,
                                    filesModel.wantedFiles,
                                    filesModel.unwantedFiles,
                                    filesModel.highPriorityFiles,
                                    filesModel.normalPriorityFiles,
                                    filesModel.lowPriorityFiles,
-                                   priorityComboBox.currentIndex,
+                                   1 - priorityComboBox.currentIndex,
                                    startSwitch.checked)
+
+    TorrentFileParser {
+        id: parser
+        filePath: addTorrentFileDialog.filePath
+        onDone: {
+            if (error == TorrentFileParser.NoError) {
+                filesModel.load(parser)
+            }
+        }
+    }
 
     LocalTorrentFilesModel {
         id: filesModel
-        Component.onCompleted: setParseResult(parseResult)
+    }
+
+    BusyIndicator {
+        anchors.centerIn: parent
+        size: BusyIndicatorSize.Large
+        running: {
+            if (!filePath) {
+                return false
+            }
+
+            if (parser.error === TorrentFileParser.NoError) {
+                return !parser.loaded || !filesModel.loaded
+            }
+
+            return false
+        }
     }
 
     SilicaFlickable {
         anchors.fill: parent
         contentHeight: column.height
 
+        ViewPlaceholder {
+            enabled: parser.error != TorrentFileParser.NoError
+            text: parser.errorString
+        }
+
         Column {
             id: column
+
             width: parent.width
+            visible: filesModel.loaded
 
             DialogHeader {
                 title: qsTranslate("tremotesf", "Add Torrent File")
             }
 
-            FileSelectionItem {
-                id: torrentFileItem
-
+            TextField {
+                width: parent.width
                 label: qsTranslate("tremotesf", "Torrent file")
+                text: filePath
                 readOnly: true
-                nameFilters: ["*.torrent"]
-                autoSetText: false
-
-                onFileSelected: {
-                    var parser = parserComponent.createObject(null, {"filePath": dialog.filePath})
-                    if (parser.error) {
-                        dialog.acceptDestinationProperties = {"filePath": dialog.filePath}
-                        dialog.acceptDestination = Qt.createComponent("TorrentFileParserErrorDialog.qml")
-                        dialog.acceptDestinationAction = PageStackAction.Replace
-                    } else {
-                        text = dialog.filePath
-                        filesModel.setParseResult(parser.result)
-                    }
-                    dialog.accept()
-                }
-
-                Component {
-                    id: parserComponent
-                    TorrentFileParser { }
-                }
             }
 
             FileSelectionItem {

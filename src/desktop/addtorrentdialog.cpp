@@ -40,13 +40,20 @@
 
 namespace tremotesf
 {
-    AddTorrentDialog::AddTorrentDialog(Rpc* rpc, const QString& filePath, const QVariantMap& parseResult, QWidget* parent)
+    AddTorrentDialog::AddTorrentDialog(Rpc* rpc,
+                                       const QString& filePath,
+                                       TorrentFileParser* parser,
+                                       LocalTorrentFilesModel* filesModel,
+                                       QWidget* parent)
         : QDialog(parent),
           mRpc(rpc),
           mLocalFile(true),
           mFilePath(filePath),
-          mFilesModel(new LocalTorrentFilesModel(parseResult, this))
+          mParser(parser),
+          mFilesModel(filesModel)
     {
+        mParser->setParent(this);
+        mFilesModel->setParent(this);
         setupUi();
     }
 
@@ -70,19 +77,19 @@ namespace tremotesf
     void AddTorrentDialog::accept()
     {
         if (mLocalFile) {
-            mRpc->addTorrentFile(mTorrentFileWidget->lineEdit()->text(),
+            mRpc->addTorrentFile(mParser->fileData(),
                                  mDownloadDirectoryWidget->lineEdit()->text(),
                                  mFilesModel->wantedFiles(),
                                  mFilesModel->unwantedFiles(),
                                  mFilesModel->highPriorityFiles(),
                                  mFilesModel->normalPriorityFiles(),
                                  mFilesModel->lowPriorityFiles(),
-                                 mPriorityComboBox->currentIndex(),
+                                 1 - mPriorityComboBox->currentIndex(),
                                  mStartTorrentCheckBox->isChecked());
         } else {
             mRpc->addTorrentLink(mTorrentLinkLineEdit->text(),
                                  mDownloadDirectoryWidget->lineEdit()->text(),
-                                 mPriorityComboBox->currentIndex(),
+                                 1 - mPriorityComboBox->currentIndex(),
                                  mStartTorrentCheckBox->isChecked());
         }
         QDialog::accept();
@@ -106,28 +113,9 @@ namespace tremotesf
         layout->addWidget(firstFormWidget);
 
         if (mLocalFile) {
-            mTorrentFileWidget = new FileSelectionWidget(false,
-                                                         qApp->translate("tremotesf", "Torrent Files (*.torrent)"),
-                                                         false,
-                                                         this);
-            mTorrentFileWidget->lineEdit()->setReadOnly(true);
-            mTorrentFileWidget->lineEdit()->setText(mFilePath);
-            QObject::connect(mTorrentFileWidget, &FileSelectionWidget::fileSelected, this, [=](const QString& filePath) {
-                TorrentFileParser parser(filePath);
-                if (parser.error()) {
-                    auto messageBox = new QMessageBox(QMessageBox::Critical,
-                                                      qApp->translate("tremotesf", "Error Reading Torrent File"),
-                                                      qApp->translate("tremotesf", "Error reading torrent file: %1").arg(filePath),
-                                                      QMessageBox::Close,
-                                                      this);
-                    messageBox->setAttribute(Qt::WA_DeleteOnClose);
-                    messageBox->show();
-                } else {
-                    mTorrentFileWidget->lineEdit()->setText(filePath);
-                    mFilesModel->setParseResult(parser.result());
-                }
-            });
-            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentFileWidget);
+            auto torrentFileLineEdit = new QLineEdit(mFilePath, this);
+            torrentFileLineEdit->setReadOnly(true);
+            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), torrentFileLineEdit);
         } else {
             mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
             QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
@@ -136,7 +124,6 @@ namespace tremotesf
 
         mDownloadDirectoryWidget = new FileSelectionWidget(true,
                                                            QString(),
-                                                           true,
                                                            this);
         mDownloadDirectoryWidget->lineEdit()->setText(mRpc->serverSettings()->downloadDirectory());
         mDownloadDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());

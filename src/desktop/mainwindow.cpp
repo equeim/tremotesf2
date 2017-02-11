@@ -47,6 +47,7 @@
 
 #include "../accounts.h"
 #include "../ipcserver.h"
+#include "../localtorrentfilesmodel.h"
 #include "../rpc.h"
 #include "../serverstats.h"
 #include "../settings.h"
@@ -464,24 +465,28 @@ namespace tremotesf
             return;
         }
 
-        TorrentFileParser parser;
         for (const QString& filePath : files) {
-            parser.setFilePath(filePath);
-            if (parser.error()) {
-                auto messageBox = new QMessageBox(QMessageBox::Critical,
-                                                  qApp->translate("tremotesf", "Error Reading Torrent File"),
-                                                  qApp->translate("tremotesf", "Error reading torrent file: %1").arg(filePath),
-                                                  QMessageBox::Close,
-                                                  this);
-                messageBox->setAttribute(Qt::WA_DeleteOnClose);
-                messageBox->show();
-            } else {
-                auto dialog = new AddTorrentDialog(mRpc, filePath, parser.result(), this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                dialog->show();
-                //dialog->open();
-                dialog->activateWindow();
-            }
+            auto parser = new TorrentFileParser(filePath, this);
+            QObject::connect(parser, &TorrentFileParser::done, this, [=]() {
+                if (parser->error() == TorrentFileParser::NoError) {
+                    auto filesModel = new LocalTorrentFilesModel(parser->parseResult(), this);
+                    QObject::connect(filesModel, &LocalTorrentFilesModel::loadedChanged, this, [=]() {
+                        auto dialog = new AddTorrentDialog(mRpc, filePath, parser, filesModel, this);
+                        dialog->setAttribute(Qt::WA_DeleteOnClose);
+                        dialog->show();
+                        dialog->activateWindow();
+                        QObject::disconnect(filesModel, &LocalTorrentFilesModel::loadedChanged, this, nullptr);
+                    });
+                } else {
+                    auto messageBox = new QMessageBox(QMessageBox::Critical,
+                                                      qApp->translate("tremotesf", "Error"),
+                                                      parser->errorString(),
+                                                      QMessageBox::Close,
+                                                      this);
+                    messageBox->setAttribute(Qt::WA_DeleteOnClose);
+                    messageBox->show();
+                }
+            });
         }
     }
 

@@ -32,11 +32,16 @@ namespace tremotesf
     class FileSelectionWidget;
     class LocalTorrentFilesModel;
     class Rpc;
+    class TorrentFileParser;
 
     class AddTorrentDialog : public QDialog
     {
     public:
-        explicit AddTorrentDialog(Rpc* rpc, const QString& filePath, const QVariantMap& parseResult, QWidget* parent = nullptr);
+        explicit AddTorrentDialog(Rpc* rpc,
+                                  const QString& filePath,
+                                  TorrentFileParser* parser,
+                                  LocalTorrentFilesModel* filesModel,
+                                  QWidget* parent = nullptr);
         explicit AddTorrentDialog(Rpc* rpc, const QString& url, QWidget* parent = nullptr);
 
         QSize sizeHint() const override;
@@ -50,17 +55,15 @@ namespace tremotesf
         bool mLocalFile;
 
         QString mFilePath;
+        TorrentFileParser* mParser;
         LocalTorrentFilesModel* mFilesModel;
 
         QString mUrl;
-
-        FileSelectionWidget* mTorrentFileWidget;
         QLineEdit* mTorrentLinkLineEdit;
 
         FileSelectionWidget* mDownloadDirectoryWidget;
         QComboBox* mPriorityComboBox;
         QCheckBox* mStartTorrentCheckBox;
-        //QCheckBox* mTrashTorrentFileCheckBox;
 
         QDialogButtonBox* mDialogButtonBox;
     };

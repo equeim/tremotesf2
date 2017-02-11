@@ -26,11 +26,9 @@ Item {
     property alias text: textField.text
     property alias readOnly: textField.readOnly
     property bool selectionButtonEnabled: true
+
     property bool showFiles: true
     property var nameFilters
-    property bool autoSetText: true
-
-    signal fileSelected(var dialog)
 
     width: parent.width
     height: Math.max(textField.height, selectionButton.height)
@@ -61,15 +59,9 @@ Item {
         onClicked: {
             var dialog = pageStack.push("FileSelectionDialog.qml", {"directory": textField.text,
                                                                     "showFiles": showFiles,
-                                                                    "nameFilters": nameFilters,
-                                                                    "automaticAccept": autoSetText})
-            dialog.fileSelected.connect(function() {
-                fileSelected(dialog)
-            })
+                                                                    "nameFilters": nameFilters})
             dialog.accepted.connect(function() {
-                if (autoSetText) {
-                    text = dialog.filePath
-                }
+                text = dialog.filePath
             })
         }
     }

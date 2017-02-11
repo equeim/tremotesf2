@@ -96,6 +96,7 @@ namespace tremotesf
         void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
 
         const QList<TorrentFilesModelEntry*>& children() const;
+        const QHash<QString, TorrentFilesModelEntry*>& childrenHash() const;
         void addChild(TorrentFilesModelEntry* child);
         void clearChildren();
         QVariantList childrenIds() const;
@@ -103,6 +104,7 @@ namespace tremotesf
         bool isChanged() const override;
     private:
         QList<TorrentFilesModelEntry*> mChildren;
+        QHash<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 
     class TorrentFilesModelFile : public TorrentFilesModelEntry

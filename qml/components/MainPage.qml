@@ -98,26 +98,13 @@ Page {
                 enabled: rpc.connected
                 text: qsTranslate("tremotesf", "Add Torrent File...")
                 onClicked: {
-                    var dialog = pageStack.push("FileSelectionDialog.qml", {"acceptDestinationAction": PageStackAction.Replace,
+                    var dialog = pageStack.push("FileSelectionDialog.qml", {"acceptDestination": Qt.createComponent("AddTorrentFileDialog.qml"),
+                                                                            "acceptDestinationAction": PageStackAction.Replace,
                                                                             "nameFilters": ["*.torrent"],
                                                                             "automaticAccept": false})
-                    dialog.fileSelected.connect(function() {
-                        var parser = parserComponent.createObject(null, {"filePath": dialog.filePath})
-                        if (parser.error) {
-                            dialog.acceptDestinationProperties = {"filePath": dialog.filePath}
-                            dialog.acceptDestination = Qt.createComponent("TorrentFileParserErrorDialog.qml")
-                        } else {
-                            dialog.acceptDestinationProperties = {"filePath": dialog.filePath,
-                                                                  "parseResult": parser.result}
-                            dialog.acceptDestination = Qt.createComponent("AddTorrentFileDialog.qml")
-                        }
-                        dialog.accept()
+                    dialog.accepted.connect(function() {
+                        dialog.acceptDestinationInstance.filePath = dialog.filePath
                     })
-                }
-
-                Component {
-                    id: parserComponent
-                    TorrentFileParser { }
                 }
             }
 

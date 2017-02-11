@@ -92,7 +92,7 @@ namespace tremotesf
         Q_INVOKABLE void connect();
         Q_INVOKABLE void disconnect();
 
-        Q_INVOKABLE void addTorrentFile(const QString& filePath,
+        Q_INVOKABLE void addTorrentFile(const QByteArray& fileData,
                                         const QString& downloadDirectory,
                                         const QVariantList& wantedFiles,
                                         const QVariantList& unwantedFiles,

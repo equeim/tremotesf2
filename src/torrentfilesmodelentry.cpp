@@ -144,15 +144,22 @@ namespace tremotesf
         return mChildren;
     }
 
+    const QHash<QString, TorrentFilesModelEntry*>& TorrentFilesModelDirectory::childrenHash() const
+    {
+        return mChildrenHash;
+    }
+
     void TorrentFilesModelDirectory::addChild(TorrentFilesModelEntry* child)
     {
         mChildren.append(child);
+        mChildrenHash.insert(child->name(), child);
     }
 
     void TorrentFilesModelDirectory::clearChildren()
     {
         qDeleteAll(mChildren);
         mChildren.clear();
+        mChildrenHash.clear();
     }
 
     QVariantList TorrentFilesModelDirectory::childrenIds() const

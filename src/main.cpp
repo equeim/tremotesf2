@@ -80,10 +80,10 @@ int main(int argc, char** argv)
 #endif
     qApp->installTranslator(&appTranslator);
 
+    tremotesf::Utils::registerTypes();
+
 #ifdef TREMOTESF_SAILFISHOS
     tremotesf::Accounts::migrate();
-
-    tremotesf::Utils::registerTypes();
 
     view->rootContext()->setContextProperty(QStringLiteral("ipcServer"), &ipcServer);
 

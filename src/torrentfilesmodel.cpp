@@ -107,16 +107,10 @@ namespace tremotesf
                             currentDirectory->addChild(childFile);
                             mFiles.append(childFile);
                         } else {
-                            bool found = false;
-                            for (TorrentFilesModelEntry* child : currentDirectory->children()) {
-                                if (child->isDirectory() && child->name() == part) {
-                                    currentDirectory = static_cast<TorrentFilesModelDirectory*>(child);
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            if (!found) {
+                            TorrentFilesModelEntry* found = currentDirectory->childrenHash().value(part);
+                            if (found) {
+                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(found);
+                            } else {
                                 auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
                                                                                      currentDirectory,
                                                                                      part);
@@ -131,9 +125,8 @@ namespace tremotesf
             }
 
         private:
-            TorrentFilesModelDirectory* mRootDirectory;
+            TorrentFilesModelDirectory *const mRootDirectory;
             QList<TorrentFilesModelFile*>& mFiles;
-
         signals:
             void done();
         };
