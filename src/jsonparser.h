@@ -35,7 +35,7 @@ namespace tremotesf
         QThread* mWorkerThread;
     signals:
         void requestParse(const QByteArray& data);
-        void done(const QVariant& parseResult);
+        void done(const QVariantMap& parseResult, bool success);
     };
 }
 

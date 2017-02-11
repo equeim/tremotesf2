@@ -60,9 +60,9 @@ namespace tremotesf
                     .toJson();
         }
 
-        QVariantMap getReplyArguments(const QVariant& result)
+        QVariantMap getReplyArguments(const QVariantMap& parseResult)
         {
-            return result.toMap().value(QStringLiteral("arguments")).toMap();
+            return parseResult.value(QStringLiteral("arguments")).toMap();
         }
 
         bool isResultSuccessful(const QVariantMap& parseResult)
@@ -304,7 +304,7 @@ namespace tremotesf
                                           this);
             QObject::connect(add, &AddTorrentFile::done, this, [=](const QByteArray& requestData) {
                 if (isConnected()) {
-                    postRequest(requestData, [=](const QVariant& parseResult) {
+                    postRequest(requestData, [=](const QVariantMap& parseResult) {
                         if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
                             updateData();
                         }
@@ -329,7 +329,7 @@ namespace tremotesf
                                      {QStringLiteral("download-dir"), downloadDirectory},
                                      {QStringLiteral("bandwidthPriority"), bandwidthPriority},
                                      {QStringLiteral("paused"), !start}}),
-                    [=](const QVariant& parseResult) {
+                    [=](const QVariantMap& parseResult) {
             if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
                 updateData();
             }
@@ -453,7 +453,7 @@ namespace tremotesf
                                    "    },"
                                    "    \"method\": \"torrent-get\""
                                    "}").arg(id).toLatin1(),
-                    [=](const QVariant& parseResult) {
+                    [=](const QVariantMap& parseResult) {
             const QVariantList torrentsVariants(getReplyArguments(parseResult)
                                                 .value(QStringLiteral("torrents")).toList());
             const std::shared_ptr<Torrent> torrent(torrentById(id));
@@ -474,7 +474,7 @@ namespace tremotesf
                                    "    },"
                                    "    \"method\": \"torrent-get\""
                                    "}").arg(id).toLatin1(),
-                    [=](const QVariant& parseResult) {
+                    [=](const QVariantMap& parseResult) {
             const QVariantList torrentsVariants(getReplyArguments(parseResult)
                                                 .value(QStringLiteral("torrents")).toList());
             const std::shared_ptr<Torrent> torrent(torrentById(id));
@@ -562,7 +562,7 @@ namespace tremotesf
     void Rpc::getServerSettings()
     {
         postRequest(QByteArrayLiteral("{\"method\": \"session-get\"}"),
-                    [=](const QVariant& parseResult) {
+                    [=](const QVariantMap& parseResult) {
             mServerSettings->update(getReplyArguments(parseResult));
             if (!mRpcVersionChecked) {
                 mRpcVersionChecked = true;
@@ -633,7 +633,7 @@ namespace tremotesf
                                       "    },"
                                       "    \"method\": \"torrent-get\""
                                       "}"),
-                    [=](const QVariant& parseResult) {
+                    [=](const QVariantMap& parseResult) {
             const QVariantList torrentsVariants(getReplyArguments(parseResult)
                                                 .value(QStringLiteral("torrents")).toList());
 
@@ -683,7 +683,7 @@ namespace tremotesf
     void Rpc::getServerStats()
     {
         postRequest(QByteArrayLiteral("{\"method\": \"session-stats\"}"),
-                    [=](const QVariant& parseResult) {
+                    [=](const QVariantMap& parseResult) {
             mServerStats->update(getReplyArguments(parseResult));
             mServerStatsUpdated = true;
             startUpdateTimer();
@@ -729,7 +729,7 @@ namespace tremotesf
     }
 
     void Rpc::postRequest(const QByteArray& data,
-                          const std::function<void(const QVariant&)>& callOnSuccess)
+                          const std::function<void(const QVariantMap&)>& callOnSuccess)
     {
         QNetworkRequest request(mServerUrl);
         request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
@@ -747,16 +747,18 @@ namespace tremotesf
                 } else if (reply->error() == QNetworkReply::NoError) {
                     if (callOnSuccess) {
                         auto parser = new JsonParser(reply->readAll(), this);
-                        QObject::connect(parser, &JsonParser::done, [=](const QVariant& parseResult) {
-                            parser->deleteLater();
+                        QObject::connect(parser,
+                                         &JsonParser::done,
+                                         [=](const QVariantMap& parseResult, bool success) {
                             if (mStatus != Disconnected) {
-                                if (parseResult.isNull()) {
+                                if (success) {
+                                    callOnSuccess(parseResult);
+                                } else {
                                     setError(ParseError);
                                     setStatus(Disconnected);
-                                } else {
-                                    callOnSuccess(parseResult);
                                 }
                             }
+                            parser->deleteLater();
                         });
                     }
                 } else {
@@ -788,7 +790,7 @@ namespace tremotesf
 
     void Rpc::postRequest(const QByteArray& data, const std::function<void()>& callOnSuccess)
     {
-        postRequest(data, [=](const QVariant&) { callOnSuccess(); });
+        postRequest(data, [=](const QVariantMap&) { callOnSuccess(); });
     }
 
     std::shared_ptr<Torrent> Rpc::torrentById(int id) const

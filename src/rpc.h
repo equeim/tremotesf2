@@ -40,8 +40,6 @@ namespace tremotesf
     class ServerStats;
     class Torrent;
 
-    typedef void (*tess) (void);
-
     class Rpc : public QObject
     {
         Q_OBJECT
@@ -140,7 +138,7 @@ namespace tremotesf
         void onAuthenticationRequired(QNetworkReply*, QAuthenticator* authenticator);
 
         void postRequest(const QByteArray& data,
-                                   const std::function<void(const QVariant&)>& callOnSuccess = nullptr);
+                                   const std::function<void(const QVariantMap&)>& callOnSuccess = nullptr);
 
         void postRequest(const QByteArray& data,
                                    const std::function<void()>& callOnSuccess);

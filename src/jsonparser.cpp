@@ -14,10 +14,13 @@ namespace tremotesf
         public:
             void parse(const QByteArray& data)
             {
-                emit done(QJsonDocument::fromJson(data).toVariant());
+                QJsonParseError error;
+                const QVariantMap result(QJsonDocument::fromJson(data, &error).toVariant().toMap());
+                emit done(result,
+                          error.error == QJsonParseError::NoError);
             }
         signals:
-            void done(const QVariant& parseResult);
+            void done(const QVariantMap& parseResult, bool success);
         };
     }
 
