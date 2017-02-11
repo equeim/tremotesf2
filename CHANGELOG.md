@@ -1,5 +1,19 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Torrent properties are now reloaded after reconnection
+
+### Changed
+- Performance improvements for torrents with large number of files
+
+### Removed
+- Ability to select another file in Add Torrent File dialog (it was causing unnecessary code complication)
+
+### Fixed
+- Tracker status is now more correct
+- Set correct torrent priority when adding torrent
+
 ## [1.1.0] - 2016-09-25
 ### Added
 #### Sailfish OS
