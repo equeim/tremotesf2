@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef TREMOTESF_TORRENTFILEPARSER_H
+#define TREMOTESF_TORRENTFILEPARSER_H
+
 #include <QObject>
 #include <QVariantList>
 #include <QVariantMap>
@@ -68,3 +71,5 @@ namespace tremotesf
         void done();
     };
 }
+
+#endif // TREMOTESF_TORRENTFILEPARSER_H
