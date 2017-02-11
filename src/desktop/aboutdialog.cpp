@@ -1,6 +1,6 @@
 /*
  * Tremotesf
- * Copyright (C) 2015-2016 Alexey Rochev <equeim@gmail.com>
+ * Copyright (C) 2015-2017 Alexey Rochev <equeim@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ namespace tremotesf
 {
     namespace
     {
-        const QString aboutPageText(QStringLiteral("<p>\u00a9 2015-2016 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>"
+        const QString aboutPageText(QStringLiteral("<p>\u00a9 2015-2017 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>"
                                                    "<p><a href=\"https://github.com/equeim/tremotesf\">https://github.com/equeim/tremotesf2</a></p>"));
 
         const QString authorText(QStringLiteral("Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
