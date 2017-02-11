@@ -44,7 +44,7 @@ namespace tremotesf
         void classBegin() override;
         void componentComplete() override;
 
-        QVariant data(const QModelIndex &index, int role) const override;
+        QVariant data(const QModelIndex& index, int role) const override;
         int rowCount(const QModelIndex&) const;
 
         const QString& directory() const;
@@ -57,8 +57,10 @@ namespace tremotesf
 
         const QStringList& nameFilters() const;
         void setNameFilters(const QStringList& filters);
+
     protected:
         QHash<int, QByteArray> roleNames() const override;
+
     private:
         void loadDirectory();
 

@@ -40,8 +40,10 @@ namespace tremotesf
         void setSortRole(int role);
 
         Q_INVOKABLE void sort(int column = 0, Qt::SortOrder order = Qt::AscendingOrder) override;
+
     protected:
         bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
     private:
         QCollator mCollator;
     signals:

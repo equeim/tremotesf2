@@ -25,7 +25,6 @@ namespace tremotesf
     TorrentFilesProxyModel::TorrentFilesProxyModel(BaseTorrentFilesModel* sourceModel, int sortRole, QObject* parent)
         : BaseProxyModel(sourceModel, sortRole, parent)
     {
-
     }
 
     bool TorrentFilesProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const

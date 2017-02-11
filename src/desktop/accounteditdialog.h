@@ -38,10 +38,12 @@ namespace tremotesf
         explicit AccountEditDialog(AccountsModel* accountsModel, int row, QWidget* parent = nullptr);
         QSize sizeHint() const override;
         void accept() override;
+
     private:
         void setupUi();
         void canAcceptUpdate();
         void setAccount();
+
     private:
         AccountsModel* mAccountsModel;
         QString mAccountName;

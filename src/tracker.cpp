@@ -63,8 +63,7 @@ namespace tremotesf
             return qApp->translate("tremotesf", "Queued");
         case Updating:
             return qApp->translate("tremotesf", "Updating");
-        case Error:
-        {
+        case Error: {
             if (mErrorMessage.isEmpty()) {
                 return qApp->translate("tremotesf", "Error");
             }

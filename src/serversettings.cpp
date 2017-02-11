@@ -86,11 +86,10 @@ namespace tremotesf
         const QString maximumPeersGloballyKey(QStringLiteral("peer-limit-global"));
     }
 
-    ServerSettings::ServerSettings(Rpc* rpc, QObject *parent)
+    ServerSettings::ServerSettings(Rpc* rpc, QObject* parent)
         : QObject(parent),
           mRpc(rpc)
     {
-
     }
 
     int ServerSettings::rpcVersion() const
@@ -614,10 +613,10 @@ namespace tremotesf
         mMinimumRpcVersion = serverSettings.value(QStringLiteral("rpc-version-minimum")).toInt();
 
         mUsingDecimalUnits = (serverSettings
-                              .value(QStringLiteral("units"))
-                              .toMap()
-                              .value(QStringLiteral("speed-bytes"))
-                              .toInt() == 1000);
+                                  .value(QStringLiteral("units"))
+                                  .toMap()
+                                  .value(QStringLiteral("speed-bytes"))
+                                  .toInt() == 1000);
 
         mDownloadDirectory = serverSettings.value(downloadDirectoryKey).toString();
         mTrashTorrentFiles = serverSettings.value(trashTorrentFilesKey).toBool();

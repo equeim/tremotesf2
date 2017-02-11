@@ -49,6 +49,7 @@ namespace tremotesf
         int nextUpdate() const;
 
         void update(const QVariantMap& trackerMap);
+
     private:
         int mId;
         QString mAnnounce;

@@ -35,9 +35,11 @@ namespace tremotesf
         explicit AccountsDialog(QWidget* parent = nullptr);
         QSize sizeHint() const override;
         void accept() override;
+
     private:
         void showEditDialogs();
         void removeAccounts();
+
     private:
         KMessageWidget* mNoAccountsWidget;
         AccountsModel* mModel;

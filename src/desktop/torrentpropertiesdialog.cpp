@@ -162,9 +162,9 @@ namespace tremotesf
             setWindowTitle(mTorrent->name());
 
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
-                                    .arg(Utils::formatByteSize(mTorrent->completedSize()))
-                                    .arg(Utils::formatByteSize(mTorrent->sizeWhenDone()))
-                                    .arg(Utils::formatProgress(mTorrent->percentDone())));
+                                        .arg(Utils::formatByteSize(mTorrent->completedSize()))
+                                        .arg(Utils::formatByteSize(mTorrent->sizeWhenDone()))
+                                        .arg(Utils::formatProgress(mTorrent->percentDone())));
             downloadedLabel->setText(Utils::formatByteSize(mTorrent->totalDownloaded()));
             uploadedLabel->setText(Utils::formatByteSize(mTorrent->totalUploaded()));
             ratioLabel->setText(Utils::formatRatio(mTorrent->ratio()));
@@ -294,12 +294,12 @@ namespace tremotesf
                          static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                          this,
                          [=](int index) {
-            if (index == 2) {
-                ratioLimitSpinBox->show();
-            } else {
-                ratioLimitSpinBox->hide();
-            }
-        });
+                             if (index == 2) {
+                                 ratioLimitSpinBox->show();
+                             } else {
+                                 ratioLimitSpinBox->hide();
+                             }
+                         });
         ratioLimitLayout->addWidget(ratioLimitSpinBox);
 
         auto idleSeedingLimitLayout = new QHBoxLayout();
@@ -320,12 +320,12 @@ namespace tremotesf
                          static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                          this,
                          [=](int index) {
-            if (index == 2) {
-                idleSeedingLimitSpinBox->show();
-            } else {
-                idleSeedingLimitSpinBox->hide();
-            }
-        });
+                             if (index == 2) {
+                                 idleSeedingLimitSpinBox->show();
+                             } else {
+                                 idleSeedingLimitSpinBox->hide();
+                             }
+                         });
         idleSeedingLimitLayout->addWidget(idleSeedingLimitSpinBox);
 
         limitsTabLayout->addWidget(seedingGroupBox);
@@ -377,9 +377,8 @@ namespace tremotesf
                              static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                              mTorrent,
                              [=](int index) {
-                mTorrent->setBandwidthPriority(static_cast<Torrent::Priority>(1 - index));
-            });
-
+                                 mTorrent->setBandwidthPriority(static_cast<Torrent::Priority>(1 - index));
+                             });
 
             switch (mTorrent->ratioLimitMode()) {
             case Torrent::GlobalRatioLimit:
@@ -396,24 +395,23 @@ namespace tremotesf
                              static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                              mTorrent,
                              [=](int index) {
-                switch (index) {
-                case 0:
-                    mTorrent->setRatioLimitMode(Torrent::GlobalRatioLimit);
-                    break;
-                case 1:
-                    mTorrent->setRatioLimitMode(Torrent::UnlimitedRatio);
-                    break;
-                case 2:
-                    mTorrent->setRatioLimitMode(Torrent::SingleRatioLimit);
-                }
-            });
+                                 switch (index) {
+                                 case 0:
+                                     mTorrent->setRatioLimitMode(Torrent::GlobalRatioLimit);
+                                     break;
+                                 case 1:
+                                     mTorrent->setRatioLimitMode(Torrent::UnlimitedRatio);
+                                     break;
+                                 case 2:
+                                     mTorrent->setRatioLimitMode(Torrent::SingleRatioLimit);
+                                 }
+                             });
 
             ratioLimitSpinBox->setValue(mTorrent->ratioLimit());
             QObject::connect(ratioLimitSpinBox,
                              static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                              mTorrent,
                              &Torrent::setRatioLimit);
-
 
             switch (mTorrent->idleSeedingLimitMode()) {
             case Torrent::GlobalIdleSeedingLimit:
@@ -429,24 +427,23 @@ namespace tremotesf
                              static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                              mTorrent,
                              [=](int index) {
-                switch (index) {
-                case 0:
-                    mTorrent->setIdleSeedingLimitMode(Torrent::GlobalIdleSeedingLimit);
-                    break;
-                case 1:
-                    mTorrent->setIdleSeedingLimitMode(Torrent::UnlimitedIdleSeeding);
-                    break;
-                case 2:
-                    mTorrent->setIdleSeedingLimitMode(Torrent::SingleIdleSeedingLimit);
-                }
-            });
+                                 switch (index) {
+                                 case 0:
+                                     mTorrent->setIdleSeedingLimitMode(Torrent::GlobalIdleSeedingLimit);
+                                     break;
+                                 case 1:
+                                     mTorrent->setIdleSeedingLimitMode(Torrent::UnlimitedIdleSeeding);
+                                     break;
+                                 case 2:
+                                     mTorrent->setIdleSeedingLimitMode(Torrent::SingleIdleSeedingLimit);
+                                 }
+                             });
 
             idleSeedingLimitSpinBox->setValue(mTorrent->idleSeedingLimit());
             QObject::connect(idleSeedingLimitSpinBox,
                              static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
                              mTorrent,
                              &Torrent::setIdleSeedingLimit);
-
 
             peersLimitsSpinBox->setValue(mTorrent->peersLimit());
             QObject::connect(peersLimitsSpinBox,
@@ -458,7 +455,7 @@ namespace tremotesf
         mUpdateLimitsTab();
     }
 
-    void TorrentPropertiesDialog::setTorrent(Torrent *torrent)
+    void TorrentPropertiesDialog::setTorrent(Torrent* torrent)
     {
         if (torrent != mTorrent) {
             mTorrent = torrent;

@@ -22,10 +22,9 @@
 
 namespace tremotesf
 {
-    ServerStats::ServerStats(QObject *parent)
+    ServerStats::ServerStats(QObject* parent)
         : QObject(parent)
     {
-
     }
 
     long long ServerStats::downloadSpeed() const

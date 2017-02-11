@@ -58,8 +58,10 @@ namespace tremotesf
         void setTracker(const QString& tracker);
 
         static bool statusFilterAcceptsTorrent(const Torrent* torrent, StatusFilter filter);
+
     protected:
         bool filterAcceptsRow(int sourceRow, const QModelIndex&) const override;
+
     private:
         QString mSearchString;
         StatusFilter mStatusFilter;

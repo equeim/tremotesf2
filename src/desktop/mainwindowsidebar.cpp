@@ -89,7 +89,8 @@ namespace tremotesf
                 return QSize(sizeHintForColumn(0), height);
             }
 
-            void updateItems() {
+            void updateItems()
+            {
                 item(TorrentsProxyModel::All)->setText(qApp->translate("tremotesf", "All (%1)").arg(mRpc->torrentsCount()));
                 item(TorrentsProxyModel::Active)->setText(qApp->translate("tremotesf", "Active (%1)").arg(mStats->activeTorrents()));
                 item(TorrentsProxyModel::Downloading)->setText(qApp->translate("tremotesf", "Downloading (%1)").arg(mStats->downloadingTorrents()));
@@ -109,6 +110,7 @@ namespace tremotesf
             {
                 mProxyModel->setStatusFilter(TorrentsProxyModel::All);
             }
+
         private:
             TorrentsProxyModel* mProxyModel;
             Rpc* mRpc;
@@ -157,6 +159,7 @@ namespace tremotesf
 
                 return QSize(sizeHintForColumn(0), height);
             }
+
         protected:
             void showEvent(QShowEvent*)
             {
@@ -167,6 +170,7 @@ namespace tremotesf
             {
                 mTorrentsProxyModel->setTracker(QString());
             }
+
         private:
             TorrentsProxyModel* mTorrentsProxyModel;
         };

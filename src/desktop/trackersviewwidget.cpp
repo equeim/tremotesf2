@@ -53,8 +53,8 @@ namespace tremotesf
             explicit EnterEatingTreeView(QWidget* parent = nullptr)
                 : BaseTreeView(parent)
             {
-
             }
+
         protected:
             void keyPressEvent(QKeyEvent* event) override
             {
@@ -116,6 +116,7 @@ namespace tremotesf
             {
                 return mLineEdit->text();
             }
+
         private:
             QLineEdit* mLineEdit;
         };
@@ -175,7 +176,7 @@ namespace tremotesf
         Settings::instance()->setTrackersViewHeaderState(mTrackersView->header()->saveState());
     }
 
-    void TrackersViewWidget::setTorrent(Torrent *torrent)
+    void TrackersViewWidget::setTorrent(Torrent* torrent)
     {
         mTorrent = torrent;
         mModel->setTorrent(torrent);

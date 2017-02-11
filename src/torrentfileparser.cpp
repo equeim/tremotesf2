@@ -38,7 +38,8 @@ namespace tremotesf
                 TorrentFileParser::Error error = TorrentFileParser::NoError;
                 QFile file(filePath);
                 if (file.open(QFile::ReadOnly)) {
-                    const QMimeType mimeType(QMimeDatabase().mimeTypeForFile(filePath, QMimeDatabase::MatchContent));
+                    const QMimeType mimeType(QMimeDatabase().mimeTypeForFile(filePath,
+                                                                             QMimeDatabase::MatchContent));
                     if (mimeType.name() == "application/x-bittorrent") {
                         mData = file.readAll();
                         result = parseMap();
@@ -58,6 +59,7 @@ namespace tremotesf
                 }
                 emit done(error, mData, result);
             }
+
         private:
             QVariant parseVariant()
             {
@@ -151,7 +153,7 @@ namespace tremotesf
         };
     }
 
-    TorrentFileParser::TorrentFileParser(const QString &filePath, QObject* parent)
+    TorrentFileParser::TorrentFileParser(const QString& filePath, QObject* parent)
         : QObject(parent),
           mWorkerThread(new QThread(this)),
           mError(NoError),
@@ -183,18 +185,18 @@ namespace tremotesf
         worker->moveToThread(mWorkerThread);
         QObject::connect(mWorkerThread, &QThread::finished, worker, &QObject::deleteLater);
         QObject::connect(this, &TorrentFileParser::requestParse, worker, &Worker::parse);
-        QObject::connect(worker, &Worker::done, this,
-                         [=](Error error,
-                         const QByteArray& fileData,
-                         const QVariantMap& parseResult) {
-            mLoaded = true;
-            mError = error;
-            mFileData = fileData;
-            mParseResult = parseResult;
-            emit done();
+        QObject::connect(worker,
+                         &Worker::done,
+                         this,
+                         [=](Error error, const QByteArray& fileData, const QVariantMap& parseResult) {
+                             mLoaded = true;
+                             mError = error;
+                             mFileData = fileData;
+                             mParseResult = parseResult;
+                             emit done();
 
-            mWorkerThread->quit();
-        });
+                             mWorkerThread->quit();
+                         });
         mWorkerThread->start();
         emit requestParse(mFilePath);
     }

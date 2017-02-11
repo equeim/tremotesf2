@@ -79,7 +79,7 @@ namespace tremotesf
         bool isLoading() const;
 
         Q_INVOKABLE void setFileWanted(const QModelIndex& index, bool wanted) override;
-        Q_INVOKABLE void setFilesWanted(const QModelIndexList& indexes, bool wanted) override ;
+        Q_INVOKABLE void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
         Q_INVOKABLE void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntryEnums::Priority priority) override;
         Q_INVOKABLE void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntryEnums::Priority priority) override;
 #ifdef TREMOTESF_SAILFISHOS

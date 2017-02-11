@@ -25,7 +25,6 @@ namespace tremotesf
           mAccounts(Accounts::instance()->accounts()),
           mCurrentAccount(Accounts::instance()->currentAccountName())
     {
-
     }
 
     QVariant AccountsModel::data(const QModelIndex& index, int role) const
@@ -104,7 +103,7 @@ namespace tremotesf
         return mAccounts;
     }
 
-    const QString&AccountsModel::currentAccountName() const
+    const QString& AccountsModel::currentAccountName() const
     {
         return mCurrentAccount;
     }
@@ -146,19 +145,17 @@ namespace tremotesf
             if (row == 0) {
                 mCurrentAccount = name;
             }
-            mAccounts.append(Account {
-                                 name,
-                                 address,
-                                 port,
-                                 apiPath,
-                                 https,
-                                 localCertificate,
-                                 authentication,
-                                 username,
-                                 password,
-                                 updateInterval,
-                                 timeout
-                             });
+            mAccounts.append(Account{name,
+                                     address,
+                                     port,
+                                     apiPath,
+                                     https,
+                                     localCertificate,
+                                     authentication,
+                                     username,
+                                     password,
+                                     updateInterval,
+                                     timeout});
             endInsertRows();
         } else {
             Account& account = mAccounts[row];

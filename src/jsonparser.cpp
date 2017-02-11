@@ -24,7 +24,7 @@ namespace tremotesf
         };
     }
 
-    JsonParser::JsonParser(const QByteArray& data, QObject *parent)
+    JsonParser::JsonParser(const QByteArray& data, QObject* parent)
         : QObject(parent),
           mWorkerThread(new QThread(this))
     {

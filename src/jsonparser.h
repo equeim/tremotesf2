@@ -31,6 +31,7 @@ namespace tremotesf
     public:
         explicit JsonParser(const QByteArray& data, QObject* parent);
         ~JsonParser();
+
     private:
         QThread* mWorkerThread;
     signals:

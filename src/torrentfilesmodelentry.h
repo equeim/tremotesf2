@@ -73,6 +73,7 @@ namespace tremotesf
         virtual void setPriority(TorrentFilesModelEntryEnums::Priority priority) = 0;
 
         virtual bool isChanged() const = 0;
+
     private:
         int mRow;
         TorrentFilesModelDirectory* mParentDirectory;
@@ -102,6 +103,7 @@ namespace tremotesf
         QVariantList childrenIds() const;
 
         bool isChanged() const override;
+
     private:
         QList<TorrentFilesModelEntry*> mChildren;
         QHash<QString, TorrentFilesModelEntry*> mChildrenHash;
@@ -131,6 +133,7 @@ namespace tremotesf
         int id() const;
         void setSize(long long size);
         void setCompletedSize(long long completedSize);
+
     private:
         int mRow;
         TorrentFilesModelDirectory* mParentDirectory;

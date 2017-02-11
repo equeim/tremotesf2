@@ -57,7 +57,7 @@ namespace tremotesf
         {
             return QJsonDocument::fromVariant(QVariantMap{{QStringLiteral("method"), method},
                                                           {QStringLiteral("arguments"), arguments}})
-                    .toJson();
+                .toJson();
         }
 
         QVariantMap getReplyArguments(const QVariantMap& parseResult)
@@ -75,14 +75,14 @@ namespace tremotesf
             Q_OBJECT
         public:
             void encode(const QByteArray& fileData,
-                   const QString& downloadDirectory,
-                   const QVariantList& wantedFiles,
-                   const QVariantList& unwantedFiles,
-                   const QVariantList& highPriorityFiles,
-                   const QVariantList& normalPriorityFiles,
-                   const QVariantList& lowPriorityFiles,
-                   int bandwidthPriority,
-                   bool start)
+                        const QString& downloadDirectory,
+                        const QVariantList& wantedFiles,
+                        const QVariantList& unwantedFiles,
+                        const QVariantList& highPriorityFiles,
+                        const QVariantList& normalPriorityFiles,
+                        const QVariantList& lowPriorityFiles,
+                        int bandwidthPriority,
+                        bool start)
             {
                 emit done(makeRequestData(QStringLiteral("torrent-add"),
                                           {{QStringLiteral("metainfo"), fileData.toBase64()},
@@ -138,6 +138,7 @@ namespace tremotesf
                 mWorkerThread->quit();
                 mWorkerThread->wait();
             }
+
         private:
             QThread* mWorkerThread;
         signals:
@@ -193,7 +194,7 @@ namespace tremotesf
         return mTorrents;
     }
 
-    Torrent* Rpc::torrentByHash(const QString &hash) const
+    Torrent* Rpc::torrentByHash(const QString& hash) const
     {
         for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
             if (torrent->hashString() == hash) {
@@ -250,13 +251,13 @@ namespace tremotesf
     {
         const QString hostName = mServerUrl.host();
         if (hostName == "localhost" ||
-                hostName == QHostInfo::localHostName()) {
+            hostName == QHostInfo::localHostName()) {
             return true;
         }
 
         const QHostAddress ipAddress(hostName);
         if (!ipAddress.isNull() &&
-                (ipAddress.isLoopback() || QNetworkInterface::allAddresses().contains(ipAddress))) {
+            (ipAddress.isLoopback() || QNetworkInterface::allAddresses().contains(ipAddress))) {
             return true;
         }
 
@@ -330,10 +331,10 @@ namespace tremotesf
                                      {QStringLiteral("bandwidthPriority"), bandwidthPriority},
                                      {QStringLiteral("paused"), !start}}),
                     [=](const QVariantMap& parseResult) {
-            if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
-                updateData();
-            }
-        });
+                        if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
+                            updateData();
+                        }
+                    });
     }
 
     void Rpc::startTorrents(const QVariantList& ids)
@@ -437,7 +438,7 @@ namespace tremotesf
         if (isConnected()) {
             postRequest(makeRequestData(QStringLiteral("torrent-set"),
                                         {{QStringLiteral("ids"), QVariantList{id}},
-                                        {property, value}}));
+                                         {property, value}}));
         }
     }
 
@@ -452,17 +453,20 @@ namespace tremotesf
                                    "        \"ids\": [%1]"
                                    "    },"
                                    "    \"method\": \"torrent-get\""
-                                   "}").arg(id).toLatin1(),
+                                   "}")
+                        .arg(id)
+                        .toLatin1(),
                     [=](const QVariantMap& parseResult) {
-            const QVariantList torrentsVariants(getReplyArguments(parseResult)
-                                                .value(QStringLiteral("torrents")).toList());
-            const std::shared_ptr<Torrent> torrent(torrentById(id));
-            if (!torrentsVariants.isEmpty() && torrent) {
-                torrent->updateFiles(torrentsVariants.first().toMap());
-                checkIfTorrentsUpdated();
-                startUpdateTimer();
-            }
-        });
+                        const QVariantList torrentsVariants(getReplyArguments(parseResult)
+                                                                .value(QStringLiteral("torrents"))
+                                                                .toList());
+                        const std::shared_ptr<Torrent> torrent(torrentById(id));
+                        if (!torrentsVariants.isEmpty() && torrent) {
+                            torrent->updateFiles(torrentsVariants.first().toMap());
+                            checkIfTorrentsUpdated();
+                            startUpdateTimer();
+                        }
+                    });
     }
 
     void Rpc::getTorrentPeers(int id)
@@ -473,17 +477,20 @@ namespace tremotesf
                                    "        \"ids\": [%1]"
                                    "    },"
                                    "    \"method\": \"torrent-get\""
-                                   "}").arg(id).toLatin1(),
+                                   "}")
+                        .arg(id)
+                        .toLatin1(),
                     [=](const QVariantMap& parseResult) {
-            const QVariantList torrentsVariants(getReplyArguments(parseResult)
-                                                .value(QStringLiteral("torrents")).toList());
-            const std::shared_ptr<Torrent> torrent(torrentById(id));
-            if (!torrentsVariants.isEmpty() && torrent) {
-                torrent->updatePeers(torrentsVariants.first().toMap());
-                checkIfTorrentsUpdated();
-                startUpdateTimer();
-            }
-        });
+                        const QVariantList torrentsVariants(getReplyArguments(parseResult)
+                                                                .value(QStringLiteral("torrents"))
+                                                                .toList());
+                        const std::shared_ptr<Torrent> torrent(torrentById(id));
+                        if (!torrentsVariants.isEmpty() && torrent) {
+                            torrent->updatePeers(torrentsVariants.first().toMap());
+                            checkIfTorrentsUpdated();
+                            startUpdateTimer();
+                        }
+                    });
     }
 
     void Rpc::setStatus(Status status)
@@ -563,24 +570,24 @@ namespace tremotesf
     {
         postRequest(QByteArrayLiteral("{\"method\": \"session-get\"}"),
                     [=](const QVariantMap& parseResult) {
-            mServerSettings->update(getReplyArguments(parseResult));
-            if (!mRpcVersionChecked) {
-                mRpcVersionChecked = true;
-                if (mServerSettings->minimumRpcVersion() > minimumRpcVersion) {
-                    setError(ServerIsTooNew);
-                    setStatus(Disconnected);
-                } else if (mServerSettings->rpcVersion() < minimumRpcVersion) {
-                    setError(ServerIsTooOld);
-                    setStatus(Disconnected);
-                } else {
-                    setStatus(Connected);
-                    getTorrents();
-                    getServerStats();
-                }
-            }
-            mServerSettingsUpdated = true;
-            startUpdateTimer();
-        });
+                        mServerSettings->update(getReplyArguments(parseResult));
+                        if (!mRpcVersionChecked) {
+                            mRpcVersionChecked = true;
+                            if (mServerSettings->minimumRpcVersion() > minimumRpcVersion) {
+                                setError(ServerIsTooNew);
+                                setStatus(Disconnected);
+                            } else if (mServerSettings->rpcVersion() < minimumRpcVersion) {
+                                setError(ServerIsTooOld);
+                                setStatus(Disconnected);
+                            } else {
+                                setStatus(Connected);
+                                getTorrents();
+                                getServerStats();
+                            }
+                        }
+                        mServerSettingsUpdated = true;
+                        startUpdateTimer();
+                    });
     }
 
     void Rpc::getTorrents()
@@ -634,60 +641,61 @@ namespace tremotesf
                                       "    \"method\": \"torrent-get\""
                                       "}"),
                     [=](const QVariantMap& parseResult) {
-            const QVariantList torrentsVariants(getReplyArguments(parseResult)
-                                                .value(QStringLiteral("torrents")).toList());
+                        const QVariantList torrentsVariants(getReplyArguments(parseResult)
+                                                                .value(QStringLiteral("torrents"))
+                                                                .toList());
 
-            QList<std::shared_ptr<Torrent>> torrents;
-            for (const QVariant& torrentVariant : torrentsVariants) {
-                const QVariantMap torrentMap(torrentVariant.toMap());
-                const int id = torrentMap.value(QStringLiteral("id")).toInt();
+                        QList<std::shared_ptr<Torrent>> torrents;
+                        for (const QVariant& torrentVariant : torrentsVariants) {
+                            const QVariantMap torrentMap(torrentVariant.toMap());
+                            const int id = torrentMap.value(QStringLiteral("id")).toInt();
 
-                std::shared_ptr<Torrent> torrent(torrentById(id));
-                if (torrent) {
-                    const bool wasFinished = (torrent->percentDone() == 1);
-                    torrent->update(torrentMap);
-                    const bool finished = (torrent->percentDone() == 1);
+                            std::shared_ptr<Torrent> torrent(torrentById(id));
+                            if (torrent) {
+                                const bool wasFinished = (torrent->percentDone() == 1);
+                                torrent->update(torrentMap);
+                                const bool finished = (torrent->percentDone() == 1);
 
-                    if (finished && !wasFinished) {
-                        emit torrentFinished(torrent->name());
-                    }
+                                if (finished && !wasFinished) {
+                                    emit torrentFinished(torrent->name());
+                                }
 
-                    if (torrent->isFilesEnabled()) {
-                        getTorrentFiles(id);
-                    }
-                    if (torrent->isPeersEnabled()) {
-                        getTorrentPeers(id);
-                    }
-                } else {
-                    torrent = std::make_shared<Torrent>(id, torrentMap, this);
+                                if (torrent->isFilesEnabled()) {
+                                    getTorrentFiles(id);
+                                }
+                                if (torrent->isPeersEnabled()) {
+                                    getTorrentPeers(id);
+                                }
+                            } else {
+                                torrent = std::make_shared<Torrent>(id, torrentMap, this);
 #ifdef TREMOTESF_SAILFISHOS
-                    // prevent automatic destroying on QML side
-                    QQmlEngine::setObjectOwnership(torrent.get(), QQmlEngine::CppOwnership);
+                                // prevent automatic destroying on QML side
+                                QQmlEngine::setObjectOwnership(torrent.get(), QQmlEngine::CppOwnership);
 #endif
 
-                    if (!mFirstUpdate) {
-                        emit torrentAdded(torrent->name());
-                    }
-                }
-                torrents.append(torrent);
-            }
-            mTorrents = torrents;
+                                if (!mFirstUpdate) {
+                                    emit torrentAdded(torrent->name());
+                                }
+                            }
+                            torrents.append(torrent);
+                        }
+                        mTorrents = torrents;
 
-            mFirstUpdate = false;
+                        mFirstUpdate = false;
 
-            checkIfTorrentsUpdated();
-            startUpdateTimer();
-        });
+                        checkIfTorrentsUpdated();
+                        startUpdateTimer();
+                    });
     }
 
     void Rpc::getServerStats()
     {
         postRequest(QByteArrayLiteral("{\"method\": \"session-stats\"}"),
                     [=](const QVariantMap& parseResult) {
-            mServerStats->update(getReplyArguments(parseResult));
-            mServerStatsUpdated = true;
-            startUpdateTimer();
-        });
+                        mServerStats->update(getReplyArguments(parseResult));
+                        mServerStatsUpdated = true;
+                        startUpdateTimer();
+                    });
     }
 
     void Rpc::checkIfTorrentsUpdated()
@@ -741,7 +749,7 @@ namespace tremotesf
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
             if (mStatus != Disconnected) {
                 if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
-                        reply->hasRawHeader(sessionIdHeader)) {
+                    reply->hasRawHeader(sessionIdHeader)) {
                     mSessionId = reply->rawHeader(sessionIdHeader);
                     postRequest(data, callOnSuccess);
                 } else if (reply->error() == QNetworkReply::NoError) {
@@ -750,16 +758,16 @@ namespace tremotesf
                         QObject::connect(parser,
                                          &JsonParser::done,
                                          [=](const QVariantMap& parseResult, bool success) {
-                            if (mStatus != Disconnected) {
-                                if (success) {
-                                    callOnSuccess(parseResult);
-                                } else {
-                                    setError(ParseError);
-                                    setStatus(Disconnected);
-                                }
-                            }
-                            parser->deleteLater();
-                        });
+                                             if (mStatus != Disconnected) {
+                                                 if (success) {
+                                                     callOnSuccess(parseResult);
+                                                 } else {
+                                                     setError(ParseError);
+                                                     setStatus(Disconnected);
+                                                 }
+                                             }
+                                             parser->deleteLater();
+                                         });
                     }
                 } else {
                     if (reply->error() == QNetworkReply::OperationCanceledError) {

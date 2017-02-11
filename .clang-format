@@ -1,0 +1,33 @@
+---
+BasedOnStyle: Chromium
+
+IndentWidth: 4
+NamespaceIndentation: All
+AccessModifierOffset: -4
+IndentCaseLabels: false
+
+KeepEmptyLinesAtTheStartOfBlocks: true
+
+ColumnLimit: 0
+AlignTrailingComments: false
+SpacesBeforeTrailingComments: 1
+BinPackArguments: false
+
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+
+AlwaysBreakBeforeMultilineStrings: false
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterObjCDeclaration: false
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false

@@ -40,15 +40,17 @@ namespace tremotesf
         explicit TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TorrentPropertiesDialog();
         QSize sizeHint() const override;
+
     private:
         void setupDetailsTab();
         void setupPeersTab();
         void setupLimitsTab();
+
     private:
         void setTorrent(Torrent* torrent);
 
         Torrent* mTorrent;
-        Rpc *const mRpc;
+        Rpc* const mRpc;
 
         KMessageWidget* mMessageWidget;
         QTabWidget* mTabWidget;

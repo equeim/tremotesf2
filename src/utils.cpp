@@ -59,7 +59,8 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFilesModelEntryEnums::Priority)
 
 namespace tremotesf
 {
-    namespace {
+    namespace
+    {
         enum ByteUnit
         {
             Byte,
@@ -226,16 +227,16 @@ namespace tremotesf
                                            versionMinor,
                                            "Settings",
                                            [](QQmlEngine*, QJSEngine*) -> QObject* {
-            return Settings::instance();
-        });
+                                               return Settings::instance();
+                                           });
 
         qmlRegisterSingletonType<Accounts>(url,
                                            versionMajor,
                                            versionMinor,
                                            "Accounts",
                                            [](QQmlEngine*, QJSEngine*) -> QObject* {
-            return Accounts::instance();
-        });
+                                               return Accounts::instance();
+                                           });
 
         qmlRegisterType<Rpc>(url, versionMajor, versionMinor, "Rpc");
         qmlRegisterUncreatableType<ServerSettings>(url, versionMajor, versionMinor, "ServerSettings", QString());
@@ -272,8 +273,8 @@ namespace tremotesf
                                         versionMinor,
                                         "Utils",
                                         [](QQmlEngine*, QJSEngine*) -> QObject* {
-            return new tremotesf::Utils();
-        });
+                                            return new tremotesf::Utils();
+                                        });
 #endif // TREMOTESF_SAILFISHOS
     }
 

@@ -32,10 +32,12 @@ namespace tremotesf
     {
     public:
         explicit MainWindowStatusBar(const Rpc* rpc, QWidget* parent = nullptr);
+
     private:
         void updateLayout();
         void updateAccountLabel();
         void updateStatusLabels();
+
     private:
         const Rpc* mRpc;
 

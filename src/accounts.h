@@ -77,6 +77,7 @@ namespace tremotesf
         Q_INVOKABLE void removeAccount(const QString& name);
 
         void saveAccounts(const QList<Account>& accounts, const QString& current);
+
     private:
         explicit Accounts(QObject* parent = nullptr);
         Account getAccount(const QString& name);

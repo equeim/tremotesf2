@@ -120,9 +120,8 @@ namespace tremotesf
     {
         qDebug() << "Sending arguments";
         const ArgumentsParseResult result(parseArguments(arguments));
-        sendMessage(QJsonDocument::fromVariant(QVariantMap {
-                                                   {QStringLiteral("files"), result.files},
-                                                   {QStringLiteral("urls"), result.urls}
-                                               }).toJson());
+        sendMessage(QJsonDocument::fromVariant(QVariantMap{{QStringLiteral("files"), result.files},
+                                                           {QStringLiteral("urls"), result.urls}})
+                        .toJson());
     }
 }

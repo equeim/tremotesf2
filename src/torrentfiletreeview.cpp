@@ -9,9 +9,9 @@
 #include "enums.h"
 #include "torrentfilemodel.h"
 
-TorrentFileTreeDelegate::TorrentFileTreeDelegate(QObject *parent) : QStyledItemDelegate(parent)
+TorrentFileTreeDelegate::TorrentFileTreeDelegate(QObject *parent)
+    : QStyledItemDelegate(parent)
 {
-
 }
 
 void TorrentFileTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -30,7 +30,8 @@ void TorrentFileTreeDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     }
 }
 
-TorrentFileTreeView::TorrentFileTreeView(TorrentFileModel *model, QWidget *parent) : QTreeView(parent)
+TorrentFileTreeView::TorrentFileTreeView(TorrentFileModel *model, QWidget *parent)
+    : QTreeView(parent)
 {
     m_model = model;
 

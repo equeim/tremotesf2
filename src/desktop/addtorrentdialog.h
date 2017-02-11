@@ -46,6 +46,7 @@ namespace tremotesf
 
         QSize sizeHint() const override;
         void accept() override;
+
     private:
         void setupUi();
         void canAcceptUpdate();

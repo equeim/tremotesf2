@@ -27,7 +27,6 @@ namespace tremotesf
           mParentDirectory(parentDirectory),
           mName(name)
     {
-
     }
 
     int TorrentFilesModelEntry::row() const
@@ -63,7 +62,6 @@ namespace tremotesf
     TorrentFilesModelDirectory::TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name)
         : TorrentFilesModelEntry(row, parentDirectory, name)
     {
-
     }
 
     TorrentFilesModelDirectory::~TorrentFilesModelDirectory()
@@ -197,7 +195,6 @@ namespace tremotesf
           mPriority(TorrentFilesModelEntryEnums::NormalPriority),
           mId(id)
     {
-
     }
 
     bool TorrentFilesModelFile::isDirectory() const

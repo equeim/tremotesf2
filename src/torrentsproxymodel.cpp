@@ -28,7 +28,6 @@ namespace tremotesf
         : BaseProxyModel(sourceModel, sortRole, parent),
           mStatusFilter(All)
     {
-
     }
 
     QString TorrentsProxyModel::searchString() const
@@ -105,7 +104,8 @@ namespace tremotesf
         const Torrent* torrent = static_cast<TorrentsModel*>(sourceModel())->torrentAtRow(sourceRow);
 
         if (!mSearchString.isEmpty() &&
-                !torrent->name().contains(mSearchString, Qt::CaseInsensitive)) {
+            !torrent->name().contains(mSearchString, Qt::CaseInsensitive)) {
+
             accepts = false;
         }
 

@@ -187,6 +187,7 @@ namespace tremotesf
 
         void update(const QVariantMap& serverSettings);
         void save() const;
+
     private:
         Rpc* mRpc;
 

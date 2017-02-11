@@ -162,8 +162,9 @@ namespace tremotesf
 
     void AccountEditDialog::canAcceptUpdate()
     {
-        mDialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(mNameLineEdit->hasAcceptableInput() &&
-                                                                   mAddressLineEdit->hasAcceptableInput());
+        mDialogButtonBox->button(QDialogButtonBox::Ok)
+            ->setEnabled(mNameLineEdit->hasAcceptableInput() &&
+                         mAddressLineEdit->hasAcceptableInput());
     }
 
     void AccountEditDialog::setAccount()

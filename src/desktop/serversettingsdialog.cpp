@@ -50,7 +50,7 @@
 
 namespace tremotesf
 {
-    ServerSettingsDialog::ServerSettingsDialog(const Rpc *rpc, QWidget* parent)
+    ServerSettingsDialog::ServerSettingsDialog(const Rpc* rpc, QWidget* parent)
         : QDialog(parent),
           mRpc(rpc)
     {

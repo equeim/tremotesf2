@@ -358,22 +358,22 @@ namespace tremotesf
         QMenu* queueMenu = mTorrentMenu->addMenu(qApp->translate("tremotesf", "&Queue"));
 
         QAction* moveTorrentToTopAction = queueMenu->addAction(QIcon::fromTheme(QStringLiteral("go-top")), qApp->translate("tremotesf", "Move To &Top"));
-        QObject::connect(moveTorrentToTopAction, &QAction ::triggered, this, [=]() {
+        QObject::connect(moveTorrentToTopAction, &QAction::triggered, this, [=]() {
             mRpc->moveTorrentsToTop(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
         QAction* moveTorrentUpAction = queueMenu->addAction(QIcon::fromTheme(QStringLiteral("go-up")), qApp->translate("tremotesf", "Move &Up"));
-        QObject::connect(moveTorrentUpAction, &QAction ::triggered, this, [=]() {
+        QObject::connect(moveTorrentUpAction, &QAction::triggered, this, [=]() {
             mRpc->moveTorrentsUp(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
         QAction* moveTorrentDownAction = queueMenu->addAction(QIcon::fromTheme(QStringLiteral("go-down")), qApp->translate("tremotesf", "Move &Down"));
-        QObject::connect(moveTorrentDownAction, &QAction ::triggered, this, [=]() {
+        QObject::connect(moveTorrentDownAction, &QAction::triggered, this, [=]() {
             mRpc->moveTorrentsDown(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
         QAction* moveTorrentToBottomAction = queueMenu->addAction(QIcon::fromTheme(QStringLiteral("go-bottom")), qApp->translate("tremotesf", "Move To &Bottom"));
-        QObject::connect(moveTorrentToBottomAction, &QAction ::triggered, this, [=]() {
+        QObject::connect(moveTorrentToBottomAction, &QAction::triggered, this, [=]() {
             mRpc->moveTorrentsToBottom(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
@@ -444,11 +444,11 @@ namespace tremotesf
                 showAddTorrentFileDialogs(fileDialog->selectedFiles());
             });
 
-    #ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
             fileDialog->open();
-    #else
+#else
             fileDialog->show();
-    #endif
+#endif
         };
 
         if (isHidden()) {
@@ -740,8 +740,8 @@ namespace tremotesf
 
         QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=]() {
             mTrayIcon->setToolTip(QStringLiteral("\u25be %1\n\u25b4 %2")
-                                  .arg(Utils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()))
-                                  .arg(Utils::formatByteSpeed(mRpc->serverStats()->uploadSpeed())));
+                                      .arg(Utils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()))
+                                      .arg(Utils::formatByteSpeed(mRpc->serverStats()->uploadSpeed())));
         });
 
         if (Settings::instance()->showTrayIcon()) {

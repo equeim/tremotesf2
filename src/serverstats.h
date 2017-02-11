@@ -38,6 +38,7 @@ namespace tremotesf
         long long uploadSpeed() const;
 
         void update(const QVariantMap& serverStats);
+
     private:
         long long mDownloadSpeed;
         long long mUploadSpeed;

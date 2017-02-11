@@ -50,8 +50,10 @@ namespace tremotesf
         QSize sizeHint() const override;
         void showIfNeeded();
         void showNotification(const QString& summary, const QString& body);
+
     protected:
         void closeEvent(QCloseEvent* event) override;
+
     private:
         void setupActions();
         void updateRpcActions();
@@ -71,6 +73,7 @@ namespace tremotesf
         void showWindow();
 
         void runAfterDelay(const std::function<void()>& function);
+
     private:
         IpcServer* mIpcServer;
 

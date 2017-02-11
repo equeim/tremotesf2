@@ -275,6 +275,5 @@ namespace tremotesf
           mSettings(new QSettings(this))
 #endif
     {
-
     }
 }

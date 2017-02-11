@@ -31,7 +31,6 @@ namespace tremotesf
           mProgressBarColumn(progressBarColumn),
           mProgressBarRole(progressBarRole)
     {
-
     }
 
     void CommonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const

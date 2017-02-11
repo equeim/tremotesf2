@@ -39,12 +39,10 @@ namespace tremotesf
           mParentDirectory(QStringLiteral("/home")),
           mShowFiles(true)
     {
-
     }
 
     void DirectoryContentModel::classBegin()
     {
-
     }
 
     void DirectoryContentModel::componentComplete()
@@ -144,9 +142,7 @@ namespace tremotesf
             filters |= QDir::Files;
         }
 
-        const QFileInfoList files(QDir(mDirectory).entryInfoList(mNameFilters,
-                                                                 filters,
-                                                                 QDir::DirsFirst));
+        const QFileInfoList files(QDir(mDirectory).entryInfoList(mNameFilters, filters, QDir::DirsFirst));
 
         beginInsertRows(QModelIndex(), 0, files.size() - 1);
 

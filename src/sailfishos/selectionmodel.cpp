@@ -26,7 +26,6 @@ namespace tremotesf
     SelectionModel::SelectionModel()
         : mModel(nullptr)
     {
-
     }
 
     QAbstractItemModel* SelectionModel::model() const

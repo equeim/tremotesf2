@@ -22,6 +22,7 @@ class TorrentFileTreeView : public QTreeView
     Q_OBJECT
 public:
     TorrentFileTreeView(TorrentFileModel *model, QWidget *parent = 0);
+
 private:
     TorrentFileModel *m_model;
     QSortFilterProxyModel *m_proxyModel;

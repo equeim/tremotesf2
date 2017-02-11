@@ -138,13 +138,12 @@ namespace tremotesf
         void onAuthenticationRequired(QNetworkReply*, QAuthenticator* authenticator);
 
         void postRequest(const QByteArray& data,
-                                   const std::function<void(const QVariantMap&)>& callOnSuccess = nullptr);
+                         const std::function<void(const QVariantMap&)>& callOnSuccess = nullptr);
 
         void postRequest(const QByteArray& data,
-                                   const std::function<void()>& callOnSuccess);
+                         const std::function<void()>& callOnSuccess);
 
         std::shared_ptr<Torrent> torrentById(int id) const;
-
 
         QNetworkAccessManager* mNetwork;
         bool mAuthenticationRequested;

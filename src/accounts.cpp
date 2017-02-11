@@ -67,7 +67,8 @@ namespace tremotesf
                     accountsSettings.setValue(apiPathKey, settings.value(apiPathKey));
                     accountsSettings.setValue(httpsKey, settings.value(httpsKey));
                     if (settings.value(localCertificateKey).toBool()) {
-                        const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("%1.pem").arg(group)));
+                        const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation,
+                                                                                  QStringLiteral("%1.pem").arg(group)));
                         if (!localCertificatePath.isEmpty()) {
                             QFile file(localCertificatePath);
                             if (file.open(QFile::ReadOnly)) {
@@ -180,7 +181,7 @@ namespace tremotesf
         }
     }
 
-    void Accounts::removeAccount(const QString &name)
+    void Accounts::removeAccount(const QString& name)
     {
         mSettings->remove(name);
         const QStringList accounts(mSettings->childGroups());
@@ -192,7 +193,7 @@ namespace tremotesf
         }
     }
 
-    void Accounts::saveAccounts(const QList<Account>& accounts, const QString &current)
+    void Accounts::saveAccounts(const QList<Account>& accounts, const QString& current)
     {
         const bool hadAccounts = hasAccounts();
         mSettings->clear();
@@ -219,7 +220,6 @@ namespace tremotesf
 
     Accounts::Accounts(QObject* parent)
         : QObject(parent),
-
 
 #ifdef Q_OS_WIN
           mSettings(new QSettings(QSettings::IniFormat,
@@ -253,19 +253,18 @@ namespace tremotesf
     Account Accounts::getAccount(const QString& name)
     {
         mSettings->beginGroup(name);
-        const Account account {
+        const Account account{
             mSettings->group(),
-                    mSettings->value(addressKey).toString(),
-                    mSettings->value(portKey).toInt(),
-                    mSettings->value(apiPathKey).toString(),
-                    mSettings->value(httpsKey).toBool(),
-                    mSettings->value(localCertificateKey).toByteArray(),
-                    mSettings->value(authenticationKey).toBool(),
-                    mSettings->value(usernameKey).toString(),
-                    mSettings->value(passwordKey).toString(),
-                    mSettings->value(updateIntervalKey).toInt(),
-                    mSettings->value(timeoutKey).toInt()
-        };
+            mSettings->value(addressKey).toString(),
+            mSettings->value(portKey).toInt(),
+            mSettings->value(apiPathKey).toString(),
+            mSettings->value(httpsKey).toBool(),
+            mSettings->value(localCertificateKey).toByteArray(),
+            mSettings->value(authenticationKey).toBool(),
+            mSettings->value(usernameKey).toString(),
+            mSettings->value(passwordKey).toString(),
+            mSettings->value(updateIntervalKey).toInt(),
+            mSettings->value(timeoutKey).toInt()};
         mSettings->endGroup();
         return account;
     }

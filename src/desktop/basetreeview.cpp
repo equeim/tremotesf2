@@ -24,7 +24,7 @@
 
 namespace tremotesf
 {
-    BaseTreeView::BaseTreeView( QWidget* parent)
+    BaseTreeView::BaseTreeView(QWidget* parent)
         : QTreeView(parent)
     {
         setAllColumnsShowFocus(true);

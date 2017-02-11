@@ -55,6 +55,7 @@ namespace tremotesf
 
         Q_INVOKABLE void selectAll(const QModelIndex& parent = QModelIndex());
         Q_INVOKABLE void clear();
+
     private:
         QAbstractItemModel* mModel;
         QItemSelectionModel* mSelectionModel;

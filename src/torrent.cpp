@@ -371,7 +371,7 @@ namespace tremotesf
         return mFileStats;
     }
 
-    void Torrent::setFilesWanted(const QVariantList &files, bool wanted)
+    void Torrent::setFilesWanted(const QVariantList& files, bool wanted)
     {
         mRpc->setTorrentProperty(mId,
                                  wanted ? QStringLiteral("files-wanted")
@@ -405,12 +405,12 @@ namespace tremotesf
 
     void Torrent::addTracker(const QString& announce)
     {
-        mRpc->setTorrentProperty(mId, QStringLiteral("trackerAdd"), QVariantList {announce});
+        mRpc->setTorrentProperty(mId, QStringLiteral("trackerAdd"), QVariantList{announce});
     }
 
     void Torrent::setTracker(int trackerId, const QString& announce)
     {
-        mRpc->setTorrentProperty(mId, QStringLiteral("trackerReplace"), QVariantList {trackerId, announce});
+        mRpc->setTorrentProperty(mId, QStringLiteral("trackerReplace"), QVariantList{trackerId, announce});
     }
 
     void Torrent::removeTrackers(const QVariantList& ids)
@@ -577,7 +577,7 @@ namespace tremotesf
         emit updated();
     }
 
-    void Torrent::updateFiles(const QVariantMap &torrentMap)
+    void Torrent::updateFiles(const QVariantMap& torrentMap)
     {
         mFiles = torrentMap.value(QStringLiteral("files")).toList();
         mFileStats = torrentMap.value(QStringLiteral("fileStats")).toList();

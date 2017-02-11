@@ -36,6 +36,7 @@ namespace tremotesf
 
         QLineEdit* lineEdit() const;
         QPushButton* selectionButton() const;
+
     private:
         QLineEdit* mLineEdit;
         QPushButton* mSelectionButton;

@@ -48,6 +48,7 @@ namespace tremotesf
         int pausedTorrents() const;
         int checkingTorrents() const;
         int erroredTorrents() const;
+
     private:
         Rpc* mRpc;
         int mActiveTorrents;

@@ -53,6 +53,7 @@ namespace tremotesf
         QString errorString() const;
         const QByteArray& fileData() const;
         const QVariantMap& parseResult() const;
+
     private:
         QThread* mWorkerThread;
 

@@ -209,6 +209,7 @@ namespace tremotesf
         void update(const QVariantMap& torrentMap);
         void updateFiles(const QVariantMap& torrentMap);
         void updatePeers(const QVariantMap& torrentMap);
+
     private:
         int mId;
         QString mHashString;

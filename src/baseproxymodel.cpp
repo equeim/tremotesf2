@@ -20,7 +20,7 @@
 
 namespace tremotesf
 {
-    BaseProxyModel::BaseProxyModel(QAbstractItemModel* sourceModel, int sortRole, QObject *parent)
+    BaseProxyModel::BaseProxyModel(QAbstractItemModel* sourceModel, int sortRole, QObject* parent)
         : QSortFilterProxyModel(parent)
     {
         setSourceModel(sourceModel);

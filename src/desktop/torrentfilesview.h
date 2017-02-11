@@ -35,9 +35,11 @@ namespace tremotesf
         explicit TorrentFilesView(LocalTorrentFilesModel* model, QWidget* parent = nullptr);
         explicit TorrentFilesView(TorrentFilesModel* model, QWidget* parent = nullptr);
         ~TorrentFilesView();
+
     private:
         void init();
         void showContextMenu(const QPoint& pos);
+
     private:
         bool mLocalFile;
         BaseTorrentFilesModel* mModel;

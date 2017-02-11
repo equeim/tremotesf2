@@ -79,7 +79,6 @@ namespace tremotesf
                 : mRootDirectory(rootDirectory),
                   mFiles(files)
             {
-
             }
 
             void createTree(const QVariantList& files, const QVariantList& fileStats)
@@ -125,7 +124,7 @@ namespace tremotesf
             }
 
         private:
-            TorrentFilesModelDirectory *const mRootDirectory;
+            TorrentFilesModelDirectory* const mRootDirectory;
             QList<TorrentFilesModelFile*>& mFiles;
         signals:
             void done();
@@ -332,7 +331,7 @@ namespace tremotesf
         mTorrent->setFilesPriority(idsFromIndexes(indexes), priority);
     }
 
-    void TorrentFilesModel::update(const QVariantList &files, const QVariantList &fileStats)
+    void TorrentFilesModel::update(const QVariantList& files, const QVariantList& fileStats)
     {
         mResetAfterCreate = false;
         mUpdateAfterCreate = false;
@@ -354,7 +353,7 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesModel::createTree(const QVariantList &files, const QVariantList &fileStats)
+    void TorrentFilesModel::createTree(const QVariantList& files, const QVariantList& fileStats)
     {
         mCreatingTree = true;
         setLoading(true);

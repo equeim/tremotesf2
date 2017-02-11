@@ -24,7 +24,6 @@ namespace tremotesf
         : QAbstractItemModel(parent),
           mRootDirectory(new TorrentFilesModelDirectory())
     {
-
     }
 
     QModelIndex BaseTorrentFilesModel::index(int row, int column, const QModelIndex& parent) const

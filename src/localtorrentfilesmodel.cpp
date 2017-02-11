@@ -42,7 +42,9 @@ namespace tremotesf
             explicit TreeCreationWorker(TorrentFilesModelDirectory* rootDirectory,
                                         QList<TorrentFilesModelFile*>& files)
                 : mRootDirectory(rootDirectory),
-                  mFiles(files) { }
+                  mFiles(files)
+            {
+            }
 
             void createTree(const QVariantMap& parseResult)
             {
@@ -104,7 +106,7 @@ namespace tremotesf
             }
 
         private:
-            TorrentFilesModelDirectory *const mRootDirectory;
+            TorrentFilesModelDirectory* const mRootDirectory;
             QList<TorrentFilesModelFile*>& mFiles;
         signals:
             void done();
@@ -231,7 +233,7 @@ namespace tremotesf
     }
 #endif
 
-    void LocalTorrentFilesModel::load(TorrentFileParser *parser)
+    void LocalTorrentFilesModel::load(TorrentFileParser* parser)
     {
         load(parser->parseResult());
     }
@@ -331,7 +333,7 @@ namespace tremotesf
                 {IsDirectoryRole, QByteArrayLiteral("isDirectory")},
                 {SizeRole, QByteArrayLiteral("size")},
                 {WantedStateRole, QByteArrayLiteral("wantedState")},
-            {PriorityRole, QByteArrayLiteral("priority")}};
+                {PriorityRole, QByteArrayLiteral("priority")}};
     }
 #endif
 
