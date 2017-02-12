@@ -442,7 +442,7 @@ namespace tremotesf
         }
     }
 
-    void Rpc::getTorrentFiles(int id)
+    void Rpc::getTorrentFiles(int id, bool scheduled)
     {
         postRequest(QStringLiteral("{"
                                    "    \"arguments\": {"
@@ -463,13 +463,15 @@ namespace tremotesf
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
                             torrent->updateFiles(torrentsVariants.first().toMap());
-                            checkIfTorrentsUpdated();
-                            startUpdateTimer();
+                            if (scheduled) {
+                                checkIfTorrentsUpdated();
+                                startUpdateTimer();
+                            }
                         }
                     });
     }
 
-    void Rpc::getTorrentPeers(int id)
+    void Rpc::getTorrentPeers(int id, bool scheduled)
     {
         postRequest(QStringLiteral("{"
                                    "    \"arguments\": {"
@@ -487,8 +489,10 @@ namespace tremotesf
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
                             torrent->updatePeers(torrentsVariants.first().toMap());
-                            checkIfTorrentsUpdated();
-                            startUpdateTimer();
+                            if (scheduled) {
+                                checkIfTorrentsUpdated();
+                                startUpdateTimer();
+                            }
                         }
                     });
     }
@@ -662,10 +666,10 @@ namespace tremotesf
                                 }
 
                                 if (torrent->isFilesEnabled()) {
-                                    getTorrentFiles(id);
+                                    getTorrentFiles(id, true);
                                 }
                                 if (torrent->isPeersEnabled()) {
-                                    getTorrentPeers(id);
+                                    getTorrentPeers(id, true);
                                 }
                             } else {
                                 torrent = std::make_shared<Torrent>(id, torrentMap, this);

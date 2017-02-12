@@ -118,8 +118,8 @@ namespace tremotesf
         void setSessionProperty(const QString& property, const QVariant& value);
         void setSessionProperties(const QVariantMap& properties);
         void setTorrentProperty(int id, const QString& property, const QVariant& value);
-        void getTorrentFiles(int id);
-        void getTorrentPeers(int id);
+        void getTorrentFiles(int id, bool scheduled);
+        void getTorrentPeers(int id, bool scheduled);
 
     private:
         void setStatus(Status status);

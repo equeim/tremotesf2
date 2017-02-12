@@ -351,7 +351,7 @@ namespace tremotesf
         if (enabled != mFilesEnabled) {
             mFilesEnabled = enabled;
             if (mFilesEnabled) {
-                mRpc->getTorrentFiles(mId);
+                mRpc->getTorrentFiles(mId, false);
             }
         }
     }
@@ -428,7 +428,7 @@ namespace tremotesf
         if (enabled != mPeersEnabled) {
             mPeersEnabled = enabled;
             if (mPeersEnabled) {
-                mRpc->getTorrentPeers(mId);
+                mRpc->getTorrentPeers(mId, false);
             }
         }
     }
