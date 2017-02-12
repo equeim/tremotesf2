@@ -7,6 +7,7 @@
 
 ### Changed
 - Performance improvements for torrents with large number of files
+- Accounts are renamed to Servers (config file name also changed)
 
 ### Removed
 - Ability to select another file in Add Torrent File dialog (it was causing unnecessary code complication)
