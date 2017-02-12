@@ -44,6 +44,11 @@ namespace tremotesf
         return mName;
     }
 
+    void TorrentFilesModelEntry::setName(const QString& name)
+    {
+        mName = name;
+    }
+
     QString TorrentFilesModelEntry::priorityString() const
     {
         switch (priority()) {

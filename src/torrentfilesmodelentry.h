@@ -58,7 +58,10 @@ namespace tremotesf
 
         int row() const;
         TorrentFilesModelDirectory* parentDirectory() const;
+
         QString name() const;
+        void setName(const QString& name);
+
         virtual bool isDirectory() const = 0;
 
         virtual long long size() const = 0;
@@ -135,9 +138,6 @@ namespace tremotesf
         void setCompletedSize(long long completedSize);
 
     private:
-        int mRow;
-        TorrentFilesModelDirectory* mParentDirectory;
-        QString mName;
         long long mSize;
         long long mCompletedSize;
         TorrentFilesModelEntryEnums::WantedState mWantedState;

@@ -27,10 +27,13 @@
 #include <QMenu>
 
 #include "../localtorrentfilesmodel.h"
+#include "../rpc.h"
+#include "../serversettings.h"
 #include "../settings.h"
 #include "../torrentfilesmodel.h"
 #include "../torrentfilesproxymodel.h"
 #include "commondelegate.h"
+#include "textinputdialog.h"
 
 namespace tremotesf
 {
@@ -38,7 +41,8 @@ namespace tremotesf
         : BaseTreeView(parent),
           mLocalFile(true),
           mModel(model),
-          mProxyModel(new TorrentFilesProxyModel(mModel, LocalTorrentFilesModel::SortRole, this))
+          mProxyModel(new TorrentFilesProxyModel(mModel, LocalTorrentFilesModel::SortRole, this)),
+          mServerSettings(nullptr)
     {
         init();
         expand(mProxyModel->index(0, 0));
@@ -47,11 +51,14 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesView::TorrentFilesView(TorrentFilesModel* model, QWidget* parent)
+    TorrentFilesView::TorrentFilesView(TorrentFilesModel* model,
+                                       ServerSettings* serverSettings,
+                                       QWidget* parent)
         : BaseTreeView(parent),
           mLocalFile(false),
           mModel(model),
-          mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, this))
+          mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, this)),
+          mServerSettings(serverSettings)
     {
         init();
         setItemDelegate(new CommonDelegate(TorrentFilesModel::ProgressBarColumn, TorrentFilesModel::SortRole, this));
@@ -164,6 +171,24 @@ namespace tremotesf
             case TorrentFilesModelEntryEnums::MixedPriority:
                 mixedPriorityAction->setVisible(true);
             }
+        }
+
+        if (mServerSettings && mServerSettings->canRenameFiles()) {
+            contextMenu.addSeparator();
+            QAction* renameAction = contextMenu.addAction(qApp->translate("tremotesf", "Rename"));
+            renameAction->setEnabled(sourceIndexes.size() == 1);
+            QObject::connect(renameAction, &QAction::triggered, this, [=]() {
+                const QModelIndex& index = sourceIndexes.first();
+                auto entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
+                auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Rename"),
+                                                  qApp->translate("tremotesf", "File name:"),
+                                                  entry->name(),
+                                                  this);
+                QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
+                    static_cast<const TorrentFilesModel*>(mModel)->renameFile(index, dialog->text());
+                });
+                dialog->show();
+            });
         }
 
         contextMenu.exec(QCursor::pos());

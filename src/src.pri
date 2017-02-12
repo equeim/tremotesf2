@@ -90,6 +90,7 @@ sailfishos {
                $$PWD/desktop/mainwindowstatusbar.h \
                $$PWD/desktop/serversettingsdialog.h \
                $$PWD/desktop/settingsdialog.h \
+               $$PWD/desktop/textinputdialog.h \
                $$PWD/desktop/torrentfilesview.h \
                $$PWD/desktop/torrentpropertiesdialog.h \
                $$PWD/desktop/torrentsview.h \
@@ -107,6 +108,7 @@ sailfishos {
                $$PWD/desktop/mainwindowstatusbar.cpp \
                $$PWD/desktop/serversettingsdialog.cpp \
                $$PWD/desktop/settingsdialog.cpp \
+               $$PWD/desktop/textinputdialog.cpp \
                $$PWD/desktop/torrentfilesview.cpp \
                $$PWD/desktop/torrentpropertiesdialog.cpp \
                $$PWD/desktop/torrentsview.cpp \

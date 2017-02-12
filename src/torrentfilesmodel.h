@@ -64,7 +64,7 @@ namespace tremotesf
         explicit TorrentFilesModel(Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~TorrentFilesModel();
 
-        int columnCount(const QModelIndex&) const override;
+        int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
 #ifndef TREMOTESF_SAILFISHOS
         Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -82,6 +82,9 @@ namespace tremotesf
         Q_INVOKABLE void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
         Q_INVOKABLE void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntryEnums::Priority priority) override;
         Q_INVOKABLE void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntryEnums::Priority priority) override;
+
+        Q_INVOKABLE void renameFile(const QModelIndex& index, const QString& newName) const;
+        void fileRenamed(const QString& path, const QString& newName);
 #ifdef TREMOTESF_SAILFISHOS
     protected:
         QHash<int, QByteArray> roleNames() const override;

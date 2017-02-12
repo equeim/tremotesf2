@@ -175,6 +175,17 @@ Page {
                             font.bold: true
                             text: qsTranslate("tremotesf", "Mixed")
                         }
+
+                        Separator {
+                            width: parent.width
+                            color: Theme.secondaryColor
+                        }
+
+                        MenuItem {
+                            text: qsTranslate("tremotesf", "Rename")
+                            onClicked: pageStack.push(renameDialogComponent)
+                            Component.onCompleted: visible = rpc.serverSettings.canRenameFiles
+                        }
                     }
                 }
                 showMenuOnPressAndHold: !selectionPanel.openPanel
@@ -198,6 +209,11 @@ Page {
                 Connections {
                     target: selectionModel
                     onSelectionChanged: selected = selectionModel.isSelected(delegateModel.modelIndex(modelData.index))
+                }
+
+                Component {
+                    id: renameDialogComponent
+                    FileRenameDialog { }
                 }
 
                 Image {

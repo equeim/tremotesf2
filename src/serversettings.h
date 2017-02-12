@@ -34,6 +34,8 @@ namespace tremotesf
         Q_ENUMS(AlternativeSpeedLimitsDays)
         Q_ENUMS(EncryptionMode)
 
+        Q_PROPERTY(bool canRenameFiles READ canRenameFiles)
+
         Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory)
         Q_PROPERTY(bool startAddedTorrents READ startAddedTorrents WRITE setStartAddedTorrents)
         Q_PROPERTY(bool trashTorrentFiles READ trashTorrentFiles WRITE setTrashTorrentFiles)
@@ -102,6 +104,8 @@ namespace tremotesf
 
         int rpcVersion() const;
         int minimumRpcVersion() const;
+
+        bool canRenameFiles() const;
 
         const QString& downloadDirectory() const;
         void setDownloadDirectory(const QString& directory, bool saveImmediately = true);

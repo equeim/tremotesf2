@@ -72,7 +72,7 @@ namespace tremotesf
         setupDetailsTab();
 
         mFilesModel = new TorrentFilesModel(mTorrent, this);
-        mTabWidget->addTab(new TorrentFilesView(mFilesModel), qApp->translate("tremotesf", "Files"));
+        mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc->serverSettings()), qApp->translate("tremotesf", "Files"));
 
         mTrackersViewWidget = new TrackersViewWidget(mTorrent, this);
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));

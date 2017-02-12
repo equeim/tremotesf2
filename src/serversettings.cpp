@@ -102,6 +102,11 @@ namespace tremotesf
         return mMinimumRpcVersion;
     }
 
+    bool ServerSettings::canRenameFiles() const
+    {
+        return (mRpcVersion >= 15);
+    }
+
     const QString& ServerSettings::downloadDirectory() const
     {
         return mDownloadDirectory;

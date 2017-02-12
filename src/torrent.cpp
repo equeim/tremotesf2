@@ -404,6 +404,11 @@ namespace tremotesf
         mRpc->setTorrentProperty(mId, propertyName, files);
     }
 
+    void Torrent::renameFile(const QString& path, const QString& newName)
+    {
+        mRpc->renameTorrentFile(mId, path, newName);
+    }
+
     const QList<std::shared_ptr<Tracker>>& Torrent::trackers() const
     {
         return mTrackers;

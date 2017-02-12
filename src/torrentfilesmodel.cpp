@@ -282,6 +282,7 @@ namespace tremotesf
             mTorrent = torrent;
             if (mTorrent) {
                 QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
+                QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
                 mTorrent->setFilesEnabled(true);
             } else {
                 resetTree();
@@ -329,6 +330,31 @@ namespace tremotesf
         }
         updateDirectoryChildren(mRootDirectory.get());
         mTorrent->setFilesPriority(idsFromIndexes(indexes), priority);
+    }
+
+    void TorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName) const
+    {
+        QStringList parts;
+        const TorrentFilesModelEntry* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
+        while (entry != mRootDirectory.get()) {
+            parts.insert(0, entry->name());
+            entry = entry->parentDirectory();
+        }
+        mTorrent->renameFile(parts.join('/'), newName);
+    }
+
+    void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName)
+    {
+        if (!mLoaded || mCreatingTree) {
+            return;
+        }
+        TorrentFilesModelEntry* entry = mRootDirectory.get();
+        for (const QString& part : path.split('/', QString::SkipEmptyParts)) {
+            entry = static_cast<const TorrentFilesModelDirectory*>(entry)->childrenHash().value(part);
+        }
+        entry->setName(newName);
+        emit dataChanged(createIndex(entry->row(), 0, entry),
+                         createIndex(entry->row(), columnCount() - 1, entry));
     }
 
     void TorrentFilesModel::update(const QVariantList& files, const QVariantList& fileStats)

@@ -497,6 +497,25 @@ namespace tremotesf
                     });
     }
 
+    void Rpc::renameTorrentFile(int torrentId, const QString& filePath, const QString& newName)
+    {
+        if (isConnected()) {
+            postRequest(makeRequestData(QStringLiteral("torrent-rename-path"),
+                                        {{QStringLiteral("ids"), QVariantList{torrentId}},
+                                         {QStringLiteral("path"), filePath},
+                                         {QStringLiteral("name"), newName}}),
+                        [=](const QVariantMap& parseResult) {
+                            const std::shared_ptr<Torrent> torrent(torrentById(torrentId));
+                            if (torrent) {
+                                const QVariantMap arguments(getReplyArguments(parseResult));
+                                emit torrent->fileRenamed(arguments.value(QStringLiteral("path")).toString(),
+                                                          arguments.value(QStringLiteral("name")).toString());
+                                updateData();
+                            }
+                        });
+        }
+    }
+
     void Rpc::setStatus(Status status)
     {
         if (status == mStatus) {

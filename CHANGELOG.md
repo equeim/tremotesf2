@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Torrent properties are now reloaded after reconnection
+- Rename torrent's files
 
 ### Changed
 - Performance improvements for torrents with large number of files

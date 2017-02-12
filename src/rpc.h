@@ -121,6 +121,10 @@ namespace tremotesf
         void getTorrentFiles(int id, bool scheduled);
         void getTorrentPeers(int id, bool scheduled);
 
+        Q_INVOKABLE void renameTorrentFile(int torrentId,
+                                           const QString& filePath,
+                                           const QString& newName);
+
     private:
         void setStatus(Status status);
         void setError(Error error);

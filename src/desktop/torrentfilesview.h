@@ -25,6 +25,7 @@ namespace tremotesf
 {
     class BaseTorrentFilesModel;
     class LocalTorrentFilesModel;
+    class ServerSettings;
     class Torrent;
     class TorrentFilesModel;
     class TorrentFilesProxyModel;
@@ -33,7 +34,9 @@ namespace tremotesf
     {
     public:
         explicit TorrentFilesView(LocalTorrentFilesModel* model, QWidget* parent = nullptr);
-        explicit TorrentFilesView(TorrentFilesModel* model, QWidget* parent = nullptr);
+        explicit TorrentFilesView(TorrentFilesModel* model,
+                                  ServerSettings* serverSettings,
+                                  QWidget* parent = nullptr);
         ~TorrentFilesView();
 
     private:
@@ -44,6 +47,7 @@ namespace tremotesf
         bool mLocalFile;
         BaseTorrentFilesModel* mModel;
         TorrentFilesProxyModel* mProxyModel;
+        ServerSettings* mServerSettings;
     };
 }
 

@@ -195,6 +195,8 @@ namespace tremotesf
         void setFilesWanted(const QVariantList& files, bool wanted);
         void setFilesPriority(const QVariantList& files, TorrentFilesModelEntryEnums::Priority priority);
 
+        void renameFile(const QString& path, const QString& newName);
+
         const QList<std::shared_ptr<Tracker>>& trackers() const;
         Q_INVOKABLE void addTracker(const QString& announce);
         Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
@@ -272,6 +274,7 @@ namespace tremotesf
     signals:
         void updated();
         void filesUpdated(const QVariantList& files, const QVariantList& fileStats);
+        void fileRenamed(const QString& filePath, const QString& newName);
         void peersUpdated(const QVariantList& peers);
         void limitsEdited();
     };

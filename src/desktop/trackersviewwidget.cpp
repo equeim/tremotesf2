@@ -42,6 +42,7 @@
 #include "../trackersmodel.h"
 #include "../utils.h"
 #include "basetreeview.h"
+#include "textinputdialog.h"
 
 namespace tremotesf
 {
@@ -65,60 +66,6 @@ namespace tremotesf
                     event->accept();
                 }
             }
-        };
-
-        class TrackerEditDialog : public QDialog
-        {
-        public:
-            explicit TrackerEditDialog(const QString& text, QWidget* parent = nullptr)
-                : QDialog(parent)
-            {
-                if (text.isEmpty()) {
-                    setWindowTitle(qApp->translate("tremotesf", "Add Tracker"));
-                } else {
-                    setWindowTitle(qApp->translate("tremotesf", "Edit Tracker"));
-                }
-
-                auto layout = new QVBoxLayout(this);
-                layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-
-                auto label = new QLabel(qApp->translate("tremotesf", "Tracker announce URL:"), this);
-                label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-                layout->addWidget(label);
-
-                mLineEdit = new QLineEdit(text, this);
-                layout->addWidget(mLineEdit);
-
-                auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-                QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &TrackerEditDialog::accept);
-                QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &TrackerEditDialog::reject);
-
-                if (text.isEmpty()) {
-                    dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-                }
-                QObject::connect(mLineEdit, &QLineEdit::textChanged, this, [=](const QString& text) {
-                    if (text.isEmpty()) {
-                        dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-                    } else {
-                        dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-                    }
-                });
-
-                layout->addWidget(dialogButtonBox);
-            }
-
-            QSize sizeHint() const override
-            {
-                return layout()->totalMinimumSize().expandedTo(QSize(256, 0));
-            }
-
-            QString text() const
-            {
-                return mLineEdit->text();
-            }
-
-        private:
-            QLineEdit* mLineEdit;
         };
     }
 
@@ -184,8 +131,11 @@ namespace tremotesf
 
     void TrackersViewWidget::addTracker()
     {
-        auto dialog = new TrackerEditDialog(QString(), this);
-        QObject::connect(dialog, &TrackerEditDialog::accepted, this, [=]() {
+        auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Add Tracker"),
+                                          qApp->translate("tremotesf", "Tracker announce URL:"),
+                                          QString(),
+                                          this);
+        QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
             mTorrent->addTracker(dialog->text());
         });
         dialog->show();
@@ -196,8 +146,11 @@ namespace tremotesf
         for (const QModelIndex& index : mTrackersView->selectionModel()->selectedRows()) {
             const Tracker* tracker = mModel->trackerAtIndex(mProxyModel->sourceIndex(index));
             const int id = tracker->id();
-            auto dialog = new TrackerEditDialog(tracker->announce(), this);
-            QObject::connect(dialog, &TrackerEditDialog::accepted, this, [=]() {
+            auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Edit Tracker"),
+                                              qApp->translate("tremotesf", "Tracker announce URL:"),
+                                              tracker->announce(),
+                                              this);
+            QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
                 mTorrent->setTracker(id, dialog->text());
             });
             dialog->show();
