@@ -507,14 +507,15 @@ namespace tremotesf
 
         if (isConnected()) {
             emit connectedChanged();
+            emit torrentsUpdated();
         } else if (wasConnected) {
             mNetwork->clearAccessCache();
             mAuthenticationRequested = false;
             mRpcVersionChecked = false;
             mFirstUpdate = true;
             mTorrents.clear();
-            emit torrentsUpdated();
             emit connectedChanged();
+            emit torrentsUpdated();
         }
     }
 
@@ -571,7 +572,10 @@ namespace tremotesf
         postRequest(QByteArrayLiteral("{\"method\": \"session-get\"}"),
                     [=](const QVariantMap& parseResult) {
                         mServerSettings->update(getReplyArguments(parseResult));
-                        if (!mRpcVersionChecked) {
+                        mServerSettingsUpdated = true;
+                        if (mRpcVersionChecked) {
+                            startUpdateTimer();
+                        } else {
                             mRpcVersionChecked = true;
                             if (mServerSettings->minimumRpcVersion() > minimumRpcVersion) {
                                 setError(ServerIsTooNew);
@@ -580,13 +584,10 @@ namespace tremotesf
                                 setError(ServerIsTooOld);
                                 setStatus(Disconnected);
                             } else {
-                                setStatus(Connected);
                                 getTorrents();
                                 getServerStats();
                             }
                         }
-                        mServerSettingsUpdated = true;
-                        startUpdateTimer();
                     });
     }
 
@@ -706,12 +707,17 @@ namespace tremotesf
             }
         }
         mTorrentsUpdated = true;
-        emit torrentsUpdated();
+        if (isConnected()) {
+            emit torrentsUpdated();
+        }
     }
 
     void Rpc::startUpdateTimer()
     {
         if (mServerSettingsUpdated && mTorrentsUpdated && mServerStatsUpdated) {
+            if (mStatus == Connecting) {
+                setStatus(Connected);
+            }
             mUpdateTimer->start();
         }
     }
