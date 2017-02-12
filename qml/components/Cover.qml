@@ -52,10 +52,10 @@ CoverBackground {
                 maximumLineCount: 2
                 truncationMode: TruncationMode.Elide
                 text: {
-                    if (Accounts.hasAccounts) {
+                    if (Servers.hasServers) {
                         return rpc.statusString
                     }
-                    return qsTranslate("tremotesf", "No accounts")
+                    return qsTranslate("tremotesf", "No servers")
                 }
             }
 
@@ -114,26 +114,26 @@ CoverBackground {
             }
 
             Column {
-                visible: Accounts.hasAccounts
+                visible: Servers.hasServers
                 width: parent.width
 
                 Label {
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
-                    text: Accounts.currentAccountName
+                    text: Servers.currentServerName
                 }
 
                 Label {
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
-                    text: Accounts.currentAccountAddress
+                    text: Servers.currentServerAddress
                 }
             }
         }
     }
 
     CoverActionList {
-        enabled: Accounts.hasAccounts
+        enabled: Servers.hasServers
 
         CoverAction {
             iconSource: rpc.connected ? "image://theme/icon-cover-cancel" : "image://theme/icon-cover-sync"

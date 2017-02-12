@@ -22,36 +22,36 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 Dialog {
-    property var accountsModel
+    property var serversModel
     property var modelData
     property bool overwrite: false
 
     function save() {
-        Accounts.setAccount(modelData ? modelData.name : String(),
-                            nameField.text,
-                            addressField.text,
-                            portField.text,
-                            apiPathField.text,
-                            httpsSwitch.checked,
-                            localCertificateTextArea.text,
-                            authenticationSwitch.checked,
-                            usernameField.text,
-                            passwordField.text,
-                            updateIntervalField.text,
-                            timeoutField.text)
-        if (accountsModel) {
-            accountsModel.setAccount(modelData ? modelData.name : String(),
-                                     nameField.text,
-                                     addressField.text,
-                                     portField.text,
-                                     apiPathField.text,
-                                     httpsSwitch.checked,
-                                     localCertificateTextArea.text,
-                                     authenticationSwitch.checked,
-                                     usernameField.text,
-                                     passwordField.text,
-                                     updateIntervalField.text,
-                                     timeoutField.text)
+        Servers.setServer(modelData ? modelData.name : String(),
+                                      nameField.text,
+                                      addressField.text,
+                                      portField.text,
+                                      apiPathField.text,
+                                      httpsSwitch.checked,
+                                      localCertificateTextArea.text,
+                                      authenticationSwitch.checked,
+                                      usernameField.text,
+                                      passwordField.text,
+                                      updateIntervalField.text,
+                                      timeoutField.text)
+        if (serversModel) {
+            serversModel.setServer(modelData ? modelData.name : String(),
+                                               nameField.text,
+                                               addressField.text,
+                                               portField.text,
+                                               apiPathField.text,
+                                               httpsSwitch.checked,
+                                               localCertificateTextArea.text,
+                                               authenticationSwitch.checked,
+                                               usernameField.text,
+                                               passwordField.text,
+                                               updateIntervalField.text,
+                                               timeoutField.text)
         }
     }
 
@@ -74,7 +74,7 @@ Dialog {
         id: overwriteDialog
 
         Dialog {
-            acceptDestination: accountsPage
+            acceptDestination: serversPage
             acceptDestinationAction: PageStackAction.Pop
             allowedOrientations: defaultAllowedOrientations
 
@@ -85,7 +85,7 @@ Dialog {
 
                 DialogHeader {
                     acceptText: qsTranslate("tremotesf", "Overwrite")
-                    title: qsTranslate("tremotesf", "Account already exists")
+                    title: qsTranslate("tremotesf", "Server already exists")
                 }
             }
         }
@@ -102,7 +102,7 @@ Dialog {
             width: parent.width
 
             DialogHeader {
-                title: modelData ? qsTranslate("tremotesf", "Edit Account") : qsTranslate("tremotesf", "Add Account")
+                title: modelData ? qsTranslate("tremotesf", "Edit Server") : qsTranslate("tremotesf", "Add Server")
             }
 
             TextField {
@@ -121,8 +121,8 @@ Dialog {
                 }
 
                 onTextChanged: {
-                    if (accountsModel) {
-                        if (text !== name && accountsModel.hasAccount(text)) {
+                    if (serversModel) {
+                        if (text !== name && serversModel.hasServer(text)) {
                             overwrite = true
                         } else {
                             overwrite = false

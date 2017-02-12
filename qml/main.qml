@@ -54,12 +54,12 @@ ApplicationWindow {
         }
         rpc.connectedChanged.connect(addTorrent)
 
-        if (Accounts.hasAccounts) {
+        if (Servers.hasServers) {
             if (Settings.connectOnStartup) {
                 rpc.connect()
             }
         } else {
-            var dialog = pageStack.push("components/AccountEditDialog.qml", {}, PageStackAction.Immediate)
+            var dialog = pageStack.push("components/ServerEditDialog.qml", {}, PageStackAction.Immediate)
             dialog.accepted.connect(function() {
                 if (Settings.connectOnStartup) {
                     rpc.connect()

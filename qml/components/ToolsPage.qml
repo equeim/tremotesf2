@@ -47,8 +47,8 @@ Page {
             }
 
             SimpleBackgroundItem {
-                text: qsTranslate("tremotesf", "Accounts")
-                onClicked: pageStack.push("AccountsPage.qml")
+                text: qsTranslate("tremotesf", "Servers")
+                onClicked: pageStack.push("ServersPage.qml")
             }
 
             Separator {

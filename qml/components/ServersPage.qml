@@ -22,7 +22,7 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 Page {
-    id: accountsPage
+    id: serverPage
 
     allowedOrientations: defaultAllowedOrientations
 
@@ -38,15 +38,15 @@ Page {
         clip: true
 
         header: PageHeader {
-            title: qsTranslate("tremotesf", "Accounts")
+            title: qsTranslate("tremotesf", "Servers")
         }
 
         model: BaseProxyModel {
             id: proxyModel
 
-            sortRole: AccountsModel.NameRole
-            sourceModel: AccountsModel {
-                id: accountsModel
+            sortRole: ServersModel.NameRole
+            sourceModel: ServersModel {
+                id: serversModel
             }
 
             Component.onCompleted: sort()
@@ -58,8 +58,8 @@ Page {
             property bool selected
 
             function remove() {
-                Accounts.removeAccount(modelData.name)
-                accountsModel.removeAccountAtRow(modelData.index)
+                Servers.removeServer(modelData.name)
+                serversModel.removeServerAtRow(modelData.index)
             }
 
             highlighted: down || menuOpen || selected
@@ -68,7 +68,7 @@ Page {
                 ContextMenu {
                     MenuItem {
                         text: qsTranslate("tremotesf", "Edit...")
-                        onClicked: pageStack.push("AccountEditDialog.qml", {"accountsModel": accountsModel,
+                        onClicked: pageStack.push("ServerEditDialog.qml", {"serversModel": serversModel,
                                                                             "modelData": modelData})
                     }
 
@@ -84,7 +84,7 @@ Page {
                 if (selectionPanel.openPanel) {
                     selectionModel.select(modelData.index)
                 } else {
-                    pageStack.push("AccountEditDialog.qml", {"accountsModel": accountsModel,
+                    pageStack.push("ServerEditDialog.qml", {"serversModel": serversModel,
                                                              "modelData": modelData})
                 }
             }
@@ -114,7 +114,7 @@ Page {
                 highlighted: down || delegate.highlighted
 
                 onClicked: {
-                    Accounts.setCurrentAccount(modelData.name)
+                    Servers.setCurrentServers(modelData.name)
                     modelData.current = true
                 }
             }
@@ -145,13 +145,13 @@ Page {
 
             MenuItem {
                 text: qsTranslate("tremotesf", "Add...")
-                onClicked: pageStack.push("AccountEditDialog.qml", {"accountsModel": accountsModel})
+                onClicked: pageStack.push("ServerEditDialog.qml", {"serversModel": serversModel})
             }
         }
 
         ViewPlaceholder {
             enabled: !listView.count
-            text: qsTranslate("tremotesf", "No accounts")
+            text: qsTranslate("tremotesf", "No servers")
         }
     }
 
@@ -162,16 +162,16 @@ Page {
     SelectionPanel {
         id: selectionPanel
         selectionModel: listView.selectionModel
-        text: qsTranslate("tremotesf", "%n account(s) selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%n server (s) selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {
                 enabled: selectionModel.hasSelection
                 text: qsTranslate("tremotesf", "Remove")
-                onClicked: remorsePopup.execute(qsTranslate("tremotesf", "Removing %n account(s)", String(), selectionModel.selectedIndexesCount),
+                onClicked: remorsePopup.execute(qsTranslate("tremotesf", "Removing %n server(s)", String(), selectionModel.selectedIndexesCount),
                                                 function() {
                                                     while (selectionModel.hasSelection) {
-                                                        accountsModel.removeAccountAtIndex(proxyModel.sourceIndex(selectionModel.firstSelectedIndex))
+                                                        serversModel.removeServerAtIndex(proxyModel.sourceIndex(selectionModel.firstSelectedIndex))
                                                     }
                                                 })
             }

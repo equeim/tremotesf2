@@ -48,8 +48,8 @@ Page {
         header: PageHeader {
             title: "Tremotesf"
             description: {
-                if (Accounts.hasAccounts) {
-                    return qsTranslate("tremotesf", "%1 (%2)").arg(Accounts.currentAccountName).arg(Accounts.currentAccountAddress)
+                if (Servers.hasServers) {
+                    return qsTranslate("tremotesf", "%1 (%2)").arg(Servers.currentServerName).arg(Servers.currentServerAddress)
                 }
                 return String()
             }
@@ -109,7 +109,7 @@ Page {
             }
 
             MenuItem {
-                enabled: Accounts.hasAccounts
+                enabled: Servers.hasServers
                 text: rpc.status !== Rpc.Disconnected ? qsTranslate("tremotesf", "Disconnect")
                                                       : qsTranslate("tremotesf", "Connect")
                 onClicked: {
@@ -129,10 +129,10 @@ Page {
         ViewPlaceholder {
             enabled: !rpc.connected
             text: {
-                if (Accounts.hasAccounts) {
+                if (Servers.hasServers) {
                     return rpc.statusString
                 }
-                return qsTranslate("tremotesf", "No accounts")
+                return qsTranslate("tremotesf", "No servers")
             }
         }
 
