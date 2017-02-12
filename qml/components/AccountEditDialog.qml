@@ -310,6 +310,7 @@ Dialog {
                     top: 60
                 }
 
+                EnterKey.enabled: canAccept
                 EnterKey.iconSource: "image://theme/icon-m-enter-accept"
                 EnterKey.onClicked: accept()
             }

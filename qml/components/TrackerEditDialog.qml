@@ -45,10 +45,15 @@ Dialog {
 
         TextField {
             id: textField
+
             width: parent.width
             errorHighlight: !text
             label: qsTranslate("tremotesf", "Tracker announce URL")
             placeholderText: label
+
+            EnterKey.enabled: text
+            EnterKey.iconSource: "image://theme/icon-m-enter-accept"
+            EnterKey.onClicked: accept()
         }
     }
 }
