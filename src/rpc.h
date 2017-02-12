@@ -129,7 +129,7 @@ namespace tremotesf
         void setStatus(Status status);
         void setError(Error error);
 
-        void updateAccount();
+        void updateServer();
 
         void getServerSettings();
         void getTorrents();

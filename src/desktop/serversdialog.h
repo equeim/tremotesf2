@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TREMOTESF_ACCOUNTSDIALOG_H
-#define TREMOTESF_ACCOUNTSDIALOG_H
+#ifndef TREMOTESF_SERVERSDIALOG_H
+#define TREMOTESF_SERVERSDIALOG_H
 
 #include <QDialog>
 
@@ -26,26 +26,26 @@ class KMessageWidget;
 
 namespace tremotesf
 {
-    class AccountsModel;
+    class ServersModel;
     class BaseProxyModel;
 
-    class AccountsDialog : public QDialog
+    class ServersDialog : public QDialog
     {
     public:
-        explicit AccountsDialog(QWidget* parent = nullptr);
+        explicit ServersDialog(QWidget* parent = nullptr);
         QSize sizeHint() const override;
         void accept() override;
 
     private:
         void showEditDialogs();
-        void removeAccounts();
+        void removeServers();
 
     private:
-        KMessageWidget* mNoAccountsWidget;
-        AccountsModel* mModel;
+        KMessageWidget* mNoServersWidget;
+        ServersModel* mModel;
         BaseProxyModel* mProxyModel;
-        QListView* mAccountsView;
+        QListView* mServersView;
     };
 }
 
-#endif // TREMOTESF_ACCOUNTSDIALOG_H
+#endif // TREMOTESF_SERVERSDIALOG_H

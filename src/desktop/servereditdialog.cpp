@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "accounteditdialog.h"
+#include "servereditdialog.h"
 
 #include <QAbstractButton>
 #include <QCoreApplication>
@@ -32,20 +32,20 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-#include "../accounts.h"
-#include "../accountsmodel.h"
+#include "../servers.h"
+#include "../serversmodel.h"
 #include "../utils.h"
 
 namespace tremotesf
 {
-    AccountEditDialog::AccountEditDialog(AccountsModel* accountsModel, int row, QWidget* parent)
+    ServerEditDialog::ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent)
         : QDialog(parent),
-          mAccountsModel(accountsModel)
+          mServersModel(serversModel)
     {
         setupUi();
 
         if (row == -1) {
-            setWindowTitle(qApp->translate("tremotesf", "Add Account"));
+            setWindowTitle(qApp->translate("tremotesf", "Add Server"));
 
             mPortSpinBox->setValue(9091);
             mApiPathLineEdit->setText(QStringLiteral("/transmission/rpc"));
@@ -54,38 +54,38 @@ namespace tremotesf
             mUpdateIntervalSpinBox->setValue(5);
             mTimeoutSpinBox->setValue(30);
         } else {
-            const Account& account = mAccountsModel->accounts().at(row);
+            const Server& server = mServersModel->servers().at(row);
 
-            mAccountName = account.name;
-            setWindowTitle(mAccountName);
+            mServerName = server.name;
+            setWindowTitle(mServerName);
 
-            mNameLineEdit->setText(mAccountName);
-            mAddressLineEdit->setText(account.address);
-            mPortSpinBox->setValue(account.port);
-            mApiPathLineEdit->setText(account.apiPath);
-            mHttpsGroupBox->setChecked(account.https);
-            mLocalCertificateTextEdit->setPlainText(account.localCertificate);
-            mAuthenticationGroupBox->setChecked(account.authentication);
-            mUsernameLineEdit->setText(account.username);
-            mPasswordLineEdit->setText(account.password);
-            mUpdateIntervalSpinBox->setValue(account.updateInterval);
-            mTimeoutSpinBox->setValue(account.timeout);
+            mNameLineEdit->setText(mServerName);
+            mAddressLineEdit->setText(server.address);
+            mPortSpinBox->setValue(server.port);
+            mApiPathLineEdit->setText(server.apiPath);
+            mHttpsGroupBox->setChecked(server.https);
+            mLocalCertificateTextEdit->setPlainText(server.localCertificate);
+            mAuthenticationGroupBox->setChecked(server.authentication);
+            mUsernameLineEdit->setText(server.username);
+            mPasswordLineEdit->setText(server.password);
+            mUpdateIntervalSpinBox->setValue(server.updateInterval);
+            mTimeoutSpinBox->setValue(server.timeout);
         }
     }
 
-    QSize AccountEditDialog::sizeHint() const
+    QSize ServerEditDialog::sizeHint() const
     {
         return layout()->totalMinimumSize().expandedTo(QSize(384, 0));
     }
 
-    void AccountEditDialog::accept()
+    void ServerEditDialog::accept()
     {
-        if (mAccountsModel) {
+        if (mServersModel) {
             const QString newName(mNameLineEdit->text());
-            if (newName != mAccountName && mAccountsModel->hasAccount(newName)) {
+            if (newName != mServerName && mServersModel->hasServer(newName)) {
                 QMessageBox messageBox(QMessageBox::Warning,
-                                       qApp->translate("tremotesf", "Overwrite Account"),
-                                       qApp->translate("tremotesf", "Account already exists"),
+                                       qApp->translate("tremotesf", "Overwrite Server"),
+                                       qApp->translate("tremotesf", "Server already exists"),
                                        QMessageBox::Ok | QMessageBox::Cancel,
                                        this);
                 messageBox.setDefaultButton(QMessageBox::Cancel);
@@ -95,11 +95,11 @@ namespace tremotesf
                 }
             }
         }
-        setAccount();
+        setServer();
         QDialog::accept();
     }
 
-    void AccountEditDialog::setupUi()
+    void ServerEditDialog::setupUi()
     {
         auto layout = new QVBoxLayout(this);
 
@@ -109,12 +109,12 @@ namespace tremotesf
 
         mNameLineEdit = new QLineEdit(this);
         mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("^\\S.*")), this));
-        QObject::connect(mNameLineEdit, &QLineEdit::textChanged, this, &AccountEditDialog::canAcceptUpdate);
+        QObject::connect(mNameLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Name:"), mNameLineEdit);
 
         mAddressLineEdit = new QLineEdit(this);
         mAddressLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("^\\S+")), this));
-        QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, &AccountEditDialog::canAcceptUpdate);
+        QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Address:"), mAddressLineEdit);
 
         mPortSpinBox = new QSpinBox(this);
@@ -155,46 +155,46 @@ namespace tremotesf
         formLayout->addRow(qApp->translate("tremotesf", "Timeout:"), mTimeoutSpinBox);
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-        QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &AccountEditDialog::accept);
-        QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &AccountEditDialog::reject);
+        QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &ServerEditDialog::accept);
+        QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &ServerEditDialog::reject);
         layout->addWidget(mDialogButtonBox);
     }
 
-    void AccountEditDialog::canAcceptUpdate()
+    void ServerEditDialog::canAcceptUpdate()
     {
         mDialogButtonBox->button(QDialogButtonBox::Ok)
             ->setEnabled(mNameLineEdit->hasAcceptableInput() &&
                          mAddressLineEdit->hasAcceptableInput());
     }
 
-    void AccountEditDialog::setAccount()
+    void ServerEditDialog::setServer()
     {
-        if (mAccountsModel) {
-            mAccountsModel->setAccount(mAccountName,
-                                       mNameLineEdit->text(),
-                                       mAddressLineEdit->text(),
-                                       mPortSpinBox->value(),
-                                       mApiPathLineEdit->text(),
-                                       mHttpsGroupBox->isChecked(),
-                                       mLocalCertificateTextEdit->toPlainText().toLatin1(),
-                                       mAuthenticationGroupBox->isChecked(),
-                                       mUsernameLineEdit->text(),
-                                       mPasswordLineEdit->text(),
-                                       mUpdateIntervalSpinBox->value(),
-                                       mTimeoutSpinBox->value());
+        if (mServersModel) {
+            mServersModel->setServer(mServerName,
+                                     mNameLineEdit->text(),
+                                     mAddressLineEdit->text(),
+                                     mPortSpinBox->value(),
+                                     mApiPathLineEdit->text(),
+                                     mHttpsGroupBox->isChecked(),
+                                     mLocalCertificateTextEdit->toPlainText().toLatin1(),
+                                     mAuthenticationGroupBox->isChecked(),
+                                     mUsernameLineEdit->text(),
+                                     mPasswordLineEdit->text(),
+                                     mUpdateIntervalSpinBox->value(),
+                                     mTimeoutSpinBox->value());
         } else {
-            Accounts::instance()->setAccount(mAccountName,
-                                             mNameLineEdit->text(),
-                                             mAddressLineEdit->text(),
-                                             mPortSpinBox->value(),
-                                             mApiPathLineEdit->text(),
-                                             mHttpsGroupBox->isChecked(),
-                                             mLocalCertificateTextEdit->toPlainText().toLatin1(),
-                                             mAuthenticationGroupBox->isChecked(),
-                                             mUsernameLineEdit->text(),
-                                             mPasswordLineEdit->text(),
-                                             mUpdateIntervalSpinBox->value(),
-                                             mTimeoutSpinBox->value());
+            Servers::instance()->setServer(mServerName,
+                                           mNameLineEdit->text(),
+                                           mAddressLineEdit->text(),
+                                           mPortSpinBox->value(),
+                                           mApiPathLineEdit->text(),
+                                           mHttpsGroupBox->isChecked(),
+                                           mLocalCertificateTextEdit->toPlainText().toLatin1(),
+                                           mAuthenticationGroupBox->isChecked(),
+                                           mUsernameLineEdit->text(),
+                                           mPasswordLineEdit->text(),
+                                           mUpdateIntervalSpinBox->value(),
+                                           mTimeoutSpinBox->value());
         }
     }
 }

@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TREMOTESF_ACCOUNTEDITDIALOG_H
-#define TREMOTESF_ACCOUNTEDITDIALOG_H
+#ifndef TREMOTESF_SERVEREDITDIALOG_H
+#define TREMOTESF_SERVEREDITDIALOG_H
 
 #include <QDialog>
 
@@ -29,24 +29,24 @@ class QSpinBox;
 
 namespace tremotesf
 {
-    class AccountsModel;
+    class ServersModel;
 
-    class AccountEditDialog : public QDialog
+    class ServerEditDialog : public QDialog
     {
         Q_OBJECT
     public:
-        explicit AccountEditDialog(AccountsModel* accountsModel, int row, QWidget* parent = nullptr);
+        explicit ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent = nullptr);
         QSize sizeHint() const override;
         void accept() override;
 
     private:
         void setupUi();
         void canAcceptUpdate();
-        void setAccount();
+        void setServer();
 
     private:
-        AccountsModel* mAccountsModel;
-        QString mAccountName;
+        ServersModel* mServersModel;
+        QString mServerName;
 
         QLineEdit* mNameLineEdit;
         QLineEdit* mAddressLineEdit;
@@ -64,4 +64,4 @@ namespace tremotesf
     };
 }
 
-#endif // TREMOTESF_ACCOUNTEDITDIALOG_H
+#endif // TREMOTESF_SERVEREDITDIALOG_H

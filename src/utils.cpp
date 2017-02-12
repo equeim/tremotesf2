@@ -30,13 +30,13 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
 #include <QModelIndexList>
 #include <qqml.h>
 
-#include "accounts.h"
-#include "accountsmodel.h"
 #include "alltrackersmodel.h"
 #include "baseproxymodel.h"
 #include "localtorrentfilesmodel.h"
 #include "peersmodel.h"
 #include "rpc.h"
+#include "servers.h"
+#include "serversmodel.h"
 #include "serversettings.h"
 #include "serverstats.h"
 #include "settings.h"
@@ -230,13 +230,13 @@ namespace tremotesf
                                                return Settings::instance();
                                            });
 
-        qmlRegisterSingletonType<Accounts>(url,
-                                           versionMajor,
-                                           versionMinor,
-                                           "Accounts",
-                                           [](QQmlEngine*, QJSEngine*) -> QObject* {
-                                               return Accounts::instance();
-                                           });
+        qmlRegisterSingletonType<Servers>(url,
+                                          versionMajor,
+                                          versionMinor,
+                                          "Servers",
+                                          [](QQmlEngine*, QJSEngine*) -> QObject* {
+                                              return Servers::instance();
+                                          });
 
         qmlRegisterType<Rpc>(url, versionMajor, versionMinor, "Rpc");
         qmlRegisterUncreatableType<ServerSettings>(url, versionMajor, versionMinor, "ServerSettings", QString());
@@ -245,7 +245,7 @@ namespace tremotesf
 
         qmlRegisterType<BaseProxyModel>(url, versionMajor, versionMinor, "BaseProxyModel");
 
-        qmlRegisterType<AccountsModel>(url, versionMajor, versionMinor, "AccountsModel");
+        qmlRegisterType<ServersModel>(url, versionMajor, versionMinor, "ServersModel");
 
         qmlRegisterType<StatusFilterStats>(url, versionMajor, versionMinor, "StatusFilterStats");
         qmlRegisterType<AllTrackersModel>(url, versionMajor, versionMinor, "AllTrackersModel");

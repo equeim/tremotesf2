@@ -6,6 +6,7 @@
 #include <QTranslator>
 
 #include "ipcserver.h"
+#include "servers.h"
 #include "utils.h"
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -14,7 +15,6 @@
 #include <QQmlContext>
 #include <QQuickView>
 #include <sailfishapp.h>
-#include "accounts.h"
 #else
 #include <QApplication>
 #include <QIcon>
@@ -83,8 +83,11 @@ int main(int argc, char** argv)
     tremotesf::Utils::registerTypes();
 
 #ifdef TREMOTESF_SAILFISHOS
-    tremotesf::Accounts::migrate();
+    tremotesf::Servers::migrateFrom0();
+#endif
+    tremotesf::Servers::migrateFromAccounts();
 
+#ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QStringLiteral("ipcServer"), &ipcServer);
 
     tremotesf::ArgumentsParseResult result(tremotesf::IpcServer::parseArguments(arguments));

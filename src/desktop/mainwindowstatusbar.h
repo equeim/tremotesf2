@@ -35,14 +35,14 @@ namespace tremotesf
 
     private:
         void updateLayout();
-        void updateAccountLabel();
+        void updateServerLabel();
         void updateStatusLabels();
 
     private:
         const Rpc* mRpc;
 
-        QLabel* mNoAccountsErrorImage;
-        QLabel* mAccountLabel;
+        QLabel* mNoServersErrorImage;
+        QLabel* mServerLabel;
         KSeparator* mFirstSeparator;
         QLabel* mStatusLabel;
         KSeparator* mSecondSeparator;

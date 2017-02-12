@@ -25,7 +25,7 @@
 
 #include <KSeparator>
 
-#include "../accounts.h"
+#include "../servers.h"
 #include "../rpc.h"
 #include "../serverstats.h"
 #include "../utils.h"
@@ -43,13 +43,13 @@ namespace tremotesf
         auto layout = new QHBoxLayout(this);
         layout->setContentsMargins(8, 4, 8, 4);
 
-        mNoAccountsErrorImage = new QLabel(this);
-        mNoAccountsErrorImage->setPixmap(QIcon::fromTheme(QStringLiteral("dialog-error")).pixmap(16, 16));
-        mNoAccountsErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mNoAccountsErrorImage);
+        mNoServersErrorImage = new QLabel(this);
+        mNoServersErrorImage->setPixmap(QIcon::fromTheme(QStringLiteral("dialog-error")).pixmap(16, 16));
+        mNoServersErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        layout->addWidget(mNoServersErrorImage);
 
-        mAccountLabel = new QLabel(this);
-        layout->addWidget(mAccountLabel);
+        mServerLabel = new QLabel(this);
+        layout->addWidget(mServerLabel);
 
         mFirstSeparator = new KSeparator(Qt::Vertical, this);
         layout->addWidget(mFirstSeparator);
@@ -81,11 +81,11 @@ namespace tremotesf
 
         updateLayout();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateLayout);
-        QObject::connect(Accounts::instance(), &Accounts::hasAccountsChanged, this, &MainWindowStatusBar::updateLayout);
+        QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
 
-        updateAccountLabel();
-        QObject::connect(Accounts::instance(), &Accounts::currentAccountChanged, this, &MainWindowStatusBar::updateAccountLabel);
-        QObject::connect(Accounts::instance(), &Accounts::hasAccountsChanged, this, &MainWindowStatusBar::updateAccountLabel);
+        updateServerLabel();
+        QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, &MainWindowStatusBar::updateServerLabel);
+        QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateServerLabel);
 
         updateStatusLabels();
         QObject::connect(mRpc, &Rpc::statusStringChanged, this, &MainWindowStatusBar::updateStatusLabels);
@@ -98,9 +98,9 @@ namespace tremotesf
 
     void MainWindowStatusBar::updateLayout()
     {
-        if (Accounts::instance()->hasAccounts()) {
-            mNoAccountsErrorImage->hide();
-            mAccountLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        if (Servers::instance()->hasServers()) {
+            mNoServersErrorImage->hide();
+            mServerLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
             mFirstSeparator->show();
             mStatusLabel->show();
             if (mRpc->status() == Rpc::Connected) {
@@ -119,8 +119,8 @@ namespace tremotesf
                 mUploadSpeedLabel->hide();
             }
         } else {
-            mNoAccountsErrorImage->show();
-            mAccountLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+            mNoServersErrorImage->show();
+            mServerLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
             mFirstSeparator->hide();
             mStatusLabel->hide();
             mSecondSeparator->hide();
@@ -132,12 +132,12 @@ namespace tremotesf
         }
     }
 
-    void MainWindowStatusBar::updateAccountLabel()
+    void MainWindowStatusBar::updateServerLabel()
     {
-        if (Accounts::instance()->hasAccounts()) {
-            mAccountLabel->setText(QStringLiteral("%1 (%2)").arg(Accounts::instance()->currentAccountName()).arg(Accounts::instance()->currentAccountAddress()));
+        if (Servers::instance()->hasServers()) {
+            mServerLabel->setText(QStringLiteral("%1 (%2)").arg(Servers::instance()->currentServerName()).arg(Servers::instance()->currentServerAddress()));
         } else {
-            mAccountLabel->setText(qApp->translate("tremotesf", "No accounts"));
+            mServerLabel->setText(qApp->translate("tremotesf", "No servers"));
         }
     }
 

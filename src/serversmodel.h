@@ -16,17 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TREMOTESF_ACCOUNTSMODEL_H
-#define TREMOTESF_ACCOUNTSMODEL_H
+#ifndef TREMOTESF_SERVERSMODEL_H
+#define TREMOTESF_SERVERSMODEL_H
 
 #include <QAbstractListModel>
 #include <QList>
 
-#include "accounts.h"
+#include "servers.h"
 
 namespace tremotesf
 {
-    class AccountsModel : public QAbstractListModel
+    class ServersModel : public QAbstractListModel
     {
         Q_OBJECT
     public:
@@ -48,42 +48,42 @@ namespace tremotesf
         };
         Q_ENUMS(Role)
 #endif
-        explicit AccountsModel(QObject* parent = nullptr);
+        explicit ServersModel(QObject* parent = nullptr);
 
         QVariant data(const QModelIndex& index, int role) const override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
         int rowCount(const QModelIndex&) const override;
         bool setData(const QModelIndex& modelIndex, const QVariant& value, int role) override;
 
-        const QList<Account>& accounts() const;
-        const QString& currentAccountName() const;
+        const QList<Server>& servers() const;
+        const QString& currentServerName() const;
 
-        Q_INVOKABLE bool hasAccount(const QString& name) const;
+        Q_INVOKABLE bool hasServer(const QString& name) const;
 
-        Q_INVOKABLE void setAccount(const QString& oldName,
-                                    const QString& name,
-                                    const QString& address,
-                                    int port,
-                                    const QString& apiPath,
-                                    bool https,
-                                    const QByteArray& localCertificate,
-                                    bool authentication,
-                                    const QString& username,
-                                    const QString& password,
-                                    int updateInterval,
-                                    int timeout);
-        Q_INVOKABLE void removeAccountAtIndex(const QModelIndex& index);
-        Q_INVOKABLE void removeAccountAtRow(int row);
+        Q_INVOKABLE void setServer(const QString& oldName,
+                                   const QString& name,
+                                   const QString& address,
+                                   int port,
+                                   const QString& apiPath,
+                                   bool https,
+                                   const QByteArray& localCertificate,
+                                   bool authentication,
+                                   const QString& username,
+                                   const QString& password,
+                                   int updateInterval,
+                                   int timeout);
+        Q_INVOKABLE void removeServerAtIndex(const QModelIndex& index);
+        Q_INVOKABLE void removeServerAtRow(int row);
 #ifdef TREMOTESF_SAILFISHOS
     protected:
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
-        int accountRow(const QString& name) const;
+        int serverRow(const QString& name) const;
 
-        QList<Account> mAccounts;
-        QString mCurrentAccount;
+        QList<Server> mServers;
+        QString mCurrentServer;
     };
 }
 
-#endif // TREMOTESF_ACCOUNTSMODEL_H
+#endif // TREMOTESF_SERVERSMODEL_H

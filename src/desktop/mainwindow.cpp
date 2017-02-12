@@ -45,10 +45,10 @@
 #include <QDBusMessage>
 #endif
 
-#include "../accounts.h"
 #include "../ipcserver.h"
 #include "../localtorrentfilesmodel.h"
 #include "../rpc.h"
+#include "../servers.h"
 #include "../serverstats.h"
 #include "../settings.h"
 #include "../torrent.h"
@@ -57,11 +57,11 @@
 #include "../torrentsproxymodel.h"
 #include "../utils.h"
 #include "aboutdialog.h"
-#include "accounteditdialog.h"
-#include "accountsdialog.h"
 #include "addtorrentdialog.h"
 #include "mainwindowsidebar.h"
 #include "mainwindowstatusbar.h"
+#include "servereditdialog.h"
+#include "serversdialog.h"
 #include "serversettingsdialog.h"
 #include "settingsdialog.h"
 #include "torrentpropertiesdialog.h"
@@ -192,15 +192,15 @@ namespace tremotesf
             }
         });
 
-        if (Accounts::instance()->hasAccounts()) {
+        if (Servers::instance()->hasServers()) {
             if (Settings::instance()->connectOnStartup()) {
                 mRpc->connect();
             }
         } else {
             runAfterDelay([=]() {
-                auto dialog = new AccountEditDialog(nullptr, -1, this);
+                auto dialog = new ServerEditDialog(nullptr, -1, this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &AccountEditDialog::accepted, this, [=]() {
+                QObject::connect(dialog, &ServerEditDialog::accepted, this, [=]() {
                     if (Settings::instance()->connectOnStartup()) {
                         mRpc->connect();
                     }
@@ -395,7 +395,7 @@ namespace tremotesf
 
         updateRpcActions();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindow::updateRpcActions);
-        QObject::connect(Accounts::instance(), &Accounts::hasAccountsChanged, this, &MainWindow::updateRpcActions);
+        QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindow::updateRpcActions);
 
         updateTorrentActions();
         QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &MainWindow::updateTorrentActions);
@@ -405,7 +405,7 @@ namespace tremotesf
     void MainWindow::updateRpcActions()
     {
         if (mRpc->status() == Rpc::Disconnected) {
-            if (Accounts::instance()->hasAccounts()) {
+            if (Servers::instance()->hasServers()) {
                 mConnectAction->setEnabled(true);
                 mDisconnectAction->setEnabled(false);
             } else {
@@ -641,16 +641,16 @@ namespace tremotesf
             }
         });
 
-        QAction* accountsAction = toolsMenu->addAction(qApp->translate("tremotesf", "&Accounts"));
-        QObject::connect(accountsAction, &QAction::triggered, this, [=]() {
-            static AccountsDialog* dialog = nullptr;
+        QAction* serversAction = toolsMenu->addAction(qApp->translate("tremotesf", "&Servers"));
+        QObject::connect(serversAction, &QAction::triggered, this, [=]() {
+            static ServersDialog* dialog = nullptr;
             if (dialog) {
                 dialog->raise();
                 dialog->activateWindow();
             } else {
-                dialog = new AccountsDialog(this);
+                dialog = new ServersDialog(this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &AccountsDialog::destroyed, this, []() {
+                QObject::connect(dialog, &ServersDialog::destroyed, this, []() {
                     dialog = nullptr;
                 });
                 dialog->show();

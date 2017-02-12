@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef TREMOTESF_TEXTINPUTDIALOG_H
 #define TREMOTESF_TEXTINPUTDIALOG_H
 
@@ -35,6 +34,7 @@ namespace tremotesf
                                  QWidget* parent = nullptr);
         QSize sizeHint() const override;
         QString text() const;
+
     private:
         QLineEdit* mLineEdit;
     };

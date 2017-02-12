@@ -36,8 +36,8 @@
 #include <QQmlEngine>
 #endif
 
-#include "accounts.h"
 #include "jsonparser.h"
+#include "servers.h"
 #include "serversettings.h"
 #include "serverstats.h"
 #include "settings.h"
@@ -175,8 +175,8 @@ namespace tremotesf
         mUpdateTimer->setSingleShot(true);
         QObject::connect(mUpdateTimer, &QTimer::timeout, this, &Rpc::updateData);
 
-        QObject::connect(Accounts::instance(), &Accounts::currentAccountChanged, this, &Rpc::updateAccount);
-        updateAccount();
+        QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, &Rpc::updateServer);
+        updateServer();
     }
 
     ServerSettings* Rpc::serverSettings() const
@@ -551,9 +551,9 @@ namespace tremotesf
         }
     }
 
-    void Rpc::updateAccount()
+    void Rpc::updateServer()
     {
-        if (!Accounts::instance()->hasAccounts()) {
+        if (!Servers::instance()->hasServers()) {
             disconnect();
             return;
         }
@@ -562,12 +562,12 @@ namespace tremotesf
 
         disconnect();
 
-        const Account account(Accounts::instance()->currentAccount());
+        const Server server(Servers::instance()->currentServer());
 
-        mServerUrl.setHost(account.address);
-        mServerUrl.setPort(account.port);
-        mServerUrl.setPath(account.apiPath);
-        if (account.https) {
+        mServerUrl.setHost(server.address);
+        mServerUrl.setPort(server.port);
+        mServerUrl.setPath(server.apiPath);
+        if (server.https) {
             mServerUrl.setScheme(QStringLiteral("https"));
         } else {
             mServerUrl.setScheme(QStringLiteral("http"));
@@ -575,15 +575,15 @@ namespace tremotesf
 
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
         mSslConfiguration.setPeerVerifyMode(QSslSocket::QueryPeer);
-        const QByteArray localCertificate(account.localCertificate);
+        const QByteArray localCertificate(server.localCertificate);
         mSslConfiguration.setLocalCertificate(QSslCertificate(localCertificate));
         mSslConfiguration.setPrivateKey(QSslKey(localCertificate, QSsl::Rsa));
 
-        mAuthentication = account.authentication;
-        mUsername = account.username;
-        mPassword = account.password;
-        mTimeout = account.timeout * 1000; // msecs
-        mUpdateTimer->setInterval(account.updateInterval * 1000); // msecs
+        mAuthentication = server.authentication;
+        mUsername = server.username;
+        mPassword = server.password;
+        mTimeout = server.timeout * 1000; // msecs
+        mUpdateTimer->setInterval(server.updateInterval * 1000); // msecs
 
         if (wasConnected) {
             connect();
