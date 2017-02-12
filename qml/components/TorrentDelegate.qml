@@ -36,7 +36,7 @@ ListItem {
         onSelectionChanged: selected = selectionModel.isSelected(model.index)
     }
 
-    contentHeight: column.height + Theme.paddingMedium
+    contentHeight: contentItem.height + Theme.paddingMedium
     menu: Component {
         ContextMenu {
             MenuItem {
@@ -105,8 +105,8 @@ ListItem {
         color: Theme.secondaryColor
     }
 
-    Column {
-        id: column
+    Item {
+        id: contentItem
 
         anchors {
             left: parent.left
@@ -116,7 +116,11 @@ ListItem {
             verticalCenter: parent.verticalCenter
         }
 
+        height: childrenRect.height
+
         Item {
+            id: nameRow
+
             width: parent.width
             height: statusImage.height
 
@@ -173,7 +177,7 @@ ListItem {
                     left: statusImage.right
                     leftMargin: Theme.paddingSmall
                     right: parent.right
-                    verticalCenter: statusImage.verticalCenter
+                    verticalCenter: parent.verticalCenter
                 }
                 color: primaryTextColor
                 font.pixelSize: Theme.fontSizeSmall
@@ -182,47 +186,52 @@ ListItem {
             }
         }
 
-        Item {
-            width: parent.width
-            height: childrenRect.height
+        Label {
+            id: progressLabel
 
-            Label {
-                anchors {
-                    left: parent.left
-                    right: etaLabel.left
+            anchors {
+                top: nameRow.bottom
+                left: parent.left
+                right: etaLabel.left
+            }
+            color: secondaryTextColor
+            font.pixelSize: Theme.fontSizeExtraSmall
+
+            text: {
+                if (!torrent) {
+                    return String()
                 }
-                color: secondaryTextColor
-                font.pixelSize: Theme.fontSizeExtraSmall
 
-                text: {
-                    if (!torrent) {
-                        return String()
-                    }
-
-                    if (torrent.percentDone === 1) {
-                        return qsTranslate("tremotesf", "%1, uploaded %2")
-                        .arg(Utils.formatByteSize(torrent.sizeWhenDone))
-                        .arg(Utils.formatByteSize(torrent.totalUploaded))
-                    }
-
-                    return qsTranslate("tremotesf", "%1 of %2 (%3)")
-                    .arg(Utils.formatByteSize(torrent.completedSize))
+                if (torrent.percentDone === 1) {
+                    return qsTranslate("tremotesf", "%1, uploaded %2")
                     .arg(Utils.formatByteSize(torrent.sizeWhenDone))
-                    .arg(Utils.formatProgress(torrent.percentDone))
+                    .arg(Utils.formatByteSize(torrent.totalUploaded))
                 }
-                truncationMode: TruncationMode.Fade
+
+                return qsTranslate("tremotesf", "%1 of %2 (%3)")
+                .arg(Utils.formatByteSize(torrent.completedSize))
+                .arg(Utils.formatByteSize(torrent.sizeWhenDone))
+                .arg(Utils.formatProgress(torrent.percentDone))
+            }
+            truncationMode: TruncationMode.Fade
+        }
+
+        Label {
+            id: etaLabel
+            anchors {
+                top: nameRow.bottom
+                right: parent.right
             }
 
-            Label {
-                id: etaLabel
-                anchors.right: parent.right
-                color: secondaryTextColor
-                font.pixelSize: Theme.fontSizeExtraSmall
-                text: torrent ? Utils.formatEta(torrent.eta) : String()
-            }
+            color: secondaryTextColor
+            font.pixelSize: Theme.fontSizeExtraSmall
+            text: torrent ? Utils.formatEta(torrent.eta) : String()
         }
 
         Item {
+            id: progressBar
+
+            anchors.top: progressLabel.bottom
             width: parent.width
             height: Theme.paddingSmall
 
@@ -261,63 +270,45 @@ ListItem {
             }
         }
 
-        Item {
-            width: parent.width
-            height: childrenRect.height
+        Column {
+            id: speedColumn
+            anchors.top: progressBar.bottom
 
-            Column {
-                Label {
-                    color: secondaryTextColor
-                    font.pixelSize: Theme.fontSizeExtraSmall
-                    text: torrent ? "\u2193 %1".arg(Utils.formatByteSpeed(torrent.downloadSpeed)) : String()
-                }
-                Label {
-                    color: secondaryTextColor
-                    font.pixelSize: Theme.fontSizeExtraSmall
-                    text: torrent ? "\u2191 %1".arg(Utils.formatByteSpeed(torrent.uploadSpeed)) : String()
-                }
+            Label {
+                color: secondaryTextColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                text: torrent ? "\u2193 %1".arg(Utils.formatByteSpeed(torrent.downloadSpeed)) : String()
+            }
+            Label {
+                color: secondaryTextColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                text: torrent ? "\u2191 %1".arg(Utils.formatByteSpeed(torrent.uploadSpeed)) : String()
+            }
+        }
+
+        Label {
+            anchors {
+                top: progressBar.bottom
+                left: speedColumn.right
+                leftMargin: Theme.paddingLarge
+                right: parent.right
             }
 
-            Column {
-                anchors {
-                    left: parent.horizontalCenter
-                    right: parent.right
-                }
-
-                Label {
-                    width: parent.width
-                    color: secondaryTextColor
-                    font.pixelSize: Theme.fontSizeExtraSmall
-                    horizontalAlignment: implicitWidth > width ? Text.AlignLeft : Text.AlignRight
-                    truncationMode: TruncationMode.Fade
-                    text: {
-                        if (torrent) {
-                            if (torrent.status === Torrent.Checking) {
-                                return qsTranslate("tremotesf", "Checking (%1)").arg(Utils.formatProgress(torrent.recheckProgress))
-                            }
-                            return torrent.statusString
-                        }
-                        return String()
+            color: secondaryTextColor
+            font.pixelSize: Theme.fontSizeExtraSmall
+            horizontalAlignment: Text.AlignRight
+            maximumLineCount: 2
+            text: {
+                if (torrent) {
+                    if (torrent.status === Torrent.Checking) {
+                        return qsTranslate("tremotesf", "Checking (%1)").arg(Utils.formatProgress(torrent.recheckProgress))
                     }
+                    return torrent.statusString
                 }
-
-                Label {
-                    anchors.right: parent.right
-                    color: secondaryTextColor
-                    font.pixelSize: Theme.fontSizeExtraSmall
-                    text: {
-                        if (torrent) {
-                            switch (torrent.status) {
-                            case Torrent.Downloading:
-                                return qsTranslate("tremotesf", "from %n peer(s)", String(), torrent.seeders)
-                            case Torrent.Seeding:
-                                return qsTranslate("tremotesf", "to %n peer(s)", String(), torrent.leechers)
-                            }
-                        }
-                        return String()
-                    }
-                }
+                return String()
             }
+            truncationMode: TruncationMode.Elide
+            wrapMode: Text.WordWrap
         }
     }
 }

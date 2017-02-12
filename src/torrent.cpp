@@ -80,9 +80,15 @@ namespace tremotesf
         case Paused:
             return qApp->translate("tremotesf", "Paused", "Paused torrent");
         case Downloading:
+#ifdef TREMOTESF_SAILFISHOS
+            return qApp->translate("tremotesf", "Downloading from %n peer(s)", nullptr, mSeeders);
+#endif
         case StalledDownloading:
             return qApp->translate("tremotesf", "Downloading", "Torrent that is being downloaded");
         case Seeding:
+#ifdef TREMOTESF_SAILFISHOS
+            return qApp->translate("tremotesf", "Seeding to %n peer(s)", nullptr, mLeechers);
+#endif
         case StalledSeeding:
             return qApp->translate("tremotesf", "Seeding", "Torrent that is being seeded");
         case QueuedForDownloading:
