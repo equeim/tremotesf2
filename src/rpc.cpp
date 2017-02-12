@@ -732,6 +732,8 @@ namespace tremotesf
         mTorrentsUpdated = false;
         mServerStatsUpdated = false;
 
+        mUpdateTimer->stop();
+
         getServerSettings();
         getTorrents();
         getServerStats();
