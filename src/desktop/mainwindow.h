@@ -45,7 +45,7 @@ namespace tremotesf
     {
     public:
         MainWindow(IpcServer* ipcServer, const QStringList& arguments);
-        ~MainWindow();
+        ~MainWindow() override;
 
         QSize sizeHint() const override;
         void showIfNeeded();

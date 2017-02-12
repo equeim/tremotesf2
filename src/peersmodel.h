@@ -73,7 +73,7 @@ namespace tremotesf
 #endif
 
         explicit PeersModel(Torrent* torrent = nullptr, QObject* parent = nullptr);
-        ~PeersModel();
+        ~PeersModel() override;
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;

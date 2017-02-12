@@ -29,7 +29,7 @@ namespace tremotesf
     {
     public:
         explicit TorrentsView(TorrentsProxyModel* model, QWidget* parent);
-        ~TorrentsView();
+        ~TorrentsView() override;
     };
 }
 

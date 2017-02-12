@@ -37,7 +37,7 @@ namespace tremotesf
         explicit TorrentFilesView(TorrentFilesModel* model,
                                   ServerSettings* serverSettings,
                                   QWidget* parent = nullptr);
-        ~TorrentFilesView();
+        ~TorrentFilesView() override;
 
     private:
         void init();

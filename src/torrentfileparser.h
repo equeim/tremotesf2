@@ -46,7 +46,7 @@ namespace tremotesf
         };
 
         explicit TorrentFileParser(const QString& filePath = QString(), QObject* parent = nullptr);
-        ~TorrentFileParser();
+        ~TorrentFileParser() override;
 
         const QString& filePath() const;
         void setFilePath(const QString& path);

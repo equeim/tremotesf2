@@ -61,7 +61,7 @@ namespace tremotesf
 #endif
         explicit LocalTorrentFilesModel(const QVariantMap& parseResult = QVariantMap(),
                                         QObject* parent = nullptr);
-        ~LocalTorrentFilesModel();
+        ~LocalTorrentFilesModel() override;
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;

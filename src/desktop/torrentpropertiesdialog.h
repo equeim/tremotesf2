@@ -38,7 +38,7 @@ namespace tremotesf
     {
     public:
         explicit TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
-        ~TorrentPropertiesDialog();
+        ~TorrentPropertiesDialog() override;
         QSize sizeHint() const override;
 
     private:
