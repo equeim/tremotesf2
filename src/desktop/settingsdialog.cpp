@@ -56,14 +56,6 @@ namespace tremotesf
         mTrayIconCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show icon in the notification area"), this);
         notificationsGroupBoxLayout->addWidget(mTrayIconCheckBox);
 
-        auto startMinimizedLayout = new QHBoxLayout();
-        notificationsGroupBoxLayout->addLayout(startMinimizedLayout);
-        mStartMinimizedCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start minimized in notification area"), this);
-        mStartMinimizedCheckBox->setEnabled(false);
-        QObject::connect(mTrayIconCheckBox, &QCheckBox::toggled, mStartMinimizedCheckBox, &QCheckBox::setEnabled);
-        startMinimizedLayout->addSpacing(28);
-        startMinimizedLayout->addWidget(mStartMinimizedCheckBox);
-
         layout->addWidget(notificationsGroupBox);
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -77,7 +69,6 @@ namespace tremotesf
         mNotificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         mNotificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
         mTrayIconCheckBox->setChecked(settings->showTrayIcon());
-        mStartMinimizedCheckBox->setChecked(settings->startMinimized());
     }
 
     void SettingsDialog::accept()
@@ -88,7 +79,6 @@ namespace tremotesf
         settings->setNotificationOnAddingTorrent(mNotificationOnAddingTorrentCheckBox->isChecked());
         settings->setNotificationOfFinishedTorrents(mNotificationOfFinishedTorrentsCheckBox->isChecked());
         settings->setShowTrayIcon(mTrayIconCheckBox->isChecked());
-        settings->setStartMinimized(mStartMinimizedCheckBox->isChecked());
         QDialog::accept();
     }
 }

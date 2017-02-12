@@ -5,12 +5,18 @@
 - Torrent properties are now reloaded after reconnection
 - Rename torrent's files
 
+#### Desktop
+- Command line option to start minimized in notification area
+
 ### Changed
 - Performance improvements for torrents with large number of files
 - Accounts are renamed to Servers (config file name also changed)
 
 ### Removed
 - Ability to select another file in Add Torrent File dialog (it was causing unnecessary code complication)
+
+#### Desktop
+- Settings options to start minimized in notification area. Use command line option instead
 
 ### Fixed
 - Tracker status is now more correct

@@ -38,7 +38,6 @@ namespace tremotesf
         const QString torrentsSortRoleKey(QStringLiteral("torrentsSortRole"));
 #else
         const QString showTrayIconKey(QStringLiteral("showTrayIcon"));
-        const QString startMinimizedKey(QStringLiteral("startMinimized"));
         const QString mainWindowGeometryKey(QStringLiteral("mainWindowGeometry"));
         const QString toolButtonStyleKey(QStringLiteral("toolButtonStyle"));
         const QString toolBarVisibleKey(QStringLiteral("toolBarVisible"));
@@ -134,16 +133,6 @@ namespace tremotesf
             mSettings->setValue(showTrayIconKey, show);
             emit showTrayIconChanged();
         }
-    }
-
-    bool Settings::startMinimized() const
-    {
-        return mSettings->value(startMinimizedKey, false).toBool();
-    }
-
-    void Settings::setStartMinimized(bool minimized)
-    {
-        mSettings->setValue(startMinimizedKey, minimized);
     }
 
     QByteArray Settings::mainWindowGeometry() const

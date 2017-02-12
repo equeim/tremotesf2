@@ -59,9 +59,6 @@ namespace tremotesf
         bool showTrayIcon() const;
         void setShowTrayIcon(bool show);
 
-        bool startMinimized() const;
-        void setStartMinimized(bool minimized);
-
         QByteArray mainWindowGeometry() const;
         void setMainWindowGeometry(const QByteArray& geometry);
 

@@ -48,7 +48,7 @@ namespace tremotesf
         ~MainWindow() override;
 
         QSize sizeHint() const override;
-        void showIfNeeded();
+        void showMinimized(bool minimized);
         void showNotification(const QString& summary, const QString& body);
 
     protected:

@@ -47,6 +47,7 @@ int main(int argc, char** argv)
     parser.addPositionalArgument(QStringLiteral("torrent"), QStringLiteral("Torrent file or URL"));
 #else
     parser.addPositionalArgument(QStringLiteral("torrents"), QStringLiteral("Torrent files or URLs"));
+    parser.addOption(QCommandLineOption(QStringLiteral("minimized"), QStringLiteral("Start minimized in notification area")));
 #endif
     parser.addHelpOption();
     parser.addVersionOption();
@@ -98,7 +99,7 @@ int main(int argc, char** argv)
     view->show();
 #else
     tremotesf::MainWindow window(&ipcServer, arguments);
-    window.showIfNeeded();
+    window.showMinimized(parser.isSet(QStringLiteral("minimized")));
 #endif
 
     return qApp->exec();

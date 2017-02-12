@@ -225,9 +225,9 @@ namespace tremotesf
         return layout()->totalMinimumSize().expandedTo(QSize(896, 640));
     }
 
-    void MainWindow::showIfNeeded()
+    void MainWindow::showMinimized(bool minimized)
     {
-        if (!(Settings::instance()->startMinimized() && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
+        if (!(minimized && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
         }
     }

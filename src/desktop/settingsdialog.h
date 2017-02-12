@@ -37,7 +37,6 @@ namespace tremotesf
         QCheckBox* mNotificationOnAddingTorrentCheckBox;
         QCheckBox* mNotificationOfFinishedTorrentsCheckBox;
         QCheckBox* mTrayIconCheckBox;
-        QCheckBox* mStartMinimizedCheckBox;
     };
 }
 
