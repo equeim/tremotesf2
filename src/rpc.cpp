@@ -234,7 +234,7 @@ namespace tremotesf
             }
             break;
         case Connecting:
-            return qApp->translate("tremotesf", "Connecting");
+            return qApp->translate("tremotesf", "Connecting...");
         case Connected:
             return qApp->translate("tremotesf", "Connected");
         }
