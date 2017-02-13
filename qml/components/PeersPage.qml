@@ -111,9 +111,10 @@ Page {
             }
         }
 
-        ViewPlaceholder {
-            enabled: !peersModel.loaded
-            text: qsTranslate("tremotesf", "Loading")
+        BusyIndicator {
+            anchors.centerIn: parent
+            size: BusyIndicatorSize.Large
+            running: !peersModel.loaded
         }
 
         ViewPlaceholder {
