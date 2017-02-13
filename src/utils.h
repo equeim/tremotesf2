@@ -19,9 +19,7 @@
 #ifndef TREMOTESF_UTILS_H
 #define TREMOTESF_UTILS_H
 
-#include <QList>
 #include <QObject>
-#include <QModelIndexList>
 
 namespace tremotesf
 {

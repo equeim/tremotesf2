@@ -21,8 +21,6 @@
 
 #include <QStyledItemDelegate>
 
-class QStyle;
-
 namespace tremotesf
 {
     class CommonDelegate : public QStyledItemDelegate

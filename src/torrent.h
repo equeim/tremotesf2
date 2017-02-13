@@ -23,7 +23,6 @@
 
 #include <QDateTime>
 #include <QObject>
-#include <QString>
 #include <QVariantMap>
 
 #include "torrentfilesmodelentry.h"

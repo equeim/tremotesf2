@@ -20,9 +20,7 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QDebug>
 #include <QUrl>
-#include <QVariantMap>
 
 namespace tremotesf
 {

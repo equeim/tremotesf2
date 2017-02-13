@@ -18,9 +18,9 @@
 
 #include "rpc.h"
 
+#include <QAuthenticator>
 #include <QCoreApplication>
 #include <QDebug>
-#include <QAuthenticator>
 #include <QHostAddress>
 #include <QHostInfo>
 #include <QJsonDocument>

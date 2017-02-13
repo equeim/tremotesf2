@@ -20,7 +20,6 @@
 
 #include <QCoreApplication>
 #include <QFileDialog>
-#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLineEdit>

@@ -20,16 +20,12 @@
 
 #include <QCoreApplication>
 #include <QCursor>
-#include <QDebug>
-#include <QDialog>
-#include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QIcon>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>

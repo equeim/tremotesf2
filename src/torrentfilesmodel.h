@@ -19,9 +19,6 @@
 #ifndef TREMOTESF_TORRENTFILESMODEL_H
 #define TREMOTESF_TORRENTFILESMODEL_H
 
-#include <memory>
-#include <QMap>
-
 #include "basetorrentfilesmodel.h"
 
 class QThread;
@@ -85,10 +82,12 @@ namespace tremotesf
 
         Q_INVOKABLE void renameFile(const QModelIndex& index, const QString& newName) const;
         void fileRenamed(const QString& path, const QString& newName);
+
 #ifdef TREMOTESF_SAILFISHOS
     protected:
         QHash<int, QByteArray> roleNames() const override;
 #endif
+
     private:
         void update(const QVariantList& files, const QVariantList& fileStats);
         void createTree(const QVariantList& files, const QVariantList& fileStats);

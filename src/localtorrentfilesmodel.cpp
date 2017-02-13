@@ -25,8 +25,6 @@
 
 #include <QThread>
 
-#include <QDebug>
-
 #include "torrentfileparser.h"
 #include "torrentfilesmodelentry.h"
 #include "utils.h"

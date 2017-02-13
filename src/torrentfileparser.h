@@ -20,8 +20,7 @@
 #define TREMOTESF_TORRENTFILEPARSER_H
 
 #include <QObject>
-#include <QVariantList>
-#include <QVariantMap>
+#include <QVariant>
 
 class QThread;
 

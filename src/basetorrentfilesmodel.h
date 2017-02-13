@@ -41,8 +41,8 @@ namespace tremotesf
 
         virtual void setFileWanted(const QModelIndex& index, bool wanted) = 0;
         virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted) = 0;
-        virtual void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntryEnums::Priority priority) = 0;
-        virtual void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntryEnums::Priority priority) = 0;
+        virtual void setFilePriority(const QModelIndex& index, TorrentFilesModelEntryEnums::Priority priority) = 0;
+        virtual void setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntryEnums::Priority priority) = 0;
 
     protected:
         void updateDirectoryChildren(const TorrentFilesModelDirectory* directory);

@@ -19,7 +19,6 @@
 #include "trackersmodel.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 
 #include "torrent.h"
 #include "tracker.h"

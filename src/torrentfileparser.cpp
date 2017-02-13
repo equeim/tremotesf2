@@ -19,8 +19,8 @@
 #include "torrentfileparser.h"
 
 #include <QCoreApplication>
-#include <QFile>
 #include <QDebug>
+#include <QFile>
 #include <QMimeDatabase>
 #include <QThread>
 

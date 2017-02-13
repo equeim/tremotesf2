@@ -20,7 +20,6 @@
 #define TREMOTESF_ADDTORRENTDIALOG_H
 
 #include <QDialog>
-#include <QVariantMap>
 
 class QCheckBox;
 class QComboBox;

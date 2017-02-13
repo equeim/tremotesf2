@@ -25,7 +25,6 @@
 #include <QItemSelectionModel>
 #include <QLineEdit>
 #include <QListWidget>
-#include <QSortFilterProxyModel>
 #include <QStyle>
 #include <QVBoxLayout>
 

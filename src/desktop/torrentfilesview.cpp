@@ -27,7 +27,6 @@
 #include <QMenu>
 
 #include "../localtorrentfilesmodel.h"
-#include "../rpc.h"
 #include "../serversettings.h"
 #include "../settings.h"
 #include "../torrentfilesmodel.h"

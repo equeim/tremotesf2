@@ -20,10 +20,6 @@
 
 #include "torrent.h"
 
-#include <algorithm>
-
-#include <QDebug>
-
 #include <QThread>
 
 #ifndef TREMOTESF_SAILFISHOS

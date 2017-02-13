@@ -19,8 +19,8 @@
 #include "ipcserver.h"
 
 #include <QDebug>
-#include <QLocalSocket>
 #include <QFileInfo>
+#include <QLocalSocket>
 #include <QJsonDocument>
 #include <QUrl>
 #include <QVariantMap>

@@ -23,10 +23,10 @@
 #include <memory>
 
 #include <QByteArray>
-#include <QList>
 #include <QObject>
 #include <QSslConfiguration>
 #include <QUrl>
+#include <QVariantList>
 
 class QAuthenticator;
 class QNetworkAccessManager;

@@ -19,7 +19,6 @@
 #ifndef TREMOTESF_TRACKER_H
 #define TREMOTESF_TRACKER_H
 
-#include <QString>
 #include <QVariantMap>
 
 namespace tremotesf

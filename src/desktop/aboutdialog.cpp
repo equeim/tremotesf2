@@ -18,19 +18,16 @@
 
 #include "aboutdialog.h"
 
-#include <QGuiApplication>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
-#include <QIcon>
+#include <QGuiApplication>
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QTabWidget>
 #include <QTextBrowser>
 #include <QVBoxLayout>
-#include <QUrl>
 
 #include <KTitleWidget>
-#include <KUrlLabel>
 
 #include "../utils.h"
 

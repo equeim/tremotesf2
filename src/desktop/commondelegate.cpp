@@ -21,7 +21,6 @@
 #include <QApplication>
 #include <QProxyStyle>
 #include <QStyle>
-#include <QStyleFactory>
 #include <QStyleOptionProgressBar>
 
 namespace tremotesf

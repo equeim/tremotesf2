@@ -23,7 +23,6 @@
 
 #include <QHash>
 #include <QMainWindow>
-#include <QStatusBar>
 
 class QAction;
 class QMenu;

@@ -26,7 +26,6 @@ namespace tremotesf
     class BaseTorrentFilesModel;
     class LocalTorrentFilesModel;
     class ServerSettings;
-    class Torrent;
     class TorrentFilesModel;
     class TorrentFilesProxyModel;
 

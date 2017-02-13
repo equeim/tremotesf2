@@ -20,7 +20,6 @@
 #define TREMOTESF_TORRENTFILESMODELENTRY_H
 
 #include <QObject>
-#include <QString>
 #include <QVariantList>
 
 namespace tremotesf

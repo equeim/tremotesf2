@@ -20,7 +20,7 @@
 #define TREMOTESF_LOCALTORRENTFILESMODEL_H
 
 #include <memory>
-#include <QVariantMap>
+#include <QVariant>
 
 #include "basetorrentfilesmodel.h"
 

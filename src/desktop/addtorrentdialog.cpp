@@ -22,10 +22,8 @@
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
-#include <QFileInfo>
 #include <QFormLayout>
 #include <QLineEdit>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -156,10 +154,6 @@ namespace tremotesf
         mStartTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start downloading after adding"), this);
         mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->startAddedTorrents());
         layout->addWidget(mStartTorrentCheckBox);
-
-        /*mTrashTorrentFileCheckBox = new QCheckBox(qApp->translate("tremotesf", "Trash .torrent file"), this);
-        mTrashTorrentFileCheckBox->setChecked(mRpc->serverSettings()->trashTorrentFiles());
-        layout->addWidget(mTrashTorrentFileCheckBox);*/
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &AddTorrentDialog::accept);

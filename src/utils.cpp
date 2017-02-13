@@ -127,7 +127,7 @@ namespace tremotesf
 
     QString Utils::formatByteSpeed(double speed)
     {
-        return QString("%1/s").arg(formatByteSize(speed));
+        return QStringLiteral("%1/s").arg(formatByteSize(speed));
     }
 
     QString Utils::formatSpeedLimit(int limit)
@@ -164,7 +164,7 @@ namespace tremotesf
     QString Utils::formatEta(int seconds)
     {
         if (seconds < 0) {
-            return "\u221E";
+            return QStringLiteral("\u221E");
         }
 
         const int days = seconds / 86400;
