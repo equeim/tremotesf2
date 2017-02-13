@@ -793,6 +793,7 @@ namespace tremotesf
                                                  if (success) {
                                                      callOnSuccess(parseResult);
                                                  } else {
+                                                     qDebug() << "parsing error";
                                                      setError(ParseError);
                                                      setStatus(Disconnected);
                                                  }
@@ -802,9 +803,10 @@ namespace tremotesf
                     }
                 } else {
                     if (reply->error() == QNetworkReply::OperationCanceledError) {
+                        qDebug() << "timed out";
                         setError(TimedOut);
                     } else {
-                        qDebug() << reply->errorString();
+                        qDebug() << reply->error() << reply->errorString();
                         setError(ConnectionError);
                     }
                     setStatus(Disconnected);
