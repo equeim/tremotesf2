@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.2.0] - 2017-02-13
 ### Added
 - Torrent properties are now reloaded after reconnection
 - Rename torrent's files
