@@ -20,6 +20,8 @@ sailfishos {
 QMAKE_CXXFLAGS += -Wall -Wextra -pedantic
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
+DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x050800
+
 HEADERS = $$PWD/alltrackersmodel.h \
           $$PWD/peersmodel.h \
           $$PWD/baseproxymodel.h \

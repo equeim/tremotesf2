@@ -46,7 +46,7 @@ namespace tremotesf
     Torrent::Torrent(int id, const QVariantMap& torrentMap, Rpc* rpc)
         : mId(id),
           mHashString(torrentMap.value(QStringLiteral("hashString")).toString()),
-          mAddedDate(QDateTime::fromTime_t(torrentMap.value(QStringLiteral("addedDate")).toUInt())),
+          mAddedDate(QDateTime::fromMSecsSinceEpoch(torrentMap.value(QStringLiteral("addedDate")).toLongLong() * 1000)),
           mFilesEnabled(false),
           mPeersEnabled(false),
           mRpc(rpc)
@@ -531,15 +531,15 @@ namespace tremotesf
 
         mPeersLimit = torrentMap.value(peersLimitKey).toInt();
 
-        const int activityDate = torrentMap.value(QStringLiteral("activityDate")).toInt();
+        const long long activityDate = torrentMap.value(QStringLiteral("activityDate")).toLongLong() * 1000;
         if (activityDate > 0) {
-            mActivityDate.setTime_t(activityDate);
+            mActivityDate.setMSecsSinceEpoch(activityDate);
         } else {
             mActivityDate = QDateTime();
         }
-        const int doneDate = torrentMap.value(QStringLiteral("doneDate")).toInt();
+        const long long doneDate = torrentMap.value(QStringLiteral("doneDate")).toLongLong() * 1000;
         if (doneDate > 0) {
-            mDoneDate.setTime_t(doneDate);
+            mDoneDate.setMSecsSinceEpoch(doneDate);
         } else {
             mDoneDate = QDateTime();
         }
@@ -551,9 +551,9 @@ namespace tremotesf
         mDownloadDirectory = torrentMap.value(QStringLiteral("downloadDir")).toString();
         mCreator = torrentMap.value(QStringLiteral("creator")).toString();
 
-        const int creationDate = torrentMap.value(QStringLiteral("dateCreated")).toInt();
+        const long long creationDate = torrentMap.value(QStringLiteral("dateCreated")).toLongLong() * 1000;
         if (creationDate > 0) {
-            mCreationDate.setTime_t(creationDate);
+            mCreationDate.setMSecsSinceEpoch(creationDate);
         } else {
             mCreationDate = QDateTime();
         }

@@ -113,11 +113,11 @@ namespace tremotesf
 
         mPeers = trackerMap.value(QStringLiteral("lastAnnouncePeerCount")).toInt();
 
-        const int time = trackerMap.value(QStringLiteral("nextAnnounceTime")).toInt();
-        if (time == -1) {
+        const long long time = trackerMap.value(QStringLiteral("nextAnnounceTime")).toLongLong() * 1000;
+        if (time < 0) {
             mNextUpdate = -1;
         } else {
-            mNextUpdate = QDateTime::currentDateTime().secsTo(QDateTime::fromTime_t(time));
+            mNextUpdate = QDateTime::currentDateTime().secsTo(QDateTime::fromMSecsSinceEpoch(time));
         }
     }
 }
