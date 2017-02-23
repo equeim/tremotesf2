@@ -316,7 +316,7 @@
         <location filename="../qml/components/MainPage.qml" line="218"/>
         <location filename="../qml/components/TorrentRemovedHeader.qml" line="29"/>
         <location filename="../src/desktop/mainwindow.cpp" line="178"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="151"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="153"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="476"/>
         <location filename="../src/rpc.cpp" line="223"/>
         <source>Disconnected</source>
@@ -325,19 +325,19 @@
     <message>
         <location filename="../qml/components/DownloadingPage.qml" line="77"/>
         <location filename="../qml/components/ServerSettingsPage.qml" line="43"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="162"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="164"/>
         <source>Downloading</source>
         <translation>Загрузка</translation>
     </message>
     <message>
         <location filename="../qml/components/DownloadingPage.qml" line="95"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="170"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="172"/>
         <source>Start added torrents</source>
         <translation>Запускать добавленные торренты</translation>
     </message>
     <message>
         <location filename="../qml/components/DownloadingPage.qml" line="107"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="176"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="178"/>
         <source>Append &quot;.part&quot; to names of incomplete files</source>
         <translation>Добавлять &quot;.part&quot; к именам незавершённых файлов</translation>
     </message>
@@ -395,7 +395,7 @@
         <location filename="../qml/components/SeedingPage.qml" line="71"/>
         <location filename="../qml/components/ServerSettingsPage.qml" line="49"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="206"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="193"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="195"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="275"/>
         <source>Seeding</source>
         <translation>Раздачи</translation>
@@ -594,13 +594,13 @@
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="83"/>
         <location filename="../qml/components/ServerSettingsPage.qml" line="67"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="386"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="388"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="87"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="391"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="393"/>
         <source>Connection</source>
         <translation>Соединение</translation>
     </message>
@@ -611,13 +611,13 @@
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="111"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="399"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="401"/>
         <source>Random port on Transmission start</source>
         <translation>Случайный порт при запуске Transmission</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="117"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="402"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="404"/>
         <source>Enable port forwarding</source>
         <translation>Использовать перенаправление портов</translation>
     </message>
@@ -628,49 +628,49 @@
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="128"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="406"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="408"/>
         <source>Allow</source>
         <translation>Разрешить</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="133"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="407"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="409"/>
         <source>Prefer</source>
         <translation>Предпочитать</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="138"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="408"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="410"/>
         <source>Require</source>
         <translation>Требовать</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="146"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="411"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="413"/>
         <source>Enable uTP</source>
         <translation>Использовать uTP</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="152"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="414"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="416"/>
         <source>Enable PEX</source>
         <translation>Использовать PEX</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="158"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="417"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="419"/>
         <source>Enable DHT</source>
         <translation>Использовать DHT</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="164"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="420"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="422"/>
         <source>Enable LPD</source>
         <translation>Использовать LPD</translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="169"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="425"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="427"/>
         <source>Peer Limits</source>
         <translation>Ограничения пиров</translation>
     </message>
@@ -702,7 +702,7 @@
     <message>
         <location filename="../qml/components/QueuePage.qml" line="75"/>
         <location filename="../qml/components/ServerSettingsPage.qml" line="55"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="223"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="225"/>
         <source>Queue</source>
         <translation>Очередь</translation>
     </message>
@@ -775,7 +775,7 @@
         <location filename="../qml/components/ServerSettingsPage.qml" line="61"/>
         <location filename="../qml/components/SpeedPage.qml" line="95"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="98"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="262"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="264"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="223"/>
         <source>Speed</source>
         <translation>Скорость</translation>
@@ -874,7 +874,7 @@
         <location filename="../qml/components/SpeedPage.qml" line="99"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="94"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="169"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="267"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="269"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="216"/>
         <source>Limits</source>
         <translation>Ограничения</translation>
@@ -896,13 +896,13 @@
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="157"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="297"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="299"/>
         <source>Alternative Limits</source>
         <translation>Альтернативные ограничения</translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="162"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="300"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="302"/>
         <source>Enable</source>
         <translation>Включить</translation>
     </message>
@@ -918,7 +918,7 @@
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="210"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="316"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="318"/>
         <source>Scheduled</source>
         <translation>По расписанию</translation>
     </message>
@@ -929,7 +929,7 @@
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="236"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="325"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="327"/>
         <source>to</source>
         <translation>до</translation>
     </message>
@@ -940,19 +940,19 @@
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="259"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="330"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="332"/>
         <source>Every day</source>
         <translation>Каждый день</translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="264"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="331"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="333"/>
         <source>Weekdays</source>
         <translation>По рабочим дням</translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="269"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="332"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="334"/>
         <source>Weekends</source>
         <translation>По выходным</translation>
     </message>
@@ -1001,7 +1001,7 @@
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="226"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="198"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="200"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="285"/>
         <source>Stop seeding at ratio:</source>
         <translation>Прекратить раздачу при рейтинге:</translation>
@@ -1024,7 +1024,7 @@
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="279"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="207"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="209"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="311"/>
         <source>Stop seeding if idle for:</source>
         <translation>Прекратить раздачу при простое:</translation>
@@ -1272,7 +1272,7 @@
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="129"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="168"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="170"/>
         <source>Download directory:</source>
         <translation>Каталог загрузки:</translation>
     </message>
@@ -1522,68 +1522,68 @@
         <translation>Поиск...</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="179"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="181"/>
         <source>Directory for incomplete files:</source>
         <translation>Каталог для незавершенных файлов:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="213"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="252"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="215"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="254"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="316"/>
         <source> min</source>
         <translation>мин</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="228"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="230"/>
         <source>Maximum active downloads:</source>
         <translation>Максимальное количество активных загрузок:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="237"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="239"/>
         <source>Maximum active uploads:</source>
         <translation>Максимальное количество активных раздач:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="246"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="248"/>
         <source>Ignore queue position if idle for:</source>
         <translation>Игнорировать позицию в очереди при простое:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="273"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="308"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="275"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="310"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="233"/>
         <source>Download:</source>
         <translation>Загрузка:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="283"/>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="312"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="285"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="314"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="248"/>
         <source>Upload:</source>
         <translation>Отдача:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="372"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="374"/>
         <source>Days:</source>
         <translation>Дни:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="397"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="399"/>
         <source>Peer port:</source>
         <translation>Порт для входящих соединений:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="409"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="411"/>
         <source>Encryption:</source>
         <translation>Шифрование:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="431"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="433"/>
         <source>Maximum peers per torrent:</source>
         <translation>Максимальное количество пиров на торрент:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/serversettingsdialog.cpp" line="435"/>
+        <location filename="../src/desktop/serversettingsdialog.cpp" line="437"/>
         <source>Maximum peers globally:</source>
         <translation>Общее максимальное количество пиров:</translation>
     </message>
@@ -1783,26 +1783,31 @@
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="229"/>
+        <source>Authentication error</source>
+        <translation>Ошибка аутентификации</translation>
+    </message>
+    <message>
+        <location filename="../src/rpc.cpp" line="231"/>
         <source>Parse error</source>
         <translation>Ошибка разбора ответа от сервера</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="231"/>
+        <location filename="../src/rpc.cpp" line="233"/>
         <source>Server is too new</source>
         <translation>Сервер слишком новый</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="233"/>
+        <location filename="../src/rpc.cpp" line="235"/>
         <source>Server is too old</source>
         <translation>Сервер слишком старый</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="237"/>
+        <location filename="../src/rpc.cpp" line="239"/>
         <source>Connecting...</source>
         <translation>Подключение...</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="239"/>
+        <location filename="../src/rpc.cpp" line="241"/>
         <source>Connected</source>
         <translation>Подключено</translation>
     </message>
