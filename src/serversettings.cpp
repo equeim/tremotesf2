@@ -88,7 +88,8 @@ namespace tremotesf
 
     ServerSettings::ServerSettings(Rpc* rpc, QObject* parent)
         : QObject(parent),
-          mRpc(rpc)
+          mRpc(rpc),
+          mSaveOnSet(true)
     {
     }
 
@@ -112,11 +113,11 @@ namespace tremotesf
         return mDownloadDirectory;
     }
 
-    void ServerSettings::setDownloadDirectory(const QString& directory, bool saveImmediately)
+    void ServerSettings::setDownloadDirectory(const QString& directory)
     {
         if (directory != mDownloadDirectory) {
             mDownloadDirectory = directory;
-            if (saveImmediately) {
+            if (mSaveOnSet) {
                 mRpc->setSessionProperty(downloadDirectoryKey, mDownloadDirectory);
             }
         }
@@ -127,10 +128,10 @@ namespace tremotesf
         return mStartAddedTorrents;
     }
 
-    void ServerSettings::setStartAddedTorrents(bool start, bool saveImmediately)
+    void ServerSettings::setStartAddedTorrents(bool start)
     {
         mStartAddedTorrents = start;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(startAddedTorrentsKey, mStartAddedTorrents);
         }
     }
@@ -140,10 +141,10 @@ namespace tremotesf
         return mTrashTorrentFiles;
     }
 
-    void ServerSettings::setTrashTorrentFiles(bool trash, bool saveImmediately)
+    void ServerSettings::setTrashTorrentFiles(bool trash)
     {
         mTrashTorrentFiles = trash;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(trashTorrentFilesKey, mTrashTorrentFiles);
         }
     }
@@ -153,10 +154,10 @@ namespace tremotesf
         return mRenameIncompleteFiles;
     }
 
-    void ServerSettings::setRenameIncompleteFiles(bool rename, bool saveImmediately)
+    void ServerSettings::setRenameIncompleteFiles(bool rename)
     {
         mRenameIncompleteFiles = rename;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(renameIncompleteFilesKey, mRenameIncompleteFiles);
         }
     }
@@ -166,10 +167,10 @@ namespace tremotesf
         return mIncompleteDirectoryEnabled;
     }
 
-    void ServerSettings::setIncompleteDirectoryEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setIncompleteDirectoryEnabled(bool enabled)
     {
         mIncompleteDirectoryEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(incompleteDirectoryEnabledKey, mIncompleteDirectoryEnabled);
         }
     }
@@ -179,12 +180,12 @@ namespace tremotesf
         return mIncompleteDirectory;
     }
 
-    void ServerSettings::setIncompleteDirectory(const QString& directory, bool saveImmediately)
+    void ServerSettings::setIncompleteDirectory(const QString& directory)
     {
         if (directory != mIncompleteDirectory) {
             mIncompleteDirectory = directory;
             qDebug() << mIncompleteDirectory;
-            if (saveImmediately) {
+            if (mSaveOnSet) {
                 mRpc->setSessionProperty(incompleteDirectoryKey, mIncompleteDirectory);
             }
         }
@@ -195,10 +196,10 @@ namespace tremotesf
         return mRatioLimited;
     }
 
-    void ServerSettings::setRatioLimited(bool limited, bool saveImmediately)
+    void ServerSettings::setRatioLimited(bool limited)
     {
         mRatioLimited = limited;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(ratioLimitedKey, mRatioLimited);
         }
     }
@@ -208,10 +209,10 @@ namespace tremotesf
         return mRatioLimit;
     }
 
-    void ServerSettings::setRatioLimit(float limit, bool saveImmediately)
+    void ServerSettings::setRatioLimit(float limit)
     {
         mRatioLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(ratioLimitKey, mRatioLimit);
         }
     }
@@ -221,10 +222,10 @@ namespace tremotesf
         return mIdleSeedingLimited;
     }
 
-    void ServerSettings::setIdleSeedingLimited(bool limited, bool saveImmediately)
+    void ServerSettings::setIdleSeedingLimited(bool limited)
     {
         mIdleSeedingLimited = limited;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(idleSeedingLimitedKey, mIdleSeedingLimited);
         }
     }
@@ -234,10 +235,10 @@ namespace tremotesf
         return mIdleSeedingLimit;
     }
 
-    void ServerSettings::setIdleSeedingLimit(int limit, bool saveImmediately)
+    void ServerSettings::setIdleSeedingLimit(int limit)
     {
         mIdleSeedingLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(idleSeedingLimitKey, mIdleSeedingLimit);
         }
     }
@@ -247,10 +248,10 @@ namespace tremotesf
         return mDownloadQueueEnabled;
     }
 
-    void ServerSettings::setDownloadQueueEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setDownloadQueueEnabled(bool enabled)
     {
         mDownloadQueueEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(downloadQueueEnabledKey, mDownloadQueueEnabled);
         }
     }
@@ -260,10 +261,10 @@ namespace tremotesf
         return mDownloadQueueSize;
     }
 
-    void ServerSettings::setDownloadQueueSize(int size, bool saveImmediately)
+    void ServerSettings::setDownloadQueueSize(int size)
     {
         mDownloadQueueSize = size;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(downloadQueueSizeKey, mDownloadQueueSize);
         }
     }
@@ -273,10 +274,10 @@ namespace tremotesf
         return mSeedQueueEnabled;
     }
 
-    void ServerSettings::setSeedQueueEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setSeedQueueEnabled(bool enabled)
     {
         mSeedQueueEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(seedQueueEnabledKey, mSeedQueueEnabled);
         }
     }
@@ -286,10 +287,10 @@ namespace tremotesf
         return mSeedQueueSize;
     }
 
-    void ServerSettings::setSeedQueueSize(int size, bool saveImmediately)
+    void ServerSettings::setSeedQueueSize(int size)
     {
         mSeedQueueSize = size;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(seedQueueSizeKey, mSeedQueueSize);
         }
     }
@@ -299,10 +300,10 @@ namespace tremotesf
         return mIdleQueueLimited;
     }
 
-    void ServerSettings::setIdleQueueLimited(bool limited, bool saveImmediately)
+    void ServerSettings::setIdleQueueLimited(bool limited)
     {
         mIdleQueueLimited = limited;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(idleQueueLimitedKey, mIdleQueueLimited);
         }
     }
@@ -312,10 +313,10 @@ namespace tremotesf
         return mIdleQueueLimit;
     }
 
-    void ServerSettings::setIdleQueueLimit(int limit, bool saveImmediately)
+    void ServerSettings::setIdleQueueLimit(int limit)
     {
         mIdleQueueLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(idleQueueLimitKey, mIdleQueueLimit);
         }
     }
@@ -325,10 +326,10 @@ namespace tremotesf
         return mDownloadSpeedLimited;
     }
 
-    void ServerSettings::setDownloadSpeedLimited(bool limited, bool saveImmediately)
+    void ServerSettings::setDownloadSpeedLimited(bool limited)
     {
         mDownloadSpeedLimited = limited;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(downloadSpeedLimitedKey, mDownloadSpeedLimited);
         }
     }
@@ -338,10 +339,10 @@ namespace tremotesf
         return mDownloadSpeedLimit;
     }
 
-    void ServerSettings::setDownloadSpeedLimit(int limit, bool saveImmediately)
+    void ServerSettings::setDownloadSpeedLimit(int limit)
     {
         mDownloadSpeedLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(downloadSpeedLimitKey, mDownloadSpeedLimit);
         }
     }
@@ -351,10 +352,10 @@ namespace tremotesf
         return mUploadSpeedLimited;
     }
 
-    void ServerSettings::setUploadSpeedLimited(bool limited, bool saveImmediately)
+    void ServerSettings::setUploadSpeedLimited(bool limited)
     {
         mUploadSpeedLimited = limited;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(uploadSpeedLimitedKey, mUploadSpeedLimited);
         }
     }
@@ -364,10 +365,10 @@ namespace tremotesf
         return mUploadSpeedLimit;
     }
 
-    void ServerSettings::setUploadSpeedLimit(int limit, bool saveImmediately)
+    void ServerSettings::setUploadSpeedLimit(int limit)
     {
         mUploadSpeedLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(uploadSpeedLimitKey, mUploadSpeedLimit);
         }
     }
@@ -377,10 +378,10 @@ namespace tremotesf
         return mAlternativeSpeedLimitsEnabled;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setAlternativeSpeedLimitsEnabled(bool enabled)
     {
         mAlternativeSpeedLimitsEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(alternativeSpeedLimitsEnabledKey, mAlternativeSpeedLimitsEnabled);
         }
     }
@@ -390,10 +391,10 @@ namespace tremotesf
         return mAlternativeDownloadSpeedLimit;
     }
 
-    void ServerSettings::setAlternativeDownloadSpeedLimit(int limit, bool saveImmediately)
+    void ServerSettings::setAlternativeDownloadSpeedLimit(int limit)
     {
         mAlternativeDownloadSpeedLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(alternativeDownloadSpeedLimitKey, mAlternativeDownloadSpeedLimit);
         }
     }
@@ -403,10 +404,10 @@ namespace tremotesf
         return mAlternativeUploadSpeedLimit;
     }
 
-    void ServerSettings::setAlternativeUploadSpeedLimit(int limit, bool saveImmediately)
+    void ServerSettings::setAlternativeUploadSpeedLimit(int limit)
     {
         mAlternativeUploadSpeedLimit = limit;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(alternativeUploadSpeedLimitKey, mAlternativeUploadSpeedLimit);
         }
     }
@@ -416,10 +417,10 @@ namespace tremotesf
         return mAlternativeSpeedLimitsScheduled;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsScheduled(bool scheduled, bool saveImmediately)
+    void ServerSettings::setAlternativeSpeedLimitsScheduled(bool scheduled)
     {
         mAlternativeSpeedLimitsScheduled = scheduled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(alternativeSpeedLimitsScheduledKey, mAlternativeSpeedLimitsScheduled);
         }
     }
@@ -429,10 +430,10 @@ namespace tremotesf
         return mAlternativeSpeedLimitsBeginTime;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsBeginTime(const QTime& time, bool saveImmediately)
+    void ServerSettings::setAlternativeSpeedLimitsBeginTime(const QTime& time)
     {
         mAlternativeSpeedLimitsBeginTime = time;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(alternativeSpeedLimitsBeginTimeKey, mAlternativeSpeedLimitsBeginTime.msecsSinceStartOfDay() / 60000);
         }
     }
@@ -442,10 +443,10 @@ namespace tremotesf
         return mAlternativeSpeedLimitsEndTime;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsEndTime(const QTime& time, bool saveImmediately)
+    void ServerSettings::setAlternativeSpeedLimitsEndTime(const QTime& time)
     {
         mAlternativeSpeedLimitsEndTime = time;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(alternativeSpeedLimitsEndTimeKey, mAlternativeSpeedLimitsEndTime.msecsSinceStartOfDay() / 60000);
         }
     }
@@ -455,11 +456,11 @@ namespace tremotesf
         return mAlternativeSpeedLimitsDays;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsDays(ServerSettings::AlternativeSpeedLimitsDays days, bool saveImmediately)
+    void ServerSettings::setAlternativeSpeedLimitsDays(ServerSettings::AlternativeSpeedLimitsDays days)
     {
         if (days != mAlternativeSpeedLimitsDays) {
             mAlternativeSpeedLimitsDays = days;
-            if (saveImmediately) {
+            if (mSaveOnSet) {
                 mRpc->setSessionProperty(alternativeSpeedLimitsDaysKey, mAlternativeSpeedLimitsDays);
             }
         }
@@ -470,10 +471,10 @@ namespace tremotesf
         return mPeerPort;
     }
 
-    void ServerSettings::setPeerPort(int port, bool saveImmediately)
+    void ServerSettings::setPeerPort(int port)
     {
         mPeerPort = port;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(peerPortKey, mPeerPort);
         }
     }
@@ -483,10 +484,10 @@ namespace tremotesf
         return mRandomPortEnabled;
     }
 
-    void ServerSettings::setRandomPortEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setRandomPortEnabled(bool enabled)
     {
         mRandomPortEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(randomPortEnabledKey, mRandomPortEnabled);
         }
     }
@@ -496,10 +497,10 @@ namespace tremotesf
         return mPortForwardingEnabled;
     }
 
-    void ServerSettings::setPortForwardingEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setPortForwardingEnabled(bool enabled)
     {
         mPortForwardingEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(portForwardingEnabledKey, mPortForwardingEnabled);
         }
     }
@@ -509,10 +510,10 @@ namespace tremotesf
         return mEncryptionMode;
     }
 
-    void ServerSettings::setEncryptionMode(ServerSettings::EncryptionMode mode, bool saveImmediately)
+    void ServerSettings::setEncryptionMode(ServerSettings::EncryptionMode mode)
     {
         mEncryptionMode = mode;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(encryptionModeKey, encryptionModeString(mode));
         }
     }
@@ -522,10 +523,10 @@ namespace tremotesf
         return mUtpEnabled;
     }
 
-    void ServerSettings::setUtpEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setUtpEnabled(bool enabled)
     {
         mUtpEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(utpEnabledKey, mUtpEnabled);
         }
     }
@@ -535,10 +536,10 @@ namespace tremotesf
         return mPexEnabled;
     }
 
-    void ServerSettings::setPexEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setPexEnabled(bool enabled)
     {
         mPexEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(pexEnabledKey, mPexEnabled);
         }
     }
@@ -548,10 +549,10 @@ namespace tremotesf
         return mDhtEnabled;
     }
 
-    void ServerSettings::setDhtEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setDhtEnabled(bool enabled)
     {
         mDhtEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(dhtEnabledKey, mDhtEnabled);
         }
     }
@@ -561,10 +562,10 @@ namespace tremotesf
         return mLpdEnabled;
     }
 
-    void ServerSettings::setLpdEnabled(bool enabled, bool saveImmediately)
+    void ServerSettings::setLpdEnabled(bool enabled)
     {
         mLpdEnabled = enabled;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(lpdEnabledKey, mLpdEnabled);
         }
     }
@@ -574,10 +575,10 @@ namespace tremotesf
         return mMaximumPeersPerTorrent;
     }
 
-    void ServerSettings::setMaximumPeersPerTorrent(int peers, bool saveImmediately)
+    void ServerSettings::setMaximumPeersPerTorrent(int peers)
     {
         mMaximumPeersPerTorrent = peers;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             mRpc->setSessionProperty(maximumPeersPerTorrentKey, mMaximumPeersPerTorrent);
         }
     }
@@ -587,10 +588,20 @@ namespace tremotesf
         return mMaximumPeersGlobally;
     }
 
-    void ServerSettings::setMaximumPeersGlobally(int peers, bool saveImmediately)
+    bool ServerSettings::saveOnSet() const
+    {
+        return mSaveOnSet;
+    }
+
+    void ServerSettings::setSaveOnSet(bool save)
+    {
+        mSaveOnSet = save;
+    }
+
+    void ServerSettings::setMaximumPeersGlobally(int peers)
     {
         mMaximumPeersGlobally = peers;
-        if (saveImmediately) {
+        if (mSaveOnSet) {
             qDebug() << mMaximumPeersGlobally;
             mRpc->setSessionProperty(maximumPeersGloballyKey, mMaximumPeersGlobally);
         }

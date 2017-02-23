@@ -91,51 +91,53 @@ namespace tremotesf
     {
         ServerSettings* settings = mRpc->serverSettings();
 
-        settings->setDownloadDirectory(mDownloadDirectoryWidget->lineEdit()->text(), false);
-        settings->setStartAddedTorrents(mStartAddedTorrentsCheckBox->isChecked(), false);
-        //settings->setTrashTorrentFiles(mTrashTorrentFilesCheckBox->isChecked(), false);
-        settings->setRenameIncompleteFiles(mIncompleteFilesCheckBox->isChecked(), false);
-        settings->setIncompleteDirectoryEnabled(mIncompleteDirectoryCheckBox->isChecked(), false);
-        settings->setIncompleteDirectory(mIncompleteDirectoryWidget->lineEdit()->text(), false);
+        settings->setSaveOnSet(false);
 
-        settings->setRatioLimited(mRatioLimitCheckBox->isChecked(), false);
-        settings->setRatioLimit(mRatioLimitSpinBox->value(), false);
-        settings->setIdleSeedingLimited(mIdleSeedingLimitCheckBox->isChecked(), false);
-        settings->setIdleSeedingLimit(mIdleSeedingLimitSpinBox->value(), false);
+        settings->setDownloadDirectory(mDownloadDirectoryWidget->lineEdit()->text());
+        settings->setStartAddedTorrents(mStartAddedTorrentsCheckBox->isChecked());
+        //settings->setTrashTorrentFiles(mTrashTorrentFilesCheckBox->isChecked());
+        settings->setRenameIncompleteFiles(mIncompleteFilesCheckBox->isChecked());
+        settings->setIncompleteDirectoryEnabled(mIncompleteDirectoryCheckBox->isChecked());
+        settings->setIncompleteDirectory(mIncompleteDirectoryWidget->lineEdit()->text());
 
-        settings->setDownloadQueueEnabled(mMaximumActiveDownloadsCheckBox->isChecked(), false);
-        settings->setDownloadQueueSize(mMaximumActiveDownloadsSpinBox->value(), false);
-        settings->setSeedQueueEnabled(mMaximumActiveUploadsCheckBox->isChecked(), false);
-        settings->setSeedQueueSize(mMaximumActiveUploadsSpinBox->value(), false);
-        settings->setIdleQueueLimited(mIdleQueueLimitCheckBox->isChecked(), false);
-        settings->setIdleQueueLimit(mIdleQueueLimitSpinBox->value(), false);
+        settings->setRatioLimited(mRatioLimitCheckBox->isChecked());
+        settings->setRatioLimit(mRatioLimitSpinBox->value());
+        settings->setIdleSeedingLimited(mIdleSeedingLimitCheckBox->isChecked());
+        settings->setIdleSeedingLimit(mIdleSeedingLimitSpinBox->value());
 
-        settings->setDownloadSpeedLimited(mDownloadSpeedLimitCheckBox->isChecked(), false);
-        settings->setDownloadSpeedLimit(mDownloadSpeedLimitSpinBox->value(), false);
-        settings->setUploadSpeedLimited(mUploadSpeedLimitCheckBox->isChecked(), false);
-        settings->setUploadSpeedLimit(mUploadSpeedLimitSpinBox->value(), false);
-        settings->setAlternativeSpeedLimitsEnabled(mEnableAlternativeSpeedLimitsGroupBox->isChecked(), false);
-        settings->setAlternativeDownloadSpeedLimit(mAlternativeDownloadSpeedLimitSpinBox->value(), false);
-        settings->setAlternativeUploadSpeedLimit(mAlternativeUploadSpeedLimitSpinBox->value(), false);
-        settings->setAlternativeSpeedLimitsScheduled(mLimitScheduleGroupBox->isChecked(), false);
-        settings->setAlternativeSpeedLimitsBeginTime(mLimitScheduleBeginTimeEdit->time(), false);
-        settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time(), false);
+        settings->setDownloadQueueEnabled(mMaximumActiveDownloadsCheckBox->isChecked());
+        settings->setDownloadQueueSize(mMaximumActiveDownloadsSpinBox->value());
+        settings->setSeedQueueEnabled(mMaximumActiveUploadsCheckBox->isChecked());
+        settings->setSeedQueueSize(mMaximumActiveUploadsSpinBox->value());
+        settings->setIdleQueueLimited(mIdleQueueLimitCheckBox->isChecked());
+        settings->setIdleQueueLimit(mIdleQueueLimitSpinBox->value());
 
-        settings->setAlternativeSpeedLimitsDays(static_cast<ServerSettings::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt()),
-                                                false);
+        settings->setDownloadSpeedLimited(mDownloadSpeedLimitCheckBox->isChecked());
+        settings->setDownloadSpeedLimit(mDownloadSpeedLimitSpinBox->value());
+        settings->setUploadSpeedLimited(mUploadSpeedLimitCheckBox->isChecked());
+        settings->setUploadSpeedLimit(mUploadSpeedLimitSpinBox->value());
+        settings->setAlternativeSpeedLimitsEnabled(mEnableAlternativeSpeedLimitsGroupBox->isChecked());
+        settings->setAlternativeDownloadSpeedLimit(mAlternativeDownloadSpeedLimitSpinBox->value());
+        settings->setAlternativeUploadSpeedLimit(mAlternativeUploadSpeedLimitSpinBox->value());
+        settings->setAlternativeSpeedLimitsScheduled(mLimitScheduleGroupBox->isChecked());
+        settings->setAlternativeSpeedLimitsBeginTime(mLimitScheduleBeginTimeEdit->time());
+        settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time());
 
-        settings->setPeerPort(mPeerPortSpinBox->value(), false);
-        settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked(), false);
-        settings->setPortForwardingEnabled(mPortForwardingCheckBox->isChecked(), false);
-        settings->setEncryptionMode(static_cast<ServerSettings::EncryptionMode>(mEncryptionComboBox->currentIndex()), false);
-        settings->setUtpEnabled(mUtpCheckBox->isChecked(), false);
-        settings->setPexEnabled(mPexCheckBox->isChecked(), false);
-        settings->setDhtEnabled(mDhtCheckBox->isChecked(), false);
-        settings->setLpdEnabled(mLpdCheckBox->isChecked(), false);
-        settings->setMaximumPeersPerTorrent(mTorrentPeerLimitSpinBox->value(), false);
-        settings->setMaximumPeersGlobally(mGlobalPeerLimitSpinBox->value(), false);
+        settings->setAlternativeSpeedLimitsDays(static_cast<ServerSettings::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt()));
+
+        settings->setPeerPort(mPeerPortSpinBox->value());
+        settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
+        settings->setPortForwardingEnabled(mPortForwardingCheckBox->isChecked());
+        settings->setEncryptionMode(static_cast<ServerSettings::EncryptionMode>(mEncryptionComboBox->currentIndex()));
+        settings->setUtpEnabled(mUtpCheckBox->isChecked());
+        settings->setPexEnabled(mPexCheckBox->isChecked());
+        settings->setDhtEnabled(mDhtCheckBox->isChecked());
+        settings->setLpdEnabled(mLpdCheckBox->isChecked());
+        settings->setMaximumPeersPerTorrent(mTorrentPeerLimitSpinBox->value());
+        settings->setMaximumPeersGlobally(mGlobalPeerLimitSpinBox->value());
 
         settings->save();
+        settings->setSaveOnSet(true);
 
         QDialog::accept();
     }
