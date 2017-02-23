@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Show authentication error
+
 ## [1.2.0] - 2017-02-13
 ### Added
 - Torrent properties are now reloaded after reconnection
