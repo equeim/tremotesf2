@@ -225,6 +225,8 @@ namespace tremotesf
                 return qApp->translate("tremotesf", "Timed out");
             case ConnectionError:
                 return qApp->translate("tremotesf", "Connection error");
+            case AuthenticationError:
+                return qApp->translate("tremotesf", "Authentication error");
             case ParseError:
                 return qApp->translate("tremotesf", "Parse error");
             case ServerIsTooNew:
@@ -779,11 +781,8 @@ namespace tremotesf
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
             if (mStatus != Disconnected) {
-                if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
-                    reply->hasRawHeader(sessionIdHeader)) {
-                    mSessionId = reply->rawHeader(sessionIdHeader);
-                    postRequest(data, callOnSuccess);
-                } else if (reply->error() == QNetworkReply::NoError) {
+                switch (reply->error()) {
+                case QNetworkReply::NoError:
                     if (callOnSuccess) {
                         auto parser = new JsonParser(reply->readAll(), this);
                         QObject::connect(parser,
@@ -801,15 +800,28 @@ namespace tremotesf
                                              parser->deleteLater();
                                          });
                     }
-                } else {
-                    if (reply->error() == QNetworkReply::OperationCanceledError) {
-                        qDebug() << "timed out";
-                        setError(TimedOut);
+                    break;
+                case QNetworkReply::AuthenticationRequiredError:
+                    qDebug() << "authentication error";
+                    setError(AuthenticationError);
+                    setStatus(Disconnected);
+                    break;
+                case QNetworkReply::OperationCanceledError:
+                case QNetworkReply::TimeoutError:
+                    qDebug() << "timed out";
+                    setError(TimedOut);
+                    setStatus(Disconnected);
+                    break;
+                default:
+                    if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
+                        reply->hasRawHeader(sessionIdHeader)) {
+                        mSessionId = reply->rawHeader(sessionIdHeader);
+                        postRequest(data, callOnSuccess);
                     } else {
                         qDebug() << reply->error() << reply->errorString();
                         setError(ConnectionError);
+                        setStatus(Disconnected);
                     }
-                    setStatus(Disconnected);
                 }
             }
             reply->deleteLater();

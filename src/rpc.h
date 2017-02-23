@@ -66,6 +66,7 @@ namespace tremotesf
             NoError,
             TimedOut,
             ConnectionError,
+            AuthenticationError,
             ParseError,
             ServerIsTooNew,
             ServerIsTooOld,
