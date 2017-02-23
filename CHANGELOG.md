@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.2.1] - 2017-02-24
 ### Added
 - Show authentication error
 
