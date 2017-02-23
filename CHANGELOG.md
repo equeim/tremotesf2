@@ -4,6 +4,13 @@
 ### Added
 - Show authentication error
 
+### Changed
+- Show license in HTML format
+
+### Fixed
+#### Desktop
+- Project URL in About dialog
+
 ## [1.2.0] - 2017-02-13
 ### Added
 - Torrent properties are now reloaded after reconnection
