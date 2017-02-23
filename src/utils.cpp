@@ -198,7 +198,7 @@ namespace tremotesf
 
     QString Utils::license()
     {
-        QFile licenseFile(QStringLiteral(":/LICENSE"));
+        QFile licenseFile(QStringLiteral(":/license.html"));
         licenseFile.open(QFile::ReadOnly);
         return licenseFile.readAll();
     }

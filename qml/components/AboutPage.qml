@@ -203,7 +203,7 @@ Page {
 
                             SilicaFlickable {
                                 anchors.fill: parent
-                                contentHeight: column.height
+                                contentHeight: column.height + Theme.paddingLarge
 
                                 Column {
                                     id: column
@@ -221,8 +221,15 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: Utils.license
+                                        text: {
+                                            var license = "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor)
+                                            license += Utils.license
+                                            return license
+                                        }
+                                        textFormat: Text.RichText
                                         wrapMode: Text.WordWrap
+
+                                        onLinkActivated: Qt.openUrlExternally(link)
                                     }
                                 }
 
