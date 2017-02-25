@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.2.2] - 2017-02-25
+### Fixed
+- Windows icons
+
 ## [1.2.1] - 2017-02-24
 ### Added
 - Show authentication error
