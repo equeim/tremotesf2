@@ -12,8 +12,12 @@ sailfishos {
         QT += dbus
     }
 
-    win32:CONFIG(debug, debug|release) {
-        CONFIG += console
+    win32 {
+        RC_ICONS = data/desktop/tremotesf.ico
+
+        CONFIG(debug, debug|release) {
+            CONFIG += console
+        }
     }
 }
 

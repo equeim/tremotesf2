@@ -39,7 +39,14 @@ int main(int argc, char** argv)
     app.setOrganizationName(app.applicationName());
     app.setWindowIcon(QIcon::fromTheme(QStringLiteral("tremotesf")));
     app.setQuitOnLastWindowClosed(false);
+
+#ifdef Q_OS_WIN
+    QIcon::setThemeSearchPaths({QStringLiteral("icons")});
+    QIcon::setThemeName(QStringLiteral("breeze"));
 #endif
+
+#endif // TREMOTESF_SAILFISHOS
+
     qApp->setApplicationVersion(QStringLiteral(TREMOTESF_VERSION));
 
     QCommandLineParser parser;
