@@ -6,8 +6,8 @@
     <message>
         <location filename="../qml/components/AboutPage.qml" line="36"/>
         <location filename="../qml/components/ToolsPage.qml" line="31"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="49"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="66"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="48"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="65"/>
         <source>About</source>
         <translation></translation>
     </message>
@@ -19,20 +19,20 @@
     <message>
         <location filename="../qml/components/AboutPage.qml" line="98"/>
         <location filename="../qml/components/AboutPage.qml" line="113"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="74"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="73"/>
         <source>Authors</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../qml/components/AboutPage.qml" line="133"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="70"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="69"/>
         <source>Maintainer</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../qml/components/AboutPage.qml" line="143"/>
         <location filename="../qml/components/AboutPage.qml" line="162"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="79"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="78"/>
         <source>Translators</source>
         <translation></translation>
     </message>
@@ -44,30 +44,30 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="87"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="92"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="93"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="96"/>
         <source>Overwrite</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="88"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="88"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="94"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="92"/>
         <source>Server already exists</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="105"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="111"/>
         <source>Edit Server</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="105"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="48"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="111"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="49"/>
         <source>Add Server</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="115"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="121"/>
         <location filename="../qml/components/SortTorrentsPage.qml" line="67"/>
         <location filename="../src/localtorrentfilesmodel.cpp" line="214"/>
         <location filename="../src/torrentfilesmodel.cpp" line="246"/>
@@ -77,56 +77,75 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="148"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="154"/>
         <location filename="../src/peersmodel.cpp" line="130"/>
         <location filename="../src/trackersmodel.cpp" line="94"/>
         <source>Address</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="166"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="172"/>
         <source>Port</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="185"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="191"/>
         <source>API path</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="204"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="127"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="210"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="131"/>
         <source>HTTPS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="219"/>
-        <source>Local certificate</source>
+        <location filename="../qml/components/ServerEditDialog.qml" line="224"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="136"/>
+        <source>Server uses self-signed certificate</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="237"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="135"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="235"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="138"/>
+        <source>Server&apos;s certificate in PEM format</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../qml/components/ServerEditDialog.qml" line="252"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="144"/>
+        <source>Use client certificate authentication</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../qml/components/ServerEditDialog.qml" line="263"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="146"/>
+        <source>Certificate in PEM format with private key</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../qml/components/ServerEditDialog.qml" line="282"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="154"/>
         <source>Authentication</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="254"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="299"/>
         <source>Username</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="268"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="313"/>
         <source>Password</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="284"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="329"/>
         <source>Update interval, s</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="303"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="348"/>
         <source>Timeout, s</source>
         <translation></translation>
     </message>
@@ -316,7 +335,7 @@
         <location filename="../src/desktop/mainwindow.cpp" line="178"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="153"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="476"/>
-        <location filename="../src/rpc.cpp" line="223"/>
+        <location filename="../src/rpc.cpp" line="233"/>
         <source>Disconnected</source>
         <translation></translation>
     </message>
@@ -1179,58 +1198,53 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="87"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="91"/>
         <source>Overwrite Server</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="113"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="117"/>
         <source>Name:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="118"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="122"/>
         <source>Address:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="122"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="126"/>
         <source>Port:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="125"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="129"/>
         <source>API path:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="130"/>
-        <source>Local certificate:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="139"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="158"/>
         <source>Username:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="142"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="161"/>
         <source>Password:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="148"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="154"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="167"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="173"/>
         <source> s</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="149"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="168"/>
         <source>Update interval:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="155"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="174"/>
         <source>Timeout:</source>
         <translation></translation>
     </message>
@@ -1763,42 +1777,42 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="225"/>
+        <location filename="../src/rpc.cpp" line="235"/>
         <source>Timed out</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="227"/>
+        <location filename="../src/rpc.cpp" line="237"/>
         <source>Connection error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="229"/>
+        <location filename="../src/rpc.cpp" line="239"/>
         <source>Authentication error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="231"/>
+        <location filename="../src/rpc.cpp" line="241"/>
         <source>Parse error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="233"/>
+        <location filename="../src/rpc.cpp" line="243"/>
         <source>Server is too new</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="235"/>
+        <location filename="../src/rpc.cpp" line="245"/>
         <source>Server is too old</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="239"/>
+        <location filename="../src/rpc.cpp" line="249"/>
         <source>Connecting...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="241"/>
+        <location filename="../src/rpc.cpp" line="251"/>
         <source>Connected</source>
         <translation></translation>
     </message>
