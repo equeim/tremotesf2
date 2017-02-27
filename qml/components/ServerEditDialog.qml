@@ -33,7 +33,10 @@ Dialog {
                                       portField.text,
                                       apiPathField.text,
                                       httpsSwitch.checked,
-                                      localCertificateTextArea.text,
+                                      selfSignedCertificateSwitch.checked,
+                                      selfSignedCertificateTextArea.text,
+                                      clientCertificateSwitch.checked,
+                                      clientCertificateTextArea.text,
                                       authenticationSwitch.checked,
                                       usernameField.text,
                                       passwordField.text,
@@ -46,7 +49,10 @@ Dialog {
                                                portField.text,
                                                apiPathField.text,
                                                httpsSwitch.checked,
-                                               localCertificateTextArea.text,
+                                               selfSignedCertificateSwitch.checked,
+                                               selfSignedCertificateTextArea.text,
+                                               clientCertificateSwitch.checked,
+                                               clientCertificateTextArea.text,
                                                authenticationSwitch.checked,
                                                usernameField.text,
                                                passwordField.text,
@@ -205,28 +211,67 @@ Dialog {
                 checked: modelData ? modelData.https : false
             }
 
-            TextArea {
-                id: localCertificateTextArea
-
+            Column {
                 anchors {
                     left: parent.left
                     leftMargin: Theme.paddingLarge
                     right: parent.right
                 }
-                height: Theme.itemSizeHuge * 2
                 visible: httpsSwitch.checked
 
-                label: qsTranslate("tremotesf", "Local certificate")
-                placeholderText: label
+                TextSwitch {
+                    id: selfSignedCertificateSwitch
+                    text: qsTranslate("tremotesf", "Server uses self-signed certificate")
+                    checked: modelData ? modelData.selfSignedCertificateEnabled : false
+                }
 
-                text: modelData ? modelData.localCertificate : String()
+                TextArea {
+                    id: selfSignedCertificateTextArea
 
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: {
-                    if (authenticationSwitch.checked) {
-                        usernameField.focus = true
-                    } else {
-                        updateIntervalField.focus = true
+                    width: parent.width
+                    height: Theme.itemSizeHuge * 2
+                    visible: selfSignedCertificateSwitch.checked
+
+                    label: qsTranslate("tremotesf", "Server's certificate in PEM format")
+                    placeholderText: label
+
+                    text: modelData ? modelData.selfSignedCertificate : String()
+
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.onClicked: {
+                        if (authenticationSwitch.checked) {
+                            usernameField.focus = true
+                        } else {
+                            updateIntervalField.focus = true
+                        }
+                    }
+                }
+
+                TextSwitch {
+                    id: clientCertificateSwitch
+                    text: qsTranslate("tremotesf", "Use client certificate authentication")
+                    checked: modelData ? modelData.clientCertificateEnabled : false
+                }
+
+                TextArea {
+                    id: clientCertificateTextArea
+
+                    width: parent.width
+                    height: Theme.itemSizeHuge * 2
+                    visible: clientCertificateSwitch.checked
+
+                    label: qsTranslate("tremotesf", "Certificate in PEM format with private key")
+                    placeholderText: label
+
+                    text: modelData ? modelData.clientCertificate : String()
+
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.onClicked: {
+                        if (authenticationSwitch.checked) {
+                            usernameField.focus = true
+                        } else {
+                            updateIntervalField.focus = true
+                        }
                     }
                 }
             }

@@ -19,6 +19,7 @@
 #include "servereditdialog.h"
 
 #include <QAbstractButton>
+#include <QCheckBox>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -64,7 +65,10 @@ namespace tremotesf
             mPortSpinBox->setValue(server.port);
             mApiPathLineEdit->setText(server.apiPath);
             mHttpsGroupBox->setChecked(server.https);
-            mLocalCertificateTextEdit->setPlainText(server.localCertificate);
+            mSelfSignedCertificateCheckBox->setChecked(server.selfSignedCertificateEnabled);
+            mSelfSignedCertificateEdit->setPlainText(server.selfSignedCertificate);
+            mClientCertificateCheckBox->setChecked(server.clientCertificateEnabled);
+            mClientCertificateEdit->setPlainText(server.clientCertificate);
             mAuthenticationGroupBox->setChecked(server.authentication);
             mUsernameLineEdit->setText(server.username);
             mPasswordLineEdit->setText(server.password);
@@ -126,10 +130,25 @@ namespace tremotesf
 
         mHttpsGroupBox = new QGroupBox(qApp->translate("tremotesf", "HTTPS"), this);
         mHttpsGroupBox->setCheckable(true);
+
         auto httpsGroupBoxLayout = new QVBoxLayout(mHttpsGroupBox);
-        httpsGroupBoxLayout->addWidget(new QLabel(qApp->translate("tremotesf", "Local certificate:")));
-        mLocalCertificateTextEdit = new QPlainTextEdit(this);
-        httpsGroupBoxLayout->addWidget(mLocalCertificateTextEdit);
+
+        mSelfSignedCertificateCheckBox = new QCheckBox(qApp->translate("tremotesf", "Server uses self-signed certificate"), this);
+        mSelfSignedCertificateEdit = new QPlainTextEdit(this);
+        mSelfSignedCertificateEdit->setPlaceholderText(qApp->translate("tremotesf", "Server's certificate in PEM format"));
+        mSelfSignedCertificateEdit->setEnabled(false);
+        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, mSelfSignedCertificateEdit, &QWidget::setEnabled);
+        httpsGroupBoxLayout->addWidget(mSelfSignedCertificateCheckBox);
+        httpsGroupBoxLayout->addWidget(mSelfSignedCertificateEdit);
+
+        mClientCertificateCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use client certificate authentication"), this);
+        mClientCertificateEdit = new QPlainTextEdit(this);
+        mClientCertificateEdit->setPlaceholderText(qApp->translate("tremotesf", "Certificate in PEM format with private key"));
+        mClientCertificateEdit->setEnabled(false);
+        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, mClientCertificateEdit, &QWidget::setEnabled);
+        httpsGroupBoxLayout->addWidget(mClientCertificateCheckBox);
+        httpsGroupBoxLayout->addWidget(mClientCertificateEdit);
+
         formLayout->addRow(mHttpsGroupBox);
 
         mAuthenticationGroupBox = new QGroupBox(qApp->translate("tremotesf", "Authentication"), this);
@@ -176,7 +195,10 @@ namespace tremotesf
                                      mPortSpinBox->value(),
                                      mApiPathLineEdit->text(),
                                      mHttpsGroupBox->isChecked(),
-                                     mLocalCertificateTextEdit->toPlainText().toLatin1(),
+                                     mSelfSignedCertificateCheckBox->isChecked(),
+                                     mSelfSignedCertificateEdit->toPlainText().toLatin1(),
+                                     mClientCertificateCheckBox->isChecked(),
+                                     mClientCertificateEdit->toPlainText().toLatin1(),
                                      mAuthenticationGroupBox->isChecked(),
                                      mUsernameLineEdit->text(),
                                      mPasswordLineEdit->text(),
@@ -189,7 +211,10 @@ namespace tremotesf
                                            mPortSpinBox->value(),
                                            mApiPathLineEdit->text(),
                                            mHttpsGroupBox->isChecked(),
-                                           mLocalCertificateTextEdit->toPlainText().toLatin1(),
+                                           mSelfSignedCertificateCheckBox->isChecked(),
+                                           mSelfSignedCertificateEdit->toPlainText().toLatin1(),
+                                           mClientCertificateCheckBox->isChecked(),
+                                           mClientCertificateEdit->toPlainText().toLatin1(),
                                            mAuthenticationGroupBox->isChecked(),
                                            mUsernameLineEdit->text(),
                                            mPasswordLineEdit->text(),

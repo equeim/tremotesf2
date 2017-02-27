@@ -32,7 +32,10 @@ namespace tremotesf
         int port;
         QString apiPath;
         bool https;
-        QByteArray localCertificate;
+        bool selfSignedCertificateEnabled;
+        QByteArray selfSignedCertificate;
+        bool clientCertificateEnabled;
+        QByteArray clientCertificate;
         bool authentication;
         QString username;
         QString password;
@@ -49,10 +52,7 @@ namespace tremotesf
     public:
         static Servers* instance();
 
-#ifdef TREMOTESF_SAILFISHOS
-        static void migrateFrom0();
-#endif
-        static void migrateFromAccounts();
+        static void migrate();
 
         bool hasServers() const;
         QList<Server> servers();
@@ -68,7 +68,10 @@ namespace tremotesf
                                    int port,
                                    const QString& apiPath,
                                    bool https,
-                                   const QByteArray& localCertificate,
+                                   bool selfSignedCertificateEnabled,
+                                   const QByteArray& selfSignedCertificate,
+                                   bool clientCertificateEnabled,
+                                   const QByteArray& clientCertificate,
                                    bool authentication,
                                    const QString& username,
                                    const QString& password,

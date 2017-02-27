@@ -44,8 +44,14 @@ namespace tremotesf
             return server.apiPath;
         case HttpsRole:
             return server.https;
-        case LocalCertificateRole:
-            return server.localCertificate;
+        case SelfSignedCertificateEnabledRole:
+            return server.selfSignedCertificateEnabled;
+        case SelfSignedCertificateRole:
+            return server.selfSignedCertificate;
+        case ClientCertificateEnabledRole:
+            return server.clientCertificateEnabled;
+        case ClientCertificateRole:
+            return server.clientCertificate;
         case AuthenticationRole:
             return server.authentication;
         case UsernameRole:
@@ -122,7 +128,10 @@ namespace tremotesf
                                  int port,
                                  const QString& apiPath,
                                  bool https,
-                                 const QByteArray& localCertificate,
+                                 bool selfSignedCertificateEnabled,
+                                 const QByteArray& selfSignedCertificate,
+                                 bool clientCertificateEnabled,
+                                 const QByteArray& clientCertificate,
                                  bool authentication,
                                  const QString& username,
                                  const QString& password,
@@ -150,7 +159,10 @@ namespace tremotesf
                                    port,
                                    apiPath,
                                    https,
-                                   localCertificate,
+                                   selfSignedCertificateEnabled,
+                                   selfSignedCertificate,
+                                   clientCertificateEnabled,
+                                   clientCertificate,
                                    authentication,
                                    username,
                                    password,
@@ -163,7 +175,10 @@ namespace tremotesf
             server.port = port;
             server.apiPath = apiPath;
             server.https = https;
-            server.localCertificate = localCertificate;
+            server.selfSignedCertificateEnabled = selfSignedCertificateEnabled;
+            server.selfSignedCertificate = selfSignedCertificate;
+            server.clientCertificateEnabled = clientCertificateEnabled;
+            server.clientCertificate = clientCertificate;
             server.authentication = authentication;
             server.username = username;
             server.password = password;
@@ -204,7 +219,10 @@ namespace tremotesf
                 {PortRole, QByteArrayLiteral("port")},
                 {ApiPathRole, QByteArrayLiteral("apiPath")},
                 {HttpsRole, QByteArrayLiteral("https")},
-                {LocalCertificateRole, QByteArrayLiteral("localCertificate")},
+                {SelfSignedCertificateEnabledRole, QByteArrayLiteral("selfSignedCertificateEnabled")},
+                {SelfSignedCertificateRole, QByteArrayLiteral("selfSignedCertificate")},
+                {ClientCertificateEnabledRole, QByteArrayLiteral("clientCertificateEnabled")},
+                {ClientCertificateRole, QByteArrayLiteral("clientCertificate")},
                 {AuthenticationRole, QByteArrayLiteral("authentication")},
                 {UsernameRole, QByteArrayLiteral("username")},
                 {PasswordRole, QByteArrayLiteral("password")},

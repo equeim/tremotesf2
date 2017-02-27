@@ -90,10 +90,7 @@ int main(int argc, char** argv)
 
     tremotesf::Utils::registerTypes();
 
-#ifdef TREMOTESF_SAILFISHOS
-    tremotesf::Servers::migrateFrom0();
-#endif
-    tremotesf::Servers::migrateFromAccounts();
+    tremotesf::Servers::migrate();
 
 #ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QStringLiteral("ipcServer"), &ipcServer);

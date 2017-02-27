@@ -21,6 +21,7 @@
 
 #include <QDialog>
 
+class QCheckBox;
 class QDialogButtonBox;
 class QGroupBox;
 class QLineEdit;
@@ -52,7 +53,10 @@ namespace tremotesf
         QSpinBox* mPortSpinBox;
         QLineEdit* mApiPathLineEdit;
         QGroupBox* mHttpsGroupBox;
-        QPlainTextEdit* mLocalCertificateTextEdit;
+        QCheckBox* mSelfSignedCertificateCheckBox;
+        QPlainTextEdit* mSelfSignedCertificateEdit;
+        QCheckBox* mClientCertificateCheckBox;
+        QPlainTextEdit* mClientCertificateEdit;
         QGroupBox* mAuthenticationGroupBox;
         QLineEdit* mUsernameLineEdit;
         QLineEdit* mPasswordLineEdit;

@@ -175,6 +175,16 @@ namespace tremotesf
         mUpdateTimer->setSingleShot(true);
         QObject::connect(mUpdateTimer, &QTimer::timeout, this, &Rpc::updateData);
 
+        /*QObject::connect(mNetwork, &QNetworkAccessManager::sslErrors, this, [=](QNetworkReply* reply, const QList<QSslError>& errors) {
+            if (mSelfSignedCertificate) {
+                if (errors.length() == 1 && errors.first().error() == QSslError::HostNameMismatch) {
+                    reply->ignoreSslErrors(errors);
+                    return;
+                }
+            }
+            qDebug() << errors;
+        });*/
+
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, &Rpc::updateServer);
         updateServer();
     }
@@ -555,6 +565,8 @@ namespace tremotesf
 
     void Rpc::updateServer()
     {
+        mNetwork->clearAccessCache();
+
         if (!Servers::instance()->hasServers()) {
             disconnect();
             return;
@@ -576,10 +588,16 @@ namespace tremotesf
         }
 
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
-        mSslConfiguration.setPeerVerifyMode(QSslSocket::QueryPeer);
-        const QByteArray localCertificate(server.localCertificate);
-        mSslConfiguration.setLocalCertificate(QSslCertificate(localCertificate));
-        mSslConfiguration.setPrivateKey(QSslKey(localCertificate, QSsl::Rsa));
+
+        mSelfSignedCertificate = server.selfSignedCertificateEnabled;
+        if (mSelfSignedCertificate) {
+            mSslConfiguration.setCaCertificates({QSslCertificate(server.selfSignedCertificate)});
+        }
+
+        if (server.clientCertificateEnabled) {
+            mSslConfiguration.setLocalCertificate(QSslCertificate(server.clientCertificate));
+            mSslConfiguration.setPrivateKey(QSslKey(server.clientCertificate, QSsl::Rsa));
+        }
 
         mAuthentication = server.authentication;
         mUsername = server.username;

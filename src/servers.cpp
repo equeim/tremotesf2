@@ -33,20 +33,87 @@ namespace tremotesf
         const QSettings::Format settingsFormat = QSettings::NativeFormat;
 #endif
 
+        const QString fileName(QStringLiteral("servers"));
+
         const QString versionKey(QStringLiteral("version"));
         const QString currentServerKey(QStringLiteral("current"));
         const QString addressKey(QStringLiteral("address"));
         const QString portKey(QStringLiteral("port"));
         const QString apiPathKey(QStringLiteral("apiPath"));
         const QString httpsKey(QStringLiteral("https"));
-        const QString localCertificateKey(QStringLiteral("localCertificate"));
+        const QString selfSignedCertificateEnabledKey(QStringLiteral("selfSignedCertificateEnabled"));
+        const QString selfSignedCertificateKey(QStringLiteral("selfSignedCertificate"));
+        const QString clientCertificateEnabledKey(QStringLiteral("clientCertificateEnabled"));
+        const QString clientCertificateKey(QStringLiteral("clientCertificate"));
         const QString authenticationKey(QStringLiteral("authentication"));
         const QString usernameKey(QStringLiteral("username"));
         const QString passwordKey(QStringLiteral("password"));
         const QString updateIntervalKey(QStringLiteral("updateInterval"));
         const QString timeoutKey(QStringLiteral("timeout"));
 
+        const QString localCertificateKey(QStringLiteral("localCertificate"));
+
         Servers* instancePointer = nullptr;
+
+#ifdef TREMOTESF_SAILFISHOS
+        void migrateFrom0()
+        {
+            QSettings settings;
+            if (settings.value(versionKey).toInt() != 1) {
+                QSettings serversSettings(qApp->organizationName(), fileName);
+                if (serversSettings.childGroups().isEmpty()) {
+                    for (const QString& group : settings.childGroups()) {
+                        settings.beginGroup(group);
+                        serversSettings.beginGroup(group);
+
+                        serversSettings.setValue(addressKey, settings.value(addressKey));
+                        serversSettings.setValue(portKey, settings.value(portKey));
+                        serversSettings.setValue(apiPathKey, settings.value(apiPathKey));
+                        serversSettings.setValue(httpsKey, settings.value(httpsKey));
+                        if (settings.value(localCertificateKey).toBool()) {
+                            const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation,
+                                                                                      QStringLiteral("%1.pem").arg(group)));
+                            if (!localCertificatePath.isEmpty()) {
+                                QFile file(localCertificatePath);
+                                if (file.open(QFile::ReadOnly)) {
+                                    serversSettings.setValue(clientCertificateEnabledKey, true);
+                                    serversSettings.setValue(clientCertificateKey, file.readAll());
+                                }
+                            }
+                        }
+                        serversSettings.setValue(authenticationKey, settings.value(authenticationKey));
+                        serversSettings.setValue(usernameKey, settings.value(usernameKey));
+                        serversSettings.setValue(passwordKey, settings.value(passwordKey));
+                        serversSettings.setValue(updateIntervalKey, settings.value(updateIntervalKey));
+                        serversSettings.setValue(timeoutKey, settings.value(timeoutKey));
+
+                        serversSettings.endGroup();
+                        settings.endGroup();
+                    }
+                    serversSettings.setValue(currentServerKey, settings.value(QStringLiteral("currentAccount")));
+                }
+                settings.clear();
+                settings.setValue(versionKey, 1);
+            }
+        }
+#endif
+        void migrateFromAccounts()
+        {
+            QSettings accounts(settingsFormat,
+                               QSettings::UserScope,
+                               qApp->organizationName(),
+                               QStringLiteral("accounts"));
+            if (!accounts.childGroups().isEmpty()) {
+                if (QFile::copy(accounts.fileName(),
+                                QSettings(settingsFormat,
+                                          QSettings::UserScope,
+                                          qApp->organizationName(),
+                                          fileName)
+                                    .fileName())) {
+                    QFile::remove(accounts.fileName());
+                }
+            }
+        }
     }
 
     Servers* Servers::instance()
@@ -57,63 +124,12 @@ namespace tremotesf
         return instancePointer;
     }
 
+    void Servers::migrate()
+    {
 #ifdef TREMOTESF_SAILFISHOS
-    void Servers::migrateFrom0()
-    {
-        QSettings settings;
-        if (settings.value(versionKey).toInt() != 1) {
-            QSettings ServersSettings(qApp->organizationName(), QStringLiteral("Servers"));
-            if (ServersSettings.childGroups().isEmpty()) {
-                for (const QString& group : settings.childGroups()) {
-                    settings.beginGroup(group);
-                    ServersSettings.beginGroup(group);
-
-                    ServersSettings.setValue(addressKey, settings.value(addressKey));
-                    ServersSettings.setValue(portKey, settings.value(portKey));
-                    ServersSettings.setValue(apiPathKey, settings.value(apiPathKey));
-                    ServersSettings.setValue(httpsKey, settings.value(httpsKey));
-                    if (settings.value(localCertificateKey).toBool()) {
-                        const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation,
-                                                                                  QStringLiteral("%1.pem").arg(group)));
-                        if (!localCertificatePath.isEmpty()) {
-                            QFile file(localCertificatePath);
-                            if (file.open(QFile::ReadOnly)) {
-                                ServersSettings.setValue(localCertificateKey, file.readAll());
-                            }
-                        }
-                    }
-                    ServersSettings.setValue(authenticationKey, settings.value(authenticationKey));
-                    ServersSettings.setValue(usernameKey, settings.value(usernameKey));
-                    ServersSettings.setValue(passwordKey, settings.value(passwordKey));
-                    ServersSettings.setValue(updateIntervalKey, settings.value(updateIntervalKey));
-                    ServersSettings.setValue(timeoutKey, settings.value(timeoutKey));
-
-                    ServersSettings.endGroup();
-                    settings.endGroup();
-                }
-                ServersSettings.setValue(currentServerKey, settings.value(QStringLiteral("currentAccount")));
-            }
-            settings.clear();
-            settings.setValue(versionKey, 1);
-        }
-    }
+        migrateFrom0();
 #endif
-    void Servers::migrateFromAccounts()
-    {
-        QSettings accounts(settingsFormat,
-                           QSettings::UserScope,
-                           qApp->organizationName(),
-                           QStringLiteral("accounts"));
-        if (!accounts.childGroups().isEmpty()) {
-            if (QFile::copy(accounts.fileName(),
-                            QSettings(settingsFormat,
-                                      QSettings::UserScope,
-                                      qApp->organizationName(),
-                                      QStringLiteral("servers"))
-                                .fileName())) {
-                QFile::remove(accounts.fileName());
-            }
-        }
+        migrateFromAccounts();
     }
 
     bool Servers::hasServers() const
@@ -160,7 +176,10 @@ namespace tremotesf
                             int port,
                             const QString& apiPath,
                             bool https,
-                            const QByteArray& localCertificate,
+                            bool selfSignedCertificateEnabled,
+                            const QByteArray& selfSignedCertificate,
+                            bool clientCertificateEnabled,
+                            const QByteArray& clientCertificate,
                             bool authentication,
                             const QString& username,
                             const QString& password,
@@ -187,7 +206,10 @@ namespace tremotesf
         mSettings->setValue(portKey, port);
         mSettings->setValue(apiPathKey, apiPath);
         mSettings->setValue(httpsKey, https);
-        mSettings->setValue(localCertificateKey, localCertificate);
+        mSettings->setValue(selfSignedCertificateEnabledKey, selfSignedCertificateEnabled);
+        mSettings->setValue(selfSignedCertificateKey, selfSignedCertificate);
+        mSettings->setValue(clientCertificateEnabledKey, clientCertificateEnabled);
+        mSettings->setValue(clientCertificateKey, clientCertificate);
         mSettings->setValue(authenticationKey, authentication);
         mSettings->setValue(usernameKey, username);
         mSettings->setValue(passwordKey, password);
@@ -227,7 +249,10 @@ namespace tremotesf
             mSettings->setValue(portKey, server.port);
             mSettings->setValue(apiPathKey, server.apiPath);
             mSettings->setValue(httpsKey, server.https);
-            mSettings->setValue(localCertificateKey, server.localCertificate);
+            mSettings->setValue(selfSignedCertificateEnabledKey, server.selfSignedCertificateEnabled);
+            mSettings->setValue(selfSignedCertificateKey, server.selfSignedCertificate);
+            mSettings->setValue(clientCertificateEnabledKey, server.clientCertificateEnabled);
+            mSettings->setValue(clientCertificateKey, server.clientCertificate);
             mSettings->setValue(authenticationKey, server.authentication);
             mSettings->setValue(usernameKey, server.username);
             mSettings->setValue(passwordKey, server.password);
@@ -266,6 +291,19 @@ namespace tremotesf
         } else {
             mSettings->remove(currentServerKey);
         }
+
+        for (const QString& group : mSettings->childGroups()) {
+            mSettings->beginGroup(group);
+            if (mSettings->contains(localCertificateKey)) {
+                const QByteArray localCertificate(mSettings->value(localCertificateKey).toByteArray());
+                if (!localCertificate.isEmpty()) {
+                    mSettings->setValue(clientCertificateEnabledKey, true);
+                    mSettings->setValue(clientCertificateKey, localCertificate);
+                }
+                mSettings->remove(localCertificateKey);
+            }
+            mSettings->endGroup();
+        }
     }
 
     Server Servers::getServer(const QString& name)
@@ -277,7 +315,10 @@ namespace tremotesf
             mSettings->value(portKey).toInt(),
             mSettings->value(apiPathKey).toString(),
             mSettings->value(httpsKey).toBool(),
-            mSettings->value(localCertificateKey).toByteArray(),
+            mSettings->value(selfSignedCertificateEnabledKey).toBool(),
+            mSettings->value(selfSignedCertificateKey).toByteArray(),
+            mSettings->value(clientCertificateEnabledKey).toBool(),
+            mSettings->value(clientCertificateKey).toByteArray(),
             mSettings->value(authenticationKey).toBool(),
             mSettings->value(usernameKey).toString(),
             mSettings->value(passwordKey).toString(),

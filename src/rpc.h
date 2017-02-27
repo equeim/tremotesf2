@@ -156,6 +156,7 @@ namespace tremotesf
 
         QUrl mServerUrl;
         bool mAuthentication;
+        bool mSelfSignedCertificate;
         QSslConfiguration mSslConfiguration;
         QString mUsername;
         QString mPassword;
