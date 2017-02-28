@@ -160,9 +160,9 @@ namespace tremotesf
         }
 
         if (unit == Byte) {
-            return string.arg(locale.toString(size));
+            return string.arg(locale.toString(speed));
         }
-        return string.arg(locale.toString(size, 'f', 1));
+        return string.arg(locale.toString(speed, 'f', 1));
     }
 
     QString Utils::formatSpeedLimit(int limit)
