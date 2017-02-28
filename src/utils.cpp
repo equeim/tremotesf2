@@ -329,9 +329,9 @@ namespace tremotesf
     QString Utils::statusIconPath(Utils::StatusIcon icon)
     {
 #ifdef Q_OS_WIN
-        static const QString iconsPath(QString("%1/icons").arg(QCoreApplication::applicationDirPath()));
+        static const QString iconsPath(QStringLiteral("%1/icons").arg(QCoreApplication::applicationDirPath()));
 #else
-        static const QString iconsPath(ICONS_PATH);
+        static const QString iconsPath(QStringLiteral(ICONS_PATH));
 #endif // Q_OS_WIN
         static const QString active(QStringLiteral("%1/active.png").arg(iconsPath));
         static const QString checking(QStringLiteral("%1/checking.png").arg(iconsPath));
