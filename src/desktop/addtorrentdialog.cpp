@@ -134,8 +134,11 @@ namespace tremotesf
 
         mPriorityComboBox = new QComboBox(this);
         mPriorityComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        mPriorityComboBox->addItems({qApp->translate("tremotesf", "High"),
+        mPriorityComboBox->addItems({//: Priority
+                                     qApp->translate("tremotesf", "High"),
+                                     //: Priority
                                      qApp->translate("tremotesf", "Normal"),
+                                     //: Priority
                                      qApp->translate("tremotesf", "Low")});
         mPriorityComboBox->setCurrentIndex(1);
 

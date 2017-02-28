@@ -151,7 +151,7 @@ Page {
     SelectionPanel {
         id: selectionPanel
         selectionModel: torrentsView.selectionModel
-        text: qsTranslate("tremotesf", "%n torrent(s) selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%n torrents selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {

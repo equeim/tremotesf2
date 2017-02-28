@@ -125,12 +125,15 @@ Dialog {
                 label: qsTranslate("tremotesf", "Torrent priority")
                 menu: ContextMenu {
                     MenuItem {
+                        //: Priority
                         text: qsTranslate("tremotesf", "High")
                     }
                     MenuItem {
+                        //: Priority
                         text: qsTranslate("tremotesf", "Normal")
                     }
                     MenuItem {
+                        //: Priority
                         text: qsTranslate("tremotesf", "Low")
                     }
                 }

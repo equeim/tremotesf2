@@ -74,7 +74,7 @@ Page {
             DisconnectedHeader { }
 
             PageHeader {
-                title: qsTranslate("tremotesf", "Downloading")
+                title: qsTranslate("tremotesf", "Downloading", "Noun")
             }
 
             FileSelectionItem {

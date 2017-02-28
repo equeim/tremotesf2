@@ -144,6 +144,7 @@ Page {
                     right: parent.right
                 }
                 visible: idleQueueSwitch.checked
+                //: Minutes
                 label: qsTranslate("tremotesf", "min")
                 placeholderText: label
                 inputMethodHints: Qt.ImhDigitsOnly

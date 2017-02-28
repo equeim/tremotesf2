@@ -66,6 +66,7 @@ Page {
 
                 FilterTorrentsListItem {
                     current: torrentsProxyModel.statusFilter === TorrentsProxyModel.All
+                    //: All torrents
                     text: qsTranslate("tremotesf", "All")
                     torrents: rpc.torrentsCount
 
@@ -88,7 +89,7 @@ Page {
 
                 FilterTorrentsListItem {
                     current: torrentsProxyModel.statusFilter === TorrentsProxyModel.Downloading
-                    text: qsTranslate("tremotesf", "Downloading", "Torrents that are being downloaded")
+                    text: qsTranslate("tremotesf", "Downloading", "Downloading torrents")
                     torrents: statusFilterStats.downloadingTorrents
 
                     onClicked: {
@@ -99,7 +100,7 @@ Page {
 
                 FilterTorrentsListItem {
                     current: torrentsProxyModel.statusFilter === TorrentsProxyModel.Seeding
-                    text: qsTranslate("tremotesf", "Seeding", "Torrents that are being seeded")
+                    text: qsTranslate("tremotesf", "Seeding", "Seeding torrents")
                     torrents: statusFilterStats.seedingTorrents
 
                     onClicked: {
@@ -121,7 +122,7 @@ Page {
 
                 FilterTorrentsListItem {
                     current: torrentsProxyModel.statusFilter === TorrentsProxyModel.Checking
-                    text: qsTranslate("tremotesf", "Checking", "Torrents that are being checked")
+                    text: qsTranslate("tremotesf", "Checking", "Checking torrents")
                     torrents: statusFilterStats.checkingTorrents
 
                     onClicked: {

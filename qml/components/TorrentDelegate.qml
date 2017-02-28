@@ -203,11 +203,13 @@ ListItem {
                 }
 
                 if (torrent.percentDone === 1) {
+                    //: e.g. 100 MiB, uploaded 200 MiB
                     return qsTranslate("tremotesf", "%1, uploaded %2")
                     .arg(Utils.formatByteSize(torrent.sizeWhenDone))
                     .arg(Utils.formatByteSize(torrent.totalUploaded))
                 }
 
+                //: e.g. 100 MiB of 200 MiB (50%)
                 return qsTranslate("tremotesf", "%1 of %2 (%3)")
                 .arg(Utils.formatByteSize(torrent.completedSize))
                 .arg(Utils.formatByteSize(torrent.sizeWhenDone))

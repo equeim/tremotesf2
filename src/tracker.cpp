@@ -54,12 +54,14 @@ namespace tremotesf
     {
         switch (mStatus) {
         case Inactive:
+            //: Tracker status
             return qApp->translate("tremotesf", "Inactive");
         case Active:
             return qApp->translate("tremotesf", "Active", "Tracker status");
         case Queued:
-            return qApp->translate("tremotesf", "Queued");
+            return qApp->translate("tremotesf", "Queued", "Tracker status");
         case Updating:
+            //: Tracker status
             return qApp->translate("tremotesf", "Updating");
         case Error: {
             if (mErrorMessage.isEmpty()) {

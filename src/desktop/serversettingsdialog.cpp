@@ -161,7 +161,7 @@ namespace tremotesf
         // Downloading page
         mDownloadingPageWidget = new QWidget(this);
 
-        KPageWidgetItem* downloadingPageItem = pageWidget->addPage(mDownloadingPageWidget, qApp->translate("tremotesf", "Downloading"));
+        KPageWidgetItem* downloadingPageItem = pageWidget->addPage(mDownloadingPageWidget, qApp->translate("tremotesf", "Downloading", "Noun"));
         downloadingPageItem->setIcon(QIcon::fromTheme(QStringLiteral("folder-download")));
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
@@ -192,7 +192,7 @@ namespace tremotesf
 
         // Seeding page
         mSeedingPageWidget = new QWidget(this);
-        KPageWidgetItem* seedingPageItem = pageWidget->addPage(mSeedingPageWidget, qApp->translate("tremotesf", "Seeding"));
+        KPageWidgetItem* seedingPageItem = pageWidget->addPage(mSeedingPageWidget, qApp->translate("tremotesf", "Seeding", "Noun"));
         seedingPageItem->setIcon(QIcon::fromTheme(QStringLiteral("network-server")));
 
         auto seedingPageLayout = new QGridLayout(mSeedingPageWidget);
@@ -212,6 +212,7 @@ namespace tremotesf
         mIdleSeedingLimitSpinBox = new QSpinBox(this);
         mIdleSeedingLimitSpinBox->setEnabled(false);
         mIdleSeedingLimitSpinBox->setMaximum(9999);
+        //: Minutes
         mIdleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
         QObject::connect(mIdleSeedingLimitCheckBox, &QCheckBox::toggled, mIdleSeedingLimitSpinBox, &QSpinBox::setEnabled);
         seedingPageLayout->addWidget(mIdleSeedingLimitSpinBox, 3, 1, Qt::AlignTop);
@@ -251,6 +252,7 @@ namespace tremotesf
         mIdleQueueLimitSpinBox = new QSpinBox(this);
         mIdleQueueLimitSpinBox->setEnabled(false);
         mIdleQueueLimitSpinBox->setMaximum(9999);
+        //: Minutes
         mIdleQueueLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
         QObject::connect(mIdleQueueLimitCheckBox, &QCheckBox::toggled, mIdleQueueLimitSpinBox, &QSpinBox::setEnabled);
         queuePageLayout->addWidget(mIdleQueueLimitSpinBox, 5, 1, Qt::AlignTop);
@@ -272,6 +274,7 @@ namespace tremotesf
         const int maxSpeedLimit = std::numeric_limits<uint>::max() / 1024;
         const QString kibiBytesPerSecond(" " + Utils::kibiBytesPerSecond());
 
+        //: Noun
         mDownloadSpeedLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);
         speedLimitsGroupBoxLayout->addWidget(mDownloadSpeedLimitCheckBox, 0, 0, 1, 2);
 
@@ -282,6 +285,7 @@ namespace tremotesf
         QObject::connect(mDownloadSpeedLimitCheckBox, &QCheckBox::toggled, mDownloadSpeedLimitSpinBox, &QSpinBox::setEnabled);
         speedLimitsGroupBoxLayout->addWidget(mDownloadSpeedLimitSpinBox, 1, 1);
 
+        //: Noun
         mUploadSpeedLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Upload:"), this);
         speedLimitsGroupBoxLayout->addWidget(mUploadSpeedLimitCheckBox, 2, 0, 1, 2);
 
@@ -324,6 +328,7 @@ namespace tremotesf
         scheduleGroupBoxLayout->addRow(scheduleTimeLayout);
         mLimitScheduleBeginTimeEdit = new QTimeEdit(this);
         scheduleTimeLayout->addWidget(mLimitScheduleBeginTimeEdit, 1);
+        //: e.g. inside "From 1:00 AM to 5:00 AM"
         scheduleTimeLayout->addWidget(new QLabel(qApp->translate("tremotesf", "to")));
         mLimitScheduleEndTimeEdit = new QTimeEdit(this);
         scheduleTimeLayout->addWidget(mLimitScheduleEndTimeEdit, 1);
@@ -405,8 +410,11 @@ namespace tremotesf
         connectionGroupBoxLayout->addRow(mPortForwardingCheckBox);
 
         mEncryptionComboBox = new QComboBox();
-        mEncryptionComboBox->addItems({qApp->translate("tremotesf", "Allow"),
+        mEncryptionComboBox->addItems({//: Encryption mode
+                                       qApp->translate("tremotesf", "Allow"),
+                                       //: Encryption mode
                                        qApp->translate("tremotesf", "Prefer"),
+                                       //: Encryption mode
                                        qApp->translate("tremotesf", "Require")});
         connectionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Encryption:"), mEncryptionComboBox);
 

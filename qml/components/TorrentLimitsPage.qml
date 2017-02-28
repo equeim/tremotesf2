@@ -108,7 +108,7 @@ Page {
             TextSwitch {
                 id: downloadSpeedLimitSwitch
                 enabled: torrent
-                text: qsTranslate("tremotesf", "Download")
+                text: qsTranslate("tremotesf", "Download", "Noun")
                 onClicked: torrent.downloadSpeedLimited = checked
             }
 
@@ -186,16 +186,19 @@ Page {
                 label: qsTranslate("tremotesf", "Torrent priority")
                 menu: ContextMenu {
                     MenuItem {
+                        //: Priority
                         text: qsTranslate("tremotesf", "High")
                         onClicked: torrent.bandwidthPriority = Torrent.HighPriority
                     }
 
                     MenuItem {
+                        //: Priority
                         text: qsTranslate("tremotesf", "Normal")
                         onClicked: torrent.bandwidthPriority = Torrent.NormalPriority
                     }
 
                     MenuItem {
+                        //: Priority
                         text: qsTranslate("tremotesf", "Low")
                         onClicked: torrent.bandwidthPriority = Torrent.LowPriority
                     }
@@ -203,7 +206,7 @@ Page {
             }
 
             SectionHeader {
-                text: qsTranslate("tremotesf", "Seeding")
+                text: qsTranslate("tremotesf", "Seeding", "Noun")
             }
 
             ComboBox {
@@ -295,6 +298,7 @@ Page {
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
 
+                //: Minutes
                 label: qsTranslate("tremotesf", "min")
                 placeholderText: label
 

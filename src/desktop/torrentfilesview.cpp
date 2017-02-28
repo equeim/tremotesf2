@@ -102,7 +102,7 @@ namespace tremotesf
 
         QMenu contextMenu;
 
-        QAction* downloadAction = contextMenu.addAction(qApp->translate("tremotesf", "Download", "File menu item"));
+        QAction* downloadAction = contextMenu.addAction(qApp->translate("tremotesf", "Download", "File menu item, verb"));
         QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes]() {
             mModel->setFilesWanted(sourceIndexes, true);
         });
@@ -118,6 +118,7 @@ namespace tremotesf
         QActionGroup priorityGroup(this);
         priorityGroup.setExclusive(true);
 
+        //: Priority
         QAction* highPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "High"));
         highPriorityAction->setCheckable(true);
         QObject::connect(highPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
@@ -126,6 +127,7 @@ namespace tremotesf
             }
         });
 
+        //: Priority
         QAction* normalPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Normal"));
         normalPriorityAction->setCheckable(true);
         QObject::connect(normalPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
@@ -134,6 +136,7 @@ namespace tremotesf
             }
         });
 
+        //: Priority
         QAction* lowPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Low"));
         lowPriorityAction->setCheckable(true);
         QObject::connect(lowPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {

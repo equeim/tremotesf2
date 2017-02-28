@@ -154,7 +154,7 @@ Page {
                         font.pixelSize: Theme.fontSizeExtraSmall
                         color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                         text: modelData.error ? String()
-                                              : qsTranslate("tremotesf", "%n peer(s)", String(), modelData.peers)
+                                              : qsTranslate("tremotesf", "%n peers", String(), modelData.peers)
                     }
                 }
 
@@ -200,12 +200,12 @@ Page {
     SelectionPanel {
         id: selectionPanel
         selectionModel: listView.selectionModel
-        text: qsTranslate("tremotesf", "%n tracker(s) selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%n trackers selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {
                 text: qsTranslate("tremotesf", "Remove")
-                onClicked: remorsePopup.execute(qsTranslate("tremotesf", "Removing %n tracker(s)", String(), selectionModel.selectedIndexesCount),
+                onClicked: remorsePopup.execute(qsTranslate("tremotesf", "Removing %n trackers", String(), selectionModel.selectedIndexesCount),
                                                 function() {
                                                     torrent.removeTrackers(trackersModel.idsFromIndexes(proxyModel.sourceIndexes(selectionModel.selectedIndexes)))
                                                 })

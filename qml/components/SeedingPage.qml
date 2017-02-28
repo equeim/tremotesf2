@@ -68,7 +68,7 @@ Page {
             DisconnectedHeader { }
 
             PageHeader {
-                title: qsTranslate("tremotesf", "Seeding")
+                title: qsTranslate("tremotesf", "Seeding", "Noun")
             }
 
             TextSwitch {
@@ -113,6 +113,7 @@ Page {
                     right: parent.right
                 }
                 visible: idleSeedingLimitSwitch.checked
+                //: Minutes
                 label: qsTranslate("tremotesf", "min")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {

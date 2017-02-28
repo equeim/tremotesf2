@@ -101,7 +101,7 @@ Page {
 
             TextSwitch {
                 id: downloadSpeedLimitSwitch
-                text: qsTranslate("tremotesf", "Download")
+                text: qsTranslate("tremotesf", "Download", "Noun")
                 onClicked: rpc.serverSettings.downloadSpeedLimited = checked
             }
 
@@ -128,6 +128,7 @@ Page {
 
             TextSwitch {
                 id: uploadSpeedLimitSwitch
+                //: Noun
                 text: qsTranslate("tremotesf", "Upload")
                 onClicked: rpc.serverSettings.uploadSpeedLimited = checked
             }
@@ -222,6 +223,7 @@ Page {
                 AlternativeLimitsTimeButton {
                     id: beginTimeButton
                     width: parent.width / 2
+                    //: e.g. inside "From 1:00 AM to 5:00 AM"
                     label: qsTranslate("tremotesf", "From")
                     onTimeChanged: {
                         if (loaded) {
@@ -233,6 +235,7 @@ Page {
                 AlternativeLimitsTimeButton {
                     id: endTimeButton
                     width: parent.width / 2
+                    //: e.g. inside "From 1:00 AM to 5:00 AM"
                     label: qsTranslate("tremotesf", "to")
                     onTimeChanged: {
                         if (loaded) {

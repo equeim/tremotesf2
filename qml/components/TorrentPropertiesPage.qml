@@ -41,6 +41,7 @@ Page {
 
         pageHeader.title = torrent.name
 
+        //: e.g. 100 MiB of 200 MiB (50%)
         progressLabel.value = qsTranslate("tremotesf", "%1 of %2 (%3)")
         .arg(Utils.formatByteSize(torrent.completedSize))
         .arg(Utils.formatByteSize(torrent.sizeWhenDone))
@@ -177,16 +178,19 @@ Page {
 
             DetailItem {
                 id: progressLabel
+                //: Torrent's completed size
                 label: qsTranslate("tremotesf", "Completed")
             }
 
             DetailItem {
                 id: downloadedLabel
+                //: Torrent's downloaded size
                 label: qsTranslate("tremotesf", "Downloaded")
             }
 
             DetailItem {
                 id: uploadedLabel
+                //: Torrent's uploaded size
                 label: qsTranslate("tremotesf", "Uploaded")
             }
 

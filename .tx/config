@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+lang_map = en_US: en
+
+[tremotesf.main]
+file_filter = translations/<lang>.ts
+source_file = translations/source.ts
+source_lang = source
+type = QT

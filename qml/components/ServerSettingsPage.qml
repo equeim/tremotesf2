@@ -40,13 +40,13 @@ Page {
 
             SimpleBackgroundItem {
                 enabled: rpc.connected
-                text: qsTranslate("tremotesf", "Downloading")
+                text: qsTranslate("tremotesf", "Downloading", "Noun")
                 onClicked: pageStack.push("DownloadingPage.qml")
             }
 
             SimpleBackgroundItem {
                 enabled: rpc.connected
-                text: qsTranslate("tremotesf", "Seeding")
+                text: qsTranslate("tremotesf", "Seeding", "Noun")
                 onClicked: pageStack.push("SeedingPage.qml")
             }
 

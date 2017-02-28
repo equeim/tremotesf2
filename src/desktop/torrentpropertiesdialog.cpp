@@ -114,10 +114,13 @@ namespace tremotesf
         auto activityGroupBox = new QGroupBox(qApp->translate("tremotesf", "Activity"), this);
         auto activityGroupBoxLayout = new QFormLayout(activityGroupBox);
         auto completedLabel = new QLabel(this);
+        //: Torrent's completed size
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Completed:"), completedLabel);
         auto downloadedLabel = new QLabel(this);
+        //: Torrent's downloaded size
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Downloaded:"), downloadedLabel);
         auto uploadedLabel = new QLabel(this);
+        //: Torrent's uploaded size
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Uploaded:"), uploadedLabel);
         auto ratioLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Ratio:"), ratioLabel);
@@ -161,6 +164,7 @@ namespace tremotesf
         mUpdateDetailsTab = [=]() {
             setWindowTitle(mTorrent->name());
 
+            //: e.g. 100 MiB of 200 MiB (50%)
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
                                         .arg(Utils::formatByteSize(mTorrent->completedSize()))
                                         .arg(Utils::formatByteSize(mTorrent->sizeWhenDone()))
@@ -261,8 +265,11 @@ namespace tremotesf
         uploadSpeedSpinBoxLayout->addWidget(uploadSpeedSpinBox);
 
         auto priorityComboBox = new QComboBox(this);
-        priorityComboBox->addItems({qApp->translate("tremotesf", "High"),
+        priorityComboBox->addItems({//: Priority
+                                    qApp->translate("tremotesf", "High"),
+                                    //: Priority
                                     qApp->translate("tremotesf", "Normal"),
+                                    //: Priority
                                     qApp->translate("tremotesf", "Low")});
 
         speedGroupBoxLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), priorityComboBox);
@@ -272,7 +279,7 @@ namespace tremotesf
         //
         // Seeding group box
         //
-        auto seedingGroupBox = new QGroupBox(qApp->translate("tremotesf", "Seeding"), this);
+        auto seedingGroupBox = new QGroupBox(qApp->translate("tremotesf", "Seeding", "Noun"), this);
         auto seedingGroupBoxLayout = new QFormLayout(seedingGroupBox);
         seedingGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
@@ -313,6 +320,7 @@ namespace tremotesf
         idleSeedingLimitLayout->addWidget(idleSeedingLimitComboBox);
         auto idleSeedingLimitSpinBox = new QSpinBox(this);
         idleSeedingLimitSpinBox->setMaximum(9999);
+        //: Minutes
         idleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
 
         idleSeedingLimitSpinBox->setVisible(false);

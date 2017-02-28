@@ -164,12 +164,14 @@ namespace tremotesf
         mUpdateIntervalSpinBox = new QSpinBox(this);
         mUpdateIntervalSpinBox->setMinimum(1);
         mUpdateIntervalSpinBox->setMaximum(3600);
+        //: Seconds
         mUpdateIntervalSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Update interval:"), mUpdateIntervalSpinBox);
 
         mTimeoutSpinBox = new QSpinBox(this);
         mTimeoutSpinBox->setMinimum(5);
         mTimeoutSpinBox->setMaximum(60);
+        //: Seconds
         mTimeoutSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Timeout:"), mTimeoutSpinBox);
 

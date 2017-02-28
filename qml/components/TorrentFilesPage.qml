@@ -126,7 +126,7 @@ Page {
                     ContextMenu {
                         MenuItem {
                             visible: modelData.wantedState !== TorrentFilesModelEntryEnums.Wanted
-                            text: qsTranslate("tremotesf", "Download", "File menu item")
+                            text: qsTranslate("tremotesf", "Download", "File menu item, verb")
                             onClicked: filesModel.setFileWanted(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index)), true)
                         }
 
@@ -142,6 +142,7 @@ Page {
 
                         MenuItem {
                             font.bold: modelData.priority === TorrentFilesModelEntryEnums.HighPriority
+                            //: Priority
                             text: qsTranslate("tremotesf", "High")
                             onClicked: {
                                 if (modelData.priority !== TorrentFilesModelEntryEnums.HighPriority) {
@@ -152,6 +153,7 @@ Page {
 
                         MenuItem {
                             font.bold: modelData.priority === TorrentFilesModelEntryEnums.NormalPriority
+                            //: Priority
                             text: qsTranslate("tremotesf", "Normal")
                             onClicked: {
                                 if (modelData.priority !== TorrentFilesModelEntryEnums.NormalPriority) {
@@ -162,6 +164,7 @@ Page {
 
                         MenuItem {
                             font.bold: modelData.priority === TorrentFilesModelEntryEnums.LowPriority
+                            //: Priority
                             text: qsTranslate("tremotesf", "Low")
                             onClicked: {
                                 if (modelData.priority !== TorrentFilesModelEntryEnums.LowPriority) {
@@ -173,6 +176,7 @@ Page {
                         MenuItem {
                             visible: modelData.priority === TorrentFilesModelEntryEnums.MixedPriority
                             font.bold: true
+                            //: Priority
                             text: qsTranslate("tremotesf", "Mixed")
                         }
 
@@ -292,6 +296,7 @@ Page {
                         color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                         font.pixelSize: Theme.fontSizeExtraSmall
 
+                        //: e.g. 100 MiB of 200 MiB (50%)
                         text: qsTranslate("tremotesf", "%1 of %2 (%3)")
                         .arg(Utils.formatByteSize(modelData.completedSize))
                         .arg(Utils.formatByteSize(modelData.size))
@@ -352,12 +357,12 @@ Page {
         id: selectionPanel
         selectionModel: listView.selectionModel
         parentIndex: delegateModel.rootIndex
-        text: qsTranslate("tremotesf", "%n file(s) selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%n files selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {
                 enabled: selectionModel.hasSelection
-                text: qsTranslate("tremotesf", "Download", "File menu item")
+                text: qsTranslate("tremotesf", "Download", "File menu item, verb")
                 onClicked: {
                     filesModel.setFilesWanted(filesProxyModel.sourceIndexes(selectionModel.selectedIndexes), true)
                     selectionPanel.hide()
@@ -379,6 +384,7 @@ Page {
 
             MenuItem {
                 enabled: selectionModel.hasSelection
+                //: Priority
                 text: qsTranslate("tremotesf", "High")
                 onClicked: {
                     filesModel.setFilesPriority(filesProxyModel.sourceIndexes(selectionModel.selectedIndexes), TorrentFilesModelEntryEnums.HighPriority)
@@ -388,6 +394,7 @@ Page {
 
             MenuItem {
                 enabled: selectionModel.hasSelection
+                //: Priority
                 text: qsTranslate("tremotesf", "Normal")
                 onClicked: {
                     filesModel.setFilesPriority(filesProxyModel.sourceIndexes(selectionModel.selectedIndexes), TorrentFilesModelEntryEnums.NormalPriority)
@@ -397,6 +404,7 @@ Page {
 
             MenuItem {
                 enabled: selectionModel.hasSelection
+                //: Priority
                 text: qsTranslate("tremotesf", "Low")
                 onClicked: {
                     filesModel.setFilesPriority(filesProxyModel.sourceIndexes(selectionModel.selectedIndexes), TorrentFilesModelEntryEnums.LowPriority)

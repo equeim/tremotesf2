@@ -53,12 +53,16 @@ namespace tremotesf
     {
         switch (priority()) {
         case TorrentFilesModelEntryEnums::LowPriority:
+            //: Priority
             return qApp->translate("tremotesf", "Low");
         case TorrentFilesModelEntryEnums::NormalPriority:
+            //: Priority
             return qApp->translate("tremotesf", "Normal");
         case TorrentFilesModelEntryEnums::HighPriority:
+            //: Priority
             return qApp->translate("tremotesf", "High");
         case TorrentFilesModelEntryEnums::MixedPriority:
+            //: Priority
             return qApp->translate("tremotesf", "Mixed");
         }
         return QString();

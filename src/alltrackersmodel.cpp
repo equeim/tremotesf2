@@ -94,7 +94,7 @@ namespace tremotesf
             case Qt::DecorationRole:
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
-                return qApp->translate("tremotesf", "All (%1)").arg(mRpc->torrentsCount());
+                return qApp->translate("tremotesf", "All (%1)", "All trackers, %1 - torrents count").arg(mRpc->torrentsCount());
             }
         } else {
             const int row = index.row() - 1;

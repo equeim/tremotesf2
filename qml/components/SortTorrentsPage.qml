@@ -37,6 +37,7 @@ Page {
             }
 
             ComboBox {
+                //: Sort order
                 label: qsTranslate("tremotesf", "Order")
                 menu: ContextMenu {
                     MenuItem {
