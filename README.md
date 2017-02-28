@@ -20,6 +20,9 @@ Sailfish OS 1.1.9 or newer
 #### Building
 Just build RPM package either using Sailfish OS IDE or manually using mb2.
 
+## Translations
+Translations are managed on [Transifex](https://www.transifex.com/equeim/tremotesf).
+
 ## Screenshots
 ### Desktop
 ![](http://i.imgur.com/b1qqVZ1.png)
