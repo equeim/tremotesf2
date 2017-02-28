@@ -85,49 +85,84 @@ namespace tremotesf
             ++unit;
         }
 
-        QString numberString;
-        if (unit == Byte) {
-            numberString = QLocale().toString(size);
-        } else {
-            numberString = QLocale().toString(size, 'f', 1);
-        }
-
-        QString unitString;
+        QString string;
         switch (unit) {
         case Byte:
-            unitString = qApp->translate("tremotesf", "B");
+            string = qApp->translate("tremotesf", "%1 B");
             break;
         case KibiByte:
-            unitString = qApp->translate("tremotesf", "KiB");
+            string = qApp->translate("tremotesf", "%1 KiB");
             break;
         case MebiByte:
-            unitString = qApp->translate("tremotesf", "MiB");
+            string = qApp->translate("tremotesf", "%1 MiB");
             break;
         case GibiByte:
-            unitString = qApp->translate("tremotesf", "GiB");
+            string = qApp->translate("tremotesf", "%1 GiB");
             break;
         case TebiByte:
-            unitString = qApp->translate("tremotesf", "TiB");
+            string = qApp->translate("tremotesf", "%1 TiB");
             break;
         case PebiByte:
-            unitString = qApp->translate("tremotesf", "PiB");
+            string = qApp->translate("tremotesf", "%1 PiB");
             break;
         case ExbiByte:
-            unitString = qApp->translate("tremotesf", "EiB");
+            string = qApp->translate("tremotesf", "%1 EiB");
             break;
         case ZebiByte:
-            unitString = qApp->translate("tremotesf", "ZiB");
+            string = qApp->translate("tremotesf", "%1 ZiB");
             break;
         case YobiByte:
-            unitString = qApp->translate("tremotesf", "YiB");
+            string = qApp->translate("tremotesf", "%1 YiB");
         }
 
-        return QString("%1 %2").arg(numberString).arg(unitString);
+        if (unit == Byte) {
+            return string.arg(locale.toString(size));
+        }
+        return string.arg(locale.toString(size, 'f', 1));
     }
 
     QString Utils::formatByteSpeed(double speed)
     {
-        return QStringLiteral("%1/s").arg(formatByteSize(speed));
+        int unit = 0;
+        while (speed >= 1024.0 && unit < YobiByte) {
+            speed /= 1024.0;
+            ++unit;
+        }
+
+        QString string;
+        switch (unit) {
+        case Byte:
+            string = qApp->translate("tremotesf", "%1 B/s");
+            break;
+        case KibiByte:
+            string = qApp->translate("tremotesf", "%1 KiB/s");
+            break;
+        case MebiByte:
+            string = qApp->translate("tremotesf", "%1 MiB/s");
+            break;
+        case GibiByte:
+            string = qApp->translate("tremotesf", "%1 GiB/s");
+            break;
+        case TebiByte:
+            string = qApp->translate("tremotesf", "%1 TiB/s");
+            break;
+        case PebiByte:
+            string = qApp->translate("tremotesf", "%1 PiB/s");
+            break;
+        case ExbiByte:
+            string = qApp->translate("tremotesf", "%1 EiB/s");
+            break;
+        case ZebiByte:
+            string = qApp->translate("tremotesf", "%1 ZiB/s");
+            break;
+        case YobiByte:
+            string = qApp->translate("tremotesf", "%1 YiB/s");
+        }
+
+        if (unit == Byte) {
+            return string.arg(locale.toString(size));
+        }
+        return string.arg(locale.toString(size, 'f', 1));
     }
 
     QString Utils::formatSpeedLimit(int limit)
@@ -143,12 +178,12 @@ namespace tremotesf
         } else {
             numberString = QLocale().toString(int(progress * 1000) / 10.0, 'f', 1);
         }
-        return QString("%1%2").arg(numberString).arg(QLocale().percent());
+        return QStringLiteral("%1%2").arg(numberString).arg(QLocale().percent());
     }
 
     QString Utils::formatRatio(float ratio)
     {
-        if (ratio == -1) {
+        if (ratio < 0) {
             return QString();
         }
 
@@ -158,7 +193,7 @@ namespace tremotesf
         } else if (ratio >= 10) {
             precision = 1;
         }
-        return QLocale().toString(ratio, 'f', precision);
+        return locale.toString(ratio, 'f', precision);
     }
 
     QString Utils::formatEta(int seconds)
