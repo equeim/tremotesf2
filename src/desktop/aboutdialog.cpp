@@ -32,16 +32,6 @@
 
 namespace tremotesf
 {
-    namespace
-    {
-        const QString aboutPageText(QStringLiteral("<p>\u00a9 2015-2017 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>"
-                                                   "<p><a href=\"https://github.com/equeim/tremotesf2\">https://github.com/equeim/tremotesf2</a></p>"));
-
-        const QString authorText(QStringLiteral("Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
-                                                "<br/>"
-                                                "<i>%1</i>"));
-    }
-
     AboutDialog::AboutDialog(QWidget* parent)
         : QDialog(parent)
     {
@@ -58,7 +48,10 @@ namespace tremotesf
 
         auto aboutPage = new QWidget(this);
         auto aboutPageLayout = new QVBoxLayout(aboutPage);
-        auto aboutPageLabel = new QLabel(aboutPageText);
+        auto aboutPageLabel = new QLabel(qApp->translate("tremotesf", "<p>&#169; 2015-2017 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>\n"
+                                                                      "<p>Source code: <a href=\"https://github.com/equeim/tremotesf2\">https://github.com/equeim/tremotesf2</a></p>\n"
+                                                                      "<p>Translations: <a href=\"https://www.transifex.com/equeim/tremotesf\">https://www.transifex.com/equeim/tremotesf</a></p>"),
+                                         this);
         QObject::connect(aboutPageLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
         aboutPageLayout->addWidget(aboutPageLabel);
 
@@ -66,7 +59,9 @@ namespace tremotesf
 
         auto authorsPage = new QWidget(this);
         auto authorsPageLayout = new QVBoxLayout(authorsPage);
-        auto authorLabel = new QLabel(authorText.arg(qApp->translate("tremotesf", "Maintainer")));
+        auto authorLabel = new QLabel(qApp->translate("tremotesf", "Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;\n"
+                                                                   "<br/>\n"
+                                                                   "<i>Maintainer</i>"));
         QObject::connect(authorLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
         authorsPageLayout->addWidget(authorLabel);
         authorsPageLayout->addStretch();

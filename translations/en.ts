@@ -4,40 +4,44 @@
     <message>
         <location filename="../qml/components/AboutPage.qml" line="36"/>
         <location filename="../qml/components/ToolsPage.qml" line="31"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="48"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="65"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="38"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="58"/>
         <source>About</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/AboutPage.qml" line="91"/>
-        <source>GitHub</source>
+        <source>Source Code</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/AboutPage.qml" line="98"/>
-        <location filename="../qml/components/AboutPage.qml" line="113"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="73"/>
+        <source>Translations</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../qml/components/AboutPage.qml" line="105"/>
+        <location filename="../qml/components/AboutPage.qml" line="120"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="68"/>
         <source>Authors</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../qml/components/AboutPage.qml" line="133"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="69"/>
+        <location filename="../qml/components/AboutPage.qml" line="140"/>
         <source>Maintainer</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../qml/components/AboutPage.qml" line="143"/>
-        <location filename="../qml/components/AboutPage.qml" line="162"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="78"/>
+        <location filename="../qml/components/AboutPage.qml" line="150"/>
+        <location filename="../qml/components/AboutPage.qml" line="169"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="73"/>
         <source>Translators</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../qml/components/AboutPage.qml" line="194"/>
-        <location filename="../qml/components/AboutPage.qml" line="213"/>
-        <location filename="../src/desktop/aboutdialog.cpp" line="83"/>
+        <location filename="../qml/components/AboutPage.qml" line="201"/>
+        <location filename="../qml/components/AboutPage.qml" line="220"/>
+        <location filename="../src/desktop/aboutdialog.cpp" line="78"/>
         <source>License</source>
         <translation type="unfinished"/>
     </message>
@@ -2087,6 +2091,20 @@
     <message>
         <location filename="../src/utils.cpp" line="226"/>
         <source>%1 s</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/desktop/aboutdialog.cpp" line="51"/>
+        <source>&lt;p&gt;&amp;#169; 2015-2017 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/desktop/aboutdialog.cpp" line="62"/>
+        <source>Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;
+&lt;br/&gt;
+&lt;i&gt;Maintainer&lt;/i&gt;</source>
         <translation type="unfinished"/>
     </message>
 </context>

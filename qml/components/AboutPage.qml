@@ -88,8 +88,15 @@ Page {
                 Button {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: Theme.buttonWidthLarge
-                    text: qsTranslate("tremotesf", "GitHub")
+                    text: qsTranslate("tremotesf", "Source Code")
                     onClicked: Qt.openUrlExternally("https://github.com/equeim/tremotesf2")
+                }
+
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: Theme.buttonWidthLarge
+                    text: qsTranslate("tremotesf", "Translations")
+                    onClicked: Qt.openUrlExternally("https://www.transifex.com/equeim/tremotesf")
                 }
 
                 Button {
