@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.3.0] - 2017-02-28
+### Changed
+- More correct handling of self-signed certificates (you may need to update server's configuration)
+- Translation are now managed on Transifex.
+
 ## [1.2.2] - 2017-02-25
 ### Fixed
 - Windows icons

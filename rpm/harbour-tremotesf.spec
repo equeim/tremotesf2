@@ -1,6 +1,6 @@
 Name: harbour-tremotesf
 Summary: Remote GUI for transmission-daemon
-Version: 1.2.1
+Version: 1.3.0
 Release: 1
 Group: Applications/Internet
 License: GPLv3
