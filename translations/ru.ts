@@ -629,7 +629,7 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="282"/>
         <source>Seeding</source>
         <comment>Noun</comment>
-        <translation>Раздается</translation>
+        <translation>Раздача</translation>
     </message>
     <message>
         <location filename="../qml/components/SeedingPage.qml" line="76"/>
