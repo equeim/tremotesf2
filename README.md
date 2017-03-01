@@ -14,6 +14,9 @@ make
 make install
 ```
 
+#### GNU/Linux distributions
+[Arch Linux AUR](https://aur.archlinux.org/packages/tremotesf)
+
 ### Sailfish OS
 #### Dependencies
 Sailfish OS 1.1.9 or newer
