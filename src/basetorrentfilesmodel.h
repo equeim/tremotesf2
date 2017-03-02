@@ -47,7 +47,7 @@ namespace tremotesf
     protected:
         void updateDirectoryChildren(const TorrentFilesModelDirectory* directory);
 
-        std::unique_ptr<TorrentFilesModelDirectory> mRootDirectory;
+        std::shared_ptr<TorrentFilesModelDirectory> mRootDirectory;
     };
 }
 

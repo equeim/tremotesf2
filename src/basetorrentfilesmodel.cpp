@@ -22,7 +22,7 @@ namespace tremotesf
 {
     BaseTorrentFilesModel::BaseTorrentFilesModel(QObject* parent)
         : QAbstractItemModel(parent),
-          mRootDirectory(new TorrentFilesModelDirectory())
+          mRootDirectory(std::make_shared<TorrentFilesModelDirectory>())
     {
     }
 

@@ -21,8 +21,6 @@
 
 #include "basetorrentfilesmodel.h"
 
-class QThread;
-
 namespace tremotesf
 {
     class Torrent;
@@ -101,12 +99,10 @@ namespace tremotesf
         bool mLoaded;
         bool mLoading;
         QList<TorrentFilesModelFile*> mFiles;
-        QThread* mWorkerThread;
         bool mCreatingTree;
         bool mResetAfterCreate;
         bool mUpdateAfterCreate;
     signals:
-        void requestTreeCreation(const QVariantList& files, const QVariantList& fileStats);
         void loadedChanged();
         void loadingChanged();
     };

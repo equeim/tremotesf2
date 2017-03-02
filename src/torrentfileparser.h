@@ -22,8 +22,6 @@
 #include <QObject>
 #include <QVariant>
 
-class QThread;
-
 namespace tremotesf
 {
     class TorrentFileParser : public QObject
@@ -45,7 +43,6 @@ namespace tremotesf
         };
 
         explicit TorrentFileParser(const QString& filePath = QString(), QObject* parent = nullptr);
-        ~TorrentFileParser() override;
 
         const QString& filePath() const;
         void setFilePath(const QString& path);
@@ -57,16 +54,20 @@ namespace tremotesf
         const QVariantMap& parseResult() const;
 
     private:
-        QThread* mWorkerThread;
+        void parse();
+        QVariant parseVariant();
+        QVariantMap parseMap();
+        QVariantList parseList();
+        QString parseString();
+        long long parseInt();
 
         QString mFilePath;
-        Error mError;
-        bool mLoaded;
-
         QByteArray mFileData;
+        int mIndex;
+        Error mError;
         QVariantMap mParseResult;
+        bool mLoaded;
     signals:
-        void requestParse(const QString& filePath);
         void done();
     };
 }

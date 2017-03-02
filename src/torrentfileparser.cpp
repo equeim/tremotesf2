@@ -18,36 +18,34 @@
 
 #include "torrentfileparser.h"
 
+#include <memory>
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
+#include <QFutureWatcher>
 #include <QMimeDatabase>
-#include <QThread>
+#include <QtConcurrentRun>
 
 namespace tremotesf
 {
-    namespace
-    {
-        class Worker : public QObject
+    namespace {
+        class Worker
         {
-            Q_OBJECT
         public:
             void parse(const QString& filePath)
             {
-                QVariantMap result;
-                TorrentFileParser::Error error = TorrentFileParser::NoError;
                 QFile file(filePath);
                 if (file.open(QFile::ReadOnly)) {
                     const QMimeType mimeType(QMimeDatabase().mimeTypeForFile(filePath,
                                                                              QMimeDatabase::MatchContent));
                     if (mimeType.name() == "application/x-bittorrent") {
-                        mData = file.readAll();
-                        result = parseMap();
-                        if (mError) {
-                            mData.clear();
-                            result.clear();
+                        fileData = file.readAll();
+                        parseResult = parseMap();
+                        if (error != TorrentFileParser::NoError) {
+                            fileData.clear();
+                            parseResult.clear();
                             qDebug() << "error parsing file";
-                            error = TorrentFileParser::ParsingError;
                         }
                     } else {
                         qDebug() << "wrong mime type" << mimeType.name();
@@ -57,13 +55,16 @@ namespace tremotesf
                     qDebug() << "error reading file";
                     error = TorrentFileParser::ReadingError;
                 }
-                emit done(error, mData, result);
             }
+
+            QByteArray fileData;
+            QVariantMap parseResult;
+            TorrentFileParser::Error error;
 
         private:
             QVariant parseVariant()
             {
-                const char firstChar = mData.at(mIndex);
+                const char firstChar = fileData.at(mIndex);
                 if (firstChar == 'i') {
                     return parseInt();
                 }
@@ -76,8 +77,7 @@ namespace tremotesf
                 if (QChar(firstChar).isDigit()) {
                     return parseString();
                 }
-
-                mError = true;
+                error = TorrentFileParser::ParsingError;
                 return QVariant();
             }
 
@@ -85,7 +85,7 @@ namespace tremotesf
             {
                 QVariantMap map;
                 ++mIndex;
-                while (mData.at(mIndex) != 'e' && !mError) {
+                while ((fileData.at(mIndex) != 'e') && (error == TorrentFileParser::NoError)) {
                     const QString key(parseString());
                     const QVariant value(parseVariant());
                     map.insert(key, value);
@@ -98,7 +98,7 @@ namespace tremotesf
             {
                 QVariantList list;
                 ++mIndex;
-                while (mData.at(mIndex) != 'e' && !mError) {
+                while ((fileData.at(mIndex) != 'e') && (error == TorrentFileParser::NoError)) {
                     list.append(parseVariant());
                 }
                 ++mIndex;
@@ -107,35 +107,35 @@ namespace tremotesf
 
             QString parseString()
             {
-                const int separatorIndex = mData.indexOf(':', mIndex);
+                const int separatorIndex = fileData.indexOf(':', mIndex);
 
                 if (separatorIndex == -1) {
-                    mError = true;
+                    error = TorrentFileParser::ParsingError;
                     return QString();
                 }
 
-                const int length = mData.mid(mIndex, separatorIndex - mIndex).toInt();
+                const int length = fileData.mid(mIndex, separatorIndex - mIndex).toInt();
                 mIndex = separatorIndex + 1;
-                const QString string(mData.mid(mIndex, length));
+                const QString string(fileData.mid(mIndex, length));
                 mIndex += length;
                 return string;
             }
 
-            qint64 parseInt()
+            long long parseInt()
             {
                 mIndex++;
-                const int endIndex = mData.indexOf('e', mIndex);
+                const int endIndex = fileData.indexOf('e', mIndex);
 
                 if (endIndex == -1) {
-                    mError = true;
+                    error = TorrentFileParser::ParsingError;
                     return 0;
                 }
 
                 bool ok;
-                const qint64 number = mData.mid(mIndex, endIndex - mIndex).toLongLong(&ok);
+                const long long number = fileData.mid(mIndex, endIndex - mIndex).toLongLong(&ok);
 
                 if (!ok) {
-                    mError = true;
+                    error = TorrentFileParser::ParsingError;
                     return 0;
                 }
 
@@ -143,29 +143,17 @@ namespace tremotesf
                 return number;
             }
 
-            QByteArray mData;
             int mIndex = 0;
-            bool mError = false;
-        signals:
-            void done(tremotesf::TorrentFileParser::Error error,
-                      const QByteArray& fileData,
-                      const QVariantMap& parseResult);
         };
     }
 
     TorrentFileParser::TorrentFileParser(const QString& filePath, QObject* parent)
         : QObject(parent),
-          mWorkerThread(new QThread(this)),
+          mIndex(0),
           mError(NoError),
           mLoaded(false)
     {
         setFilePath(filePath);
-    }
-
-    TorrentFileParser::~TorrentFileParser()
-    {
-        mWorkerThread->quit();
-        mWorkerThread->wait();
     }
 
     const QString& TorrentFileParser::filePath() const
@@ -175,30 +163,10 @@ namespace tremotesf
 
     void TorrentFileParser::setFilePath(const QString& path)
     {
-        if (path.isEmpty() || !mFilePath.isEmpty()) {
-            return;
+        if (!path.isEmpty() && mFilePath.isEmpty()) {
+            mFilePath = path;
+            parse();
         }
-
-        mFilePath = path;
-
-        auto worker = new Worker();
-        worker->moveToThread(mWorkerThread);
-        QObject::connect(mWorkerThread, &QThread::finished, worker, &QObject::deleteLater);
-        QObject::connect(this, &TorrentFileParser::requestParse, worker, &Worker::parse);
-        QObject::connect(worker,
-                         &Worker::done,
-                         this,
-                         [=](Error error, const QByteArray& fileData, const QVariantMap& parseResult) {
-                             mLoaded = true;
-                             mError = error;
-                             mFileData = fileData;
-                             mParseResult = parseResult;
-                             emit done();
-
-                             mWorkerThread->quit();
-                         });
-        mWorkerThread->start();
-        emit requestParse(mFilePath);
     }
 
     bool TorrentFileParser::isLoaded() const
@@ -234,6 +202,25 @@ namespace tremotesf
     {
         return mParseResult;
     }
-}
 
-#include "torrentfileparser.moc"
+    void TorrentFileParser::parse()
+    {
+        auto worker = std::make_shared<Worker>();
+
+        const QString& filePath = mFilePath;
+        const auto future = QtConcurrent::run([=]() {
+            worker->parse(filePath);
+        });
+
+        auto watcher = new QFutureWatcher<void>(this);
+        QObject::connect(watcher, &QFutureWatcher<void>::finished, this, [=]() {
+            mFileData = worker->fileData;
+            mParseResult = worker->parseResult;
+            mError = worker->error;
+            mLoaded = true;
+            emit done();
+            watcher->deleteLater();
+        });
+        watcher->setFuture(future);
+    }
+}

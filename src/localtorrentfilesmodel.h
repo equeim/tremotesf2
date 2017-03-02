@@ -19,12 +19,9 @@
 #ifndef TREMOTESF_LOCALTORRENTFILESMODEL_H
 #define TREMOTESF_LOCALTORRENTFILESMODEL_H
 
-#include <memory>
 #include <QVariant>
 
 #include "basetorrentfilesmodel.h"
-
-class QThread;
 
 namespace tremotesf
 {
@@ -61,7 +58,6 @@ namespace tremotesf
 #endif
         explicit LocalTorrentFilesModel(const QVariantMap& parseResult = QVariantMap(),
                                         QObject* parent = nullptr);
-        ~LocalTorrentFilesModel() override;
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
@@ -93,10 +89,8 @@ namespace tremotesf
         void load(const QVariantMap& parseResult);
 
         QList<TorrentFilesModelFile*> mFiles;
-        QThread* mWorkerThread;
         bool mLoaded;
     signals:
-        void requestTreeCreation(const QVariantMap& parseResult);
         void loadedChanged();
     };
 }

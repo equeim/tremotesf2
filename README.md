@@ -4,7 +4,7 @@ Remote GUI for transmission-daemon. Supports desktop OSes (GNU/Linux and Windows
 ## Installation
 ### Desktop
 #### Dependencies
-- Qt 5.2 or newer (core, network, gui, widgets and dbus for GNU/Linux)
+- Qt 5.2 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
 - KWidgetsAddons from KDE Frameworks 5
 
 #### Building

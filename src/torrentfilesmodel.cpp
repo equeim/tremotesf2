@@ -18,15 +18,15 @@
 
 #include "torrentfilesmodel.h"
 
-#include "torrent.h"
-
-#include <QThread>
+#include <QFutureWatcher>
+#include <QtConcurrentRun>
 
 #ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
 #include <QStyle>
 #endif
 
+#include "torrent.h"
 #include "utils.h"
 
 namespace tremotesf
@@ -66,65 +66,53 @@ namespace tremotesf
             return ids;
         }
 
-        class TreeCreationWorker : public QObject
+        using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, QList<TorrentFilesModelFile*>>>;
+
+        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, QList<TorrentFilesModelFile*>>
+        doCreateTree(const QVariantList& filesJsons, const QVariantList& fileStatsJsons)
         {
-            Q_OBJECT
-        public:
-            explicit TreeCreationWorker(TorrentFilesModelDirectory* rootDirectory,
-                                        QList<TorrentFilesModelFile*>& files)
-                : mRootDirectory(rootDirectory),
-                  mFiles(files)
-            {
-            }
+            const auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
+            QList<TorrentFilesModelFile*> files;
 
-            void createTree(const QVariantList& files, const QVariantList& fileStats)
-            {
-                for (int fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
-                    const QVariantMap fileMap(files.at(fileIndex).toMap());
-                    const QVariantMap fileStatsMap(fileStats.at(fileIndex).toMap());
+            for (int fileIndex = 0, filesCount = filesJsons.size(); fileIndex < filesCount; ++fileIndex) {
+                const QVariantMap fileMap(filesJsons.at(fileIndex).toMap());
+                const QVariantMap fileStatsMap(fileStatsJsons.at(fileIndex).toMap());
 
-                    TorrentFilesModelDirectory* currentDirectory = mRootDirectory;
+                TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
-                    const QString filePath(fileMap.value(QStringLiteral("name")).toString());
-                    const QStringList parts(filePath.split('/', QString::SkipEmptyParts));
+                const QString filePath(fileMap.value(QStringLiteral("name")).toString());
+                const QStringList parts(filePath.split('/', QString::SkipEmptyParts));
 
-                    for (int partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
-                        const QString& part = parts.at(partIndex);
+                for (int partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
+                    const QString& part = parts.at(partIndex);
 
-                        if (partIndex == lastPartIndex) {
-                            auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
-                                                                       currentDirectory,
-                                                                       fileIndex,
-                                                                       part,
-                                                                       fileMap.value(QStringLiteral("length")).toLongLong());
+                    if (partIndex == lastPartIndex) {
+                        auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
+                                                                   currentDirectory,
+                                                                   fileIndex,
+                                                                   part,
+                                                                   fileMap.value(QStringLiteral("length")).toLongLong());
 
-                            updateFile(childFile, fileMap, fileStatsMap);
-                            currentDirectory->addChild(childFile);
-                            mFiles.append(childFile);
+                        updateFile(childFile, fileMap, fileStatsMap);
+                        currentDirectory->addChild(childFile);
+                        files.append(childFile);
+                    } else {
+                        TorrentFilesModelEntry* found = currentDirectory->childrenHash().value(part);
+                        if (found) {
+                            currentDirectory = static_cast<TorrentFilesModelDirectory*>(found);
                         } else {
-                            TorrentFilesModelEntry* found = currentDirectory->childrenHash().value(part);
-                            if (found) {
-                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(found);
-                            } else {
-                                auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
-                                                                                     currentDirectory,
-                                                                                     part);
-                                currentDirectory->addChild(childDirectory);
-                                currentDirectory = childDirectory;
-                            }
+                            auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
+                                                                                 currentDirectory,
+                                                                                 part);
+                            currentDirectory->addChild(childDirectory);
+                            currentDirectory = childDirectory;
                         }
                     }
                 }
-
-                emit done();
             }
 
-        private:
-            TorrentFilesModelDirectory* const mRootDirectory;
-            QList<TorrentFilesModelFile*>& mFiles;
-        signals:
-            void done();
-        };
+            return {rootDirectory, files};
+        }
     }
 
     TorrentFilesModel::TorrentFilesModel(Torrent* torrent, QObject* parent)
@@ -132,7 +120,6 @@ namespace tremotesf
           mTorrent(nullptr),
           mLoaded(false),
           mLoading(true),
-          mWorkerThread(new QThread(this)),
           mCreatingTree(false),
           mResetAfterCreate(false),
           mUpdateAfterCreate(false)
@@ -145,8 +132,6 @@ namespace tremotesf
         if (mTorrent) {
             mTorrent->setFilesEnabled(false);
         }
-        mWorkerThread->quit();
-        mWorkerThread->wait();
     }
 
     int TorrentFilesModel::columnCount(const QModelIndex&) const
@@ -381,11 +366,14 @@ namespace tremotesf
         setLoading(true);
         beginResetModel();
 
-        auto worker = new TreeCreationWorker(mRootDirectory.get(), mFiles);
-        worker->moveToThread(mWorkerThread);
-        QObject::connect(mWorkerThread, &QThread::finished, worker, &QObject::deleteLater);
-        QObject::connect(this, &TorrentFilesModel::requestTreeCreation, worker, &TreeCreationWorker::createTree);
-        QObject::connect(worker, &TreeCreationWorker::done, this, [=]() {
+        const auto future = QtConcurrent::run(doCreateTree, files, fileStats);
+
+        auto watcher = new FutureWatcher(this);
+        QObject::connect(watcher, &FutureWatcher::finished, this, [=]() {
+            const auto result = watcher->result();
+            mRootDirectory = result.first;
+            mFiles = result.second;
+
             if (mResetAfterCreate) {
                 mRootDirectory->clearChildren();
                 endResetModel();
@@ -404,12 +392,9 @@ namespace tremotesf
             setLoading(false);
 
             mCreatingTree = false;
-
-            mWorkerThread->quit();
+            watcher->deleteLater();
         });
-
-        mWorkerThread->start();
-        emit requestTreeCreation(files, fileStats);
+        watcher->setFuture(future);
     }
 
     void TorrentFilesModel::resetTree()
@@ -463,5 +448,3 @@ namespace tremotesf
     }
 #endif
 }
-
-#include "torrentfilesmodel.moc"

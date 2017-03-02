@@ -21,6 +21,7 @@
 #include <QAuthenticator>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFutureWatcher>
 #include <QHostAddress>
 #include <QHostInfo>
 #include <QJsonDocument>
@@ -28,15 +29,14 @@
 #include <QNetworkInterface>
 #include <QNetworkReply>
 #include <QTimer>
-#include <QThread>
 #include <QSslCertificate>
 #include <QSslKey>
+#include <QtConcurrentRun>
 
 #ifdef TREMOTESF_SAILFISHOS
 #include <QQmlEngine>
 #endif
 
-#include "jsonparser.h"
 #include "servers.h"
 #include "serversettings.h"
 #include "serverstats.h"
@@ -69,90 +69,6 @@ namespace tremotesf
         {
             return (parseResult.value(QStringLiteral("result")).toString() == "success");
         }
-
-        class AddTorrentFileWorker : public QObject
-        {
-            Q_OBJECT
-        public:
-            void encode(const QByteArray& fileData,
-                        const QString& downloadDirectory,
-                        const QVariantList& wantedFiles,
-                        const QVariantList& unwantedFiles,
-                        const QVariantList& highPriorityFiles,
-                        const QVariantList& normalPriorityFiles,
-                        const QVariantList& lowPriorityFiles,
-                        int bandwidthPriority,
-                        bool start)
-            {
-                emit done(makeRequestData(QStringLiteral("torrent-add"),
-                                          {{QStringLiteral("metainfo"), fileData.toBase64()},
-                                           {QStringLiteral("download-dir"), downloadDirectory},
-                                           {QStringLiteral("files-wanted"), wantedFiles},
-                                           {QStringLiteral("files-unwanted"), unwantedFiles},
-                                           {QStringLiteral("priority-high"), highPriorityFiles},
-                                           {QStringLiteral("priority-normal"), normalPriorityFiles},
-                                           {QStringLiteral("priority-low"), lowPriorityFiles},
-                                           {QStringLiteral("bandwidthPriority"), bandwidthPriority},
-                                           {QStringLiteral("paused"), !start}}));
-            }
-        signals:
-            void done(const QByteArray& requestData);
-        };
-
-        class AddTorrentFile : public QObject
-        {
-            Q_OBJECT
-        public:
-            explicit AddTorrentFile(const QByteArray& fileData,
-                                    const QString& downloadDirectory,
-                                    const QVariantList& wantedFiles,
-                                    const QVariantList& unwantedFiles,
-                                    const QVariantList& highPriorityFiles,
-                                    const QVariantList& normalPriorityFiles,
-                                    const QVariantList& lowPriorityFiles,
-                                    int bandwidthPriority,
-                                    bool start,
-                                    QObject* parent)
-                : QObject(parent),
-                  mWorkerThread(new QThread(this))
-            {
-                auto worker = new AddTorrentFileWorker();
-                worker->moveToThread(mWorkerThread);
-                QObject::connect(mWorkerThread, &QThread::finished, worker, &QObject::deleteLater);
-                QObject::connect(this, &AddTorrentFile::requestEncode, worker, &AddTorrentFileWorker::encode);
-                QObject::connect(worker, &AddTorrentFileWorker::done, this, &AddTorrentFile::done);
-                mWorkerThread->start();
-                emit requestEncode(fileData,
-                                   downloadDirectory,
-                                   wantedFiles,
-                                   unwantedFiles,
-                                   highPriorityFiles,
-                                   normalPriorityFiles,
-                                   lowPriorityFiles,
-                                   bandwidthPriority,
-                                   start);
-            }
-
-            ~AddTorrentFile() override
-            {
-                mWorkerThread->quit();
-                mWorkerThread->wait();
-            }
-
-        private:
-            QThread* mWorkerThread;
-        signals:
-            void requestEncode(const QByteArray& fileData,
-                               const QString& downloadDirectory,
-                               const QVariantList& wantedFiles,
-                               const QVariantList& unwantedFiles,
-                               const QVariantList& highPriorityFiles,
-                               const QVariantList& normalPriorityFiles,
-                               const QVariantList& lowPriorityFiles,
-                               int bandwidthPriority,
-                               bool start);
-            void done(const QByteArray& requestData);
-        };
     }
 
     Rpc::Rpc(QObject* parent)
@@ -305,26 +221,30 @@ namespace tremotesf
                              bool start)
     {
         if (isConnected()) {
-            auto add = new AddTorrentFile(fileData,
-                                          downloadDirectory,
-                                          wantedFiles,
-                                          unwantedFiles,
-                                          highPriorityFiles,
-                                          normalPriorityFiles,
-                                          lowPriorityFiles,
-                                          bandwidthPriority,
-                                          start,
-                                          this);
-            QObject::connect(add, &AddTorrentFile::done, this, [=](const QByteArray& requestData) {
+            const auto future = QtConcurrent::run([=]() {
+                return makeRequestData(QStringLiteral("torrent-add"),
+                                       {{QStringLiteral("metainfo"), fileData.toBase64()},
+                                        {QStringLiteral("download-dir"), downloadDirectory},
+                                        {QStringLiteral("files-wanted"), wantedFiles},
+                                        {QStringLiteral("files-unwanted"), unwantedFiles},
+                                        {QStringLiteral("priority-high"), highPriorityFiles},
+                                        {QStringLiteral("priority-normal"), normalPriorityFiles},
+                                        {QStringLiteral("priority-low"), lowPriorityFiles},
+                                        {QStringLiteral("bandwidthPriority"), bandwidthPriority},
+                                        {QStringLiteral("paused"), !start}});
+            });
+            auto watcher = new QFutureWatcher<QByteArray>(this);
+            QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=]() {
                 if (isConnected()) {
-                    postRequest(requestData, [=](const QVariantMap& parseResult) {
+                    postRequest(watcher->result(), [=](const QVariantMap& parseResult) {
                         if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
                             updateData();
                         }
                     });
+                    watcher->deleteLater();
                 }
-                add->deleteLater();
             });
+            watcher->setFuture(future);
         }
     }
 
@@ -802,21 +722,27 @@ namespace tremotesf
                 switch (reply->error()) {
                 case QNetworkReply::NoError:
                     if (callOnSuccess) {
-                        auto parser = new JsonParser(reply->readAll(), this);
-                        QObject::connect(parser,
-                                         &JsonParser::done,
-                                         [=](const QVariantMap& parseResult, bool success) {
-                                             if (mStatus != Disconnected) {
-                                                 if (success) {
-                                                     callOnSuccess(parseResult);
-                                                 } else {
-                                                     qDebug() << "parsing error";
-                                                     setError(ParseError);
-                                                     setStatus(Disconnected);
-                                                 }
-                                             }
-                                             parser->deleteLater();
-                                         });
+                        const QByteArray replyData(reply->readAll());
+                        const auto future = QtConcurrent::run([=]() {
+                            QJsonParseError error;
+                            const QVariantMap result(QJsonDocument::fromJson(replyData, &error).toVariant().toMap());
+                            return std::pair<QVariantMap, bool>(result, error.error == QJsonParseError::NoError);
+                        });
+                        auto watcher = new QFutureWatcher<std::pair<QVariantMap, bool>>(this);
+                        QObject::connect(watcher, &QFutureWatcher<std::pair<QVariantMap, bool>>::finished, this, [=]() {
+                            const auto result = watcher->result();
+                            if (mStatus != Disconnected) {
+                                if (result.second) {
+                                    callOnSuccess(result.first);
+                                } else {
+                                    qDebug() << "parsing error";
+                                    setError(ParseError);
+                                    setStatus(Disconnected);
+                                }
+                            }
+                            watcher->deleteLater();
+                        });
+                        watcher->setFuture(future);
                     }
                     break;
                 case QNetworkReply::AuthenticationRequiredError:
@@ -874,5 +800,3 @@ namespace tremotesf
         return std::shared_ptr<Torrent>();
     }
 }
-
-#include "rpc.moc"
