@@ -74,7 +74,7 @@ namespace tremotesf
           mRpc(new Rpc(this)),
           mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QStringLiteral("tremotesf-tray-icon"), windowIcon()), this))
     {
-        setWindowTitle("Tremotesf");
+        setWindowTitle(QStringLiteral("Tremotesf"));
 
         setMinimumSize(minimumSizeHint().expandedTo(QSize(384, 256)));
         if (!restoreGeometry(Settings::instance()->mainWindowGeometry())) {

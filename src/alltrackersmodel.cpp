@@ -100,7 +100,7 @@ namespace tremotesf
             const int row = index.row() - 1;
             switch (role) {
             case Qt::DecorationRole:
-                return QIcon::fromTheme("network-server");
+                return QIcon::fromTheme(QStringLiteral("network-server"));
             case Qt::DisplayRole:
                 return qApp->translate("tremotesf", "%1 (%2)").arg(mTrackers.at(row)).arg(mTrackersTorrents.at(row));
             case TrackerRole:

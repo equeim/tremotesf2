@@ -53,7 +53,7 @@ namespace tremotesf
 #ifdef Q_OS_WIN
             // hack to remove progress bar animation
             if (qApp->style()->objectName() == "windowsvista") {
-                QProxyStyle("windowsvista").drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
+                QProxyStyle(QStringLiteral("windowsvista")).drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
                 return;
             }
 #endif

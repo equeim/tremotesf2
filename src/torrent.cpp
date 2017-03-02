@@ -390,13 +390,13 @@ namespace tremotesf
         QString propertyName;
         switch (priority) {
         case TorrentFilesModelEntryEnums::LowPriority:
-            propertyName = "priority-low";
+            propertyName = QStringLiteral("priority-low");
             break;
         case TorrentFilesModelEntryEnums::NormalPriority:
-            propertyName = "priority-normal";
+            propertyName = QStringLiteral("priority-normal");
             break;
         case TorrentFilesModelEntryEnums::HighPriority:
-            propertyName = "priority-high";
+            propertyName = QStringLiteral("priority-high");
             break;
         case TorrentFilesModelEntryEnums::MixedPriority:
             return;

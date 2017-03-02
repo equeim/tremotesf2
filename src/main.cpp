@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     view->rootContext()->setContextProperty(QStringLiteral("files"), result.files);
     view->rootContext()->setContextProperty(QStringLiteral("urls"), result.urls);
 
-    view->setSource(SailfishApp::pathTo("qml/main.qml"));
+    view->setSource(SailfishApp::pathTo(QStringLiteral("qml/main.qml")));
     view->show();
 #else
     tremotesf::MainWindow window(&ipcServer, arguments);

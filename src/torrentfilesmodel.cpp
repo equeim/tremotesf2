@@ -38,7 +38,7 @@ namespace tremotesf
             file->setChanged(false);
             file->setCompletedSize(fileMap.value(QStringLiteral("bytesCompleted")).toLongLong());
             file->setWanted(fileStatsMap.value(QStringLiteral("wanted")).toBool());
-            file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileStatsMap.value("priority").toInt()));
+            file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileStatsMap.value(QStringLiteral("priority")).toInt()));
         }
 
         QVariantList idsFromIndex(const QModelIndex& index)
