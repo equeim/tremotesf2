@@ -4,6 +4,10 @@
 ### Changed
 - Don't create a new thread for every async task, instead use QtConcurrent::run
 
+### Fixed
+#### Desktop
+- 256x256 icon
+
 ## [1.3.0] - 2017-02-28
 ### Changed
 - More correct handling of self-signed certificates (you may need to update server's configuration)
