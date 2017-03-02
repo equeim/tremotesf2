@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.3.1] - 2017-03-02
 ### Changed
 - Don't create a new thread for every async task, instead use QtConcurrent::run
 

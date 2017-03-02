@@ -1,6 +1,6 @@
 Name: harbour-tremotesf
 Summary: Remote GUI for transmission-daemon
-Version: 1.3.0
+Version: 1.3.1
 Release: 1
 Group: Applications/Internet
 License: GPLv3
@@ -10,6 +10,7 @@ Requires: sailfishsilica-qt5
 Requires: nemo-qml-plugin-dbus-qt5
 Requires: nemo-qml-plugin-notifications-qt5
 BuildRequires: pkgconfig(Qt5Core)
+BuildRequires: pkgconfig(Qt5Concurrent)
 BuildRequires: pkgconfig(Qt5Network)
 BuildRequires: pkgconfig(Qt5Gui)
 BuildRequires: pkgconfig(Qt5Qml)
