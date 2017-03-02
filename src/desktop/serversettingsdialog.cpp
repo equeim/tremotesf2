@@ -272,7 +272,7 @@ namespace tremotesf
         auto speedLimitsGroupBoxLayout = new QGridLayout(speedLimitsGroupBox);
 
         const int maxSpeedLimit = std::numeric_limits<uint>::max() / 1024;
-        const QString kibiBytesPerSecond(" " + Utils::kibiBytesPerSecond());
+        const QString suffix(qApp->translate("tremotesf", " KiB/s"));
 
         //: Noun
         mDownloadSpeedLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);
@@ -281,7 +281,7 @@ namespace tremotesf
         mDownloadSpeedLimitSpinBox = new QSpinBox(this);
         mDownloadSpeedLimitSpinBox->setEnabled(false);
         mDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
-        mDownloadSpeedLimitSpinBox->setSuffix(kibiBytesPerSecond);
+        mDownloadSpeedLimitSpinBox->setSuffix(suffix);
         QObject::connect(mDownloadSpeedLimitCheckBox, &QCheckBox::toggled, mDownloadSpeedLimitSpinBox, &QSpinBox::setEnabled);
         speedLimitsGroupBoxLayout->addWidget(mDownloadSpeedLimitSpinBox, 1, 1);
 
@@ -292,7 +292,7 @@ namespace tremotesf
         mUploadSpeedLimitSpinBox = new QSpinBox(this);
         mUploadSpeedLimitSpinBox->setEnabled(false);
         mUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
-        mUploadSpeedLimitSpinBox->setSuffix(kibiBytesPerSecond);
+        mUploadSpeedLimitSpinBox->setSuffix(suffix);
         QObject::connect(mUploadSpeedLimitCheckBox, &QCheckBox::toggled, mUploadSpeedLimitSpinBox, &QSpinBox::setEnabled);
         speedLimitsGroupBoxLayout->addWidget(mUploadSpeedLimitSpinBox, 3, 1);
 
@@ -310,11 +310,11 @@ namespace tremotesf
 
         mAlternativeDownloadSpeedLimitSpinBox = new QSpinBox(this);
         mAlternativeDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
-        mAlternativeDownloadSpeedLimitSpinBox->setSuffix(kibiBytesPerSecond);
+        mAlternativeDownloadSpeedLimitSpinBox->setSuffix(suffix);
         enableAlternativeLimitsGroupBoxLayout->addRow(qApp->translate("tremotesf", "Download:"), mAlternativeDownloadSpeedLimitSpinBox);
         mAlternativeUploadSpeedLimitSpinBox = new QSpinBox(this);
         mAlternativeUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
-        mAlternativeUploadSpeedLimitSpinBox->setSuffix(kibiBytesPerSecond);
+        mAlternativeUploadSpeedLimitSpinBox->setSuffix(suffix);
         enableAlternativeLimitsGroupBoxLayout->addRow(qApp->translate("tremotesf", "Upload:"), mAlternativeUploadSpeedLimitSpinBox);
 
         alternativeSpeedLimitsGroupBoxLayout->addWidget(mEnableAlternativeSpeedLimitsGroupBox);

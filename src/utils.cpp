@@ -226,11 +226,6 @@ namespace tremotesf
         return qApp->translate("tremotesf", "%1 s").arg(locale.toString(seconds));
     }
 
-    QString Utils::kibiBytesPerSecond()
-    {
-        return qApp->translate("tremotesf", "KiB/s");
-    }
-
     QString Utils::license()
     {
         QFile licenseFile(QStringLiteral(":/license.html"));

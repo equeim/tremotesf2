@@ -38,8 +38,6 @@ namespace tremotesf
 
         Q_INVOKABLE static QString formatEta(int seconds);
 
-        static QString kibiBytesPerSecond();
-
         static QString license();
         static QString translators();
 
