@@ -22,8 +22,13 @@ sailfishos {
     qml.files = qml
     qml.path = $$PREFIX/share/$$TARGET
     INSTALLS += qml
-
-    OTHER_FILES += rpm/harbour-tremotesf.spec
 }
 
 include(translations/translations.pri)
+
+OTHER_FILES += .clang-format \
+               .gitignore \
+               CHANGELOG.md \
+               README.md \
+               .tx/config \
+               rpm/harbour-tremotesf.spec
