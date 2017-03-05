@@ -98,7 +98,7 @@ namespace tremotesf
                     return;
                 }
             }*/
-            qDebug() << errors;
+            qWarning() << errors;
         });
 
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, &Rpc::updateServer);
@@ -472,6 +472,17 @@ namespace tremotesf
             emit connectedChanged();
             emit torrentsUpdated();
         }
+
+        switch (mStatus) {
+        case Disconnected:
+            qDebug() << "disconnected";
+            break;
+        case Connecting:
+            qDebug() << "connecting";
+            break;
+        case Connected:
+            qDebug() << "connected";
+        }
     }
 
     void Rpc::setError(Error error)
@@ -735,7 +746,7 @@ namespace tremotesf
                                 if (result.second) {
                                     callOnSuccess(result.first);
                                 } else {
-                                    qDebug() << "parsing error";
+                                    qWarning() << "parsing error";
                                     setError(ParseError);
                                     setStatus(Disconnected);
                                 }
@@ -746,13 +757,13 @@ namespace tremotesf
                     }
                     break;
                 case QNetworkReply::AuthenticationRequiredError:
-                    qDebug() << "authentication error";
+                    qWarning() << "authentication error";
                     setError(AuthenticationError);
                     setStatus(Disconnected);
                     break;
                 case QNetworkReply::OperationCanceledError:
                 case QNetworkReply::TimeoutError:
-                    qDebug() << "timed out";
+                    qWarning() << "timed out";
                     setError(TimedOut);
                     setStatus(Disconnected);
                     break;
@@ -762,7 +773,7 @@ namespace tremotesf
                         mSessionId = reply->rawHeader(sessionIdHeader);
                         postRequest(data, callOnSuccess);
                     } else {
-                        qDebug() << reply->error() << reply->errorString();
+                        qWarning() << reply->error() << reply->errorString();
                         setError(ConnectionError);
                         setStatus(Disconnected);
                     }

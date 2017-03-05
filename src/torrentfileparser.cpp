@@ -45,14 +45,14 @@ namespace tremotesf
                         if (error != TorrentFileParser::NoError) {
                             fileData.clear();
                             parseResult.clear();
-                            qDebug() << "error parsing file";
+                            qWarning() << "error parsing file";
                         }
                     } else {
-                        qDebug() << "wrong mime type" << mimeType.name();
+                        qWarning() << "wrong mime type" << mimeType.name();
                         error = TorrentFileParser::WrongMimeType;
                     }
                 } else {
-                    qDebug() << "error reading file";
+                    qWarning() << "error reading file";
                     error = TorrentFileParser::ReadingError;
                 }
             }

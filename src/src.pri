@@ -21,6 +21,10 @@ sailfishos {
     }
 }
 
+CONFIG(release, debug|release) {
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
 QMAKE_CXXFLAGS += -Wall -Wextra -pedantic
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 

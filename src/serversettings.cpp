@@ -184,7 +184,6 @@ namespace tremotesf
     {
         if (directory != mIncompleteDirectory) {
             mIncompleteDirectory = directory;
-            qDebug() << mIncompleteDirectory;
             if (mSaveOnSet) {
                 mRpc->setSessionProperty(incompleteDirectoryKey, mIncompleteDirectory);
             }
@@ -602,7 +601,6 @@ namespace tremotesf
     {
         mMaximumPeersGlobally = peers;
         if (mSaveOnSet) {
-            qDebug() << mMaximumPeersGlobally;
             mRpc->setSessionProperty(maximumPeersGloballyKey, mMaximumPeersGlobally);
         }
     }

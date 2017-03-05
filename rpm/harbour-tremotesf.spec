@@ -27,7 +27,11 @@ Remote GUI for transmission-daemon
 %build
 mkdir -p build-sailfishos
 pushd build-sailfishos
-%qmake5 ../ CONFIG+=sailfishos
+
+build_type=debug
+#build_type=release
+
+%qmake5 ../ CONFIG+=sailfishos CONFIG+=$build_type
 make %{?_smp_mflags}
 popd build-sailfishos
 

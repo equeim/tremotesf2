@@ -47,13 +47,13 @@ namespace tremotesf
     {
         if (!listen(name)) {
             if (serverError() == QAbstractSocket::AddressInUseError) {
-                qDebug() << "Removing dead socket";
+                qWarning() << "Removing dead socket";
                 removeServer(name);
                 if (!listen(name)) {
-                    qDebug() << errorString();
+                    qWarning() << errorString();
                 }
             } else {
-                qDebug() << errorString();
+                qWarning() << errorString();
             }
         }
 
@@ -63,7 +63,7 @@ namespace tremotesf
             if (socket->state() == QLocalSocket::ConnectedState) {
                 const QByteArray message(socket->readAll());
                 if (message == "ping") {
-                    qDebug() << "Pinged";
+                    qWarning() << "Pinged";
                     emit pinged();
                 } else {
                     const QVariantMap map(QJsonDocument::fromJson(message).toVariant().toMap());
@@ -77,7 +77,7 @@ namespace tremotesf
                             emit urlsReceived(urls);
                         }
                     } else {
-                        qDebug() << "Unknown message";
+                        qWarning() << "Unknown message";
                     }
                 }
             }
@@ -112,13 +112,13 @@ namespace tremotesf
 
     void IpcServer::ping()
     {
-        qDebug() << "Pinging";
+        qWarning() << "Pinging";
         sendMessage(QByteArrayLiteral("ping"));
     }
 
     void IpcServer::sendArguments(const QStringList& arguments)
     {
-        qDebug() << "Sending arguments";
+        qWarning() << "Sending arguments";
         const ArgumentsParseResult result(parseArguments(arguments));
         sendMessage(QJsonDocument::fromVariant(QVariantMap{{QStringLiteral("files"), result.files},
                                                            {QStringLiteral("urls"), result.urls}})
