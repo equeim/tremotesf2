@@ -17,6 +17,8 @@ make install
 #### GNU/Linux distributions
 [Arch Linux AUR](https://aur.archlinux.org/packages/tremotesf)
 
+[Gentoo overlay](https://github.com/equeim/equeim-overlay)
+
 ### Sailfish OS
 #### Dependencies
 Sailfish OS 1.1.9 or newer
