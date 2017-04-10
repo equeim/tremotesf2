@@ -65,10 +65,10 @@ namespace tremotesf
             return parseResult.value(QLatin1String("arguments")).toMap();
         }
 
-        bool isResultSuccessful(const QVariantMap& parseResult)
+        /*bool isResultSuccessful(const QVariantMap& parseResult)
         {
             return (parseResult.value(QLatin1String("result")).toString() == "success");
-        }
+        }*/
     }
 
     Rpc::Rpc(QObject* parent)
@@ -178,7 +178,7 @@ namespace tremotesf
     bool Rpc::isLocal() const
     {
         const QString hostName = mServerUrl.host();
-        if (hostName == "localhost" ||
+        if (hostName == QLatin1String("localhost") ||
             hostName == QHostInfo::localHostName()) {
             return true;
         }
