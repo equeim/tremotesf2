@@ -37,24 +37,24 @@ int main(int argc, char** argv)
 #else
     QApplication app(argc, argv);
     app.setOrganizationName(app.applicationName());
-    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("tremotesf")));
+    app.setWindowIcon(QIcon::fromTheme(QLatin1String("tremotesf")));
     app.setQuitOnLastWindowClosed(false);
 
 #ifdef Q_OS_WIN
-    QIcon::setThemeSearchPaths({QStringLiteral("icons")});
-    QIcon::setThemeName(QStringLiteral("breeze"));
+    QIcon::setThemeSearchPaths({QLatin1String("icons")});
+    QIcon::setThemeName(QLatin1String("breeze"));
 #endif
 
 #endif // TREMOTESF_SAILFISHOS
 
-    qApp->setApplicationVersion(QStringLiteral(TREMOTESF_VERSION));
+    qApp->setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
 
     QCommandLineParser parser;
 #ifdef TREMOTESF_SAILFIDHOS
-    parser.addPositionalArgument(QStringLiteral("torrent"), QStringLiteral("Torrent file or URL"));
+    parser.addPositionalArgument(QLatin1String("torrent"), QLatin1String("Torrent file or URL"));
 #else
-    parser.addPositionalArgument(QStringLiteral("torrents"), QStringLiteral("Torrent files or URLs"));
-    parser.addOption(QCommandLineOption(QStringLiteral("minimized"), QStringLiteral("Start minimized in notification area")));
+    parser.addPositionalArgument(QLatin1String("torrents"), QLatin1String("Torrent files or URLs"));
+    parser.addOption(QCommandLineOption(QLatin1String("minimized"), QLatin1String("Start minimized in notification area")));
 #endif
     parser.addHelpOption();
     parser.addVersionOption();
@@ -77,14 +77,14 @@ int main(int argc, char** argv)
     tremotesf::IpcServer ipcServer;
 
     QTranslator qtTranslator;
-    qtTranslator.load(QLocale(), QStringLiteral("qt"), QStringLiteral("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    qtTranslator.load(QLocale(), QLatin1String("qt"), QLatin1String("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     qApp->installTranslator(&qtTranslator);
 
     QTranslator appTranslator;
 #ifdef Q_OS_WIN
-    appTranslator.load(QLocale().name(), QStringLiteral("%1/translations").arg(app.applicationDirPath()));
+    appTranslator.load(QLocale().name(), QLatin1String("%1/translations").arg(app.applicationDirPath()));
 #else
-    appTranslator.load(QLocale().name(), QStringLiteral(TRANSLATIONS_PATH));
+    appTranslator.load(QLocale().name(), QLatin1String(TRANSLATIONS_PATH));
 #endif
     qApp->installTranslator(&appTranslator);
 
@@ -93,17 +93,17 @@ int main(int argc, char** argv)
     tremotesf::Servers::migrate();
 
 #ifdef TREMOTESF_SAILFISHOS
-    view->rootContext()->setContextProperty(QStringLiteral("ipcServer"), &ipcServer);
+    view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
 
     tremotesf::ArgumentsParseResult result(tremotesf::IpcServer::parseArguments(arguments));
-    view->rootContext()->setContextProperty(QStringLiteral("files"), result.files);
-    view->rootContext()->setContextProperty(QStringLiteral("urls"), result.urls);
+    view->rootContext()->setContextProperty(QLatin1String("files"), result.files);
+    view->rootContext()->setContextProperty(QLatin1String("urls"), result.urls);
 
-    view->setSource(SailfishApp::pathTo(QStringLiteral("qml/main.qml")));
+    view->setSource(SailfishApp::pathTo(QLatin1String("qml/main.qml")));
     view->show();
 #else
     tremotesf::MainWindow window(&ipcServer, arguments);
-    window.showMinimized(parser.isSet(QStringLiteral("minimized")));
+    window.showMinimized(parser.isSet(QLatin1String("minimized")));
 #endif
 
     return qApp->exec();

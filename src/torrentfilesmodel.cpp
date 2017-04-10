@@ -36,9 +36,9 @@ namespace tremotesf
         void updateFile(TorrentFilesModelFile* file, const QVariantMap& fileMap, const QVariantMap& fileStatsMap)
         {
             file->setChanged(false);
-            file->setCompletedSize(fileMap.value(QStringLiteral("bytesCompleted")).toLongLong());
-            file->setWanted(fileStatsMap.value(QStringLiteral("wanted")).toBool());
-            file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileStatsMap.value(QStringLiteral("priority")).toInt()));
+            file->setCompletedSize(fileMap.value(QLatin1String("bytesCompleted")).toLongLong());
+            file->setWanted(fileStatsMap.value(QLatin1String("wanted")).toBool());
+            file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileStatsMap.value(QLatin1String("priority")).toInt()));
         }
 
         QVariantList idsFromIndex(const QModelIndex& index)
@@ -80,7 +80,7 @@ namespace tremotesf
 
                 TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
-                const QString filePath(fileMap.value(QStringLiteral("name")).toString());
+                const QString filePath(fileMap.value(QLatin1String("name")).toString());
                 const QStringList parts(filePath.split('/', QString::SkipEmptyParts));
 
                 for (int partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
@@ -91,7 +91,7 @@ namespace tremotesf
                                                                    currentDirectory,
                                                                    fileIndex,
                                                                    part,
-                                                                   fileMap.value(QStringLiteral("length")).toLongLong());
+                                                                   fileMap.value(QLatin1String("length")).toLongLong());
 
                         updateFile(childFile, fileMap, fileStatsMap);
                         currentDirectory->addChild(childFile);
@@ -438,13 +438,13 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> TorrentFilesModel::roleNames() const
     {
-        return {{NameRole, QByteArrayLiteral("name")},
-                {IsDirectoryRole, QByteArrayLiteral("isDirectory")},
-                {CompletedSizeRole, QByteArrayLiteral("completedSize")},
-                {SizeRole, QByteArrayLiteral("size")},
-                {ProgressRole, QByteArrayLiteral("progress")},
-                {WantedStateRole, QByteArrayLiteral("wantedState")},
-                {PriorityRole, QByteArrayLiteral("priority")}};
+        return {{NameRole, "name"},
+                {IsDirectoryRole, "isDirectory"},
+                {CompletedSizeRole, "completedSize"},
+                {SizeRole, "size"},
+                {ProgressRole, "progress"},
+                {WantedStateRole, "wantedState"},
+                {PriorityRole, "priority"}};
     }
 #endif
 }

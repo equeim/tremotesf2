@@ -44,7 +44,7 @@ namespace tremotesf
         layout->setContentsMargins(8, 4, 8, 4);
 
         mNoServersErrorImage = new QLabel(this);
-        mNoServersErrorImage->setPixmap(QIcon::fromTheme(QStringLiteral("dialog-error")).pixmap(16, 16));
+        mNoServersErrorImage->setPixmap(QIcon::fromTheme(QLatin1String("dialog-error")).pixmap(16, 16));
         mNoServersErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mNoServersErrorImage);
 
@@ -61,7 +61,7 @@ namespace tremotesf
         layout->addWidget(mSecondSeparator);
 
         mDownloadSpeedImage = new QLabel(this);
-        mDownloadSpeedImage->setPixmap(QIcon::fromTheme(QStringLiteral("go-down")).pixmap(16, 16));
+        mDownloadSpeedImage->setPixmap(QIcon::fromTheme(QLatin1String("go-down")).pixmap(16, 16));
         mDownloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mDownloadSpeedImage);
 
@@ -72,7 +72,7 @@ namespace tremotesf
         layout->addWidget(mThirdSeparator);
 
         mUploadSpeedImage = new QLabel(this);
-        mUploadSpeedImage->setPixmap(QIcon::fromTheme(QStringLiteral("go-up")).pixmap(16, 16));
+        mUploadSpeedImage->setPixmap(QIcon::fromTheme(QLatin1String("go-up")).pixmap(16, 16));
         mUploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mUploadSpeedImage);
 
@@ -135,7 +135,7 @@ namespace tremotesf
     void MainWindowStatusBar::updateServerLabel()
     {
         if (Servers::instance()->hasServers()) {
-            mServerLabel->setText(QStringLiteral("%1 (%2)").arg(Servers::instance()->currentServerName()).arg(Servers::instance()->currentServerAddress()));
+            mServerLabel->setText(QString::fromLatin1("%1 (%2)").arg(Servers::instance()->currentServerName()).arg(Servers::instance()->currentServerAddress()));
         } else {
             mServerLabel->setText(qApp->translate("tremotesf", "No servers"));
         }

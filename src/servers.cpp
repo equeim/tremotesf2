@@ -33,25 +33,25 @@ namespace tremotesf
         const QSettings::Format settingsFormat = QSettings::NativeFormat;
 #endif
 
-        const QString fileName(QStringLiteral("servers"));
+        const QString fileName(QLatin1String("servers"));
 
-        const QString versionKey(QStringLiteral("version"));
-        const QString currentServerKey(QStringLiteral("current"));
-        const QString addressKey(QStringLiteral("address"));
-        const QString portKey(QStringLiteral("port"));
-        const QString apiPathKey(QStringLiteral("apiPath"));
-        const QString httpsKey(QStringLiteral("https"));
-        const QString selfSignedCertificateEnabledKey(QStringLiteral("selfSignedCertificateEnabled"));
-        const QString selfSignedCertificateKey(QStringLiteral("selfSignedCertificate"));
-        const QString clientCertificateEnabledKey(QStringLiteral("clientCertificateEnabled"));
-        const QString clientCertificateKey(QStringLiteral("clientCertificate"));
-        const QString authenticationKey(QStringLiteral("authentication"));
-        const QString usernameKey(QStringLiteral("username"));
-        const QString passwordKey(QStringLiteral("password"));
-        const QString updateIntervalKey(QStringLiteral("updateInterval"));
-        const QString timeoutKey(QStringLiteral("timeout"));
+        const QString versionKey(QLatin1String("version"));
+        const QString currentServerKey(QLatin1String("current"));
+        const QString addressKey(QLatin1String("address"));
+        const QString portKey(QLatin1String("port"));
+        const QString apiPathKey(QLatin1String("apiPath"));
+        const QString httpsKey(QLatin1String("https"));
+        const QString selfSignedCertificateEnabledKey(QLatin1String("selfSignedCertificateEnabled"));
+        const QString selfSignedCertificateKey(QLatin1String("selfSignedCertificate"));
+        const QString clientCertificateEnabledKey(QLatin1String("clientCertificateEnabled"));
+        const QString clientCertificateKey(QLatin1String("clientCertificate"));
+        const QString authenticationKey(QLatin1String("authentication"));
+        const QString usernameKey(QLatin1String("username"));
+        const QString passwordKey(QLatin1String("password"));
+        const QString updateIntervalKey(QLatin1String("updateInterval"));
+        const QString timeoutKey(QLatin1String("timeout"));
 
-        const QString localCertificateKey(QStringLiteral("localCertificate"));
+        const QString localCertificateKey(QLatin1String("localCertificate"));
 
         Servers* instancePointer = nullptr;
 
@@ -72,7 +72,7 @@ namespace tremotesf
                         serversSettings.setValue(httpsKey, settings.value(httpsKey));
                         if (settings.value(localCertificateKey).toBool()) {
                             const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation,
-                                                                                      QStringLiteral("%1.pem").arg(group)));
+                                                                                      QLatin1String("%1.pem").arg(group)));
                             if (!localCertificatePath.isEmpty()) {
                                 QFile file(localCertificatePath);
                                 if (file.open(QFile::ReadOnly)) {
@@ -90,7 +90,7 @@ namespace tremotesf
                         serversSettings.endGroup();
                         settings.endGroup();
                     }
-                    serversSettings.setValue(currentServerKey, settings.value(QStringLiteral("currentAccount")));
+                    serversSettings.setValue(currentServerKey, settings.value(QLatin1String("currentAccount")));
                 }
                 settings.clear();
                 settings.setValue(versionKey, 1);
@@ -102,7 +102,7 @@ namespace tremotesf
             QSettings accounts(settingsFormat,
                                QSettings::UserScope,
                                qApp->organizationName(),
-                               QStringLiteral("accounts"));
+                               QLatin1String("accounts"));
             if (!accounts.childGroups().isEmpty()) {
                 if (QFile::copy(accounts.fileName(),
                                 QSettings(settingsFormat,
@@ -271,7 +271,7 @@ namespace tremotesf
           mSettings(new QSettings(settingsFormat,
                                   QSettings::UserScope,
                                   qApp->organizationName(),
-                                  QStringLiteral("servers"),
+                                  QLatin1String("servers"),
                                   this))
     {
         if (hasServers()) {

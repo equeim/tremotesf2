@@ -86,7 +86,7 @@ namespace tremotesf
 
     void Tracker::update(const QVariantMap& trackerMap)
     {
-        mAnnounce = trackerMap.value(QStringLiteral("announce")).toString();
+        mAnnounce = trackerMap.value(QLatin1String("announce")).toString();
 
         const QUrl url(mAnnounce);
         mSite = url.host();
@@ -95,27 +95,27 @@ namespace tremotesf
             mSite = mSite.mid(mSite.lastIndexOf('.', -topLevelDomain.size() - 1) + 1);
         }
 
-        const bool scrapeError = (!trackerMap.value(QStringLiteral("lastScrapeSucceeded")).toBool() &&
-                                  trackerMap.value(QStringLiteral("lastScrapeTime")).toInt() != 0);
+        const bool scrapeError = (!trackerMap.value(QLatin1String("lastScrapeSucceeded")).toBool() &&
+                                  trackerMap.value(QLatin1String("lastScrapeTime")).toInt() != 0);
 
-        const bool announceError = (!trackerMap.value(QStringLiteral("lastAnnounceSucceeded")).toBool() &&
-                                    trackerMap.value(QStringLiteral("lastAnnounceTime")).toInt() != 0);
+        const bool announceError = (!trackerMap.value(QLatin1String("lastAnnounceSucceeded")).toBool() &&
+                                    trackerMap.value(QLatin1String("lastAnnounceTime")).toInt() != 0);
 
         if (scrapeError || announceError) {
             mStatus = Error;
             if (scrapeError) {
-                mErrorMessage = trackerMap.value(QStringLiteral("lastScrapeResult")).toString();
+                mErrorMessage = trackerMap.value(QLatin1String("lastScrapeResult")).toString();
             } else {
-                mErrorMessage = trackerMap.value(QStringLiteral("lastAnnounceResult")).toString();
+                mErrorMessage = trackerMap.value(QLatin1String("lastAnnounceResult")).toString();
             }
         } else {
-            mStatus = static_cast<Status>(trackerMap.value(QStringLiteral("announceState")).toInt());
+            mStatus = static_cast<Status>(trackerMap.value(QLatin1String("announceState")).toInt());
             mErrorMessage.clear();
         }
 
-        mPeers = trackerMap.value(QStringLiteral("lastAnnouncePeerCount")).toInt();
+        mPeers = trackerMap.value(QLatin1String("lastAnnouncePeerCount")).toInt();
 
-        const long long time = trackerMap.value(QStringLiteral("nextAnnounceTime")).toLongLong() * 1000;
+        const long long time = trackerMap.value(QLatin1String("nextAnnounceTime")).toLongLong() * 1000;
         if (time < 0) {
             mNextUpdate = -1;
         } else {

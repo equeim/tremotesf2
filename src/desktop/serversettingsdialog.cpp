@@ -162,7 +162,7 @@ namespace tremotesf
         mDownloadingPageWidget = new QWidget(this);
 
         KPageWidgetItem* downloadingPageItem = pageWidget->addPage(mDownloadingPageWidget, qApp->translate("tremotesf", "Downloading", "Noun"));
-        downloadingPageItem->setIcon(QIcon::fromTheme(QStringLiteral("folder-download")));
+        downloadingPageItem->setIcon(QIcon::fromTheme(QLatin1String("folder-download")));
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
 
@@ -193,7 +193,7 @@ namespace tremotesf
         // Seeding page
         mSeedingPageWidget = new QWidget(this);
         KPageWidgetItem* seedingPageItem = pageWidget->addPage(mSeedingPageWidget, qApp->translate("tremotesf", "Seeding", "Noun"));
-        seedingPageItem->setIcon(QIcon::fromTheme(QStringLiteral("network-server")));
+        seedingPageItem->setIcon(QIcon::fromTheme(QLatin1String("network-server")));
 
         auto seedingPageLayout = new QGridLayout(mSeedingPageWidget);
 
@@ -224,7 +224,7 @@ namespace tremotesf
         // Queue page
         mQueuePageWidget = new QWidget(this);
         KPageWidgetItem* queuePageItem = pageWidget->addPage(mQueuePageWidget, qApp->translate("tremotesf", "Queue"));
-        queuePageItem->setIcon(QIcon::fromTheme(QStringLiteral("applications-utilities")));
+        queuePageItem->setIcon(QIcon::fromTheme(QLatin1String("applications-utilities")));
 
         auto queuePageLayout = new QGridLayout(mQueuePageWidget);
 
@@ -264,7 +264,7 @@ namespace tremotesf
         // Speed page
         mSpeedPageWidget = new QWidget(this);
         KPageWidgetItem* speedPageItem = pageWidget->addPage(mSpeedPageWidget, qApp->translate("tremotesf", "Speed"));
-        speedPageItem->setIcon(QIcon::fromTheme(QStringLiteral("preferences-system-time")));
+        speedPageItem->setIcon(QIcon::fromTheme(QLatin1String("preferences-system-time")));
 
         auto speedPageLayout = new QVBoxLayout(mSpeedPageWidget);
 
@@ -391,7 +391,7 @@ namespace tremotesf
         // Network page
         mNetworkPageWidget = new QWidget(this);
         KPageWidgetItem* networkPageItem = pageWidget->addPage(mNetworkPageWidget, qApp->translate("tremotesf", "Network"));
-        networkPageItem->setIcon(QIcon::fromTheme(QStringLiteral("preferences-system-network")));
+        networkPageItem->setIcon(QIcon::fromTheme(QLatin1String("preferences-system-network")));
 
         auto networkPageLayout = new QVBoxLayout(mNetworkPageWidget);
 

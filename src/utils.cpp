@@ -199,7 +199,7 @@ namespace tremotesf
     QString Utils::formatEta(int seconds)
     {
         if (seconds < 0) {
-            return QStringLiteral("\u221E");
+            return "\u221E";
         }
 
         const int days = seconds / 86400;
@@ -228,14 +228,14 @@ namespace tremotesf
 
     QString Utils::license()
     {
-        QFile licenseFile(QStringLiteral(":/license.html"));
+        QFile licenseFile(QLatin1String(":/license.html"));
         licenseFile.open(QFile::ReadOnly);
         return licenseFile.readAll();
     }
 
     QString Utils::translators()
     {
-        QFile translatorsFile(QStringLiteral(":/translators.html"));
+        QFile translatorsFile(QLatin1String(":/translators.html"));
         translatorsFile.open(QFile::ReadOnly);
         return translatorsFile.readAll();
     }
@@ -311,32 +311,32 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QString Utils::sdcardPath()
     {
-        QFile mtab(QStringLiteral("/etc/mtab"));
+        QFile mtab(QLatin1String("/etc/mtab"));
         if (mtab.open(QIODevice::ReadOnly)) {
-            const QStringList mmcblk1p1(QString(mtab.readAll()).split('\n').filter(QStringLiteral("/dev/mmcblk1p1")));
+            const QStringList mmcblk1p1(QString(mtab.readAll()).split('\n').filter(QLatin1String("/dev/mmcblk1p1")));
             if (!mmcblk1p1.isEmpty()) {
                 return mmcblk1p1.first().split(' ').at(1);
             }
         }
-        return QStringLiteral("/media/sdcard");
+        return QLatin1String("/media/sdcard");
     }
 #else
     QString Utils::statusIconPath(Utils::StatusIcon icon)
     {
 #ifdef Q_OS_WIN
-        static const QString iconsPath(QStringLiteral("%1/icons").arg(QCoreApplication::applicationDirPath()));
+        static const QString iconsPath(QLatin1String("%1/icons").arg(QCoreApplication::applicationDirPath()));
 #else
-        static const QString iconsPath(QStringLiteral(ICONS_PATH));
+        static const QString iconsPath(QLatin1String(ICONS_PATH));
 #endif // Q_OS_WIN
-        static const QString active(QStringLiteral("%1/active.png").arg(iconsPath));
-        static const QString checking(QStringLiteral("%1/checking.png").arg(iconsPath));
-        static const QString downloading(QStringLiteral("%1/downloading.png").arg(iconsPath));
-        static const QString errored(QStringLiteral("%1/errored.png").arg(iconsPath));
-        static const QString paused(QStringLiteral("%1/paused.png").arg(iconsPath));
-        static const QString queued(QStringLiteral("%1/queued.png").arg(iconsPath));
-        static const QString seeding(QStringLiteral("%1/seeding.png").arg(iconsPath));
-        static const QString stalledDownloading(QStringLiteral("%1/stalled-downloading.png").arg(iconsPath));
-        static const QString stalledSeeding(QStringLiteral("%1/stalled-seeding.png").arg(iconsPath));
+        static const QString active(QString::fromLatin1("%1/active.png").arg(iconsPath));
+        static const QString checking(QString::fromLatin1("%1/checking.png").arg(iconsPath));
+        static const QString downloading(QString::fromLatin1("%1/downloading.png").arg(iconsPath));
+        static const QString errored(QString::fromLatin1("%1/errored.png").arg(iconsPath));
+        static const QString paused(QString::fromLatin1("%1/paused.png").arg(iconsPath));
+        static const QString queued(QString::fromLatin1("%1/queued.png").arg(iconsPath));
+        static const QString seeding(QString::fromLatin1("%1/seeding.png").arg(iconsPath));
+        static const QString stalledDownloading(QString::fromLatin1("%1/stalled-downloading.png").arg(iconsPath));
+        static const QString stalledSeeding(QString::fromLatin1("%1/stalled-seeding.png").arg(iconsPath));
 
         switch (icon) {
         case ActiveIcon:

@@ -213,21 +213,21 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> ServersModel::roleNames() const
     {
-        return {{NameRole, QByteArrayLiteral("name")},
-                {IsCurrentRole, QByteArrayLiteral("current")},
-                {AddressRole, QByteArrayLiteral("address")},
-                {PortRole, QByteArrayLiteral("port")},
-                {ApiPathRole, QByteArrayLiteral("apiPath")},
-                {HttpsRole, QByteArrayLiteral("https")},
-                {SelfSignedCertificateEnabledRole, QByteArrayLiteral("selfSignedCertificateEnabled")},
-                {SelfSignedCertificateRole, QByteArrayLiteral("selfSignedCertificate")},
-                {ClientCertificateEnabledRole, QByteArrayLiteral("clientCertificateEnabled")},
-                {ClientCertificateRole, QByteArrayLiteral("clientCertificate")},
-                {AuthenticationRole, QByteArrayLiteral("authentication")},
-                {UsernameRole, QByteArrayLiteral("username")},
-                {PasswordRole, QByteArrayLiteral("password")},
-                {UpdateIntervalRole, QByteArrayLiteral("updateInterval")},
-                {TimeoutRole, QByteArrayLiteral("timeout")}};
+        return {{NameRole, "name"},
+                {IsCurrentRole, "current"},
+                {AddressRole, "address"},
+                {PortRole, "port"},
+                {ApiPathRole, "apiPath"},
+                {HttpsRole, "https"},
+                {SelfSignedCertificateEnabledRole, "selfSignedCertificateEnabled"},
+                {SelfSignedCertificateRole, "selfSignedCertificate"},
+                {ClientCertificateEnabledRole, "clientCertificateEnabled"},
+                {ClientCertificateRole, "clientCertificate"},
+                {AuthenticationRole, "authentication"},
+                {UsernameRole, "username"},
+                {PasswordRole, "password"},
+                {UpdateIntervalRole, "updateInterval"},
+                {TimeoutRole, "timeout"}};
     }
 #endif
 

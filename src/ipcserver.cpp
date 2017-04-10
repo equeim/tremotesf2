@@ -29,7 +29,7 @@ namespace tremotesf
 {
     namespace
     {
-        const QString name(QStringLiteral("tremotesf"));
+        const QString name(QLatin1String("tremotesf"));
 
         void sendMessage(const QByteArray& message)
         {
@@ -67,12 +67,12 @@ namespace tremotesf
                     emit pinged();
                 } else {
                     const QVariantMap map(QJsonDocument::fromJson(message).toVariant().toMap());
-                    if (map.contains("files") && map.contains(QStringLiteral("urls"))) {
-                        const QStringList files(map.value(QStringLiteral("files")).toStringList());
+                    if (map.contains("files") && map.contains(QLatin1String("urls"))) {
+                        const QStringList files(map.value(QLatin1String("files")).toStringList());
                         if (!files.isEmpty()) {
                             emit filesReceived(files);
                         }
-                        const QStringList urls(map.value(QStringLiteral("urls")).toStringList());
+                        const QStringList urls(map.value(QLatin1String("urls")).toStringList());
                         if (!urls.isEmpty()) {
                             emit urlsReceived(urls);
                         }
@@ -113,15 +113,15 @@ namespace tremotesf
     void IpcServer::ping()
     {
         qWarning() << "Pinging";
-        sendMessage(QByteArrayLiteral("ping"));
+        sendMessage("ping");
     }
 
     void IpcServer::sendArguments(const QStringList& arguments)
     {
         qWarning() << "Sending arguments";
         const ArgumentsParseResult result(parseArguments(arguments));
-        sendMessage(QJsonDocument::fromVariant(QVariantMap{{QStringLiteral("files"), result.files},
-                                                           {QStringLiteral("urls"), result.urls}})
+        sendMessage(QJsonDocument::fromVariant(QVariantMap{{QLatin1String("files"), result.files},
+                                                           {QLatin1String("urls"), result.urls}})
                         .toJson());
     }
 }

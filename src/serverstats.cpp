@@ -39,8 +39,8 @@ namespace tremotesf
 
     void ServerStats::update(const QVariantMap& serverStats)
     {
-        mDownloadSpeed = serverStats.value(QStringLiteral("downloadSpeed")).toLongLong();
-        mUploadSpeed = serverStats.value(QStringLiteral("uploadSpeed")).toLongLong();
+        mDownloadSpeed = serverStats.value(QLatin1String("downloadSpeed")).toLongLong();
+        mUploadSpeed = serverStats.value(QLatin1String("uploadSpeed")).toLongLong();
         emit updated();
     }
 }

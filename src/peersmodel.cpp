@@ -26,18 +26,18 @@
 namespace tremotesf
 {
     Peer::Peer(const QVariantMap& peerMap)
-        : address(peerMap.value(QStringLiteral("address")).toString())
+        : address(peerMap.value(QLatin1String("address")).toString())
     {
         update(peerMap);
     }
 
     void Peer::update(const QVariantMap& peerMap)
     {
-        downloadSpeed = peerMap.value(QStringLiteral("rateToClient")).toLongLong();
-        uploadSpeed = peerMap.value(QStringLiteral("rateToPeer")).toLongLong();
-        progress = peerMap.value(QStringLiteral("progress")).toFloat();
-        flags = peerMap.value(QStringLiteral("flagStr")).toString();
-        client = peerMap.value(QStringLiteral("clientName")).toString();
+        downloadSpeed = peerMap.value(QLatin1String("rateToClient")).toLongLong();
+        uploadSpeed = peerMap.value(QLatin1String("rateToPeer")).toLongLong();
+        progress = peerMap.value(QLatin1String("progress")).toFloat();
+        flags = peerMap.value(QLatin1String("flagStr")).toString();
+        client = peerMap.value(QLatin1String("clientName")).toString();
     }
 
 #ifndef TREMOTESF_SAILFISHOS
@@ -169,7 +169,7 @@ namespace tremotesf
                 QObject::connect(mTorrent, &Torrent::peersUpdated, this, [=](const QVariantList& peers) {
                     QStringList addresses;
                     for (const QVariant& peer : peers) {
-                        addresses.append(peer.toMap().value(QStringLiteral("address")).toString());
+                        addresses.append(peer.toMap().value(QLatin1String("address")).toString());
                     }
 
                     for (int i = 0, max = mPeers.size(); i < max; ++i) {
@@ -184,7 +184,7 @@ namespace tremotesf
 
                     for (const QVariant& peerVariant : peers) {
                         const QVariantMap peerMap(peerVariant.toMap());
-                        const QString address(peerMap.value(QStringLiteral("address")).toString());
+                        const QString address(peerMap.value(QLatin1String("address")).toString());
                         int row = -1;
                         for (int i = 0, max = mPeers.size(); i < max; ++i) {
                             if (mPeers.at(i)->address == address) {
@@ -226,12 +226,12 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> PeersModel::roleNames() const
     {
-        return {{Address, QByteArrayLiteral("address")},
-                {DownloadSpeed, QByteArrayLiteral("downloadSpeed")},
-                {UploadSpeed, QByteArrayLiteral("uploadSpeed")},
-                {Progress, QByteArrayLiteral("progress")},
-                {Flags, QByteArrayLiteral("flags")},
-                {Client, QByteArrayLiteral("client")}};
+        return {{Address, "address"},
+                {DownloadSpeed, "downloadSpeed"},
+                {UploadSpeed, "uploadSpeed"},
+                {Progress, "progress"},
+                {Flags, "flags"},
+                {Client, "client"}};
     }
 #endif
 }

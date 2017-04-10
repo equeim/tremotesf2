@@ -191,7 +191,7 @@ namespace tremotesf
         : QScrollArea(parent)
     {
         setFrameShape(QFrame::NoFrame);
-        setStyleSheet(QStringLiteral("QFrame {background: transparent}"));
+        setStyleSheet(QLatin1String("QFrame {background: transparent}"));
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setWidgetResizable(true);
 

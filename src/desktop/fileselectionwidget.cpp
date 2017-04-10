@@ -38,7 +38,7 @@ namespace tremotesf
         mLineEdit = new QLineEdit(this);
         layout->addWidget(mLineEdit);
 
-        mSelectionButton = new QPushButton(QIcon::fromTheme(QStringLiteral("document-open")), QString(), this);
+        mSelectionButton = new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this);
         layout->addWidget(mSelectionButton);
 
         QObject::connect(mSelectionButton, &QPushButton::clicked, this, [=]() {

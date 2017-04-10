@@ -100,7 +100,7 @@ namespace tremotesf
             const int row = index.row() - 1;
             switch (role) {
             case Qt::DecorationRole:
-                return QIcon::fromTheme(QStringLiteral("network-server"));
+                return QIcon::fromTheme(QLatin1String("network-server"));
             case Qt::DisplayRole:
                 return qApp->translate("tremotesf", "%1 (%2)").arg(mTrackers.at(row)).arg(mTrackersTorrents.at(row));
             case TrackerRole:
@@ -144,8 +144,8 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> AllTrackersModel::roleNames() const
     {
-        return {{TrackerRole, QByteArrayLiteral("tracker")},
-                {TorrentsRole, QByteArrayLiteral("torrents")}};
+        return {{TrackerRole, "tracker"},
+                {TorrentsRole, "torrents"}};
     }
 #endif
 

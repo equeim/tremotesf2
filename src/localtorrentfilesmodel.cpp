@@ -42,19 +42,19 @@ namespace tremotesf
             const auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             QList<TorrentFilesModelFile*> files;
 
-            const QVariantMap infoMap(parseResult.value(QStringLiteral("info")).toMap());
-            if (infoMap.contains(QStringLiteral("files"))) {
+            const QVariantMap infoMap(parseResult.value(QLatin1String("info")).toMap());
+            if (infoMap.contains(QLatin1String("files"))) {
                 auto torrentDirectory = new TorrentFilesModelDirectory(0,
                                                                        rootDirectory.get(),
-                                                                       infoMap.value(QStringLiteral("name")).toString());
+                                                                       infoMap.value(QLatin1String("name")).toString());
                 rootDirectory->addChild(torrentDirectory);
 
-                const QVariantList fileMaps(infoMap.value(QStringLiteral("files")).toList());
+                const QVariantList fileMaps(infoMap.value(QLatin1String("files")).toList());
                 for (int fileIndex = 0, filesCount = fileMaps.size(); fileIndex < filesCount; ++fileIndex) {
                     const QVariantMap fileMap(fileMaps.at(fileIndex).toMap());
 
                     TorrentFilesModelDirectory* currentDirectory = static_cast<TorrentFilesModelDirectory*>(torrentDirectory);
-                    const QStringList pathParts(fileMap.value(QStringLiteral("path")).toStringList());
+                    const QStringList pathParts(fileMap.value(QLatin1String("path")).toStringList());
                     for (int partIndex = 0, partsCount = pathParts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
                         const QString& part = pathParts.at(partIndex);
                         if (partIndex == lastPartIndex) {
@@ -62,7 +62,7 @@ namespace tremotesf
                                                                        currentDirectory,
                                                                        fileIndex,
                                                                        part,
-                                                                       fileMap.value(QStringLiteral("length")).toLongLong());
+                                                                       fileMap.value(QLatin1String("length")).toLongLong());
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
                             currentDirectory->addChild(childFile);
@@ -85,8 +85,8 @@ namespace tremotesf
                 auto file = new TorrentFilesModelFile(0,
                                                       rootDirectory.get(),
                                                       0,
-                                                      infoMap.value(QStringLiteral("name")).toString(),
-                                                      infoMap.value(QStringLiteral("length")).toLongLong());
+                                                      infoMap.value(QLatin1String("name")).toString(),
+                                                      infoMap.value(QLatin1String("length")).toLongLong());
                 file->setWanted(true);
                 file->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
                 rootDirectory->addChild(file);
@@ -306,11 +306,11 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> LocalTorrentFilesModel::roleNames() const
     {
-        return {{NameRole, QByteArrayLiteral("name")},
-                {IsDirectoryRole, QByteArrayLiteral("isDirectory")},
-                {SizeRole, QByteArrayLiteral("size")},
-                {WantedStateRole, QByteArrayLiteral("wantedState")},
-                {PriorityRole, QByteArrayLiteral("priority")}};
+        return {{NameRole, "name"},
+                {IsDirectoryRole, "isDirectory"},
+                {SizeRole, "size"},
+                {WantedStateRole, "wantedState"},
+                {PriorityRole, "priority"}};
     }
 #endif
 

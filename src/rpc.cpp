@@ -51,23 +51,23 @@ namespace tremotesf
         // Transmission 2.40+
         const int minimumRpcVersion = 14;
 
-        const QByteArray sessionIdHeader(QByteArrayLiteral("X-Transmission-Session-Id"));
+        const QByteArray sessionIdHeader("X-Transmission-Session-Id");
 
         QByteArray makeRequestData(const QString& method, const QVariantMap& arguments)
         {
-            return QJsonDocument::fromVariant(QVariantMap{{QStringLiteral("method"), method},
-                                                          {QStringLiteral("arguments"), arguments}})
+            return QJsonDocument::fromVariant(QVariantMap{{QLatin1String("method"), method},
+                                                          {QLatin1String("arguments"), arguments}})
                 .toJson();
         }
 
         QVariantMap getReplyArguments(const QVariantMap& parseResult)
         {
-            return parseResult.value(QStringLiteral("arguments")).toMap();
+            return parseResult.value(QLatin1String("arguments")).toMap();
         }
 
         bool isResultSuccessful(const QVariantMap& parseResult)
         {
-            return (parseResult.value(QStringLiteral("result")).toString() == "success");
+            return (parseResult.value(QLatin1String("result")).toString() == "success");
         }
     }
 
@@ -222,22 +222,22 @@ namespace tremotesf
     {
         if (isConnected()) {
             const auto future = QtConcurrent::run([=]() {
-                return makeRequestData(QStringLiteral("torrent-add"),
-                                       {{QStringLiteral("metainfo"), fileData.toBase64()},
-                                        {QStringLiteral("download-dir"), downloadDirectory},
-                                        {QStringLiteral("files-wanted"), wantedFiles},
-                                        {QStringLiteral("files-unwanted"), unwantedFiles},
-                                        {QStringLiteral("priority-high"), highPriorityFiles},
-                                        {QStringLiteral("priority-normal"), normalPriorityFiles},
-                                        {QStringLiteral("priority-low"), lowPriorityFiles},
-                                        {QStringLiteral("bandwidthPriority"), bandwidthPriority},
-                                        {QStringLiteral("paused"), !start}});
+                return makeRequestData(QLatin1String("torrent-add"),
+                                       {{QLatin1String("metainfo"), fileData.toBase64()},
+                                        {QLatin1String("download-dir"), downloadDirectory},
+                                        {QLatin1String("files-wanted"), wantedFiles},
+                                        {QLatin1String("files-unwanted"), unwantedFiles},
+                                        {QLatin1String("priority-high"), highPriorityFiles},
+                                        {QLatin1String("priority-normal"), normalPriorityFiles},
+                                        {QLatin1String("priority-low"), lowPriorityFiles},
+                                        {QLatin1String("bandwidthPriority"), bandwidthPriority},
+                                        {QLatin1String("paused"), !start}});
             });
             auto watcher = new QFutureWatcher<QByteArray>(this);
             QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=]() {
                 if (isConnected()) {
                     postRequest(watcher->result(), [=](const QVariantMap& parseResult) {
-                        if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
+                        if (getReplyArguments(parseResult).contains(QLatin1String("torrent-added"))) {
                             updateData();
                         }
                     });
@@ -257,13 +257,13 @@ namespace tremotesf
             return;
         }
 
-        postRequest(makeRequestData(QStringLiteral("torrent-add"),
-                                    {{QStringLiteral("filename"), link},
-                                     {QStringLiteral("download-dir"), downloadDirectory},
-                                     {QStringLiteral("bandwidthPriority"), bandwidthPriority},
-                                     {QStringLiteral("paused"), !start}}),
+        postRequest(makeRequestData(QLatin1String("torrent-add"),
+                                    {{QLatin1String("filename"), link},
+                                     {QLatin1String("download-dir"), downloadDirectory},
+                                     {QLatin1String("bandwidthPriority"), bandwidthPriority},
+                                     {QLatin1String("paused"), !start}}),
                     [=](const QVariantMap& parseResult) {
-                        if (getReplyArguments(parseResult).contains(QStringLiteral("torrent-added"))) {
+                        if (getReplyArguments(parseResult).contains(QLatin1String("torrent-added"))) {
                             updateData();
                         }
                     });
@@ -272,8 +272,8 @@ namespace tremotesf
     void Rpc::startTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-start"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("torrent-start"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -281,8 +281,8 @@ namespace tremotesf
     void Rpc::startTorrentsNow(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-start-now"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("torrent-start-now"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -290,8 +290,8 @@ namespace tremotesf
     void Rpc::pauseTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-stop"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("torrent-stop"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -299,9 +299,9 @@ namespace tremotesf
     void Rpc::removeTorrents(const QVariantList& ids, bool deleteFiles)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-remove"),
-                                        {{QStringLiteral("ids"), ids},
-                                         {QStringLiteral("delete-local-data"), deleteFiles}}),
+            postRequest(makeRequestData(QLatin1String("torrent-remove"),
+                                        {{QLatin1String("ids"), ids},
+                                         {QLatin1String("delete-local-data"), deleteFiles}}),
                         [=]() { updateData(); });
         }
     }
@@ -309,8 +309,8 @@ namespace tremotesf
     void Rpc::checkTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-verify"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("torrent-verify"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -318,8 +318,8 @@ namespace tremotesf
     void Rpc::moveTorrentsToTop(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("queue-move-top"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("queue-move-top"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -327,8 +327,8 @@ namespace tremotesf
     void Rpc::moveTorrentsUp(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("queue-move-up"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("queue-move-up"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -336,8 +336,8 @@ namespace tremotesf
     void Rpc::moveTorrentsDown(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("queue-move-down"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("queue-move-down"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -345,8 +345,8 @@ namespace tremotesf
     void Rpc::moveTorrentsToBottom(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("queue-move-bottom"),
-                                        {{QStringLiteral("ids"), ids}}),
+            postRequest(makeRequestData(QLatin1String("queue-move-bottom"),
+                                        {{QLatin1String("ids"), ids}}),
                         [=]() { updateData(); });
         }
     }
@@ -354,22 +354,22 @@ namespace tremotesf
     void Rpc::setSessionProperty(const QString& property, const QVariant& value)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("session-set"), {{property, value}}));
+            postRequest(makeRequestData(QLatin1String("session-set"), {{property, value}}));
         }
     }
 
     void Rpc::setSessionProperties(const QVariantMap& properties)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("session-set"), properties));
+            postRequest(makeRequestData(QLatin1String("session-set"), properties));
         }
     }
 
     void Rpc::setTorrentProperty(int id, const QString& property, const QVariant& value)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-set"),
-                                        {{QStringLiteral("ids"), QVariantList{id}},
+            postRequest(makeRequestData(QLatin1String("torrent-set"),
+                                        {{QLatin1String("ids"), QVariantList{id}},
                                          {property, value}}));
         }
     }
@@ -390,7 +390,7 @@ namespace tremotesf
                         .toLatin1(),
                     [=](const QVariantMap& parseResult) {
                         const QVariantList torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(QStringLiteral("torrents"))
+                                                                .value(QLatin1String("torrents"))
                                                                 .toList());
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
@@ -416,7 +416,7 @@ namespace tremotesf
                         .toLatin1(),
                     [=](const QVariantMap& parseResult) {
                         const QVariantList torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(QStringLiteral("torrents"))
+                                                                .value(QLatin1String("torrents"))
                                                                 .toList());
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
@@ -432,16 +432,16 @@ namespace tremotesf
     void Rpc::renameTorrentFile(int torrentId, const QString& filePath, const QString& newName)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("torrent-rename-path"),
-                                        {{QStringLiteral("ids"), QVariantList{torrentId}},
-                                         {QStringLiteral("path"), filePath},
-                                         {QStringLiteral("name"), newName}}),
+            postRequest(makeRequestData(QLatin1String("torrent-rename-path"),
+                                        {{QLatin1String("ids"), QVariantList{torrentId}},
+                                         {QLatin1String("path"), filePath},
+                                         {QLatin1String("name"), newName}}),
                         [=](const QVariantMap& parseResult) {
                             const std::shared_ptr<Torrent> torrent(torrentById(torrentId));
                             if (torrent) {
                                 const QVariantMap arguments(getReplyArguments(parseResult));
-                                emit torrent->fileRenamed(arguments.value(QStringLiteral("path")).toString(),
-                                                          arguments.value(QStringLiteral("name")).toString());
+                                emit torrent->fileRenamed(arguments.value(QLatin1String("path")).toString(),
+                                                          arguments.value(QLatin1String("name")).toString());
                                 updateData();
                             }
                         });
@@ -513,9 +513,9 @@ namespace tremotesf
         mServerUrl.setPort(server.port);
         mServerUrl.setPath(server.apiPath);
         if (server.https) {
-            mServerUrl.setScheme(QStringLiteral("https"));
+            mServerUrl.setScheme(QLatin1String("https"));
         } else {
-            mServerUrl.setScheme(QStringLiteral("http"));
+            mServerUrl.setScheme(QLatin1String("http"));
         }
 
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
@@ -617,13 +617,13 @@ namespace tremotesf
                                       "}"),
                     [=](const QVariantMap& parseResult) {
                         const QVariantList torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(QStringLiteral("torrents"))
+                                                                .value(QLatin1String("torrents"))
                                                                 .toList());
 
                         QList<std::shared_ptr<Torrent>> torrents;
                         for (const QVariant& torrentVariant : torrentsVariants) {
                             const QVariantMap torrentMap(torrentVariant.toMap());
-                            const int id = torrentMap.value(QStringLiteral("id")).toInt();
+                            const int id = torrentMap.value(QLatin1String("id")).toInt();
 
                             std::shared_ptr<Torrent> torrent(torrentById(id));
                             if (torrent) {
@@ -722,7 +722,7 @@ namespace tremotesf
                           const std::function<void(const QVariantMap&)>& callOnSuccess)
     {
         QNetworkRequest request(mServerUrl);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
+        request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/json"));
         request.setRawHeader(sessionIdHeader, mSessionId);
         request.setSslConfiguration(mSslConfiguration);
 
