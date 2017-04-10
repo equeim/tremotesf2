@@ -39,7 +39,7 @@ namespace tremotesf
                 if (file.open(QFile::ReadOnly)) {
                     const QMimeType mimeType(QMimeDatabase().mimeTypeForFile(filePath,
                                                                              QMimeDatabase::MatchContent));
-                    if (mimeType.name() == "application/x-bittorrent") {
+                    if (mimeType.name() == QLatin1String("application/x-bittorrent")) {
                         fileData = file.readAll();
                         parseResult = parseMap();
                         if (error != TorrentFileParser::NoError) {
