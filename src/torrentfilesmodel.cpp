@@ -33,12 +33,18 @@ namespace tremotesf
 {
     namespace
     {
+        const QString nameKey(QLatin1String("name"));
+        const QString sizeKey(QLatin1String("length"));
+        const QString completedSizeKey(QLatin1String("bytesCompleted"));
+        const QString wantedKey(QLatin1String("wanted"));
+        const QString priorityKey(QLatin1String("priority"));
+
         void updateFile(TorrentFilesModelFile* file, const QVariantMap& fileMap, const QVariantMap& fileStatsMap)
         {
             file->setChanged(false);
-            file->setCompletedSize(fileMap.value(QLatin1String("bytesCompleted")).toLongLong());
-            file->setWanted(fileStatsMap.value(QLatin1String("wanted")).toBool());
-            file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileStatsMap.value(QLatin1String("priority")).toInt()));
+            file->setCompletedSize(fileMap.value(completedSizeKey).toLongLong());
+            file->setWanted(fileStatsMap.value(wantedKey).toBool());
+            file->setPriority(static_cast<TorrentFilesModelEntryEnums::Priority>(fileStatsMap.value(priorityKey).toInt()));
         }
 
         QVariantList idsFromIndex(const QModelIndex& index)
@@ -80,7 +86,7 @@ namespace tremotesf
 
                 TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
-                const QString filePath(fileMap.value(QLatin1String("name")).toString());
+                const QString filePath(fileMap.value(nameKey).toString());
                 const QStringList parts(filePath.split('/', QString::SkipEmptyParts));
 
                 for (int partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
@@ -91,7 +97,7 @@ namespace tremotesf
                                                                    currentDirectory,
                                                                    fileIndex,
                                                                    part,
-                                                                   fileMap.value(QLatin1String("length")).toLongLong());
+                                                                   fileMap.value(sizeKey).toLongLong());
 
                         updateFile(childFile, fileMap, fileStatsMap);
                         currentDirectory->addChild(childFile);
