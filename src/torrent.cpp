@@ -30,23 +30,81 @@ namespace tremotesf
 {
     namespace
     {
+        const QString hashStringKey(QLatin1String("hashString"));
+        const QString addedDateKey(QLatin1String("addedDate"));
+
+        const QString nameKey(QLatin1String("name"));
+
+        const QString errorStringKey(QLatin1String("errorString"));
+        const QString queuePositionKey(QLatin1String("queuePosition"));
+
+        const QString totalSizeKey(QLatin1String("totalSize"));
+        const QString completedSizeKey(QLatin1String("haveValid"));
+        const QString leftUntilDoneKey(QLatin1String("leftUntilDone"));
+        const QString sizeWhenDoneKey(QLatin1String("sizeWhenDone"));
+        const QString percentDoneKey(QLatin1String("percentDone"));
+        const QString recheckProgressKey(QLatin1String("recheckProgress"));
+        const QString etaKey(QLatin1String("eta"));
+
+        const QString downloadSpeedKey(QLatin1String("rateDownload"));
+        const QString uploadSpeedKey(QLatin1String("rateUpload"));
+
         const QString downloadSpeedLimitedKey(QLatin1String("downloadLimited"));
         const QString downloadSpeedLimitKey(QLatin1String("downloadLimit"));
         const QString uploadSpeedLimitedKey(QLatin1String("uploadLimited"));
         const QString uploadSpeedLimitKey(QLatin1String("uploadLimit"));
+
+        const QString totalDownloadedKey(QLatin1String("downloadedEver"));
+        const QString totalUploadedKey(QLatin1String("uploadedEver"));
+        const QString ratioKey(QLatin1String("uploadRatio"));
         const QString ratioLimitModeKey(QLatin1String("seedRatioMode"));
         const QString ratioLimitKey(QLatin1String("seedRatioLimit"));
+
+        const QString seedersKey(QLatin1String("peersSendingToUs"));
+        const QString leechersKey(QLatin1String("peersGettingFromUs"));
+
+        const QString errorKey(QLatin1String("error"));
+        const QString statusKey(QLatin1String("status"));
+
+        const QString activityDateKey(QLatin1String("activityDate"));
+        const QString doneDateKey(QLatin1String("doneDate"));
+
         const QString peersLimitKey(QLatin1String("peer-limit"));
         const QString honorSessionLimitsKey(QLatin1String("honorsSessionLimits"));
         const QString bandwidthPriorityKey(QLatin1String("bandwidthPriority"));
         const QString idleSeedingLimitModeKey(QLatin1String("seedIdleMode"));
         const QString idleSeedingLimitKey(QLatin1String("seedRatioLimit"));
+        const QString downloadDirectoryKey(QLatin1String("downloadDir"));
+        const QString creatorKey(QLatin1String("creator"));
+        const QString creationDateKey(QLatin1String("dateCreated"));
+        const QString commentKey(QLatin1String("comment"));
+
+        const QString trackerStatsKey(QLatin1String("trackerStats"));
+        const QString trackerIdKey(QLatin1String("id"));
+
+        const QString filesKey(QLatin1String("files"));
+        const QString fileStatsKey(QLatin1String("fileStats"));
+
+        const QString peersKey(QLatin1String("peers"));
+
+        const QString wantedFilesKey(QLatin1String("files-wanted"));
+        const QString unwantedFilesKey(QLatin1String("files-unwanted"));
+
+        const QString lowPriorityKey(QLatin1String("priority-low"));
+        const QString normalPriorityKey(QLatin1String("priority-normal"));
+        const QString highPriorityKey(QLatin1String("priority-high"));
+
+        const QString addTrackerKey(QLatin1String("trackerAdd"));
+        const QString replaceTrackerKey(QLatin1String("trackerReplace"));
+        const QString removeTrackerKey(QLatin1String("trackerRemove"));
     }
+
+    const QString Torrent::idKey(QLatin1String("id"));
 
     Torrent::Torrent(int id, const QVariantMap& torrentMap, Rpc* rpc)
         : mId(id),
-          mHashString(torrentMap.value(QLatin1String("hashString")).toString()),
-          mAddedDate(QDateTime::fromMSecsSinceEpoch(torrentMap.value(QLatin1String("addedDate")).toLongLong() * 1000)),
+          mHashString(torrentMap.value(hashStringKey).toString()),
+          mAddedDate(QDateTime::fromMSecsSinceEpoch(torrentMap.value(addedDateKey).toLongLong() * 1000)),
           mFilesEnabled(false),
           mPeersEnabled(false),
           mRpc(rpc)
@@ -380,8 +438,8 @@ namespace tremotesf
     void Torrent::setFilesWanted(const QVariantList& files, bool wanted)
     {
         mRpc->setTorrentProperty(mId,
-                                 wanted ? QLatin1String("files-wanted")
-                                        : QLatin1String("files-unwanted"),
+                                 wanted ? wantedFilesKey
+                                        : unwantedFilesKey,
                                  files);
     }
 
@@ -390,13 +448,13 @@ namespace tremotesf
         QString propertyName;
         switch (priority) {
         case TorrentFilesModelEntryEnums::LowPriority:
-            propertyName = QLatin1String("priority-low");
+            propertyName = lowPriorityKey;
             break;
         case TorrentFilesModelEntryEnums::NormalPriority:
-            propertyName = QLatin1String("priority-normal");
+            propertyName = normalPriorityKey;
             break;
         case TorrentFilesModelEntryEnums::HighPriority:
-            propertyName = QLatin1String("priority-high");
+            propertyName = highPriorityKey;
             break;
         case TorrentFilesModelEntryEnums::MixedPriority:
             return;
@@ -416,17 +474,17 @@ namespace tremotesf
 
     void Torrent::addTracker(const QString& announce)
     {
-        mRpc->setTorrentProperty(mId, QLatin1String("trackerAdd"), QVariantList{announce});
+        mRpc->setTorrentProperty(mId, addTrackerKey, QVariantList{announce});
     }
 
     void Torrent::setTracker(int trackerId, const QString& announce)
     {
-        mRpc->setTorrentProperty(mId, QLatin1String("trackerReplace"), QVariantList{trackerId, announce});
+        mRpc->setTorrentProperty(mId, replaceTrackerKey, QVariantList{trackerId, announce});
     }
 
     void Torrent::removeTrackers(const QVariantList& ids)
     {
-        mRpc->setTorrentProperty(mId, QLatin1String("trackerRemove"), ids);
+        mRpc->setTorrentProperty(mId, removeTrackerKey, ids);
     }
 
     bool Torrent::isPeersEnabled() const
@@ -463,39 +521,39 @@ namespace tremotesf
 
     void Torrent::update(const QVariantMap& torrentMap)
     {
-        mName = torrentMap.value(QLatin1String("name")).toString();
+        mName = torrentMap.value(nameKey).toString();
 
-        mErrorString = torrentMap.value(QLatin1String("errorString")).toString();
-        mQueuePosition = torrentMap.value(QLatin1String("queuePosition")).toInt();
+        mErrorString = torrentMap.value(errorStringKey).toString();
+        mQueuePosition = torrentMap.value(queuePositionKey).toInt();
 
-        mTotalSize = torrentMap.value(QLatin1String("totalSize")).toLongLong();
-        mCompletedSize = torrentMap.value(QLatin1String("haveValid")).toLongLong();
-        mLeftUntilDone = torrentMap.value(QLatin1String("leftUntilDone")).toLongLong();
-        mSizeWhenDone = torrentMap.value(QLatin1String("sizeWhenDone")).toLongLong();
-        mPercentDone = torrentMap.value(QLatin1String("percentDone")).toFloat();
-        mRecheckProgress = torrentMap.value(QLatin1String("recheckProgress")).toFloat();
-        mEta = torrentMap.value(QLatin1String("eta")).toInt();
+        mTotalSize = torrentMap.value(totalSizeKey).toLongLong();
+        mCompletedSize = torrentMap.value(completedSizeKey).toLongLong();
+        mLeftUntilDone = torrentMap.value(leftUntilDoneKey).toLongLong();
+        mSizeWhenDone = torrentMap.value(sizeWhenDoneKey).toLongLong();
+        mPercentDone = torrentMap.value(percentDoneKey).toFloat();
+        mRecheckProgress = torrentMap.value(recheckProgressKey).toFloat();
+        mEta = torrentMap.value(etaKey).toInt();
 
-        mDownloadSpeed = torrentMap.value(QLatin1String("rateDownload")).toLongLong();
-        mUploadSpeed = torrentMap.value(QLatin1String("rateUpload")).toLongLong();
+        mDownloadSpeed = torrentMap.value(downloadSpeedKey).toLongLong();
+        mUploadSpeed = torrentMap.value(uploadSpeedKey).toLongLong();
 
         mDownloadSpeedLimited = torrentMap.value(downloadSpeedLimitedKey).toBool();
         mDownloadSpeedLimit = mRpc->serverSettings()->kibiBytes(torrentMap.value(downloadSpeedLimitKey).toInt());
         mUploadSpeedLimited = torrentMap.value(uploadSpeedLimitedKey).toBool();
         mUploadSpeedLimit = mRpc->serverSettings()->kibiBytes(torrentMap.value(uploadSpeedLimitKey).toInt());
 
-        mTotalDownloaded = torrentMap.value(QLatin1String("downloadedEver")).toLongLong();
-        mTotalUploaded = torrentMap.value(QLatin1String("uploadedEver")).toLongLong();
-        mRatio = torrentMap.value(QLatin1String("uploadRatio")).toFloat();
+        mTotalDownloaded = torrentMap.value(totalDownloadedKey).toLongLong();
+        mTotalUploaded = torrentMap.value(totalUploadedKey).toLongLong();
+        mRatio = torrentMap.value(ratioKey).toFloat();
         mRatioLimitMode = static_cast<RatioLimitMode>(torrentMap.value(ratioLimitModeKey).toInt());
         mRatioLimit = torrentMap.value(ratioLimitKey).toFloat();
 
-        mSeeders = torrentMap.value(QLatin1String("peersSendingToUs")).toInt();
-        mLeechers = torrentMap.value(QLatin1String("peersGettingFromUs")).toInt();
+        mSeeders = torrentMap.value(seedersKey).toInt();
+        mLeechers = torrentMap.value(leechersKey).toInt();
 
         const bool stalled = (mSeeders == 0 && mLeechers == 0);
-        if (torrentMap.value(QLatin1String("error")).toInt() == 0) {
-            switch (torrentMap.value(QLatin1String("status")).toInt()) {
+        if (torrentMap.value(errorKey).toInt() == 0) {
+            switch (torrentMap.value(statusKey).toInt()) {
             case 0:
                 mStatus = Paused;
                 break;
@@ -531,13 +589,13 @@ namespace tremotesf
 
         mPeersLimit = torrentMap.value(peersLimitKey).toInt();
 
-        const long long activityDate = torrentMap.value(QLatin1String("activityDate")).toLongLong() * 1000;
+        const long long activityDate = torrentMap.value(activityDateKey).toLongLong() * 1000;
         if (activityDate > 0) {
             mActivityDate.setMSecsSinceEpoch(activityDate);
         } else {
             mActivityDate = QDateTime();
         }
-        const long long doneDate = torrentMap.value(QLatin1String("doneDate")).toLongLong() * 1000;
+        const long long doneDate = torrentMap.value(doneDateKey).toLongLong() * 1000;
         if (doneDate > 0) {
             mDoneDate.setMSecsSinceEpoch(doneDate);
         } else {
@@ -548,22 +606,22 @@ namespace tremotesf
         mBandwidthPriority = static_cast<Priority>(torrentMap.value(bandwidthPriorityKey).toInt());
         mIdleSeedingLimitMode = static_cast<IdleSeedingLimitMode>(torrentMap.value(idleSeedingLimitModeKey).toInt());
         mIdleSeedingLimit = torrentMap.value(idleSeedingLimitKey).toInt();
-        mDownloadDirectory = torrentMap.value(QLatin1String("downloadDir")).toString();
-        mCreator = torrentMap.value(QLatin1String("creator")).toString();
+        mDownloadDirectory = torrentMap.value(downloadDirectoryKey).toString();
+        mCreator = torrentMap.value(creatorKey).toString();
 
-        const long long creationDate = torrentMap.value(QLatin1String("dateCreated")).toLongLong() * 1000;
+        const long long creationDate = torrentMap.value(creationDateKey).toLongLong() * 1000;
         if (creationDate > 0) {
             mCreationDate.setMSecsSinceEpoch(creationDate);
         } else {
             mCreationDate = QDateTime();
         }
 
-        mComment = torrentMap.value(QLatin1String("comment")).toString();
+        mComment = torrentMap.value(commentKey).toString();
 
         QList<std::shared_ptr<Tracker>> trackers;
-        for (const QVariant& trackerVariant : torrentMap.value(QLatin1String("trackerStats")).toList()) {
+        for (const QVariant& trackerVariant : torrentMap.value(trackerStatsKey).toList()) {
             const QVariantMap trackerMap(trackerVariant.toMap());
-            const int id = trackerMap.value(QLatin1String("id")).toInt();
+            const int id = trackerMap.value(trackerIdKey).toInt();
 
             std::shared_ptr<Tracker> tracker;
             for (const std::shared_ptr<Tracker>& existingTracker : mTrackers) {
@@ -590,8 +648,8 @@ namespace tremotesf
 
     void Torrent::updateFiles(const QVariantMap& torrentMap)
     {
-        mFiles = torrentMap.value(QLatin1String("files")).toList();
-        mFileStats = torrentMap.value(QLatin1String("fileStats")).toList();
+        mFiles = torrentMap.value(filesKey).toList();
+        mFileStats = torrentMap.value(fileStatsKey).toList();
         mFilesUpdated = true;
         emit filesUpdated(mFiles, mFileStats);
     }
@@ -599,6 +657,6 @@ namespace tremotesf
     void Torrent::updatePeers(const QVariantMap& torrentMap)
     {
         mPeersUpdated = true;
-        emit peersUpdated(torrentMap.value(QLatin1String("peers")).toList());
+        emit peersUpdated(torrentMap.value(peersKey).toList());
     }
 }

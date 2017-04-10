@@ -124,6 +124,8 @@ namespace tremotesf
             UnlimitedIdleSeeding
         };
 
+        static const QString idKey;
+
         explicit Torrent(int id, const QVariantMap& torrentMap, Rpc* rpc);
 
         int id() const;

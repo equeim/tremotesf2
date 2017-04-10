@@ -623,7 +623,7 @@ namespace tremotesf
                         QList<std::shared_ptr<Torrent>> torrents;
                         for (const QVariant& torrentVariant : torrentsVariants) {
                             const QVariantMap torrentMap(torrentVariant.toMap());
-                            const int id = torrentMap.value(QLatin1String("id")).toInt();
+                            const int id = torrentMap.value(Torrent::idKey).toInt();
 
                             std::shared_ptr<Torrent> torrent(torrentById(id));
                             if (torrent) {
