@@ -28,7 +28,7 @@ namespace tremotesf
 
     struct Peer
     {
-        explicit Peer(const QVariantMap& peerMap);
+        explicit Peer(const QString& address, const QVariantMap& peerMap);
 
         QString address;
         long long downloadSpeed;

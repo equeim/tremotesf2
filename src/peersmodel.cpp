@@ -25,19 +25,29 @@
 
 namespace tremotesf
 {
-    Peer::Peer(const QVariantMap& peerMap)
-        : address(peerMap.value(QLatin1String("address")).toString())
+    namespace
+    {
+        const QString addressKey(QLatin1String("address"));
+        const QString downloadSpeedKey(QLatin1String("rateToClient"));
+        const QString uploadSpeedKey(QLatin1String("rateToPeer"));
+        const QString progressKey(QLatin1String("progress"));
+        const QString flagsKey(QLatin1String("flagStr"));
+        const QString clientKey(QLatin1String("clientName"));
+    }
+
+    Peer::Peer(const QString& address, const QVariantMap& peerMap)
+        : address(address)
     {
         update(peerMap);
     }
 
     void Peer::update(const QVariantMap& peerMap)
     {
-        downloadSpeed = peerMap.value(QLatin1String("rateToClient")).toLongLong();
-        uploadSpeed = peerMap.value(QLatin1String("rateToPeer")).toLongLong();
-        progress = peerMap.value(QLatin1String("progress")).toFloat();
-        flags = peerMap.value(QLatin1String("flagStr")).toString();
-        client = peerMap.value(QLatin1String("clientName")).toString();
+        downloadSpeed = peerMap.value(downloadSpeedKey).toLongLong();
+        uploadSpeed = peerMap.value(uploadSpeedKey).toLongLong();
+        progress = peerMap.value(progressKey).toFloat();
+        flags = peerMap.value(flagsKey).toString();
+        client = peerMap.value(clientKey).toString();
     }
 
 #ifndef TREMOTESF_SAILFISHOS
@@ -169,7 +179,7 @@ namespace tremotesf
                 QObject::connect(mTorrent, &Torrent::peersUpdated, this, [=](const QVariantList& peers) {
                     QStringList addresses;
                     for (const QVariant& peer : peers) {
-                        addresses.append(peer.toMap().value(QLatin1String("address")).toString());
+                        addresses.append(peer.toMap().value(addressKey).toString());
                     }
 
                     for (int i = 0, max = mPeers.size(); i < max; ++i) {
@@ -184,7 +194,7 @@ namespace tremotesf
 
                     for (const QVariant& peerVariant : peers) {
                         const QVariantMap peerMap(peerVariant.toMap());
-                        const QString address(peerMap.value(QLatin1String("address")).toString());
+                        const QString address(peerMap.value(addressKey).toString());
                         int row = -1;
                         for (int i = 0, max = mPeers.size(); i < max; ++i) {
                             if (mPeers.at(i)->address == address) {
@@ -195,7 +205,7 @@ namespace tremotesf
                         if (row == -1) {
                             row = mPeers.size();
                             beginInsertRows(QModelIndex(), row, row);
-                            mPeers.append(std::make_shared<Peer>(peerMap));
+                            mPeers.append(std::make_shared<Peer>(address, peerMap));
                             endInsertRows();
                         } else {
                             mPeers.at(row)->update(peerMap);
