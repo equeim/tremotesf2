@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QVariantList>
+#include <QVector>
 
 namespace tremotesf
 {
@@ -98,7 +99,7 @@ namespace tremotesf
         TorrentFilesModelEntryEnums::Priority priority() const override;
         void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
 
-        const QList<TorrentFilesModelEntry*>& children() const;
+        const QVector<TorrentFilesModelEntry*>& children() const;
         const QHash<QString, TorrentFilesModelEntry*>& childrenHash() const;
         void addChild(TorrentFilesModelEntry* child);
         void clearChildren();
@@ -107,7 +108,7 @@ namespace tremotesf
         bool isChanged() const override;
 
     private:
-        QList<TorrentFilesModelEntry*> mChildren;
+        QVector<TorrentFilesModelEntry*> mChildren;
         QHash<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 

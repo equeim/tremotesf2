@@ -146,7 +146,7 @@ namespace tremotesf
         }
     }
 
-    const QList<TorrentFilesModelEntry*>& TorrentFilesModelDirectory::children() const
+    const QVector<TorrentFilesModelEntry*>& TorrentFilesModelDirectory::children() const
     {
         return mChildren;
     }
