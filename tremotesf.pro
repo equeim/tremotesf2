@@ -1,5 +1,7 @@
-lessThan(QT_VERSION, 5.2) {
-    error("Requires Qt 5.2 or greather")
+lessThan(QT_MAJOR_VERSION, 5) {
+    lessThan(QT_MINOR_VERSION, 2) {
+        error("Requires Qt 5.2 or greather")
+    }
 }
 
 VERSION = 1.3.2
