@@ -29,6 +29,7 @@
 #include <QVBoxLayout>
 
 #include "../alltrackersmodel.h"
+#include "../downloaddirectoriesmodel.h"
 #include "../rpc.h"
 #include "../statusfilterstats.h"
 #include "../torrentsproxymodel.h"
@@ -128,10 +129,10 @@ namespace tremotesf
             StatusFilterStats* mStats;
         };
 
-        class TrackersListView : public QListView
+        class BaseListView : public QListView
         {
         public:
-            explicit TrackersListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
+            explicit BaseListView(TorrentsProxyModel* proxyModel, QWidget* parent)
                 : QListView(parent),
                   mTorrentsProxyModel(proxyModel)
             {
@@ -139,27 +140,15 @@ namespace tremotesf
                 setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
                 setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
                 setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
                 setIconSize(QSize(16, 16));
-
-                auto model = new AllTrackersModel(rpc, mTorrentsProxyModel, this);
-                setModel(model);
-                setCurrentIndex(model->index(0));
-
-                QObject::connect(model, &AllTrackersModel::rowsInserted, this, &TrackersListView::updateGeometry);
-                QObject::connect(model, &AllTrackersModel::rowsRemoved, this, &TrackersListView::updateGeometry);
-
-                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
-                    mTorrentsProxyModel->setTracker(current.data(AllTrackersModel::TrackerRole).toString());
-                });
             }
 
-            QSize minimumSizeHint() const
+            QSize minimumSizeHint() const override
             {
                 return QSize(8, 0);
             }
 
-            QSize sizeHint() const
+            QSize sizeHint() const override
             {
                 int height = 0;
                 for (int i = 0, max = model()->rowCount(); i < max; ++i) {
@@ -172,18 +161,67 @@ namespace tremotesf
             }
 
         protected:
-            void showEvent(QShowEvent*)
+            TorrentsProxyModel* mTorrentsProxyModel;
+        };
+
+        class TrackersListView : public BaseListView
+        {
+        public:
+            explicit TrackersListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
+                : BaseListView(proxyModel, parent)
+            {
+                auto model = new AllTrackersModel(rpc, mTorrentsProxyModel, this);
+                setModel(model);
+                setCurrentIndex(model->index(0));
+
+                QObject::connect(model, &AllTrackersModel::rowsInserted, this, &TrackersListView::updateGeometry);
+                QObject::connect(model, &AllTrackersModel::rowsRemoved, this, &TrackersListView::updateGeometry);
+
+                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
+                    mTorrentsProxyModel->setTracker(current.data(AllTrackersModel::TrackerRole).toString());
+                });
+            }
+
+        protected:
+            void showEvent(QShowEvent*) override
             {
                 mTorrentsProxyModel->setTracker(currentIndex().data(AllTrackersModel::TrackerRole).toString());
             }
 
-            void hideEvent(QHideEvent*)
+            void hideEvent(QHideEvent*) override
             {
                 mTorrentsProxyModel->setTracker(QString());
             }
+        };
 
-        private:
-            TorrentsProxyModel* mTorrentsProxyModel;
+        class DirectoriesListView : public BaseListView
+        {
+        public:
+            explicit DirectoriesListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
+                : BaseListView(proxyModel, parent)
+            {
+                auto model = new DownloadDirectoriesModel(rpc, mTorrentsProxyModel, this);
+                setModel(model);
+                setCurrentIndex(model->index(0));
+
+                QObject::connect(model, &DownloadDirectoriesModel::rowsInserted, this, &TrackersListView::updateGeometry);
+                QObject::connect(model, &DownloadDirectoriesModel::rowsRemoved, this, &TrackersListView::updateGeometry);
+
+                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
+                    mTorrentsProxyModel->setDownloadDirectory(current.data(DownloadDirectoriesModel::DirectoryRole).toString());
+                });
+            }
+
+        protected:
+            void showEvent(QShowEvent*) override
+            {
+                mTorrentsProxyModel->setDownloadDirectory(currentIndex().data(DownloadDirectoriesModel::DirectoryRole).toString());
+            }
+
+            void hideEvent(QHideEvent*) override
+            {
+                mTorrentsProxyModel->setDownloadDirectory(QString());
+            }
         };
     }
 
@@ -218,6 +256,15 @@ namespace tremotesf
         auto statusListWidget = new StatusListWidget(rpc, proxyModel, this);
         QObject::connect(statusCheckBox, &QCheckBox::toggled, statusListWidget, &StatusListWidget::setVisible);
         layout->addWidget(statusListWidget);
+
+        auto directoriesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Directories"), this);
+        directoriesCheckBox->setChecked(true);
+        directoriesCheckBox->setFont(checkBoxFont);
+        layout->addWidget(directoriesCheckBox);
+
+        auto directoriesListView = new DirectoriesListView(rpc, proxyModel, this);
+        QObject::connect(directoriesCheckBox, &QCheckBox::toggled, directoriesListView, &TrackersListView::setVisible);
+        layout->addWidget(directoriesListView);
 
         auto trackersCheckBox = new QCheckBox(qApp->translate("tremotesf", "Trackers"), this);
         trackersCheckBox->setChecked(true);

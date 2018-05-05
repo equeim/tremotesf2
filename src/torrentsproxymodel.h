@@ -33,6 +33,7 @@ namespace tremotesf
         Q_PROPERTY(QString searchString READ searchString WRITE setSearchString NOTIFY searchStringChanged)
         Q_PROPERTY(StatusFilter statusFilter READ statusFilter WRITE setStatusFilter NOTIFY statusFilterChanged)
         Q_PROPERTY(QString tracker READ tracker WRITE setTracker NOTIFY trackerChanged)
+        Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory NOTIFY downloadDirectoryChanged)
     public:
         enum StatusFilter
         {
@@ -57,6 +58,9 @@ namespace tremotesf
         QString tracker() const;
         void setTracker(const QString& tracker);
 
+        QString downloadDirectory() const;
+        void setDownloadDirectory(const QString& downloadDirectory);
+
         static bool statusFilterAcceptsTorrent(const Torrent* torrent, StatusFilter filter);
 
     protected:
@@ -66,10 +70,12 @@ namespace tremotesf
         QString mSearchString;
         StatusFilter mStatusFilter;
         QString mTracker;
+        QString mDownloadDirectory;
     signals:
         void searchStringChanged();
         void statusFilterChanged();
         void trackerChanged();
+        void downloadDirectoryChanged();
     };
 }
 

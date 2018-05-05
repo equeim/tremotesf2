@@ -32,6 +32,7 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
 
 #include "alltrackersmodel.h"
 #include "baseproxymodel.h"
+#include "downloaddirectoriesmodel.h"
 #include "localtorrentfilesmodel.h"
 #include "peersmodel.h"
 #include "rpc.h"
@@ -287,6 +288,7 @@ namespace tremotesf
         qmlRegisterType<TorrentFilesProxyModel>(url, versionMajor, versionMinor, "TorrentFilesProxyModel");
 
         qmlRegisterType<TrackersModel>(url, versionMajor, versionMinor, "TrackersModel");
+        qmlRegisterType<DownloadDirectoriesModel>(url, versionMajor, versionMinor, "DownloadDirectoriesModel");
 
         qmlRegisterType<PeersModel>(url, versionMajor, versionMinor, "PeersModel");
 

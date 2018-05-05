@@ -72,6 +72,20 @@ namespace tremotesf
         }
     }
 
+    QString TorrentsProxyModel::downloadDirectory() const
+    {
+        return mDownloadDirectory;
+    }
+
+    void TorrentsProxyModel::setDownloadDirectory(const QString& downloadDirectory)
+    {
+        if (downloadDirectory != mDownloadDirectory) {
+            mDownloadDirectory = downloadDirectory;
+            invalidateFilter();
+            emit downloadDirectoryChanged();
+        }
+    }
+
     bool TorrentsProxyModel::statusFilterAcceptsTorrent(const Torrent* torrent, StatusFilter filter)
     {
         switch (filter) {
@@ -122,6 +136,12 @@ namespace tremotesf
                 }
             }
             if (!found) {
+                accepts = false;
+            }
+        }
+
+        if (!mDownloadDirectory.isEmpty()) {
+            if (torrent->downloadDirectory() != mDownloadDirectory) {
                 accepts = false;
             }
         }

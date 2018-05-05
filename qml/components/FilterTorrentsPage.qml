@@ -144,6 +144,47 @@ Page {
             }
 
             TextSwitch {
+                id: directoriesSwitch
+
+                property string directory
+
+                checked: true
+                text: qsTranslate("tremotesf", "Directories")
+
+                onCheckedChanged: {
+                    if (checked) {
+                        torrentsProxyModel.downloadDirectory = directory
+                    } else {
+                        torrentsProxyModel.downloadDirectory = String()
+                    }
+                }
+            }
+
+            Column {
+                width: parent.width
+                visible: directoriesSwitch.checked
+
+                Repeater {
+                    model: DownloadDirectoriesModel {
+                        rpc: rootWindow.rpc
+                        torrentsProxyModel: torrentsView.model
+                    }
+                    delegate: FilterTorrentsListItem {
+                        property var modelData: model
+
+                        current: modelData.directory === torrentsProxyModel.downloadDirectory
+                        text: (modelData.index > 0) ? modelData.directory : qsTranslate("tremotesf", "All")
+                        torrents: modelData.torrents
+
+                        onClicked: {
+                            directoriesSwitch.directory = modelData.directory
+                            torrentsProxyModel.downloadDirectory = modelData.directory
+                        }
+                    }
+                }
+            }
+
+            TextSwitch {
                 id: trackersSwitch
 
                 property string tracker

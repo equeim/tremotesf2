@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "alltrackersmodel.h"
+#include "downloaddirectoriesmodel.h"
 
 #include <unordered_map>
 
@@ -29,7 +29,6 @@
 #include "stdutils.h"
 #include "torrent.h"
 #include "torrentsproxymodel.h"
-#include "tracker.h"
 
 namespace tremotesf
 {
@@ -38,13 +37,13 @@ namespace tremotesf
     {
         enum Role
         {
-            TrackerRole = Qt::UserRole,
+            DirectoryRole = Qt::UserRole,
             TorrentsRole
         };
     }
 #endif
 
-    AllTrackersModel::AllTrackersModel(Rpc* rpc, TorrentsProxyModel* torrentsProxyModel, QObject* parent)
+    DownloadDirectoriesModel::DownloadDirectoriesModel(Rpc* rpc, TorrentsProxyModel* torrentsProxyModel, QObject* parent)
         : QAbstractListModel(parent),
           mRpc(nullptr),
           mTorrentsProxyModel(nullptr)
@@ -58,11 +57,11 @@ namespace tremotesf
     }
 
 #ifdef TREMOTESF_SAILFISHOS
-    void AllTrackersModel::classBegin()
+    void DownloadDirectoriesModel::classBegin()
     {
     }
 
-    void AllTrackersModel::componentComplete()
+    void DownloadDirectoriesModel::componentComplete()
     {
         if (mRpc && mTorrentsProxyModel) {
             update();
@@ -70,12 +69,12 @@ namespace tremotesf
     }
 #endif
 
-    QVariant AllTrackersModel::data(const QModelIndex& index, int role) const
+    QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const
     {
 #ifdef TREMOTESF_SAILFISHOS
         if (index.row() == 0) {
             switch (role) {
-            case TrackerRole:
+            case DirectoryRole:
                 return QString();
             case TorrentsRole:
                 return mRpc->torrentsCount();
@@ -83,10 +82,10 @@ namespace tremotesf
         } else {
             const int row = index.row() - 1;
             switch (role) {
-            case TrackerRole:
-                return mTrackers[row];
+            case DirectoryRole:
+                return mDirectories[row];
             case TorrentsRole:
-                return mTrackersTorrents[row];
+                return mDirectoriesTorrents[row];
             }
         }
 #else
@@ -101,41 +100,41 @@ namespace tremotesf
             const int row = index.row() - 1;
             switch (role) {
             case Qt::DecorationRole:
-                return QIcon::fromTheme(QLatin1String("network-server"));
+                return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
-                return qApp->translate("tremotesf", "%1 (%2)").arg(mTrackers[row]).arg(mTrackersTorrents[row]);
-            case TrackerRole:
-                return mTrackers[row];
+                return qApp->translate("tremotesf", "%1 (%2)").arg(mDirectories[row]).arg(mDirectoriesTorrents[row]);
+            case DirectoryRole:
+                return mDirectories[row];
             }
         }
 #endif
         return QVariant();
     }
 
-    int AllTrackersModel::rowCount(const QModelIndex&) const
+    int DownloadDirectoriesModel::rowCount(const QModelIndex&) const
     {
-        return mTrackers.size() + 1;
+        return mDirectories.size() + 1;
     }
 
-    Rpc* AllTrackersModel::rpc() const
+    Rpc* DownloadDirectoriesModel::rpc() const
     {
         return mRpc;
     }
 
-    void AllTrackersModel::setRpc(Rpc* rpc)
+    void DownloadDirectoriesModel::setRpc(Rpc* rpc)
     {
         if (rpc && !mRpc) {
             mRpc = rpc;
-            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &AllTrackersModel::update);
+            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &DownloadDirectoriesModel::update);
         }
     }
 
-    TorrentsProxyModel* AllTrackersModel::torrentsProxyModel() const
+    TorrentsProxyModel* DownloadDirectoriesModel::torrentsProxyModel() const
     {
         return mTorrentsProxyModel;
     }
 
-    void AllTrackersModel::setTorrentsProxyModel(TorrentsProxyModel* model)
+    void DownloadDirectoriesModel::setTorrentsProxyModel(TorrentsProxyModel* model)
     {
         if (model && !mTorrentsProxyModel) {
             mTorrentsProxyModel = model;
@@ -143,23 +142,23 @@ namespace tremotesf
     }
 
 #ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> AllTrackersModel::roleNames() const
+    QHash<int, QByteArray> DownloadDirectoriesModel::roleNames() const
     {
-        return {{TrackerRole, "tracker"},
+        return {{DirectoryRole, "directory"},
                 {TorrentsRole, "torrents"}};
     }
 #endif
 
-    void AllTrackersModel::update()
+    void DownloadDirectoriesModel::update()
     {
         if (mRpc->torrents().empty()) {
-            if (!mTrackers.empty()) {
+            if (!mDirectories.empty()) {
                 const QModelIndex firstIndex(index(0));
                 emit dataChanged(firstIndex, firstIndex);
 
-                beginRemoveRows(QModelIndex(), 1, mTrackers.size());
-                mTrackers.clear();
-                mTrackersTorrents.clear();
+                beginRemoveRows(QModelIndex(), 1, mDirectories.size());
+                mDirectories.clear();
+                mDirectoriesTorrents.clear();
                 endRemoveRows();
 
                 mTorrentsProxyModel->setTracker(QString());
@@ -167,55 +166,53 @@ namespace tremotesf
             return;
         }
 
-        std::unordered_map<QString, int> trackers;
+        std::unordered_map<QString, int> directories;
         for (const std::shared_ptr<Torrent>& torrent : mRpc->torrents()) {
-            for (const std::shared_ptr<Tracker>& tracker : torrent->trackers()) {
-                const QString& site = tracker->site();
+            const QString& directory = torrent->downloadDirectory();
 
-                auto found = trackers.find(site);
-                if (found == trackers.end()) {
-                    trackers.insert({site, 1});
-                } else {
-                    ++(found->second);
-                }
+            auto found = directories.find(directory);
+            if (found == directories.end()) {
+                directories.insert({directory, 1});
+            } else {
+                ++(found->second);
             }
         }
 
-        for (int i = 0, max = mTrackers.size(); i < max; ++i) {
-            if (trackers.find(mTrackers[i]) == trackers.end()) {
-                if (mTrackers[i] == mTorrentsProxyModel->tracker()) {
+        for (int i = 0, max = mDirectories.size(); i < max; ++i) {
+            if (directories.find(mDirectories[i]) == directories.end()) {
+                if (mDirectories[i] == mTorrentsProxyModel->tracker()) {
                     mTorrentsProxyModel->setTracker(QString());
                 }
 
                 const int row = i + 1;
                 beginRemoveRows(QModelIndex(), row, row);
-                mTrackers.erase(mTrackers.begin() + i);
-                mTrackersTorrents.erase(mTrackersTorrents.begin() + i);
+                mDirectories.erase(mDirectories.begin() + i);
+                mDirectoriesTorrents.erase(mDirectoriesTorrents.begin() + i);
                 endRemoveRows();
                 i--;
                 max--;
             }
         }
 
-        for (auto i = trackers.cbegin(), max = trackers.cend();
+        for (auto i = directories.cbegin(), max = directories.cend();
              i != max;
              ++i) {
 
             const QString& tracker = i->first;
-            auto row = index_of(mTrackers, tracker);
-            if (row == mTrackers.size()) {
-                row = mTrackers.size() + 1;
+            auto row = index_of(mDirectories, tracker);
+            if (row == mDirectories.size()) {
+                row = mDirectories.size() + 1;
                 beginInsertRows(QModelIndex(), row, row);
-                mTrackers.push_back(tracker);
-                mTrackersTorrents.push_back(i->second);
+                mDirectories.push_back(tracker);
+                mDirectoriesTorrents.push_back(i->second);
                 endInsertRows();
             } else {
-                mTrackersTorrents[row] = i->second;
+                mDirectoriesTorrents[row] = i->second;
                 const QModelIndex modelIndex(index(row + 1));
                 emit dataChanged(modelIndex, modelIndex);
             }
         }
 
-        emit dataChanged(index(0), index(mTrackers.size()));
+        emit dataChanged(index(0), index(mDirectories.size()));
     }
 }
