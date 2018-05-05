@@ -22,6 +22,7 @@
 #include <QPixmap>
 
 #include "rpc.h"
+#include "stdutils.h"
 #include "torrent.h"
 #include "utils.h"
 
@@ -45,7 +46,7 @@ namespace tremotesf
 
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
-        const Torrent* torrent = mTorrents.at(index.row()).get();
+        const Torrent* torrent = mTorrents[index.row()].get();
 
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
@@ -292,7 +293,7 @@ namespace tremotesf
 
     Torrent* TorrentsModel::torrentAtRow(int row) const
     {
-        return mTorrents.at(row).get();
+        return mTorrents[row].get();
     }
 
     Torrent* TorrentsModel::torrentByName(const QString& name) const
@@ -309,7 +310,7 @@ namespace tremotesf
     {
         QVariantList ids;
         for (const QModelIndex& index : indexes) {
-            ids.append(mTorrents.at(index.row())->id());
+            ids.append(mTorrents[index.row()]->id());
         }
         return ids;
     }
@@ -329,10 +330,10 @@ namespace tremotesf
 
     void TorrentsModel::update()
     {
-        const QList<std::shared_ptr<Torrent>>& torrents = mRpc->torrents();
+        const std::vector<std::shared_ptr<Torrent>>& torrents = mRpc->torrents();
 
-        if (torrents.isEmpty()) {
-            if (!mTorrents.isEmpty()) {
+        if (torrents.empty()) {
+            if (!mTorrents.empty()) {
                 beginRemoveRows(QModelIndex(), 0, mTorrents.size() - 1);
                 mTorrents.clear();
                 endRemoveRows();
@@ -341,9 +342,9 @@ namespace tremotesf
         }
 
         for (int i = 0, max = mTorrents.size(); i < max; ++i) {
-            if (!torrents.contains(mTorrents.at(i))) {
+            if (!contains(torrents, mTorrents[i])) {
                 beginRemoveRows(QModelIndex(), i, i);
-                mTorrents.removeAt(i);
+                mTorrents.erase(mTorrents.begin() + i);
                 endRemoveRows();
                 i--;
                 max--;
@@ -351,16 +352,16 @@ namespace tremotesf
         }
 
         for (const std::shared_ptr<Torrent>& torrent : torrents) {
-            if (!mTorrents.contains(torrent)) {
+            if (!contains(mTorrents, torrent)) {
                 const int row = mTorrents.size();
                 beginInsertRows(QModelIndex(), row, row);
-                mTorrents.append(torrent);
+                mTorrents.push_back(torrent);
                 endInsertRows();
 
                 const Torrent* torrentPointer = torrent.get();
                 QObject::connect(torrentPointer, &Torrent::limitsEdited, this, [=]() {
                     for (int i = 0, max = mTorrents.size(); i < max; i++) {
-                        if (mTorrents.at(i).get() == torrentPointer) {
+                        if (mTorrents[i].get() == torrentPointer) {
                             emit dataChanged(index(i, 0), index(i, columnCount() - 1));
                             break;
                         }

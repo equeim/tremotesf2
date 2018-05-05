@@ -118,7 +118,7 @@ namespace tremotesf
         return mServerStats;
     }
 
-    const QList<std::shared_ptr<Torrent>>& Rpc::torrents() const
+    const std::vector<std::shared_ptr<Torrent>>& Rpc::torrents() const
     {
         return mTorrents;
     }
@@ -623,7 +623,7 @@ namespace tremotesf
                                                                 .value(QLatin1String("torrents"))
                                                                 .toList());
 
-                        QList<std::shared_ptr<Torrent>> torrents;
+                        std::vector<std::shared_ptr<Torrent>> torrents;
                         for (const QVariant& torrentVariant : torrentsVariants) {
                             const QVariantMap torrentMap(torrentVariant.toMap());
                             const int id = torrentMap.value(Torrent::idKey).toInt();
@@ -655,9 +655,9 @@ namespace tremotesf
                                     emit torrentAdded(torrent->name());
                                 }
                             }
-                            torrents.append(torrent);
+                            torrents.push_back(std::move(torrent));
                         }
-                        mTorrents = torrents;
+                        mTorrents = std::move(torrents);
 
                         mFirstUpdate = false;
 
@@ -806,11 +806,12 @@ namespace tremotesf
 
     std::shared_ptr<Torrent> Rpc::torrentById(int id) const
     {
-        for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
-            if (torrent->id() == id) {
-                return torrent;
-            }
+        const auto found = std::find_if(mTorrents.cbegin(), mTorrents.cend(), [id](const std::shared_ptr<Torrent>& torrent) {
+            return (torrent->id() == id);
+        });
+        if (found != mTorrents.cend()) {
+            return *found;
         }
-        return std::shared_ptr<Torrent>();
+        return {};
     }
 }

@@ -19,6 +19,7 @@
 #ifndef TREMOTESF_LOCALTORRENTFILESMODEL_H
 #define TREMOTESF_LOCALTORRENTFILESMODEL_H
 
+#include <vector>
 #include <QVariant>
 
 #include "basetorrentfilesmodel.h"
@@ -88,7 +89,7 @@ namespace tremotesf
     private:
         void load(const QVariantMap& parseResult);
 
-        QList<TorrentFilesModelFile*> mFiles;
+        std::vector<TorrentFilesModelFile*> mFiles;
         bool mLoaded;
     signals:
         void loadedChanged();

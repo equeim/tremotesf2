@@ -19,9 +19,13 @@
 #ifndef TREMOTESF_TORRENTFILESMODELENTRY_H
 #define TREMOTESF_TORRENTFILESMODELENTRY_H
 
+#include <vector>
+#include <unordered_map>
+
 #include <QObject>
 #include <QVariantList>
-#include <QVector>
+
+#include "stdutils.h"
 
 namespace tremotesf
 {
@@ -99,8 +103,8 @@ namespace tremotesf
         TorrentFilesModelEntryEnums::Priority priority() const override;
         void setPriority(TorrentFilesModelEntryEnums::Priority priority) override;
 
-        const QVector<TorrentFilesModelEntry*>& children() const;
-        const QHash<QString, TorrentFilesModelEntry*>& childrenHash() const;
+        const std::vector<TorrentFilesModelEntry*>& children() const;
+        const std::unordered_map<QString, TorrentFilesModelEntry*>& childrenHash() const;
         void addChild(TorrentFilesModelEntry* child);
         void clearChildren();
         QVariantList childrenIds() const;
@@ -108,8 +112,8 @@ namespace tremotesf
         bool isChanged() const override;
 
     private:
-        QVector<TorrentFilesModelEntry*> mChildren;
-        QHash<QString, TorrentFilesModelEntry*> mChildrenHash;
+        std::vector<TorrentFilesModelEntry*> mChildren;
+        std::unordered_map<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 
     class TorrentFilesModelFile : public TorrentFilesModelEntry

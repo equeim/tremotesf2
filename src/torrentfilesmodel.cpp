@@ -72,13 +72,13 @@ namespace tremotesf
             return ids;
         }
 
-        using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, QList<TorrentFilesModelFile*>>>;
+        using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
 
-        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, QList<TorrentFilesModelFile*>>
+        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
         doCreateTree(const QVariantList& filesJsons, const QVariantList& fileStatsJsons)
         {
-            const auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
-            QList<TorrentFilesModelFile*> files;
+            auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
+            std::vector<TorrentFilesModelFile*> files;
 
             for (int fileIndex = 0, filesCount = filesJsons.size(); fileIndex < filesCount; ++fileIndex) {
                 const QVariantMap fileMap(filesJsons.at(fileIndex).toMap());
@@ -101,11 +101,12 @@ namespace tremotesf
 
                         updateFile(childFile, fileMap, fileStatsMap);
                         currentDirectory->addChild(childFile);
-                        files.append(childFile);
+                        files.push_back(childFile);
                     } else {
-                        TorrentFilesModelEntry* found = currentDirectory->childrenHash().value(part);
-                        if (found) {
-                            currentDirectory = static_cast<TorrentFilesModelDirectory*>(found);
+                        const auto& childrenHash = currentDirectory->childrenHash();
+                        const auto found = childrenHash.find(part);
+                        if (found != childrenHash.end()) {
+                            currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                         } else {
                             auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
                                                                                  currentDirectory,
@@ -117,7 +118,7 @@ namespace tremotesf
                 }
             }
 
-            return {rootDirectory, files};
+            return {std::move(rootDirectory), std::move(files)};
         }
     }
 
@@ -337,7 +338,7 @@ namespace tremotesf
         }
         TorrentFilesModelEntry* entry = mRootDirectory.get();
         for (const QString& part : path.split('/', QString::SkipEmptyParts)) {
-            entry = static_cast<const TorrentFilesModelDirectory*>(entry)->childrenHash().value(part);
+            entry = static_cast<const TorrentFilesModelDirectory*>(entry)->childrenHash().at(part);
         }
         entry->setName(newName);
         emit dataChanged(createIndex(entry->row(), 0, entry),
@@ -376,9 +377,9 @@ namespace tremotesf
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=]() {
-            const auto result = watcher->result();
-            mRootDirectory = result.first;
-            mFiles = result.second;
+            auto result = watcher->result();
+            mRootDirectory = std::move(result.first);
+            mFiles = std::move(result.second);
 
             if (mResetAfterCreate) {
                 mRootDirectory->clearChildren();
@@ -418,7 +419,7 @@ namespace tremotesf
                                        bool emitSignal)
     {
         for (int i = 0, size = files.size(); i < size; i++) {
-            updateFile(mFiles.at(i), files.at(i).toMap(), fileStats.at(i).toMap());
+            updateFile(mFiles[i], files.at(i).toMap(), fileStats.at(i).toMap());
         }
         if (emitSignal) {
             updateDirectoryChildren(mRootDirectory.get());

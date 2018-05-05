@@ -19,6 +19,7 @@
 #ifndef TREMOTESF_SERVERS_H
 #define TREMOTESF_SERVERS_H
 
+#include <vector>
 #include <QObject>
 
 class QSettings;
@@ -55,7 +56,7 @@ namespace tremotesf
         static void migrate();
 
         bool hasServers() const;
-        QList<Server> servers();
+        std::vector<Server> servers();
 
         Server currentServer();
         QString currentServerName() const;
@@ -80,7 +81,7 @@ namespace tremotesf
 
         Q_INVOKABLE void removeServer(const QString& name);
 
-        void saveServers(const QList<Server>& servers, const QString& current);
+        void saveServers(const std::vector<Server>& servers, const QString& current);
 
     private:
         explicit Servers(QObject* parent = nullptr);

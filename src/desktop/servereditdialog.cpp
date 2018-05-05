@@ -55,7 +55,7 @@ namespace tremotesf
             mUpdateIntervalSpinBox->setValue(5);
             mTimeoutSpinBox->setValue(30);
         } else {
-            const Server& server = mServersModel->servers().at(row);
+            const Server& server = mServersModel->servers()[row];
 
             mServerName = server.name;
             setWindowTitle(mServerName);

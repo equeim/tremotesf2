@@ -531,9 +531,9 @@ namespace tremotesf
         for (int i = 0, max = selectedRows.size(); i < max; i++) {
             Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
             const int id = torrent->id();
-            if (mTorrentsDialogs.contains(id)) {
+            if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
                 if (i == (max - 1)) {
-                    TorrentPropertiesDialog* dialog = mTorrentsDialogs.value(id);
+                    TorrentPropertiesDialog* dialog = mTorrentsDialogs[id];
                     dialog->raise();
                     dialog->activateWindow();
                 }
@@ -542,9 +542,9 @@ namespace tremotesf
                                                           mRpc,
                                                           this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
-                mTorrentsDialogs.insert(id, dialog);
+                mTorrentsDialogs.insert({id, dialog});
                 QObject::connect(dialog, &TorrentPropertiesDialog::destroyed, this, [=]() {
-                    mTorrentsDialogs.remove(id);
+                    mTorrentsDialogs.erase(mTorrentsDialogs.find(id));
                 });
                 dialog->show();
             }

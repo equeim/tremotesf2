@@ -467,7 +467,7 @@ namespace tremotesf
         mRpc->renameTorrentFile(mId, path, newName);
     }
 
-    const QList<std::shared_ptr<Tracker>>& Torrent::trackers() const
+    const std::vector<std::shared_ptr<Tracker>>& Torrent::trackers() const
     {
         return mTrackers;
     }
@@ -618,7 +618,7 @@ namespace tremotesf
 
         mComment = torrentMap.value(commentKey).toString();
 
-        QList<std::shared_ptr<Tracker>> trackers;
+        std::vector<std::shared_ptr<Tracker>> trackers;
         for (const QVariant& trackerVariant : torrentMap.value(trackerStatsKey).toList()) {
             const QVariantMap trackerMap(trackerVariant.toMap());
             const int id = trackerMap.value(trackerIdKey).toInt();
@@ -636,9 +636,9 @@ namespace tremotesf
                 tracker = std::make_shared<Tracker>(id, trackerMap);
             }
 
-            trackers.append(tracker);
+            trackers.push_back(std::move(tracker));
         }
-        mTrackers = trackers;
+        mTrackers = std::move(trackers);
 
         mFilesUpdated = false;
         mPeersUpdated = false;

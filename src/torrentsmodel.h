@@ -20,8 +20,9 @@
 #define TREMOTESF_TORRENTSMODEL_H
 
 #include <memory>
+#include <vector>
+
 #include <QAbstractTableModel>
-#include <QList>
 
 namespace tremotesf
 {
@@ -103,7 +104,7 @@ namespace tremotesf
     private:
         void update();
 
-        QList<std::shared_ptr<Torrent>> mTorrents;
+        std::vector<std::shared_ptr<Torrent>> mTorrents;
         Rpc* mRpc;
     };
 }

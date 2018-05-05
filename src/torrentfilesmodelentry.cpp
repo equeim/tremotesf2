@@ -112,9 +112,9 @@ namespace tremotesf
 
     TorrentFilesModelEntryEnums::WantedState TorrentFilesModelDirectory::wantedState() const
     {
-        const TorrentFilesModelEntryEnums::WantedState first = mChildren.first()->wantedState();
+        const TorrentFilesModelEntryEnums::WantedState first = mChildren.front()->wantedState();
         for (int i = 1, max = mChildren.size(); i < max; ++i) {
-            if (mChildren.at(i)->wantedState() != first) {
+            if (mChildren[i]->wantedState() != first) {
                 return TorrentFilesModelEntryEnums::MixedWanted;
             }
         }
@@ -130,9 +130,9 @@ namespace tremotesf
 
     TorrentFilesModelEntryEnums::Priority TorrentFilesModelDirectory::priority() const
     {
-        const TorrentFilesModelEntryEnums::Priority first = mChildren.first()->priority();
+        const TorrentFilesModelEntryEnums::Priority first = mChildren.front()->priority();
         for (int i = 1, max = mChildren.size(); i < max; ++i) {
-            if (mChildren.at(i)->priority() != first) {
+            if (mChildren[i]->priority() != first) {
                 return TorrentFilesModelEntryEnums::MixedPriority;
             }
         }
@@ -146,20 +146,21 @@ namespace tremotesf
         }
     }
 
-    const QVector<TorrentFilesModelEntry*>& TorrentFilesModelDirectory::children() const
+    const std::vector<TorrentFilesModelEntry*>& TorrentFilesModelDirectory::children() const
     {
         return mChildren;
     }
 
-    const QHash<QString, TorrentFilesModelEntry*>& TorrentFilesModelDirectory::childrenHash() const
+    const std::unordered_map<QString, TorrentFilesModelEntry*>& TorrentFilesModelDirectory::childrenHash() const
     {
         return mChildrenHash;
     }
 
     void TorrentFilesModelDirectory::addChild(TorrentFilesModelEntry* child)
     {
-        mChildren.append(child);
-        mChildrenHash.insert(child->name(), child);
+
+        mChildren.push_back(child);
+        mChildrenHash.insert({child->name(), child});
     }
 
     void TorrentFilesModelDirectory::clearChildren()

@@ -20,8 +20,8 @@
 #define TREMOTESF_MAINWINDOW_H
 
 #include <functional>
+#include <unordered_map>
 
-#include <QHash>
 #include <QMainWindow>
 
 class QAction;
@@ -86,7 +86,7 @@ namespace tremotesf
         MainWindowSideBar* mSideBar;
 
         TorrentsView* mTorrentsView;
-        QHash<int, TorrentPropertiesDialog*> mTorrentsDialogs;
+        std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs;
 
         QMenu* mFileMenu = nullptr;
         QAction* mConnectAction = nullptr;

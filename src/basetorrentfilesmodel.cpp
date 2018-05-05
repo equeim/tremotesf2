@@ -36,7 +36,7 @@ namespace tremotesf
         }
 
         if (row >= 0 && row < parentDirectory->children().size()) {
-            return createIndex(row, column, parentDirectory->children().at(row));
+            return createIndex(row, column, parentDirectory->children()[row]);
         }
         return QModelIndex();
     }

@@ -20,6 +20,7 @@
 #define TREMOTESF_TORRENT_H
 
 #include <memory>
+#include <vector>
 
 #include <QDateTime>
 #include <QObject>
@@ -198,7 +199,7 @@ namespace tremotesf
 
         void renameFile(const QString& path, const QString& newName);
 
-        const QList<std::shared_ptr<Tracker>>& trackers() const;
+        const std::vector<std::shared_ptr<Tracker>>& trackers() const;
         Q_INVOKABLE void addTracker(const QString& announce);
         Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
         Q_INVOKABLE void removeTrackers(const QVariantList& ids);
@@ -269,7 +270,7 @@ namespace tremotesf
         bool mPeersEnabled = false;
         bool mPeersUpdated = false;
 
-        QList<std::shared_ptr<Tracker>> mTrackers;
+        std::vector<std::shared_ptr<Tracker>> mTrackers;
 
         Rpc* mRpc;
     signals:

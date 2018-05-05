@@ -21,6 +21,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include <QByteArray>
 #include <QObject>
@@ -77,7 +78,7 @@ namespace tremotesf
         ServerSettings* serverSettings() const;
         ServerStats* serverStats() const;
 
-        const QList<std::shared_ptr<Torrent>>& torrents() const;
+        const std::vector<std::shared_ptr<Torrent>>& torrents() const;
         Q_INVOKABLE tremotesf::Torrent* torrentByHash(const QString& hash) const;
 
         bool isConnected() const;
@@ -170,7 +171,7 @@ namespace tremotesf
         QTimer* mUpdateTimer;
 
         ServerSettings* mServerSettings;
-        QList<std::shared_ptr<Torrent>> mTorrents;
+        std::vector<std::shared_ptr<Torrent>> mTorrents;
         ServerStats* mServerStats;
 
         Status mStatus;

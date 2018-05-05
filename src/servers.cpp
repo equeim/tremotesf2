@@ -137,11 +137,11 @@ namespace tremotesf
         return !mSettings->childGroups().isEmpty();
     }
 
-    QList<Server> Servers::servers()
+    std::vector<Server> Servers::servers()
     {
-        QList<Server> list;
+        std::vector<Server> list;
         for (const QString& group : mSettings->childGroups()) {
-            list.append(getServer(group));
+            list.push_back(getServer(group));
         }
         return list;
     }
@@ -238,7 +238,7 @@ namespace tremotesf
         }
     }
 
-    void Servers::saveServers(const QList<Server>& servers, const QString& current)
+    void Servers::saveServers(const std::vector<Server>& servers, const QString& current)
     {
         const bool hadServers = hasServers();
         mSettings->clear();

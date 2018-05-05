@@ -29,7 +29,7 @@ namespace tremotesf
 
     QVariant ServersModel::data(const QModelIndex& index, int role) const
     {
-        const Server& server = mServers.at(index.row());
+        const Server& server = mServers[index.row()];
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case NameRole:
@@ -94,7 +94,7 @@ namespace tremotesf
 #else
         if (role == Qt::CheckStateRole && value.toInt() == Qt::Checked) {
 #endif
-            const QString current(mServers.at(modelIndex.row()).name);
+            const QString current(mServers[modelIndex.row()].name);
             if (current != mCurrentServer) {
                 mCurrentServer = current;
                 emit dataChanged(index(0), index(mServers.size() - 1));
@@ -104,7 +104,7 @@ namespace tremotesf
         return false;
     }
 
-    const QList<Server>& ServersModel::servers() const
+    const std::vector<Server>& ServersModel::servers() const
     {
         return mServers;
     }
@@ -142,7 +142,7 @@ namespace tremotesf
             const int row = serverRow(oldName);
             if (row != -1) {
                 beginRemoveRows(QModelIndex(), row, row);
-                mServers.removeAt(row);
+                mServers.erase(mServers.begin() + row);
                 endRemoveRows();
             }
         }
@@ -154,20 +154,20 @@ namespace tremotesf
             if (row == 0) {
                 mCurrentServer = name;
             }
-            mServers.append(Server{name,
-                                   address,
-                                   port,
-                                   apiPath,
-                                   https,
-                                   selfSignedCertificateEnabled,
-                                   selfSignedCertificate,
-                                   clientCertificateEnabled,
-                                   clientCertificate,
-                                   authentication,
-                                   username,
-                                   password,
-                                   updateInterval,
-                                   timeout});
+            mServers.push_back({name,
+                                address,
+                                port,
+                                apiPath,
+                                https,
+                                selfSignedCertificateEnabled,
+                                selfSignedCertificate,
+                                clientCertificateEnabled,
+                                clientCertificate,
+                                authentication,
+                                username,
+                                password,
+                                updateInterval,
+                                timeout});
             endInsertRows();
         } else {
             Server& server = mServers[row];
@@ -199,12 +199,12 @@ namespace tremotesf
 
     void ServersModel::removeServerAtRow(int row)
     {
-        const bool current = (mServers.at(row).name == mCurrentServer);
+        const bool current = (mServers[row].name == mCurrentServer);
         beginRemoveRows(QModelIndex(), row, row);
-        mServers.removeAt(row);
+        mServers.erase(mServers.begin() + row);
         endRemoveRows();
-        if (current && !mServers.isEmpty()) {
-            mCurrentServer = mServers.first().name;
+        if (current && !mServers.empty()) {
+            mCurrentServer = mServers.front().name;
             const QModelIndex modelIndex(index(0, 0));
             emit dataChanged(modelIndex, modelIndex);
         }
@@ -234,7 +234,7 @@ namespace tremotesf
     int ServersModel::serverRow(const QString& name) const
     {
         for (int i = 0, max = mServers.size(); i < max; ++i) {
-            if (mServers.at(i).name == name) {
+            if (mServers[i].name == name) {
                 return i;
             }
         }

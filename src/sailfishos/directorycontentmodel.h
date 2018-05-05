@@ -65,7 +65,7 @@ namespace tremotesf
         void loadDirectory();
 
         bool mComponentCompleted;
-        QList<File> mFiles;
+        std::vector<File> mFiles;
         QString mDirectory;
         QString mParentDirectory;
         bool mShowFiles;

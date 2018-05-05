@@ -19,6 +19,8 @@
 #ifndef TREMOTESF_ALLTRACKERSMODEL_H
 #define TREMOTESF_ALLTRACKERSMODEL_H
 
+#include <vector>
+
 #include <QAbstractListModel>
 #include <QStringList>
 
@@ -74,8 +76,8 @@ namespace tremotesf
 
         Rpc* mRpc;
         TorrentsProxyModel* mTorrentsProxyModel;
-        QStringList mTrackers;
-        QList<int> mTrackersTorrents;
+        std::vector<QString> mTrackers;
+        std::vector<int> mTrackersTorrents;
     };
 }
 

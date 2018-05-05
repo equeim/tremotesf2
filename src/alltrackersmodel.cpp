@@ -18,7 +18,7 @@
 
 #include "alltrackersmodel.h"
 
-#include <QMap>
+#include <unordered_map>
 
 #ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
@@ -26,6 +26,7 @@
 #endif
 
 #include "rpc.h"
+#include "stdutils.h"
 #include "torrent.h"
 #include "torrentsproxymodel.h"
 #include "tracker.h"
@@ -102,9 +103,9 @@ namespace tremotesf
             case Qt::DecorationRole:
                 return QIcon::fromTheme(QLatin1String("network-server"));
             case Qt::DisplayRole:
-                return qApp->translate("tremotesf", "%1 (%2)").arg(mTrackers.at(row)).arg(mTrackersTorrents.at(row));
+                return qApp->translate("tremotesf", "%1 (%2)").arg(mTrackers[row]).arg(mTrackersTorrents[row]);
             case TrackerRole:
-                return mTrackers.at(row);
+                return mTrackers[row];
             }
         }
 #endif
@@ -151,8 +152,8 @@ namespace tremotesf
 
     void AllTrackersModel::update()
     {
-        if (mRpc->torrents().isEmpty()) {
-            if (!mTrackers.isEmpty()) {
+        if (mRpc->torrents().empty()) {
+            if (!mTrackers.empty()) {
                 const QModelIndex firstIndex(index(0));
                 emit dataChanged(firstIndex, firstIndex);
 
@@ -166,48 +167,50 @@ namespace tremotesf
             return;
         }
 
-        QMap<QString, int> trackers;
+        std::unordered_map<QString, int> trackers;
         for (const std::shared_ptr<Torrent>& torrent : mRpc->torrents()) {
             for (const std::shared_ptr<Tracker>& tracker : torrent->trackers()) {
                 const QString& site = tracker->site();
-                if (trackers.contains(site)) {
-                    ++trackers[site];
+
+                auto found = trackers.find(site);
+                if (found == trackers.end()) {
+                    trackers.insert({site, 1});
                 } else {
-                    trackers.insert(site, 1);
+                    ++(found->second);
                 }
             }
         }
 
         for (int i = 0, max = mTrackers.size(); i < max; ++i) {
-            if (!trackers.contains(mTrackers.at(i))) {
-                if (mTrackers.at(i) == mTorrentsProxyModel->tracker()) {
+            if (trackers.find(mTrackers[i]) == trackers.end()) {
+                if (mTrackers[i] == mTorrentsProxyModel->tracker()) {
                     mTorrentsProxyModel->setTracker(QString());
                 }
 
                 const int row = i + 1;
                 beginRemoveRows(QModelIndex(), row, row);
-                mTrackers.removeAt(i);
-                mTrackersTorrents.removeAt(i);
+                mTrackers.erase(mTrackers.begin() + i);
+                mTrackersTorrents.erase(mTrackersTorrents.begin() + i);
                 endRemoveRows();
                 i--;
                 max--;
             }
         }
 
-        for (QMap<QString, int>::const_iterator i = trackers.begin(), max = trackers.end();
+        for (auto i = trackers.cbegin(), max = trackers.cend();
              i != max;
              ++i) {
 
-            const QString& tracker = i.key();
-            int row = mTrackers.indexOf(tracker);
-            if (row == -1) {
+            const QString& tracker = i->first;
+            auto row = index_of(mTrackers, tracker);
+            if (row == mTrackers.size()) {
                 row = mTrackers.size() + 1;
                 beginInsertRows(QModelIndex(), row, row);
-                mTrackers.append(tracker);
-                mTrackersTorrents.append(i.value());
+                mTrackers.push_back(tracker);
+                mTrackersTorrents.push_back(i->second);
                 endInsertRows();
             } else {
-                mTrackersTorrents[row] = i.value();
+                mTrackersTorrents[row] = i->second;
                 const QModelIndex modelIndex(index(row + 1));
                 emit dataChanged(modelIndex, modelIndex);
             }

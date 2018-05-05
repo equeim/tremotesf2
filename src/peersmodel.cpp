@@ -80,7 +80,7 @@ namespace tremotesf
 
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
-        const Peer* peer = mPeers.at(index.row()).get();
+        const Peer* peer = mPeers[index.row()].get();
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case Address:
@@ -183,9 +183,9 @@ namespace tremotesf
                     }
 
                     for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                        if (!addresses.contains(mPeers.at(i)->address)) {
+                        if (!addresses.contains(mPeers[i]->address)) {
                             beginRemoveRows(QModelIndex(), i, i);
-                            mPeers.removeAt(i);
+                            mPeers.erase(mPeers.begin() + i);
                             endRemoveRows();
                             i--;
                             max--;
@@ -197,7 +197,7 @@ namespace tremotesf
                         const QString address(peerMap.value(addressKey).toString());
                         int row = -1;
                         for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                            if (mPeers.at(i)->address == address) {
+                            if (mPeers[i]->address == address) {
                                 row = i;
                                 break;
                             }
@@ -205,10 +205,10 @@ namespace tremotesf
                         if (row == -1) {
                             row = mPeers.size();
                             beginInsertRows(QModelIndex(), row, row);
-                            mPeers.append(std::make_shared<Peer>(address, peerMap));
+                            mPeers.push_back(std::make_shared<Peer>(address, peerMap));
                             endInsertRows();
                         } else {
-                            mPeers.at(row)->update(peerMap);
+                            mPeers[row]->update(peerMap);
                             emit dataChanged(index(row, 0), index(row, columnCount() - 1));
                         }
                     }

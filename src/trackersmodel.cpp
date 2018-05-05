@@ -20,6 +20,7 @@
 
 #include <QCoreApplication>
 
+#include "stdutils.h"
 #include "torrent.h"
 #include "tracker.h"
 #include "utils.h"
@@ -44,7 +45,7 @@ namespace tremotesf
 
     QVariant TrackersModel::data(const QModelIndex& index, int role) const
     {
-        const Tracker* tracker = mTrackers.at(index.row()).get();
+        const Tracker* tracker = mTrackers[index.row()].get();
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case IdRole:
@@ -133,7 +134,7 @@ namespace tremotesf
     {
         QVariantList ids;
         for (const QModelIndex& index : indexes) {
-            ids.append(mTrackers.at(index.row())->id());
+            ids.append(mTrackers[index.row()]->id());
         }
         return ids;
     }
@@ -145,7 +146,7 @@ namespace tremotesf
 
     Tracker* TrackersModel::trackerAtRow(int row) const
     {
-        return mTrackers.at(row).get();
+        return mTrackers[row].get();
     }
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -162,12 +163,12 @@ namespace tremotesf
 
     void TrackersModel::update()
     {
-        const QList<std::shared_ptr<Tracker>>& trackers = mTorrent->trackers();
+        const std::vector<std::shared_ptr<Tracker>>& trackers = mTorrent->trackers();
 
         for (int i = 0, max = mTrackers.size(); i < max; ++i) {
-            if (!trackers.contains(mTrackers.at(i))) {
+            if (!contains(trackers, mTrackers[i])) {
                 beginRemoveRows(QModelIndex(), i, i);
-                mTrackers.removeAt(i);
+                mTrackers.erase(mTrackers.begin() + i);
                 endRemoveRows();
                 i--;
                 max--;
@@ -175,10 +176,10 @@ namespace tremotesf
         }
 
         for (const std::shared_ptr<Tracker>& tracker : trackers) {
-            if (!mTrackers.contains(tracker)) {
+            if (!contains(mTrackers, tracker)) {
                 const int row = mTrackers.size();
                 beginInsertRows(QModelIndex(), row, row);
-                mTrackers.append(tracker);
+                mTrackers.push_back(tracker);
                 endInsertRows();
             }
         }

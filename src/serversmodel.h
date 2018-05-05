@@ -19,8 +19,8 @@
 #ifndef TREMOTESF_SERVERSMODEL_H
 #define TREMOTESF_SERVERSMODEL_H
 
+#include <vector>
 #include <QAbstractListModel>
-#include <QList>
 
 #include "servers.h"
 
@@ -58,7 +58,7 @@ namespace tremotesf
         int rowCount(const QModelIndex&) const override;
         bool setData(const QModelIndex& modelIndex, const QVariant& value, int role) override;
 
-        const QList<Server>& servers() const;
+        const std::vector<Server>& servers() const;
         const QString& currentServerName() const;
 
         Q_INVOKABLE bool hasServer(const QString& name) const;
@@ -87,7 +87,7 @@ namespace tremotesf
     private:
         int serverRow(const QString& name) const;
 
-        QList<Server> mServers;
+        std::vector<Server> mServers;
         QString mCurrentServer;
     };
 }

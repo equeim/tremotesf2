@@ -20,9 +20,9 @@
 #define TREMOTESF_TRACKERSMODEL_H
 
 #include <memory>
+#include <vector>
 
 #include <QAbstractTableModel>
-#include <QList>
 
 namespace tremotesf
 {
@@ -82,7 +82,7 @@ namespace tremotesf
         void update();
 
         Torrent* mTorrent;
-        QList<std::shared_ptr<Tracker>> mTrackers;
+        std::vector<std::shared_ptr<Tracker>> mTrackers;
     };
 }
 

@@ -60,7 +60,7 @@ namespace tremotesf
 
         mNoServersWidget->setCloseButtonVisible(false);
         mNoServersWidget->setMessageType(KMessageWidget::Warning);
-        if (!mModel->servers().isEmpty()) {
+        if (!mModel->servers().empty()) {
             mNoServersWidget->hide();
         }
         layout->addWidget(mNoServersWidget, 0, 0);
@@ -144,7 +144,7 @@ namespace tremotesf
         while (mServersView->selectionModel()->hasSelection()) {
             mModel->removeServerAtIndex(mProxyModel->sourceIndex(mServersView->selectionModel()->selectedIndexes().first()));
         }
-        if (mModel->servers().isEmpty()) {
+        if (mModel->servers().empty()) {
             mNoServersWidget->animatedShow();
         }
     }

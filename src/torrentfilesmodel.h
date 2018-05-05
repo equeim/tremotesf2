@@ -19,6 +19,8 @@
 #ifndef TREMOTESF_TORRENTFILESMODEL_H
 #define TREMOTESF_TORRENTFILESMODEL_H
 
+#include <vector>
+
 #include "basetorrentfilesmodel.h"
 
 namespace tremotesf
@@ -98,7 +100,7 @@ namespace tremotesf
         Torrent* mTorrent;
         bool mLoaded;
         bool mLoading;
-        QList<TorrentFilesModelFile*> mFiles;
+        std::vector<TorrentFilesModelFile*> mFiles;
         bool mCreatingTree;
         bool mResetAfterCreate;
         bool mUpdateAfterCreate;

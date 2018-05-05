@@ -34,13 +34,13 @@ namespace tremotesf
 {
     namespace
     {
-        using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, QList<TorrentFilesModelFile*>>>;
+        using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
 
-        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, QList<TorrentFilesModelFile*>>
+        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
         createTree(const QVariantMap& parseResult)
         {
             const auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
-            QList<TorrentFilesModelFile*> files;
+            std::vector<TorrentFilesModelFile*> files;
 
             const QVariantMap infoMap(parseResult.value(QLatin1String("info")).toMap());
             if (infoMap.contains(QLatin1String("files"))) {
@@ -66,11 +66,12 @@ namespace tremotesf
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
                             currentDirectory->addChild(childFile);
-                            files.append(childFile);
+                            files.push_back(childFile);
                         } else {
-                            TorrentFilesModelEntry* found = currentDirectory->childrenHash().value(part);
-                            if (found) {
-                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(found);
+                            const auto& childrenHash = currentDirectory->childrenHash();
+                            const auto found = childrenHash.find(part);
+                            if (found != childrenHash.end()) {
+                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                             } else {
                                 auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
                                                                                      currentDirectory,
@@ -90,10 +91,10 @@ namespace tremotesf
                 file->setWanted(true);
                 file->setPriority(TorrentFilesModelEntryEnums::NormalPriority);
                 rootDirectory->addChild(file);
-                files.append(file);
+                files.push_back(file);
             }
 
-            return {rootDirectory, files};
+            return {std::move(rootDirectory), std::move(files)};
         }
     }
 
@@ -322,9 +323,9 @@ namespace tremotesf
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=]() {
-            const auto result = watcher->result();
-            mRootDirectory = result.first;
-            mFiles = result.second;
+            auto result = watcher->result();
+            mRootDirectory = std::move(result.first);
+            mFiles = std::move(result.second);
 
             endResetModel();
             mLoaded = true;
