@@ -53,7 +53,6 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
 #include "sailfishos/directorycontentmodel.h"
 #include "sailfishos/selectionmodel.h"
 
-Q_DECLARE_METATYPE(QModelIndexList)
 Q_DECLARE_METATYPE(tremotesf::TorrentFilesModelEntryEnums::Priority)
 #endif // TREMOTESF_SAILFISHOS
 

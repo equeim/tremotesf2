@@ -72,7 +72,7 @@ namespace tremotesf
                         serversSettings.setValue(httpsKey, settings.value(httpsKey));
                         if (settings.value(localCertificateKey).toBool()) {
                             const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation,
-                                                                                      QLatin1String("%1.pem").arg(group)));
+                                                                                      QString::fromLatin1("%1.pem").arg(group)));
                             if (!localCertificatePath.isEmpty()) {
                                 QFile file(localCertificatePath);
                                 if (file.open(QFile::ReadOnly)) {
