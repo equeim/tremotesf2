@@ -1,4 +1,6 @@
 TRANSLATIONS = $$PWD/en.ts \
+               $$PWD/nl.ts \
+               $$PWD/nl_BE.ts \
                $$PWD/ru.ts
 
 lupdate_only {
