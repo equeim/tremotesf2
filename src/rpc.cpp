@@ -65,10 +65,10 @@ namespace tremotesf
             return parseResult.value(QLatin1String("arguments")).toMap();
         }
 
-        /*bool isResultSuccessful(const QVariantMap& parseResult)
+        bool isResultSuccessful(const QVariantMap& parseResult)
         {
             return (parseResult.value(QLatin1String("result")).toString() == "success");
-        }*/
+        }
     }
 
     Rpc::Rpc(QObject* parent)
@@ -447,6 +447,34 @@ namespace tremotesf
                                                           arguments.value(QLatin1String("name")).toString());
                                 updateData();
                             }
+                        });
+        }
+    }
+
+    void Rpc::getDownloadDirFreeSpace()
+    {
+        if (isConnected()) {
+            postRequest("{"
+                        "    \"arguments\": {"
+                        "        \"fields\": ["
+                        "            \"download-dir-free-space\""
+                        "        ]"
+                        "    },"
+                        "    \"method\": \"session-get\""
+                        "}",
+                        [=](const QVariantMap& parseResult) {
+                            emit gotDownloadDirFreeSpace(getReplyArguments(parseResult).value("download-dir-free-space").toLongLong());
+                        });
+        }
+    }
+
+    void Rpc::getFreeSpaceForPath(const QString& path)
+    {
+        if (isConnected()) {
+            postRequest(makeRequestData(QLatin1String("free-space"),
+                                        {{QLatin1String("path"), path}}),
+                        [=](const QVariantMap& parseResult) {
+                            emit gotFreeSpaceForPath(path, isResultSuccessful(parseResult), getReplyArguments(parseResult).value("size-bytes").toLongLong());
                         });
         }
     }

@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -33,6 +34,7 @@
 #include "../rpc.h"
 #include "../serversettings.h"
 #include "../torrentfileparser.h"
+#include "../utils.h"
 #include "fileselectionwidget.h"
 #include "torrentfilesview.h"
 
@@ -127,6 +129,41 @@ namespace tremotesf
         mDownloadDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
         QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
+
+        mFreeSpaceLabel = new QLabel(this);
+        if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
+            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=]() {
+                mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
+            });
+            QObject::connect(mRpc, &Rpc::gotFreeSpaceForPath, this, [=](const QString&, bool success, long long bytes) {
+                if (success) {
+                    mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
+                } else {
+                    mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
+                }
+            });
+            firstFormLayout->addRow(nullptr, mFreeSpaceLabel);
+            mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
+        } else {
+            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=]() {
+                const QString path(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
+                if (path == mRpc->serverSettings()->downloadDirectory()) {
+                    mRpc->getDownloadDirFreeSpace();
+                } else {
+                    mFreeSpaceLabel->hide();
+                    mFreeSpaceLabel->clear();
+                }
+            });
+
+            QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](long long bytes) {
+                if (mDownloadDirectoryWidget->lineEdit()->text().trimmed() == mRpc->serverSettings()->downloadDirectory()) {
+                    mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
+                    mFreeSpaceLabel->show();
+                }
+            });
+            mRpc->getDownloadDirFreeSpace();
+        }
+        firstFormLayout->addRow(nullptr, mFreeSpaceLabel);
 
         if (mLocalFile) {
             layout->addWidget(new TorrentFilesView(mFilesModel), 1);

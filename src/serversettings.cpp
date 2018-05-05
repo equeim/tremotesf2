@@ -108,6 +108,11 @@ namespace tremotesf
         return (mRpcVersion >= 15);
     }
 
+    bool ServerSettings::canShowFreeSpaceForPath() const
+    {
+        return (mRpcVersion >= 15);
+    }
+
     const QString& ServerSettings::downloadDirectory() const
     {
         return mDownloadDirectory;

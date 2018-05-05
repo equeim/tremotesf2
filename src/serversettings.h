@@ -35,6 +35,7 @@ namespace tremotesf
         Q_ENUMS(EncryptionMode)
 
         Q_PROPERTY(bool canRenameFiles READ canRenameFiles)
+        Q_PROPERTY(bool canShowFreeSpaceForPath READ canShowFreeSpaceForPath)
 
         Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory)
         Q_PROPERTY(bool startAddedTorrents READ startAddedTorrents WRITE setStartAddedTorrents)
@@ -106,6 +107,7 @@ namespace tremotesf
         int minimumRpcVersion() const;
 
         bool canRenameFiles() const;
+        bool canShowFreeSpaceForPath() const;
 
         const QString& downloadDirectory() const;
         void setDownloadDirectory(const QString& directory);

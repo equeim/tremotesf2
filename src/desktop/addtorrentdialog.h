@@ -24,6 +24,7 @@
 class QCheckBox;
 class QComboBox;
 class QDialogButtonBox;
+class QLabel;
 class QLineEdit;
 
 namespace tremotesf
@@ -62,6 +63,7 @@ namespace tremotesf
         QLineEdit* mTorrentLinkLineEdit = nullptr;
 
         FileSelectionWidget* mDownloadDirectoryWidget = nullptr;
+        QLabel* mFreeSpaceLabel = nullptr;
         QComboBox* mPriorityComboBox = nullptr;
         QCheckBox* mStartTorrentCheckBox = nullptr;
 

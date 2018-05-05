@@ -127,6 +127,9 @@ namespace tremotesf
                                            const QString& filePath,
                                            const QString& newName);
 
+        Q_INVOKABLE void getDownloadDirFreeSpace();
+        Q_INVOKABLE void getFreeSpaceForPath(const QString& path);
+
     private:
         void setStatus(Status status);
         void setError(Error error);
@@ -187,6 +190,9 @@ namespace tremotesf
 
         void torrentAdded(const QString& torrent);
         void torrentFinished(const QString& torrent);
+
+        void gotDownloadDirFreeSpace(long long bytes);
+        void gotFreeSpaceForPath(const QString& path, bool success, long long bytes);
     };
 }
 

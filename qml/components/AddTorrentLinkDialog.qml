@@ -64,6 +64,53 @@ Dialog {
                 selectionButtonEnabled: rpc.local
                 showFiles: false
                 Component.onCompleted: text = rpc.serverSettings.downloadDirectory
+
+                onTextChanged: {
+                    var path = text.trim()
+                    if (rpc.serverSettings.canShowFreeSpaceForPath) {
+                        rpc.getFreeSpaceForPath(path)
+                    } else {
+                        if (path === rpc.serverSettings.downloadDirectory) {
+                            rpc.getDownloadDirFreeSpace()
+                        } else {
+                            freeSpaceLabel.visible = false
+                            freeSpaceLabel.text = String()
+                        }
+                    }
+                }
+            }
+
+            Label {
+                id: freeSpaceLabel
+
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    right: parent.right
+                    rightMargin: Theme.horizontalPageMargin
+                }
+
+                font.pixelSize: Theme.fontSizeSmall
+                color: Theme.secondaryColor
+
+                Connections {
+                    target: rpc
+                    onGotDownloadDirFreeSpace: {
+                        if (downloadDirectoryItem.text.trim() === rpc.serverSettings.downloadDirectory) {
+                            freeSpaceLabel.text = qsTranslate("tremotesf", "Free space: %1").arg(Utils.formatByteSize(bytes))
+                            freeSpaceLabel.visible = true
+                        }
+                    }
+                    onGotFreeSpaceForPath: {
+                        if (path === downloadDirectoryItem.text.trim()) {
+                            if (success) {
+                                freeSpaceLabel.text = qsTranslate("tremotesf", "Free space: %1").arg(Utils.formatByteSize(bytes))
+                            } else {
+                                freeSpaceLabel.text = qsTranslate("tremotesf", "Error getting free space")
+                            }
+                        }
+                    }
+                }
             }
 
             ComboBox {
