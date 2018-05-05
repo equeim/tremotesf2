@@ -1,5 +1,3 @@
-# Project is temporarily suspended. I won't be able to support my projects until 2018 spring
-
 # Tremotesf
 Remote GUI for transmission-daemon. Supports desktop OSes (GNU/Linux and Windows) and Sailfish OS.
 
