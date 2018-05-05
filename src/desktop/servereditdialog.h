@@ -48,22 +48,22 @@ namespace tremotesf
         ServersModel* mServersModel;
         QString mServerName;
 
-        QLineEdit* mNameLineEdit;
-        QLineEdit* mAddressLineEdit;
-        QSpinBox* mPortSpinBox;
-        QLineEdit* mApiPathLineEdit;
-        QGroupBox* mHttpsGroupBox;
-        QCheckBox* mSelfSignedCertificateCheckBox;
-        QPlainTextEdit* mSelfSignedCertificateEdit;
-        QCheckBox* mClientCertificateCheckBox;
-        QPlainTextEdit* mClientCertificateEdit;
-        QGroupBox* mAuthenticationGroupBox;
-        QLineEdit* mUsernameLineEdit;
-        QLineEdit* mPasswordLineEdit;
-        QSpinBox* mUpdateIntervalSpinBox;
-        QSpinBox* mTimeoutSpinBox;
+        QLineEdit* mNameLineEdit = nullptr;
+        QLineEdit* mAddressLineEdit = nullptr;
+        QSpinBox* mPortSpinBox = nullptr;
+        QLineEdit* mApiPathLineEdit = nullptr;
+        QGroupBox* mHttpsGroupBox = nullptr;
+        QCheckBox* mSelfSignedCertificateCheckBox = nullptr;
+        QPlainTextEdit* mSelfSignedCertificateEdit = nullptr;
+        QCheckBox* mClientCertificateCheckBox = nullptr;
+        QPlainTextEdit* mClientCertificateEdit = nullptr;
+        QGroupBox* mAuthenticationGroupBox = nullptr;
+        QLineEdit* mUsernameLineEdit = nullptr;
+        QLineEdit* mPasswordLineEdit = nullptr;
+        QSpinBox* mUpdateIntervalSpinBox = nullptr;
+        QSpinBox* mTimeoutSpinBox = nullptr;
 
-        QDialogButtonBox* mDialogButtonBox;
+        QDialogButtonBox* mDialogButtonBox = nullptr;
     };
 }
 

@@ -24,7 +24,8 @@
 namespace tremotesf
 {
     SelectionModel::SelectionModel()
-        : mModel(nullptr)
+        : mModel(nullptr),
+          mSelectionModel(nullptr)
     {
     }
 

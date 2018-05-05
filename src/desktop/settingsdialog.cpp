@@ -30,30 +30,26 @@
 namespace tremotesf
 {
     SettingsDialog::SettingsDialog(QWidget* parent)
-        : QDialog(parent)
+        : QDialog(parent),
+          mConnectOnStartupCheckBox(new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this)),
+          mNotificationOnDisconnectingCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show a notification on disconnecting from server"), this)),
+          mNotificationOnAddingTorrentCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show a notification when torrents are added"), this)),
+          mNotificationOfFinishedTorrentsCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show a notification when torrents finish"), this)),
+          mTrayIconCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show icon in the notification area"), this))
     {
         setWindowTitle(qApp->translate("tremotesf", "Options"));
 
         auto layout = new QVBoxLayout(this);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
-        mConnectOnStartupCheckBox = new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this);
         layout->addWidget(mConnectOnStartupCheckBox);
 
         auto notificationsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Notifications"), this);
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
         notificationsGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-
-        mNotificationOnDisconnectingCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show a notification on disconnecting from server"), this);
         notificationsGroupBoxLayout->addWidget(mNotificationOnDisconnectingCheckBox);
-
-        mNotificationOnAddingTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show a notification when torrents are added"), this);
         notificationsGroupBoxLayout->addWidget(mNotificationOnAddingTorrentCheckBox);
-
-        mNotificationOfFinishedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show a notification when torrents finish"), this);
         notificationsGroupBoxLayout->addWidget(mNotificationOfFinishedTorrentsCheckBox);
-
-        mTrayIconCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show icon in the notification area"), this);
         notificationsGroupBoxLayout->addWidget(mTrayIconCheckBox);
 
         layout->addWidget(notificationsGroupBox);

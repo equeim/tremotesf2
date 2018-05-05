@@ -12,7 +12,8 @@ namespace tremotesf
                                      const QString& labelText,
                                      const QString& text,
                                      QWidget* parent)
-        : QDialog(parent)
+        : QDialog(parent),
+          mLineEdit(new QLineEdit(text, this))
     {
         setWindowTitle(title);
 
@@ -22,8 +23,6 @@ namespace tremotesf
         auto label = new QLabel(labelText, this);
         label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         layout->addWidget(label);
-
-        mLineEdit = new QLineEdit(text, this);
         layout->addWidget(mLineEdit);
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);

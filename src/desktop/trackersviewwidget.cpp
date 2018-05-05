@@ -69,11 +69,11 @@ namespace tremotesf
         : QWidget(parent),
           mTorrent(torrent),
           mModel(new TrackersModel(torrent, this)),
-          mProxyModel(new BaseProxyModel(mModel, TrackersModel::SortRole, this))
+          mProxyModel(new BaseProxyModel(mModel, TrackersModel::SortRole, this)),
+          mTrackersView(new EnterEatingTreeView(this))
     {
         auto layout = new QHBoxLayout(this);
 
-        mTrackersView = new EnterEatingTreeView(this);
         mTrackersView->setContextMenuPolicy(Qt::CustomContextMenu);
         mTrackersView->setModel(mProxyModel);
         mTrackersView->setSelectionMode(QAbstractItemView::ExtendedSelection);

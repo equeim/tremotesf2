@@ -30,15 +30,13 @@ namespace tremotesf
     FileSelectionWidget::FileSelectionWidget(bool directory,
                                              const QString& filter,
                                              QWidget* parent)
-        : QWidget(parent)
+        : QWidget(parent),
+          mLineEdit(new QLineEdit(this)),
+          mSelectionButton(new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this))
     {
         auto layout = new QHBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
-
-        mLineEdit = new QLineEdit(this);
         layout->addWidget(mLineEdit);
-
-        mSelectionButton = new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this);
         layout->addWidget(mSelectionButton);
 
         QObject::connect(mSelectionButton, &QPushButton::clicked, this, [=]() {

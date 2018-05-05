@@ -198,52 +198,52 @@ namespace tremotesf
     private:
         Rpc* mRpc;
 
-        int mRpcVersion;
-        int mMinimumRpcVersion;
+        int mRpcVersion = 0;
+        int mMinimumRpcVersion = 0;
 
-        bool mUsingDecimalUnits;
+        bool mUsingDecimalUnits = false;
 
         QString mDownloadDirectory;
-        bool mStartAddedTorrents;
-        bool mTrashTorrentFiles;
-        bool mRenameIncompleteFiles;
-        bool mIncompleteDirectoryEnabled;
+        bool mStartAddedTorrents = false;
+        bool mTrashTorrentFiles = false;
+        bool mRenameIncompleteFiles = false;
+        bool mIncompleteDirectoryEnabled = false;
         QString mIncompleteDirectory;
 
-        bool mRatioLimited;
-        float mRatioLimit;
-        bool mIdleSeedingLimited;
-        int mIdleSeedingLimit;
+        bool mRatioLimited = false;
+        float mRatioLimit = 0.0f;
+        bool mIdleSeedingLimited = false;
+        int mIdleSeedingLimit = 0;
 
-        bool mDownloadQueueEnabled;
-        int mDownloadQueueSize;
-        bool mSeedQueueEnabled;
-        int mSeedQueueSize;
-        bool mIdleQueueLimited;
-        int mIdleQueueLimit;
+        bool mDownloadQueueEnabled = false;
+        int mDownloadQueueSize = 0;
+        bool mSeedQueueEnabled = false;
+        int mSeedQueueSize = 0;
+        bool mIdleQueueLimited = false;
+        int mIdleQueueLimit = 0;
 
-        bool mDownloadSpeedLimited;
-        int mDownloadSpeedLimit;
-        bool mUploadSpeedLimited;
-        int mUploadSpeedLimit;
-        bool mAlternativeSpeedLimitsEnabled;
-        int mAlternativeDownloadSpeedLimit;
-        int mAlternativeUploadSpeedLimit;
-        bool mAlternativeSpeedLimitsScheduled;
+        bool mDownloadSpeedLimited = false;
+        int mDownloadSpeedLimit = 0;
+        bool mUploadSpeedLimited = false;
+        int mUploadSpeedLimit = 0;
+        bool mAlternativeSpeedLimitsEnabled = false;
+        int mAlternativeDownloadSpeedLimit = 0;
+        int mAlternativeUploadSpeedLimit = 0;
+        bool mAlternativeSpeedLimitsScheduled = false;
         QTime mAlternativeSpeedLimitsBeginTime;
         QTime mAlternativeSpeedLimitsEndTime;
-        AlternativeSpeedLimitsDays mAlternativeSpeedLimitsDays;
+        AlternativeSpeedLimitsDays mAlternativeSpeedLimitsDays = All;
 
-        int mPeerPort;
-        bool mRandomPortEnabled;
-        bool mPortForwardingEnabled;
-        EncryptionMode mEncryptionMode;
-        bool mUtpEnabled;
-        bool mPexEnabled;
-        bool mDhtEnabled;
-        bool mLpdEnabled;
-        int mMaximumPeersPerTorrent;
-        int mMaximumPeersGlobally;
+        int mPeerPort = 0;
+        bool mRandomPortEnabled = false;
+        bool mPortForwardingEnabled = false;
+        EncryptionMode mEncryptionMode = PreferredEncryption;
+        bool mUtpEnabled = false;
+        bool mPexEnabled = false;
+        bool mDhtEnabled = false;
+        bool mLpdEnabled = false;
+        int mMaximumPeersPerTorrent = 0;
+        int mMaximumPeersGlobally = 0;
 
         bool mSaveOnSet;
     };

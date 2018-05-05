@@ -78,8 +78,8 @@ namespace tremotesf
         virtual bool isChanged() const = 0;
 
     private:
-        int mRow;
-        TorrentFilesModelDirectory* mParentDirectory;
+        int mRow = 0;
+        TorrentFilesModelDirectory* mParentDirectory = nullptr;
         QString mName;
     };
 

@@ -55,17 +55,17 @@ namespace tremotesf
         bool mLocalFile;
 
         QString mFilePath;
-        TorrentFileParser* mParser;
-        LocalTorrentFilesModel* mFilesModel;
+        TorrentFileParser* mParser = nullptr;
+        LocalTorrentFilesModel* mFilesModel = nullptr;
 
         QString mUrl;
-        QLineEdit* mTorrentLinkLineEdit;
+        QLineEdit* mTorrentLinkLineEdit = nullptr;
 
-        FileSelectionWidget* mDownloadDirectoryWidget;
-        QComboBox* mPriorityComboBox;
-        QCheckBox* mStartTorrentCheckBox;
+        FileSelectionWidget* mDownloadDirectoryWidget = nullptr;
+        QComboBox* mPriorityComboBox = nullptr;
+        QCheckBox* mStartTorrentCheckBox = nullptr;
 
-        QDialogButtonBox* mDialogButtonBox;
+        QDialogButtonBox* mDialogButtonBox = nullptr;
     };
 }
 

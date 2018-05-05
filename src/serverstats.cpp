@@ -23,7 +23,9 @@
 namespace tremotesf
 {
     ServerStats::ServerStats(QObject* parent)
-        : QObject(parent)
+        : QObject(parent),
+          mDownloadSpeed(0),
+          mUploadSpeed(0)
     {
     }
 

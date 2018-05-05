@@ -54,10 +54,10 @@ namespace tremotesf
         QString mAnnounce;
         QString mSite;
 
-        Status mStatus;
+        Status mStatus = Inactive;
         QString mErrorMessage;
-        int mPeers;
-        int mNextUpdate;
+        int mPeers = 0;
+        int mNextUpdate = 0;
     };
 }
 

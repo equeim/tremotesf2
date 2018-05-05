@@ -57,26 +57,24 @@ namespace tremotesf
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)
         : QDialog(parent),
           mTorrent(torrent),
-          mRpc(rpc)
+          mRpc(rpc),
+          mMessageWidget(new KMessageWidget(this)),
+          mTabWidget(new QTabWidget(this)),
+          mFilesModel(new TorrentFilesModel(mTorrent, this)),
+          mTrackersViewWidget(new TrackersViewWidget(mTorrent, this)),
+          mPeersView(nullptr),
+          mPeersModel(nullptr)
     {
         auto layout = new QVBoxLayout(this);
 
-        mMessageWidget = new KMessageWidget(this);
         mMessageWidget->setCloseButtonVisible(false);
         mMessageWidget->setMessageType(KMessageWidget::Warning);
         mMessageWidget->hide();
         layout->addWidget(mMessageWidget);
 
-        mTabWidget = new QTabWidget(this);
-
         setupDetailsTab();
-
-        mFilesModel = new TorrentFilesModel(mTorrent, this);
         mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc->serverSettings()), qApp->translate("tremotesf", "Files"));
-
-        mTrackersViewWidget = new TrackersViewWidget(mTorrent, this);
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));
-
         setupPeersTab();
         setupLimitsTab();
 

@@ -49,54 +49,54 @@ namespace tremotesf
     private:
         const Rpc* mRpc;
 
-        KMessageWidget* mDisconnectedMessageWidget;
+        KMessageWidget* mDisconnectedMessageWidget = nullptr;
 
-        QWidget* mDownloadingPageWidget;
-        FileSelectionWidget* mDownloadDirectoryWidget;
-        QCheckBox* mStartAddedTorrentsCheckBox;
-        //QCheckBox* mTrashTorrentFilesCheckBox;
-        QCheckBox* mIncompleteFilesCheckBox;
-        QCheckBox* mIncompleteDirectoryCheckBox;
-        FileSelectionWidget* mIncompleteDirectoryWidget;
+        QWidget* mDownloadingPageWidget = nullptr;
+        FileSelectionWidget* mDownloadDirectoryWidget = nullptr;
+        QCheckBox* mStartAddedTorrentsCheckBox = nullptr;
+        //QCheckBox* mTrashTorrentFilesCheckBox = nullptr;
+        QCheckBox* mIncompleteFilesCheckBox = nullptr;
+        QCheckBox* mIncompleteDirectoryCheckBox = nullptr;
+        FileSelectionWidget* mIncompleteDirectoryWidget = nullptr;
 
-        QWidget* mSeedingPageWidget;
-        QCheckBox* mRatioLimitCheckBox;
-        QDoubleSpinBox* mRatioLimitSpinBox;
-        QCheckBox* mIdleSeedingLimitCheckBox;
-        QSpinBox* mIdleSeedingLimitSpinBox;
+        QWidget* mSeedingPageWidget = nullptr;
+        QCheckBox* mRatioLimitCheckBox = nullptr;
+        QDoubleSpinBox* mRatioLimitSpinBox = nullptr;
+        QCheckBox* mIdleSeedingLimitCheckBox = nullptr;
+        QSpinBox* mIdleSeedingLimitSpinBox = nullptr;
 
-        QWidget* mQueuePageWidget;
-        QCheckBox* mMaximumActiveDownloadsCheckBox;
-        QSpinBox* mMaximumActiveDownloadsSpinBox;
-        QCheckBox* mMaximumActiveUploadsCheckBox;
-        QSpinBox* mMaximumActiveUploadsSpinBox;
-        QCheckBox* mIdleQueueLimitCheckBox;
-        QSpinBox* mIdleQueueLimitSpinBox;
+        QWidget* mQueuePageWidget = nullptr;
+        QCheckBox* mMaximumActiveDownloadsCheckBox = nullptr;
+        QSpinBox* mMaximumActiveDownloadsSpinBox = nullptr;
+        QCheckBox* mMaximumActiveUploadsCheckBox = nullptr;
+        QSpinBox* mMaximumActiveUploadsSpinBox = nullptr;
+        QCheckBox* mIdleQueueLimitCheckBox = nullptr;
+        QSpinBox* mIdleQueueLimitSpinBox = nullptr;
 
-        QWidget* mSpeedPageWidget;
-        QCheckBox* mDownloadSpeedLimitCheckBox;
-        QSpinBox* mDownloadSpeedLimitSpinBox;
-        QCheckBox* mUploadSpeedLimitCheckBox;
-        QSpinBox* mUploadSpeedLimitSpinBox;
-        QGroupBox* mEnableAlternativeSpeedLimitsGroupBox;
-        QSpinBox* mAlternativeDownloadSpeedLimitSpinBox;
-        QSpinBox* mAlternativeUploadSpeedLimitSpinBox;
-        QGroupBox* mLimitScheduleGroupBox;
-        QTimeEdit* mLimitScheduleBeginTimeEdit;
-        QTimeEdit* mLimitScheduleEndTimeEdit;
-        QComboBox* mLimitScheduleDaysComboBox;
+        QWidget* mSpeedPageWidget = nullptr;
+        QCheckBox* mDownloadSpeedLimitCheckBox = nullptr;
+        QSpinBox* mDownloadSpeedLimitSpinBox = nullptr;
+        QCheckBox* mUploadSpeedLimitCheckBox = nullptr;
+        QSpinBox* mUploadSpeedLimitSpinBox = nullptr;
+        QGroupBox* mEnableAlternativeSpeedLimitsGroupBox = nullptr;
+        QSpinBox* mAlternativeDownloadSpeedLimitSpinBox = nullptr;
+        QSpinBox* mAlternativeUploadSpeedLimitSpinBox = nullptr;
+        QGroupBox* mLimitScheduleGroupBox = nullptr;
+        QTimeEdit* mLimitScheduleBeginTimeEdit = nullptr;
+        QTimeEdit* mLimitScheduleEndTimeEdit = nullptr;
+        QComboBox* mLimitScheduleDaysComboBox = nullptr;
 
-        QWidget* mNetworkPageWidget;
-        QSpinBox* mPeerPortSpinBox;
-        QCheckBox* mRandomPortCheckBox;
-        QCheckBox* mPortForwardingCheckBox;
-        QComboBox* mEncryptionComboBox;
-        QCheckBox* mUtpCheckBox;
-        QCheckBox* mPexCheckBox;
-        QCheckBox* mDhtCheckBox;
-        QCheckBox* mLpdCheckBox;
-        QSpinBox* mTorrentPeerLimitSpinBox;
-        QSpinBox* mGlobalPeerLimitSpinBox;
+        QWidget* mNetworkPageWidget = nullptr;
+        QSpinBox* mPeerPortSpinBox = nullptr;
+        QCheckBox* mRandomPortCheckBox = nullptr;
+        QCheckBox* mPortForwardingCheckBox = nullptr;
+        QComboBox* mEncryptionComboBox = nullptr;
+        QCheckBox* mUtpCheckBox = nullptr;
+        QCheckBox* mPexCheckBox = nullptr;
+        QCheckBox* mDhtCheckBox = nullptr;
+        QCheckBox* mLpdCheckBox = nullptr;
+        QSpinBox* mTorrentPeerLimitSpinBox = nullptr;
+        QSpinBox* mGlobalPeerLimitSpinBox = nullptr;
     };
 }
 

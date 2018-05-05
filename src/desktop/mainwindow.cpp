@@ -72,6 +72,11 @@ namespace tremotesf
     MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& arguments)
         : mIpcServer(ipcServer),
           mRpc(new Rpc(this)),
+          mTorrentsModel(new TorrentsModel(mRpc, this)),
+          mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, TorrentsModel::SortRole, this)),
+          mSplitter(new QSplitter(this)),
+          mSideBar(new MainWindowSideBar(mRpc, mTorrentsProxyModel)),
+          mTorrentsView(new TorrentsView(mTorrentsProxyModel, this)),
           mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QLatin1String("tremotesf-tray-icon"), windowIcon()), this))
     {
         setWindowTitle(QLatin1String("Tremotesf"));
@@ -86,19 +91,13 @@ namespace tremotesf
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
 
-        mTorrentsModel = new TorrentsModel(mRpc, this);
-        mTorrentsProxyModel = new TorrentsProxyModel(mTorrentsModel, TorrentsModel::SortRole, this);
-
-        mSplitter = new QSplitter(this);
         mSplitter->setChildrenCollapsible(false);
 
-        mSideBar = new MainWindowSideBar(mRpc, mTorrentsProxyModel);
         if (!Settings::instance()->isSideBarVisible()) {
             mSideBar->hide();
         }
         mSplitter->addWidget(mSideBar);
 
-        mTorrentsView = new TorrentsView(mTorrentsProxyModel, this);
         mSplitter->addWidget(mTorrentsView);
         mSplitter->setStretchFactor(1, 1);
         QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](const QPoint& point) {

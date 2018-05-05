@@ -214,60 +214,60 @@ namespace tremotesf
         void updatePeers(const QVariantMap& torrentMap);
 
     private:
-        int mId;
+        int mId = 0;
         QString mHashString;
         QString mName;
 
-        Status mStatus;
+        Status mStatus = Paused;
         QString mErrorString;
-        int mQueuePosition;
+        int mQueuePosition = 0;
 
-        long long mTotalSize;
-        long long mCompletedSize;
-        long long mLeftUntilDone;
-        long long mSizeWhenDone;
-        float mPercentDone;
-        float mRecheckProgress;
-        int mEta;
+        long long mTotalSize = 0;
+        long long mCompletedSize = 0;
+        long long mLeftUntilDone = 0;
+        long long mSizeWhenDone = 0;
+        float mPercentDone = 0.0f;
+        float mRecheckProgress = 0.0f;
+        int mEta = 0;
 
-        long long mDownloadSpeed;
-        long long mUploadSpeed;
+        long long mDownloadSpeed = 0;
+        long long mUploadSpeed = 0;
 
-        bool mDownloadSpeedLimited;
-        int mDownloadSpeedLimit; // KiB/s
-        bool mUploadSpeedLimited;
-        int mUploadSpeedLimit; // KiB/s
+        bool mDownloadSpeedLimited = false;
+        int mDownloadSpeedLimit = 0; // KiB/s
+        bool mUploadSpeedLimited = false;
+        int mUploadSpeedLimit = 0; // KiB/s
 
-        long long mTotalDownloaded;
-        long long mTotalUploaded;
-        float mRatio;
-        RatioLimitMode mRatioLimitMode;
-        float mRatioLimit;
+        long long mTotalDownloaded = 0;
+        long long mTotalUploaded = 0;
+        float mRatio = 0.0f;
+        RatioLimitMode mRatioLimitMode = GlobalRatioLimit;
+        float mRatioLimit = 0.0f;
 
-        int mSeeders;
-        int mLeechers;
-        int mPeersLimit;
+        int mSeeders = 0;
+        int mLeechers = 0;
+        int mPeersLimit = 0;
 
         QDateTime mAddedDate;
         QDateTime mActivityDate;
         QDateTime mDoneDate;
 
-        bool mHonorSessionLimits;
-        Priority mBandwidthPriority;
-        IdleSeedingLimitMode mIdleSeedingLimitMode;
-        int mIdleSeedingLimit;
+        bool mHonorSessionLimits = false;
+        Priority mBandwidthPriority = NormalPriority;
+        IdleSeedingLimitMode mIdleSeedingLimitMode = GlobalIdleSeedingLimit;
+        int mIdleSeedingLimit = 0;
         QString mDownloadDirectory;
         QString mComment;
         QString mCreator;
         QDateTime mCreationDate;
 
-        bool mFilesEnabled;
-        bool mFilesUpdated;
+        bool mFilesEnabled = false;
+        bool mFilesUpdated = false;
         QVariantList mFiles;
         QVariantList mFileStats;
 
-        bool mPeersEnabled;
-        bool mPeersUpdated;
+        bool mPeersEnabled = false;
+        bool mPeersUpdated = false;
 
         QList<std::shared_ptr<Tracker>> mTrackers;
 

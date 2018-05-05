@@ -46,17 +46,18 @@ namespace tremotesf
     }
 
     ServersDialog::ServersDialog(QWidget* parent)
-        : QDialog(parent)
+        : QDialog(parent),
+          mNoServersWidget(new KMessageWidget(qApp->translate("tremotesf", "No servers"), this)),
+          mModel(new ServersModel(this)),
+          mProxyModel(new BaseProxyModel(mModel, Qt::DisplayRole, this)),
+          mServersView(new QListView(this))
     {
         setWindowTitle(qApp->translate("tremotesf", "Servers"));
 
-        mModel = new ServersModel(this);
-        mProxyModel = new BaseProxyModel(mModel, Qt::DisplayRole, this);
         mProxyModel->sort();
 
         auto layout = new QGridLayout(this);
 
-        mNoServersWidget = new KMessageWidget(qApp->translate("tremotesf", "No servers"), this);
         mNoServersWidget->setCloseButtonVisible(false);
         mNoServersWidget->setMessageType(KMessageWidget::Warning);
         if (!mModel->servers().isEmpty()) {
@@ -64,7 +65,6 @@ namespace tremotesf
         }
         layout->addWidget(mNoServersWidget, 0, 0);
 
-        mServersView = new QListView(this);
         mServersView->setContextMenuPolicy(Qt::CustomContextMenu);
         mServersView->setSelectionMode(QListView::ExtendedSelection);
         mServersView->setModel(mProxyModel);

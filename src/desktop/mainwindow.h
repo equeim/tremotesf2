@@ -78,30 +78,31 @@ namespace tremotesf
 
         Rpc* mRpc;
 
+        TorrentsModel* mTorrentsModel;
+        TorrentsProxyModel* mTorrentsProxyModel;
+
         QSplitter* mSplitter;
 
         MainWindowSideBar* mSideBar;
 
-        TorrentsModel* mTorrentsModel;
-        TorrentsProxyModel* mTorrentsProxyModel;
         TorrentsView* mTorrentsView;
         QHash<int, TorrentPropertiesDialog*> mTorrentsDialogs;
 
-        QMenu* mFileMenu;
-        QAction* mConnectAction;
-        QAction* mDisconnectAction;
-        QAction* mAddTorrentFileAction;
-        QAction* mAddTorrentLinkAction;
+        QMenu* mFileMenu = nullptr;
+        QAction* mConnectAction = nullptr;
+        QAction* mDisconnectAction = nullptr;
+        QAction* mAddTorrentFileAction = nullptr;
+        QAction* mAddTorrentLinkAction = nullptr;
 
-        QAction* mServerSettingsAction;
+        QAction* mServerSettingsAction = nullptr;
 
-        QMenu* mTorrentMenu;
-        QAction* mStartTorrentAction;
-        QAction* mStartTorrentNowAction;
-        QAction* mPauseTorrentAction;
-        QAction* mRemoveTorrentAction;
+        QMenu* mTorrentMenu = nullptr;
+        QAction* mStartTorrentAction = nullptr;
+        QAction* mStartTorrentNowAction = nullptr;
+        QAction* mPauseTorrentAction = nullptr;
+        QAction* mRemoveTorrentAction = nullptr;
 
-        QToolBar* mToolBar;
+        QToolBar* mToolBar = nullptr;
 
         QSystemTrayIcon* mTrayIcon;
     };
