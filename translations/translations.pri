@@ -1,4 +1,5 @@
 TRANSLATIONS = $$PWD/en.ts \
+               $$PWD/es.ts \
                $$PWD/nl.ts \
                $$PWD/nl_BE.ts \
                $$PWD/ru.ts
