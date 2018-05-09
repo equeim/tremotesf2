@@ -16,7 +16,7 @@ QMAKE_EXTRA_COMPILERS += lrelease
 
 for (file, TRANSLATIONS) {
     file = $$shadowed($$file)
-    TRANSLATIONS_QM += $$sprintf("%1.qm", $$str_member($$file, 0, $$num_add($$str_size($$file), -4)))
+    TRANSLATIONS_QM += $$sprintf("%1.qm", $$section(file, ".", 0, -2))
 }
 
 translations.files = $$TRANSLATIONS_QM
