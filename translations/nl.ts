@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="nl" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="nl" sourcelanguage="en" version="2.1">
 <context>
     <name>tremotesf</name>
     <message>
@@ -25,7 +23,7 @@
         <location filename="../qml/components/AboutPage.qml" line="105"/>
         <location filename="../qml/components/AboutPage.qml" line="119"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>Doneren</translation>
     </message>
     <message>
         <location filename="../qml/components/AboutPage.qml" line="143"/>
@@ -79,14 +77,14 @@
         <location filename="../src/desktop/addtorrentdialog.cpp" line="140"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="160"/>
         <source>Free space: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrije ruimte: %1</translation>
     </message>
     <message>
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="147"/>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="109"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="142"/>
         <source>Error getting free space</source>
-        <translation type="unfinished"></translation>
+        <translation>Fout bij verkrijgen van vrije ruimte</translation>
     </message>
     <message>
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="163"/>
@@ -334,7 +332,7 @@
         <location filename="../qml/components/FilterTorrentsPage.qml" line="152"/>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="260"/>
         <source>Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Mappen</translation>
     </message>
     <message>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="193"/>
@@ -394,10 +392,7 @@
         <location filename="../qml/components/LocalTorrentFilesPage.qml" line="291"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="360"/>
         <source>%n files selected</source>
-        <translation>
-            <numerusform>%n bestand geselecteerd</numerusform>
-            <numerusform>%n bestanden geselecteerd</numerusform>
-        </translation>
+        <translation><numerusform>%n bestand geselecteerd</numerusform><numerusform>%n bestanden geselecteerd</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="52"/>
@@ -440,10 +435,7 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="154"/>
         <source>%n torrents selected</source>
-        <translation>
-            <numerusform>%n torrent geselecteerd</numerusform>
-            <numerusform>%n torrents geselecteerd</numerusform>
-        </translation>
+        <translation><numerusform>%n torrent geselecteerd</numerusform><numerusform>%n torrents geselecteerd</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="159"/>
@@ -652,10 +644,7 @@
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="572"/>
         <source>Are you sure you want to remove %n selected torrents?</source>
-        <translation>
-            <numerusform>Weet je zeker dat je %n geselecteerde torrent wil verwijderen?</numerusform>
-            <numerusform>Weet je zeker dat je %n geselecteerde torrents wil verwijderen?</numerusform>
-        </translation>
+        <translation><numerusform>Weet je zeker dat je %n geselecteerde torrent wil verwijderen?</numerusform><numerusform>Weet je zeker dat je %n geselecteerde torrents wil verwijderen?</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
@@ -840,18 +829,12 @@
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="165"/>
         <source>%n servers selected</source>
-        <translation>
-            <numerusform>%n server geselecteerd</numerusform>
-            <numerusform>%n servers geselecteerd</numerusform>
-        </translation>
+        <translation><numerusform>%n server geselecteerd</numerusform><numerusform>%n servers geselecteerd</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="171"/>
         <source>Removing %n servers</source>
-        <translation>
-            <numerusform>%n server wordt verwijderd</numerusform>
-            <numerusform>%n servers worden verwijderd</numerusform>
-        </translation>
+        <translation><numerusform>%n server wordt verwijderd</numerusform><numerusform>%n servers worden verwijderd</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="36"/>
@@ -1132,21 +1115,21 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="182"/>
         <location filename="../src/torrentsmodel.cpp" line="260"/>
         <source>Completed</source>
-        <extracomment>Torrent&apos;s completed size</extracomment>
+        <extracomment>Torrent's completed size</extracomment>
         <translation>Voltooid</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="188"/>
         <location filename="../src/torrentsmodel.cpp" line="249"/>
         <source>Downloaded</source>
-        <extracomment>Torrent&apos;s downloaded size</extracomment>
+        <extracomment>Torrent's downloaded size</extracomment>
         <translation>Gedownload</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="194"/>
         <location filename="../src/torrentsmodel.cpp" line="252"/>
         <source>Uploaded</source>
-        <extracomment>Torrent&apos;s uploaded size</extracomment>
+        <extracomment>Torrent's uploaded size</extracomment>
         <translation>Geüpload</translation>
     </message>
     <message>
@@ -1238,10 +1221,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
         <source>%n peers</source>
-        <translation>
-            <numerusform>%n peer</numerusform>
-            <numerusform>%n peers</numerusform>
-        </translation>
+        <translation><numerusform>%n peer</numerusform><numerusform>%n peers</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="166"/>
@@ -1256,18 +1236,12 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="203"/>
         <source>%n trackers selected</source>
-        <translation>
-            <numerusform>%n tracker geselecteerd</numerusform>
-            <numerusform>%n trackers geselecteerd</numerusform>
-        </translation>
+        <translation><numerusform>%n tracker geselecteerd</numerusform><numerusform>%n trackers geselecteerd</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
         <source>Removing %n trackers</source>
-        <translation>
-            <numerusform>%n tracker wordt verwijderd</numerusform>
-            <numerusform>%n trackers worden verwijderd</numerusform>
-        </translation>
+        <translation><numerusform>%n tracker wordt verwijderd</numerusform><numerusform>%n trackers worden verwijderd</numerusform></translation>
     </message>
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="98"/>
@@ -1703,19 +1677,19 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="116"/>
         <source>Completed:</source>
-        <extracomment>Torrent&apos;s completed size</extracomment>
+        <extracomment>Torrent's completed size</extracomment>
         <translation>Voltooid:</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="119"/>
         <source>Downloaded:</source>
-        <extracomment>Torrent&apos;s downloaded size</extracomment>
+        <extracomment>Torrent's downloaded size</extracomment>
         <translation>Gedownload:</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="122"/>
         <source>Uploaded:</source>
-        <extracomment>Torrent&apos;s uploaded size</extracomment>
+        <extracomment>Torrent's uploaded size</extracomment>
         <translation>Geüpload:</translation>
     </message>
     <message>
@@ -1829,10 +1803,7 @@
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="171"/>
         <source>Are you sure you want to remove %n selected trackers?</source>
-        <translation>
-            <numerusform>Weet je zeker dat je %n geselecteerde tracker wil verwijderen?</numerusform>
-            <numerusform>Weet je zeker dat je %n geselecteerde trackers wil verwijderen?</numerusform>
-        </translation>
+        <translation><numerusform>Weet je zeker dat je %n geselecteerde tracker wil verwijderen?</numerusform><numerusform>Weet je zeker dat je %n geselecteerde trackers wil verwijderen?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/peersmodel.cpp" line="142"/>
@@ -1918,18 +1889,12 @@
     <message numerus="yes">
         <location filename="../src/torrent.cpp" line="142"/>
         <source>Downloading from %n peers</source>
-        <translation>
-            <numerusform>Downloaden van %n peer</numerusform>
-            <numerusform>Downloaden van %n peers</numerusform>
-        </translation>
+        <translation><numerusform>Downloaden van %n peer</numerusform><numerusform>Downloaden van %n peers</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../src/torrent.cpp" line="148"/>
         <source>Seeding to %n peers</source>
-        <translation>
-            <numerusform>Seeden naar %n peer</numerusform>
-            <numerusform>Seeden naar %n peers</numerusform>
-        </translation>
+        <translation><numerusform>Seeden naar %n peer</numerusform><numerusform>Seeden naar %n peers</numerusform></translation>
     </message>
     <message>
         <location filename="../src/torrent.cpp" line="151"/>
@@ -2002,7 +1967,7 @@
     <message>
         <location filename="../src/torrentsmodel.cpp" line="255"/>
         <source>Remaining</source>
-        <extracomment>Torrents&apos;s remaining size</extracomment>
+        <extracomment>Torrents's remaining size</extracomment>
         <translation>Resterend</translation>
     </message>
     <message>
