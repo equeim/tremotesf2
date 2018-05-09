@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     qApp->setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
 
     QCommandLineParser parser;
-#ifdef TREMOTESF_SAILFIDHOS
+#ifdef TREMOTESF_SAILFISHOS
     parser.addPositionalArgument(QLatin1String("torrent"), QLatin1String("Torrent file or URL"));
 #else
     parser.addPositionalArgument(QLatin1String("torrents"), QLatin1String("Torrent files or URLs"));
