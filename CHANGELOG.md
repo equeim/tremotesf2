@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.4.0] - 2018-05-09
+### Added
+- Donation links via PayPal and Yandex.Money
+- Filter torrents by download directory
+- Show available free space when adding torrent
+- Dutch, Flemish and Spanish translations
+
+### Fixed
+- Checking for Qt version in .pro file
+- Translations installation
+- Sailfish OS command line arguments
+
 ## [1.3.2] - 2017-03-05
 ### Changed
 - Disable debug output in release builds

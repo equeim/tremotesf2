@@ -6,7 +6,7 @@ lessThan(QT_MINOR_VERSION, 2) {
     error("Requires Qt 5.2 or greather")
 }
 
-VERSION = 1.3.2
+VERSION = 1.4.0
 DEFINES += TREMOTESF_VERSION=\\\"$$VERSION\\\"
 
 sailfishos {
