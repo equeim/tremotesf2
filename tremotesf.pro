@@ -1,34 +1,14 @@
 lessThan(QT_MAJOR_VERSION, 5) {
-    error("Requires Qt 5.2 or greather")
+    error("Requires Qt 5.6 or greather")
 }
 
-lessThan(QT_MINOR_VERSION, 2) {
-    error("Requires Qt 5.2 or greather")
+lessThan(QT_MINOR_VERSION, 6) {
+    error("Requires Qt 5.6 or greather")
 }
 
-VERSION = 1.4.0
-DEFINES += TREMOTESF_VERSION=\\\"$$VERSION\\\"
-
-sailfishos {
-    TARGET = harbour-tremotesf
-} else {
-    TARGET = tremotesf
-}
-
-isEmpty(PREFIX) {
-    PREFIX = /usr/local
-}
-
-include(data/data.pri)
-include(src/src.pri)
-
-sailfishos {
-    qml.files = qml
-    qml.path = $$PREFIX/share/$$TARGET
-    INSTALLS += qml
-}
-
-include(translations/translations.pri)
+TEMPLATE = subdirs
+SUBDIRS = libtremotesf tremotesf
+tremotesf.depends = libtremotesf
 
 OTHER_FILES += .clang-format \
                .gitignore \
