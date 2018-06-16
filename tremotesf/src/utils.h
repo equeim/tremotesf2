@@ -35,6 +35,7 @@ namespace tremotesf
 
         Q_INVOKABLE static QString formatProgress(float progress);
         Q_INVOKABLE static QString formatRatio(float ratio);
+        Q_INVOKABLE static QString formatRatio(long long downloaded, long long uploaded);
 
         Q_INVOKABLE static QString formatEta(int seconds);
 

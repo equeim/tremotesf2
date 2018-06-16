@@ -63,6 +63,7 @@
 #include "servereditdialog.h"
 #include "serversdialog.h"
 #include "serversettingsdialog.h"
+#include "serverstatsdialog.h"
 #include "settingsdialog.h"
 #include "torrentpropertiesdialog.h"
 #include "torrentsview.h"
@@ -404,6 +405,22 @@ namespace tremotesf
             }
         });
 
+        mServerStatsAction = new QAction(qApp->translate("tremotesf", "Server S&tats"), this);
+        QObject::connect(mServerStatsAction, &QAction::triggered, this, [=]() {
+            static ServerStatsDialog* dialog = nullptr;
+            if (dialog) {
+                dialog->raise();
+                dialog->activateWindow();
+            } else {
+                dialog = new ServerStatsDialog(mRpc, this);
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, []() {
+                    dialog = nullptr;
+                });
+                dialog->show();
+            }
+        });
+
         updateRpcActions();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindow::updateRpcActions);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindow::updateRpcActions);
@@ -432,10 +449,12 @@ namespace tremotesf
             mAddTorrentFileAction->setEnabled(true);
             mAddTorrentLinkAction->setEnabled(true);
             mServerSettingsAction->setEnabled(true);
+            mServerStatsAction->setEnabled(true);
         } else {
             mAddTorrentFileAction->setEnabled(false);
             mAddTorrentLinkAction->setEnabled(false);
             mServerSettingsAction->setEnabled(false);
+            mServerStatsAction->setEnabled(false);
         }
     }
 
@@ -670,6 +689,7 @@ namespace tremotesf
 
         toolsMenu->addSeparator();
         toolsMenu->addAction(mServerSettingsAction);
+        toolsMenu->addAction(mServerStatsAction);
 
         QMenu* helpMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Help"));
 

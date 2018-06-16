@@ -61,6 +61,12 @@ Page {
                 text: qsTranslate("tremotesf", "Server Settings")
                 onClicked: pageStack.push("ServerSettingsPage.qml")
             }
+
+            SimpleBackgroundItem {
+                enabled: rpc.connected
+                text: qsTranslate("tremotesf", "Server Stats")
+                onClicked: pageStack.push("ServerStatsPage.qml")
+            }
         }
     }
 }

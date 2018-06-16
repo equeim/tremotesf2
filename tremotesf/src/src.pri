@@ -94,6 +94,7 @@ sailfishos {
                $$PWD/desktop/servereditdialog.h \
                $$PWD/desktop/serversdialog.h \
                $$PWD/desktop/serversettingsdialog.h \
+               $$PWD/desktop/serverstatsdialog.h \
                $$PWD/desktop/settingsdialog.h \
                $$PWD/desktop/textinputdialog.h \
                $$PWD/desktop/torrentfilesview.h \
@@ -112,6 +113,7 @@ sailfishos {
                $$PWD/desktop/servereditdialog.cpp \
                $$PWD/desktop/serversdialog.cpp \
                $$PWD/desktop/serversettingsdialog.cpp \
+               $$PWD/desktop/serverstatsdialog.cpp \
                $$PWD/desktop/settingsdialog.cpp \
                $$PWD/desktop/textinputdialog.cpp \
                $$PWD/desktop/torrentfilesview.cpp \

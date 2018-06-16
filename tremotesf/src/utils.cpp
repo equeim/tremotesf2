@@ -223,6 +223,14 @@ namespace tremotesf
         return locale.toString(ratio, 'f', precision);
     }
 
+    QString Utils::formatRatio(long long downloaded, long long uploaded)
+    {
+        if (downloaded == 0) {
+            return formatRatio(0);
+        }
+        return formatRatio(static_cast<double>(uploaded) / downloaded);
+    }
+
     QString Utils::formatEta(int seconds)
     {
         if (seconds < 0) {

@@ -95,6 +95,7 @@ namespace tremotesf
         QAction* mAddTorrentLinkAction = nullptr;
 
         QAction* mServerSettingsAction = nullptr;
+        QAction* mServerStatsAction = nullptr;
 
         QMenu* mTorrentMenu = nullptr;
         QAction* mStartTorrentAction = nullptr;
