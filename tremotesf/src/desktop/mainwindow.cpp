@@ -191,15 +191,15 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(mRpc, &Rpc::torrentAdded, this, [=](const QString& torrent) {
+        QObject::connect(mRpc, &Rpc::torrentAdded, this, [=](const std::shared_ptr<Torrent>& torrent) {
             if (Settings::instance()->notificationOnAddingTorrent()) {
-                showNotification(qApp->translate("tremotesf", "Torrent added"), torrent);
+                showNotification(qApp->translate("tremotesf", "Torrent added"), torrent->name());
             }
         });
 
-        QObject::connect(mRpc, &Rpc::torrentFinished, this, [=](int, const QString&, const QString& name) {
+        QObject::connect(mRpc, &Rpc::torrentFinished, this, [=](const std::shared_ptr<Torrent>& torrent) {
             if (Settings::instance()->notificationOnAddingTorrent()) {
-                showNotification(qApp->translate("tremotesf", "Torrent finished"), name);
+                showNotification(qApp->translate("tremotesf", "Torrent finished"), torrent->name());
             }
         });
 
