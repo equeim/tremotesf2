@@ -24,7 +24,9 @@ namespace libtremotesf
     ServerStats::ServerStats(QObject* parent)
         : QObject(parent),
           mDownloadSpeed(0),
-          mUploadSpeed(0)
+          mUploadSpeed(0),
+          mCurrentSession(new SessionStats(this)),
+          mTotal(new SessionStats(this))
     {
 
     }
@@ -39,30 +41,57 @@ namespace libtremotesf
         return mUploadSpeed;
     }
 
-    const SessionStats* ServerStats::currentSession() const
+    SessionStats* ServerStats::currentSession() const
     {
-        return &mCurrentSession;
+        return mCurrentSession;
     }
 
-    const SessionStats* ServerStats::total() const
+    SessionStats* ServerStats::total() const
     {
-        return &mTotal;
+        return mTotal;
     }
 
     void ServerStats::update(const QVariantMap& serverStats)
     {
         mDownloadSpeed = serverStats[QLatin1String("downloadSpeed")].toLongLong();
         mUploadSpeed = serverStats[QLatin1String("uploadSpeed")].toLongLong();
-        mCurrentSession.update(serverStats[QLatin1String("current-stats")].toMap());
-        mTotal.update(serverStats[QLatin1String("cumulative-stats")].toMap());
+        mCurrentSession->update(serverStats[QLatin1String("current-stats")].toMap());
+        mTotal->update(serverStats[QLatin1String("cumulative-stats")].toMap());
         emit updated();
+    }
+
+    SessionStats::SessionStats(QObject* parent)
+        : QObject(parent)
+    {
+
+    }
+
+    long long SessionStats::downloaded() const
+    {
+        return mDownloaded;
+    }
+
+    long long SessionStats::uploaded() const
+    {
+        return mUploaded;
+    }
+
+    int SessionStats::duration() const
+    {
+        return mDuration;
+    }
+
+    int SessionStats::sessionCount() const
+    {
+        return mSessionCount;
     }
 
     void SessionStats::update(const QVariantMap& stats)
     {
-        downloaded = stats[QLatin1String("downloadedBytes")].toLongLong();
-        uploaded = stats[QLatin1String("uploadedBytes")].toLongLong();
-        duration = stats[QLatin1String("secondsActive")].toInt();
-        sessionCount = stats[QLatin1String("sessionCount")].toInt();
+        mDownloaded = stats[QLatin1String("downloadedBytes")].toLongLong();
+        mUploaded = stats[QLatin1String("uploadedBytes")].toLongLong();
+        mDuration = stats[QLatin1String("secondsActive")].toInt();
+        mSessionCount = stats[QLatin1String("sessionCount")].toInt();
+        emit updated();
     }
 }

@@ -26,13 +26,31 @@ namespace libtremotesf
 {
     class Rpc;
 
-    struct SessionStats
+    class SessionStats : public QObject
     {
-        long long downloaded;
-        long long uploaded;
-        int duration;
-        int sessionCount;
+        Q_OBJECT
+        Q_PROPERTY(long long downloaded READ downloaded NOTIFY updated)
+        Q_PROPERTY(long long uploaded READ uploaded NOTIFY updated)
+        Q_PROPERTY(int duration READ duration NOTIFY updated)
+        Q_PROPERTY(int sessionCount READ sessionCount NOTIFY updated)
+    public:
+        explicit SessionStats(QObject* parent = nullptr);
+
+        long long downloaded() const;
+        long long uploaded() const;
+        int duration() const;
+        int sessionCount() const;
+
         void update(const QVariantMap& stats);
+
+    private:
+        long long mDownloaded;
+        long long mUploaded;
+        int mDuration;
+        int mSessionCount;
+
+    signals:
+        void updated();
     };
 
     class ServerStats : public QObject
@@ -40,22 +58,24 @@ namespace libtremotesf
         Q_OBJECT
         Q_PROPERTY(long long downloadSpeed READ downloadSpeed NOTIFY updated)
         Q_PROPERTY(long long uploadSpeed READ uploadSpeed NOTIFY updated)
+        Q_PROPERTY(libtremotesf::SessionStats* currentSession READ currentSession CONSTANT)
+        Q_PROPERTY(libtremotesf::SessionStats* total READ total CONSTANT)
     public:
         explicit ServerStats(QObject* parent);
 
         long long downloadSpeed() const;
         long long uploadSpeed() const;
 
-        const SessionStats* currentSession() const;
-        const SessionStats* total() const;
+        SessionStats* currentSession() const;
+        SessionStats* total() const;
 
         void update(const QVariantMap& serverStats);
 
     private:
         long long mDownloadSpeed;
         long long mUploadSpeed;
-        SessionStats mCurrentSession;
-        SessionStats mTotal;
+        SessionStats* mCurrentSession;
+        SessionStats* mTotal;
     signals:
         void updated();
     };
