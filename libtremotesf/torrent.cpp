@@ -106,6 +106,14 @@ namespace libtremotesf
                 changed = true;
             }
         }
+
+        void setChanged(double& value, const double& newValue, bool& changed)
+        {
+            if (!qFuzzyCompare(newValue, value)) {
+                value = newValue;
+                changed = true;
+            }
+        }
     }
 
     const QString Torrent::idKey(QLatin1String("id"));
@@ -128,7 +136,7 @@ namespace libtremotesf
     {
         downloadSpeed = peerMap["rateToClient"].toLongLong();
         uploadSpeed = peerMap["rateToPeer"].toLongLong();
-        progress = peerMap["progress"].toFloat();
+        progress = peerMap["progress"].toDouble();
         flags = peerMap["flagStr"].toString();
         client = peerMap["clientName"].toString();
     }
@@ -194,12 +202,17 @@ namespace libtremotesf
         return mSizeWhenDone;
     }
 
-    float Torrent::percentDone() const
+    double Torrent::percentDone() const
     {
         return mPercentDone;
     }
 
-    float Torrent::recheckProgress() const
+    bool Torrent::isFinished() const
+    {
+        return mLeftUntilDone == 0;
+    }
+
+    double Torrent::recheckProgress() const
     {
         return mRecheckProgress;
     }
@@ -277,7 +290,7 @@ namespace libtremotesf
         return mTotalUploaded;
     }
 
-    float Torrent::ratio() const
+    double Torrent::ratio() const
     {
         return mRatio;
     }
@@ -294,12 +307,12 @@ namespace libtremotesf
         mRpc->setTorrentProperty(mId, ratioLimitModeKey, mRatioLimitMode);
     }
 
-    float Torrent::ratioLimit() const
+    double Torrent::ratioLimit() const
     {
         return mRatioLimit;
     }
 
-    void Torrent::setRatioLimit(float limit)
+    void Torrent::setRatioLimit(double limit)
     {
         mRatioLimit = limit;
         emit limitsEdited();
@@ -551,8 +564,8 @@ namespace libtremotesf
         setChanged(mCompletedSize, torrentMap[completedSizeKey].toLongLong(), mChanged);
         setChanged(mLeftUntilDone, torrentMap[leftUntilDoneKey].toLongLong(), mChanged);
         setChanged(mSizeWhenDone, torrentMap[sizeWhenDoneKey].toLongLong(), mChanged);
-        setChanged(mPercentDone, torrentMap[percentDoneKey].toFloat(), mChanged);
-        setChanged(mRecheckProgress, torrentMap[recheckProgressKey].toFloat(), mChanged);
+        setChanged(mPercentDone, torrentMap[percentDoneKey].toDouble(), mChanged);
+        setChanged(mRecheckProgress, torrentMap[recheckProgressKey].toDouble(), mChanged);
         setChanged(mEta, torrentMap[etaKey].toInt(), mChanged);
 
         setChanged(mDownloadSpeed, torrentMap[downloadSpeedKey].toLongLong(), mChanged);
@@ -565,9 +578,9 @@ namespace libtremotesf
 
         setChanged(mTotalDownloaded, torrentMap[totalDownloadedKey].toLongLong(), mChanged);
         setChanged(mTotalUploaded, torrentMap[totalUploadedKey].toLongLong(), mChanged);
-        setChanged(mRatio, torrentMap[ratioKey].toFloat(), mChanged);
+        setChanged(mRatio, torrentMap[ratioKey].toDouble(), mChanged);
         setChanged(mRatioLimitMode, static_cast<RatioLimitMode>(torrentMap[ratioLimitModeKey].toInt()), mChanged);
-        setChanged(mRatioLimit, torrentMap[ratioLimitKey].toFloat(), mChanged);
+        setChanged(mRatioLimit, torrentMap[ratioLimitKey].toDouble(), mChanged);
 
         setChanged(mSeeders, torrentMap[seedersKey].toInt(), mChanged);
         setChanged(mLeechers, torrentMap[leechersKey].toInt(), mChanged);

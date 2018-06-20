@@ -66,7 +66,6 @@ namespace libtremotesf
         Q_PROPERTY(libtremotesf::ServerStats* serverStats READ serverStats CONSTANT)
         Q_PROPERTY(bool connected READ isConnected NOTIFY connectedChanged)
         Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-        //Q_PROPERTY(QString statusString READ statusString NOTIFY statusStringChanged)
         Q_PROPERTY(Error error READ error NOTIFY errorChanged)
         Q_PROPERTY(bool local READ isLocal NOTIFY connectedChanged)
         Q_PROPERTY(int torrentsCount READ torrentsCount NOTIFY torrentsUpdated)
@@ -94,6 +93,7 @@ namespace libtremotesf
         Q_ENUM(Error)
 
         explicit Rpc(ServerSettings* serverSettings = nullptr, QObject* parent = nullptr);
+        ~Rpc() override;
 
         ServerSettings* serverSettings() const;
         ServerStats* serverStats() const;
@@ -104,7 +104,6 @@ namespace libtremotesf
 
         bool isConnected() const;
         Status status() const;
-        //QString statusString() const;
         Error error() const;
         bool isLocal() const;
 
@@ -204,7 +203,6 @@ namespace libtremotesf
         bool mRpcVersionChecked;
         bool mServerSettingsUpdated;
         bool mTorrentsUpdated;
-        bool mFirstUpdate;
         bool mServerStatsUpdated;
         QTimer* mUpdateTimer;
 
@@ -224,8 +222,8 @@ namespace libtremotesf
 
         void torrentsUpdated();
 
-        void torrentAdded(const std::shared_ptr<Torrent>& torrent);
-        void torrentFinished(const std::shared_ptr<Torrent>& torrent);
+        void torrentAdded(libtremotesf::Torrent* torrent);
+        void torrentFinished(libtremotesf::Torrent* torrent);
 
         void torrentAddDuplicate();
         void torrentAddError();

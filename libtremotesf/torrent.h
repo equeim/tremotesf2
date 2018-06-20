@@ -61,7 +61,7 @@ namespace libtremotesf
         QString address;
         long long downloadSpeed;
         long long uploadSpeed;
-        float progress;
+        double progress;
         QString flags;
         QString client;
     };
@@ -82,8 +82,9 @@ namespace libtremotesf
         Q_PROPERTY(long long completedSize READ completedSize NOTIFY updated)
         Q_PROPERTY(long long leftUntilDone READ leftUntilDone NOTIFY updated)
         Q_PROPERTY(long long sizeWhenDone READ sizeWhenDone NOTIFY updated)
-        Q_PROPERTY(float percentDone READ percentDone NOTIFY updated)
-        Q_PROPERTY(float recheckProgress READ recheckProgress NOTIFY updated)
+        Q_PROPERTY(double percentDone READ percentDone NOTIFY updated)
+        Q_PROPERTY(bool finished READ isFinished NOTIFY updated)
+        Q_PROPERTY(double recheckProgress READ recheckProgress NOTIFY updated)
         Q_PROPERTY(int eta READ eta NOTIFY updated)
 
         Q_PROPERTY(long long downloadSpeed READ downloadSpeed NOTIFY updated)
@@ -96,9 +97,9 @@ namespace libtremotesf
 
         Q_PROPERTY(long long totalDownloaded READ totalDownloaded NOTIFY updated)
         Q_PROPERTY(long long totalUploaded READ totalUploaded NOTIFY updated)
-        Q_PROPERTY(float ratio READ ratio NOTIFY updated)
+        Q_PROPERTY(double ratio READ ratio NOTIFY updated)
         Q_PROPERTY(RatioLimitMode ratioLimitMode READ ratioLimitMode WRITE setRatioLimitMode NOTIFY updated)
-        Q_PROPERTY(float ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY updated)
+        Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY updated)
 
         Q_PROPERTY(int seeders READ seeders NOTIFY updated)
         Q_PROPERTY(int leechers READ leechers NOTIFY updated)
@@ -173,8 +174,9 @@ namespace libtremotesf
         long long completedSize() const;
         long long leftUntilDone() const;
         long long sizeWhenDone() const;
-        float percentDone() const;
-        float recheckProgress() const;
+        double percentDone() const;
+        bool isFinished() const;
+        double recheckProgress() const;
         int eta() const;
 
         long long downloadSpeed() const;
@@ -192,11 +194,11 @@ namespace libtremotesf
 
         long long totalDownloaded() const;
         long long totalUploaded() const;
-        float ratio() const;
+        double ratio() const;
         RatioLimitMode ratioLimitMode() const;
         Q_INVOKABLE void setRatioLimitMode(libtremotesf::Torrent::RatioLimitMode mode);
-        float ratioLimit() const;
-        Q_INVOKABLE void setRatioLimit(float limit);
+        double ratioLimit() const;
+        Q_INVOKABLE void setRatioLimit(double limit);
 
         int seeders() const;
         int leechers() const;
@@ -262,8 +264,8 @@ namespace libtremotesf
         long long mCompletedSize = 0;
         long long mLeftUntilDone = 0;
         long long mSizeWhenDone = 0;
-        float mPercentDone = 0.0f;
-        float mRecheckProgress = 0.0f;
+        double mPercentDone = 0.0;
+        double mRecheckProgress = 0.0;
         int mEta = 0;
 
         long long mDownloadSpeed = 0;
@@ -276,9 +278,9 @@ namespace libtremotesf
 
         long long mTotalDownloaded = 0;
         long long mTotalUploaded = 0;
-        float mRatio = 0.0f;
+        double mRatio = 0.0;
         RatioLimitMode mRatioLimitMode = GlobalRatioLimit;
-        float mRatioLimit = 0.0f;
+        double mRatioLimit = 0.0;
 
         int mSeeders = 0;
         int mLeechers = 0;
