@@ -30,6 +30,18 @@ namespace tremotesf
 {
     using namespace libtremotesf;
 
+    struct LastTorrentsTorrent
+    {
+        const QString hashString;
+        const bool finished;
+    };
+
+    struct LastTorrents
+    {
+        bool saved = false;
+        std::vector<LastTorrentsTorrent> torrents;
+    };
+
     class Servers : public QObject
     {
         Q_OBJECT
@@ -49,6 +61,9 @@ namespace tremotesf
         QString currentServerName() const;
         QString currentServerAddress();
         Q_INVOKABLE void setCurrentServer(const QString& name);
+
+        LastTorrents currentServerLastTorrents() const;
+        Q_INVOKABLE void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
 
         Q_INVOKABLE void setServer(const QString& oldName,
                                    const QString& name,

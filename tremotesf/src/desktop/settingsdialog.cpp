@@ -30,27 +30,43 @@
 namespace tremotesf
 {
     SettingsDialog::SettingsDialog(QWidget* parent)
-        : QDialog(parent),
-          mConnectOnStartupCheckBox(new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this)),
-          mNotificationOnDisconnectingCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show a notification on disconnecting from server"), this)),
-          mNotificationOnAddingTorrentCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show a notification when torrents are added"), this)),
-          mNotificationOfFinishedTorrentsCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show a notification when torrents finish"), this)),
-          mTrayIconCheckBox(new QCheckBox(qApp->translate("tremotesf", "Show icon in the notification area"), this))
+        : QDialog(parent)
     {
         setWindowTitle(qApp->translate("tremotesf", "Options"));
 
         auto layout = new QVBoxLayout(this);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
-        layout->addWidget(mConnectOnStartupCheckBox);
+        auto connectOnStartupCheckBox = new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this);
+        layout->addWidget(connectOnStartupCheckBox);
 
         auto notificationsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Notifications"), this);
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
         notificationsGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-        notificationsGroupBoxLayout->addWidget(mNotificationOnDisconnectingCheckBox);
-        notificationsGroupBoxLayout->addWidget(mNotificationOnAddingTorrentCheckBox);
-        notificationsGroupBoxLayout->addWidget(mNotificationOfFinishedTorrentsCheckBox);
-        notificationsGroupBoxLayout->addWidget(mTrayIconCheckBox);
+
+        auto notificationOnDisconnectingCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify when disconnecting from server"), this);
+        notificationsGroupBoxLayout->addWidget(notificationOnDisconnectingCheckBox);
+
+        auto notificationOnAddingTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on added torrents"), this);
+        notificationsGroupBoxLayout->addWidget(notificationOnAddingTorrentCheckBox);
+
+        auto notificationOfFinishedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on finished torrents"), this);
+        notificationsGroupBoxLayout->addWidget(notificationOfFinishedTorrentsCheckBox);
+
+        auto trayIconCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show icon in the notification area"), this);
+        notificationsGroupBoxLayout->addWidget(trayIconCheckBox);
+
+        auto whenConnectingGroupBox = new QGroupBox(qApp->translate("tremotesf", "When connecting to server"), this);
+        auto whenConnectingGroupBoxLayout = new QVBoxLayout(whenConnectingGroupBox);
+        whenConnectingGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+        auto addedSinceLastConnectionCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on added torrents since last connection to server"), this);
+        whenConnectingGroupBoxLayout->addWidget(addedSinceLastConnectionCheckBox);
+
+        auto finishedSinceLastConnectionCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on finished torrents since last connection to server"), this);
+        whenConnectingGroupBoxLayout->addWidget(finishedSinceLastConnectionCheckBox);
+
+        notificationsGroupBoxLayout->addWidget(whenConnectingGroupBox);
 
         layout->addWidget(notificationsGroupBox);
 
@@ -60,21 +76,23 @@ namespace tremotesf
         layout->addWidget(dialogButtonBox);
 
         auto settings = Settings::instance();
-        mConnectOnStartupCheckBox->setChecked(settings->connectOnStartup());
-        mNotificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
-        mNotificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
-        mNotificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
-        mTrayIconCheckBox->setChecked(settings->showTrayIcon());
-    }
+        connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
+        notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
+        notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
+        notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
+        trayIconCheckBox->setChecked(settings->showTrayIcon());
+        addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
+        finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
 
-    void SettingsDialog::accept()
-    {
-        auto settings = Settings::instance();
-        settings->setConnectOnStartup(mConnectOnStartupCheckBox->isChecked());
-        settings->setNotificationOnDisconnecting(mNotificationOnDisconnectingCheckBox->isChecked());
-        settings->setNotificationOnAddingTorrent(mNotificationOnAddingTorrentCheckBox->isChecked());
-        settings->setNotificationOfFinishedTorrents(mNotificationOfFinishedTorrentsCheckBox->isChecked());
-        settings->setShowTrayIcon(mTrayIconCheckBox->isChecked());
-        QDialog::accept();
+        QObject::connect(this, &SettingsDialog::accepted, this, [=]() {
+            auto settings = Settings::instance();
+            settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
+            settings->setNotificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());
+            settings->setNotificationOnAddingTorrent(notificationOnAddingTorrentCheckBox->isChecked());
+            settings->setNotificationOfFinishedTorrents(notificationOfFinishedTorrentsCheckBox->isChecked());
+            settings->setShowTrayIcon(trayIconCheckBox->isChecked());
+            settings->setNotificationsOnAddedTorrentsSinceLastConnection(addedSinceLastConnectionCheckBox->isChecked());
+            settings->setNotificationsOnFinishedTorrentsSinceLastConnection(finishedSinceLastConnectionCheckBox->isChecked());
+        });
     }
 }

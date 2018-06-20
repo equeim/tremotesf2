@@ -32,6 +32,8 @@ namespace tremotesf
         Q_PROPERTY(bool notificationOnDisconnecting READ notificationOnDisconnecting WRITE setNotificationOnDisconnecting)
         Q_PROPERTY(bool notificationOnAddingTorrent READ notificationOnAddingTorrent WRITE setNotificationOnAddingTorrent)
         Q_PROPERTY(bool notificationOfFinishedTorrents READ notificationOfFinishedTorrents WRITE setNotificationOfFinishedTorrents)
+        Q_PROPERTY(bool notificationsOnAddedTorrentsSinceLastConnection READ notificationsOnAddedTorrentsSinceLastConnection WRITE setNotificationsOnAddedTorrentsSinceLastConnection)
+        Q_PROPERTY(bool notificationsOnFinishedTorrentsSinceLastConnection READ notificationsOnFinishedTorrentsSinceLastConnection WRITE setNotificationsOnFinishedTorrentsSinceLastConnection)
     public:
         static Settings* instance();
 
@@ -46,6 +48,12 @@ namespace tremotesf
 
         bool notificationOfFinishedTorrents() const;
         void setNotificationOfFinishedTorrents(bool enabled);
+
+        bool notificationsOnAddedTorrentsSinceLastConnection() const;
+        void setNotificationsOnAddedTorrentsSinceLastConnection(bool enabled);
+
+        bool notificationsOnFinishedTorrentsSinceLastConnection() const;
+        void setNotificationsOnFinishedTorrentsSinceLastConnection(bool enabled);
 
 #ifdef TREMOTESF_SAILFISHOS
         Q_PROPERTY(int torrentsSortOrder READ torrentsSortOrder WRITE setTorrentsSortOrder)

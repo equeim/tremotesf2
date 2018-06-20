@@ -199,10 +199,11 @@ Page {
             activate()
         }
 
-        function openTorrentPropertiesPage(torrent) {
+        function openTorrentPropertiesPage(hashString) {
             activate()
             pageStack.pop(mainPage, PageStackAction.Immediate)
-            pageStack.push("TorrentPropertiesPage.qml", {"torrent": torrentsModel.torrentByName(torrent)}, PageStackAction.Immediate)
+            pageStack.push("TorrentPropertiesPage.qml", {"torrentHash": hashString,
+                                                         "torrent": rpc.torrentByHash(hashString)}, PageStackAction.Immediate)
         }
 
         service: "org.tremotesf"
@@ -215,66 +216,87 @@ Page {
 
         onConnectedChanged: {
             if (!rpc.connected && (rpc.error !== Rpc.NoError) && Settings.notificationOnDisconnecting) {
-                notification.summary = qsTranslate("tremotesf", "Disconnected")
-                notification.body = rpc.statusString
-                notification.previewSummary = notification.summary
-                notification.previewBody = notification.body
-                notification.remoteActions = [{
-                    "name": "default",
-                    "service": dbusAdaptor.service,
-                    "path": dbusAdaptor.path,
-                    "iface": dbusAdaptor.iface,
-                    "method": "activateWindow",
-                }]
-                notification.replacesId = 0
-                notification.publish()
+                notification.publishGeneric(qsTranslate("tremotesf", "Disconnected"), rpc.statusString)
             }
         }
 
-        onTorrentAdded: {
-            if (!Settings.notificationOnAddingTorrent) {
-                return
+        onAddedNotificationRequested: {
+            var count = hashStrings.length
+            if (count === 1) {
+                notification.addedTorrent(names[0], hashStrings[0], true)
+            } else {
+                for (var i = 0; i < count; ++i) {
+                    notification.addedTorrent(names[i], hashStrings[i], false)
+                }
+                notification.publishGeneric(qsTranslate("tremotesf", "%n torrents added", String(), count))
             }
-
-            notification.summary = qsTranslate("tremotesf", "Torrent added")
-            notification.body = torrent
-            notification.previewSummary = notification.summary
-            notification.previewBody = notification.body
-            notification.remoteActions = [{
-                "name": "default",
-                "service": dbusAdaptor.service,
-                "path": dbusAdaptor.path,
-                "iface": dbusAdaptor.iface,
-                "method": "openTorrentPropertiesPage",
-                "arguments": [torrent]
-            }]
-            notification.replacesId = 0
-            notification.publish()
         }
 
-        onTorrentFinished: {
-            if (!Settings.notificationOfFinishedTorrents) {
-                return
+        onFinishedNotificationRequested: {
+            var count = hashStrings.length
+            if (count === 1) {
+                notification.finishedTorrent(names[0], hashStrings[0], true)
+            } else {
+                for (var i = 0; i < count; ++i) {
+                    notification.finishedTorrent(names[i], hashStrings[i], false)
+                }
+                notification.publishGeneric(qsTranslate("tremotesf", "%n torrents finished", String(), count))
             }
-
-            notification.summary = qsTranslate("tremotesf", "Torrent finished")
-            notification.body = torrent
-            notification.previewSummary = notification.summary
-            notification.previewBody = notification.body
-            notification.remoteActions = [{
-                "name": "default",
-                "service": dbusAdaptor.service,
-                "path": dbusAdaptor.path,
-                "iface": dbusAdaptor.iface,
-                "method": "openTorrentPropertiesPage",
-                "arguments": [torrent]
-            }]
-            notification.replacesId = 0
-            notification.publish()
         }
     }
 
     Notification {
         id: notification
+
+        function publishGeneric(summary, body) {
+            notification.summary = summary
+            notification.previewSummary = summary
+            if (body === undefined) {
+                notification.body = String()
+                notification.previewBody = String()
+            } else {
+                notification.body = body
+                notification.previewBody = body
+            }
+            notification.remoteActions = [{
+                "name": "default",
+                "service": dbusAdaptor.service,
+                "path": dbusAdaptor.path,
+                "iface": dbusAdaptor.iface,
+                "method": "activateWindow",
+            }]
+            notification.replacesId = 0
+            notification.publish()
+        }
+
+        function addedTorrent(name, hashString, preview) {
+            publishTorrent(qsTranslate("tremotesf", "Torrent added"), name, hashString, preview)
+        }
+
+        function finishedTorrent(name, hashString, preview) {
+            publishTorrent(qsTranslate("tremotesf", "Torrent finished"), name, hashString, preview)
+        }
+
+        function publishTorrent(summary, body, hashString, preview) {
+            notification.summary = summary
+            notification.body = body
+            if (preview) {
+                notification.previewSummary = summary
+                notification.previewBody = body
+            } else {
+                notification.previewSummary = String()
+                notification.previewBody = String()
+            }
+            notification.remoteActions = [{
+                "name": "default",
+                "service": dbusAdaptor.service,
+                "path": dbusAdaptor.path,
+                "iface": dbusAdaptor.iface,
+                "method": "openTorrentPropertiesPage",
+                "arguments": [hashString]
+            }]
+            notification.replacesId = 0
+            notification.publish()
+        }
     }
 }

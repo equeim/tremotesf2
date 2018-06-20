@@ -29,14 +29,6 @@ namespace tremotesf
     {
     public:
         explicit SettingsDialog(QWidget* parent = nullptr);
-        void accept() override;
-
-    private:
-        QCheckBox* mConnectOnStartupCheckBox;
-        QCheckBox* mNotificationOnDisconnectingCheckBox;
-        QCheckBox* mNotificationOnAddingTorrentCheckBox;
-        QCheckBox* mNotificationOfFinishedTorrentsCheckBox;
-        QCheckBox* mTrayIconCheckBox;
     };
 }
 

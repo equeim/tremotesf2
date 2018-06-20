@@ -33,6 +33,8 @@ namespace tremotesf
         const QString notificationOnDisconnectingKey(QLatin1String("notificationOnDisconnecting"));
         const QString notificationOnAddingTorrentKey(QLatin1String("notificationOnAddingTorrent"));
         const QString notificationOfFinishedTorrentsKey(QLatin1String("notificationOfFinishedTorrents"));
+        const QString notificationsOnAddedTorrentsSinceLastConnectionKey(QLatin1String("notificationsOnAddedTorrentsSinceLastConnection"));
+        const QString notificationsOnFinishedTorrentsSinceLastConnectionKey(QLatin1String("notificationsOnFinishedTorrentsSinceLastConnection"));
 #ifdef TREMOTESF_SAILFISHOS
         const QString torrentsSortOrderKey(QLatin1String("torrentsSortOrder"));
         const QString torrentsSortRoleKey(QLatin1String("torrentsSortRole"));
@@ -99,6 +101,26 @@ namespace tremotesf
     void Settings::setNotificationOfFinishedTorrents(bool enabled)
     {
         mSettings->setValue(notificationOfFinishedTorrentsKey, enabled);
+    }
+
+    bool Settings::notificationsOnAddedTorrentsSinceLastConnection() const
+    {
+        return mSettings->value(notificationsOnAddedTorrentsSinceLastConnectionKey, false).toBool();
+    }
+
+    void Settings::setNotificationsOnAddedTorrentsSinceLastConnection(bool enabled)
+    {
+        mSettings->setValue(notificationsOnAddedTorrentsSinceLastConnectionKey, enabled);
+    }
+
+    bool Settings::notificationsOnFinishedTorrentsSinceLastConnection() const
+    {
+        return mSettings->value(notificationsOnFinishedTorrentsSinceLastConnectionKey, false).toBool();
+    }
+
+    void Settings::setNotificationsOnFinishedTorrentsSinceLastConnection(bool enabled)
+    {
+        mSettings->setValue(notificationsOnFinishedTorrentsSinceLastConnectionKey, enabled);
     }
 
 #ifdef TREMOTESF_SAILFISHOS

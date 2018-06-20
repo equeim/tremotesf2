@@ -14,6 +14,9 @@ namespace tremotesf
         QString statusString() const;
     signals:
         void statusStringChanged();
+
+        void addedNotificationRequested(const QStringList& hashStrings, const QStringList& names);
+        void finishedNotificationRequested(const QStringList& hashStrings, const QStringList& names);
     };
 }
 

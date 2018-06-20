@@ -18,6 +18,8 @@
 
 #include "mainwindow.h"
 
+#include <algorithm>
+
 #include <QDebug>
 
 #include <QAction>
@@ -43,6 +45,9 @@
 #ifdef QT_DBUS_LIB
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <QDBusPendingCall>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
 #endif
 
 #include "../libtremotesf/serverstats.h"
@@ -192,16 +197,12 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(mRpc, &Rpc::torrentAdded, this, [=](const std::shared_ptr<Torrent>& torrent) {
-            if (Settings::instance()->notificationOnAddingTorrent()) {
-                showNotification(qApp->translate("tremotesf", "Torrent added"), torrent->name());
-            }
+        QObject::connect(mRpc, &Rpc::addedNotificationRequested, this, [=](const QStringList&, const QStringList& names) {
+            showAddedNotification(names);
         });
 
-        QObject::connect(mRpc, &Rpc::torrentFinished, this, [=](const std::shared_ptr<Torrent>& torrent) {
-            if (Settings::instance()->notificationOnAddingTorrent()) {
-                showNotification(qApp->translate("tremotesf", "Torrent finished"), torrent->name());
-            }
+        QObject::connect(mRpc, &Rpc::finishedNotificationRequested, this, [=](const QStringList&, const QStringList& names) {
+            showFinishedNotification(names);
         });
 
         if (Servers::instance()->hasServers()) {
@@ -242,32 +243,6 @@ namespace tremotesf
         if (!(minimized && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
         }
-    }
-
-    void MainWindow::showNotification(const QString& summary, const QString& body)
-    {
-#ifdef QT_DBUS_LIB
-        //
-        // https://developer.gnome.org/notification-spec
-        //
-        QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.freedesktop.Notifications"),
-                                                            QLatin1String("/org/freedesktop/Notifications"),
-                                                            QLatin1String("org.freedesktop.Notifications"),
-                                                            QLatin1String("Notify")));
-        message.setArguments({QLatin1String("Tremotesf"),
-                              uint(0),
-                              QLatin1String("tremotesf"),
-                              summary,
-                              body,
-                              QVariant(QVariant::StringList),
-                              QVariant(QVariant::Map),
-                              -1});
-        if (QDBusConnection::sessionBus().call(message).type() == QDBusMessage::ReplyMessage) {
-            return;
-        }
-#endif
-
-        mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
     }
 
     void MainWindow::closeEvent(QCloseEvent* event)
@@ -805,5 +780,68 @@ namespace tremotesf
         QObject::connect(timer, &QTimer::timeout, this, function);
         QObject::connect(timer, &QTimer::timeout, timer, &QTimer::deleteLater);
         timer->start();
+    }
+
+    void MainWindow::showFinishedNotification(const QStringList& names)
+    {
+        showTorrentsNotification(names.size() == 1 ? qApp->translate("tremotesf", "Torrent finished")
+                                                   : qApp->translate("tremotesf", "%n torrents finished", nullptr, names.size()),
+                                 names);
+    }
+
+    void MainWindow::showAddedNotification(const QStringList& names)
+    {
+        showTorrentsNotification(names.size() == 1 ? qApp->translate("tremotesf", "Torrent added")
+                                                   : qApp->translate("tremotesf", "%n torrents added", nullptr, names.size()),
+                                 names);
+    }
+
+    void MainWindow::showTorrentsNotification(const QString& summary, const QStringList& torrents)
+    {
+        if (torrents.size() == 1) {
+            showNotification(summary, torrents.first());
+        } else {
+            QStringList join(torrents);
+            for (QString& torrent : join) {
+                torrent.prepend("\u2022 ");
+            }
+            showNotification(summary, join.join('\n'));
+        }
+    }
+
+    void MainWindow::showNotification(const QString& summary, const QString& body)
+    {
+#ifdef QT_DBUS_LIB
+        //
+        // https://developer.gnome.org/notification-spec
+        //
+        QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.freedesktop.Notifications"),
+                                                            QLatin1String("/org/freedesktop/Notifications"),
+                                                            QLatin1String("org.freedesktop.Notifications"),
+                                                            QLatin1String("Notify")));
+        message.setArguments({QLatin1String("Tremotesf"),
+                              uint(0),
+                              QLatin1String("tremotesf"),
+                              summary,
+                              body,
+                              QVariant(QVariant::StringList),
+                              QVariant(QVariant::Map),
+                              -1});
+        auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), this);
+        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=]() {
+            QDBusPendingReply<uint> reply(*watcher);
+            if (reply.isError()) {
+                qWarning() << reply.error();
+                if (mTrayIcon->isVisible()) {
+                    mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
+                }
+            }
+            watcher->deleteLater();
+        });
+#else
+        if (mTrayIcon->isVisible()) {
+            mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
+        }
+#endif
     }
 }

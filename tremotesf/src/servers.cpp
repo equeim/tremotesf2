@@ -23,6 +23,8 @@
 #include <QSettings>
 #include <QStandardPaths>
 
+#include "libtremotesf/torrent.h"
+
 namespace tremotesf
 {
     namespace
@@ -51,6 +53,7 @@ namespace tremotesf
         const QString updateIntervalKey(QLatin1String("updateInterval"));
         const QString backgroundUpdateIntervalKey(QLatin1String("backgroundUpdateInterval"));
         const QString timeoutKey(QLatin1String("timeout"));
+        const QString lastTorrentsKey(QLatin1String("lastTorrents"));
 
         const QString localCertificateKey(QLatin1String("localCertificate"));
 
@@ -169,6 +172,36 @@ namespace tremotesf
     {
         mSettings->setValue(currentServerKey, name);
         emit currentServerChanged();
+    }
+
+    LastTorrents Servers::currentServerLastTorrents() const
+    {
+        mSettings->beginGroup(currentServerName());
+        LastTorrents lastTorrents;
+        const QVariant lastTorrentsVariant(mSettings->value(lastTorrentsKey));
+        if (lastTorrentsVariant.isValid() && lastTorrentsVariant.type() == QVariant::List) {
+            lastTorrents.saved = true;
+            const QVariantList torrentVariants(lastTorrentsVariant.toList());
+            for (const QVariant& variant : torrentVariants) {
+                const QVariantMap torrentMap(variant.toMap());
+                lastTorrents.torrents.push_back({torrentMap[QLatin1String("hashString")].toString(),
+                                                 torrentMap[QLatin1String("finished")].toBool()});
+            }
+        }
+        mSettings->endGroup();
+        return lastTorrents;
+    }
+
+    void Servers::saveCurrentServerLastTorrents(const Rpc* rpc)
+    {
+        mSettings->beginGroup(currentServerName());
+        QVariantList torrents;
+        for (const auto& torrent : rpc->torrents()) {
+            torrents.push_back(QVariantMap{{QLatin1String("hashString"), torrent->hashString()},
+                                           {QLatin1String("finished"), torrent->isFinished()}});
+        }
+        mSettings->setValue(lastTorrentsKey, torrents);
+        mSettings->endGroup();
     }
 
     void Servers::setServer(const QString& oldName,

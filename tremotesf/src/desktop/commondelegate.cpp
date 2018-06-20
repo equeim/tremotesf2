@@ -49,6 +49,7 @@ namespace tremotesf
             if (progressBar.progress == 0) {
                 progressBar.progress = 1;
             }
+            progressBar.state = option.state;
 
 #ifdef Q_OS_WIN
             // hack to remove progress bar animation

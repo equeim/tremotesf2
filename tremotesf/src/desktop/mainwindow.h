@@ -48,7 +48,6 @@ namespace tremotesf
 
         QSize sizeHint() const override;
         void showMinimized(bool minimized);
-        void showNotification(const QString& summary, const QString& body);
 
     protected:
         void closeEvent(QCloseEvent* event) override;
@@ -72,6 +71,11 @@ namespace tremotesf
         void showWindow();
 
         void runAfterDelay(const std::function<void()>& function);
+
+        void showFinishedNotification(const QStringList& names);
+        void showAddedNotification(const QStringList& names);
+        void showTorrentsNotification(const QString& summary, const QStringList& torrents);
+        void showNotification(const QString& summary, const QString& body);
 
     private:
         IpcServer* mIpcServer;

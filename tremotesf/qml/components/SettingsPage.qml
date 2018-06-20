@@ -47,21 +47,37 @@ Page {
             }
 
             TextSwitch {
-                text: qsTranslate("tremotesf", "Show a notification on disconnecting from server")
+                text: qsTranslate("tremotesf", "Notify when disconnecting from server")
                 onClicked: Settings.notificationOnDisconnecting = checked
                 Component.onCompleted: checked = Settings.notificationOnDisconnecting
             }
 
             TextSwitch {
-                text: qsTranslate("tremotesf", "Show a notification when torrents are added")
+                text: qsTranslate("tremotesf", "Notify on added torrents")
                 onClicked: Settings.notificationOnAddingTorrent = checked
                 Component.onCompleted: checked = Settings.notificationOnAddingTorrent
             }
 
             TextSwitch {
-                text: qsTranslate("tremotesf", "Show a notification when torrents finish")
+                text: qsTranslate("tremotesf", "Notify on finished torrents")
                 onClicked: Settings.notificationOfFinishedTorrents = checked
                 Component.onCompleted: checked = Settings.notificationOfFinishedTorrents
+            }
+
+            SectionHeader {
+                text: qsTranslate("tremotesf", "When connecting to server")
+            }
+
+            TextSwitch {
+                text: qsTranslate("tremotesf", "Notify on added torrents since last connection to server")
+                onClicked: Settings.notificationsOnAddedTorrentsSinceLastConnection = checked
+                Component.onCompleted: checked = Settings.notificationsOnAddedTorrentsSinceLastConnection
+            }
+
+            TextSwitch {
+                text: qsTranslate("tremotesf", "Notify on finished torrents since last connection to server")
+                onClicked: Settings.notificationsOnFinishedTorrentsSinceLastConnection = checked
+                Component.onCompleted: checked = Settings.notificationsOnFinishedTorrentsSinceLastConnection
             }
         }
     }
