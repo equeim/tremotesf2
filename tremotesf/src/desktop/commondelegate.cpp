@@ -45,7 +45,7 @@ namespace tremotesf
             progressBar.rect = rect;
             progressBar.minimum = 0;
             progressBar.maximum = 100;
-            progressBar.progress = index.data(mProgressBarRole).toFloat() * 100;
+            progressBar.progress = index.data(mProgressBarRole).toDouble() * 100;
             if (progressBar.progress == 0) {
                 progressBar.progress = 1;
             }

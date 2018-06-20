@@ -197,10 +197,10 @@ namespace tremotesf
         return qApp->translate("tremotesf", "%1 KiB/s").arg(limit);
     }
 
-    QString Utils::formatProgress(float progress)
+    QString Utils::formatProgress(double progress)
     {
         QString numberString;
-        if (progress == 1) {
+        if (qFuzzyCompare(progress, 1.0)) {
             numberString = QLocale().toString(100);
         } else {
             numberString = QLocale().toString(int(progress * 1000) / 10.0, 'f', 1);
@@ -208,7 +208,7 @@ namespace tremotesf
         return QStringLiteral("%1%2").arg(numberString).arg(QLocale().percent());
     }
 
-    QString Utils::formatRatio(float ratio)
+    QString Utils::formatRatio(double ratio)
     {
         if (ratio < 0) {
             return QString();
