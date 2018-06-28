@@ -28,7 +28,6 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    using libtremotesf::ServerSettings;
     class BaseTorrentFilesModel;
     class LocalTorrentFilesModel;
     class TorrentFilesModel;
@@ -39,7 +38,7 @@ namespace tremotesf
     public:
         explicit TorrentFilesView(LocalTorrentFilesModel* model, QWidget* parent = nullptr);
         explicit TorrentFilesView(TorrentFilesModel* model,
-                                  ServerSettings* serverSettings,
+                                  libtremotesf::ServerSettings* serverSettings,
                                   QWidget* parent = nullptr);
         ~TorrentFilesView() override;
 
@@ -51,7 +50,7 @@ namespace tremotesf
         bool mLocalFile;
         BaseTorrentFilesModel* mModel;
         TorrentFilesProxyModel* mProxyModel;
-        ServerSettings* mServerSettings;
+        libtremotesf::ServerSettings* mServerSettings;
     };
 }
 

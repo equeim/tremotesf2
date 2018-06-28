@@ -32,7 +32,6 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    using libtremotesf::Torrent;
     class BaseTreeView;
     class PeersModel;
     class Rpc;
@@ -42,7 +41,7 @@ namespace tremotesf
     class TorrentPropertiesDialog : public QDialog
     {
     public:
-        explicit TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
+        explicit TorrentPropertiesDialog(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TorrentPropertiesDialog() override;
         QSize sizeHint() const override;
 
@@ -52,9 +51,9 @@ namespace tremotesf
         void setupLimitsTab();
 
     private:
-        void setTorrent(Torrent* torrent);
+        void setTorrent(libtremotesf::Torrent* torrent);
 
-        Torrent* mTorrent;
+        libtremotesf::Torrent* mTorrent;
         Rpc* const mRpc;
 
         KMessageWidget* mMessageWidget;

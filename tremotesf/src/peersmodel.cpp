@@ -30,7 +30,7 @@ namespace tremotesf
     const int PeersModel::SortRole = Qt::UserRole;
 #endif
 
-    PeersModel::PeersModel(Torrent* torrent, QObject* parent)
+    PeersModel::PeersModel(libtremotesf::Torrent* torrent, QObject* parent)
         : QAbstractTableModel(parent),
           mTorrent(nullptr),
           mLoaded(false)
@@ -56,7 +56,7 @@ namespace tremotesf
 
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
-        const Peer* peer = mPeers[index.row()].get();
+        const libtremotesf::Peer* peer = mPeers[index.row()].get();
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case Address:
@@ -137,12 +137,12 @@ namespace tremotesf
         return mPeers.size();
     }
 
-    Torrent* PeersModel::torrent() const
+    libtremotesf::Torrent* PeersModel::torrent() const
     {
         return mTorrent;
     }
 
-    void PeersModel::setTorrent(Torrent* torrent)
+    void PeersModel::setTorrent(libtremotesf::Torrent* torrent)
     {
         if (!torrent || mTorrent) {
             return;
@@ -152,7 +152,7 @@ namespace tremotesf
             mTorrent = torrent;
 
             if (mTorrent) {
-                QObject::connect(mTorrent, &Torrent::peersUpdated, this, [=](const std::vector<std::shared_ptr<Peer>>& peers) {
+                QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, [=](const std::vector<std::shared_ptr<libtremotesf::Peer>>& peers) {
                     for (int i = 0, max = mPeers.size(); i < max; ++i) {
                         if (!contains(peers, mPeers[i])) {
                             beginRemoveRows(QModelIndex(), i, i);

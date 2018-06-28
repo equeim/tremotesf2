@@ -32,9 +32,6 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    using libtremotesf::Peer;
-    using libtremotesf::Torrent;
-
     class PeersModel : public QAbstractTableModel
     {
         Q_OBJECT
@@ -67,7 +64,7 @@ namespace tremotesf
         static const int SortRole;
 #endif
 
-        explicit PeersModel(Torrent* torrent = nullptr, QObject* parent = nullptr);
+        explicit PeersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~PeersModel() override;
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
@@ -77,8 +74,8 @@ namespace tremotesf
 #endif
         int rowCount(const QModelIndex&) const override;
 
-        Torrent* torrent() const;
-        void setTorrent(Torrent* torrent);
+        libtremotesf::Torrent* torrent() const;
+        void setTorrent(libtremotesf::Torrent* torrent);
 
         bool isLoaded() const;
 
@@ -87,8 +84,8 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
-        std::vector<std::shared_ptr<Peer>> mPeers;
-        Torrent* mTorrent;
+        std::vector<std::shared_ptr<libtremotesf::Peer>> mPeers;
+        libtremotesf::Torrent* mTorrent;
         bool mLoaded;
     signals:
         void loadedChanged();

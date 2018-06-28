@@ -26,9 +26,6 @@
 
 namespace tremotesf
 {
-    using libtremotesf::Torrent;
-    using libtremotesf::TorrentFile;
-
     class TorrentFilesModel : public BaseTorrentFilesModel
     {
         Q_OBJECT
@@ -60,7 +57,7 @@ namespace tremotesf
         };
 #endif
 
-        explicit TorrentFilesModel(Torrent* torrent = nullptr, QObject* parent = nullptr);
+        explicit TorrentFilesModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~TorrentFilesModel() override;
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
@@ -71,8 +68,8 @@ namespace tremotesf
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 #endif
 
-        Torrent* torrent() const;
-        void setTorrent(Torrent* torrent);
+        libtremotesf::Torrent* torrent() const;
+        void setTorrent(libtremotesf::Torrent* torrent);
 
         bool isLoaded() const;
         bool isLoading() const;
@@ -91,15 +88,15 @@ namespace tremotesf
 #endif
 
     private:
-        void update(const std::vector<std::shared_ptr<TorrentFile>>& files);
-        void createTree(const std::vector<std::shared_ptr<TorrentFile>>& files);
+        void update(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files);
+        void createTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files);
         void resetTree();
-        void updateTree(const std::vector<std::shared_ptr<TorrentFile>>& files, bool emitSignal);
+        void updateTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files, bool emitSignal);
 
         void setLoaded(bool loaded);
         void setLoading(bool loading);
 
-        Torrent* mTorrent;
+        libtremotesf::Torrent* mTorrent;
         bool mLoaded;
         bool mLoading;
         std::vector<TorrentFilesModelFile*> mFiles;

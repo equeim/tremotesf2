@@ -32,13 +32,10 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    using libtremotesf::Torrent;
-    using libtremotesf::Tracker;
-
     class TrackersModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(tremotesf::Torrent* torrent READ torrent WRITE setTorrent)
+        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)
     public:
 #ifdef TREMOTESF_SAILFISHOS
         enum Role
@@ -63,7 +60,7 @@ namespace tremotesf
         static const int SortRole = Qt::UserRole;
 #endif
 
-        explicit TrackersModel(Torrent* torrent = nullptr, QObject* parent = nullptr);
+        explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
@@ -72,12 +69,12 @@ namespace tremotesf
 #endif
         int rowCount(const QModelIndex&) const override;
 
-        Torrent* torrent() const;
-        void setTorrent(Torrent* torrent);
+        libtremotesf::Torrent* torrent() const;
+        void setTorrent(libtremotesf::Torrent* torrent);
 
         Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
-        Tracker* trackerAtIndex(const QModelIndex& index) const;
-        Tracker* trackerAtRow(int row) const;
+        libtremotesf::Tracker* trackerAtIndex(const QModelIndex& index) const;
+        libtremotesf::Tracker* trackerAtRow(int row) const;
 
 #ifdef TREMOTESF_SAILFISHOS
     protected:
@@ -87,8 +84,8 @@ namespace tremotesf
     private:
         void update();
 
-        Torrent* mTorrent;
-        std::vector<std::shared_ptr<Tracker>> mTrackers;
+        libtremotesf::Torrent* mTorrent;
+        std::vector<std::shared_ptr<libtremotesf::Tracker>> mTrackers;
     };
 }
 

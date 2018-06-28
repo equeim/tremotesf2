@@ -53,7 +53,7 @@ namespace tremotesf
     }
 
     TorrentFilesView::TorrentFilesView(TorrentFilesModel* model,
-                                       ServerSettings* serverSettings,
+                                       libtremotesf::ServerSettings* serverSettings,
                                        QWidget* parent)
         : BaseTreeView(parent),
           mLocalFile(false),

@@ -65,7 +65,7 @@ namespace tremotesf
         };
     }
 
-    TrackersViewWidget::TrackersViewWidget(Torrent* torrent, QWidget* parent)
+    TrackersViewWidget::TrackersViewWidget(libtremotesf::Torrent* torrent, QWidget* parent)
         : QWidget(parent),
           mTorrent(torrent),
           mModel(new TrackersModel(torrent, this)),
@@ -119,7 +119,7 @@ namespace tremotesf
         Settings::instance()->setTrackersViewHeaderState(mTrackersView->header()->saveState());
     }
 
-    void TrackersViewWidget::setTorrent(Torrent* torrent)
+    void TrackersViewWidget::setTorrent(libtremotesf::Torrent* torrent)
     {
         mTorrent = torrent;
         mModel->setTorrent(torrent);
@@ -140,7 +140,7 @@ namespace tremotesf
     void TrackersViewWidget::showEditDialogs()
     {
         for (const QModelIndex& index : mTrackersView->selectionModel()->selectedRows()) {
-            const Tracker* tracker = mModel->trackerAtIndex(mProxyModel->sourceIndex(index));
+            const libtremotesf::Tracker* tracker = mModel->trackerAtIndex(mProxyModel->sourceIndex(index));
             const int id = tracker->id();
             auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Edit Tracker"),
                                               qApp->translate("tremotesf", "Tracker announce URL:"),

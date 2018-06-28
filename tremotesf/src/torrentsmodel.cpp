@@ -29,6 +29,8 @@
 
 namespace tremotesf
 {
+    using libtremotesf::Torrent;
+
     TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent)
         : QAbstractTableModel(parent),
           mRpc(nullptr)

@@ -31,7 +31,6 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    using libtremotesf::Torrent;
     class Rpc;
 
     class TorrentsModel : public QAbstractTableModel
@@ -95,7 +94,7 @@ namespace tremotesf
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
 
-        Torrent* torrentAtIndex(const QModelIndex& index) const;
+        libtremotesf::Torrent* torrentAtIndex(const QModelIndex& index) const;
         Q_INVOKABLE libtremotesf::Torrent* torrentAtRow(int row) const;
         Q_INVOKABLE libtremotesf::Torrent* torrentByName(const QString& name) const;
 
@@ -109,7 +108,7 @@ namespace tremotesf
     private:
         void update();
 
-        std::vector<std::shared_ptr<Torrent>> mTorrents;
+        std::vector<std::shared_ptr<libtremotesf::Torrent>> mTorrents;
         Rpc* mRpc;
     };
 }

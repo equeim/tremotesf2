@@ -38,7 +38,7 @@ namespace tremotesf
         const QString wantedKey(QLatin1String("wanted"));
         const QString priorityKey(QLatin1String("priority"));
 
-        void updateFile(TorrentFilesModelFile* treeFile, const TorrentFile* file)
+        void updateFile(TorrentFilesModelFile* treeFile, const libtremotesf::TorrentFile* file)
         {
             treeFile->setChanged(false);
             treeFile->setCompletedSize(file->completedSize);
@@ -74,13 +74,13 @@ namespace tremotesf
         using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
 
         std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
-        doCreateTree(const std::vector<std::shared_ptr<TorrentFile>>& files)
+        doCreateTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files)
         {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> treeFiles;
 
             for (int fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
-                const TorrentFile* file = files[fileIndex].get();
+                const libtremotesf::TorrentFile* file = files[fileIndex].get();
 
                 TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
@@ -119,7 +119,7 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesModel::TorrentFilesModel(Torrent* torrent, QObject* parent)
+    TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, QObject* parent)
         : BaseTorrentFilesModel(parent),
           mTorrent(nullptr),
           mLoaded(false),
@@ -256,18 +256,18 @@ namespace tremotesf
     }
 #endif
 
-    Torrent* TorrentFilesModel::torrent() const
+    libtremotesf::Torrent* TorrentFilesModel::torrent() const
     {
         return mTorrent;
     }
 
-    void TorrentFilesModel::setTorrent(Torrent* torrent)
+    void TorrentFilesModel::setTorrent(libtremotesf::Torrent* torrent)
     {
         if (torrent != mTorrent) {
             mTorrent = torrent;
             if (mTorrent) {
-                QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
-                QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
+                QObject::connect(mTorrent, &libtremotesf::Torrent::filesUpdated, this, &TorrentFilesModel::update);
+                QObject::connect(mTorrent, &libtremotesf::Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
                 mTorrent->setFilesEnabled(true);
             } else {
                 resetTree();
@@ -343,7 +343,7 @@ namespace tremotesf
                          createIndex(entry->row(), columnCount() - 1, entry));
     }
 
-    void TorrentFilesModel::update(const std::vector<std::shared_ptr<TorrentFile>>& files)
+    void TorrentFilesModel::update(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files)
     {
         mResetAfterCreate = false;
         mUpdateAfterCreate = false;
@@ -365,7 +365,7 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesModel::createTree(const std::vector<std::shared_ptr<TorrentFile>>& files)
+    void TorrentFilesModel::createTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files)
     {
         mCreatingTree = true;
         setLoading(true);
@@ -412,7 +412,7 @@ namespace tremotesf
         setLoaded(false);
     }
 
-    void TorrentFilesModel::updateTree(const std::vector<std::shared_ptr<TorrentFile>>& files,
+    void TorrentFilesModel::updateTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files,
                                        bool emitSignal)
     {
         for (int i = 0, size = files.size(); i < size; i++) {

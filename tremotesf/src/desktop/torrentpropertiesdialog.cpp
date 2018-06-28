@@ -54,6 +54,8 @@
 
 namespace tremotesf
 {
+    using libtremotesf::Torrent;
+
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)
         : QDialog(parent),
           mTorrent(torrent),

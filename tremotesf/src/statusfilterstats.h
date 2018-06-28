@@ -28,7 +28,6 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    using libtremotesf::Torrent;
     class Rpc;
 
     class StatusFilterStats : public QObject

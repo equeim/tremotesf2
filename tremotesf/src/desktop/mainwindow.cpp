@@ -514,8 +514,8 @@ namespace tremotesf
             const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
             if (selectedRows.size() == 1) {
                 switch (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))->status()) {
-                case Torrent::Paused:
-                case Torrent::Errored:
+                case libtremotesf::Torrent::Paused:
+                case libtremotesf::Torrent::Errored:
                     mPauseTorrentAction->setEnabled(false);
                     break;
                 default:
@@ -535,7 +535,7 @@ namespace tremotesf
         const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
 
         for (int i = 0, max = selectedRows.size(); i < max; i++) {
-            Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
+            libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
             const int id = torrent->id();
             if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
                 if (i == (max - 1)) {

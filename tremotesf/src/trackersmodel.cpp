@@ -28,6 +28,8 @@
 
 namespace tremotesf
 {
+    using libtremotesf::Tracker;
+
     namespace
     {
         QString trackerStatusString(const Tracker* tracker)
@@ -56,7 +58,7 @@ namespace tremotesf
         }
     }
 
-    TrackersModel::TrackersModel(Torrent* torrent, QObject* parent)
+    TrackersModel::TrackersModel(libtremotesf::Torrent* torrent, QObject* parent)
         : QAbstractTableModel(parent),
           mTorrent(nullptr)
     {
@@ -139,18 +141,18 @@ namespace tremotesf
         return mTrackers.size();
     }
 
-    Torrent* TrackersModel::torrent() const
+    libtremotesf::Torrent* TrackersModel::torrent() const
     {
         return mTorrent;
     }
 
-    void TrackersModel::setTorrent(Torrent* torrent)
+    void TrackersModel::setTorrent(libtremotesf::Torrent* torrent)
     {
         if (torrent != mTorrent) {
             mTorrent = torrent;
             if (mTorrent) {
                 update();
-                QObject::connect(mTorrent, &Torrent::updated, this, &TrackersModel::update);
+                QObject::connect(mTorrent, &libtremotesf::Torrent::updated, this, &TrackersModel::update);
             } else {
                 beginResetModel();
                 mTrackers.clear();

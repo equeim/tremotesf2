@@ -52,8 +52,8 @@ namespace tremotesf
                 mCheckingTorrents = 0;
                 mErroredTorrents = 0;
 
-                for (const std::shared_ptr<Torrent>& torrent : mRpc->torrents()) {
-                    const Torrent* torrentPointer = torrent.get();
+                for (const std::shared_ptr<libtremotesf::Torrent>& torrent : mRpc->torrents()) {
+                    const libtremotesf::Torrent* torrentPointer = torrent.get();
                     if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Active)) {
                         ++mActiveTorrents;
                     }
