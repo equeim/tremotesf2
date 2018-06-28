@@ -38,7 +38,7 @@ namespace tremotesf
     class PeersModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(tremotesf::Torrent* torrent READ torrent WRITE setTorrent)
+        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
     public:
 #ifdef TREMOTESF_SAILFISHOS
