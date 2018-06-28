@@ -27,6 +27,7 @@ class QGroupBox;
 class QLineEdit;
 class QPlainTextEdit;
 class QSpinBox;
+class QTableWidget;
 
 namespace tremotesf
 {
@@ -63,6 +64,7 @@ namespace tremotesf
         QSpinBox* mUpdateIntervalSpinBox = nullptr;
         QSpinBox* mBackgroundUpdateIntervalSpinBox = nullptr;
         QSpinBox* mTimeoutSpinBox = nullptr;
+        QTableWidget* mMountedDirectoriesWidget = nullptr;
 
         QDialogButtonBox* mDialogButtonBox = nullptr;
     };

@@ -27,8 +27,15 @@ Item {
     property alias readOnly: textField.readOnly
     property bool selectionButtonEnabled: true
 
+    property bool connectTextFieldWithDialog: true
+    property bool fileDialogCanAccept: true
+    property string fileDialogErrorString
+    property string fileDialogDirectory
+
     property bool showFiles: true
     property var nameFilters
+
+    signal dialogAccepted(string filePath)
 
     width: parent.width
     height: Math.max(textField.height, selectionButton.height)
@@ -43,6 +50,12 @@ Item {
         }
         errorHighlight: !text
         placeholderText: label
+
+        onTextChanged: {
+            if (!showFiles && connectTextFieldWithDialog) {
+                fileDialogDirectory = text
+            }
+        }
     }
 
     IconButton {
@@ -57,12 +70,25 @@ Item {
         icon.source: "image://theme/icon-m-folder"
 
         onClicked: {
-            var dialog = pageStack.push("FileSelectionDialog.qml", {"directory": textField.text,
-                                                                    "showFiles": showFiles,
-                                                                    "nameFilters": nameFilters})
+            var dialog = pageStack.push(fileDialogComponent, {"directory": showFiles ? String() : fileDialogDirectory,
+                                                              "showFiles": showFiles,
+                                                              "nameFilters": nameFilters,
+                                                              "errorString": fileDialogErrorString})
             dialog.accepted.connect(function() {
-                text = dialog.filePath
+                if (connectTextFieldWithDialog) {
+                    text = dialog.filePath
+                }
+                dialogAccepted(dialog.filePath)
             })
+        }
+    }
+
+    Component {
+        id: fileDialogComponent
+
+        FileSelectionDialog {
+            canAccept: fileDialogCanAccept
+            onDirectoryChanged: fileDialogDirectory = directory
         }
     }
 }

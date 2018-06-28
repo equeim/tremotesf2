@@ -48,7 +48,8 @@ namespace tremotesf
             PasswordRole,
             UpdateIntervalRole,
             BackgroundUpdateIntervalRole,
-            TimeoutRole
+            TimeoutRole,
+            MountedDirectoriesRole
         };
         Q_ENUMS(Role)
 #endif
@@ -79,7 +80,8 @@ namespace tremotesf
                                    const QString& password,
                                    int updateInterval,
                                    int backgroundUpdateInterval,
-                                   int timeout);
+                                   int timeout,
+                                   const QVariantMap& mountedDirectories);
         Q_INVOKABLE void removeServerAtIndex(const QModelIndex& index);
         Q_INVOKABLE void removeServerAtRow(int row);
 #ifdef TREMOTESF_SAILFISHOS

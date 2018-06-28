@@ -20,14 +20,23 @@ import QtQuick 2.2
 import Sailfish.Silica 1.0
 
 Rectangle {
+    property int padding: Theme.paddingLarge * 1.5
     property alias text: label.text
+    property alias fontSize: label.font.pixelSize
 
     width: parent.width
-    height: Theme.itemSizeLarge
+    height: label.height + padding * 2
     color: Theme.rgba("red", 0.5)
 
     Label {
         id: label
-        anchors.centerIn: parent
+        anchors {
+            left: parent.left
+            leftMargin: Theme.horizontalPageMargin
+            right: parent.right
+            rightMargin: Theme.horizontalPageMargin
+            verticalCenter: parent.verticalCenter
+        }
+        wrapMode: Text.WordWrap
     }
 }

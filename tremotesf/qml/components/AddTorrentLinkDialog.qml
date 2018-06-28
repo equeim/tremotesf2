@@ -60,10 +60,23 @@ Dialog {
             FileSelectionItem {
                 id: downloadDirectoryItem
 
+                property bool mounted: !rpc.local && Servers.currentServerHasMountedDirectories
+                property bool settingTextFromDialog: false
+
                 label: qsTranslate("tremotesf", "Download directory")
-                selectionButtonEnabled: rpc.local
+                selectionButtonEnabled: rpc.local || mounted
                 showFiles: false
-                Component.onCompleted: text = rpc.serverSettings.downloadDirectory
+
+                connectTextFieldWithDialog: rpc.local
+                fileDialogCanAccept: mounted ? Servers.isUnderCurrentServerMountedDirectory(fileDialogDirectory) : true
+                fileDialogErrorString: qsTranslate("tremotesf", "Selected directory is not inside mounted directory")
+
+                Component.onCompleted: {
+                    text = rpc.serverSettings.downloadDirectory
+                    if (mounted && !fileDialogDirectory) {
+                        fileDialogDirectory = Servers.firstLocalDirectory
+                    }
+                }
 
                 onTextChanged: {
                     var path = text.trim()
@@ -76,6 +89,21 @@ Dialog {
                             freeSpaceLabel.visible = false
                             freeSpaceLabel.text = String()
                         }
+                    }
+
+                    if (mounted && !settingTextFromDialog) {
+                        var directory = Servers.fromRemoteToLocalDirectory(text, rpc.serverSettings.downloadDirectory)
+                        if (directory) {
+                            fileDialogDirectory = directory
+                        }
+                    }
+                }
+
+                onDialogAccepted: {
+                    if (mounted) {
+                        settingTextFromDialog = true
+                        text = Servers.fromLocalToRemoteDirectory(filePath, rpc.serverSettings.downloadDirectory)
+                        settingTextFromDialog = false
                     }
                 }
             }

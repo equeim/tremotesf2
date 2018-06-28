@@ -25,14 +25,16 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 
 #include <KColumnResizer>
 
-#include "../localtorrentfilesmodel.h"
 #include "../libtremotesf/serversettings.h"
+#include "../localtorrentfilesmodel.h"
 #include "../rpc.h"
+#include "../servers.h"
 #include "../torrentfileparser.h"
 #include "../utils.h"
 #include "fileselectionwidget.h"
@@ -122,18 +124,46 @@ namespace tremotesf
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
         }
 
+        const bool local = false/*mRpc->isLocal()*/;
+        const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
         mDownloadDirectoryWidget = new FileSelectionWidget(true,
                                                            QString(),
+                                                           local || !mounted,
                                                            this);
-        mDownloadDirectoryWidget->lineEdit()->setText(mRpc->serverSettings()->downloadDirectory());
-        mDownloadDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
+        mDownloadDirectoryWidget->selectionButton()->setEnabled(local || mounted);
+        mDownloadDirectoryWidget->setLineEditText(mRpc->serverSettings()->downloadDirectory());
         QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
+        if (mounted && !local) {
+            const auto onTextEdited = [=](const QString& text) {
+                const QString directory(Servers::instance()->fromRemoteToLocalDirectory(text));
+                if (!directory.isEmpty()) {
+                    mDownloadDirectoryWidget->setFileDialogDirectory(directory);
+                }
+            };
+            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textEdited, this, onTextEdited);
+            const QString downloadDirectory(Servers::instance()->fromRemoteToLocalDirectory(mRpc->serverSettings()->downloadDirectory()));
+            if (downloadDirectory.isEmpty()) {
+                mDownloadDirectoryWidget->setFileDialogDirectory(Servers::instance()->firstLocalDirectory());
+            } else {
+                mDownloadDirectoryWidget->setFileDialogDirectory(downloadDirectory);
+            }
+
+            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::fileDialogAccepted, this, [=](const QString& filePath) {
+                const QString directory(Servers::instance()->fromLocalToRemoteDirectory(filePath));
+                if (directory.isEmpty()) {
+                    QMessageBox::warning(this, qApp->translate("tremotesf", "Error"), qApp->translate("tremotesf", "Selected directory should be inside mounted directory"));
+                } else {
+                    mDownloadDirectoryWidget->setLineEditText(directory);
+                    mDownloadDirectoryWidget->setFileDialogDirectory(filePath);
+                }
+            });
+        }
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         mFreeSpaceLabel = new QLabel(this);
         if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
-            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=]() {
-                mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
+            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=](const QString& text) {
+                mRpc->getFreeSpaceForPath(text.trimmed());
             });
             QObject::connect(mRpc, &Rpc::gotFreeSpaceForPath, this, [=](const QString&, bool success, long long bytes) {
                 if (success) {
@@ -145,8 +175,8 @@ namespace tremotesf
             firstFormLayout->addRow(nullptr, mFreeSpaceLabel);
             mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
         } else {
-            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=]() {
-                const QString path(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
+            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=](const QString& text) {
+                const QString path(text.trimmed());
                 if (path == mRpc->serverSettings()->downloadDirectory()) {
                     mRpc->getDownloadDirFreeSpace();
                 } else {

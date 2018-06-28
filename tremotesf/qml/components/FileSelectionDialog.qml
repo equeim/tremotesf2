@@ -30,6 +30,8 @@ Dialog {
     property alias showFiles: directoryContentModel.showFiles
     property alias nameFilters: directoryContentModel.nameFilters
 
+    property string errorString
+
     allowedOrientations: defaultAllowedOrientations
     canAccept: showFiles ? filePath : true
 
@@ -56,6 +58,13 @@ Dialog {
             DialogHeader {
                 title: showFiles ? qsTranslate("tremotesf", "Select File")
                                  : qsTranslate("tremotesf", "Select Directory")
+            }
+
+            ErrorHeader {
+                visible: !canAccept && errorString
+                padding: Theme.paddingMedium
+                fontSize: Theme.fontSizeSmall
+                text: errorString
             }
 
             FileListItem {

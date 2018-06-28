@@ -744,7 +744,7 @@ namespace tremotesf
             mTrayIcon->setToolTip(mRpc->statusString());
         });
 
-        QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=]() {
+        QObject::connect(mRpc->serverStats(), &libtremotesf::ServerStats::updated, this, [=]() {
             mTrayIcon->setToolTip(QString("\u25be %1\n\u25b4 %2")
                                       .arg(Utils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()))
                                       .arg(Utils::formatByteSpeed(mRpc->serverStats()->uploadSpeed())));

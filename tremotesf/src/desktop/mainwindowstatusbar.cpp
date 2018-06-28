@@ -90,7 +90,7 @@ namespace tremotesf
         updateStatusLabels();
         QObject::connect(mRpc, &Rpc::statusStringChanged, this, &MainWindowStatusBar::updateStatusLabels);
 
-        QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=]() {
+        QObject::connect(mRpc->serverStats(), &libtremotesf::ServerStats::updated, this, [=]() {
             mDownloadSpeedLabel->setText(Utils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
             mUploadSpeedLabel->setText(Utils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
         });

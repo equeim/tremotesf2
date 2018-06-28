@@ -20,6 +20,8 @@
 #define TREMOTESF_SERVERS_H
 
 #include <vector>
+#include <utility>
+
 #include <QObject>
 
 #include "libtremotesf/rpc.h"
@@ -28,7 +30,25 @@ class QSettings;
 
 namespace tremotesf
 {
-    using namespace libtremotesf;
+    struct Server
+    {
+        QString name;
+        QString address;
+        int port;
+        QString apiPath;
+        bool https;
+        bool selfSignedCertificateEnabled;
+        QByteArray selfSignedCertificate;
+        bool clientCertificateEnabled;
+        QByteArray clientCertificate;
+        bool authentication;
+        QString username;
+        QString password;
+        int updateInterval;
+        int backgroundUpdateInterval;
+        int timeout;
+        QVariantMap mountedDirectories;
+    };
 
     struct LastTorrentsTorrent
     {
@@ -49,6 +69,8 @@ namespace tremotesf
         Q_PROPERTY(libtremotesf::Server currentServer READ currentServer NOTIFY currentServerChanged)
         Q_PROPERTY(QString currentServerName READ currentServerName NOTIFY currentServerChanged)
         Q_PROPERTY(QString currentServerAddress READ currentServerAddress NOTIFY currentServerChanged)
+        Q_PROPERTY(bool currentServerHasMountedDirectories READ currentServerHasMountedDirectories NOTIFY currentServerChanged)
+        Q_PROPERTY(QString firstLocalDirectory READ firstLocalDirectory NOTIFY currentServerChanged)
     public:
         static Servers* instance();
 
@@ -57,10 +79,16 @@ namespace tremotesf
         bool hasServers() const;
         std::vector<Server> servers();
 
-        Server currentServer();
+        libtremotesf::Server currentServer();
         QString currentServerName() const;
         QString currentServerAddress();
         Q_INVOKABLE void setCurrentServer(const QString& name);
+
+        bool currentServerHasMountedDirectories() const;
+        Q_INVOKABLE bool isUnderCurrentServerMountedDirectory(const QString& path) const;
+        QString firstLocalDirectory() const;
+        Q_INVOKABLE QString fromLocalToRemoteDirectory(const QString& path);
+        Q_INVOKABLE QString fromRemoteToLocalDirectory(const QString& path);
 
         LastTorrents currentServerLastTorrents() const;
         Q_INVOKABLE void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
@@ -80,7 +108,8 @@ namespace tremotesf
                                    const QString& password,
                                    int updateInterval,
                                    int backgroundUpdateInterval,
-                                   int timeout);
+                                   int timeout,
+                                   const QVariantMap& mountedDirectories);
 
         Q_INVOKABLE void removeServer(const QString& name);
 
@@ -89,8 +118,11 @@ namespace tremotesf
     private:
         explicit Servers(QObject* parent = nullptr);
         Server getServer(const QString& name);
+        void updateMountedDirectories(const QVariantMap& directories);
+        void updateMountedDirectories();
 
         QSettings* mSettings;
+        std::vector<std::pair<QString, QString>> mCurrentServerMountedDirectories;
     signals:
         void currentServerChanged();
         void hasServersChanged();

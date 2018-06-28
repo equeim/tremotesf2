@@ -29,20 +29,28 @@ namespace tremotesf
 {
     FileSelectionWidget::FileSelectionWidget(bool directory,
                                              const QString& filter,
+                                             bool connectLineEditWithDialog,
                                              QWidget* parent)
         : QWidget(parent),
           mLineEdit(new QLineEdit(this)),
-          mSelectionButton(new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this))
+          mSelectionButton(new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this)),
+          mConnectLineEditWithDialog(connectLineEditWithDialog)
     {
         auto layout = new QHBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(mLineEdit);
         layout->addWidget(mSelectionButton);
 
+        if (connectLineEditWithDialog) {
+            QObject::connect(mLineEdit, &QLineEdit::textEdited, this, [=](const QString& text) {
+                mFileDialogDirectory = text;
+            });
+        }
+
         QObject::connect(mSelectionButton, &QPushButton::clicked, this, [=]() {
             QFileDialog* dialog;
             if (directory) {
-                dialog = new QFileDialog(this, qApp->translate("tremotesf", "Select Directory"), mLineEdit->text());
+                dialog = new QFileDialog(this, qApp->translate("tremotesf", "Select Directory"), mFileDialogDirectory);
                 dialog->setFileMode(QFileDialog::Directory);
                 dialog->setOptions(QFileDialog::ShowDirsOnly);
             } else {
@@ -52,7 +60,17 @@ namespace tremotesf
             dialog->setAttribute(Qt::WA_DeleteOnClose);
 
             QObject::connect(dialog, &QFileDialog::accepted, this, [=]() {
-                mLineEdit->setText(dialog->selectedFiles().first());
+                const QString filePath(dialog->selectedFiles().first());
+
+                if (directory && connectLineEditWithDialog) {
+                    mFileDialogDirectory = filePath;
+                }
+
+                if (connectLineEditWithDialog) {
+                    mLineEdit->setText(filePath);
+                }
+
+                emit fileDialogAccepted(filePath);
             });
 
 #ifdef Q_OS_WIN
@@ -68,8 +86,21 @@ namespace tremotesf
         return mLineEdit;
     }
 
+    void FileSelectionWidget::setLineEditText(const QString& text)
+    {
+        mLineEdit->setText(text);
+        if (mConnectLineEditWithDialog) {
+            mFileDialogDirectory = text;
+        }
+    }
+
     QPushButton* FileSelectionWidget::selectionButton() const
     {
         return mSelectionButton;
+    }
+
+    void FileSelectionWidget::setFileDialogDirectory(const QString& directory)
+    {
+        mFileDialogDirectory = directory;
     }
 }

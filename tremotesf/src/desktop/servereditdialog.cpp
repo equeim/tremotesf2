@@ -23,14 +23,20 @@
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QGridLayout>
 #include <QGroupBox>
+#include <QHeaderView>
+#include <QIcon>
+#include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRegularExpressionValidator>
+#include <QScrollArea>
 #include <QSpinBox>
+#include <QTableWidget>
 #include <QVBoxLayout>
 
 #include "../servers.h"
@@ -76,12 +82,21 @@ namespace tremotesf
             mUpdateIntervalSpinBox->setValue(server.updateInterval);
             mBackgroundUpdateIntervalSpinBox->setValue(server.backgroundUpdateInterval);
             mTimeoutSpinBox->setValue(server.timeout);
+
+            for (auto i = server.mountedDirectories.cbegin(), end = server.mountedDirectories.cend();
+                 i != end;
+                 ++i) {
+                const int row = mMountedDirectoriesWidget->rowCount();
+                mMountedDirectoriesWidget->insertRow(row);
+                mMountedDirectoriesWidget->setItem(row, 0, new QTableWidgetItem(i.key()));
+                mMountedDirectoriesWidget->setItem(row, 1, new QTableWidgetItem(i.value().toString()));
+            }
         }
     }
 
     QSize ServerEditDialog::sizeHint() const
     {
-        return layout()->totalMinimumSize().expandedTo(QSize(384, 0));
+        return QDialog::sizeHint().expandedTo(QSize(std::max(static_cast<QScrollArea*>(layout()->itemAt(0)->widget())->widget()->sizeHint().width(), 384), 512));
     }
 
     void ServerEditDialog::accept()
@@ -107,10 +122,15 @@ namespace tremotesf
 
     void ServerEditDialog::setupUi()
     {
-        auto layout = new QVBoxLayout(this);
+        auto topLayout = new QVBoxLayout(this);
+        auto scrollArea = new QScrollArea(this);
+        scrollArea->setFrameShape(QFrame::NoFrame);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollArea->setWidgetResizable(true);
+        topLayout->addWidget(scrollArea);
 
-        auto formLayout = new QFormLayout();
-        layout->addLayout(formLayout);
+        auto widget = new QWidget(this);
+        auto formLayout = new QFormLayout(widget);
         formLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mNameLineEdit = new QLineEdit(this);
@@ -137,17 +157,19 @@ namespace tremotesf
 
         mSelfSignedCertificateCheckBox = new QCheckBox(qApp->translate("tremotesf", "Server uses self-signed certificate"), this);
         mSelfSignedCertificateEdit = new QPlainTextEdit(this);
+        mSelfSignedCertificateEdit->setMinimumHeight(192);
         mSelfSignedCertificateEdit->setPlaceholderText(qApp->translate("tremotesf", "Server's certificate in PEM format"));
-        mSelfSignedCertificateEdit->setEnabled(false);
-        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, mSelfSignedCertificateEdit, &QWidget::setEnabled);
+        mSelfSignedCertificateEdit->setVisible(false);
+        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, mSelfSignedCertificateEdit, &QWidget::setVisible);
         httpsGroupBoxLayout->addWidget(mSelfSignedCertificateCheckBox);
         httpsGroupBoxLayout->addWidget(mSelfSignedCertificateEdit);
 
         mClientCertificateCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use client certificate authentication"), this);
         mClientCertificateEdit = new QPlainTextEdit(this);
+        mClientCertificateEdit->setMinimumHeight(192);
         mClientCertificateEdit->setPlaceholderText(qApp->translate("tremotesf", "Certificate in PEM format with private key"));
-        mClientCertificateEdit->setEnabled(false);
-        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, mClientCertificateEdit, &QWidget::setEnabled);
+        mClientCertificateEdit->setVisible(false);
+        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, mClientCertificateEdit, &QWidget::setVisible);
         httpsGroupBoxLayout->addWidget(mClientCertificateCheckBox);
         httpsGroupBoxLayout->addWidget(mClientCertificateEdit);
 
@@ -184,10 +206,38 @@ namespace tremotesf
         mTimeoutSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Timeout:"), mTimeoutSpinBox);
 
+        auto mountedDirectoriesGroupBox = new QGroupBox(qApp->translate("tremotesf", "Mounted directories"), this);
+        auto mountedDirectoriesLayout = new QGridLayout(mountedDirectoriesGroupBox);
+        mMountedDirectoriesWidget = new QTableWidget(0, 2);
+        mMountedDirectoriesWidget->setMinimumHeight(192);
+        mMountedDirectoriesWidget->setHorizontalHeaderLabels({qApp->translate("tremotesf", "Local directory"),
+                                                             qApp->translate("tremotesf", "Remote directory")});
+        mMountedDirectoriesWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        mMountedDirectoriesWidget->horizontalHeader()->setSectionsClickable(false);
+        mMountedDirectoriesWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+        mMountedDirectoriesWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        mountedDirectoriesLayout->addWidget(mMountedDirectoriesWidget, 0, 0, 1, 2);
+        auto addDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add"), this);
+        QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=]() {
+            mMountedDirectoriesWidget->insertRow(mMountedDirectoriesWidget->rowCount());
+        });
+        mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
+        auto removeDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "Remove"), this);
+        QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=]() {
+            const auto items(mMountedDirectoriesWidget->selectionModel()->selectedRows());
+            if (!items.isEmpty()) {
+                mMountedDirectoriesWidget->removeRow(items.first().row());
+            }
+        });
+        mountedDirectoriesLayout->addWidget(removeDirectoriesButton, 1, 1);
+        formLayout->addRow(mountedDirectoriesGroupBox);
+
+        scrollArea->setWidget(widget);
+
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &ServerEditDialog::accept);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &ServerEditDialog::reject);
-        layout->addWidget(mDialogButtonBox);
+        topLayout->addWidget(mDialogButtonBox);
     }
 
     void ServerEditDialog::canAcceptUpdate()
@@ -199,7 +249,19 @@ namespace tremotesf
 
     void ServerEditDialog::setServer()
     {
+        QVariantMap mountedDirectories;
+        for (int i = 0, max = mMountedDirectoriesWidget->rowCount(); i < max; ++i) {
+            const auto localItem = mMountedDirectoriesWidget->item(i, 0);
+            const QString localDirectory(localItem ? localItem->text().trimmed() : QString());
+            const auto remoteItem = mMountedDirectoriesWidget->item(i, 1);
+            const QString remoteDirectory(remoteItem ? remoteItem->text().trimmed() : QString());
+            if (!localDirectory.isEmpty() && !remoteDirectory.isEmpty()) {
+                mountedDirectories.insert(localDirectory, remoteDirectory);
+            }
+        }
+
         if (mServersModel) {
+
             mServersModel->setServer(mServerName,
                                      mNameLineEdit->text(),
                                      mAddressLineEdit->text(),
@@ -215,7 +277,8 @@ namespace tremotesf
                                      mPasswordLineEdit->text(),
                                      mUpdateIntervalSpinBox->value(),
                                      mBackgroundUpdateIntervalSpinBox->value(),
-                                     mTimeoutSpinBox->value());
+                                     mTimeoutSpinBox->value(),
+                                     mountedDirectories);
         } else {
             Servers::instance()->setServer(mServerName,
                                            mNameLineEdit->text(),
@@ -232,7 +295,8 @@ namespace tremotesf
                                            mPasswordLineEdit->text(),
                                            mUpdateIntervalSpinBox->value(),
                                            mBackgroundUpdateIntervalSpinBox->value(),
-                                           mTimeoutSpinBox->value());
+                                           mTimeoutSpinBox->value(),
+                                           mountedDirectories);
         }
     }
 }

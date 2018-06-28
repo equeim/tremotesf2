@@ -55,13 +55,13 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(this, &Rpc::torrentAdded, this, [=](const Torrent* torrent) {
+        QObject::connect(this, &Rpc::torrentAdded, this, [=](const libtremotesf::Torrent* torrent) {
             if (Settings::instance()->notificationOnAddingTorrent()) {
                 emit addedNotificationRequested({torrent->hashString()}, {torrent->name()});
             }
         });
 
-        QObject::connect(this, &Rpc::torrentFinished, this, [=](const Torrent* torrent) {
+        QObject::connect(this, &Rpc::torrentFinished, this, [=](const libtremotesf::Torrent* torrent) {
             if (Settings::instance()->notificationOfFinishedTorrents()) {
                 emit finishedNotificationRequested({torrent->hashString()}, {torrent->name()});
             }

@@ -466,13 +466,13 @@ namespace tremotesf
     {
         const libtremotesf::ServerSettings* settings = mRpc->serverSettings();
 
-        mDownloadDirectoryWidget->lineEdit()->setText(settings->downloadDirectory());
+        mDownloadDirectoryWidget->setLineEditText(settings->downloadDirectory());
         mDownloadDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
         mStartAddedTorrentsCheckBox->setChecked(settings->startAddedTorrents());
         //mTrashTorrentFilesCheckBox->setChecked(settings->trashTorrentFiles());
         mIncompleteFilesCheckBox->setChecked(settings->renameIncompleteFiles());
         mIncompleteDirectoryCheckBox->setChecked(settings->isIncompleteDirectoryEnabled());
-        mIncompleteDirectoryWidget->lineEdit()->setText(settings->incompleteDirectory());
+        mIncompleteDirectoryWidget->setLineEditText(settings->incompleteDirectory());
         mIncompleteDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
 
         mRatioLimitCheckBox->setChecked(settings->isRatioLimited());

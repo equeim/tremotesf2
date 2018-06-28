@@ -32,14 +32,22 @@ namespace tremotesf
     public:
         explicit FileSelectionWidget(bool directory,
                                      const QString& filter,
+                                     bool connectLineEditWithDialog,
                                      QWidget* parent = nullptr);
 
         QLineEdit* lineEdit() const;
+        void setLineEditText(const QString& text);
         QPushButton* selectionButton() const;
+        void setFileDialogDirectory(const QString& directory);
 
     private:
         QLineEdit* mLineEdit;
         QPushButton* mSelectionButton;
+        bool mConnectLineEditWithDialog;
+        QString mFileDialogDirectory;
+
+    signals:
+        void fileDialogAccepted(const QString& filePath);
     };
 }
 

@@ -64,6 +64,8 @@ namespace tremotesf
             return server.backgroundUpdateInterval;
         case TimeoutRole:
             return server.timeout;
+        case MountedDirectoriesRole:
+            return server.mountedDirectories;
         }
 #else
         switch (role) {
@@ -139,7 +141,8 @@ namespace tremotesf
                                  const QString& password,
                                  int updateInterval,
                                  int backgroundUpdateInterval,
-                                 int timeout)
+                                 int timeout,
+                                 const QVariantMap& mountedDirectories)
     {
         if (!oldName.isEmpty() && name != oldName) {
             const int row = serverRow(oldName);
@@ -171,7 +174,8 @@ namespace tremotesf
                                 password,
                                 updateInterval,
                                 backgroundUpdateInterval,
-                                timeout});
+                                timeout,
+                                mountedDirectories});
             endInsertRows();
         } else {
             Server& server = mServers[row];
@@ -189,6 +193,7 @@ namespace tremotesf
             server.updateInterval = updateInterval;
             server.backgroundUpdateInterval = backgroundUpdateInterval;
             server.timeout = timeout;
+            server.mountedDirectories = mountedDirectories;
             if (oldName == mCurrentServer) {
                 mCurrentServer = name;
             }
@@ -233,7 +238,8 @@ namespace tremotesf
                 {PasswordRole, "password"},
                 {UpdateIntervalRole, "updateInterval"},
                 {BackgroundUpdateIntervalRole, "backgroundUpdateInterval"},
-                {TimeoutRole, "timeout"}};
+                {TimeoutRole, "timeout"},
+                {MountedDirectoriesRole, "mountedDirectories"}};
     }
 #endif
 

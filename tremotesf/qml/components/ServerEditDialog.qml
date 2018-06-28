@@ -27,6 +27,14 @@ Dialog {
     property bool overwrite: false
 
     function save() {
+        var mountedDirectories = {}
+        for (var i = 0, max = mountedDirectoriesModel.count; i < max; ++i) {
+            var item = mountedDirectoriesModel.get(i)
+            if (item.local && item.remote) {
+                mountedDirectories[item.local] = item.remote
+            }
+        }
+
         Servers.setServer(modelData ? modelData.name : String(),
                                       nameField.text,
                                       addressField.text,
@@ -42,7 +50,8 @@ Dialog {
                                       passwordField.text,
                                       updateIntervalField.text,
                                       backgroundUpdateIntervalField.text,
-                                      timeoutField.text)
+                                      timeoutField.text,
+                                      mountedDirectories)
         if (serversModel) {
             serversModel.setServer(modelData ? modelData.name : String(),
                                                nameField.text,
@@ -59,7 +68,8 @@ Dialog {
                                                passwordField.text,
                                                updateIntervalField.text,
                                                backgroundUpdateIntervalField.text,
-                                               timeoutField.text)
+                                               timeoutField.text,
+                                               mountedDirectories)
         }
     }
 
@@ -101,8 +111,10 @@ Dialog {
     }
 
     SilicaFlickable {
+        id: flickable
+
         anchors.fill: parent
-        contentHeight: column.height
+        contentHeight: column.height + Theme.paddingLarge
 
         VerticalScrollDecorator { }
 
@@ -377,9 +389,111 @@ Dialog {
                     top: 60
                 }
 
-                EnterKey.enabled: canAccept
-                EnterKey.iconSource: "image://theme/icon-m-enter-accept"
-                EnterKey.onClicked: accept()
+                EnterKey.enabled: directoriesRepeater.count ? true : canAccept
+                EnterKey.iconSource: directoriesRepeater.count ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-accept"
+                EnterKey.onClicked: {
+                    if (directoriesRepeater.count) {
+                        directoriesRepeater.itemAt(0).forceActiveFocus()
+                    } else {
+                        accept()
+                    }
+                }
+            }
+
+            SectionHeader {
+                text: qsTranslate("tremotesf", "Mounted directories")
+            }
+
+            Repeater {
+                id: directoriesRepeater
+
+                model: ListModel {
+                    id: mountedDirectoriesModel
+                    Component.onCompleted: {
+                        if (modelData) {
+                            var directories = modelData.mountedDirectories
+                            for (var local in directories) {
+                                append({"local": local, "remote": directories[local]})
+                            }
+                        }
+                    }
+                }
+
+                delegate: Row {
+                    property alias localDirectoryLabel: localDirectoryLabel
+                    property int lastItem: (index === mountedDirectoriesModel.count - 1)
+
+                    width: column.width
+
+                    Column {
+                        id: dirsColumn
+                        width: parent.width - removeButton.width
+
+                        Item {
+                            width: column.width
+                            height: Theme.paddingMedium
+                            visible: index > 0
+
+                            Separator {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width
+                                color: Theme.secondaryColor
+                            }
+                        }
+
+                        TextField {
+                            id: localDirectoryLabel
+
+                            width: dirsColumn.width
+                            inputMethodHints: Qt.ImhNoAutoUppercase
+                            text: local
+                            label: qsTranslate("tremotesf", "Local directory")
+                            placeholderText: label
+                            onTextChanged: local = text
+
+                            EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                            EnterKey.onClicked: remoteDirectoryLabel.forceActiveFocus()
+                        }
+
+                        TextField {
+                            id: remoteDirectoryLabel
+
+                            width: dirsColumn.width
+                            inputMethodHints: Qt.ImhNoAutoUppercase
+                            text: remote
+                            label: qsTranslate("tremotesf", "Remote directory")
+                            placeholderText: label
+                            onTextChanged: remote = text
+
+                            EnterKey.enabled: lastItem ? canAccept : true
+                            EnterKey.iconSource: lastItem ? "image://theme/icon-m-enter-accept" : "image://theme/icon-m-enter-next"
+                            EnterKey.onClicked: {
+                                if (lastItem) {
+                                    accept()
+                                } else {
+                                    directoriesRepeater.itemAt(index + 1).forceActiveFocus()
+                                }
+                            }
+                        }
+                    }
+
+                    IconButton {
+                        id: removeButton
+                        anchors.verticalCenter: parent.verticalCenter
+                        icon.source: "image://theme/icon-m-remove"
+                        onClicked: mountedDirectoriesModel.remove(index)
+                    }
+                }
+            }
+
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                preferredWidth: Theme.buttonWidthLarge
+                text: qsTranslate("tremotesf", "Add")
+                onClicked: {
+                    mountedDirectoriesModel.append({"local": String(), "remote": String()})
+                    flickable.contentY += directoriesRepeater.itemAt(directoriesRepeater.count - 1).height
+                }
             }
         }
     }
