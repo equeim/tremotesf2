@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
     QTranslator appTranslator;
 #ifdef Q_OS_WIN
-    appTranslator.load(QLocale().name(), QLatin1String("%1/translations").arg(app.applicationDirPath()));
+    appTranslator.load(QLocale().name(), QString::fromLatin1("%1/translations").arg(app.applicationDirPath()));
 #else
     appTranslator.load(QLocale().name(), QLatin1String(TRANSLATIONS_PATH));
 #endif

@@ -31,7 +31,17 @@ QMAKE_CXXFLAGS_DEBUG += -ggdb
 DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x050800
 
 INCLUDEPATH += ..
-LIBS += -L../libtremotesf -ltremotesf
+win32 {
+    LIBS += -lole32
+    CONFIG(debug, debug|release) {
+        LIBS += -L../libtremotesf/debug
+    } else {
+        LIBS += -L../libtremotesf/release
+    }
+} else {
+    LIBS += -L../libtremotesf
+}
+LIBS += -ltremotesf
 
 HEADERS = $$PWD/alltrackersmodel.h \
           $$PWD/baseproxymodel.h \
