@@ -70,7 +70,7 @@ namespace tremotesf
 
         virtual long long size() const = 0;
         virtual long long completedSize() const = 0;
-        virtual float progress() const = 0;
+        virtual double progress() const = 0;
 
         virtual WantedState wantedState() const = 0;
         virtual void setWanted(bool wanted) = 0;
@@ -98,7 +98,7 @@ namespace tremotesf
         bool isDirectory() const override;
         long long size() const override;
         long long completedSize() const override;
-        float progress() const override;
+        double progress() const override;
         WantedState wantedState() const override;
         void setWanted(bool wanted) override;
         Priority priority() const override;
@@ -130,7 +130,7 @@ namespace tremotesf
         bool isDirectory() const override;
         long long size() const override;
         long long completedSize() const override;
-        float progress() const override;
+        double progress() const override;
         WantedState wantedState() const override;
         void setWanted(bool wanted) override;
         Priority priority() const override;

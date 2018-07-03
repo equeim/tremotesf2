@@ -142,11 +142,11 @@ namespace tremotesf
         return bytes;
     }
 
-    float TorrentFilesModelDirectory::progress() const
+    double TorrentFilesModelDirectory::progress() const
     {
         const long long bytes = size();
         if (bytes > 0) {
-            return completedSize() / float(bytes);
+            return completedSize() / static_cast<double>(bytes);
         }
         return 0;
     }
@@ -264,10 +264,10 @@ namespace tremotesf
         return mCompletedSize;
     }
 
-    float TorrentFilesModelFile::progress() const
+    double TorrentFilesModelFile::progress() const
     {
         if (mSize > 0) {
-            return mCompletedSize / float(mSize);
+            return mCompletedSize / static_cast<double>(mSize);
         }
         return 0;
     }
