@@ -52,10 +52,11 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesModelEntry::TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name)
+    TorrentFilesModelEntry::TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path)
         : mRow(row),
           mParentDirectory(parentDirectory),
-          mName(name)
+          mName(name),
+          mPath(path)
     {
     }
 
@@ -79,6 +80,16 @@ namespace tremotesf
         mName = name;
     }
 
+    QString TorrentFilesModelEntry::path() const
+    {
+        return mPath;
+    }
+
+    void TorrentFilesModelEntry::setPath(const QString& path)
+    {
+        mPath = path;
+    }
+
     QString TorrentFilesModelEntry::priorityString() const
     {
         switch (priority()) {
@@ -98,8 +109,8 @@ namespace tremotesf
         return QString();
     }
 
-    TorrentFilesModelDirectory::TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name)
-        : TorrentFilesModelEntry(row, parentDirectory, name)
+    TorrentFilesModelDirectory::TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path)
+        : TorrentFilesModelEntry(row, parentDirectory, name, path)
     {
     }
 
@@ -227,8 +238,9 @@ namespace tremotesf
                                                  TorrentFilesModelDirectory* parentDirectory,
                                                  int id,
                                                  const QString& name,
+                                                 const QString& path,
                                                  long long size)
-        : TorrentFilesModelEntry(row, parentDirectory, name),
+        : TorrentFilesModelEntry(row, parentDirectory, name, path),
           mSize(size),
           mCompletedSize(0),
           mWantedState(Unwanted),

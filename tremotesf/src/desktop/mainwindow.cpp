@@ -50,6 +50,7 @@
 #include <QDBusPendingReply>
 #endif
 
+#include "../libtremotesf/serversettings.h"
 #include "../libtremotesf/serverstats.h"
 #include "../libtremotesf/torrent.h"
 #include "../ipcserver.h"
@@ -337,6 +338,14 @@ namespace tremotesf
 
         mTorrentMenu->addSeparator();
 
+        mOpenTorrentFilesAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("document-open")), qApp->translate("tremotesf", "&Open"));
+        QObject::connect(mOpenTorrentFilesAction, &QAction::triggered, this, &MainWindow::openTorrentsFiles);
+
+        mShowInFileManagerAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("go-jump")), qApp->translate("tremotesf", "Show In &File Manager"));
+        QObject::connect(mShowInFileManagerAction, &QAction::triggered, this, &MainWindow::showTorrentsInFileManager);
+
+        mTorrentMenu->addSeparator();
+
         QAction* checkTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("document-preview")), qApp->translate("tremotesf", "&Check Local Data"));
         QObject::connect(checkTorrentAction, &QAction::triggered, this, [=]() {
             mRpc->checkTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
@@ -523,6 +532,23 @@ namespace tremotesf
                 default:
                     mStartTorrentAction->setEnabled(false);
                     mStartTorrentNowAction->setEnabled(false);
+                }
+            }
+
+            if (!mRpc->isLocal()) {
+                if (Servers::instance()->currentServerHasMountedDirectories() &&
+                        mRpc->serverSettings()->isIncompleteDirectoryEnabled() ? mRpc->isIncompleteDirectoryMounted() : true) {
+                    for (const QModelIndex& index : selectedRows) {
+                        const libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
+                        if (!Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory()).isEmpty()) {
+                            mOpenTorrentFilesAction->setEnabled(false);
+                            mShowInFileManagerAction->setEnabled(false);
+                            break;
+                        }
+                    }
+                } else {
+                    mOpenTorrentFilesAction->setEnabled(false);
+                    mShowInFileManagerAction->setEnabled(false);
                 }
             }
         } else {
@@ -845,5 +871,25 @@ namespace tremotesf
             mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
         }
 #endif
+    }
+
+    void MainWindow::openTorrentsFiles()
+    {
+        const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
+        for (const QModelIndex& index : selectedRows) {
+            Utils::openFile(mRpc->localTorrentFilesPath(mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index))),
+                            this);
+        }
+    }
+
+    void MainWindow::showTorrentsInFileManager()
+    {
+        QStringList files;
+        const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
+        for (int i = 0, max = selectedRows.size(); i < max; i++) {
+            libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
+            files.push_back(mRpc->localTorrentFilesPath(torrent));
+        }
+        Utils::selectFilesInFileManager(files, this);
     }
 }

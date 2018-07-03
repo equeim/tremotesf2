@@ -44,24 +44,30 @@ namespace tremotesf
 
             const QVariantMap infoMap(parseResult.value(QLatin1String("info")).toMap());
             if (infoMap.contains(QLatin1String("files"))) {
+                const QString torrentDirectoryName(infoMap[QLatin1String("name")].toString());
                 auto torrentDirectory = new TorrentFilesModelDirectory(0,
                                                                        rootDirectory.get(),
-                                                                       infoMap.value(QLatin1String("name")).toString());
+                                                                       torrentDirectoryName,
+                                                                       torrentDirectoryName);
                 rootDirectory->addChild(torrentDirectory);
 
                 const QVariantList fileMaps(infoMap.value(QLatin1String("files")).toList());
                 for (int fileIndex = 0, filesCount = fileMaps.size(); fileIndex < filesCount; ++fileIndex) {
                     const QVariantMap fileMap(fileMaps.at(fileIndex).toMap());
 
-                    TorrentFilesModelDirectory* currentDirectory = static_cast<TorrentFilesModelDirectory*>(torrentDirectory);
+                    TorrentFilesModelDirectory* currentDirectory = torrentDirectory;
                     const QStringList pathParts(fileMap.value(QLatin1String("path")).toStringList());
+                    QString path(torrentDirectoryName);
                     for (int partIndex = 0, partsCount = pathParts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
                         const QString& part = pathParts.at(partIndex);
+                        path += '/';
+                        path += part;
                         if (partIndex == lastPartIndex) {
                             auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
                                                                        currentDirectory,
                                                                        fileIndex,
                                                                        part,
+                                                                       path,
                                                                        fileMap.value(QLatin1String("length")).toLongLong());
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
@@ -75,7 +81,8 @@ namespace tremotesf
                             } else {
                                 auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
                                                                                      currentDirectory,
-                                                                                     part);
+                                                                                     part,
+                                                                                     path);
                                 currentDirectory->addChild(childDirectory);
                                 currentDirectory = childDirectory;
                             }
@@ -83,10 +90,12 @@ namespace tremotesf
                     }
                 }
             } else {
+                const QString name(infoMap[QLatin1String("name")].toString());
                 auto file = new TorrentFilesModelFile(0,
                                                       rootDirectory.get(),
                                                       0,
-                                                      infoMap.value(QLatin1String("name")).toString(),
+                                                      name,
+                                                      name,
                                                       infoMap.value(QLatin1String("length")).toLongLong());
                 file->setWanted(true);
                 file->setPriority(TorrentFilesModelEntry::NormalPriority);

@@ -21,6 +21,10 @@
 
 #include <QObject>
 
+#ifndef TREMOTESF_SAILFISHOS
+class QWidget;
+#endif
+
 namespace tremotesf
 {
     class Utils : public QObject
@@ -61,6 +65,9 @@ namespace tremotesf
             StalledSeedingIcon
         };
         static QString statusIconPath(StatusIcon icon);
+
+        static void openFile(const QString& filePath, QWidget* parent = nullptr);
+        static void selectFilesInFileManager(const QStringList& files, QWidget* parent = nullptr);
 #endif
     };
 }

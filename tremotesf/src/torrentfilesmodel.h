@@ -26,11 +26,14 @@
 
 namespace tremotesf
 {
+    class Rpc;
+
     class TorrentFilesModel : public BaseTorrentFilesModel
     {
         Q_OBJECT
         Q_ENUMS(Role)
         Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)
+        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
         Q_PROPERTY(bool loading READ isLoading NOTIFY loadingChanged)
     public:
@@ -57,7 +60,9 @@ namespace tremotesf
         };
 #endif
 
-        explicit TorrentFilesModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
+        explicit TorrentFilesModel(libtremotesf::Torrent* torrent = nullptr,
+                                   Rpc* rpc = nullptr,
+                                   QObject* parent = nullptr);
         ~TorrentFilesModel() override;
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
@@ -71,6 +76,9 @@ namespace tremotesf
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);
 
+        Rpc* rpc() const;
+        void setRpc(Rpc* rpc);
+
         bool isLoaded() const;
         bool isLoading() const;
 
@@ -81,6 +89,9 @@ namespace tremotesf
 
         Q_INVOKABLE void renameFile(const QModelIndex& index, const QString& newName) const;
         void fileRenamed(const QString& path, const QString& newName);
+
+        Q_INVOKABLE QString localFilePath(const QModelIndex& index) const;
+        Q_INVOKABLE bool isWanted(const QModelIndex& index) const;
 
 #ifdef TREMOTESF_SAILFISHOS
     protected:
@@ -97,6 +108,7 @@ namespace tremotesf
         void setLoading(bool loading);
 
         libtremotesf::Torrent* mTorrent;
+        Rpc* mRpc;
         bool mLoaded;
         bool mLoading;
         std::vector<TorrentFilesModelFile*> mFiles;

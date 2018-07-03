@@ -19,6 +19,7 @@
 #include "torrentfilesmodel.h"
 
 #include <QFutureWatcher>
+#include <QStringBuilder>
 #include <QtConcurrentRun>
 
 #ifndef TREMOTESF_SAILFISHOS
@@ -26,6 +27,8 @@
 #include <QStyle>
 #endif
 
+#include "libtremotesf/serversettings.h"
+#include "rpc.h"
 #include "utils.h"
 
 namespace tremotesf
@@ -85,15 +88,21 @@ namespace tremotesf
                 TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
                 const std::vector<QString> parts(file->path);
+                QString path;
 
                 for (int partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
                     const QString& part = parts[partIndex];
+                    if (partIndex > 0) {
+                        path += '/';
+                    }
+                    path += part;
 
                     if (partIndex == lastPartIndex) {
                         auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
                                                                    currentDirectory,
                                                                    fileIndex,
                                                                    part,
+                                                                   path,
                                                                    file->size);
 
                         updateFile(childFile, file);
@@ -107,7 +116,8 @@ namespace tremotesf
                         } else {
                             auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
                                                                                  currentDirectory,
-                                                                                 part);
+                                                                                 part,
+                                                                                 path);
                             currentDirectory->addChild(childDirectory);
                             currentDirectory = childDirectory;
                         }
@@ -119,9 +129,10 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, QObject* parent)
+    TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, Rpc* rpc, QObject* parent)
         : BaseTorrentFilesModel(parent),
           mTorrent(nullptr),
+          mRpc(rpc),
           mLoaded(false),
           mLoading(true),
           mCreatingTree(false),
@@ -275,6 +286,16 @@ namespace tremotesf
         }
     }
 
+    Rpc* TorrentFilesModel::rpc() const
+    {
+        return mRpc;
+    }
+
+    void TorrentFilesModel::setRpc(Rpc* rpc)
+    {
+        mRpc = rpc;
+    }
+
     bool TorrentFilesModel::isLoaded() const
     {
         return mLoaded;
@@ -320,13 +341,8 @@ namespace tremotesf
 
     void TorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName) const
     {
-        QStringList parts;
         const TorrentFilesModelEntry* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
-        while (entry != mRootDirectory.get()) {
-            parts.insert(0, entry->name());
-            entry = entry->parentDirectory();
-        }
-        mTorrent->renameFile(parts.join('/'), newName);
+        mTorrent->renameFile(entry->path(), newName);
     }
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName)
@@ -341,6 +357,30 @@ namespace tremotesf
         entry->setName(newName);
         emit dataChanged(createIndex(entry->row(), 0, entry),
                          createIndex(entry->row(), columnCount() - 1, entry));
+    }
+
+    QString TorrentFilesModel::localFilePath(const QModelIndex &index) const
+    {
+        if (!index.isValid()) {
+            return mRpc->localTorrentDownloadDirectoryPath(mTorrent);
+        }
+        if (mTorrent->isSingleFile()) {
+            return mRpc->localTorrentFilesPath(mTorrent);
+        }
+        const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
+        QString path(entry->path());
+        if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->renameIncompleteFiles()) {
+            path += QLatin1String(".part");
+        }
+        return mRpc->localTorrentDownloadDirectoryPath(mTorrent) % '/' % path;
+    }
+
+    bool TorrentFilesModel::isWanted(const QModelIndex& index) const
+    {
+        if (!index.isValid()) {
+            return true;
+        }
+        return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() != TorrentFilesModelEntry::Unwanted;
     }
 
     void TorrentFilesModel::update(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files)

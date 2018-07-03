@@ -77,6 +77,9 @@ namespace tremotesf
         void showTorrentsNotification(const QString& summary, const QStringList& torrents);
         void showNotification(const QString& summary, const QString& body);
 
+        void openTorrentsFiles();
+        void showTorrentsInFileManager();
+
     private:
         IpcServer* mIpcServer;
 
@@ -106,6 +109,9 @@ namespace tremotesf
         QAction* mStartTorrentNowAction = nullptr;
         QAction* mPauseTorrentAction = nullptr;
         QAction* mRemoveTorrentAction = nullptr;
+
+        QAction* mOpenTorrentFilesAction = nullptr;
+        QAction* mShowInFileManagerAction = nullptr;
 
         QToolBar* mToolBar = nullptr;
 

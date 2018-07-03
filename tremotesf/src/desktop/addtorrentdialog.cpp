@@ -196,7 +196,7 @@ namespace tremotesf
         firstFormLayout->addRow(nullptr, mFreeSpaceLabel);
 
         if (mLocalFile) {
-            layout->addWidget(new TorrentFilesView(mFilesModel), 1);
+            layout->addWidget(new TorrentFilesView(mFilesModel, mRpc), 1);
         }
 
         mPriorityComboBox = new QComboBox(this);

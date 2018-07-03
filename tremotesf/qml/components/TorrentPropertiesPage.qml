@@ -26,6 +26,7 @@ Page {
 
     property string torrentHash
     property var torrent
+    property bool torrentIsLocal: torrent ? rpc.isTorrentLocalMounted(torrent.downloadDirectory) : false
 
     function updateTorrent() {
         var newTorrent = rpc.torrentByHash(torrentHash)
@@ -87,6 +88,16 @@ Page {
                 enabled: torrent
                 text: qsTranslate("tremotesf", "Check Local Data")
                 onClicked: rpc.checkTorrents([torrent.id])
+            }
+            MenuItem {
+                visible: torrentIsLocal
+                text: qsTranslate("tremotesf", "Open Download Directory")
+                onClicked: Qt.openUrlExternally(rpc.localTorrentDownloadDirectoryPath(torrent))
+            }
+            MenuItem {
+                visible: torrentIsLocal
+                text: qsTranslate("tremotesf", "Open")
+                onClicked: Qt.openUrlExternally(rpc.localTorrentFilesPath(torrent))
             }
             MenuItem {
                 enabled: torrent

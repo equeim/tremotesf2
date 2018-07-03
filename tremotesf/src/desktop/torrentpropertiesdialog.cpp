@@ -62,7 +62,7 @@ namespace tremotesf
           mRpc(rpc),
           mMessageWidget(new KMessageWidget(this)),
           mTabWidget(new QTabWidget(this)),
-          mFilesModel(new TorrentFilesModel(mTorrent, this)),
+          mFilesModel(new TorrentFilesModel(mTorrent, mRpc, this)),
           mTrackersViewWidget(new TrackersViewWidget(mTorrent, this)),
           mPeersView(nullptr),
           mPeersModel(nullptr)
@@ -75,7 +75,7 @@ namespace tremotesf
         layout->addWidget(mMessageWidget);
 
         setupDetailsTab();
-        mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc->serverSettings()), qApp->translate("tremotesf", "Files"));
+        mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc), qApp->translate("tremotesf", "Files"));
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));
         setupPeersTab();
         setupLimitsTab();

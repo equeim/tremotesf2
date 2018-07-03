@@ -21,24 +21,20 @@
 
 #include "basetreeview.h"
 
-namespace libtremotesf
-{
-    class ServerSettings;
-}
-
 namespace tremotesf
 {
     class BaseTorrentFilesModel;
     class LocalTorrentFilesModel;
+    class Rpc;
     class TorrentFilesModel;
     class TorrentFilesProxyModel;
 
     class TorrentFilesView : public BaseTreeView
     {
     public:
-        explicit TorrentFilesView(LocalTorrentFilesModel* model, QWidget* parent = nullptr);
+        explicit TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent = nullptr);
         explicit TorrentFilesView(TorrentFilesModel* model,
-                                  libtremotesf::ServerSettings* serverSettings,
+                                  Rpc* rpc,
                                   QWidget* parent = nullptr);
         ~TorrentFilesView() override;
 
@@ -50,7 +46,7 @@ namespace tremotesf
         bool mLocalFile;
         BaseTorrentFilesModel* mModel;
         TorrentFilesProxyModel* mProxyModel;
-        libtremotesf::ServerSettings* mServerSettings;
+        Rpc* mRpc;
     };
 }
 

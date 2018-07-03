@@ -109,6 +109,7 @@ Page {
                 sourceModel: TorrentFilesModel {
                     id: filesModel
                     torrent: torrentFilesPage.torrent
+                    rpc: rootWindow.rpc
                 }
                 sortRole: TorrentFilesModel.NameRole
                 Component.onCompleted: sort()
@@ -125,6 +126,19 @@ Page {
                 menu: Component {
                     ContextMenu {
                         MenuItem {
+                            id: openMenuItem
+                            visible: torrentPropertiesPage.torrentIsLocal && modelData.wantedState !== TorrentFilesModelEntry.Unwanted
+                            text: qsTranslate("tremotesf", "Open")
+                            onClicked: Qt.openUrlExternally(filesModel.localFilePath(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index))))
+                        }
+
+                        Separator {
+                            visible: openMenuItem.visible
+                            width: parent.width
+                            color: Theme.secondaryColor
+                        }
+
+                        MenuItem {
                             visible: modelData.wantedState !== TorrentFilesModelEntry.Wanted
                             text: qsTranslate("tremotesf", "Download", "File menu item, verb")
                             onClicked: filesModel.setFileWanted(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index)), true)
@@ -134,6 +148,11 @@ Page {
                             visible: modelData.wantedState !== TorrentFilesModelEntry.Unwanted
                             text: qsTranslate("tremotesf", "Not Download")
                             onClicked: filesModel.setFileWanted(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index)), false)
+                        }
+
+                        Separator {
+                            width: parent.width
+                            color: Theme.secondaryColor
                         }
 
                         MenuLabel {
@@ -332,6 +351,12 @@ Page {
         }
 
         PullDownMenu {
+            MenuItem {
+                visible: filesModel.loaded && torrentPropertiesPage.torrentIsLocal && filesModel.isWanted(filesProxyModel.sourceIndex(delegateModel.rootIndex))
+                text: qsTranslate("tremotesf", "Open")
+                onClicked: Qt.openUrlExternally(filesModel.localFilePath(filesProxyModel.sourceIndex(delegateModel.rootIndex)))
+            }
+
             MenuItem {
                 enabled: filesModel.loaded
                 text: qsTranslate("tremotesf", "Select")

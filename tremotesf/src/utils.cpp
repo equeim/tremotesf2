@@ -19,6 +19,7 @@
 #include "utils.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 #include <QFile>
 #include <QLocale>
 
@@ -81,7 +82,24 @@ namespace tremotesf
         Q_ENUM(Priority)
     };
 }
-
+#else
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QUrl>
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QProcess>
+#include <QRegularExpression>
+#include <QVersionNumber>
+#elif defined(Q_OS_WIN)
+#include <windows.h>
+#include <shlobj.h>
+#endif
 #endif // TREMOTESF_SAILFISHOS
 
 namespace tremotesf
@@ -397,6 +415,162 @@ namespace tremotesf
         }
 
         return QString();
+    }
+
+    void Utils::openFile(const QString& filePath, QWidget* parent)
+    {
+        const QString nativePath(QDir::toNativeSeparators(filePath));
+        if (!QDesktopServices::openUrl(QUrl::fromLocalFile(nativePath))) {
+            qWarning() << "QDesktopServices::openUrl" << nativePath << "failed";
+            auto dialog = new QMessageBox(QMessageBox::Warning,
+                                          qApp->translate("tremotesf", "Error"),
+                                          qApp->translate("tremotesf", "Error opening %1").arg(nativePath),
+                                          QMessageBox::Close,
+                                          parent);
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->show();
+        }
+    }
+
+    void Utils::selectFilesInFileManager(const QStringList& files, QWidget* parent)
+    {
+        const auto openParentDirectory = [=](const QString& filePath) {
+            const QString directory(QFileInfo(filePath).path());
+            qDebug() << "executing QDesktopServices::openUrl" << directory;
+            if (!QDesktopServices::openUrl(QUrl::fromLocalFile(directory))) {
+                qWarning() << "QDesktopServices::openUrl" << directory << "failed";
+                if (parent) {
+                    auto dialog = new QMessageBox(QMessageBox::Warning,
+                                                  qApp->translate("tremotesf", "Error"),
+                                                  qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(directory)),
+                                                  QMessageBox::Close,
+                                                  parent);
+                    dialog->setAttribute(Qt::WA_DeleteOnClose);
+                    dialog->show();
+                }
+            }
+        };
+
+        const auto openParentDirectoryForAll = [=]() {
+            for (const QString& filePath : files) {
+                openParentDirectory(filePath);
+            }
+        };
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+        auto xdgMimeProcess = new QProcess(qApp);
+        QObject::connect(xdgMimeProcess,
+                         static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+                         qApp,
+                         [=](int exitCode, QProcess::ExitStatus exitStatus) {
+            if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                const QByteArray fileManager(xdgMimeProcess->readLine().trimmed());
+                qDebug() << "detected file manager:" << fileManager;
+                if (fileManager == "dolphin.desktop" || fileManager == "org.kde.dolphin.desktop") {
+                    qDebug() << "launching dolphin";
+                    QProcess::startDetached(QLatin1String("dolphin"), QStringList{QLatin1String("--select")} + files);
+                } else if (fileManager == "nautilus.desktop" || fileManager == "org.gnome.Nautilus.desktop" || fileManager == "nautilus-folder-handler.desktop") {
+                    auto nautilusProcess = new QProcess(qApp);
+                    QObject::connect(nautilusProcess,
+                                     static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+                                     qApp,
+                                     [=](int exitCode, QProcess::ExitStatus exitStatus) {
+                        if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                            const QByteArray processOutput(nautilusProcess->readLine().trimmed());
+                            const QVersionNumber version(QVersionNumber::fromString(QRegularExpression(QLatin1String("[0-9.]+")).match(processOutput).captured()));
+                            if (version.isNull()) {
+                                qWarning() << "failed to detect nautilus version, \"nautilus --version\" output was" << processOutput;
+                            } else {
+                                qDebug() << "detected nautilus version:" << version;
+                                if (version >= QVersionNumber(3, 28, 0)) {
+                                    qDebug() << "launching nautilus";
+                                    QProcess::startDetached(QLatin1String("nautilus"), QStringList{QLatin1String("--select")} + files);
+                                } else if (version >= QVersionNumber(3, 8, 0)) {
+                                    qDebug() << "launching nautilus";
+                                    QProcess::startDetached(QLatin1String("nautilus"), QStringList{QLatin1String("--no-desktop"), QLatin1String("--select")} + files);
+                                } else {
+                                    qWarning() << "nautilus version is too old";
+                                    openParentDirectoryForAll();
+                                }
+                            }
+                        } else {
+                            qWarning().nospace() << "process " << nautilusProcess->program()
+                                       << ' ' << nautilusProcess->arguments()
+                                       << " failed, exitStatus " << exitStatus
+                                       << ", exitCode " << exitCode
+                                       << ", error string " << nautilusProcess->errorString()
+                                       << ", stderr:";
+                            qWarning() << QString(nautilusProcess->readAllStandardError());
+                            openParentDirectoryForAll();
+                        }
+                        nautilusProcess->deleteLater();
+                    });
+
+                    nautilusProcess->start(QLatin1String("nautilus"), {QLatin1String("--versio")});
+                    qDebug() << "executing" << nautilusProcess->program() << nautilusProcess->arguments();
+
+                } else if (fileManager == "nemo.desktop") {
+                    qDebug() << "launching nemo";
+                    QProcess::startDetached(QLatin1String("nemo"), files);
+                } else if (fileManager == "Thunar.desktop" || fileManager == "Thunar-folder-handler.desktop") {
+                    qDebug() << "executing thunar dbus calls";
+
+                    for (const QString& filePath : files) {
+                        QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.xfce.FileManager"),
+                                                                            QLatin1String("/org/xfce/FileManager"),
+                                                                            QLatin1String("org.xfce.FileManager"),
+                                                                            QLatin1String("DisplayFolderAndSelect")));
+                        const QFileInfo info(filePath);
+                        message.setArguments({info.path(), info.fileName(), QVariant(QVariant::String), QVariant(QVariant::String)});
+                        auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), qApp);
+                        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=]() {
+                            QDBusPendingReply<void> reply(*watcher);
+                            if (reply.isError()) {
+                                qWarning() << "thunar dbus call failed, error string" << reply.error();
+                                openParentDirectory(filePath);
+                            }
+                            watcher->deleteLater();
+                        });
+                    }
+                } else {
+                    openParentDirectoryForAll();
+                }
+            } else {
+                qWarning().nospace() << "process " << xdgMimeProcess->program()
+                           << ' ' << xdgMimeProcess->arguments()
+                           << " failed, exitStatus " << exitStatus
+                           << ", exitCode " << exitCode
+                           << ", error string " << xdgMimeProcess->errorString()
+                           << ", stderr:";
+                qWarning() << QString(xdgMimeProcess->readAllStandardError());
+                openParentDirectoryForAll();
+            }
+            xdgMimeProcess->deleteLater();
+        });
+
+        xdgMimeProcess->start(QLatin1String("xdg-mime"), {QLatin1String("query"),
+                                                          QLatin1String("default"),
+                                                          QLatin1String("inode/directory")});
+        qDebug() << "executing" << xdgMimeProcess->program() << xdgMimeProcess->arguments();
+
+#elif defined(Q_OS_WIN)
+        for (const QString& filePath : files) {
+            const QString nativePath(QDir::toNativeSeparators(filePath));
+            PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCTSTR>(nativePath.utf16()));
+            if (directory) {
+                qDebug() << "executing SHOpenFolderAndSelectItems" << nativePath;
+                if (SHOpenFolderAndSelectItems(directory, 0, nullptr, 0) != S_OK) {
+                    qWarning() << "SHOpenFolderAndSelectItems" << nativePath << "failed";
+                    openParentDirectory(filePath);
+                }
+                ILFree(directory);
+            } else {
+                qWarning() << "ILCreateFromPathW" << nativePath << "failed";
+                openParentDirectory(filePath);
+            }
+        }
+#else
+        openParentDirectoryForAll();
+#endif
     }
 #endif // TREMOTESF_SAILFISHOS
 }

@@ -23,6 +23,7 @@ import harbour.tremotesf 1.0
 
 ListItem {
     property var torrent
+    property bool torrentIsLocal: rpc.isTorrentLocalMounted(torrent.downloadDirectory)
 
     property color primaryTextColor: highlighted ? Theme.highlightColor : Theme.primaryColor
     property color secondaryTextColor: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
@@ -71,6 +72,16 @@ ListItem {
             MenuItem {
                 text: qsTranslate("tremotesf", "Remove")
                 onClicked: pageStack.push("RemoveTorrentsDialog.qml", {"ids": [torrent.id]})
+            }
+            MenuItem {
+                visible: torrentIsLocal
+                text: qsTranslate("tremotesf", "Open")
+                onClicked: Qt.openUrlExternally(rpc.localTorrentFilesPath(torrent))
+            }
+            MenuItem {
+                visible: torrentIsLocal
+                text: qsTranslate("tremotesf", "Open Download Directory")
+                onClicked: Qt.openUrlExternally(rpc.localTorrentDownloadDirectoryPath(torrent))
             }
             MenuItem {
                 text: qsTranslate("tremotesf", "Check Local Data")

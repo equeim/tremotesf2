@@ -39,12 +39,11 @@ int main(int argc, char** argv)
     app.setOrganizationName(app.applicationName());
     app.setWindowIcon(QIcon::fromTheme(QLatin1String("tremotesf")));
     app.setQuitOnLastWindowClosed(false);
-
 #ifdef Q_OS_WIN
+    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     QIcon::setThemeSearchPaths({QLatin1String("icons")});
     QIcon::setThemeName(QLatin1String("breeze"));
 #endif
-
 #endif // TREMOTESF_SAILFISHOS
 
     qApp->setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
@@ -104,7 +103,12 @@ int main(int argc, char** argv)
 #else
     tremotesf::MainWindow window(&ipcServer, arguments);
     window.showMinimized(parser.isSet(QLatin1String("minimized")));
+
 #endif
 
-    return qApp->exec();
+    const int exitCode = qApp->exec();
+#ifdef Q_OS_WIN
+    CoUninitialize();
+#endif
+    return exitCode;
 }
