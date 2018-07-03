@@ -107,7 +107,7 @@ ListItem {
     }
 
     Component.onCompleted: {
-        torrent = torrentsModel.torrentAtRow(torrentsProxyModel.sourceRow(model.index))
+        torrent = torrentsModel.torrentAtIndex(torrentsProxyModel.sourceIndex(model.index))
         selected = selectionModel.isSelected(model.index)
     }
 

@@ -34,6 +34,11 @@ namespace tremotesf
         return mapToSource(proxyIndex);
     }
 
+    QModelIndex BaseProxyModel::sourceIndex(int proxyRow) const
+    {
+        return mapToSource(index(proxyRow, 0));
+    }
+
     QModelIndexList BaseProxyModel::sourceIndexes(const QModelIndexList& proxyIndexes) const
     {
         QModelIndexList indexes;
@@ -41,11 +46,6 @@ namespace tremotesf
             indexes.append(mapToSource(index));
         }
         return indexes;
-    }
-
-    int BaseProxyModel::sourceRow(int proxyRow, const QModelIndex& proxyParent) const
-    {
-        return mapToSource(index(proxyRow, 0, proxyParent)).row();
     }
 
     void BaseProxyModel::setSortRole(int role)

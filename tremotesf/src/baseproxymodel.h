@@ -34,8 +34,8 @@ namespace tremotesf
         explicit BaseProxyModel(QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
 
         Q_INVOKABLE QModelIndex sourceIndex(const QModelIndex& proxyIndex) const;
+        Q_INVOKABLE QModelIndex sourceIndex(int proxyRow) const;
         Q_INVOKABLE QModelIndexList sourceIndexes(const QModelIndexList& proxyIndexes) const;
-        Q_INVOKABLE int sourceRow(int proxyRow, const QModelIndex& proxyParent = QModelIndex()) const;
 
         void setSortRole(int role);
 

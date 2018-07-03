@@ -318,16 +318,6 @@ namespace tremotesf
         return mTorrents[row].get();
     }
 
-    Torrent* TorrentsModel::torrentByName(const QString& name) const
-    {
-        for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
-            if (torrent->name() == name) {
-                return torrent.get();
-            }
-        }
-        return nullptr;
-    }
-
     QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const
     {
         QVariantList ids;

@@ -94,9 +94,8 @@ namespace tremotesf
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
 
-        libtremotesf::Torrent* torrentAtIndex(const QModelIndex& index) const;
-        Q_INVOKABLE libtremotesf::Torrent* torrentAtRow(int row) const;
-        Q_INVOKABLE libtremotesf::Torrent* torrentByName(const QString& name) const;
+        Q_INVOKABLE libtremotesf::Torrent* torrentAtIndex(const QModelIndex& index) const;
+        libtremotesf::Torrent* torrentAtRow(int row) const;
 
         Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
 
