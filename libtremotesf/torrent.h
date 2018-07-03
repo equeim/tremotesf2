@@ -114,6 +114,7 @@ namespace libtremotesf
         Q_PROPERTY(IdleSeedingLimitMode idleSeedingLimitMode READ idleSeedingLimitMode WRITE setIdleSeedingLimitMode)
         Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit)
         Q_PROPERTY(QString downloadDirectory READ downloadDirectory NOTIFY updated)
+        Q_PROPERTY(bool singleFile READ isSingleFile NOTIFY updated)
         Q_PROPERTY(QString creator READ creator NOTIFY updated)
         Q_PROPERTY(QDateTime creationDate READ creationDate NOTIFY updated)
         Q_PROPERTY(QString comment READ comment NOTIFY updated)
@@ -218,6 +219,7 @@ namespace libtremotesf
         int idleSeedingLimit() const;
         Q_INVOKABLE void setIdleSeedingLimit(int limit);
         const QString& downloadDirectory() const;
+        bool isSingleFile() const;
         const QString& creator() const;
         const QDateTime& creationDate() const;
         const QString& comment() const;
@@ -295,6 +297,7 @@ namespace libtremotesf
         IdleSeedingLimitMode mIdleSeedingLimitMode = GlobalIdleSeedingLimit;
         int mIdleSeedingLimit = 0;
         QString mDownloadDirectory;
+        bool mSingleFile = false;
         QString mComment;
         QString mCreator;
         QDateTime mCreationDate;

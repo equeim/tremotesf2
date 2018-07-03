@@ -75,6 +75,7 @@ namespace libtremotesf
         const QString idleSeedingLimitModeKey(QLatin1String("seedIdleMode"));
         const QString idleSeedingLimitKey(QLatin1String("seedRatioLimit"));
         const QString downloadDirectoryKey(QLatin1String("downloadDir"));
+        const QString prioritiesKey(QLatin1String("priorities"));
         const QString creatorKey(QLatin1String("creator"));
         const QString creationDateKey(QLatin1String("dateCreated"));
         const QString commentKey(QLatin1String("comment"));
@@ -409,6 +410,11 @@ namespace libtremotesf
         return mDownloadDirectory;
     }
 
+    bool Torrent::isSingleFile() const
+    {
+        return mSingleFile;
+    }
+
     const QString& Torrent::creator() const
     {
         return mCreator;
@@ -653,6 +659,7 @@ namespace libtremotesf
         setChanged(mIdleSeedingLimitMode, static_cast<IdleSeedingLimitMode>(torrentMap[idleSeedingLimitModeKey].toInt()), mChanged);
         setChanged(mIdleSeedingLimit, torrentMap[idleSeedingLimitKey].toInt(), mChanged);
         setChanged(mDownloadDirectory, torrentMap[downloadDirectoryKey].toString(), mChanged);
+        setChanged(mSingleFile, torrentMap[prioritiesKey].toList().size() == 1, mChanged);
         setChanged(mCreator, torrentMap[creatorKey].toString(), mChanged);
 
         const long long creationDate = torrentMap[creationDateKey].toLongLong() * 1000;
@@ -756,7 +763,6 @@ namespace libtremotesf
                 }
             }
             if (row == -1) {
-                row = mPeers.size();
                 mPeers.push_back(std::make_shared<Peer>(address, peerMap));
             } else {
                 mPeers[row]->update(peerMap);

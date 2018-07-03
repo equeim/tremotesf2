@@ -104,11 +104,6 @@ namespace libtremotesf
         });
     }
 
-    Rpc::~Rpc()
-    {
-        disconnect();
-    }
-
     ServerSettings* Rpc::serverSettings() const
     {
         return mServerSettings;
@@ -701,6 +696,7 @@ namespace libtremotesf
                                       "            \"peersGettingFromUs\","
                                       "            \"peersSendingToUs\","
                                       "            \"percentDone\","
+                                      "            \"priorities\","
                                       "            \"queuePosition\","
                                       "            \"rateDownload\","
                                       "            \"rateUpload\","

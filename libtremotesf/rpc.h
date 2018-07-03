@@ -93,7 +93,6 @@ namespace libtremotesf
         Q_ENUM(Error)
 
         explicit Rpc(ServerSettings* serverSettings = nullptr, QObject* parent = nullptr);
-        ~Rpc() override;
 
         ServerSettings* serverSettings() const;
         ServerStats* serverStats() const;
