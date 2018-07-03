@@ -124,7 +124,7 @@ namespace tremotesf
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
         }
 
-        const bool local = false/*mRpc->isLocal()*/;
+        const bool local = mRpc->isLocal();
         const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
         mDownloadDirectoryWidget = new FileSelectionWidget(true,
                                                            QString(),

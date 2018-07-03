@@ -53,7 +53,7 @@ namespace tremotesf
                             emit addedNotificationRequested(addedHashes, addedNames);
                         }
                         if (notifyOnFinished && !finishedHashes.isEmpty()) {
-                            emit finishedNotificationRequested(addedHashes, addedNames);
+                            emit finishedNotificationRequested(finishedHashes, finishedNames);
                         }
                     }
                 }

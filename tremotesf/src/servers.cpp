@@ -238,7 +238,7 @@ namespace tremotesf
             const int remoteSize = directory.second.size();
             if (path.startsWith(directory.second)) {
                 if (path.size() == remoteSize || path[remoteSize] == '/') {
-                    return directory.first % path.midRef(directory.second.size());
+                    return directory.first % path.midRef(remoteSize);
                 }
             }
         }
