@@ -21,7 +21,8 @@
 
 #include <QObject>
 #include <QTime>
-#include <QVariantMap>
+
+class QJsonObject;
 
 namespace libtremotesf
 {
@@ -42,7 +43,7 @@ namespace libtremotesf
         Q_PROPERTY(QString incompleteDirectory READ incompleteDirectory WRITE setIncompleteDirectory)
 
         Q_PROPERTY(bool ratioLimited READ isRatioLimited WRITE setRatioLimited)
-        Q_PROPERTY(float ratioLimit READ ratioLimit WRITE setRatioLimit)
+        Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit)
         Q_PROPERTY(bool idleSeedingLimited READ isIdleSeedingLimited WRITE setIdleSeedingLimited)
         Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit)
 
@@ -125,8 +126,8 @@ namespace libtremotesf
 
         bool isRatioLimited() const;
         Q_INVOKABLE void setRatioLimited(bool limited);
-        float ratioLimit() const;
-        Q_INVOKABLE void setRatioLimit(float limit);
+        double ratioLimit() const;
+        Q_INVOKABLE void setRatioLimit(double limit);
         bool isIdleSeedingLimited() const;
         Q_INVOKABLE void setIdleSeedingLimited(bool limited);
         int idleSeedingLimit() const;
@@ -195,7 +196,7 @@ namespace libtremotesf
         int toKibiBytes(int kiloBytesOrKibiBytes) const;
         int fromKibiBytes(int kibiBytes) const;
 
-        void update(const QVariantMap& serverSettings);
+        void update(const QJsonObject& serverSettings);
         void save() const;
 
     private:
@@ -214,7 +215,7 @@ namespace libtremotesf
         QString mIncompleteDirectory;
 
         bool mRatioLimited = false;
-        float mRatioLimit = 0.0f;
+        double mRatioLimit = 0.0;
         bool mIdleSeedingLimited = false;
         int mIdleSeedingLimit = 0;
 

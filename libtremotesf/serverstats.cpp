@@ -19,6 +19,8 @@
 #include "serverstats.h"
 #include "rpc.h"
 
+#include <QJsonObject>
+
 namespace libtremotesf
 {
     ServerStats::ServerStats(QObject* parent)
@@ -51,12 +53,12 @@ namespace libtremotesf
         return mTotal;
     }
 
-    void ServerStats::update(const QVariantMap& serverStats)
+    void ServerStats::update(const QJsonObject& serverStats)
     {
-        mDownloadSpeed = serverStats[QLatin1String("downloadSpeed")].toLongLong();
-        mUploadSpeed = serverStats[QLatin1String("uploadSpeed")].toLongLong();
-        mCurrentSession->update(serverStats[QLatin1String("current-stats")].toMap());
-        mTotal->update(serverStats[QLatin1String("cumulative-stats")].toMap());
+        mDownloadSpeed = serverStats[QLatin1String("downloadSpeed")].toDouble();
+        mUploadSpeed = serverStats[QLatin1String("uploadSpeed")].toDouble();
+        mCurrentSession->update(serverStats[QLatin1String("current-stats")].toObject());
+        mTotal->update(serverStats[QLatin1String("cumulative-stats")].toObject());
         emit updated();
     }
 
@@ -86,10 +88,10 @@ namespace libtremotesf
         return mSessionCount;
     }
 
-    void SessionStats::update(const QVariantMap& stats)
+    void SessionStats::update(const QJsonObject& stats)
     {
-        mDownloaded = stats[QLatin1String("downloadedBytes")].toLongLong();
-        mUploaded = stats[QLatin1String("uploadedBytes")].toLongLong();
+        mDownloaded = stats[QLatin1String("downloadedBytes")].toDouble();
+        mUploaded = stats[QLatin1String("uploadedBytes")].toDouble();
         mDuration = stats[QLatin1String("secondsActive")].toInt();
         mSessionCount = stats[QLatin1String("sessionCount")].toInt();
         emit updated();

@@ -20,7 +20,8 @@
 #define TREMOTESF_SERVERSTATS_H
 
 #include <QObject>
-#include <QVariantMap>
+
+class QJsonObject;
 
 namespace libtremotesf
 {
@@ -41,7 +42,7 @@ namespace libtremotesf
         int duration() const;
         int sessionCount() const;
 
-        void update(const QVariantMap& stats);
+        void update(const QJsonObject& stats);
 
     private:
         long long mDownloaded;
@@ -69,7 +70,7 @@ namespace libtremotesf
         SessionStats* currentSession() const;
         SessionStats* total() const;
 
-        void update(const QVariantMap& serverStats);
+        void update(const QJsonObject& serverStats);
 
     private:
         long long mDownloadSpeed;

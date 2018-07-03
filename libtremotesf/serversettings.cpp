@@ -20,6 +20,8 @@
 
 #include "rpc.h"
 
+#include <QJsonObject>
+
 namespace libtremotesf
 {
     namespace
@@ -213,12 +215,12 @@ namespace libtremotesf
         }
     }
 
-    float ServerSettings::ratioLimit() const
+    double ServerSettings::ratioLimit() const
     {
         return mRatioLimit;
     }
 
-    void ServerSettings::setRatioLimit(float limit)
+    void ServerSettings::setRatioLimit(double limit)
     {
         mRatioLimit = limit;
         if (mSaveOnSet) {
@@ -631,14 +633,14 @@ namespace libtremotesf
         return kibiBytes;
     }
 
-    void ServerSettings::update(const QVariantMap& serverSettings)
+    void ServerSettings::update(const QJsonObject& serverSettings)
     {
         mRpcVersion = serverSettings.value(QLatin1String("rpc-version")).toInt();
         mMinimumRpcVersion = serverSettings.value(QLatin1String("rpc-version-minimum")).toInt();
 
         mUsingDecimalUnits = (serverSettings
                                   .value(QLatin1String("units"))
-                                  .toMap()
+                                  .toObject()
                                   .value(QLatin1String("speed-bytes"))
                                   .toInt() == 1000);
 
@@ -650,7 +652,7 @@ namespace libtremotesf
         mIncompleteDirectory = serverSettings.value(incompleteDirectoryKey).toString();
 
         mRatioLimited = serverSettings.value(ratioLimitedKey).toBool();
-        mRatioLimit = serverSettings.value(ratioLimitKey).toFloat();
+        mRatioLimit = serverSettings.value(ratioLimitKey).toDouble();
         mIdleSeedingLimited = serverSettings.value(idleSeedingLimitedKey).toBool();
         mIdleSeedingLimit = serverSettings.value(idleSeedingLimitKey).toInt();
 

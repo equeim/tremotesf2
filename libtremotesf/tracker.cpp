@@ -20,11 +20,12 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QJsonObject>
 #include <QUrl>
 
 namespace libtremotesf
 {
-    Tracker::Tracker(int id, const QVariantMap& trackerMap)
+    Tracker::Tracker(int id, const QJsonObject& trackerMap)
         : mId(id)
     {
         update(trackerMap);
@@ -65,7 +66,7 @@ namespace libtremotesf
         return mNextUpdate;
     }
 
-    void Tracker::update(const QVariantMap& trackerMap)
+    void Tracker::update(const QJsonObject& trackerMap)
     {
         mAnnounce = trackerMap.value(QLatin1String("announce")).toString();
 
@@ -96,7 +97,7 @@ namespace libtremotesf
 
         mPeers = trackerMap.value(QLatin1String("lastAnnouncePeerCount")).toInt();
 
-        const long long time = trackerMap.value(QLatin1String("nextAnnounceTime")).toLongLong() * 1000;
+        const long long time = trackerMap.value(QLatin1String("nextAnnounceTime")).toDouble() * 1000;
         if (time < 0) {
             mNextUpdate = -1;
         } else {

@@ -24,7 +24,8 @@
 
 #include <QDateTime>
 #include <QObject>
-#include <QVariantMap>
+
+class QJsonObject;
 
 namespace libtremotesf
 {
@@ -55,8 +56,8 @@ namespace libtremotesf
 
     struct Peer
     {
-        explicit Peer(const QString& address, const QVariantMap& peerMap);
-        void update(const QVariantMap& peerMap);
+        explicit Peer(const QString& address, const QJsonObject& peerMap);
+        void update(const QJsonObject& peerMap);
 
         QString address;
         long long downloadSpeed;
@@ -161,7 +162,7 @@ namespace libtremotesf
 
         static const QString idKey;
 
-        explicit Torrent(int id, const QVariantMap& torrentMap, Rpc* rpc);
+        explicit Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc);
 
         int id() const;
         const QString& hashString() const;
@@ -247,9 +248,9 @@ namespace libtremotesf
 
         bool isUpdated() const;
 
-        void update(const QVariantMap& torrentMap);
-        void updateFiles(const QVariantMap& torrentMap);
-        void updatePeers(const QVariantMap& torrentMap);
+        void update(const QJsonObject& torrentMap);
+        void updateFiles(const QJsonObject& torrentMap);
+        void updatePeers(const QJsonObject& torrentMap);
 
         bool isChanged() const;
 

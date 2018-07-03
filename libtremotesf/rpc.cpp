@@ -24,7 +24,9 @@
 #include <QFutureWatcher>
 #include <QHostAddress>
 #include <QHostInfo>
+#include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkInterface>
 #include <QNetworkReply>
@@ -57,14 +59,14 @@ namespace libtremotesf
                 .toJson();
         }
 
-        QVariantMap getReplyArguments(const QVariantMap& parseResult)
+        QJsonObject getReplyArguments(const QJsonObject& parseResult)
         {
-            return parseResult.value(QLatin1String("arguments")).toMap();
+            return parseResult[QLatin1String("arguments")].toObject();
         }
 
-        bool isResultSuccessful(const QVariantMap& parseResult)
+        bool isResultSuccessful(const QJsonObject& parseResult)
         {
-            return (parseResult.value(QLatin1String("result")).toString() == "success");
+            return (parseResult[QLatin1String("result")].toString() == QLatin1String("success"));
         }
     }
 
@@ -308,7 +310,7 @@ namespace libtremotesf
             auto watcher = new QFutureWatcher<QByteArray>(this);
             QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=]() {
                 if (isConnected()) {
-                    postRequest(watcher->result(), [=](const QVariantMap& parseResult) {
+                    postRequest(watcher->result(), [=](const QJsonObject& parseResult) {
                         if (isResultSuccessful(parseResult)) {
                             if (getReplyArguments(parseResult).contains(QLatin1String("torrent-duplicate"))) {
                                 emit torrentAddDuplicate();
@@ -340,7 +342,7 @@ namespace libtremotesf
                                      {QLatin1String("download-dir"), downloadDirectory},
                                      {QLatin1String("bandwidthPriority"), bandwidthPriority},
                                      {QLatin1String("paused"), !start}}),
-                    [=](const QVariantMap& parseResult) {
+                    [=](const QJsonObject& parseResult) {
                         if (isResultSuccessful(parseResult)) {
                             if (getReplyArguments(parseResult).contains(QLatin1String("torrent-duplicate"))) {
                                 emit torrentAddDuplicate();
@@ -457,7 +459,7 @@ namespace libtremotesf
                                                    {property, value}}));
 
            if (updateIfSuccessful) {
-               postRequest(QByteArray(std::move(requestData)), [=](const QVariantMap& parseResult) {
+               postRequest(QByteArray(std::move(requestData)), [=](const QJsonObject& parseResult) {
                    if (isResultSuccessful(parseResult)) {
                        updateData();
                    }
@@ -475,7 +477,7 @@ namespace libtremotesf
                                         {{QLatin1String("ids"), QVariantList{id}},
                                          {QLatin1String("location"), location},
                                          {QLatin1String("move"), moveFiles}}),
-                        [=](const QVariantMap& parseResult) {
+                        [=](const QJsonObject& parseResult) {
                 if (isResultSuccessful(parseResult)) {
                     updateData();
                 }
@@ -497,13 +499,13 @@ namespace libtremotesf
                                    "}")
                         .arg(id)
                         .toLatin1(),
-                    [=](const QVariantMap& parseResult) {
-                        const QVariantList torrentsVariants(getReplyArguments(parseResult)
+                    [=](const QJsonObject& parseResult) {
+                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
                                                                 .value(QLatin1String("torrents"))
-                                                                .toList());
+                                                                .toArray());
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
-                            torrent->updateFiles(torrentsVariants.first().toMap());
+                            torrent->updateFiles(torrentsVariants.first().toObject());
                             emit gotTorrentFiles(id);
                             if (scheduled) {
                                 checkIfTorrentsUpdated();
@@ -524,13 +526,13 @@ namespace libtremotesf
                                    "}")
                         .arg(id)
                         .toLatin1(),
-                    [=](const QVariantMap& parseResult) {
-                        const QVariantList torrentsVariants(getReplyArguments(parseResult)
+                    [=](const QJsonObject& parseResult) {
+                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
                                                                 .value(QLatin1String("torrents"))
-                                                                .toList());
+                                                                .toArray());
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
-                            torrent->updatePeers(torrentsVariants.first().toMap());
+                            torrent->updatePeers(torrentsVariants.first().toObject());
                             emit gotTorrentPeers(id);
                             if (scheduled) {
                                 checkIfTorrentsUpdated();
@@ -547,10 +549,10 @@ namespace libtremotesf
                                         {{QLatin1String("ids"), QVariantList{torrentId}},
                                          {QLatin1String("path"), filePath},
                                          {QLatin1String("name"), newName}}),
-                        [=](const QVariantMap& parseResult) {
+                        [=](const QJsonObject& parseResult) {
                             const std::shared_ptr<Torrent> torrent(torrentById(torrentId));
                             if (torrent) {
-                                const QVariantMap arguments(getReplyArguments(parseResult));
+                                const QJsonObject arguments(getReplyArguments(parseResult));
                                 const QString path(arguments[QLatin1String("path")].toString());
                                 const QString newName(arguments[QLatin1String("name")].toString());
                                 emit torrent->fileRenamed(path, newName);
@@ -572,8 +574,8 @@ namespace libtremotesf
                         "    },"
                         "    \"method\": \"session-get\""
                         "}",
-                        [=](const QVariantMap& parseResult) {
-                            emit gotDownloadDirFreeSpace(getReplyArguments(parseResult).value("download-dir-free-space").toLongLong());
+                        [=](const QJsonObject& parseResult) {
+                            emit gotDownloadDirFreeSpace(getReplyArguments(parseResult).value("download-dir-free-space").toDouble());
                         });
         }
     }
@@ -583,8 +585,8 @@ namespace libtremotesf
         if (isConnected()) {
             postRequest(makeRequestData(QLatin1String("free-space"),
                                         {{QLatin1String("path"), path}}),
-                        [=](const QVariantMap& parseResult) {
-                            emit gotFreeSpaceForPath(path, isResultSuccessful(parseResult), getReplyArguments(parseResult).value("size-bytes").toLongLong());
+                        [=](const QJsonObject& parseResult) {
+                            emit gotFreeSpaceForPath(path, isResultSuccessful(parseResult), getReplyArguments(parseResult).value("size-bytes").toDouble());
                         });
         }
     }
@@ -645,7 +647,7 @@ namespace libtremotesf
     void Rpc::getServerSettings()
     {
         postRequest(QByteArrayLiteral("{\"method\": \"session-get\"}"),
-                    [=](const QVariantMap& parseResult) {
+                    [=](const QJsonObject& parseResult) {
                         mServerSettings->update(getReplyArguments(parseResult));
                         mServerSettingsUpdated = true;
                         if (mRpcVersionChecked) {
@@ -717,14 +719,14 @@ namespace libtremotesf
                                       "    },"
                                       "    \"method\": \"torrent-get\""
                                       "}"),
-                    [=](const QVariantMap& parseResult) {
-                        const QVariantList torrentsVariants(getReplyArguments(parseResult)
+                    [=](const QJsonObject& parseResult) {
+                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
                                                                 .value(QLatin1String("torrents"))
-                                                                .toList());
+                                                                .toArray());
 
                         std::vector<std::shared_ptr<Torrent>> torrents;
-                        for (const QVariant& torrentVariant : torrentsVariants) {
-                            const QVariantMap torrentMap(torrentVariant.toMap());
+                        for (const QJsonValue& torrentVariant : torrentsVariants) {
+                            const QJsonObject torrentMap(torrentVariant.toObject());
                             const int id = torrentMap.value(Torrent::idKey).toInt();
 
                             std::shared_ptr<Torrent> torrent(torrentById(id));
@@ -766,7 +768,7 @@ namespace libtremotesf
     void Rpc::getServerStats()
     {
         postRequest(QByteArrayLiteral("{\"method\": \"session-stats\"}"),
-                    [=](const QVariantMap& parseResult) {
+                    [=](const QJsonObject& parseResult) {
                         mServerStats->update(getReplyArguments(parseResult));
                         mServerStatsUpdated = true;
                         startUpdateTimer();
@@ -821,7 +823,7 @@ namespace libtremotesf
     }
 
     void Rpc::postRequest(const QByteArray& data,
-                          const std::function<void(const QVariantMap&)>& callOnSuccessParse,
+                          const std::function<void(const QJsonObject&)>& callOnSuccessParse,
                           const std::function<void()>& callOnSuccess)
     {
         QNetworkRequest request(mServerUrl);
@@ -839,11 +841,11 @@ namespace libtremotesf
                         const QByteArray replyData(reply->readAll());
                         const auto future = QtConcurrent::run([=]() {
                             QJsonParseError error;
-                            const QVariantMap result(QJsonDocument::fromJson(replyData, &error).toVariant().toMap());
-                            return std::pair<QVariantMap, bool>(result, error.error == QJsonParseError::NoError);
+                            QJsonObject result(QJsonDocument::fromJson(replyData, &error).object());
+                            return std::pair<QJsonObject, bool>(std::move(result), error.error == QJsonParseError::NoError);
                         });
-                        auto watcher = new QFutureWatcher<std::pair<QVariantMap, bool>>(this);
-                        QObject::connect(watcher, &QFutureWatcher<std::pair<QVariantMap, bool>>::finished, this, [=]() {
+                        auto watcher = new QFutureWatcher<std::pair<QJsonObject, bool>>(this);
+                        QObject::connect(watcher, &QFutureWatcher<std::pair<QJsonObject, bool>>::finished, this, [=]() {
                             const auto result = watcher->result();
                             if (mStatus != Disconnected) {
                                 if (result.second) {
@@ -901,7 +903,7 @@ namespace libtremotesf
         timer->start();
     }
 
-    void Rpc::postRequest(const QByteArray& data, const std::function<void(const QVariantMap&)>& callOnSuccess)
+    void Rpc::postRequest(const QByteArray& data, const std::function<void(const QJsonObject&)>& callOnSuccess)
     {
         postRequest(data, callOnSuccess, nullptr);
     }
