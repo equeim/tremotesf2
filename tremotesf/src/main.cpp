@@ -62,6 +62,8 @@ int main(int argc, char** argv)
 
     signal(SIGINT, [](int) { qApp->quit(); });
     signal(SIGTERM, [](int) { qApp->quit(); });
+    signal(SIGHUP, [](int) { qApp->quit(); });
+    signal(SIGQUIT, [](int) { qApp->quit(); });
 
     if (tremotesf::IpcServer::tryToConnect()) {
         qWarning() << "Only one instance of Tremotesf can be run at the same time";
