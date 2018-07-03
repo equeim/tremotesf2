@@ -85,6 +85,8 @@ ApplicationWindow {
         }
     }
 
+    Component.onDestruction: rpc.disconnect()
+
     MainPage {
         id: mainPage
     }

@@ -225,6 +225,8 @@ namespace tremotesf
 
     MainWindow::~MainWindow()
     {
+        mRpc->disconnect();
+
         Settings::instance()->setMainWindowGeometry(saveGeometry());
         Settings::instance()->setToolButtonStyle(toolButtonStyle());
         Settings::instance()->setToolBarArea(toolBarArea(mToolBar));
