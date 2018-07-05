@@ -158,7 +158,7 @@ Dialog {
                 }
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: addressField.focus = true
+                EnterKey.onClicked: addressField.forceActiveFocus()
             }
 
             TextField {
@@ -176,7 +176,7 @@ Dialog {
                 }
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: portField.focus = true
+                EnterKey.onClicked: portField.forceActiveFocus()
             }
 
             TextField {
@@ -195,7 +195,7 @@ Dialog {
                 }
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: apiPathField.focus = true
+                EnterKey.onClicked: apiPathField.forceActiveFocus()
             }
 
             TextField {
@@ -211,11 +211,11 @@ Dialog {
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: {
                     if (httpsSwitch.checked) {
-                        localCertificateTextArea.focus = true
+                        localCertificateTextArea.forceActiveFocus()
                     } else if (authenticationSwitch.checked) {
-                        usernameField.focus = true
+                        usernameField.forceActiveFocus()
                     } else {
-                        updateIntervalField.focus = true
+                        updateIntervalField.forceActiveFocus()
                     }
                 }
             }
@@ -255,9 +255,9 @@ Dialog {
                     EnterKey.iconSource: "image://theme/icon-m-enter-next"
                     EnterKey.onClicked: {
                         if (authenticationSwitch.checked) {
-                            usernameField.focus = true
+                            usernameField.forceActiveFocus()
                         } else {
-                            updateIntervalField.focus = true
+                            updateIntervalField.forceActiveFocus()
                         }
                     }
                 }
@@ -283,9 +283,9 @@ Dialog {
                     EnterKey.iconSource: "image://theme/icon-m-enter-next"
                     EnterKey.onClicked: {
                         if (authenticationSwitch.checked) {
-                            usernameField.focus = true
+                            usernameField.forceActiveFocus()
                         } else {
-                            updateIntervalField.focus = true
+                            updateIntervalField.forceActiveFocus()
                         }
                     }
                 }
@@ -317,7 +317,7 @@ Dialog {
                     text: modelData ? modelData.username : String()
 
                     EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: passwordField.focus = true
+                    EnterKey.onClicked: passwordField.forceActiveFocus()
                 }
 
                 TextField {
@@ -332,7 +332,7 @@ Dialog {
                     echoMode: TextInput.Password
 
                     EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: updateIntervalField.focus = true
+                    EnterKey.onClicked: updateIntervalField.forceActiveFocus()
                 }
             }
 
@@ -352,7 +352,7 @@ Dialog {
                 }
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: backgroundUpdateIntervalField.focus = true
+                EnterKey.onClicked: backgroundUpdateIntervalField.forceActiveFocus()
             }
             
             TextField {
@@ -371,7 +371,7 @@ Dialog {
                 }
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: timeoutField.focus = true
+                EnterKey.onClicked: timeoutField.forceActiveFocus()
             }
 
             TextField {
