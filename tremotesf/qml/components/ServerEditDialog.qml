@@ -320,7 +320,7 @@ Dialog {
                     EnterKey.onClicked: passwordField.forceActiveFocus()
                 }
 
-                TextField {
+                PasswordField {
                     id: passwordField
 
                     width: parent.width
@@ -329,7 +329,6 @@ Dialog {
                     placeholderText: label
 
                     text: modelData ? modelData.password : String()
-                    echoMode: TextInput.Password
 
                     EnterKey.iconSource: "image://theme/icon-m-enter-next"
                     EnterKey.onClicked: updateIntervalField.forceActiveFocus()
