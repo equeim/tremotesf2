@@ -31,6 +31,7 @@ namespace tremotesf
         explicit TextInputDialog(const QString& title,
                                  const QString& labelText,
                                  const QString& text,
+                                 const QString& okButtonText,
                                  QWidget* parent = nullptr);
         QSize sizeHint() const override;
         QString text() const;

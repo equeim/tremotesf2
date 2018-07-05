@@ -11,6 +11,7 @@ namespace tremotesf
     TextInputDialog::TextInputDialog(const QString& title,
                                      const QString& labelText,
                                      const QString& text,
+                                     const QString& okButtonText,
                                      QWidget* parent)
         : QDialog(parent),
           mLineEdit(new QLineEdit(text, this))
@@ -26,6 +27,9 @@ namespace tremotesf
         layout->addWidget(mLineEdit);
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+        if (!okButtonText.isEmpty()) {
+            dialogButtonBox->button(QDialogButtonBox::Ok)->setText(okButtonText);
+        }
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &TextInputDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &TextInputDialog::reject);
 

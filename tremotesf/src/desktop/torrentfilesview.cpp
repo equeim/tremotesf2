@@ -218,6 +218,7 @@ namespace tremotesf
                 auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Rename"),
                                                   qApp->translate("tremotesf", "File name:"),
                                                   entry->name(),
+                                                  qApp->translate("tremotesf", "Rename"),
                                                   this);
                 QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
                     static_cast<const TorrentFilesModel*>(mModel)->renameFile(index, dialog->text());

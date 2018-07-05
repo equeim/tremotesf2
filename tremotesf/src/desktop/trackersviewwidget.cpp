@@ -130,6 +130,7 @@ namespace tremotesf
         auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Add Tracker"),
                                           qApp->translate("tremotesf", "Tracker announce URL:"),
                                           QString(),
+                                          qApp->translate("tremotesf", "Add"),
                                           this);
         QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
             mTorrent->addTracker(dialog->text());
@@ -145,6 +146,7 @@ namespace tremotesf
             auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Edit Tracker"),
                                               qApp->translate("tremotesf", "Tracker announce URL:"),
                                               tracker->announce(),
+                                              QString(),
                                               this);
             QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
                 mTorrent->setTracker(id, dialog->text());
