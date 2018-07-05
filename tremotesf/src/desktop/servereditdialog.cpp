@@ -82,18 +82,15 @@ namespace tremotesf
     protected:
         void keyPressEvent(QKeyEvent* event) override
         {
+            QTableWidget::keyPressEvent(event);
             switch (event->key()) {
             case Qt::Key_Return:
             case Qt::Key_Enter:
+                event->accept();
                 if (state() != EditingState) {
                     edit(currentIndex());
-                    event->accept();
-                } else {
-                    QTableWidget::keyPressEvent(event);
                 }
                 break;
-            default:
-                QTableWidget::keyPressEvent(event);
             }
         }
     };
