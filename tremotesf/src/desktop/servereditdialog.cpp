@@ -275,7 +275,7 @@ namespace tremotesf
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
         auto removeDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "Remove"), this);
         QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=]() {
-            const auto items(mMountedDirectoriesWidget->selectionModel()->selectedRows());
+            const auto items(mMountedDirectoriesWidget->selectionModel()->selectedIndexes());
             if (!items.isEmpty()) {
                 mMountedDirectoriesWidget->removeRow(items.first().row());
             }
