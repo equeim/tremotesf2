@@ -22,14 +22,17 @@
 #include <QCheckBox>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
+#include <QFileDialog>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QIcon>
 #include <QItemSelectionModel>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -45,6 +48,56 @@
 
 namespace tremotesf
 {
+    class MountedDirectoriesWidget : public QTableWidget
+    {
+    public:
+        MountedDirectoriesWidget(int rows, int columns, QWidget* parent = nullptr)
+            : QTableWidget(rows, columns, parent)
+        {
+            setMinimumHeight(192);
+            setSelectionMode(QAbstractItemView::SingleSelection);
+            setHorizontalHeaderLabels({qApp->translate("tremotesf", "Local directory"),
+                                       qApp->translate("tremotesf", "Remote directory")});
+            horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+            horizontalHeader()->setSectionsClickable(false);
+            verticalHeader()->setVisible(false);
+
+            setContextMenuPolicy(Qt::CustomContextMenu);
+            QObject::connect(this, &QWidget::customContextMenuRequested, this, [=](const QPoint& pos) {
+                const QModelIndex index(indexAt(pos));
+                if (!index.isValid() || index.column() != 0) {
+                    return;
+                }
+                QMenu contextMenu;
+                contextMenu.addAction(qApp->translate("tremotesf", "&Select..."));
+                if (contextMenu.exec(viewport()->mapToGlobal(pos))) {
+                    const QString directory(QFileDialog::getExistingDirectory(this));
+                    if (!directory.isEmpty()) {
+                        model()->setData(index, directory);
+                    }
+                }
+            });
+        }
+
+    protected:
+        void keyPressEvent(QKeyEvent* event) override
+        {
+            switch (event->key()) {
+            case Qt::Key_Return:
+            case Qt::Key_Enter:
+                if (state() != EditingState) {
+                    edit(currentIndex());
+                    event->accept();
+                } else {
+                    QTableWidget::keyPressEvent(event);
+                }
+                break;
+            default:
+                QTableWidget::keyPressEvent(event);
+            }
+        }
+    };
+
     ServerEditDialog::ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent)
         : QDialog(parent),
           mServersModel(serversModel)
@@ -208,18 +261,16 @@ namespace tremotesf
 
         auto mountedDirectoriesGroupBox = new QGroupBox(qApp->translate("tremotesf", "Mounted directories"), this);
         auto mountedDirectoriesLayout = new QGridLayout(mountedDirectoriesGroupBox);
-        mMountedDirectoriesWidget = new QTableWidget(0, 2);
-        mMountedDirectoriesWidget->setMinimumHeight(192);
-        mMountedDirectoriesWidget->setHorizontalHeaderLabels({qApp->translate("tremotesf", "Local directory"),
-                                                             qApp->translate("tremotesf", "Remote directory")});
-        mMountedDirectoriesWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        mMountedDirectoriesWidget->horizontalHeader()->setSectionsClickable(false);
-        mMountedDirectoriesWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-        mMountedDirectoriesWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        mMountedDirectoriesWidget = new MountedDirectoriesWidget(0, 2);
         mountedDirectoriesLayout->addWidget(mMountedDirectoriesWidget, 0, 0, 1, 2);
         auto addDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add"), this);
         QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=]() {
-            mMountedDirectoriesWidget->insertRow(mMountedDirectoriesWidget->rowCount());
+            const QString directory(QFileDialog::getExistingDirectory(this));
+            if (!directory.isEmpty()) {
+                const int row = mMountedDirectoriesWidget->rowCount();
+                mMountedDirectoriesWidget->insertRow(row);
+                mMountedDirectoriesWidget->setItem(row, 0, new QTableWidgetItem(directory));
+            }
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
         auto removeDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "Remove"), this);

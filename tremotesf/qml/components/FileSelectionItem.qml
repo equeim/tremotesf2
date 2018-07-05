@@ -25,6 +25,7 @@ Item {
     property alias label: textField.label
     property alias text: textField.text
     property alias readOnly: textField.readOnly
+    property string enterKeyIconSource
     property bool selectionButtonEnabled: true
 
     property bool connectTextFieldWithDialog: true
@@ -35,7 +36,12 @@ Item {
     property bool showFiles: true
     property var nameFilters
 
+    signal enterKeyClicked()
     signal dialogAccepted(string filePath)
+
+    function forceActiveFocus() {
+        textField.forceActiveFocus()
+    }
 
     width: parent.width
     height: Math.max(textField.height, selectionButton.height)
@@ -50,12 +56,16 @@ Item {
         }
         errorHighlight: !text
         placeholderText: label
+        inputMethodHints: Qt.ImhNoAutoUppercase
 
         onTextChanged: {
             if (!showFiles && connectTextFieldWithDialog) {
                 fileDialogDirectory = text
             }
         }
+
+        EnterKey.iconSource: enterKeyIconSource
+        EnterKey.onClicked: enterKeyClicked()
     }
 
     IconButton {

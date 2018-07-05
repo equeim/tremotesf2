@@ -27,10 +27,10 @@ class QGroupBox;
 class QLineEdit;
 class QPlainTextEdit;
 class QSpinBox;
-class QTableWidget;
 
 namespace tremotesf
 {
+    class MountedDirectoriesWidget;
     class ServersModel;
 
     class ServerEditDialog : public QDialog
@@ -64,7 +64,7 @@ namespace tremotesf
         QSpinBox* mUpdateIntervalSpinBox = nullptr;
         QSpinBox* mBackgroundUpdateIntervalSpinBox = nullptr;
         QSpinBox* mTimeoutSpinBox = nullptr;
-        QTableWidget* mMountedDirectoriesWidget = nullptr;
+        MountedDirectoriesWidget* mMountedDirectoriesWidget = nullptr;
 
         QDialogButtonBox* mDialogButtonBox = nullptr;
     };

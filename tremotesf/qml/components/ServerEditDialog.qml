@@ -393,7 +393,7 @@ Dialog {
                 EnterKey.iconSource: directoriesRepeater.count ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-accept"
                 EnterKey.onClicked: {
                     if (directoriesRepeater.count) {
-                        directoriesRepeater.itemAt(0).forceActiveFocus()
+                        directoriesRepeater.itemAt(0).localDirectoryTextField.forceActiveFocus()
                     } else {
                         accept()
                     }
@@ -419,46 +419,42 @@ Dialog {
                     }
                 }
 
-                delegate: Row {
-                    property alias localDirectoryLabel: localDirectoryLabel
+                delegate: Column {
+                    property alias localDirectoryTextField: localDirectoryTextField
                     property int lastItem: (index === mountedDirectoriesModel.count - 1)
 
                     width: column.width
 
-                    Column {
-                        id: dirsColumn
-                        width: parent.width - removeButton.width
+                    Item {
+                        width: column.width
+                        height: Theme.paddingMedium
+                        visible: index > 0
 
-                        Item {
-                            width: column.width
-                            height: Theme.paddingMedium
-                            visible: index > 0
-
-                            Separator {
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: parent.width
-                                color: Theme.secondaryColor
-                            }
+                        Separator {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width
+                            color: Theme.secondaryColor
                         }
+                    }
 
+                    FileSelectionItem {
+                        id: localDirectoryTextField
+
+                        label: qsTranslate("tremotesf", "Local directory")
+                        showFiles: false
+                        text: local
+
+                        onTextChanged: local = text
+
+                        enterKeyIconSource: "image://theme/icon-m-enter-next"
+                        onEnterKeyClicked: remoteDirectoryTextField.forceActiveFocus()
+                    }
+
+                    Row {
                         TextField {
-                            id: localDirectoryLabel
+                            id: remoteDirectoryTextField
 
-                            width: dirsColumn.width
-                            inputMethodHints: Qt.ImhNoAutoUppercase
-                            text: local
-                            label: qsTranslate("tremotesf", "Local directory")
-                            placeholderText: label
-                            onTextChanged: local = text
-
-                            EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                            EnterKey.onClicked: remoteDirectoryLabel.forceActiveFocus()
-                        }
-
-                        TextField {
-                            id: remoteDirectoryLabel
-
-                            width: dirsColumn.width
+                            width: column.width - removeButton.width - Theme.horizontalPageMargin
                             inputMethodHints: Qt.ImhNoAutoUppercase
                             text: remote
                             label: qsTranslate("tremotesf", "Remote directory")
@@ -475,13 +471,13 @@ Dialog {
                                 }
                             }
                         }
-                    }
 
-                    IconButton {
-                        id: removeButton
-                        anchors.verticalCenter: parent.verticalCenter
-                        icon.source: "image://theme/icon-m-remove"
-                        onClicked: mountedDirectoriesModel.remove(index)
+                        IconButton {
+                            id: removeButton
+                            anchors.verticalCenter: parent.verticalCenter
+                            icon.source: "image://theme/icon-m-remove"
+                            onClicked: mountedDirectoriesModel.remove(index)
+                        }
                     }
                 }
             }
