@@ -147,7 +147,9 @@ namespace tremotesf
     std::vector<Server> Servers::servers()
     {
         std::vector<Server> list;
-        for (const QString& group : mSettings->childGroups()) {
+        const QStringList groups(mSettings->childGroups());
+        list.reserve(groups.size());
+        for (const QString& group : groups) {
             list.push_back(getServer(group));
         }
         return list;
@@ -253,6 +255,7 @@ namespace tremotesf
         if (lastTorrentsVariant.isValid() && lastTorrentsVariant.type() == QVariant::List) {
             lastTorrents.saved = true;
             const QVariantList torrentVariants(lastTorrentsVariant.toList());
+            lastTorrents.torrents.reserve(torrentVariants.size());
             for (const QVariant& variant : torrentVariants) {
                 const QVariantMap torrentMap(variant.toMap());
                 lastTorrents.torrents.push_back({torrentMap[QLatin1String("hashString")].toString(),
@@ -267,6 +270,7 @@ namespace tremotesf
     {
         mSettings->beginGroup(currentServerName());
         QVariantList torrents;
+        torrents.reserve(rpc->torrents().size());
         for (const auto& torrent : rpc->torrents()) {
             torrents.push_back(QVariantMap{{QLatin1String("hashString"), torrent->hashString()},
                                            {QLatin1String("finished"), torrent->isFinished()}});
@@ -448,6 +452,7 @@ namespace tremotesf
     void Servers::updateMountedDirectories(const QVariantMap& directories)
     {
         mCurrentServerMountedDirectories.clear();
+        mCurrentServerMountedDirectories.reserve(directories.size());
         for (auto i = directories.cbegin(), end = directories.cend(); i != end; ++i) {
             mCurrentServerMountedDirectories.push_back({QDir(i.key()).absolutePath(), QDir(i.value().toString()).absolutePath()});
         }

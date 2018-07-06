@@ -195,6 +195,9 @@ namespace tremotesf
             }
         }
 
+        mDirectories.reserve(directories.size());
+        mDirectoriesTorrents.reserve(directories.size());
+
         for (auto i = directories.cbegin(), max = directories.cend();
              i != max;
              ++i) {

@@ -198,6 +198,9 @@ namespace tremotesf
             }
         }
 
+        mTrackers.reserve(trackers.size());
+        mTrackersTorrents.reserve(trackers.size());
+
         for (auto i = trackers.cbegin(), max = trackers.cend();
              i != max;
              ++i) {

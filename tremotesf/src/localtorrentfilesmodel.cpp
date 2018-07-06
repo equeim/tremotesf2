@@ -52,6 +52,7 @@ namespace tremotesf
                 rootDirectory->addChild(torrentDirectory);
 
                 const QVariantList fileMaps(infoMap.value(QLatin1String("files")).toList());
+                files.reserve(fileMaps.size());
                 for (int fileIndex = 0, filesCount = fileMaps.size(); fileIndex < filesCount; ++fileIndex) {
                     const QVariantMap fileMap(fileMaps.at(fileIndex).toMap());
 

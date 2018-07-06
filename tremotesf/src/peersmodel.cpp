@@ -163,6 +163,8 @@ namespace tremotesf
                         }
                     }
 
+                    mPeers.reserve(peers.size());
+
                     for (const auto& peer : peers) {
                         const int row = index_of(mPeers, peer);
                         if (row == mPeers.size()) {

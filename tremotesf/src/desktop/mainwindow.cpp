@@ -886,6 +886,7 @@ namespace tremotesf
     {
         QStringList files;
         const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
+        files.reserve(selectedRows.size());
         for (int i = 0, max = selectedRows.size(); i < max; i++) {
             libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
             files.push_back(mRpc->localTorrentFilesPath(torrent));

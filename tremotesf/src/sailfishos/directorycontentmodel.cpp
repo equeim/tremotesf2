@@ -146,10 +146,11 @@ namespace tremotesf
 
         beginInsertRows(QModelIndex(), 0, files.size() - 1);
 
+        mFiles.reserve(files.size());
         for (const QFileInfo& info : files) {
             mFiles.push_back({info.filePath(),
-                           info.fileName(),
-                           info.isDir()});
+                              info.fileName(),
+                              info.isDir()});
         }
 
         endInsertRows();

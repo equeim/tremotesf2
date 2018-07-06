@@ -363,6 +363,8 @@ namespace tremotesf
             }
         }
 
+        mTorrents.reserve(torrents.size());
+
         for (const std::shared_ptr<Torrent>& torrent : torrents) {
             if (!contains(mTorrents, torrent)) {
                 const int row = mTorrents.size();

@@ -125,6 +125,7 @@ namespace tremotesf
                 QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme("go-jump"), qApp->translate("tremotesf", "Show In File Manager"));
                 QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     QStringList files;
+                    files.reserve(sourceIndexes.size());
                     for (const QModelIndex& index : sourceIndexes) {
                         files.push_back(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index));
                     }

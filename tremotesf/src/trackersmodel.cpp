@@ -206,6 +206,8 @@ namespace tremotesf
             }
         }
 
+        mTrackers.reserve(trackers.size());
+
         for (const std::shared_ptr<Tracker>& tracker : trackers) {
             if (!contains(mTrackers, tracker)) {
                 const int row = mTrackers.size();

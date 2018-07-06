@@ -81,6 +81,7 @@ namespace tremotesf
         {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> treeFiles;
+            treeFiles.reserve(files.size());
 
             for (int fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
                 const libtremotesf::TorrentFile* file = files[fileIndex].get();
