@@ -52,8 +52,8 @@ namespace tremotesf
 
     struct LastTorrentsTorrent
     {
-        const QString hashString;
-        const bool finished;
+        QString hashString;
+        bool finished;
     };
 
     struct LastTorrents
