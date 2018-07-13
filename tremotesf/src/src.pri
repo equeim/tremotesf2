@@ -50,7 +50,7 @@ HEADERS = $$PWD/alltrackersmodel.h \
           $$PWD/ipcserver.h \
           $$PWD/localtorrentfilesmodel.h \
           $$PWD/peersmodel.h \
-          $$PWD/rpc.h \
+          $$PWD/trpc.h \
           $$PWD/servers.h \
           $$PWD/serversmodel.h \
           $$PWD/settings.h \
@@ -72,7 +72,7 @@ SOURCES = $$PWD/alltrackersmodel.cpp \
           $$PWD/localtorrentfilesmodel.cpp \
           $$PWD/main.cpp \
           $$PWD/peersmodel.cpp \
-          $$PWD/rpc.cpp \
+          $$PWD/trpc.cpp \
           $$PWD/servers.cpp \
           $$PWD/serversmodel.cpp \
           $$PWD/settings.cpp \

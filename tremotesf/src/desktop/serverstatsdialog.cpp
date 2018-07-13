@@ -12,7 +12,7 @@
 #include <KMessageWidget>
 
 #include "libtremotesf/serverstats.h"
-#include "../rpc.h"
+#include "../trpc.h"
 #include "../utils.h"
 
 namespace tremotesf

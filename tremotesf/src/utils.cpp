@@ -36,7 +36,6 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
 #include "downloaddirectoriesmodel.h"
 #include "localtorrentfilesmodel.h"
 #include "peersmodel.h"
-#include "rpc.h"
 #include "servers.h"
 #include "serversmodel.h"
 #include "settings.h"
@@ -47,6 +46,7 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
 #include "torrentsmodel.h"
 #include "torrentsproxymodel.h"
 #include "trackersmodel.h"
+#include "trpc.h"
 
 #include "libtremotesf/serversettings.h"
 #include "libtremotesf/serverstats.h"
@@ -97,7 +97,6 @@ namespace tremotesf
 #include <QRegularExpression>
 #include <QVersionNumber>
 #elif defined(Q_OS_WIN)
-#include <windows.h>
 #include <shlobj.h>
 #endif
 #endif // TREMOTESF_SAILFISHOS
@@ -555,7 +554,7 @@ namespace tremotesf
 #elif defined(Q_OS_WIN)
         for (const QString& filePath : files) {
             const QString nativePath(QDir::toNativeSeparators(filePath));
-            PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCTSTR>(nativePath.utf16()));
+            PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativePath.utf16()));
             if (directory) {
                 qDebug() << "executing SHOpenFolderAndSelectItems" << nativePath;
                 if (SHOpenFolderAndSelectItems(directory, 0, nullptr, 0) != S_OK) {

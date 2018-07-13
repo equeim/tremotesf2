@@ -44,7 +44,7 @@
 #include <KPageWidget>
 
 #include "../libtremotesf/serversettings.h"
-#include "../rpc.h"
+#include "../trpc.h"
 #include "../utils.h"
 #include "fileselectionwidget.h"
 

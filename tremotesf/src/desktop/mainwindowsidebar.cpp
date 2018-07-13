@@ -30,9 +30,9 @@
 
 #include "../alltrackersmodel.h"
 #include "../downloaddirectoriesmodel.h"
-#include "../rpc.h"
 #include "../statusfilterstats.h"
 #include "../torrentsproxymodel.h"
+#include "../trpc.h"
 #include "../utils.h"
 
 namespace tremotesf

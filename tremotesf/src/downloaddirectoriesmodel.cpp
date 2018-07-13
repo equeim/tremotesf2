@@ -28,8 +28,8 @@
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 
-#include "rpc.h"
 #include "torrentsproxymodel.h"
+#include "trpc.h"
 
 namespace tremotesf
 {

@@ -28,7 +28,7 @@
 #endif
 
 #include "libtremotesf/serversettings.h"
-#include "rpc.h"
+#include "trpc.h"
 #include "utils.h"
 
 namespace tremotesf

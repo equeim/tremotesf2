@@ -27,7 +27,7 @@
 
 #include "../libtremotesf/serverstats.h"
 #include "../servers.h"
-#include "../rpc.h"
+#include "../trpc.h"
 #include "../utils.h"
 
 namespace tremotesf

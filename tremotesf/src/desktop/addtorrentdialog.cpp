@@ -33,9 +33,9 @@
 
 #include "../libtremotesf/serversettings.h"
 #include "../localtorrentfilesmodel.h"
-#include "../rpc.h"
 #include "../servers.h"
 #include "../torrentfileparser.h"
+#include "../trpc.h"
 #include "../utils.h"
 #include "fileselectionwidget.h"
 #include "torrentfilesview.h"

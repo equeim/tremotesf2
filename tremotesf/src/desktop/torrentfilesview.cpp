@@ -29,10 +29,10 @@
 #include "../libtremotesf/serversettings.h"
 
 #include "../localtorrentfilesmodel.h"
-#include "../rpc.h"
 #include "../settings.h"
 #include "../torrentfilesmodel.h"
 #include "../torrentfilesproxymodel.h"
+#include "../trpc.h"
 #include "../utils.h"
 
 #include "commondelegate.h"

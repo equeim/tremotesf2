@@ -24,7 +24,7 @@
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 
-#include "rpc.h"
+#include "trpc.h"
 #include "utils.h"
 
 namespace tremotesf

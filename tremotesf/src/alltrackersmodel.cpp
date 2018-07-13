@@ -30,7 +30,7 @@
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/tracker.h"
-#include "rpc.h"
+#include "trpc.h"
 
 namespace tremotesf
 {

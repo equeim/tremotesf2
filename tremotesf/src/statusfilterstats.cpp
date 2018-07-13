@@ -18,8 +18,8 @@
 
 #include "statusfilterstats.h"
 
-#include "rpc.h"
 #include "torrentsproxymodel.h"
+#include "trpc.h"
 
 namespace tremotesf
 {
