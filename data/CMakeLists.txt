@@ -1,0 +1,15 @@
+if (SAILFISHOS)
+    set(app_icons "sailfishos/hicolor")
+    set(desktop_file "sailfishos/harbour-tremotesf.desktop")
+    install(FILES "sailfish/cover.svg" DESTINATION "${DATA_PATH}")
+else()
+    set(app_icons "desktop/hicolor")
+    set(desktop_file "desktop/tremotesf.desktop")
+    install(DIRECTORY "desktop/status/" DESTINATION "${ICONS_PATH}")
+endif()
+
+file(TO_CMAKE_PATH "${CMAKE_INSTALL_DATADIR}/icons" app_icons_path)
+install(DIRECTORY "${app_icons}" DESTINATION "${app_icons_path}")
+
+file(TO_CMAKE_PATH "${CMAKE_INSTALL_DATADIR}/applications" desktop_file_path)
+install(FILES "${desktop_file}" DESTINATION "${desktop_file_path}")
