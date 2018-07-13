@@ -130,7 +130,7 @@ Dialog {
                     }
 
                     if (mounted && !settingTextFromDialog) {
-                        var directory = Servers.fromRemoteToLocalDirectory(text, rpc.serverSettings.downloadDirectory)
+                        var directory = Servers.fromRemoteToLocalDirectory(path)
                         if (directory) {
                             fileDialogDirectory = directory
                         }
@@ -140,7 +140,7 @@ Dialog {
                 onDialogAccepted: {
                     if (mounted) {
                         settingTextFromDialog = true
-                        text = Servers.fromLocalToRemoteDirectory(filePath, rpc.serverSettings.downloadDirectory)
+                        text = Servers.fromLocalToRemoteDirectory(filePath)
                         settingTextFromDialog = false
                     }
                 }
