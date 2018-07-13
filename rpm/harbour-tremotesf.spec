@@ -16,7 +16,15 @@ BuildRequires: pkgconfig(Qt5Gui)
 BuildRequires: pkgconfig(Qt5Qml)
 BuildRequires: pkgconfig(Qt5Quick)
 BuildRequires: pkgconfig(sailfishapp)
+BuildRequires: cmake
 BuildRequires: desktop-file-utils
+
+# >> macros
+#%%define __provides_exclude_from ^%{_datadir}/.*$
+#%%define __requires_exclude ^libstdc++.*$
+#%%define _cmake_skip_rpath -DCMAKE_SKIP_RPATH:BOOL=OFF
+%define build_directory build-%{_arch}
+# << macros
 
 %description
 Remote GUI for transmission-daemon
@@ -25,26 +33,26 @@ Remote GUI for transmission-daemon
 %setup -q -n %{name}-%{version}
 
 %build
-mkdir -p build-sailfishos
-pushd build-sailfishos
+mkdir -p %{build_directory}
+cd %{build_directory}
 
-build_type=debug
-#build_type=release
-
-%qmake5 ../ CONFIG+=sailfishos CONFIG+=$build_type
+#build_type=Debug
+build_type=Release
+%cmake -DCMAKE_BUILD_TYPE=$build_type -DSAILFISHOS=ON -DCMAKE_INSTALL_RPATH="%{_datadir}/%{name}/lib" ..
 make %{?_smp_mflags}
-popd build-sailfishos
+cd -
 
 %install
-echo %{buildroot}
-rm -rf %{buildroot}
-pushd build-sailfishos
-%qmake5_install
-popd build-sailfishos
+rm -rf "%{buildroot}"
+cd %{build_directory}
+%make_install
+cd -
+
+#install -D /usr/lib/libstdc++.so.6 "%{buildroot}/%{_datadir}/%{name}/lib/libstdc++.so.6"
 
 desktop-file-install --delete-original \
-    --dir %{buildroot}%{_datadir}/applications \
-    %{buildroot}%{_datadir}/applications/%{name}.desktop
+    --dir "%{buildroot}/%{_datadir}/applications" \
+    "%{buildroot}/%{_datadir}/applications/%{name}.desktop"
 
 %files
 %defattr(644, root, root, 755)

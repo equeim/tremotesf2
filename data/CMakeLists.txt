@@ -1,7 +1,7 @@
 if (SAILFISHOS)
     set(app_icons "sailfishos/hicolor")
     set(desktop_file "sailfishos/harbour-tremotesf.desktop")
-    install(FILES "sailfish/cover.svg" DESTINATION "${DATA_PATH}")
+    install(FILES "sailfishos/cover.svg" DESTINATION "${DATA_PATH}")
 else()
     set(app_icons "desktop/hicolor")
     set(desktop_file "desktop/tremotesf.desktop")
