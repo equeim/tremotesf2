@@ -88,7 +88,7 @@ namespace tremotesf
         QString mPath;
     };
 
-    class TorrentFilesModelDirectory : public TorrentFilesModelEntry
+    class TorrentFilesModelDirectory final : public TorrentFilesModelEntry
     {
     public:
         TorrentFilesModelDirectory() = default;
@@ -117,7 +117,7 @@ namespace tremotesf
         std::unordered_map<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 
-    class TorrentFilesModelFile : public TorrentFilesModelEntry
+    class TorrentFilesModelFile final : public TorrentFilesModelEntry
     {
     public:
         explicit TorrentFilesModelFile(int row,
