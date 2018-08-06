@@ -43,7 +43,8 @@ set(tremotesf_sources
 
 set(tremotesf_properties
     OUTPUT_NAME "${TREMOTESF_NAME}"
-    CXX_STANDARD_REQUIRED 11
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED ON
 )
 
 set(tremotesf_libs
