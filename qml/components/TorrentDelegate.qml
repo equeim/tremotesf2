@@ -41,11 +41,6 @@ ListItem {
     menu: Component {
         ContextMenu {
             MenuItem {
-                text: qsTranslate("tremotesf", "Properties")
-                onClicked: pageStack.push("TorrentPropertiesPage.qml", {"torrentHash": torrent.hashString,
-                                                                        "torrent": torrent})
-            }
-            MenuItem {
                 id: startMenuItem
                 visible: {
                     switch (torrent.status) {
