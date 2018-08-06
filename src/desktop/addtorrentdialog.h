@@ -29,8 +29,8 @@ class QLineEdit;
 
 namespace tremotesf
 {
-    class FileSelectionWidget;
     class LocalTorrentFilesModel;
+    class RemoteDirectorySelectionWidget;
     class Rpc;
     class TorrentFileParser;
 
@@ -62,7 +62,7 @@ namespace tremotesf
         QString mUrl;
         QLineEdit* mTorrentLinkLineEdit = nullptr;
 
-        FileSelectionWidget* mDownloadDirectoryWidget = nullptr;
+        RemoteDirectorySelectionWidget* mDownloadDirectoryWidget = nullptr;
         QLabel* mFreeSpaceLabel = nullptr;
         QComboBox* mPriorityComboBox = nullptr;
         QCheckBox* mStartTorrentCheckBox = nullptr;

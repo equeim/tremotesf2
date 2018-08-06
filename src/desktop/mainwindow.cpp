@@ -28,14 +28,18 @@
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QCursor>
+#include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QIcon>
 #include <QItemSelectionModel>
 #include <QKeySequence>
+#include <QLabel>
 #include <QLayout>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QScreen>
 #include <QSplitter>
 #include <QSystemTrayIcon>
@@ -66,6 +70,7 @@
 #include "addtorrentdialog.h"
 #include "mainwindowsidebar.h"
 #include "mainwindowstatusbar.h"
+#include "remotedirectoryselectionwidget.h"
 #include "servereditdialog.h"
 #include "serversdialog.h"
 #include "serversettingsdialog.h"
@@ -76,6 +81,65 @@
 
 namespace tremotesf
 {
+    namespace
+    {
+        class SetLocationDialog : public QDialog
+        {
+        public:
+            explicit SetLocationDialog(const QString& downloadDirectory,
+                                       bool serverIsLocal,
+                                       QWidget* parent = nullptr)
+                : QDialog(parent),
+                  mDirectoryWidget(new RemoteDirectorySelectionWidget(downloadDirectory, serverIsLocal, this)),
+                  mMoveFilesCheckBox(new QCheckBox(qApp->translate("tremotesf", "Move files from current directory"), this))
+            {
+                setWindowTitle(qApp->translate("tremotesf", "Set Location"));
+
+                auto layout = new QVBoxLayout(this);
+                layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+                auto label = new QLabel(qApp->translate("tremotesf", "Download directory:"), this);
+                label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+                layout->addWidget(label);
+
+                mDirectoryWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+                layout->addWidget(mDirectoryWidget);
+
+                mMoveFilesCheckBox->setChecked(true);
+                layout->addWidget(mMoveFilesCheckBox);
+
+                auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+                QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &SetLocationDialog::accept);
+                QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
+
+                QObject::connect(mDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=](const QString& text) {
+                    dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(!text.isEmpty());
+                });
+
+                layout->addWidget(dialogButtonBox);
+            }
+
+            QSize sizeHint() const override
+            {
+                return QDialog::sizeHint().expandedTo(QSize(320, 0));
+            }
+
+            QString downloadDirectory() const
+            {
+                return mDirectoryWidget->lineEdit()->text();
+            }
+
+            bool moveFiles() const
+            {
+                return mMoveFilesCheckBox->isChecked();
+            }
+
+        private:
+            FileSelectionWidget *const mDirectoryWidget;
+            QCheckBox *const mMoveFilesCheckBox;
+        };
+    }
+
     MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& arguments)
         : mIpcServer(ipcServer),
           mRpc(new Rpc(this)),
@@ -332,6 +396,21 @@ namespace tremotesf
         });
 
         mTorrentMenu->addSeparator();
+
+        QAction* setLocationAction = mTorrentMenu->addAction(qApp->translate("tremotesf", "Set &Location"));
+        QObject::connect(setLocationAction, &QAction::triggered, this, [=]() {
+            if (mTorrentsView->selectionModel()->hasSelection()) {
+                QModelIndexList indexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows()));
+                auto dialog = new SetLocationDialog(mTorrentsModel->torrentAtIndex(indexes.first())->downloadDirectory(),
+                                                    mRpc->isLocal(),
+                                                    this);
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                QObject::connect(dialog, &SetLocationDialog::accepted, this, [=]() {
+                    mRpc->setTorrentsLocation(mTorrentsModel->idsFromIndexes(indexes), dialog->downloadDirectory(), dialog->moveFiles());
+                });
+                dialog->show();
+            }
+        });
 
         mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
         QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, &MainWindow::removeSelectedTorrents);

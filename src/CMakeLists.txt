@@ -106,6 +106,7 @@ else()
         desktop/mainwindow.cpp
         desktop/mainwindowsidebar.cpp
         desktop/mainwindowstatusbar.cpp
+        desktop/remotedirectoryselectionwidget.cpp
         desktop/servereditdialog.cpp
         desktop/serversdialog.cpp
         desktop/serversettingsdialog.cpp

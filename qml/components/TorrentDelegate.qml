@@ -70,6 +70,12 @@ ListItem {
                 onClicked: rpc.pauseTorrents([torrent.id])
             }
             MenuItem {
+                text: qsTranslate("tremotesf", "Set Location")
+                onClicked: pageStack.push("SetLocationDialog.qml",
+                                          {"directory": torrent.downloadDirectory,
+                                           "ids": [torrent.id]})
+            }
+            MenuItem {
                 text: qsTranslate("tremotesf", "Remove")
                 onClicked: pageStack.push("RemoveTorrentsDialog.qml", {"ids": [torrent.id]})
             }
