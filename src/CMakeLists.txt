@@ -1,10 +1,3 @@
-if (SAILFISHOS)
-    set(tremotesf_name "harbour-tremotesf")
-else()
-
-endif()
-
-
 find_package(Qt5Core CONFIG REQUIRED)
 if (Qt5Core_VERSION VERSION_LESS 5.6)
     message(FATAL_ERROR "Qt >= 5.6 is required")
@@ -15,6 +8,8 @@ find_package(Qt5Gui CONFIG REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+
+qt5_add_resources(resources resources.qrc)
 
 set(tremotesf_sources
     libtremotesf/rpc.cpp
@@ -43,6 +38,7 @@ set(tremotesf_sources
     trackersmodel.cpp
     trpc.cpp
     utils.cpp
+    ${resources}
 )
 
 set(tremotesf_properties
@@ -72,8 +68,6 @@ set(tremotesf_defines
 set(tremotesf_cxxflags -Wall -Wextra -pedantic)
 
 if (SAILFISHOS)
-    set(tremotesf_name "harbour-tremotesf")
-
     find_package(Qt5Qml CONFIG REQUIRED)
     find_package(Qt5Quick CONFIG REQUIRED)
     find_package(PkgConfig REQUIRED)
@@ -92,8 +86,6 @@ if (SAILFISHOS)
     list(APPEND tremotesf_includes ${SAILFISHAPP_INCLUDE_DIRS})
     list(APPEND tremotesf_cxxflags ${SAILFISHAPP_CFLAGS_OTHER})
 else()
-    set(tremotesf_name "tremotesf")
-
     find_package(Qt5Widgets CONFIG REQUIRED)
     find_package(KF5WidgetsAddons CONFIG REQUIRED)
 
