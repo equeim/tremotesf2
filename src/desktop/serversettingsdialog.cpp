@@ -166,7 +166,7 @@ namespace tremotesf
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
 
-        mDownloadDirectoryWidget = new FileSelectionWidget(true, QString(), this);
+        mDownloadDirectoryWidget = new FileSelectionWidget(true, QString(), true, this);
         downloadingPageLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         mStartAddedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start added torrents"), this);
@@ -183,7 +183,7 @@ namespace tremotesf
 
         auto incompleteDirectoryWidgetLayout = new QHBoxLayout();
         downloadingPageLayout->addRow(incompleteDirectoryWidgetLayout);
-        mIncompleteDirectoryWidget = new FileSelectionWidget(true, QString(), this);
+        mIncompleteDirectoryWidget = new FileSelectionWidget(true, QString(), true, this);
         mIncompleteDirectoryWidget->setEnabled(false);
         QObject::connect(mIncompleteDirectoryCheckBox, &QCheckBox::toggled, mIncompleteDirectoryWidget, &FileSelectionWidget::setEnabled);
         //downloadingPageLayout->addRow(mIncompleteDirectoryCheckBox, mIncompleteDirectoryWidget);
