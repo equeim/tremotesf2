@@ -114,8 +114,10 @@ Page {
                 highlighted: down || delegate.highlighted
 
                 onClicked: {
-                    Servers.setCurrentServer(modelData.name)
-                    modelData.current = true
+                    if (!modelData.current) {
+                        Servers.setCurrentServer(modelData.name)
+                        modelData.current = true
+                    }
                 }
             }
 
