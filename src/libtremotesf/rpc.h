@@ -145,10 +145,12 @@ namespace libtremotesf
         Q_INVOKABLE void moveTorrentsDown(const QVariantList& ids);
         Q_INVOKABLE void moveTorrentsToBottom(const QVariantList& ids);
 
+        Q_INVOKABLE void reannounceTorrents(const QVariantList& ids);
+
         void setSessionProperty(const QString& property, const QVariant& value);
         void setSessionProperties(const QVariantMap& properties);
         void setTorrentProperty(int id, const QString& property, const QVariant& value, bool updateIfSuccessful = false);
-        Q_INVOKABLE void setTorrentLocation(int id, const QString& location, bool moveFiles);
+        Q_INVOKABLE void setTorrentsLocation(const QVariantList& ids, const QString& location, bool moveFiles);
         Q_INVOKABLE void getTorrentFiles(int id, bool scheduled);
         Q_INVOKABLE void getTorrentPeers(int id, bool scheduled);
 

@@ -673,7 +673,22 @@ namespace libtremotesf
         mAlternativeSpeedLimitsScheduled = serverSettings.value(alternativeSpeedLimitsScheduledKey).toBool();
         mAlternativeSpeedLimitsBeginTime = QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsBeginTimeKey).toInt() * 60000);
         mAlternativeSpeedLimitsEndTime = QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsEndTimeKey).toInt() * 60000);
-        mAlternativeSpeedLimitsDays = static_cast<AlternativeSpeedLimitsDays>(serverSettings.value(alternativeSpeedLimitsDaysKey).toInt());
+        switch (int days = serverSettings.value(alternativeSpeedLimitsDaysKey).toInt()) {
+        case Sunday:
+        case Monday:
+        case Tuesday:
+        case Wednesday:
+        case Thursday:
+        case Friday:
+        case Saturday:
+        case Weekdays:
+        case Weekends:
+        case All:
+            mAlternativeSpeedLimitsDays = static_cast<AlternativeSpeedLimitsDays>(days);
+            break;
+        default:
+            mAlternativeSpeedLimitsDays = All;
+        }
 
         mPeerPort = serverSettings.value(peerPortKey).toInt();
         mRandomPortEnabled = serverSettings.value(randomPortEnabledKey).toBool();

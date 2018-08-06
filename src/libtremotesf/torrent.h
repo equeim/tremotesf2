@@ -43,7 +43,7 @@ namespace libtremotesf
             HighPriority
         };
 
-        explicit TorrentFile(const std::vector<QString>& path, long long size);
+        explicit TorrentFile(std::vector<QString>&& path, long long size);
 
         std::vector<QString> path;
         long long size;
@@ -56,7 +56,7 @@ namespace libtremotesf
 
     struct Peer
     {
-        explicit Peer(const QString& address, const QJsonObject& peerMap);
+        explicit Peer(QString&& address, const QJsonObject& peerMap);
         void update(const QJsonObject& peerMap);
 
         QString address;

@@ -91,7 +91,17 @@ namespace libtremotesf
                 mErrorMessage = trackerMap.value(QLatin1String("lastAnnounceResult")).toString();
             }
         } else {
-            mStatus = static_cast<Status>(trackerMap.value(QLatin1String("announceState")).toInt());
+            switch (int status = trackerMap.value(QLatin1String("announceState")).toInt()) {
+            case Inactive:
+            case Active:
+            case Queued:
+            case Updating:
+            case Error:
+                mStatus = static_cast<Status>(status);
+                break;
+            default:
+                mStatus = Error;
+            }
             mErrorMessage.clear();
         }
 
