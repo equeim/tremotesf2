@@ -1,5 +1,7 @@
-build*
+build
+build-*
 *.list
 *.user
 *.user.*
 RPMS
+installroot
