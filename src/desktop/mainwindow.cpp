@@ -397,6 +397,9 @@ namespace tremotesf
 
         mTorrentMenu->addSeparator();
 
+        mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
+        QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, &MainWindow::removeSelectedTorrents);
+
         QAction* setLocationAction = mTorrentMenu->addAction(qApp->translate("tremotesf", "Set &Location"));
         QObject::connect(setLocationAction, &QAction::triggered, this, [=]() {
             if (mTorrentsView->selectionModel()->hasSelection()) {
@@ -411,9 +414,6 @@ namespace tremotesf
                 dialog->show();
             }
         });
-
-        mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
-        QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, &MainWindow::removeSelectedTorrents);
 
         mTorrentMenu->addSeparator();
 

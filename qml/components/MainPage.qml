@@ -171,16 +171,16 @@ Page {
             }
             MenuItem {
                 enabled: selectionModel.hasSelection
+                text: qsTranslate("tremotesf", "Remove")
+                onClicked: pageStack.push("RemoveTorrentsDialog.qml",
+                                          {"ids": torrentsModel.idsFromIndexes(torrentsProxyModel.sourceIndexes(selectionModel.selectedIndexes))})
+            }
+            MenuItem {
+                enabled: selectionModel.hasSelection
                 text: qsTranslate("tremotesf", "Set Location")
                 onClicked: pageStack.push("SetLocationDialog.qml",
                                           {"directory": torrentsModel.torrentAtIndex(torrentsProxyModel.sourceIndex(selectionModel.selectedIndexes[0])).downloadDirectory,
                                            "ids": torrentsModel.idsFromIndexes(torrentsProxyModel.sourceIndexes(selectionModel.selectedIndexes))})
-            }
-            MenuItem {
-                enabled: selectionModel.hasSelection
-                text: qsTranslate("tremotesf", "Remove")
-                onClicked: pageStack.push("RemoveTorrentsDialog.qml",
-                                          {"ids": torrentsModel.idsFromIndexes(torrentsProxyModel.sourceIndexes(selectionModel.selectedIndexes))})
             }
             MenuItem {
                 enabled: selectionModel.hasSelection
