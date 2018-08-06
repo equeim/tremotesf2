@@ -96,6 +96,13 @@ Page {
                         rpc.serverSettings.ratioLimit = Number.fromLocaleString(Qt.locale(), text)
                     }
                 }
+
+                EnterKey.iconSource: idleSeedingLimitSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
+                EnterKey.onClicked: {
+                    if (idleSeedingLimitSwitch.checked) {
+                        idleSeedingLimitTextField.forceActiveFocus()
+                    }
+                }
             }
 
             TextSwitch {
@@ -125,6 +132,8 @@ Page {
                         rpc.serverSettings.idleSeedingLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 

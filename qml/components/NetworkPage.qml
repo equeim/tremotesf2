@@ -104,6 +104,9 @@ Page {
                         rpc.serverSettings.peerPort = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: peersPerTorrentTextField.forceActiveFocus()
             }
 
             TextSwitch {
@@ -185,6 +188,9 @@ Page {
                         rpc.serverSettings.maximumPeerPerTorrent = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: peersGloballyTextField.forceActiveFocus()
             }
 
             TextField {
@@ -203,6 +209,8 @@ Page {
                         rpc.serverSettings.maximumPeersGlobally = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 

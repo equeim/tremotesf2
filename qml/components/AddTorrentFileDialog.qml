@@ -113,6 +113,9 @@ Dialog {
                         }
                     }
                 }
+
+                enterKeyIconSource: "image://theme/icon-m-enter-accept"
+                onEnterKeyClicked: accept()
             }
 
             Label {

@@ -100,6 +100,15 @@ Page {
                         rpc.serverSettings.downloadQueueSize = text
                     }
                 }
+
+                EnterKey.iconSource: seedQueueSwitch.checked || idleQueueSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
+                EnterKey.onClicked: {
+                    if (seedQueueSwitch.checked) {
+                        seedQueueTextField.forceActiveFocus()
+                    } else if (idleQueueSwitch.checked) {
+                        idleQueueTextField.forceActiveFocus()
+                    }
+                }
             }
 
             TextSwitch {
@@ -125,6 +134,13 @@ Page {
                 onTextChanged: {
                     if (loaded) {
                         rpc.serverSettings.seedQueueSize = text
+                    }
+                }
+
+                EnterKey.iconSource: idleQueueSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
+                EnterKey.onClicked: {
+                    if (idleQueueSwitch.checked) {
+                        idleQueueTextField.forceActiveFocus()
                     }
                 }
             }
@@ -157,6 +173,8 @@ Page {
                         rpc.serverSettings.idleQueueLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 

@@ -55,6 +55,9 @@ Dialog {
                 errorHighlight: !text
                 label: qsTranslate("tremotesf", "Torrent Link")
                 placeholderText: label
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: downloadDirectoryItem.forceActiveFocus()
             }
 
             RemoteDirectorySelectionItem {
@@ -75,6 +78,9 @@ Dialog {
                         }
                     }
                 }
+
+                enterKeyIconSource: "image://theme/icon-m-enter-accept"
+                onEnterKeyClicked: accept()
             }
 
             Label {

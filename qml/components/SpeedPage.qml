@@ -124,6 +124,15 @@ Page {
                         rpc.serverSettings.downloadSpeedLimit = text
                     }
                 }
+
+                EnterKey.iconSource: uploadSpeedLimitSwitch.checked || alternativeLimitsSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
+                EnterKey.onClicked: {
+                    if (uploadSpeedLimitSwitch.checked) {
+                        uploadSpeedLimitTextField.forceActiveFocus()
+                    } else if (alternativeLimitsSwitch.checked) {
+                        alternativeDownloadSpeedLimitTextField.forceActiveFocus()
+                    }
+                }
             }
 
             TextSwitch {
@@ -150,6 +159,13 @@ Page {
                 onTextChanged: {
                     if (loaded) {
                         rpc.serverSettings.uploadSpeedLimit = text
+                    }
+                }
+
+                EnterKey.iconSource: alternativeLimitsSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
+                EnterKey.onClicked: {
+                    if (alternativeLimitsSwitch.checked) {
+                        alternativeDownloadSpeedLimitTextField.forceActiveFocus()
                     }
                 }
             }
@@ -183,6 +199,9 @@ Page {
                         rpc.serverSettings.alternativeDownloadSpeedLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: alternativeUploadSpeedLimitTextField.forceActiveFocus()
             }
 
             TextField {
@@ -204,6 +223,8 @@ Page {
                         rpc.serverSettings.alternativeUploadSpeedLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
 
             TextSwitch {

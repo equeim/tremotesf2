@@ -140,6 +140,19 @@ Page {
                         torrent.downloadSpeedLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: {
+                    if (uploadSpeedLimitSwitch.checked) {
+                        uploadSpeedLimitField.forceActiveFocus()
+                    } else if (ratioLimitComboBox.currentIndex == 2) {
+                        ratioLimitField.forceActiveFocus()
+                    } else if (idleSeedingComboBox.currentIndex == 2) {
+                        idleSeedingField.forceActiveFocus()
+                    } else {
+                        peersLimitField.forceActiveFocus()
+                    }
+                }
             }
 
             TextSwitch {
@@ -175,6 +188,17 @@ Page {
                 onTextChanged: {
                     if (!updating) {
                         torrent.uploadSpeedLimit = text
+                    }
+                }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: {
+                    if (ratioLimitComboBox.currentIndex == 2) {
+                        ratioLimitField.forceActiveFocus()
+                    } else if (idleSeedingComboBox.currentIndex == 2) {
+                        idleSeedingField.forceActiveFocus()
+                    } else {
+                        peersLimitField.forceActiveFocus()
                     }
                 }
             }
@@ -260,6 +284,15 @@ Page {
                         torrent.ratioLimit = Number.fromLocaleString(Qt.locale(), text)
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: {
+                    if (idleSeedingComboBox.currentIndex == 2) {
+                        idleSeedingField.forceActiveFocus()
+                    } else {
+                        peersLimitField.forceActiveFocus()
+                    }
+                }
             }
 
             ComboBox {
@@ -313,6 +346,9 @@ Page {
                         torrent.idleSeedingLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: peersLimitField.forceActiveFocus()
             }
 
             SectionHeader {
@@ -341,6 +377,8 @@ Page {
                         torrent.peersLimit = text
                     }
                 }
+
+                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 
