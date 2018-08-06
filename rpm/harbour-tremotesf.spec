@@ -38,7 +38,11 @@ cd %{build_directory}
 
 #build_type=Debug
 build_type=Release
-%cmake -DCMAKE_BUILD_TYPE=$build_type -DSAILFISHOS=ON -DCMAKE_INSTALL_RPATH="%{_datadir}/%{name}/lib" ..
+%cmake -DCMAKE_BUILD_TYPE=$build_type \
+       -DSAILFISHOS=ON \
+       ..
+#-DCMAKE_INSTALL_RPATH="%{_datadir}/%{name}/lib" \
+
 make %{?_smp_mflags}
 cd -
 
