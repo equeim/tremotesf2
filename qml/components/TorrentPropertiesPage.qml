@@ -89,11 +89,11 @@ Page {
                 text: qsTranslate("tremotesf", "Check Local Data")
                 onClicked: rpc.checkTorrents([torrent.id])
             }
-            MenuItem {
+            /*MenuItem {
                 visible: torrentIsLocal
                 text: qsTranslate("tremotesf", "Open Download Directory")
                 onClicked: Qt.openUrlExternally(rpc.localTorrentDownloadDirectoryPath(torrent))
-            }
+            }*/
             MenuItem {
                 visible: torrentIsLocal
                 text: qsTranslate("tremotesf", "Open")
