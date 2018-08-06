@@ -68,6 +68,16 @@ namespace tremotesf
         if (!header()->restoreState(Settings::instance()->torrentFilesViewHeaderState())) {
             sortByColumn(TorrentFilesModel::NameColumn, Qt::AscendingOrder);
         }
+
+        QObject::connect(this, &TorrentFilesView::activated, this, [=](const QModelIndex& index) {
+            const QModelIndex sourceIndex(mProxyModel->sourceIndex(index));
+            const TorrentFilesModelEntry* entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->sourceIndex(index).internalPointer());
+            if (!entry->isDirectory() &&
+                    mRpc->isTorrentLocalMounted(static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
+                    entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
+                Utils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
+            }
+        });
     }
 
     TorrentFilesView::~TorrentFilesView()

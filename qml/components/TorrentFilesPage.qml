@@ -218,6 +218,8 @@ Page {
                         selectionModel.select(delegateModel.modelIndex(modelData.index))
                     } else if (modelData.isDirectory) {
                         delegateModel.rootIndex = delegateModel.modelIndex(modelData.index)
+                    } else if (torrentPropertiesPage.torrentIsLocal && modelData.wantedState !== TorrentFilesModelEntry.Unwanted) {
+                        Qt.openUrlExternally(filesModel.localFilePath(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index))))
                     }
                 }
 
