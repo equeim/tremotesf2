@@ -270,6 +270,20 @@ namespace tremotesf
             showFinishedNotification(names);
         });
 
+        QObject::connect(mRpc, &Rpc::torrentAddDuplicate, this, [=]() {
+            QMessageBox::warning(this,
+                                 qApp->translate("tremotesf", "Error adding torrent"),
+                                 qApp->translate("tremotesf", "This torrent is already added"),
+                                 QMessageBox::Close);
+        });
+
+        QObject::connect(mRpc, &Rpc::torrentAddError, this, [=]() {
+            QMessageBox::warning(this,
+                                 qApp->translate("tremotesf", "Error adding torrent"),
+                                 qApp->translate("tremotesf", "Error adding torrent"),
+                                 QMessageBox::Close);
+        });
+
         if (Servers::instance()->hasServers()) {
             if (Settings::instance()->connectOnStartup()) {
                 mRpc->connect();

@@ -255,6 +255,9 @@ Page {
                 notification.publishGeneric(qsTranslate("tremotesf", "%n torrents finished", String(), count))
             }
         }
+
+        onTorrentAddDuplicate: notification.publishGeneric(qsTranslate("tremotesf", "Error adding torrent"), qsTranslate("tremotesf", "This torrent is already added"))
+        onTorrentAddError: notification.publishGeneric(qsTranslate("tremotesf", "Error adding torrent"), qsTranslate("tremotesf", "Error adding torrent"))
     }
 
     Notification {
