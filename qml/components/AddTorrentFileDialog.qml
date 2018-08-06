@@ -43,7 +43,7 @@ Dialog {
         id: parser
         filePath: addTorrentFileDialog.filePath
         onDone: {
-            if (error == TorrentFileParser.NoError) {
+            if (error === TorrentFileParser.NoError) {
                 filesModel.load(parser)
             }
         }
@@ -74,7 +74,7 @@ Dialog {
         contentHeight: column.height
 
         ViewPlaceholder {
-            enabled: parser.error != TorrentFileParser.NoError
+            enabled: parser.error !== TorrentFileParser.NoError
             text: parser.errorString
         }
 
