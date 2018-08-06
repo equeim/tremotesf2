@@ -36,6 +36,7 @@
 #include "../baseproxymodel.h"
 #include "../settings.h"
 #include "../trackersmodel.h"
+#include "../trpc.h"
 #include "../utils.h"
 #include "basetreeview.h"
 #include "textinputdialog.h"
@@ -65,9 +66,10 @@ namespace tremotesf
         };
     }
 
-    TrackersViewWidget::TrackersViewWidget(libtremotesf::Torrent* torrent, QWidget* parent)
+    TrackersViewWidget::TrackersViewWidget(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent)
         : QWidget(parent),
           mTorrent(torrent),
+          mRpc(rpc),
           mModel(new TrackersModel(torrent, this)),
           mProxyModel(new BaseProxyModel(mModel, TrackersModel::SortRole, this)),
           mTrackersView(new EnterEatingTreeView(this))
@@ -105,6 +107,11 @@ namespace tremotesf
         removeButton->setEnabled(false);
         QObject::connect(removeButton, &QPushButton::clicked, this, &TrackersViewWidget::removeTrackers);
         buttonsLayout->addWidget(removeButton);
+        auto reannounceButton = new QPushButton(QIcon::fromTheme(QLatin1String("view-refresh")), qApp->translate("tremotesf", "Reanno&unce"), this);
+        QObject::connect(reannounceButton, &QPushButton::clicked, this, [=]() {
+            mRpc->reannounceTorrents({mTorrent->id()});
+        });
+        buttonsLayout->addWidget(reannounceButton);
         buttonsLayout->addStretch();
 
         QObject::connect(mTrackersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {

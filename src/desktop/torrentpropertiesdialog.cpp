@@ -63,7 +63,7 @@ namespace tremotesf
           mMessageWidget(new KMessageWidget(this)),
           mTabWidget(new QTabWidget(this)),
           mFilesModel(new TorrentFilesModel(mTorrent, mRpc, this)),
-          mTrackersViewWidget(new TrackersViewWidget(mTorrent, this)),
+          mTrackersViewWidget(new TrackersViewWidget(mTorrent, mRpc, this)),
           mPeersView(nullptr),
           mPeersModel(nullptr)
     {

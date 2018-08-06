@@ -30,12 +30,13 @@ namespace tremotesf
 {
     class BaseProxyModel;
     class BaseTreeView;
+    class Rpc;
     class TrackersModel;
 
     class TrackersViewWidget : public QWidget
     {
     public:
-        explicit TrackersViewWidget(libtremotesf::Torrent* torrent, QWidget* parent = nullptr);
+        TrackersViewWidget(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TrackersViewWidget() override;
         void setTorrent(libtremotesf::Torrent* torrent);
 
@@ -46,6 +47,7 @@ namespace tremotesf
 
     private:
         libtremotesf::Torrent* mTorrent;
+        Rpc* mRpc;
         TrackersModel* mModel;
         BaseProxyModel* mProxyModel;
         BaseTreeView* mTrackersView;

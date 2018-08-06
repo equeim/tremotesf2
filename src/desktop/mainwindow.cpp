@@ -430,6 +430,11 @@ namespace tremotesf
             mRpc->checkTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
+        QAction* reannounceAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("view-refresh")), qApp->translate("tremotesf", "Reanno&unce"));
+        QObject::connect(reannounceAction, &QAction::triggered, this, [=]() {
+            mRpc->reannounceTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
+        });
+
         mTorrentMenu->addSeparator();
 
         QMenu* queueMenu = mTorrentMenu->addMenu(qApp->translate("tremotesf", "&Queue"));

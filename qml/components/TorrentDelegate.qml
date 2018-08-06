@@ -93,6 +93,10 @@ ListItem {
                 text: qsTranslate("tremotesf", "Check Local Data")
                 onClicked: rpc.checkTorrents([torrent.id])
             }
+            MenuItem {
+                text: qsTranslate("tremotesf", "Reannounce")
+                onClicked: rpc.reannounceTorrents([torrent.id])
+            }
         }
     }
     showMenuOnPressAndHold: !selectionPanel.openPanel

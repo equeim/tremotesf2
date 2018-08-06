@@ -187,6 +187,11 @@ Page {
                 text: qsTranslate("tremotesf", "Check Local Data")
                 onClicked: rpc.checkTorrents(torrentsModel.idsFromIndexes(torrentsProxyModel.sourceIndexes(selectionModel.selectedIndexes)))
             }
+            MenuItem {
+                enabled: selectionModel.hasSelection
+                text: qsTranslate("tremotesf", "Reannounce")
+                onClicked: rpc.reannounceTorrents(torrentsModel.idsFromIndexes(torrentsProxyModel.sourceIndexes(selectionModel.selectedIndexes)))
+            }
         }
 
         Connections {
