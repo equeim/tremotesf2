@@ -95,8 +95,12 @@ namespace libtremotesf
         mUpdateTimer->setSingleShot(true);
         QObject::connect(mUpdateTimer, &QTimer::timeout, this, &Rpc::updateData);
 
-        QObject::connect(mNetwork, &QNetworkAccessManager::sslErrors, this, [=](QNetworkReply*, const QList<QSslError>& errors) {
-            qWarning() << errors;
+        QObject::connect(mNetwork, &QNetworkAccessManager::sslErrors, this, [=](QNetworkReply* reply, const QList<QSslError>& errors) {
+            for (const auto& error : errors) {
+                if (!mExpectedSslErrors.contains(error)) {
+                    qWarning() << error;
+                }
+            }
         });
     }
 
@@ -227,9 +231,13 @@ namespace libtremotesf
         }
 
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
+        mExpectedSslErrors.clear();
 
         if (server.selfSignedCertificateEnabled) {
-            mSslConfiguration.setCaCertificates({QSslCertificate(server.selfSignedCertificate)});
+            const QSslCertificate certificate(server.selfSignedCertificate);
+            mExpectedSslErrors.reserve(2);
+            mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, certificate));
+            mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, certificate));
         }
 
         if (server.clientCertificateEnabled) {
@@ -255,6 +263,7 @@ namespace libtremotesf
         disconnect();
         mServerUrl.clear();
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
+        mExpectedSslErrors.clear();
         mAuthentication = false;
         mUsername.clear();
         mPassword.clear();
@@ -837,6 +846,7 @@ namespace libtremotesf
         request.setSslConfiguration(mSslConfiguration);
 
         QNetworkReply* reply = mNetwork->post(request, data);
+        reply->ignoreSslErrors(mExpectedSslErrors);
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
             if (mStatus != Disconnected) {

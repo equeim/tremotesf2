@@ -195,6 +195,7 @@ namespace libtremotesf
         QUrl mServerUrl;
         bool mAuthentication;
         QSslConfiguration mSslConfiguration;
+        QList<QSslError> mExpectedSslErrors;
         QString mUsername;
         QString mPassword;
         int mUpdateInterval;
