@@ -125,14 +125,14 @@ namespace tremotesf
                 }
             }
             if (show) {
-                QAction* openAction = contextMenu.addAction(QIcon::fromTheme("document-open"), qApp->translate("tremotesf", "Open"));
+                QAction* openAction = contextMenu.addAction(QIcon::fromTheme("document-open"), qApp->translate("tremotesf", "&Open"));
                 QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     for (const QModelIndex& index : sourceIndexes) {
                         Utils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index), this);
                     }
                 });
 
-                QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme("go-jump"), qApp->translate("tremotesf", "Show In File Manager"));
+                QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme("go-jump"), qApp->translate("tremotesf", "Show In &File Manager"));
                 QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     QStringList files;
                     files.reserve(sourceIndexes.size());
@@ -146,24 +146,24 @@ namespace tremotesf
 
         contextMenu.addSeparator();
 
-        QAction* downloadAction = contextMenu.addAction(qApp->translate("tremotesf", "Download", "File menu item, verb"));
+        QAction* downloadAction = contextMenu.addAction(qApp->translate("tremotesf", "&Download", "File menu item, verb"));
         QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes]() {
             mModel->setFilesWanted(sourceIndexes, true);
         });
 
-        QAction* notDownloadAction = contextMenu.addAction(qApp->translate("tremotesf", "Not Download"));
+        QAction* notDownloadAction = contextMenu.addAction(qApp->translate("tremotesf", "&Not Download"));
         QObject::connect(notDownloadAction, &QAction::triggered, this, [=, &sourceIndexes]() {
             mModel->setFilesWanted(sourceIndexes, false);
         });
 
         contextMenu.addSeparator();
 
-        QMenu* priorityMenu = contextMenu.addMenu(qApp->translate("tremotesf", "Priority"));
+        QMenu* priorityMenu = contextMenu.addMenu(qApp->translate("tremotesf", "&Priority"));
         QActionGroup priorityGroup(this);
         priorityGroup.setExclusive(true);
 
         //: Priority
-        QAction* highPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "High"));
+        QAction* highPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&High"));
         highPriorityAction->setCheckable(true);
         QObject::connect(highPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
             if (checked) {
@@ -172,7 +172,7 @@ namespace tremotesf
         });
 
         //: Priority
-        QAction* normalPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Normal"));
+        QAction* normalPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Normal"));
         normalPriorityAction->setCheckable(true);
         QObject::connect(normalPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
             if (checked) {
@@ -181,7 +181,7 @@ namespace tremotesf
         });
 
         //: Priority
-        QAction* lowPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Low"));
+        QAction* lowPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Low"));
         lowPriorityAction->setCheckable(true);
         QObject::connect(lowPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
             if (checked) {
@@ -221,7 +221,7 @@ namespace tremotesf
 
         if (!mLocalFile && mRpc->serverSettings()->canRenameFiles()) {
             contextMenu.addSeparator();
-            QAction* renameAction = contextMenu.addAction(qApp->translate("tremotesf", "Rename"));
+            QAction* renameAction = contextMenu.addAction(qApp->translate("tremotesf", "&Rename"));
             renameAction->setEnabled(sourceIndexes.size() == 1);
             QObject::connect(renameAction, &QAction::triggered, this, [=]() {
                 const QModelIndex& index = sourceIndexes.first();

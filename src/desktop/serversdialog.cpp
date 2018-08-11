@@ -69,16 +69,22 @@ namespace tremotesf
         mServersView->setSelectionMode(QListView::ExtendedSelection);
         mServersView->setModel(mProxyModel);
         QObject::connect(mServersView, &QListView::activated, this, &ServersDialog::showEditDialogs);
+
+        auto removeAction = new QAction(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "&Remove"), this);
+        removeAction->setShortcut(QKeySequence::Delete);
+        mServersView->addAction(removeAction);
+        QObject::connect(removeAction, &QAction::triggered, this, &ServersDialog::removeServers);
+
         QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=](const QPoint& pos) {
             if (mServersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(QIcon::fromTheme(editIconName), qApp->translate("tremotesf", "&Edit..."));
                 QObject::connect(editAction, &QAction::triggered, this, &ServersDialog::showEditDialogs);
-                QAction* removeAction = contextMenu.addAction(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "&Remove"));
-                QObject::connect(removeAction, &QAction::triggered, this, &ServersDialog::removeServers);
+                contextMenu.addAction(removeAction);
                 contextMenu.exec(QCursor::pos());
             }
         });
+
         layout->addWidget(mServersView, 1, 0);
 
         auto buttonsLayout = new QVBoxLayout();

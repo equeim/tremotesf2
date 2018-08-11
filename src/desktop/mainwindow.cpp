@@ -404,7 +404,7 @@ namespace tremotesf
             mRpc->startTorrentsNow(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        mPauseTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("media-playback-pause")), qApp->translate("tremotesf", "&Pause"));
+        mPauseTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("media-playback-pause")), qApp->translate("tremotesf", "P&ause"));
         QObject::connect(mPauseTorrentAction, &QAction::triggered, this, [=]() {
             mRpc->pauseTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
@@ -412,6 +412,7 @@ namespace tremotesf
         mTorrentMenu->addSeparator();
 
         mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
+        mRemoveTorrentAction->setShortcut(QKeySequence::Delete);
         QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, &MainWindow::removeSelectedTorrents);
 
         QAction* setLocationAction = mTorrentMenu->addAction(qApp->translate("tremotesf", "Set &Location"));
@@ -716,6 +717,7 @@ namespace tremotesf
         QMenu* editMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
 
         QAction* selectAllAction = editMenu->addAction(QIcon::fromTheme(QLatin1String("edit-select-all")), qApp->translate("tremotesf", "&Select All"));
+        selectAllAction->setShortcut(QKeySequence::SelectAll);
         QObject::connect(selectAllAction, &QAction::triggered, mTorrentsView, &TorrentsView::selectAll);
 
         QAction* invertSelectionAction = editMenu->addAction(qApp->translate("tremotesf", "&Invert Selection"));
@@ -757,6 +759,7 @@ namespace tremotesf
         QMenu* toolsMenu = menuBar()->addMenu(qApp->translate("tremotesf", "T&ools"));
 
         QAction* settingsAction = toolsMenu->addAction(QIcon::fromTheme(QLatin1String("configure"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Options"));
+        settingsAction->setShortcut(QKeySequence::Preferences);
         QObject::connect(settingsAction, &QAction::triggered, this, [=]() {
             static SettingsDialog* dialog = nullptr;
             if (dialog) {

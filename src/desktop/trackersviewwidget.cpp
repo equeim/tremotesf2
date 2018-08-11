@@ -82,16 +82,22 @@ namespace tremotesf
         mTrackersView->setRootIsDecorated(false);
         mTrackersView->header()->restoreState(Settings::instance()->trackersViewHeaderState());
         QObject::connect(mTrackersView, &EnterEatingTreeView::activated, this, &TrackersViewWidget::showEditDialogs);
+
+        auto removeAction = new QAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"), this);
+        removeAction->setShortcut(QKeySequence::Delete);
+        mTrackersView->addAction(removeAction);
+        QObject::connect(removeAction, &QAction::triggered, this, &TrackersViewWidget::removeTrackers);
+
         QObject::connect(mTrackersView, &EnterEatingTreeView::customContextMenuRequested, this, [=](const QPoint& pos) {
             if (mTrackersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("document-properties")), qApp->translate("tremotesf", "&Edit..."));
                 QObject::connect(editAction, &QAction::triggered, this, &TrackersViewWidget::showEditDialogs);
-                QAction* removeAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
-                QObject::connect(removeAction, &QAction::triggered, this, &TrackersViewWidget::removeTrackers);
+                contextMenu.addAction(removeAction);
                 contextMenu.exec(QCursor::pos());
             }
         });
+
         layout->addWidget(mTrackersView);
 
         auto buttonsLayout = new QVBoxLayout();
@@ -164,6 +170,10 @@ namespace tremotesf
 
     void TrackersViewWidget::removeTrackers()
     {
+        if (!mTrackersView->selectionModel()->hasSelection()) {
+            return;
+        }
+
         QMessageBox dialog(this);
         dialog.setIcon(QMessageBox::Warning);
 

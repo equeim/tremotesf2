@@ -48,6 +48,11 @@
 
 namespace tremotesf
 {
+    namespace
+    {
+        const QString removeIconName(QLatin1String("list-remove"));
+    }
+
     class MountedDirectoriesWidget : public QTableWidget
     {
     public:
@@ -63,14 +68,35 @@ namespace tremotesf
             verticalHeader()->setVisible(false);
 
             setContextMenuPolicy(Qt::CustomContextMenu);
+
+            auto removeAction = new QAction(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "&Remove"), this);
+            removeAction->setShortcut(QKeySequence::Delete);
+            addAction(removeAction);
+
+            QObject::connect(removeAction, &QAction::triggered, this, [=]() {
+                const auto items(selectionModel()->selectedIndexes());
+                if (!items.isEmpty()) {
+                    removeRow(items.first().row());
+                }
+            });
+
             QObject::connect(this, &QWidget::customContextMenuRequested, this, [=](const QPoint& pos) {
                 const QModelIndex index(indexAt(pos));
-                if (!index.isValid() || index.column() != 0) {
+                if (!index.isValid()) {
                     return;
                 }
+
                 QMenu contextMenu;
-                contextMenu.addAction(qApp->translate("tremotesf", "&Select..."));
-                if (contextMenu.exec(viewport()->mapToGlobal(pos))) {
+
+                QAction* selectAction = nullptr;
+                if (index.column() == 0) {
+                    selectAction = contextMenu.addAction(qApp->translate("tremotesf", "&Select..."));
+                }
+
+                contextMenu.addAction(removeAction);
+
+                auto executed = contextMenu.exec(viewport()->mapToGlobal(pos));
+                if (executed && executed == selectAction) {
                     const QString directory(QFileDialog::getExistingDirectory(this));
                     if (!directory.isEmpty()) {
                         model()->setData(index, directory);
@@ -270,7 +296,7 @@ namespace tremotesf
             }
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
-        auto removeDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "Remove"), this);
+        auto removeDirectoriesButton = new QPushButton(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "Remove"), this);
         QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=]() {
             const auto items(mMountedDirectoriesWidget->selectionModel()->selectedIndexes());
             if (!items.isEmpty()) {
