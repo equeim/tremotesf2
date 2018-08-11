@@ -95,7 +95,6 @@ namespace tremotesf
         TorrentsView* mTorrentsView;
         std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs;
 
-        QMenu* mFileMenu = nullptr;
         QAction* mConnectAction = nullptr;
         QAction* mDisconnectAction = nullptr;
         QAction* mAddTorrentFileAction = nullptr;
@@ -112,6 +111,8 @@ namespace tremotesf
 
         QAction* mOpenTorrentFilesAction = nullptr;
         QAction* mShowInFileManagerAction = nullptr;
+
+        QMenu* mFileMenu = nullptr;
 
         QToolBar* mToolBar = nullptr;
 

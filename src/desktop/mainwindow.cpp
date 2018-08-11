@@ -336,15 +336,11 @@ namespace tremotesf
 
     void MainWindow::setupActions()
     {
-        mFileMenu = new QMenu(qApp->translate("tremotesf", "&File"), this);
-
-        mConnectAction = mFileMenu->addAction(qApp->translate("tremotesf", "&Connect"));
+        mConnectAction = new QAction(qApp->translate("tremotesf", "&Connect"), this);
         QObject::connect(mConnectAction, &QAction::triggered, mRpc, &Rpc::connect);
 
-        mDisconnectAction = mFileMenu->addAction(qApp->translate("tremotesf", "&Disconnect"));
+        mDisconnectAction = new QAction(qApp->translate("tremotesf", "&Disconnect"), this);
         QObject::connect(mDisconnectAction, &QAction::triggered, mRpc, &Rpc::disconnect);
-
-        mFileMenu->addSeparator();
 
         const QIcon connectIcon(QIcon::fromTheme(QLatin1String("network-connect")));
         const QIcon disconnectIcon(QIcon::fromTheme(QLatin1String("network-disconnect")));
@@ -353,11 +349,11 @@ namespace tremotesf
             mDisconnectAction->setIcon(disconnectIcon);
         }
 
-        mAddTorrentFileAction = mFileMenu->addAction(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "&Add Torrent File..."));
+        mAddTorrentFileAction = new QAction(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "&Add Torrent File..."), this);
         mAddTorrentFileAction->setShortcuts(QKeySequence::Open);
         QObject::connect(mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::addTorrentsFiles);
 
-        mAddTorrentLinkAction = mFileMenu->addAction(QIcon::fromTheme(QLatin1String("insert-link")), qApp->translate("tremotesf", "Add Torrent &Link..."));
+        mAddTorrentLinkAction = new QAction(QIcon::fromTheme(QLatin1String("insert-link")), qApp->translate("tremotesf", "Add Torrent &Link..."), this);
         QObject::connect(mAddTorrentLinkAction, &QAction::triggered, this, [=]() {
             setWindowState(windowState() & ~Qt::WindowMinimized);
             auto showDialog = [=]() {
@@ -372,17 +368,6 @@ namespace tremotesf
                 showDialog();
             }
         });
-
-        mFileMenu->addSeparator();
-
-        QAction* quitAction = mFileMenu->addAction(QIcon::fromTheme(QLatin1String("application-exit")), qApp->translate("tremotesf", "&Quit"));
-#ifdef Q_OS_WIN
-        quitAction->setShortcut(QKeySequence(QLatin1String("Ctrl+Q")));
-#else
-        quitAction->setShortcuts(QKeySequence::Quit);
-#endif
-        QObject::connect(quitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
-        mFileMenu->addAction(quitAction);
 
         //
         // Torrent menu
@@ -712,7 +697,21 @@ namespace tremotesf
 
     void MainWindow::setupMenuBar()
     {
-        menuBar()->addMenu(mFileMenu);
+        mFileMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
+        mFileMenu->addAction(mConnectAction);
+        mFileMenu->addAction(mDisconnectAction);
+        mFileMenu->addSeparator();
+        mFileMenu->addAction(mAddTorrentFileAction);
+        mFileMenu->addAction(mAddTorrentLinkAction);
+        mFileMenu->addSeparator();
+
+        QAction* quitAction = mFileMenu->addAction(QIcon::fromTheme(QLatin1String("application-exit")), qApp->translate("tremotesf", "&Quit"));
+#ifdef Q_OS_WIN
+        quitAction->setShortcut(QKeySequence(QLatin1String("Ctrl+Q")));
+#else
+        quitAction->setShortcuts(QKeySequence::Quit);
+#endif
+        QObject::connect(quitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
 
         QMenu* editMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
 
@@ -856,7 +855,12 @@ namespace tremotesf
 
     void MainWindow::setupTrayIcon()
     {
-        mTrayIcon->setContextMenu(mFileMenu);
+        QMenu* contextMenu = new QMenu(mFileMenu);
+        for (QAction* action : mFileMenu->actions()) {
+            contextMenu->addAction(action);
+        }
+
+        mTrayIcon->setContextMenu(contextMenu);
         mTrayIcon->setToolTip(mRpc->statusString());
 
         QObject::connect(mTrayIcon, &QSystemTrayIcon::activated, this, [=](QSystemTrayIcon::ActivationReason reason) {
