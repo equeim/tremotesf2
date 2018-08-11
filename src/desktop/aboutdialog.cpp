@@ -98,6 +98,8 @@ namespace tremotesf
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &AboutDialog::reject);
         layout->addWidget(dialogButtonBox);
+
+        dialogButtonBox->button(QDialogButtonBox::Close)->setDefault(true);
     }
 
     QSize AboutDialog::sizeHint() const
