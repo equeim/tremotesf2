@@ -7,5 +7,13 @@ qt5_add_translation(qm_files
     ru.ts
 )
 add_custom_target(translations DEPENDS ${qm_files})
-add_dependencies(tremotesf translations)
-install(FILES ${qm_files} DESTINATION "${TRANSLATIONS_PATH}")
+
+if (TEST_BUILD)
+    set(translations_path "${CMAKE_BINARY_DIR}/translations")
+else()
+    set(translations_path "${DATA_PATH}/translations")
+    if (NOT WIN32)
+        install(FILES ${qm_files} DESTINATION "${translations_path}")
+    endif()
+endif()
+set(TRANSLATIONS_PATH "${translations_path}" PARENT_SCOPE)

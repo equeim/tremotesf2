@@ -56,14 +56,11 @@ set(tremotesf_libs
 
 set(tremotesf_includes)
 
-file(TO_CMAKE_PATH "${DATA_PATH}/translations" translations_path)
-set(TRANSLATIONS_PATH "${translations_path}" PARENT_SCOPE)
-
 set(tremotesf_defines
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x050800
     TREMOTESF_VERSION="${TREMOTESF_VERSION}"
-    TRANSLATIONS_PATH="${translations_path}"
+    TRANSLATIONS_PATH="${TRANSLATIONS_PATH}"
 )
 
 set(tremotesf_cxxflags -Wall -Wextra -pedantic)
@@ -119,9 +116,7 @@ else()
         desktop/trackersviewwidget.cpp
     )
 
-    file(TO_CMAKE_PATH "${DATA_PATH}/icons" icons_path)
-    set(ICONS_PATH "${icons_path}" PARENT_SCOPE)
-    list(APPEND tremotesf_defines ICONS_PATH="${icons_path}")
+    list(APPEND tremotesf_defines ICONS_PATH="${ICONS_PATH}")
 
     if (WIN32)
         list(APPEND tremotesf_sources "desktop/tremotesf.rc")
@@ -136,11 +131,15 @@ else()
 endif()
 
 add_executable(tremotesf ${tremotesf_sources})
-set_target_properties(tremotesf PROPERTIES ${tremotesf_properties})
 
+set_target_properties(tremotesf PROPERTIES ${tremotesf_properties})
 target_link_libraries(tremotesf ${tremotesf_libs})
 target_include_directories(tremotesf PRIVATE ${tremotesf_includes})
 target_compile_definitions(tremotesf PRIVATE ${tremotesf_defines})
 target_compile_options(tremotesf PRIVATE ${tremotesf_cxxflags})
 
-install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
+add_dependencies(tremotesf translations)
+
+if (NOT TEST_BUILD AND NOT WIN32)
+    install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()

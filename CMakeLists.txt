@@ -3,7 +3,12 @@ cmake_minimum_required(VERSION 3.1.0)
 project(tremotesf)
 set(TREMOTESF_VERSION 1.4.0)
 
+option(TEST_BUILD "Test build" OFF)
 option(SAILFISHOS "Build for Sailfish OS" OFF)
+
+if (TEST_BUILD AND SAILFISHOS)
+    message(FATAL_ERROR "TEST_BUILD and SAILFISHOS can't be used together")
+endif()
 
 include(GNUInstallDirs)
 
@@ -12,11 +17,11 @@ if (SAILFISHOS)
 else()
     set(TREMOTESF_NAME "tremotesf")
 endif()
-file(TO_CMAKE_PATH "${CMAKE_INSTALL_DATADIR}/${TREMOTESF_NAME}" DATA_PATH)
+file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/${TREMOTESF_NAME}" DATA_PATH)
 
-add_subdirectory("src")
-add_subdirectory("translations")
 add_subdirectory("data")
+add_subdirectory("translations")
+add_subdirectory("src")
 
 if (SAILFISHOS)
     install(DIRECTORY "qml" DESTINATION "${DATA_PATH}")
