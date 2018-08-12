@@ -23,7 +23,7 @@ import harbour.tremotesf 1.0
 
 ListItem {
     property var torrent
-    property bool torrentIsLocal: rpc.isTorrentLocalMounted(torrent.downloadDirectory)
+    property bool torrentIsLocal: torrent ? rpc.isTorrentLocalMounted(torrent.downloadDirectory) : false
 
     property color primaryTextColor: highlighted ? Theme.highlightColor : Theme.primaryColor
     property color secondaryTextColor: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
