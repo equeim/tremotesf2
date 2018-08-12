@@ -38,6 +38,7 @@
 #include <QPushButton>
 #include <QRegularExpressionValidator>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -172,7 +173,7 @@ namespace tremotesf
 
     QSize ServerEditDialog::sizeHint() const
     {
-        return QDialog::sizeHint().expandedTo(QSize(std::max(static_cast<QScrollArea*>(layout()->itemAt(0)->widget())->widget()->sizeHint().width(), 384), 512));
+        return QDialog::sizeHint().expandedTo(QSize(384, 512));
     }
 
     void ServerEditDialog::accept()
@@ -202,6 +203,7 @@ namespace tremotesf
         auto scrollArea = new QScrollArea(this);
         scrollArea->setFrameShape(QFrame::NoFrame);
         scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scrollArea->setWidgetResizable(true);
         topLayout->addWidget(scrollArea);
 
