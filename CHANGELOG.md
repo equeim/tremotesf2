@@ -1,5 +1,24 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Server stats dialog
+- Ability to set mounted directories for servers
+- Ability to open torrents' files
+- Notifications on added/finished torrents since last connection to server
+- Ability to reannounce torrents
+- Ability to set torrent's location
+
+### Changed
+- CMake build system
+
+#### Sailfish OS
+- File selection dialog now shows current directory
+
+### Fixed
+- Impoved support of self-signed certificates
+- Active network requests are now aborted when manually disconnecting from server
+
 ## [1.4.0] - 2018-05-09
 ### Added
 - Donation links via PayPal and Yandex.Money
