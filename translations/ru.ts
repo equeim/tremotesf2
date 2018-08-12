@@ -1419,7 +1419,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="392"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Приостановить</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="708"/>
@@ -1444,7 +1444,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="387"/>
         <source>Start &amp;Now</source>
-        <translation>Запустить &amp;сейчас</translation>
+        <translation>Запус&amp;тить сейчас</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="399"/>
@@ -1463,7 +1463,7 @@
         <location filename="../src/desktop/mainwindow.cpp" line="420"/>
         <location filename="../src/desktop/torrentfilesview.cpp" line="128"/>
         <source>&amp;Open</source>
-        <translation>О&amp;ткрыть</translation>
+        <translation>&amp;Открыть</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="423"/>
@@ -1485,7 +1485,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="440"/>
         <source>&amp;Queue</source>
-        <translation>&amp;Очередь</translation>
+        <translation>О&amp;чередь</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="442"/>
@@ -1510,7 +1510,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="462"/>
         <source>&amp;Server Options</source>
-        <translation>Настройки &amp;сервера</translation>
+        <translation>Н&amp;астройки сервера</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="478"/>
@@ -1548,13 +1548,17 @@
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="700"/>
+        <source>&amp;File</source>
+        <translation>&amp;Файл</translation>
+    </message>
+    <message>
         <location filename="../src/desktop/mainwindow.cpp" line="716"/>
         <source>&amp;Edit</source>
         <translation>&amp;Правка</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="718"/>
-        <source>&amp;Select All</source>
+        <source>Select &amp;All</source>
         <translation>&amp;Выбрать все</translation>
     </message>
     <message>
@@ -1830,40 +1834,40 @@
         <location filename="../src/desktop/torrentfilesview.cpp" line="149"/>
         <source>&amp;Download</source>
         <comment>File menu item, verb</comment>
-        <translation type="unfinished"/>
+        <translation>&amp;Загружать</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="154"/>
         <source>&amp;Not Download</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Не загружать</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="161"/>
         <source>&amp;Priority</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Приоритет</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="166"/>
         <source>&amp;High</source>
         <extracomment>Priority</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Высокий</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="175"/>
         <source>&amp;Normal</source>
         <extracomment>Priority</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Нормальный</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="184"/>
         <source>&amp;Low</source>
         <extracomment>Priority</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Низкий</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="224"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished"/>
+        <translation>П&amp;ереименовать</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="230"/>
@@ -2117,7 +2121,7 @@
         <location filename="../qml/components/TorrentFilesPage.qml" line="358"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="104"/>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>Открыть</translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="332"/>
@@ -2360,14 +2364,16 @@
         <location filename="../src/utils.cpp" line="426"/>
         <location filename="../src/utils.cpp" line="444"/>
         <source>Error opening %1</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка открытия %1</translation>
     </message>
     <message>
         <location filename="../src/desktop/aboutdialog.cpp" line="52"/>
         <source>&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p&gt;Исходный код: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Переводы: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../src/desktop/aboutdialog.cpp" line="78"/>
@@ -2381,18 +2387,18 @@
     <message>
         <location filename="../qml/components/RemoteDirectorySelectionItem.qml" line="33"/>
         <source>Selected directory is not inside mounted directory</source>
-        <translation type="unfinished"/>
+        <translation>Выбранный каталог должен быть внутри подключенного каталога</translation>
     </message>
     <message>
         <location filename="../qml/components/SetLocationDialog.qml" line="47"/>
         <location filename="../src/desktop/mainwindow.cpp" line="94"/>
         <source>Move files from current directory</source>
-        <translation type="unfinished"/>
+        <translation>Переместить файлы из текущего каталога</translation>
     </message>
     <message>
         <location filename="../src/desktop/remotedirectoryselectionwidget.cpp" line="36"/>
         <source>Selected directory should be inside mounted directory</source>
-        <translation type="unfinished"/>
+        <translation>Выбранный каталог должен быть внутри подключенного каталога</translation>
     </message>
 </context>
 </TS>

@@ -1548,14 +1548,18 @@
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="700"/>
+        <source>&amp;File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../src/desktop/mainwindow.cpp" line="716"/>
         <source>&amp;Edit</source>
         <translation>B&amp;ewerken</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="718"/>
-        <source>&amp;Select All</source>
-        <translation>Alles &amp;selecteren</translation>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="722"/>
