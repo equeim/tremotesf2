@@ -177,6 +177,11 @@ Page {
 
         PullDownMenu {
             MenuItem {
+                text: qsTranslate("tremotesf", "Reannounce")
+                onClicked: rpc.reannounceTorrents([torrent.id])
+            }
+
+            MenuItem {
                 enabled: torrent
                 text: qsTranslate("tremotesf", "Select")
                 onClicked: selectionPanel.show()
