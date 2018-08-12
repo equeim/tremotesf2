@@ -22,6 +22,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include <unordered_set>
 
 #include <QByteArray>
 #include <QObject>
@@ -186,6 +187,8 @@ namespace libtremotesf
                          const std::function<void()>& callOnSuccess = nullptr);
 
         QNetworkAccessManager* mNetwork;
+        std::unordered_set<QNetworkReply*> mNetworkRequests;
+
         bool mAuthenticationRequested;
         QByteArray mSessionId;
 

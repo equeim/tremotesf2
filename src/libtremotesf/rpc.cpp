@@ -625,6 +625,9 @@ namespace libtremotesf
             emit torrentsUpdated();
         } else if (wasConnected) {
             mNetwork->clearAccessCache();
+            for (QNetworkReply* reply : mNetworkRequests) {
+                reply->abort();
+            }
             mAuthenticationRequested = false;
             mRpcVersionChecked = false;
             mServerSettingsUpdated = false;
@@ -846,6 +849,8 @@ namespace libtremotesf
         request.setSslConfiguration(mSslConfiguration);
 
         QNetworkReply* reply = mNetwork->post(request, data);
+        mNetworkRequests.insert(reply);
+
         reply->ignoreSslErrors(mExpectedSslErrors);
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
@@ -901,6 +906,7 @@ namespace libtremotesf
                     }
                 }
             }
+            mNetworkRequests.erase(reply);
             reply->deleteLater();
         });
 
