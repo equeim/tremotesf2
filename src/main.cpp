@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     qApp->installTranslator(&qtTranslator);
 
     QTranslator appTranslator;
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(TEST_BUILD)
     appTranslator.load(QLocale().name(), QString::fromLatin1("%1/translations").arg(app.applicationDirPath()));
 #else
     appTranslator.load(QLocale().name(), QLatin1String(TRANSLATIONS_PATH));
