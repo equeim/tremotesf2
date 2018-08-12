@@ -60,6 +60,26 @@ Dialog {
                                  : qsTranslate("tremotesf", "Select Directory")
             }
 
+            Item {
+                width: parent.width
+                height: directoryLabel.height + Theme.paddingMedium
+
+                Label {
+                    id: directoryLabel
+
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.horizontalPageMargin
+                        right: parent.right
+                        rightMargin: Theme.horizontalPageMargin
+                    }
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.secondaryColor
+                    text: directoryContentModel.directory
+                }
+            }
+
             ErrorHeader {
                 visible: !canAccept && errorString
                 padding: Theme.paddingMedium
