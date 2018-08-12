@@ -63,7 +63,15 @@ set(tremotesf_defines
     TRANSLATIONS_PATH="${TRANSLATIONS_PATH}"
 )
 
-set(tremotesf_cxxflags -Wall -Wextra -pedantic)
+if (TEST_BUILD)
+    list(APPEND tremotesf_defines TEST_BUILD)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(tremotesf_cxxflags /W3)
+else()
+    set(tremotesf_cxxflags -Wall -Wextra -pedantic)
+endif()
 
 if (SAILFISHOS)
     find_package(Qt5Qml CONFIG REQUIRED)

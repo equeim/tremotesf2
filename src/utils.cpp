@@ -251,7 +251,7 @@ namespace tremotesf
     QString Utils::formatEta(int seconds)
     {
         if (seconds < 0) {
-            return "\u221E";
+            return u8"\u221E";
         }
 
         const int days = seconds / 86400;
@@ -377,7 +377,7 @@ namespace tremotesf
 #else
     QString Utils::statusIconPath(Utils::StatusIcon icon)
     {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(TEST_BUILD)
         static const QString iconsPath(QString::fromLatin1("%1/icons").arg(QCoreApplication::applicationDirPath()));
 #else
         static const QString iconsPath(QLatin1String(ICONS_PATH));

@@ -26,7 +26,7 @@
 
 namespace libtremotesf
 {
-    class Peer;
+    struct Peer;
     class Torrent;
 }
 

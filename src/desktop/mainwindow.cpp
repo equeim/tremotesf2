@@ -878,7 +878,7 @@ namespace tremotesf
         });
 
         QObject::connect(mRpc->serverStats(), &libtremotesf::ServerStats::updated, this, [=]() {
-            mTrayIcon->setToolTip(QString("\u25be %1\n\u25b4 %2")
+            mTrayIcon->setToolTip(QString(u8"\u25be %1\n\u25b4 %2")
                                       .arg(Utils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()))
                                       .arg(Utils::formatByteSpeed(mRpc->serverStats()->uploadSpeed())));
         });
@@ -936,7 +936,7 @@ namespace tremotesf
         } else {
             QStringList join(torrents);
             for (QString& torrent : join) {
-                torrent.prepend("\u2022 ");
+                torrent.prepend(u8"\u2022 ");
             }
             showNotification(summary, join.join('\n'));
         }
