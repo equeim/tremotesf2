@@ -697,7 +697,7 @@ namespace tremotesf
 
     void MainWindow::setupMenuBar()
     {
-        mFileMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
+        mFileMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&File"));
         mFileMenu->addAction(mConnectAction);
         mFileMenu->addAction(mDisconnectAction);
         mFileMenu->addSeparator();
@@ -715,7 +715,7 @@ namespace tremotesf
 
         QMenu* editMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
 
-        QAction* selectAllAction = editMenu->addAction(QIcon::fromTheme(QLatin1String("edit-select-all")), qApp->translate("tremotesf", "&Select All"));
+        QAction* selectAllAction = editMenu->addAction(QIcon::fromTheme(QLatin1String("edit-select-all")), qApp->translate("tremotesf", "Select &All"));
         selectAllAction->setShortcut(QKeySequence::SelectAll);
         QObject::connect(selectAllAction, &QAction::triggered, mTorrentsView, &TorrentsView::selectAll);
 
