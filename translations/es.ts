@@ -1549,7 +1549,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="700"/>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Archivos</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="716"/>
@@ -1559,7 +1559,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="718"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"/>
+        <translation>Elegir &amp;Todo</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="722"/>
