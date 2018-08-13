@@ -1500,7 +1500,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="452"/>
         <source>Move &amp;Down</source>
-        <translation>Сдвинуть &amp;вниз</translation>
+        <translation>Сдвинуть вн&amp;из</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="457"/>
