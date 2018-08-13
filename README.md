@@ -4,20 +4,22 @@ Remote GUI for transmission-daemon. Supports desktop OSes (GNU/Linux and Windows
 ## Installation
 ### Desktop
 #### Dependencies
-- Qt 5.2 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
+- Qt 5.6 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
 - KWidgetsAddons from KDE Frameworks 5
 
 #### Building
 ```
-qmake
+cmake
 make
 make install
 ```
 
 #### GNU/Linux distributions
-[Arch Linux AUR](https://aur.archlinux.org/packages/tremotesf)
+##### Arch Linux
+[AUR](https://aur.archlinux.org/packages/tremotesf)
 
-[Gentoo overlay](https://github.com/equeim/equeim-overlay)
+##### Gentoo
+[equeim-overlay](https://github.com/equeim/equeim-overlay)
 
 ### Sailfish OS
 #### Dependencies
