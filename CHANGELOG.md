@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.5.0] - 2018-08-13
 ### Added
 - Server stats dialog
 - Ability to set mounted directories for servers
