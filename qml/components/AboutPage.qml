@@ -215,11 +215,7 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: {
-                                            var translators = "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor)
-                                            translators += Utils.translators
-                                            return translators
-                                        }
+                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.translators
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
 
@@ -266,11 +262,7 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: {
-                                            var license = "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor)
-                                            license += Utils.license
-                                            return license
-                                        }
+                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.license
                                         textFormat: Text.RichText
                                         wrapMode: Text.WordWrap
 
