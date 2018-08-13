@@ -144,10 +144,6 @@ namespace tremotesf
 
     void PeersModel::setTorrent(libtremotesf::Torrent* torrent)
     {
-        if (!torrent || mTorrent) {
-            return;
-        }
-
         if (torrent != mTorrent) {
             mTorrent = torrent;
 
