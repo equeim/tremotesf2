@@ -661,9 +661,10 @@ namespace tremotesf
                                                           this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 mTorrentsDialogs.insert({id, dialog});
-                QObject::connect(dialog, &TorrentPropertiesDialog::destroyed, this, [=]() {
+                QObject::connect(dialog, &TorrentPropertiesDialog::finished, this, [=]() {
                     mTorrentsDialogs.erase(mTorrentsDialogs.find(id));
                 });
+
                 dialog->show();
             }
         }
