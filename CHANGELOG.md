@@ -16,6 +16,8 @@
 - File selection dialog now shows current directory
 
 ### Fixed
+- Fixed segfault when disconnecting from server
+- Fixed segfault when closing properties dialog
 - Impoved support of self-signed certificates
 - Active network requests are now aborted when manually disconnecting from server
 
