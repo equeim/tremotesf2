@@ -818,7 +818,7 @@
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="362"/>
         <source>Background update interval, s</source>
-        <translation type="unfinished"/>
+        <translation>Intervalo de actualización en segundo plano, s</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="381"/>
@@ -1419,7 +1419,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="392"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"/>
+        <translation>P&amp;ausa</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="708"/>
@@ -1457,13 +1457,13 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="403"/>
         <source>Set &amp;Location</source>
-        <translation type="unfinished"/>
+        <translation>Establecer &amp;Ubicación</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="420"/>
         <location filename="../src/desktop/torrentfilesview.cpp" line="128"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Abrir</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="423"/>
@@ -1733,7 +1733,7 @@
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="276"/>
         <source>Background update interval:</source>
-        <translation type="unfinished"/>
+        <translation>Intervalo de actualización en segundo plano:</translation>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="283"/>
@@ -1834,40 +1834,40 @@
         <location filename="../src/desktop/torrentfilesview.cpp" line="149"/>
         <source>&amp;Download</source>
         <comment>File menu item, verb</comment>
-        <translation type="unfinished"/>
+        <translation>&amp;Descargar</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="154"/>
         <source>&amp;Not Download</source>
-        <translation type="unfinished"/>
+        <translation>&amp;No descargar</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="161"/>
         <source>&amp;Priority</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Prioridad</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="166"/>
         <source>&amp;High</source>
         <extracomment>Priority</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Alto</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="175"/>
         <source>&amp;Normal</source>
         <extracomment>Priority</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Normal</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="184"/>
         <source>&amp;Low</source>
         <extracomment>Priority</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Bajar</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="224"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Renombrar</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="230"/>
@@ -2371,7 +2371,9 @@
         <source>&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p&gt;Código fuente: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Traducción: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../src/desktop/aboutdialog.cpp" line="78"/>
