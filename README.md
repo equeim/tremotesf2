@@ -4,12 +4,15 @@ Remote GUI for transmission-daemon. Supports desktop OSes (GNU/Linux and Windows
 ## Installation
 ### Desktop
 #### Dependencies
+- C++11 compiler (GCC, MinGW and MSVC are supported)
+- CMake
 - Qt 5.6 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
 - KWidgetsAddons from KDE Frameworks 5
 
 #### Building
 ```
-cmake
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/your/install/prefix
 make
 make install
 ```
@@ -18,14 +21,27 @@ make install
 ##### Arch Linux
 [AUR](https://aur.archlinux.org/packages/tremotesf)
 
+##### Fedora
+[Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+
 ##### Gentoo
 [equeim-overlay](https://github.com/equeim/equeim-overlay)
+
+##### Mageia
+[Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+
+##### openSUSE
+[OBS repo](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ### Sailfish OS
 #### Dependencies
 Sailfish OS 1.1.9 or newer
 #### Building
-Just build RPM package either using Sailfish OS IDE or manually using mb2.
+SSH/chroot into SDK, then:
+```
+cd /path/to/sources
+mb2 -X -t <target name, e.g. SailfishOS-latest-armv7hl> build -d
+```
 
 ## Translations
 Translations are managed on [Transifex](https://www.transifex.com/equeim/tremotesf).
