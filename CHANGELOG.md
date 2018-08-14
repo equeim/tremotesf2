@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.5.1] - 2018-08-14
+### Added
+- Universal RPM spec file for SailfishOS/Fedora/Mageia/openSUSE
+
+### Changed
+- Updated Spanish translation
+
+### Fixed
+- Fixed openSUSE OBS build by adding subcategory to .desktop file
+
 ## [1.5.0] - 2018-08-13
 ### Added
 - Server stats dialog
