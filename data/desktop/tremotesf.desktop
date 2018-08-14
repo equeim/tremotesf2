@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Tremotesf
-Categories=Network
+Categories=Network;P2P;
 Icon=tremotesf
 Exec=tremotesf %U
 StartupNotify=false
