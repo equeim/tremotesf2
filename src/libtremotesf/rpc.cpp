@@ -628,6 +628,7 @@ namespace libtremotesf
             for (QNetworkReply* reply : mNetworkRequests) {
                 reply->abort();
             }
+            mNetworkRequests.clear();
             mAuthenticationRequested = false;
             mRpcVersionChecked = false;
             mServerSettingsUpdated = false;
@@ -855,6 +856,8 @@ namespace libtremotesf
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
             if (mStatus != Disconnected) {
+                mNetworkRequests.erase(reply);
+
                 switch (reply->error()) {
                 case QNetworkReply::NoError:
                     if (callOnSuccessParse) {
@@ -906,7 +909,6 @@ namespace libtremotesf
                     }
                 }
             }
-            mNetworkRequests.erase(reply);
             reply->deleteLater();
         });
 
