@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(tremotesf VERSION 1.5.1)
+project(tremotesf VERSION 1.5.2)
 
 option(TEST_BUILD "Test build" OFF)
 option(SAILFISHOS "Build for Sailfish OS" OFF)

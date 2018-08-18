@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.5.2] - 2018-08-18
+### Fixed
+- Fixed crash when disconnecting from server
+
 ## [1.5.1] - 2018-08-14
 ### Added
 - Universal RPM spec file for SailfishOS/Fedora/Mageia/openSUSE
