@@ -33,6 +33,9 @@ make install
 ##### openSUSE
 [OBS repo](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
+#### Windows
+Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
+
 ### Sailfish OS
 #### Dependencies
 Sailfish OS 1.1.9 or newer
