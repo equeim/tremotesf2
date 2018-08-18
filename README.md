@@ -48,6 +48,7 @@ make install
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
 
 ### Sailfish OS
+Tremotesf is available in Jolla Store and [OpenRepos.net](https://openrepos.net/content/equeim/tremotesf).
 #### Dependencies
 Sailfish OS 1.1.9 or newer
 #### Building
