@@ -1,6 +1,26 @@
 # Tremotesf
 Remote GUI for transmission-daemon. Supports desktop OSes (GNU/Linux and Windows) and Sailfish OS.
 
+Table of Contents
+=================
+
+   * [Tremotesf](#tremotesf)
+      * [Installation](#installation)
+         * [Desktop](#desktop)
+            * [Dependencies](#dependencies)
+            * [Building](#building)
+            * [GNU/Linux distributions](#gnulinux-distributions)
+            * [Windows](#windows)
+         * [Sailfish OS](#sailfish-os)
+            * [Dependencies](#dependencies-1)
+            * [Building](#building-1)
+      * [Translations](#translations)
+      * [Donate](#donate)
+      * [Screenshots](#screenshots)
+         * [Desktop](#desktop-1)
+         * [Sailfish OS](#sailfish-os-1)
+
+
 ## Installation
 ### Desktop
 #### Dependencies
@@ -18,20 +38,11 @@ make install
 ```
 
 #### GNU/Linux distributions
-##### Arch Linux
-[AUR](https://aur.archlinux.org/packages/tremotesf)
-
-##### Fedora
-[Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
-
-##### Gentoo
-[equeim-overlay](https://github.com/equeim/equeim-overlay)
-
-##### Mageia
-[Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
-
-##### openSUSE
-[OBS repo](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+- Arch Linux - [AUR](https://aur.archlinux.org/packages/tremotesf)
+- Fedora - [Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+- Gentoo - [equeim-overlay](https://github.com/equeim/equeim-overlay)
+- Mageia - [Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+- openSUSE - [OBS repo](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 #### Windows
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
