@@ -25,6 +25,3 @@ add_subdirectory("src")
 if (SAILFISHOS)
     install(DIRECTORY "qml" DESTINATION "${DATA_PATH}")
 endif()
-
-#message(${PROJECT_VERSION_MAJOR})
-include(CPack)
