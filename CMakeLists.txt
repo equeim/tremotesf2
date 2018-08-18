@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(tremotesf)
-set(TREMOTESF_VERSION 1.5.1)
+project(tremotesf VERSION 1.5.1)
 
 option(TEST_BUILD "Test build" OFF)
 option(SAILFISHOS "Build for Sailfish OS" OFF)
@@ -26,3 +25,6 @@ add_subdirectory("src")
 if (SAILFISHOS)
     install(DIRECTORY "qml" DESTINATION "${DATA_PATH}")
 endif()
+
+#message(${PROJECT_VERSION_MAJOR})
+include(CPack)
