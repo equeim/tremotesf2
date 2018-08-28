@@ -1,10 +1,5 @@
-find_package(Qt5Core CONFIG REQUIRED)
-if (Qt5Core_VERSION VERSION_LESS 5.6)
-    message(FATAL_ERROR "Qt >= 5.6 is required")
-endif()
 find_package(Qt5Concurrent CONFIG REQUIRED)
 find_package(Qt5Network CONFIG REQUIRED)
-find_package(Qt5Gui CONFIG REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -48,17 +43,15 @@ set(tremotesf_properties
 )
 
 set(tremotesf_libs
-    Qt5::Core
     Qt5::Concurrent
     Qt5::Network
-    Qt5::Gui
 )
 
 set(tremotesf_includes)
 
 set(tremotesf_defines
     QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=0x050800
+    QT_DISABLE_DEPRECATED_BEFORE=0x050600
     TREMOTESF_VERSION="${PROJECT_VERSION}"
     TRANSLATIONS_PATH="${TRANSLATIONS_PATH}"
 )
@@ -74,7 +67,6 @@ else()
 endif()
 
 if (SAILFISHOS)
-    find_package(Qt5Qml CONFIG REQUIRED)
     find_package(Qt5Quick CONFIG REQUIRED)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SAILFISHAPP REQUIRED sailfishapp)
@@ -84,7 +76,6 @@ if (SAILFISHOS)
         sailfishos/selectionmodel.cpp
     )
     list(APPEND tremotesf_libs
-        Qt5::Qml
         Qt5::Quick
         ${SAILFISHAPP_LDFLAGS}
     )

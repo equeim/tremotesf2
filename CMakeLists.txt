@@ -16,7 +16,13 @@ if (SAILFISHOS)
 else()
     set(TREMOTESF_NAME "tremotesf")
 endif()
-file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/${TREMOTESF_NAME}" DATA_PATH)
+
+set(DATA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/${TREMOTESF_NAME}")
+
+find_package(Qt5Core CONFIG REQUIRED)
+if (Qt5Core_VERSION VERSION_LESS 5.6)
+    message(FATAL_ERROR "Qt >= 5.6 is required")
+endif()
 
 add_subdirectory("data")
 add_subdirectory("translations")
