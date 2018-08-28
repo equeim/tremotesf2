@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.0.0)
 
 project(tremotesf VERSION 1.5.2)
 

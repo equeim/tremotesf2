@@ -25,7 +25,7 @@ Table of Contents
 ### Desktop
 #### Dependencies
 - C++11 compiler (GCC, MinGW and MSVC are supported)
-- CMake
+- CMake 3.0 or newer (3.1 for Qt >= 5.11)
 - Qt 5.6 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
 - KWidgetsAddons from KDE Frameworks 5
 
