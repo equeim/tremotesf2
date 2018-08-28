@@ -325,7 +325,6 @@ namespace tremotesf
 
     void TorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority)
     {
-        qDebug() << priority;
         static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
         updateDirectoryChildren(mRootDirectory.get());
         mTorrent->setFilesPriority(idsFromIndex(index), TorrentFilesModelEntry::toFilePriority(priority));
