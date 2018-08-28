@@ -619,21 +619,30 @@ namespace tremotesf
                 }
             }
 
-            if (!mRpc->isLocal()) {
-                if (Servers::instance()->currentServerHasMountedDirectories() &&
-                        mRpc->serverSettings()->isIncompleteDirectoryEnabled() ? mRpc->isIncompleteDirectoryMounted() : true) {
-                    for (const QModelIndex& index : selectedRows) {
-                        const libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
-                        if (!Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory()).isEmpty()) {
-                            mOpenTorrentFilesAction->setEnabled(false);
-                            mShowInFileManagerAction->setEnabled(false);
-                            break;
+            if (mRpc->isLocal() || Servers::instance()->currentServerHasMountedDirectories()) {
+                bool disableOpen = false;
+                bool disableBoth = false;
+                for (const QModelIndex& index : selectedRows) {
+                    libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
+                    if (mRpc->isTorrentLocalMounted(torrent) && QFile::exists(mRpc->localTorrentDownloadDirectoryPath(torrent))) {
+                        if (!disableOpen && !QFile::exists(mRpc->localTorrentFilesPath(torrent))) {
+                            disableOpen = true;
                         }
+                    } else {
+                        disableBoth = true;
+                        break;
                     }
-                } else {
+                }
+
+                if (disableBoth) {
                     mOpenTorrentFilesAction->setEnabled(false);
                     mShowInFileManagerAction->setEnabled(false);
+                } else if (disableOpen) {
+                    mOpenTorrentFilesAction->setEnabled(false);
                 }
+            } else {
+                mOpenTorrentFilesAction->setEnabled(false);
+                mShowInFileManagerAction->setEnabled(false);
             }
         } else {
             for (QAction* action : mTorrentMenu->actions()) {

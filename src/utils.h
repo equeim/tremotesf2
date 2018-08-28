@@ -51,6 +51,8 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
         Q_PROPERTY(QString sdcardPath READ sdcardPath)
         static QString sdcardPath();
+
+        Q_INVOKABLE static bool fileExists(const QString& filePath);
 #else
         enum StatusIcon
         {

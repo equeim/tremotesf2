@@ -23,7 +23,9 @@ import harbour.tremotesf 1.0
 
 ListItem {
     property var torrent
-    property bool torrentIsLocal: torrent ? rpc.isTorrentLocalMounted(torrent.downloadDirectory) : false
+
+    property string localTorrentFilesPath: torrent ? rpc.localTorrentFilesPath(torrent) : String()
+    property bool torrentIsLocal: rpc.isTorrentLocalMounted(torrent) && Utils.fileExists(localTorrentFilesPath)
 
     property color primaryTextColor: highlighted ? Theme.highlightColor : Theme.primaryColor
     property color secondaryTextColor: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
@@ -77,7 +79,7 @@ ListItem {
             MenuItem {
                 visible: torrentIsLocal
                 text: qsTranslate("tremotesf", "Open")
-                onClicked: Qt.openUrlExternally(rpc.localTorrentFilesPath(torrent))
+                onClicked: Qt.openUrlExternally(localTorrentFilesPath)
             }
             /*MenuItem {
                 visible: torrentIsLocal

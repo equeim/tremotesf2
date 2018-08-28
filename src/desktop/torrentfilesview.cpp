@@ -22,6 +22,7 @@
 #include <QActionGroup>
 #include <QCoreApplication>
 #include <QCursor>
+#include <QFileInfo>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QMenu>
@@ -116,7 +117,7 @@ namespace tremotesf
 
         QMenu contextMenu;
 
-        if (!mLocalFile && mRpc->isTorrentLocalMounted(static_cast<const TorrentFilesModel*>(mModel)->torrent())) {
+        if (!mLocalFile) {
             bool show = true;
             for (const QModelIndex& index : sourceIndexes) {
                 if (static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() == TorrentFilesModelEntry::Unwanted) {
@@ -125,7 +126,27 @@ namespace tremotesf
                 }
             }
             if (show) {
+                bool disableOpen = false;
+                bool disableBoth = false;
+
+                libtremotesf::Torrent* torrent = static_cast<const TorrentFilesModel*>(mModel)->torrent();
+                if (mRpc->isTorrentLocalMounted(torrent)) {
+                    if (sourceIndexes.size() == 1 && !sourceIndexes.first().parent().internalPointer()) {
+                        disableOpen = true;
+                    } else {
+                        for (const QModelIndex& index : sourceIndexes) {
+                            if (!QFileInfo::exists(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index))) {
+                                disableBoth = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    disableBoth = true;
+                }
+
                 QAction* openAction = contextMenu.addAction(QIcon::fromTheme("document-open"), qApp->translate("tremotesf", "&Open"));
+                openAction->setEnabled(!disableBoth && !disableOpen);
                 QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     for (const QModelIndex& index : sourceIndexes) {
                         Utils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index), this);
@@ -133,6 +154,7 @@ namespace tremotesf
                 });
 
                 QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme("go-jump"), qApp->translate("tremotesf", "Show In &File Manager"));
+                showInFileManagerAction->setEnabled(!disableBoth);
                 QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     QStringList files;
                     files.reserve(sourceIndexes.size());

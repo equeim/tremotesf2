@@ -375,6 +375,11 @@ namespace tremotesf
         }
         return QLatin1String("/media/sdcard");
     }
+
+    bool Utils::fileExists(const QString& filePath)
+    {
+        return QFile::exists(filePath);
+    }
 #else
     QString Utils::statusIconPath(Utils::StatusIcon icon)
     {

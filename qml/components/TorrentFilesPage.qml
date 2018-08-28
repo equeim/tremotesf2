@@ -126,10 +126,16 @@ Page {
                 menu: Component {
                     ContextMenu {
                         MenuItem {
+                            property string filePath: torrentPropertiesPage.torrentIsLocal
+                                                      ? filesModel.localFilePath(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index)))
+                                                      : String()
+
                             id: openMenuItem
-                            visible: torrentPropertiesPage.torrentIsLocal && modelData.wantedState !== TorrentFilesModelEntry.Unwanted
+                            visible: modelData.wantedState !== TorrentFilesModelEntry.Unwanted &&
+                                     torrentPropertiesPage.torrentIsLocal &&
+                                     Utils.fileExists(filePath)
                             text: qsTranslate("tremotesf", "Open")
-                            onClicked: Qt.openUrlExternally(filesModel.localFilePath(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index))))
+                            onClicked: Qt.openUrlExternally(filePath)
                         }
 
                         Separator {

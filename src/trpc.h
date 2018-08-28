@@ -32,8 +32,7 @@ namespace tremotesf
         QString statusString() const;
 
         bool isIncompleteDirectoryMounted() const;
-        bool isTorrentLocalMounted(const libtremotesf::Torrent* torrent) const;
-        Q_INVOKABLE bool isTorrentLocalMounted(const QString& downloadDirectory) const;
+        Q_INVOKABLE bool isTorrentLocalMounted(libtremotesf::Torrent* torrent) const;
         Q_INVOKABLE QString localTorrentFilesPath(libtremotesf::Torrent* torrent) const;
         Q_INVOKABLE QString localTorrentDownloadDirectoryPath(libtremotesf::Torrent* torrent) const;
     private:

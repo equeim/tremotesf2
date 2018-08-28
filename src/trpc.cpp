@@ -137,17 +137,12 @@ namespace tremotesf
         return mIncompleteDirectoryMounted;
     }
 
-    bool Rpc::isTorrentLocalMounted(const libtremotesf::Torrent* torrent) const
-    {
-        return isTorrentLocalMounted(torrent->downloadDirectory());
-    }
-
-    bool Rpc::isTorrentLocalMounted(const QString& downloadDirectory) const
+    bool Rpc::isTorrentLocalMounted(libtremotesf::Torrent* torrent) const
     {
         return isLocal() ||
                 (Servers::instance()->currentServerHasMountedDirectories() &&
-                 (serverSettings()->isIncompleteDirectoryEnabled() ? mIncompleteDirectoryMounted : true) &&
-                 !Servers::instance()->fromRemoteToLocalDirectory(downloadDirectory).isEmpty());
+                 (serverSettings()->isIncompleteDirectoryEnabled() && torrent->leftUntilDone() > 0 ? mIncompleteDirectoryMounted : true) &&
+                 !Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory()).isEmpty());
     }
 
     QString Rpc::localTorrentDownloadDirectoryPath(libtremotesf::Torrent* torrent) const
@@ -155,16 +150,23 @@ namespace tremotesf
         const bool incompleteDirectoryEnabled = serverSettings()->isIncompleteDirectoryEnabled();
         QString filePath;
         if (isLocal()) {
-            filePath = incompleteDirectoryEnabled && QFileInfo::exists(serverSettings()->incompleteDirectory() % '/' % torrentRootFileName(torrent))
-                    ? serverSettings()->incompleteDirectory()
-                    : torrent->downloadDirectory();
-        } else {
-            if (incompleteDirectoryEnabled && mIncompleteDirectoryMounted) {
-                filePath = QFileInfo::exists(mMountedIncompleteDirectory % '/' % torrentRootFileName(torrent))
-                        ? mMountedIncompleteDirectory
-                        : Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory());
+            if (incompleteDirectoryEnabled &&
+                    torrent->leftUntilDone() > 0 &&
+                    QFileInfo::exists(serverSettings()->incompleteDirectory() % '/' % torrentRootFileName(torrent))) {
+                filePath = serverSettings()->incompleteDirectory();
             } else {
-                filePath = Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory());
+                filePath = torrent->downloadDirectory();
+            }
+        } else {
+            if (Servers::instance()->currentServerHasMountedDirectories()) {
+                if (incompleteDirectoryEnabled &&
+                        torrent->leftUntilDone() > 0 &&
+                        mIncompleteDirectoryMounted &&
+                        QFileInfo::exists(mMountedIncompleteDirectory % '/' % torrentRootFileName(torrent))) {
+                    filePath = mMountedIncompleteDirectory;
+                } else {
+                    filePath = Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory());
+                }
             }
         }
         return filePath;
@@ -172,7 +174,11 @@ namespace tremotesf
 
     QString Rpc::localTorrentFilesPath(libtremotesf::Torrent* torrent) const
     {
-        return localTorrentDownloadDirectoryPath(torrent) % '/' % torrentRootFileName(torrent);
+        const QString downloadDirectoryPath(localTorrentDownloadDirectoryPath(torrent));
+        if (downloadDirectoryPath.isEmpty()) {
+            return QString();
+        }
+        return downloadDirectoryPath % '/' % torrentRootFileName(torrent);
     }
 
     QString Rpc::torrentRootFileName(const libtremotesf::Torrent* torrent) const
