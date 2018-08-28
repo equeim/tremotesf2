@@ -204,6 +204,7 @@ namespace libtremotesf
         int mUpdateInterval;
         int mBackgroundUpdateInterval;
         int mTimeout;
+        bool mLocal;
 
         bool mRpcVersionChecked;
         bool mServerSettingsUpdated;

@@ -80,6 +80,7 @@ namespace libtremotesf
           mUpdateInterval(0),
           mBackgroundUpdateInterval(0),
           mTimeout(0),
+          mLocal(false),
           mRpcVersionChecked(false),
           mServerSettingsUpdated(false),
           mTorrentsUpdated(false),
@@ -146,19 +147,7 @@ namespace libtremotesf
 
     bool Rpc::isLocal() const
     {
-        const QString hostName = mServerUrl.host();
-        if (hostName == QLatin1String("localhost") ||
-            hostName == QHostInfo::localHostName()) {
-            return true;
-        }
-
-        const QHostAddress ipAddress(hostName);
-        if (!ipAddress.isNull() &&
-            (ipAddress.isLoopback() || QNetworkInterface::allAddresses().contains(ipAddress))) {
-            return true;
-        }
-
-        return false;
+        return mLocal;
     }
 
     int Rpc::torrentsCount() const
@@ -253,6 +242,22 @@ namespace libtremotesf
         mBackgroundUpdateInterval = server.backgroundUpdateInterval * 1000; // msecs
         mUpdateTimer->setInterval(mUpdateInterval);
 
+        mLocal = [=]() {
+            const QString hostName = mServerUrl.host();
+            if (hostName == QLatin1String("localhost") ||
+                hostName == QHostInfo::localHostName()) {
+                return true;
+            }
+
+            const QHostAddress ipAddress(hostName);
+            if (!ipAddress.isNull() &&
+                (ipAddress.isLoopback() || QNetworkInterface::allAddresses().contains(ipAddress))) {
+                return true;
+            }
+
+            return false;
+        }();
+
         if (wasConnected) {
             connect();
         }
@@ -270,6 +275,7 @@ namespace libtremotesf
         mUpdateInterval = 0;
         mBackgroundUpdateInterval = 0;
         mTimeout = 0;
+        mLocal = false;
     }
 
     void Rpc::connect()
@@ -620,35 +626,44 @@ namespace libtremotesf
         emit statusChanged();
         emit statusStringChanged();
 
-        if (isConnected()) {
-            emit connectedChanged();
-            emit torrentsUpdated();
-        } else if (wasConnected) {
+        switch (mStatus) {
+        case Disconnected:
+        {
+            qDebug() << "disconnected";
+
             mNetwork->clearAccessCache();
+
             for (QNetworkReply* reply : mNetworkRequests) {
                 reply->abort();
             }
             mNetworkRequests.clear();
+
             mAuthenticationRequested = false;
             mRpcVersionChecked = false;
             mServerSettingsUpdated = false;
             mTorrentsUpdated = false;
             mServerStatsUpdated = false;
-            mTorrents.clear();
-            emit connectedChanged();
-            emit torrentsUpdated();
-            mUpdateTimer->stop();
-        }
 
-        switch (mStatus) {
-        case Disconnected:
-            qDebug() << "disconnected";
+            mTorrents.clear();
+
+            if (wasConnected) {
+                mUpdateTimer->stop();
+                emit connectedChanged();
+                emit torrentsUpdated();
+            }
+
             break;
+        }
         case Connecting:
             qDebug() << "connecting";
             break;
         case Connected:
+        {
             qDebug() << "connected";
+            emit connectedChanged();
+            emit torrentsUpdated();
+            break;
+        }
         }
     }
 
