@@ -4,7 +4,7 @@ if (SAILFISHOS)
     install(FILES "sailfishos/cover.svg" DESTINATION "${DATA_PATH}")
 else()
     set(app_icons "desktop/hicolor")
-    set(desktop_file "desktop/tremotesf.desktop")
+    set(desktop_file "desktop/org.equeim.Tremotesf.desktop")
 
     if (TEST_BUILD)
         set(icons_path "${CMAKE_SOURCE_DIR}/data/desktop/status")

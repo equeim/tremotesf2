@@ -93,14 +93,14 @@ cd %{build_directory}
 desktop-file-install \
     --delete-original \
     --dir "%{buildroot}/%{_datadir}/applications" \
-    "%{buildroot}/%{_datadir}/applications/%{name}.desktop"
+    "%{buildroot}/%{_datadir}/applications/*.desktop"
 
 
 %files
 %defattr(-,root,root)
 %{_bindir}/%{name}
-%{_datadir}/icons/hicolor/*/apps/%{name}.*
-%{_datadir}/applications/%{name}.desktop
+%{_datadir}/icons/hicolor/*/apps/*
+%{_datadir}/applications/*.desktop
 %{_datadir}/%{name}
 
 %changelog

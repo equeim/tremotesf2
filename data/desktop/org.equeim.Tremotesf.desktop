@@ -2,7 +2,7 @@
 Type=Application
 Name=Tremotesf
 Categories=Network;P2P;
-Icon=tremotesf
+Icon=org.equeim.Tremotesf
 Exec=tremotesf %U
 StartupNotify=false
 MimeType=application/x-bittorrent;x-scheme-handler/magnet;

@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 #else
     QApplication app(argc, argv);
     app.setOrganizationName(app.applicationName());
-    app.setWindowIcon(QIcon::fromTheme(QLatin1String("tremotesf")));
+    app.setWindowIcon(QIcon::fromTheme(QLatin1String("org.equeim.Tremotesf")));
     app.setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);

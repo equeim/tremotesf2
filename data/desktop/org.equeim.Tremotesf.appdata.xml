@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>org.equeim.Tremotesf.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <name>Tremotesf</name>
+  <summary>Remote GUI for Transmission BitTorrent client</summary>
+  <description>
+  <p>
+   This should be long prose.
+  </p>
+  <p>
+   This should a second paragraph.
+  </p>
+</description>
+<developer_name>Alexey Rochev</developer_name>
+  <url type="bugtracker">XXX: http://www.homepage.com/where-to-report_bug.html</url>
+  <url type="donation">XXX: http://www.homepage.com/donation.html</url>
+  <url type="faq">XXX: http://www.homepage.com/faq.html</url>
+  <url type="help">XXX: http://www.homepage.com/docs/</url>
+  <url type="homepage">XXX: http://www.homepage.com/</url>
+  <project_group>XXX: Values valid are none, GNOME, KDE or XFCE</project_group>
+  <screenshots>
+    <screenshot type="default">
+      <caption>XXX: Describe the default screenshot</caption>
+      <image height="630" width="1120">XXX: http://www.my-screenshot-default.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>XXX: Describe another screenshot</caption>
+      <image height="630" width="1120">XXX: http://www.my-screenshot.png</image>
+    </screenshot>
+  </screenshots>
+  <update_contact>XXX: upstream-contact@email.com</update_contact>
+</component>
