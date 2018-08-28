@@ -1,5 +1,15 @@
 # Change Log
 
+## [Unreleased]
+### Changed
+- Minimum CMake version lowered to 3.0 (note that Qt >= 5.11 requires CMake 3.1)
+- Desktop: .desktop file and icons are renamed according to Desktop Entry Specification
+
+### Fixed
+- "Open" and "Show In File Manager" menu items are disabled when files don't exist on filesystem
+- Desktop: handle cases when xdg-mime executable doesn't exist
+- Desktop: fallback to org.freedesktop.FileManager1 when showing files in file manager
+
 ## [1.5.2] - 2018-08-18
 ### Fixed
 - Fixed crash when disconnecting from server
