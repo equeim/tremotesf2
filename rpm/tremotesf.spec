@@ -93,7 +93,7 @@ cd %{build_directory}
 desktop-file-install \
     --delete-original \
     --dir "%{buildroot}/%{_datadir}/applications" \
-    "%{buildroot}/%{_datadir}/applications/*.desktop"
+    "%{buildroot}/%{_datadir}/applications/"*.desktop
 
 
 %files
