@@ -18,110 +18,34 @@
 
 #include "ipcserver.h"
 
-#include <QDebug>
 #include <QFileInfo>
-#include <QLocalSocket>
-#include <QJsonDocument>
 #include <QUrl>
-#include <QVariantMap>
 
 namespace tremotesf
 {
-    namespace
+    void IpcServer::parseArgument(const QString& argument, ArgumentsParseResult& result)
     {
-        const QString name(QLatin1String("tremotesf"));
-
-        void sendMessage(const QByteArray& message)
-        {
-            QLocalSocket socket;
-            socket.connectToServer(name);
-            if (socket.waitForConnected(1000)) {
-                socket.write(message);
-                socket.waitForBytesWritten(1000);
-            }
-        }
-    }
-
-    IpcServer::IpcServer(QObject* parent)
-        : QLocalServer(parent)
-    {
-        if (!listen(name)) {
-            if (serverError() == QAbstractSocket::AddressInUseError) {
-                qWarning() << "Removing dead socket";
-                removeServer(name);
-                if (!listen(name)) {
-                    qWarning() << errorString();
+        const QFileInfo info(argument);
+        if (info.isFile()) {
+            result.files.push_back(info.absoluteFilePath());
+        } else {
+            const QUrl url(argument);
+            if (url.isLocalFile()) {
+                if (QFileInfo(url.path()).isFile()) {
+                    result.files.push_back(url.path());
                 }
             } else {
-                qWarning() << errorString();
+                result.urls.push_back(argument);
             }
         }
-
-        QObject::connect(this, &IpcServer::newConnection, this, [=]() {
-            QLocalSocket* socket = nextPendingConnection();
-            socket->waitForReadyRead();
-            if (socket->state() == QLocalSocket::ConnectedState) {
-                const QByteArray message(socket->readAll());
-                if (message == "ping") {
-                    qWarning() << "Pinged";
-                    emit pinged();
-                } else {
-                    const QVariantMap map(QJsonDocument::fromJson(message).toVariant().toMap());
-                    if (map.contains("files") && map.contains(QLatin1String("urls"))) {
-                        const QStringList files(map.value(QLatin1String("files")).toStringList());
-                        if (!files.isEmpty()) {
-                            emit filesReceived(files);
-                        }
-                        const QStringList urls(map.value(QLatin1String("urls")).toStringList());
-                        if (!urls.isEmpty()) {
-                            emit urlsReceived(urls);
-                        }
-                    } else {
-                        qWarning() << "Unknown message";
-                    }
-                }
-            }
-        });
-    }
-
-    bool IpcServer::tryToConnect()
-    {
-        QLocalSocket socket;
-        socket.connectToServer(name);
-        return socket.waitForConnected(1000);
     }
 
     ArgumentsParseResult IpcServer::parseArguments(const QStringList& arguments)
     {
         ArgumentsParseResult result;
-        for (const QString& torrent : arguments) {
-            const QFileInfo info(torrent);
-            if (info.isFile()) {
-                result.files.append(info.absoluteFilePath());
-            } else {
-                const QUrl url(torrent);
-                if (url.isLocalFile()) {
-                    result.files.append(url.path());
-                } else {
-                    result.urls.append(torrent);
-                }
-            }
+        for (const QString& argument : arguments) {
+            parseArgument(argument, result);
         }
         return result;
-    }
-
-    void IpcServer::ping()
-    {
-        qWarning() << "Pinging";
-        sendMessage("ping");
-    }
-
-    void IpcServer::sendArguments(const QStringList& arguments)
-    {
-        qWarning() << "Sending arguments";
-        const ArgumentsParseResult result(parseArguments(arguments));
-        sendMessage(QJsonDocument::fromVariant(QVariantMap{{QLatin1String("files"), result.files},
-                                                           {QLatin1String("urls"), result.urls}})
-                        .toJson());
     }
 }

@@ -205,7 +205,7 @@ namespace tremotesf
         setupMenuBar();
         setupTrayIcon();
 
-        QObject::connect(ipcServer, &IpcServer::pinged, this, &MainWindow::showWindow);
+        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, &MainWindow::showWindow);
 
         QObject::connect(ipcServer, &IpcServer::filesReceived, this, [=](const QStringList& files) {
             if (mRpc->isConnected()) {

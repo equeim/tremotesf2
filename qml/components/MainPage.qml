@@ -19,7 +19,6 @@
 import QtQuick 2.2
 
 import Sailfish.Silica 1.0
-import org.nemomobile.dbus 2.0
 import org.nemomobile.notifications 1.0
 
 import harbour.tremotesf 1.0
@@ -204,25 +203,6 @@ Page {
         }
     }
 
-    DBusAdaptor {
-        id: dbusAdaptor
-
-        function activateWindow() {
-            activate()
-        }
-
-        function openTorrentPropertiesPage(hashString) {
-            activate()
-            pageStack.pop(mainPage, PageStackAction.Immediate)
-            pageStack.push("TorrentPropertiesPage.qml", {"torrentHash": hashString,
-                                                         "torrent": rpc.torrentByHash(hashString)}, PageStackAction.Immediate)
-        }
-
-        service: "org.tremotesf"
-        path: "/"
-        iface: "org.tremotesf"
-    }
-
     Connections {
         target: rpc
 
@@ -275,10 +255,10 @@ Page {
             }
             notification.remoteActions = [{
                 "name": "default",
-                "service": dbusAdaptor.service,
-                "path": dbusAdaptor.path,
-                "iface": dbusAdaptor.iface,
-                "method": "activateWindow",
+                "service": ipcServerServiceName,
+                "path": ipcServerObjectPath,
+                "iface": ipcServerInterfaceName,
+                "method": "ActivateWindow",
             }]
             notification.replacesId = 0
             notification.publish()
@@ -304,10 +284,10 @@ Page {
             }
             notification.remoteActions = [{
                 "name": "default",
-                "service": dbusAdaptor.service,
-                "path": dbusAdaptor.path,
-                "iface": dbusAdaptor.iface,
-                "method": "openTorrentPropertiesPage",
+                "service": ipcServerServiceName,
+                "path": ipcServerObjectPath,
+                "iface": ipcServerInterfaceName,
+                "method": "OpenTorrentPropertiesPage",
                 "arguments": [hashString]
             }]
             notification.replacesId = 0

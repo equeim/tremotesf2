@@ -19,7 +19,7 @@
 #ifndef TREMOTESF_IPCSERVER_H
 #define TREMOTESF_IPCSERVER_H
 
-#include <QLocalServer>
+#include <QObject>
 
 namespace tremotesf
 {
@@ -29,20 +29,31 @@ namespace tremotesf
         QStringList urls;
     };
 
-    class IpcServer : public QLocalServer
+    class IpcServer : public QObject
     {
         Q_OBJECT
     public:
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+        static const QLatin1String serviceName;
+        static const QLatin1String objectPath;
+        static const QLatin1String interfaceName;
+#endif
+
         explicit IpcServer(QObject* parent = nullptr);
 
         static bool tryToConnect();
-        static void ping();
+        static void activateWindow();
         static void sendArguments(const QStringList& arguments);
+
+        static void parseArgument(const QString& argument, ArgumentsParseResult& result);
         static ArgumentsParseResult parseArguments(const QStringList& arguments);
     signals:
-        void pinged();
+        void windowActivationRequested();
         void filesReceived(const QStringList& files);
         void urlsReceived(const QStringList& urls);
+#ifdef TREMOTESF_SAILFISHOS
+        void torrentPropertiesPageRequested(const QString& hashString);
+#endif
     };
 }
 

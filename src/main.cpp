@@ -54,15 +54,7 @@ int main(int argc, char** argv)
     std::unique_ptr<QQuickView> view(SailfishApp::createView());
 #else
     QApplication app(argc, argv);
-    app.setOrganizationName(app.applicationName());
-    app.setWindowIcon(QIcon::fromTheme(QLatin1String("org.equeim.Tremotesf")));
-    app.setQuitOnLastWindowClosed(false);
-#ifdef Q_OS_WIN
-    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    QIcon::setThemeSearchPaths({QLatin1String("icons")});
-    QIcon::setThemeName(QLatin1String("breeze"));
 #endif
-#endif // TREMOTESF_SAILFISHOS
 
     qApp->setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
 
@@ -78,22 +70,33 @@ int main(int argc, char** argv)
     parser.process(qApp->arguments());
     const QStringList arguments(parser.positionalArguments());
 
+    if (tremotesf::IpcServer::tryToConnect()) {
+        qWarning() << "Only one instance of Tremotesf can be run at the same time";
+        if (arguments.isEmpty()) {
+            tremotesf::IpcServer::activateWindow();
+        } else {
+            tremotesf::IpcServer::sendArguments(arguments);
+        }
+        return 0;
+    }
+
+#ifndef TREMOTESF_SAILFISHOS
+    app.setOrganizationName(app.applicationName());
+    app.setWindowIcon(QIcon::fromTheme(QLatin1String("org.equeim.Tremotesf")));
+    app.setQuitOnLastWindowClosed(false);
+#ifdef Q_OS_WIN
+    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    QIcon::setThemeSearchPaths({QLatin1String("icons")});
+    QIcon::setThemeName(QLatin1String("breeze"));
+#endif
+#endif
+
     signal(SIGINT, [](int) { qApp->quit(); });
     signal(SIGTERM, [](int) { qApp->quit(); });
 #ifdef Q_OS_UNIX
     signal(SIGHUP, [](int) { qApp->quit(); });
     signal(SIGQUIT, [](int) { qApp->quit(); });
 #endif
-
-    if (tremotesf::IpcServer::tryToConnect()) {
-        qWarning() << "Only one instance of Tremotesf can be run at the same time";
-        if (arguments.isEmpty()) {
-            tremotesf::IpcServer::ping();
-        } else {
-            tremotesf::IpcServer::sendArguments(arguments);
-        }
-        return 0;
-    }
 
     tremotesf::IpcServer ipcServer;
 
@@ -115,6 +118,9 @@ int main(int argc, char** argv)
 
 #ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
+    view->rootContext()->setContextProperty(QLatin1String("ipcServerServiceName"), tremotesf::IpcServer::serviceName);
+    view->rootContext()->setContextProperty(QLatin1String("ipcServerObjectPath"), tremotesf::IpcServer::objectPath);
+    view->rootContext()->setContextProperty(QLatin1String("ipcServerInterfaceName"), tremotesf::IpcServer::interfaceName);
 
     tremotesf::ArgumentsParseResult result(tremotesf::IpcServer::parseArguments(arguments));
     view->rootContext()->setContextProperty(QLatin1String("files"), result.files);

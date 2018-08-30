@@ -94,7 +94,14 @@ ApplicationWindow {
     Connections {
         target: ipcServer
 
-        onPinged: activate()
+        onWindowActivationRequested: activate()
+
+        onTorrentPropertiesPageRequested: {
+            activate()
+            pageStack.pop(mainPage, PageStackAction.Immediate)
+            pageStack.push("components/TorrentPropertiesPage.qml", {"torrentHash": hashString,
+                                                                    "torrent": rpc.torrentByHash(hashString)}, PageStackAction.Immediate)
+        }
 
         onFilesReceived: {
             activate()

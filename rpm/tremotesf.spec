@@ -22,10 +22,10 @@ BuildRequires: desktop-file-utils
 
 %if 0%{?sailfishos}
 Requires:      sailfishsilica-qt5
-Requires:      nemo-qml-plugin-dbus-qt5
 Requires:      nemo-qml-plugin-notifications-qt5
 BuildRequires: pkgconfig(Qt5Concurrent)
 BuildRequires: pkgconfig(Qt5Network)
+BuildRequires: pkgconfig(Qt5DBus)
 BuildRequires: pkgconfig(Qt5Quick)
 BuildRequires: qt5-qttools-linguist
 BuildRequires: pkgconfig(sailfishapp)
