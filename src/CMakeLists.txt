@@ -60,7 +60,7 @@ if (TEST_BUILD)
     list(APPEND tremotesf_defines TEST_BUILD)
 endif()
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if (MSVC)
     set(tremotesf_cxxflags /W3)
 else()
     set(tremotesf_cxxflags -Wall -Wextra -pedantic)
