@@ -1,11 +1,17 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Multiseat support (it is now possible to run multiple Tremotesf instances on different login sessions)
+
 ### Changed
+- D-Bus is now used for IPC on Unix
 - Minimum CMake version lowered to 3.0 (note that Qt >= 5.11 requires CMake 3.1)
 - Desktop: .desktop file and icons are renamed according to Desktop Entry Specification
 
 ### Fixed
+- Fixed crashes when disconnecting from server
+- Added window title to Server Stats dialog
 - "Open" and "Show In File Manager" menu items are disabled when files don't exist on filesystem
 - Desktop: handle cases when xdg-mime executable doesn't exist
 - Desktop: fallback to org.freedesktop.FileManager1 when showing files in file manager
