@@ -38,6 +38,8 @@ namespace tremotesf
     ServerStatsDialog::ServerStatsDialog(Rpc* rpc, QWidget* parent)
         : QDialog(parent)
     {
+        setWindowTitle(qApp->translate("tremotesf", "Server Stats"));
+
         auto layout = new QVBoxLayout(this);
 
         auto disconnectedWidget = new KMessageWidget(qApp->translate("tremotesf", "Disconnected"));
