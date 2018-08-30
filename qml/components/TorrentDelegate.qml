@@ -25,7 +25,7 @@ ListItem {
     property var torrent
 
     property string localTorrentFilesPath: torrent ? rpc.localTorrentFilesPath(torrent) : String()
-    property bool torrentIsLocal: rpc.isTorrentLocalMounted(torrent) && Utils.fileExists(localTorrentFilesPath)
+    property bool torrentIsLocal: torrent ? rpc.isTorrentLocalMounted(torrent) && Utils.fileExists(localTorrentFilesPath) : false
 
     property color primaryTextColor: highlighted ? Theme.highlightColor : Theme.primaryColor
     property color secondaryTextColor: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
