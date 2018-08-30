@@ -878,7 +878,7 @@
         <location filename="../src/desktop/serversdialog.cpp" line="104"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="108"/>
         <source>Edit...</source>
-        <translation>Editar...</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../qml/components/ServersPage.qml" line="77"/>
@@ -892,7 +892,7 @@
         <location filename="../src/desktop/serversdialog.cpp" line="92"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="105"/>
         <source>Add...</source>
-        <translation>Agregar...</translation>
+        <translation>Agregar</translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="167"/>
