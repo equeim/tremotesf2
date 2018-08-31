@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.equeim.Tremotesf</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+
+  <name>Tremotesf</name>
+  <summary>Remote GUI for Transmission BitTorrent client</summary>
+
+  <description>
+  <p>
+   Tremotesf is a remote GUI for Transmission BitTorrent cloent. You can fully control your transmission-daemon instance, manage torrents, set Transmission settings, view server statistics.
+  </p>
+  <p>
+   You can add several servers profiles and switch between them (only one can be connected at a time). Tremotesf has support of HTTPS, including self-signed certificates and client certificate authentication. You can set mounted directories for servers and quickly open torrents' files and choose download directory from file dialog.
+  </p>
+  </description>
+
+  ​<launchable type="desktop-id">org.equeim.Tremotesf</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-1.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-2.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-3.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-4.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/equeim/tremotesf2</url>
+  <url type="bugtracker">https://github.com/equeim/tremotesf2/issues</url>
+  <url type="donation">https://github.com/equeim/tremotesf2#donate</url>
+  <url type="translate">https://www.transifex.com/equeim/tremotesf</url>
+
+  <developer_name>Alexey Rochev</developer_name>
+</component>

@@ -1,0 +1,57 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Alexey Rochev <equeim@gmail.com>
+# This file is distributed under the same license as the tremotesf package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: tremotesf\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-31 19:28+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Alexey Rochev <equeim@gmail.com>, 2018\n"
+"Language-Team: Russian (https://www.transifex.com/equeim/teams/72280/ru/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: tmp.desktop.in:4 ../org.equeim.Tremotesf.appdata.xml.in:7
+msgid "Tremotesf"
+msgstr "Tremotesf"
+
+#: tmp.desktop.in:5 ../org.equeim.Tremotesf.appdata.xml.in:8
+msgid "Remote GUI for Transmission BitTorrent client"
+msgstr "Клиент удаленного управления для BitTorrent-клиента Transmission"
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:11
+msgid ""
+"Tremotesf is a remote GUI for Transmission BitTorrent cloent. You can fully "
+"control your transmission-daemon instance, manage torrents, set Transmission"
+" settings, view server statistics."
+msgstr ""
+"Tremotesf - это клиент удаленного управления для BitTorrent-клиента "
+"Transmission. Вы можете полностью контролировать ваш transmission-daemon. "
+"управлять торрентами, изменять настройки Transmission, просматривать "
+"статистику сервера."
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:14
+msgid ""
+"You can add several servers profiles and switch between them (only one can "
+"be connected at a time). Tremotesf has support of HTTPS, including self-"
+"signed certificates and client certificate authentication. You can set "
+"mounted directories for servers and quickly open torrents' files and choose "
+"download directory from file dialog."
+msgstr ""
+"Вы можете создать несколько профилей сервероы и переключаться между ними "
+"(одновременно может быть подключен только один). Tremotesf поддерживает "
+"работу через HTTPS, в том числе самоподписанные сертификаты и авторизацию с "
+"помощью клиентского сертификата. Вы можете указать подключенные каталоги для"
+" сервера и быстро открывать файлы торрента или выбирать каталог загрузки с "
+"помощью диалога выбора файлов."
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:41
+msgid "Alexey Rochev"
+msgstr "Alexey Rochev"

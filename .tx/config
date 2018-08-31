@@ -5,5 +5,11 @@ lang_map = en_US: en
 [tremotesf.main]
 file_filter = translations/<lang>.ts
 source_file = translations/source.ts
-source_lang = source
+source_lang = en
 type = QT
+
+[tremotesf.desktop]
+file_filter = data/desktop/po/<lang>.po
+source_file = data/desktop/po/messages.po
+source_lang = en
+type = PO

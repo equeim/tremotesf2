@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Tremotesf
+Comment=Remote GUI for Transmission BitTorrent client
 Categories=Network;P2P;
 Icon=org.equeim.Tremotesf
 Exec=tremotesf %U

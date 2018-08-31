@@ -1,8 +1,8 @@
-find_package(Qt5Concurrent CONFIG REQUIRED)
-find_package(Qt5Network CONFIG REQUIRED)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+
+find_package(Qt5Concurrent REQUIRED CONFIG)
+find_package(Qt5Network REQUIRED CONFIG)
 
 qt5_add_resources(resources resources.qrc)
 
@@ -67,7 +67,7 @@ else()
 endif()
 
 if (SAILFISHOS)
-    find_package(Qt5Quick CONFIG REQUIRED)
+    find_package(Qt5Quick REQUIRED CONFIG)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SAILFISHAPP REQUIRED sailfishapp)
 
@@ -83,8 +83,8 @@ if (SAILFISHOS)
     list(APPEND tremotesf_includes ${SAILFISHAPP_INCLUDE_DIRS})
     list(APPEND tremotesf_cxxflags ${SAILFISHAPP_CFLAGS_OTHER})
 else()
-    find_package(Qt5Widgets CONFIG REQUIRED)
-    find_package(KF5WidgetsAddons CONFIG REQUIRED)
+    find_package(Qt5Widgets REQUIRED CONFIG)
+    find_package(KF5WidgetsAddons REQUIRED CONFIG)
 
     list(APPEND tremotesf_libs
         Qt5::Widgets
@@ -141,8 +141,6 @@ target_link_libraries(tremotesf ${tremotesf_libs})
 target_include_directories(tremotesf PRIVATE ${tremotesf_includes})
 target_compile_definitions(tremotesf PRIVATE ${tremotesf_defines})
 target_compile_options(tremotesf PRIVATE ${tremotesf_cxxflags})
-
-add_dependencies(tremotesf translations)
 
 if (NOT TEST_BUILD AND NOT WIN32)
     install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
