@@ -1,15 +1,16 @@
 [main]
 host = https://www.transifex.com
-lang_map = en_US: en
 
 [tremotesf.main]
 file_filter = translations/<lang>.ts
 source_file = translations/source.ts
 source_lang = en
+trans.en_US = translations/en.ts
 type = QT
 
 [tremotesf.desktop]
 file_filter = data/desktop/po/<lang>.po
 source_file = data/desktop/po/messages.po
 source_lang = en
+trans.en_US = data/desktop/po/en.po
 type = PO
