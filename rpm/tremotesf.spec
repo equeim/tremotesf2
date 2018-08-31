@@ -38,6 +38,7 @@ BuildRequires: cmake(Qt5DBus)
 BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5LinguistTools)
 BuildRequires: cmake(KF5WidgetsAddons)
+BuildRequires: gettext
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 %if 0%{?suse_version}
 BuildRequires: hicolor-icon-theme
@@ -45,7 +46,7 @@ BuildRequires: hicolor-icon-theme
 %endif
 
 
-%global build_type Release
+%global build_type RelWithDebInfo
 #%%global build_type Debug
 
 %if 0%{?sailfishos}
@@ -101,11 +102,17 @@ desktop-file-install \
 %{_bindir}/%{name}
 %{_datadir}/icons/hicolor/*/apps/*
 %{_datadir}/applications/*.desktop
+%if ! 0%{?sailfishos:1}
+%{_datadir}/metainfo/org.equeim.Tremotesf.appdata.xml
+%endif
 %{_datadir}/%{name}
 
 %changelog
+* Sat Aug 18 2018 Alexey Rochev <equeim@gmail.com> - 1.5.2-1
+- tremotesf-1.5.2
+
 * Tue Aug 14 2018 Alexey Rochev <equeim@gmail.com> - 1.5.1-1
 - tremotesf-1.5.1
 
-* Tue Aug 13 2018 Alexey Rochev <equeim@gmail.com> - 1.5.0-1
+* Mon Aug 13 2018 Alexey Rochev <equeim@gmail.com> - 1.5.0-1
 - tremotesf-1.5.0
