@@ -1,8 +1,9 @@
-# Change Log
+# Changelog
 
 ## [Unreleased]
 ### Added
 - Multiseat support (it is now possible to run multiple Tremotesf instances on different login sessions)
+- Added .appdata.xml file
 
 ### Changed
 - D-Bus is now used for IPC on Unix
