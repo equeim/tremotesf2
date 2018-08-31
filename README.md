@@ -26,6 +26,7 @@ Table of Contents
 #### Dependencies
 - C++11 compiler (GCC, MinGW and MSVC are supported)
 - CMake 3.0 or newer (3.1 for Qt >= 5.11)
+- Gettext 0.19.7 or newer
 - Qt 5.6 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
 - KWidgetsAddons from KDE Frameworks 5
 
@@ -66,9 +67,10 @@ I you like this app, you can support its development via [PayPal](https://www.pa
 
 ## Screenshots
 ### Desktop
-![](http://i.imgur.com/b1qqVZ1.png)
-![](http://i.imgur.com/dhopqqf.png)
-![](http://i.imgur.com/FGEjDvC.png)
+![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-1.png)
+![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-2.png)
+![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-3.png)
+![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-4.png)
 ### Sailfish OS
 ![](http://i.imgur.com/pNVIpCm.png)
 ![](http://i.imgur.com/RCqDejT.png)
