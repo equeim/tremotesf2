@@ -47,15 +47,14 @@ namespace tremotesf
                 emit mIpcServer->windowActivationRequested();
             }
 
-            void SetArguments(const QStringList& arguments)
+            void SetArguments(const QStringList& files, const QStringList& urls)
             {
-                qDebug() << "Received arguments" << arguments;
-                const ArgumentsParseResult result(IpcServer::parseArguments(arguments));
-                if (!result.files.isEmpty()) {
-                    emit mIpcServer->filesReceived(result.files);
+                qDebug() << "Received arguments" << files << urls;
+                if (!files.isEmpty()) {
+                    emit mIpcServer->filesReceived(files);
                 }
-                if (!result.urls.isEmpty()) {
-                    emit mIpcServer->urlsReceived(result.urls);
+                if (!urls.isEmpty()) {
+                    emit mIpcServer->urlsReceived(urls);
                 }
             }
 
@@ -116,7 +115,8 @@ namespace tremotesf
                                                             objectPath,
                                                             interfaceName,
                                                             QLatin1String("SetArguments")));
-        message.setArguments({arguments});
+        const ArgumentsParseResult result(parseArguments(arguments));
+        message.setArguments({result.files, result.urls});
         QDBusConnection::sessionBus().asyncCall(message);
     }
 }

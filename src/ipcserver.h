@@ -44,8 +44,6 @@ namespace tremotesf
         static bool tryToConnect();
         static void activateWindow();
         static void sendArguments(const QStringList& arguments);
-
-        static void parseArgument(const QString& argument, ArgumentsParseResult& result);
         static ArgumentsParseResult parseArguments(const QStringList& arguments);
     signals:
         void windowActivationRequested();

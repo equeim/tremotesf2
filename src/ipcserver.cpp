@@ -23,28 +23,23 @@
 
 namespace tremotesf
 {
-    void IpcServer::parseArgument(const QString& argument, ArgumentsParseResult& result)
-    {
-        const QFileInfo info(argument);
-        if (info.isFile()) {
-            result.files.push_back(info.absoluteFilePath());
-        } else {
-            const QUrl url(argument);
-            if (url.isLocalFile()) {
-                if (QFileInfo(url.path()).isFile()) {
-                    result.files.push_back(url.path());
-                }
-            } else {
-                result.urls.push_back(argument);
-            }
-        }
-    }
-
     ArgumentsParseResult IpcServer::parseArguments(const QStringList& arguments)
     {
         ArgumentsParseResult result;
         for (const QString& argument : arguments) {
-            parseArgument(argument, result);
+            const QFileInfo info(argument);
+            if (info.isFile()) {
+                result.files.push_back(info.absoluteFilePath());
+            } else {
+                const QUrl url(argument);
+                if (url.isLocalFile()) {
+                    if (QFileInfo(url.path()).isFile()) {
+                        result.files.push_back(url.path());
+                    }
+                } else {
+                    result.urls.push_back(argument);
+                }
+            }
         }
         return result;
     }

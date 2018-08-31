@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QTimer>
@@ -103,17 +104,15 @@ namespace tremotesf
                     qDebug() << "Window activation requested";
                     emit windowActivationRequested();
                 } else {
-                    const QJsonArray arguments(QJsonDocument::fromJson(message).array());
+                    const QVariantMap arguments(QJsonDocument::fromJson(message).toVariant().toMap());
                     qDebug() << "Arguments received" << arguments;
-                    ArgumentsParseResult result;
-                    for (const QJsonValue& argument : arguments) {
-                        parseArgument(argument.toString(), result);
+                    const QStringList files(arguments.value(QLatin1String("files")).toStringList());
+                    if (!files.isEmpty()) {
+                        emit filesReceived(files);
                     }
-                    if (!result.files.isEmpty()) {
-                        emit filesReceived(result.files);
-                    }
-                    if (!result.urls.isEmpty()) {
-                        emit urlsReceived(result.urls);
+                    const QStringList urls(arguments.value(QLatin1String("urls")).toStringList());
+                    if (!urls.isEmpty()) {
+                        emit urlsReceived(urls);
                     }
                 }
             });
@@ -141,10 +140,8 @@ namespace tremotesf
     void IpcServer::sendArguments(const QStringList& arguments)
     {
         qInfo() << "Sending arguments";
-        QJsonArray array;
-        for (const QString& argument : arguments) {
-            array.push_back(argument);
-        }
-        sendMessage(QJsonDocument(array).toJson());
+        const ArgumentsParseResult result(parseArguments(arguments));
+        sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(result.files)},
+                                              {QLatin1String("urls"), QJsonArray::fromStringList(result.urls)}}).toJson());
     }
 }
