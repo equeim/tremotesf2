@@ -5,11 +5,12 @@ Table of Contents
 =================
 
    * [Tremotesf](#tremotesf)
+   * [Table of Contents](#table-of-contents)
       * [Installation](#installation)
          * [Desktop](#desktop)
             * [Dependencies](#dependencies)
             * [Building](#building)
-            * [GNU/Linux distributions](#gnulinux-distributions)
+            * [GNU/Linux](#gnulinux)
             * [Windows](#windows)
          * [Sailfish OS](#sailfish-os)
             * [Dependencies](#dependencies-1)
@@ -31,19 +32,56 @@ Table of Contents
 - KWidgetsAddons from KDE Frameworks 5
 
 #### Building
-```
+```sh
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/your/install/prefix
 make
 make install
 ```
 
-#### GNU/Linux distributions
+#### GNU/Linux
 - Arch Linux - [AUR](https://aur.archlinux.org/packages/tremotesf)
-- Fedora - [Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+
+- Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+Only 9.0 (Stretch) is supported.
+```sh
+wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_9.0/Release.key -O - | sudo apt-key add -
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_9.0/ /"
+sudo apt update
+sudo apt install tremotesf
+```
+
+- Fedora - [Copr](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+```sh
+dnf copr enable equeim/tremotesf
+dnf install tremotesf
+```
+
 - Gentoo - [equeim-overlay](https://github.com/equeim/equeim-overlay)
-- Mageia - [Copr repo](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
-- openSUSE - [OBS repo](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+
+- Mageia - [Copr](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
+```sh
+dnf copr enable equeim/tremotesf
+dnf install tremotesf
+```
+
+- openSUSE - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+```sh
+#zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
+zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.0/home:equeim:tremotesf.repo
+zypper in tremotesf
+```
+
+- Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+Only 18.04 and 17.10 are supported
+```sh
+#wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_17.10/Release.key -O - | sudo apt-key add -
+wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_18.04/Release.key -O - | sudo apt-key add -
+#sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_17.10/ /"
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_18.04/ /"
+sudo apt update
+sudo apt install tremotesf
+```
 
 #### Windows
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
@@ -54,7 +92,7 @@ Tremotesf is available in Jolla Store and [OpenRepos.net](https://openrepos.net/
 Sailfish OS 1.1.9 or newer
 #### Building
 SSH/chroot into SDK, then:
-```
+```sh
 cd /path/to/sources
 mb2 -X -t <target name, e.g. SailfishOS-latest-armv7hl> build -d
 ```
