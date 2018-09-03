@@ -42,6 +42,7 @@ namespace tremotesf
     QModelIndexList BaseProxyModel::sourceIndexes(const QModelIndexList& proxyIndexes) const
     {
         QModelIndexList indexes;
+        indexes.reserve(proxyIndexes.size());
         for (const QModelIndex& index : proxyIndexes) {
             indexes.append(mapToSource(index));
         }

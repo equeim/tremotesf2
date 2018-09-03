@@ -61,6 +61,8 @@ namespace tremotesf
         QVariantList idsFromIndexes(const QList<QModelIndex>& indexes)
         {
             QVariantList ids;
+            // at least indexes.size(), but may be more
+            ids.reserve(indexes.size());
             for (const QModelIndex& index : indexes) {
                 auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
                 if (entry->isDirectory()) {

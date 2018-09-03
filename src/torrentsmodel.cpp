@@ -321,6 +321,7 @@ namespace tremotesf
     QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const
     {
         QVariantList ids;
+        ids.reserve(indexes.size());
         for (const QModelIndex& index : indexes) {
             ids.append(mTorrents[index.row()]->id());
         }

@@ -164,6 +164,7 @@ namespace tremotesf
     QVariantList TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const
     {
         QVariantList ids;
+        ids.reserve(indexes.size());
         for (const QModelIndex& index : indexes) {
             ids.append(mTrackers[index.row()]->id());
         }
