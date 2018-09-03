@@ -166,9 +166,9 @@ namespace tremotesf
 
             //: e.g. 100 MiB of 200 MiB (50%)
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
-                                        .arg(Utils::formatByteSize(mTorrent->completedSize()))
-                                        .arg(Utils::formatByteSize(mTorrent->sizeWhenDone()))
-                                        .arg(Utils::formatProgress(mTorrent->percentDone())));
+                                        .arg(Utils::formatByteSize(mTorrent->completedSize()),
+                                             Utils::formatByteSize(mTorrent->sizeWhenDone()),
+                                             Utils::formatProgress(mTorrent->percentDone())));
             downloadedLabel->setText(Utils::formatByteSize(mTorrent->totalDownloaded()));
             uploadedLabel->setText(Utils::formatByteSize(mTorrent->totalUploaded()));
             ratioLabel->setText(Utils::formatRatio(mTorrent->ratio()));

@@ -265,15 +265,15 @@ namespace tremotesf
         const QLocale locale;
 
         if (days > 0) {
-            return qApp->translate("tremotesf", "%1 d %2 h").arg(locale.toString(days)).arg(locale.toString(hours));
+            return qApp->translate("tremotesf", "%1 d %2 h").arg(locale.toString(days), locale.toString(hours));
         }
 
         if (hours > 0) {
-            return qApp->translate("tremotesf", "%1 h %2 m").arg(locale.toString(hours)).arg(locale.toString(minutes));
+            return qApp->translate("tremotesf", "%1 h %2 m").arg(locale.toString(hours), locale.toString(minutes));
         }
 
         if (minutes > 0) {
-            return qApp->translate("tremotesf", "%1 m %2 s").arg(locale.toString(minutes)).arg(locale.toString(seconds));
+            return qApp->translate("tremotesf", "%1 m %2 s").arg(locale.toString(minutes), locale.toString(seconds));
         }
 
         return qApp->translate("tremotesf", "%1 s").arg(locale.toString(seconds));

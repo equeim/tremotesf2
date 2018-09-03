@@ -135,7 +135,7 @@ namespace tremotesf
     void MainWindowStatusBar::updateServerLabel()
     {
         if (Servers::instance()->hasServers()) {
-            mServerLabel->setText(QString::fromLatin1("%1 (%2)").arg(Servers::instance()->currentServerName()).arg(Servers::instance()->currentServerAddress()));
+            mServerLabel->setText(QString::fromLatin1("%1 (%2)").arg(Servers::instance()->currentServerName(), Servers::instance()->currentServerAddress()));
         } else {
             mServerLabel->setText(qApp->translate("tremotesf", "No servers"));
         }
