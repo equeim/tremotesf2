@@ -145,7 +145,7 @@ namespace tremotesf
                     disableBoth = true;
                 }
 
-                QAction* openAction = contextMenu.addAction(QIcon::fromTheme("document-open"), qApp->translate("tremotesf", "&Open"));
+                QAction* openAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("document-open")), qApp->translate("tremotesf", "&Open"));
                 openAction->setEnabled(!disableBoth && !disableOpen);
                 QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     for (const QModelIndex& index : sourceIndexes) {
@@ -153,7 +153,7 @@ namespace tremotesf
                     }
                 });
 
-                QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme("go-jump"), qApp->translate("tremotesf", "Show In &File Manager"));
+                QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("go-jump")), qApp->translate("tremotesf", "Show In &File Manager"));
                 showInFileManagerAction->setEnabled(!disableBoth);
                 QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes]() {
                     QStringList files;
