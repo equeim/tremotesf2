@@ -9,7 +9,7 @@
 
   <description>
   <p>
-   Tremotesf is a remote GUI for Transmission BitTorrent cloent. You can fully control your transmission-daemon instance, manage torrents, set Transmission settings, view server statistics.
+   Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully control your transmission-daemon instance, manage torrents, set Transmission settings, view server statistics.
   </p>
   <p>
    You can add several servers profiles and switch between them (only one can be connected at a time). Tremotesf has support of HTTPS, including self-signed certificates and client certificate authentication. You can set mounted directories for servers and quickly open torrents' files and choose download directory from file dialog.

@@ -28,11 +28,11 @@ msgstr "Remote GUI for Transmission BitTorrent client"
 
 #: ../org.equeim.Tremotesf.appdata.xml.in:11
 msgid ""
-"Tremotesf is a remote GUI for Transmission BitTorrent cloent. You can fully "
+"Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully "
 "control your transmission-daemon instance, manage torrents, set Transmission"
 " settings, view server statistics."
 msgstr ""
-"Tremotesf is a remote GUI for Transmission BitTorrent cloent. You can fully "
+"Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully "
 "control your transmission-daemon instance, manage torrents, set Transmission"
 " settings, view server statistics."
 
