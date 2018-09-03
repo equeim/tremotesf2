@@ -22,7 +22,6 @@
 #include <QDBusConnection>
 #include <QDBusError>
 #include <QDBusMessage>
-#include <QDBusPendingCall>
 #include <QDebug>
 
 namespace tremotesf
@@ -102,10 +101,13 @@ namespace tremotesf
     void IpcServer::activateWindow()
     {
         qInfo() << "Requesting window activation";
-        QDBusConnection::sessionBus().asyncCall(QDBusMessage::createMethodCall(serviceName,
-                                                                               objectPath,
-                                                                               interfaceName,
-                                                                               QLatin1String("ActivateWindow")));
+        const QDBusMessage reply(QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall(serviceName,
+                                                                                                   objectPath,
+                                                                                                   interfaceName,
+                                                                                                   QLatin1String("ActivateWindow"))));
+        if (reply.type() != QDBusMessage::ReplyMessage) {
+            qWarning() << "D-Bus method call failed, error string" << reply.errorMessage();
+        }
     }
 
     void IpcServer::sendArguments(const QStringList& arguments)
@@ -117,7 +119,10 @@ namespace tremotesf
                                                             QLatin1String("SetArguments")));
         const ArgumentsParseResult result(parseArguments(arguments));
         message.setArguments({result.files, result.urls});
-        QDBusConnection::sessionBus().asyncCall(message);
+        const QDBusMessage reply(QDBusConnection::sessionBus().call(message));
+        if (reply.type() != QDBusMessage::ReplyMessage) {
+            qWarning() << "D-Bus method call failed, error string" << reply.errorMessage();
+        }
     }
 }
 
