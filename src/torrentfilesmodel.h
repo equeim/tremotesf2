@@ -31,7 +31,6 @@ namespace tremotesf
     class TorrentFilesModel : public BaseTorrentFilesModel
     {
         Q_OBJECT
-        Q_ENUMS(Role)
         Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)
         Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
@@ -48,6 +47,7 @@ namespace tremotesf
             WantedStateRole,
             PriorityRole
         };
+        Q_ENUM(Role)
 #else
         enum Column
         {

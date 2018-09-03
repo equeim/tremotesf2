@@ -27,7 +27,6 @@ namespace tremotesf
     class TorrentFileParser : public QObject
     {
         Q_OBJECT
-        Q_ENUMS(Error)
         Q_PROPERTY(QString filePath READ filePath WRITE setFilePath)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY done)
         Q_PROPERTY(Error error READ error NOTIFY done)
@@ -41,6 +40,7 @@ namespace tremotesf
             ReadingError,
             ParsingError
         };
+        Q_ENUM(Error)
 
         explicit TorrentFileParser(const QString& filePath = QString(), QObject* parent = nullptr);
 

@@ -33,7 +33,6 @@ namespace tremotesf
     class TorrentsProxyModel : public BaseProxyModel
     {
         Q_OBJECT
-        Q_ENUMS(StatusFilter)
         Q_PROPERTY(QString searchString READ searchString WRITE setSearchString NOTIFY searchStringChanged)
         Q_PROPERTY(StatusFilter statusFilter READ statusFilter WRITE setStatusFilter NOTIFY statusFilterChanged)
         Q_PROPERTY(QString tracker READ tracker WRITE setTracker NOTIFY trackerChanged)
@@ -50,6 +49,7 @@ namespace tremotesf
             Errored,
             StatusFilterCount
         };
+        Q_ENUM(StatusFilter)
 
         explicit TorrentsProxyModel(TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
 
