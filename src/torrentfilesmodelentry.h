@@ -54,8 +54,11 @@ namespace tremotesf
         static libtremotesf::TorrentFile::Priority toFilePriority(Priority priority);
 
         TorrentFilesModelEntry() = default;
+        TorrentFilesModelEntry(const TorrentFilesModelEntry& other) = delete;
         explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path);
         virtual ~TorrentFilesModelEntry() = default;
+
+        TorrentFilesModelEntry& operator=(const TorrentFilesModelEntry& other) = delete;
 
         int row() const;
         TorrentFilesModelDirectory* parentDirectory() const;
