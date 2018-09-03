@@ -28,6 +28,7 @@ namespace tremotesf
 {
     class BaseTorrentFilesModel : public QAbstractItemModel
     {
+        Q_OBJECT
     public:
 #ifndef TREMOTESF_SAILFISHOS
         static const int SortRole = Qt::UserRole;
