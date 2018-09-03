@@ -51,7 +51,7 @@ namespace tremotesf
 
         QVariantList idsFromIndex(const QModelIndex& index)
         {
-            TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
+            auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
             if (entry->isDirectory()) {
                 return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
             }
@@ -62,7 +62,7 @@ namespace tremotesf
         {
             QVariantList ids;
             for (const QModelIndex& index : indexes) {
-                TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
+                auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
                 if (entry->isDirectory()) {
                     ids.append(static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds());
                 } else {
@@ -341,8 +341,7 @@ namespace tremotesf
 
     void TorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName) const
     {
-        const TorrentFilesModelEntry* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
-        mTorrent->renameFile(entry->path(), newName);
+        mTorrent->renameFile(static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->path(), newName);
     }
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName)

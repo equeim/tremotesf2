@@ -39,7 +39,7 @@ namespace tremotesf
         std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
         createTree(const QVariantMap& parseResult)
         {
-            const auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
+            auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> files;
 
             const QVariantMap infoMap(parseResult.value(QLatin1String("info")).toMap());

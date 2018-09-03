@@ -32,7 +32,7 @@ namespace libtremotesf
 
 namespace tremotesf
 {
-    class TrackersModel : public QAbstractTableModel
+    class TrackersModel final : public QAbstractTableModel
     {
         Q_OBJECT
         Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)

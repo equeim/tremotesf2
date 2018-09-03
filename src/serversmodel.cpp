@@ -120,10 +120,7 @@ namespace tremotesf
 
     bool ServersModel::hasServer(const QString& name) const
     {
-        if (serverRow(name) == -1) {
-            return false;
-        }
-        return true;
+        return serverRow(name) != -1;
     }
 
     void ServersModel::setServer(const QString& oldName,

@@ -40,7 +40,7 @@ namespace tremotesf
     class TorrentsProxyModel;
     class TorrentsView;
 
-    class MainWindow : public QMainWindow
+    class MainWindow final : public QMainWindow
     {
     public:
         MainWindow(IpcServer* ipcServer, const QStringList& arguments);

@@ -454,7 +454,7 @@ namespace tremotesf
         mCurrentServerMountedDirectories.clear();
         mCurrentServerMountedDirectories.reserve(directories.size());
         for (auto i = directories.cbegin(), end = directories.cend(); i != end; ++i) {
-            mCurrentServerMountedDirectories.push_back({QDir(i.key()).absolutePath(), QDir(i.value().toString()).absolutePath()});
+            mCurrentServerMountedDirectories.emplace_back(QDir(i.key()).absolutePath(), QDir(i.value().toString()).absolutePath());
         }
     }
 

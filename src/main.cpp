@@ -81,9 +81,9 @@ int main(int argc, char** argv)
     }
 
 #ifndef TREMOTESF_SAILFISHOS
-    app.setOrganizationName(app.applicationName());
-    app.setWindowIcon(QIcon::fromTheme(QLatin1String("org.equeim.Tremotesf")));
-    app.setQuitOnLastWindowClosed(false);
+    qApp->setOrganizationName(qApp->applicationName());
+    qApp->setWindowIcon(QIcon::fromTheme(QLatin1String("org.equeim.Tremotesf")));
+    qApp->setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     QIcon::setThemeSearchPaths({QLatin1String("icons")});
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 
     QTranslator appTranslator;
 #if defined(Q_OS_WIN) && !defined(TEST_BUILD)
-    appTranslator.load(QLocale().name(), QString::fromLatin1("%1/translations").arg(app.applicationDirPath()));
+    appTranslator.load(QLocale().name(), QString::fromLatin1("%1/translations").arg(qApp->applicationDirPath()));
 #else
     appTranslator.load(QLocale().name(), QLatin1String(TRANSLATIONS_PATH));
 #endif

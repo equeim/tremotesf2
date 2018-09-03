@@ -72,12 +72,12 @@ namespace tremotesf
                 });
             }
 
-            QSize minimumSizeHint() const
+            QSize minimumSizeHint() const override
             {
                 return QSize(8, 0);
             }
 
-            QSize sizeHint() const
+            QSize sizeHint() const override
             {
                 int height = 0;
                 for (int i = 0, max = count(); i < max; ++i) {
@@ -113,12 +113,12 @@ namespace tremotesf
             }
 
         protected:
-            void showEvent(QShowEvent*)
+            void showEvent(QShowEvent*) override
             {
                 mProxyModel->setStatusFilter(static_cast<TorrentsProxyModel::StatusFilter>(currentRow()));
             }
 
-            void hideEvent(QHideEvent*)
+            void hideEvent(QHideEvent*) override
             {
                 mProxyModel->setStatusFilter(TorrentsProxyModel::All);
             }

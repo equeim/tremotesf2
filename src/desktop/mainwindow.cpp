@@ -864,7 +864,7 @@ namespace tremotesf
 
     void MainWindow::setupTrayIcon()
     {
-        QMenu* contextMenu = new QMenu(mFileMenu);
+        auto contextMenu = new QMenu(mFileMenu);
         for (QAction* action : mFileMenu->actions()) {
             contextMenu->addAction(action);
         }
