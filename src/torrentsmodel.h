@@ -33,7 +33,7 @@ namespace tremotesf
 {
     class Rpc;
 
-    class TorrentsModel final : public QAbstractTableModel
+    class TorrentsModel : public QAbstractTableModel
     {
         Q_OBJECT
         Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc)
