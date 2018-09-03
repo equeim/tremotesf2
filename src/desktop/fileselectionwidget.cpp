@@ -60,7 +60,7 @@ namespace tremotesf
             dialog->setAttribute(Qt::WA_DeleteOnClose);
 
             QObject::connect(dialog, &QFileDialog::accepted, this, [=]() {
-                const QString filePath(dialog->selectedFiles().first());
+                const QString filePath(dialog->selectedFiles().constFirst());
 
                 if (directory && connectLineEditWithDialog) {
                     mFileDialogDirectory = filePath;

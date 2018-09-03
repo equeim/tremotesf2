@@ -602,7 +602,8 @@ namespace tremotesf
     void MainWindow::updateTorrentActions()
     {
         if (mTorrentsView->selectionModel()->hasSelection()) {
-            for (QAction* action : mTorrentMenu->actions()) {
+            const QList<QAction*> actions(mTorrentMenu->actions());
+            for (QAction* action : actions) {
                 action->setEnabled(true);
             }
             const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
@@ -644,7 +645,8 @@ namespace tremotesf
                 mShowInFileManagerAction->setEnabled(false);
             }
         } else {
-            for (QAction* action : mTorrentMenu->actions()) {
+            const QList<QAction*> actions(mTorrentMenu->actions());
+            for (QAction* action : actions) {
                 action->setEnabled(false);
             }
         }
@@ -865,7 +867,8 @@ namespace tremotesf
     void MainWindow::setupTrayIcon()
     {
         auto contextMenu = new QMenu(mFileMenu);
-        for (QAction* action : mFileMenu->actions()) {
+        const QList<QAction*> actions(mFileMenu->actions());
+        for (QAction* action : actions) {
             contextMenu->addAction(action);
         }
 

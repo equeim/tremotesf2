@@ -136,7 +136,8 @@ namespace tremotesf
 
     void ServersDialog::showEditDialogs()
     {
-        for (const QModelIndex& index : mServersView->selectionModel()->selectedIndexes()) {
+        const QModelIndexList indexes(mServersView->selectionModel()->selectedIndexes());
+        for (const QModelIndex& index : indexes) {
             auto dialog = new ServerEditDialog(mModel,
                                                mProxyModel->sourceIndex(index).row(),
                                                this);

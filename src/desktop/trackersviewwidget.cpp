@@ -153,7 +153,8 @@ namespace tremotesf
 
     void TrackersViewWidget::showEditDialogs()
     {
-        for (const QModelIndex& index : mTrackersView->selectionModel()->selectedRows()) {
+        const QModelIndexList indexes(mTrackersView->selectionModel()->selectedRows());
+        for (const QModelIndex& index : indexes) {
             const libtremotesf::Tracker* tracker = mModel->trackerAtIndex(mProxyModel->sourceIndex(index));
             const int id = tracker->id();
             auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Edit Tracker"),

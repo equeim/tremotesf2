@@ -395,7 +395,8 @@ namespace tremotesf
             bool setFirst = true;
             const QString current(currentServerName());
             if (!current.isEmpty()) {
-                for (const QString& group : mSettings->childGroups()) {
+                const QStringList groups(mSettings->childGroups());
+                for (const QString& group : groups) {
                     if (group == current) {
                         setFirst = false;
                         break;
@@ -403,13 +404,14 @@ namespace tremotesf
                 }
             }
             if (setFirst) {
-                setCurrentServer(mSettings->childGroups().first());
+                setCurrentServer(mSettings->childGroups().constFirst());
             }
         } else {
             mSettings->remove(currentServerKey);
         }
 
-        for (const QString& group : mSettings->childGroups()) {
+        const QStringList groups(mSettings->childGroups());
+        for (const QString& group : groups) {
             mSettings->beginGroup(group);
             if (mSettings->contains(localCertificateKey)) {
                 const QByteArray localCertificate(mSettings->value(localCertificateKey).toByteArray());
