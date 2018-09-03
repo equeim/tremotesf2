@@ -201,20 +201,17 @@ namespace tremotesf
         mTrackers.reserve(trackers.size());
         mTrackersTorrents.reserve(trackers.size());
 
-        for (auto i = trackers.cbegin(), max = trackers.cend();
-             i != max;
-             ++i) {
-
-            const QString& tracker = i->first;
+        for (const auto& i :  trackers) {
+            const QString& tracker = i.first;
             auto row = index_of(mTrackers, tracker);
             if (row == mTrackers.size()) {
                 row = mTrackers.size() + 1;
                 beginInsertRows(QModelIndex(), row, row);
                 mTrackers.push_back(tracker);
-                mTrackersTorrents.push_back(i->second);
+                mTrackersTorrents.push_back(i.second);
                 endInsertRows();
             } else {
-                mTrackersTorrents[row] = i->second;
+                mTrackersTorrents[row] = i.second;
                 const QModelIndex modelIndex(index(row + 1));
                 emit dataChanged(modelIndex, modelIndex);
             }

@@ -198,20 +198,17 @@ namespace tremotesf
         mDirectories.reserve(directories.size());
         mDirectoriesTorrents.reserve(directories.size());
 
-        for (auto i = directories.cbegin(), max = directories.cend();
-             i != max;
-             ++i) {
-
-            const QString& tracker = i->first;
-            auto row = index_of(mDirectories, tracker);
+        for (const auto& i : directories) {
+            const QString& directory = i.first;
+            auto row = index_of(mDirectories, directory);
             if (row == mDirectories.size()) {
                 row = mDirectories.size() + 1;
                 beginInsertRows(QModelIndex(), row, row);
-                mDirectories.push_back(tracker);
-                mDirectoriesTorrents.push_back(i->second);
+                mDirectories.push_back(directory);
+                mDirectoriesTorrents.push_back(i.second);
                 endInsertRows();
             } else {
-                mDirectoriesTorrents[row] = i->second;
+                mDirectoriesTorrents[row] = i.second;
                 const QModelIndex modelIndex(index(row + 1));
                 emit dataChanged(modelIndex, modelIndex);
             }
