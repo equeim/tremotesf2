@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.5.3] - 2018-09-03
 ### Added
 - Multiseat support (it is now possible to run multiple Tremotesf instances on different login sessions)
 - Added .appdata.xml file
