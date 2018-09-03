@@ -19,7 +19,7 @@ endif()
 
 set(DATA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/${TREMOTESF_NAME}")
 
-find_package(Qt5Concurrent 5.6 REQUIRED CONFIG)
+find_package(Qt5Core 5.6 REQUIRED CONFIG)
 
 add_subdirectory("data")
 add_subdirectory("translations")
