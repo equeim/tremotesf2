@@ -148,8 +148,6 @@ namespace libtremotesf
         : mId(id),
           mHashString(torrentMap.value(hashStringKey).toString()),
           mAddedDate(QDateTime::fromMSecsSinceEpoch(torrentMap.value(addedDateKey).toDouble() * 1000)),
-          mFilesEnabled(false),
-          mPeersEnabled(false),
           mRpc(rpc)
     {
         update(torrentMap);

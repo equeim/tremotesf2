@@ -81,8 +81,6 @@ namespace tremotesf
         void showTorrentsInFileManager();
 
     private:
-        IpcServer* mIpcServer;
-
         Rpc* mRpc;
 
         TorrentsModel* mTorrentsModel;

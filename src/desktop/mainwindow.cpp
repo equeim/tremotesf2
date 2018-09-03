@@ -141,8 +141,7 @@ namespace tremotesf
     }
 
     MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& arguments)
-        : mIpcServer(ipcServer),
-          mRpc(new Rpc(this)),
+        : mRpc(new Rpc(this)),
           mTorrentsModel(new TorrentsModel(mRpc, this)),
           mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, TorrentsModel::SortRole, this)),
           mSplitter(new QSplitter(this)),
