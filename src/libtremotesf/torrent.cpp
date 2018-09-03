@@ -110,7 +110,7 @@ namespace libtremotesf
             }
         }
 
-        void setChanged(double& value, const double& newValue, bool& changed)
+        void setChanged(double& value, double newValue, bool& changed)
         {
             if (!qFuzzyCompare(newValue, value)) {
                 value = newValue;

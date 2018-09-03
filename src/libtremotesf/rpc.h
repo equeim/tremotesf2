@@ -223,7 +223,6 @@ namespace libtremotesf
         void aboutToDisconnect();
         void connectedChanged();
         void statusChanged();
-        void statusStringChanged();
         void errorChanged();
 
         void torrentsUpdated();
