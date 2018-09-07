@@ -43,11 +43,12 @@ set(tremotesf_properties
 )
 
 set(tremotesf_libs
-    Qt5::Concurrent
     Qt5::Network
 )
 
-set(tremotesf_includes)
+set(tremotesf_includes
+    ${Qt5Concurrent_INCLUDE_DIRS}
+)
 
 set(tremotesf_defines
     QT_DEPRECATED_WARNINGS
