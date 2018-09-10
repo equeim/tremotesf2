@@ -44,6 +44,7 @@
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2018-09-10" version="1.5.4"/>
     <release date="2018-09-03" version="1.5.3"/>
   </releases>
 

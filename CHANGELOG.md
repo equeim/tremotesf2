@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.4] - 2018-09-10
+### Changed
+- Tremotesf binary now doesn't link to QtConcurrent library (but still requires its headers at build time)
+- Desktop: improved AppStream metadata
+
 ## [1.5.3] - 2018-09-03
 ### Added
 - Multiseat support (it is now possible to run multiple Tremotesf instances on different login sessions)
