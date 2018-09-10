@@ -16,7 +16,7 @@
   </p>
   </description>
 
-  ​<launchable type="desktop-id">org.equeim.Tremotesf</launchable>
+  ​<launchable type="desktop-id">org.equeim.Tremotesf.desktop</launchable>
 
   <screenshots>
     <screenshot type="default">
