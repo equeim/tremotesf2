@@ -130,7 +130,7 @@ Page {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: Theme.buttonWidthLarge
                                     text: "Yandex.Money"
-                                    onClicked: Qt.openUrlExternally("https://yasobe.ru/na/tremotesf")
+                                    onClicked: Qt.openUrlExternally("https://yasobe.ru/na/equeim_tremotesf")
                                 }
                             }
                         }

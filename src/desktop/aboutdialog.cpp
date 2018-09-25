@@ -67,7 +67,7 @@ namespace tremotesf
         donatePageLayout->addWidget(paypalButton);
         auto yandexButton = new QPushButton(QLatin1String("Yandex.Money"), this);
         QObject::connect(yandexButton, &QPushButton::clicked, this, []() {
-            QDesktopServices::openUrl(QUrl(QLatin1String("https://yasobe.ru/na/tremotesf")));
+            QDesktopServices::openUrl(QUrl(QLatin1String("https://yasobe.ru/na/equeim_tremotesf")));
         });
         donatePageLayout->addWidget(yandexButton);
         donatePageLayout->addStretch();
