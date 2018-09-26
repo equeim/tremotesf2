@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.5] - 2018-09-26
+### Fixed
+- Yandex.Money donate link
+
 ## [1.5.4] - 2018-09-10
 ### Changed
 - Tremotesf binary now doesn't link to QtConcurrent library (but still requires its headers at build time)
