@@ -40,6 +40,8 @@ make install
 ```
 
 #### GNU/Linux
+- Flatpak - [Flathub](https://flathub.org/apps/details/org.equeim.Tremotesf)
+
 - Arch Linux - [AUR](https://aur.archlinux.org/packages/tremotesf)
 
 - Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
@@ -75,7 +77,7 @@ zypper in tremotesf
 
 - Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
-Only 18.04 and 17.10 are supported
+Only 18.04 and 17.10 are supported.
 ```sh
 #wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_17.10/Release.key -O - | sudo apt-key add -
 wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_18.04/Release.key -O - | sudo apt-key add -
