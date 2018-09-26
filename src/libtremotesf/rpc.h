@@ -105,6 +105,7 @@ namespace libtremotesf
         bool isConnected() const;
         Status status() const;
         Error error() const;
+        const QString& errorMessage() const;
         bool isLocal() const;
 
         int torrentsCount() const;
@@ -164,7 +165,7 @@ namespace libtremotesf
 
     private:
         void setStatus(Status status);
-        void setError(Error error);
+        void setError(Error error, const QString& errorMessage = QString());
 
         void getServerSettings();
         void getTorrents();
@@ -218,6 +219,7 @@ namespace libtremotesf
 
         Status mStatus;
         Error mError;
+        QString mErrorMessage;
 
     signals:
         void aboutToDisconnect();

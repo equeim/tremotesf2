@@ -145,6 +145,11 @@ namespace libtremotesf
         return mError;
     }
 
+    const QString& Rpc::errorMessage() const
+    {
+        return mErrorMessage;
+    }
+
     bool Rpc::isLocal() const
     {
         return mLocal;
@@ -660,10 +665,11 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::setError(Error error)
+    void Rpc::setError(Error error, const QString& errorMessage)
     {
         if (error != mError) {
             mError = error;
+            mErrorMessage = errorMessage;
             emit errorChanged();
         }
     }
@@ -911,7 +917,7 @@ namespace libtremotesf
                         postRequest(data, callOnSuccessParse);
                     } else {
                         qWarning() << reply->error() << reply->errorString();
-                        setError(ConnectionError);
+                        setError(ConnectionError, reply->errorString());
                         setStatus(Disconnected);
                     }
                 }
