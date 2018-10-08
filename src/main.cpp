@@ -53,6 +53,8 @@ int main(int argc, char** argv)
     std::unique_ptr<QGuiApplication> app(SailfishApp::application(argc, argv));
     std::unique_ptr<QQuickView> view(SailfishApp::createView());
 #else
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication app(argc, argv);
 #endif
 
