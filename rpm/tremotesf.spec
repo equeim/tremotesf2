@@ -4,7 +4,7 @@ Name:       harbour-tremotesf
 %else
 Name:       tremotesf
 %endif
-Version:    1.5.5
+Version:    1.5.6
 Release:    1%{!?sailfishos:%{!?suse_version:%{dist}}}
 Summary:    Remote GUI for transmission-daemon
 %if 0%{?suse_version}
@@ -108,6 +108,9 @@ desktop-file-install \
 %{_datadir}/%{name}
 
 %changelog
+* Sat Dec 08 2018 Alexey Rochev <equeim@gmail.com> - 1.5.6-1
+- tremotesf-1.5.6
+
 * Wed Sep 26 2018 Alexey Rochev <equeim@gmail.com> - 1.5.5-1
 - tremotesf-1.5.5
 

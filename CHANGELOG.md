@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.6] - 2018-12-08
+### Changed
+- Desktop: Improved HiDPI support
+
+### Fixed
+- Desktop: fixed notification icon
+
 ## [1.5.5] - 2018-09-26
 ### Fixed
 - Yandex.Money donate link
