@@ -966,7 +966,7 @@ namespace tremotesf
                                                             QLatin1String("Notify")));
         message.setArguments({QLatin1String("Tremotesf"),
                               uint(0),
-                              QLatin1String("tremotesf"),
+                              QLatin1String("org.equeim.Tremotesf"),
                               summary,
                               body,
                               QVariant(QVariant::StringList),
