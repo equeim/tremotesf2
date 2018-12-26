@@ -95,11 +95,11 @@ namespace tremotesf
         bool isStatusBarVisible() const;
         void setStatusBarVisible(bool visible);
 
-        QByteArray localTorrentFilesViewHeaderState() const;
-        void setLocalTorrentFilesViewHeaderState(const QByteArray& state);
-
         QByteArray torrentsViewHeaderState() const;
         void setTorrentsViewHeaderState(const QByteArray& state);
+
+        QByteArray torrentPropertiesDialogGeometry() const;
+        void setTorrentPropertiesDialogGeometry(const QByteArray& geometry);
 
         QByteArray torrentFilesViewHeaderState() const;
         void setTorrentFilesViewHeaderState(const QByteArray& state);
@@ -109,6 +109,9 @@ namespace tremotesf
 
         QByteArray peersViewHeaderState() const;
         void setPeersViewHeaderState(const QByteArray& state);
+
+        QByteArray localTorrentFilesViewHeaderState() const;
+        void setLocalTorrentFilesViewHeaderState(const QByteArray& state);
 #endif
     private:
         explicit Settings(QObject* parent = nullptr);

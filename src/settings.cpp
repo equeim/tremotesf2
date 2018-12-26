@@ -48,11 +48,12 @@ namespace tremotesf
         const QString sideBarVisibleKey(QLatin1String("sideBarVisible"));
         const QString splitterStateKey(QLatin1String("splitterState"));
         const QString statusBarVisibleKey(QLatin1String("statusBarVisible"));
-        const QString localTorrentFilesViewHeaderStateKey(QLatin1String("localTorrentFilesViewHeaderState"));
         const QString torrentsViewHeaderStateKey(QLatin1String("torrentsViewHeaderState"));
+        const QString torrentPropertiesDialogGeometryKey(QLatin1String("torrentPropertiesDialogGeometry"));
         const QString torrentFilesViewHeaderStateKey(QLatin1String("torrentFilesViewHeaderState"));
         const QString trackersViewHeaderStateKey(QLatin1String("trackersViewHeaderState"));
         const QString peersViewHeaderStateKey(QLatin1String("peersViewHeaderState"));
+        const QString localTorrentFilesViewHeaderStateKey(QLatin1String("localTorrentFilesViewHeaderState"));
 #endif
     }
 
@@ -248,16 +249,6 @@ namespace tremotesf
         mSettings->setValue(statusBarVisibleKey, visible);
     }
 
-    QByteArray Settings::localTorrentFilesViewHeaderState() const
-    {
-        return mSettings->value(localTorrentFilesViewHeaderStateKey).toByteArray();
-    }
-
-    void Settings::setLocalTorrentFilesViewHeaderState(const QByteArray& state)
-    {
-        mSettings->setValue(localTorrentFilesViewHeaderStateKey, state);
-    }
-
     QByteArray Settings::torrentsViewHeaderState() const
     {
         return mSettings->value(torrentsViewHeaderStateKey).toByteArray();
@@ -266,6 +257,16 @@ namespace tremotesf
     void Settings::setTorrentsViewHeaderState(const QByteArray& state)
     {
         mSettings->setValue(torrentsViewHeaderStateKey, state);
+    }
+
+    QByteArray Settings::torrentPropertiesDialogGeometry() const
+    {
+        return mSettings->value(torrentPropertiesDialogGeometryKey).toByteArray();
+    }
+
+    void Settings::setTorrentPropertiesDialogGeometry(const QByteArray& geometry)
+    {
+        mSettings->setValue(torrentPropertiesDialogGeometryKey, geometry);
     }
 
     QByteArray Settings::torrentFilesViewHeaderState() const
@@ -297,6 +298,17 @@ namespace tremotesf
     {
         mSettings->setValue(peersViewHeaderStateKey, state);
     }
+
+    QByteArray Settings::localTorrentFilesViewHeaderState() const
+    {
+        return mSettings->value(localTorrentFilesViewHeaderStateKey).toByteArray();
+    }
+
+    void Settings::setLocalTorrentFilesViewHeaderState(const QByteArray& state)
+    {
+        mSettings->setValue(localTorrentFilesViewHeaderStateKey, state);
+    }
+
 #endif
 
     Settings::Settings(QObject* parent)

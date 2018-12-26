@@ -92,11 +92,14 @@ namespace tremotesf
         QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=]() {
             setTorrent(mRpc->torrentByHash(torrentHash));
         });
+
+        restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
     }
 
     TorrentPropertiesDialog::~TorrentPropertiesDialog()
     {
         Settings::instance()->setPeersViewHeaderState(mPeersView->header()->saveState());
+        Settings::instance()->setTorrentPropertiesDialogGeometry(saveGeometry());
     }
 
     QSize TorrentPropertiesDialog::sizeHint() const
