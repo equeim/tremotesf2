@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Desktop: restoring of torrent properties dialog's geometry
+
+### Changed
+- Desktop: toolBarVisible and toolBarArea configuration keys are now deprecated, mainWindowState is used instead
+
+### Fixed
+- Desktop: fixed restoring state of detached toolbar
+
 ## [1.5.6] - 2018-12-08
 ### Changed
 - Desktop: Improved HiDPI support
