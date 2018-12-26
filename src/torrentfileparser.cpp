@@ -59,7 +59,7 @@ namespace tremotesf
 
             QByteArray fileData;
             QVariantMap parseResult;
-            TorrentFileParser::Error error;
+            TorrentFileParser::Error error = TorrentFileParser::NoError;
 
         private:
             QVariant parseVariant()

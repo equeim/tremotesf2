@@ -124,6 +124,9 @@ namespace libtremotesf
     TorrentFile::TorrentFile(std::vector<QString>&& path, long long size)
         : path(std::move(path)),
           size(size),
+          completedSize(0),
+          wanted(false),
+          priority(NormalPriority),
           changed(false)
     {
 

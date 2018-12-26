@@ -245,7 +245,8 @@ namespace tremotesf
           mCompletedSize(0),
           mWantedState(Unwanted),
           mPriority(NormalPriority),
-          mId(id)
+          mId(id),
+          mChanged(false)
     {
     }
 
