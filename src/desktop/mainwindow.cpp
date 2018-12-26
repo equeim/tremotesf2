@@ -150,13 +150,7 @@ namespace tremotesf
           mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QLatin1String("tremotesf-tray-icon"), windowIcon()), this))
     {
         setWindowTitle(QLatin1String("Tremotesf"));
-
         setMinimumSize(minimumSizeHint().expandedTo(QSize(384, 256)));
-        if (!restoreGeometry(Settings::instance()->mainWindowGeometry())) {
-            const QSize screenSize(qApp->primaryScreen()->size());
-            const QSize windowSize(sizeHint());
-            move((screenSize.width() - windowSize.width()) / 2, (screenSize.height() - windowSize.height()) / 2);
-        }
 
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
@@ -203,6 +197,20 @@ namespace tremotesf
 
         setupMenuBar();
         setupTrayIcon();
+
+        if (!restoreGeometry(Settings::instance()->mainWindowGeometry())) {
+            const QSize screenSize(qApp->primaryScreen()->size());
+            const QSize windowSize(sizeHint());
+            move((screenSize.width() - windowSize.width()) / 2, (screenSize.height() - windowSize.height()) / 2);
+        }
+
+        if (!restoreState(Settings::instance()->mainWindowState())) {
+            addToolBar(Settings::instance()->toolBarArea(), mToolBar);
+            mToolBar->setVisible(Settings::instance()->isToolBarVisible());
+        }
+        Settings::instance()->clearToolBarVisible();
+        Settings::instance()->clearToolBarArea();
+        mToolBarAction->setChecked(!mToolBar->isHidden());
 
         QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, &MainWindow::showWindow);
 
@@ -306,8 +314,8 @@ namespace tremotesf
         mRpc->disconnect();
 
         Settings::instance()->setMainWindowGeometry(saveGeometry());
+        Settings::instance()->setMainWindowState(saveState());
         Settings::instance()->setToolButtonStyle(toolButtonStyle());
-        Settings::instance()->setToolBarArea(toolBarArea(mToolBar));
         Settings::instance()->setSplitterState(mSplitter->saveState());
 
         mTrayIcon->hide();
@@ -742,13 +750,9 @@ namespace tremotesf
 
         QMenu* viewMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&View"));
 
-        QAction* toolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Toolbar"));
-        toolBarAction->setCheckable(true);
-        toolBarAction->setChecked(Settings::instance()->isToolBarVisible());
-        QObject::connect(toolBarAction, &QAction::triggered, this, [=](bool checked) {
-            mToolBar->setVisible(checked);
-            Settings::instance()->setToolBarVisible(checked);
-        });
+        mToolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Toolbar"));
+        mToolBarAction->setCheckable(true);
+        QObject::connect(mToolBarAction, &QAction::triggered, mToolBar, &QToolBar::setVisible);
 
         QAction* sideBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Sidebar"));
         sideBarAction->setCheckable(true);
@@ -828,10 +832,7 @@ namespace tremotesf
     {
         mToolBar = new QToolBar(this);
         mToolBar->setContextMenuPolicy(Qt::CustomContextMenu);
-        if (!Settings::instance()->isToolBarVisible()) {
-            mToolBar->hide();
-        }
-        addToolBar(Settings::instance()->toolBarArea(), mToolBar);
+        addToolBar(mToolBar);
 
         mToolBar->addAction(mConnectAction);
         mToolBar->addAction(mDisconnectAction);

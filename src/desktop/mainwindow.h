@@ -113,6 +113,7 @@ namespace tremotesf
         QMenu* mFileMenu = nullptr;
 
         QToolBar* mToolBar = nullptr;
+        QAction* mToolBarAction = nullptr;
 
         QSystemTrayIcon* mTrayIcon;
     };

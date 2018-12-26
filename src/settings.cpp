@@ -41,6 +41,7 @@ namespace tremotesf
 #else
         const QString showTrayIconKey(QLatin1String("showTrayIcon"));
         const QString mainWindowGeometryKey(QLatin1String("mainWindowGeometry"));
+        const QString mainWindowStateKey(QLatin1String("mainWindowState"));
         const QString toolButtonStyleKey(QLatin1String("toolButtonStyle"));
         const QString toolBarVisibleKey(QLatin1String("toolBarVisible"));
         const QString toolBarAreaKey(QLatin1String("toolBarArea"));
@@ -167,6 +168,16 @@ namespace tremotesf
         mSettings->setValue(mainWindowGeometryKey, geometry);
     }
 
+    QByteArray Settings::mainWindowState() const
+    {
+        return mSettings->value(mainWindowStateKey).toByteArray();
+    }
+
+    void Settings::setMainWindowState(const QByteArray& state)
+    {
+        mSettings->setValue(mainWindowStateKey, state);
+    }
+
     Qt::ToolButtonStyle Settings::toolButtonStyle() const
     {
         return mSettings->value(toolButtonStyleKey, Qt::ToolButtonFollowStyle).value<Qt::ToolButtonStyle>();
@@ -187,6 +198,11 @@ namespace tremotesf
         mSettings->setValue(toolBarVisibleKey, visible);
     }
 
+    void Settings::clearToolBarVisible()
+    {
+        mSettings->remove(toolBarVisibleKey);
+    }
+
     Qt::ToolBarArea Settings::toolBarArea() const
     {
         return mSettings->value(toolBarAreaKey, Qt::TopToolBarArea).value<Qt::ToolBarArea>();
@@ -195,6 +211,11 @@ namespace tremotesf
     void Settings::setToolBarArea(Qt::ToolBarArea area)
     {
         mSettings->setValue(toolBarAreaKey, area);
+    }
+
+    void Settings::clearToolBarArea()
+    {
+        mSettings->remove(toolBarAreaKey);
     }
 
     bool Settings::isSideBarVisible() const

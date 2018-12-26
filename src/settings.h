@@ -70,14 +70,21 @@ namespace tremotesf
         QByteArray mainWindowGeometry() const;
         void setMainWindowGeometry(const QByteArray& geometry);
 
+        QByteArray mainWindowState() const;
+        void setMainWindowState(const QByteArray& state);
+
         Qt::ToolButtonStyle toolButtonStyle() const;
         void setToolButtonStyle(Qt::ToolButtonStyle style);
 
+        // Deprecated
         bool isToolBarVisible() const;
         void setToolBarVisible(bool visible);
+        void clearToolBarVisible();
 
+        // Deprecated
         Qt::ToolBarArea toolBarArea() const;
         void setToolBarArea(Qt::ToolBarArea area);
+        void clearToolBarArea();
 
         bool isSideBarVisible() const;
         void setSideBarVisible(bool visible);
