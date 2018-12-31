@@ -834,6 +834,7 @@ namespace tremotesf
     void MainWindow::setupToolBar()
     {
         mToolBar = new QToolBar(this);
+        mToolBar->setObjectName(QLatin1String("toolBar"));
         mToolBar->setContextMenuPolicy(Qt::CustomContextMenu);
         addToolBar(mToolBar);
 
