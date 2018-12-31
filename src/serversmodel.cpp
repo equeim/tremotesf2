@@ -141,61 +141,76 @@ namespace tremotesf
                                  int timeout,
                                  const QVariantMap& mountedDirectories)
     {
-        if (!oldName.isEmpty() && name != oldName) {
-            const int row = serverRow(oldName);
+        const int oldRow = serverRow(oldName);
+        int row = serverRow(name);
+
+        Server *const server = [=]() -> Server* {
+            if (oldRow != -1) {
+                return &mServers[oldRow];
+            }
             if (row != -1) {
+                return &mServers[row];
+            }
+            return nullptr;
+        }();
+
+        if (server) {
+            // Overwrite an existing server
+
+            server->name = name;
+            server->address = address;
+            server->port = port;
+            server->apiPath = apiPath;
+            server->https = https;
+            server->selfSignedCertificateEnabled = selfSignedCertificateEnabled;
+            server->selfSignedCertificate = selfSignedCertificate;
+            server->clientCertificateEnabled = clientCertificateEnabled;
+            server->clientCertificate = clientCertificate;
+            server->authentication = authentication;
+            server->username = username;
+            server->password = password;
+            server->updateInterval = updateInterval;
+            server->backgroundUpdateInterval = backgroundUpdateInterval;
+            server->timeout = timeout;
+            server->mountedDirectories = mountedDirectories;
+            const QModelIndex modelIndex(index(oldRow));
+            emit dataChanged(modelIndex, modelIndex);
+
+            if (oldRow != -1 && row != -1 && row != oldRow) {
+                // Remove overwritten server if we overwrite when renaming
                 beginRemoveRows(QModelIndex(), row, row);
                 mServers.erase(mServers.begin() + row);
                 endRemoveRows();
             }
-        }
 
-        int row = serverRow(name);
-        if (row == -1) {
-            row = mServers.size();
-            beginInsertRows(QModelIndex(), row, row);
-            if (row == 0) {
-                mCurrentServer = name;
-            }
-            mServers.push_back({name,
-                                address,
-                                port,
-                                apiPath,
-                                https,
-                                selfSignedCertificateEnabled,
-                                selfSignedCertificate,
-                                clientCertificateEnabled,
-                                clientCertificate,
-                                authentication,
-                                username,
-                                password,
-                                updateInterval,
-                                backgroundUpdateInterval,
-                                timeout,
-                                mountedDirectories});
-            endInsertRows();
-        } else {
-            Server& server = mServers[row];
-            server.address = address;
-            server.port = port;
-            server.apiPath = apiPath;
-            server.https = https;
-            server.selfSignedCertificateEnabled = selfSignedCertificateEnabled;
-            server.selfSignedCertificate = selfSignedCertificate;
-            server.clientCertificateEnabled = clientCertificateEnabled;
-            server.clientCertificate = clientCertificate;
-            server.authentication = authentication;
-            server.username = username;
-            server.password = password;
-            server.updateInterval = updateInterval;
-            server.backgroundUpdateInterval = backgroundUpdateInterval;
-            server.timeout = timeout;
-            server.mountedDirectories = mountedDirectories;
             if (oldName == mCurrentServer) {
                 mCurrentServer = name;
             }
-            const QModelIndex modelIndex(index(row));
-            emit dataChanged(modelIndex, modelIndex);
+        } else {
+            row = mServers.size();
+            beginInsertRows(QModelIndex(), row, row);
+            mServers.emplace_back(name,
+                                  address,
+                                  port,
+                                  apiPath,
+                                  https,
+                                  selfSignedCertificateEnabled,
+                                  selfSignedCertificate,
+                                  clientCertificateEnabled,
+                                  clientCertificate,
+                                  authentication,
+                                  username,
+                                  password,
+                                  updateInterval,
+                                  backgroundUpdateInterval,
+                                  timeout,
+                                  mountedDirectories,
+                                  QVariant(),
+                                  QVariant());
+            endInsertRows();
+            if (row == 0) {
+                mCurrentServer = name;
+            }
         }
     }
 

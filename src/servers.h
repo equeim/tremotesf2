@@ -30,36 +30,63 @@ class QSettings;
 
 namespace tremotesf
 {
-    struct Server
+    struct Server : libtremotesf::Server
     {
-        QString name;
-        QString address;
-        int port;
-        QString apiPath;
-        bool https;
-        bool selfSignedCertificateEnabled;
-        QByteArray selfSignedCertificate;
-        bool clientCertificateEnabled;
-        QByteArray clientCertificate;
-        bool authentication;
-        QString username;
-        QString password;
-        int updateInterval;
-        int backgroundUpdateInterval;
-        int timeout;
-        QVariantMap mountedDirectories;
-    };
+        Server() = default;
 
-    struct LastTorrentsTorrent
-    {
-        QString hashString;
-        bool finished;
+        Server(const QString& name,
+               const QString& address,
+               int port,
+               const QString& apiPath,
+               bool https,
+               bool selfSignedCertificateEnabled,
+               const QByteArray& selfSignedCertificate,
+               bool clientCertificateEnabled,
+               const QByteArray& clientCertificate,
+               bool authentication,
+               const QString& username,
+               const QString& password,
+               int updateInterval,
+               int backgroundUpdateInterval,
+               int timeout,
+               const QVariantMap& mountedDirectories,
+               const QVariant& lastTorrents,
+               const QVariant& addTorrentDialogDirectories);
+
+        Server(QString&& name,
+               QString&& address,
+               int port,
+               QString&& apiPath,
+               bool https,
+               bool selfSignedCertificateEnabled,
+               QByteArray&& selfSignedCertificate,
+               bool clientCertificateEnabled,
+               QByteArray&& clientCertificate,
+               bool authentication,
+               QString&& username,
+               QString&& password,
+               int updateInterval,
+               int backgroundUpdateInterval,
+               int timeout,
+               QVariantMap&& mountedDirectories,
+               QVariant&& lastTorrents,
+               QVariant&& addTorrentDialogDirectories);
+
+        QVariantMap mountedDirectories;
+        QVariant lastTorrents;
+        QVariant addTorrentDialogDirectories;
     };
 
     struct LastTorrents
     {
+        struct Torrent
+        {
+            QString hashString;
+            bool finished;
+        };
+
         bool saved = false;
-        std::vector<LastTorrentsTorrent> torrents;
+        std::vector<Torrent> torrents;
     };
 
     class Servers : public QObject
@@ -79,7 +106,7 @@ namespace tremotesf
         bool hasServers() const;
         std::vector<Server> servers();
 
-        libtremotesf::Server currentServer();
+        Server currentServer() const;
         QString currentServerName() const;
         QString currentServerAddress();
         Q_INVOKABLE void setCurrentServer(const QString& name);
@@ -120,7 +147,7 @@ namespace tremotesf
 
     private:
         explicit Servers(QObject* parent = nullptr);
-        Server getServer(const QString& name);
+        Server getServer(const QString& name) const;
         void updateMountedDirectories(const QVariantMap& directories);
         void updateMountedDirectories();
 

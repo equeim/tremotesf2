@@ -124,6 +124,86 @@ namespace tremotesf
         }
     }
 
+    Server::Server(const QString& name,
+                   const QString& address,
+                   int port,
+                   const QString& apiPath,
+                   bool https,
+                   bool selfSignedCertificateEnabled,
+                   const QByteArray& selfSignedCertificate,
+                   bool clientCertificateEnabled,
+                   const QByteArray& clientCertificate,
+                   bool authentication,
+                   const QString& username,
+                   const QString& password,
+                   int updateInterval,
+                   int backgroundUpdateInterval,
+                   int timeout,
+                   const QVariantMap& mountedDirectories,
+                   const QVariant& lastTorrents,
+                   const QVariant& addTorrentDialogDirectories)
+        : libtremotesf::Server{name,
+                               address,
+                               port,
+                               apiPath,
+                               https,
+                               selfSignedCertificateEnabled,
+                               selfSignedCertificate,
+                               clientCertificateEnabled,
+                               clientCertificate,
+                               authentication,
+                               username,
+                               password,
+                               updateInterval,
+                               backgroundUpdateInterval,
+                               timeout},
+          mountedDirectories(mountedDirectories),
+          lastTorrents(lastTorrents),
+          addTorrentDialogDirectories(addTorrentDialogDirectories)
+    {
+
+    }
+
+    Server::Server(QString&& name,
+                   QString&& address,
+                   int port,
+                   QString&& apiPath,
+                   bool https,
+                   bool selfSignedCertificateEnabled,
+                   QByteArray&& selfSignedCertificate,
+                   bool clientCertificateEnabled,
+                   QByteArray&& clientCertificate,
+                   bool authentication,
+                   QString&& username,
+                   QString&& password,
+                   int updateInterval,
+                   int backgroundUpdateInterval,
+                   int timeout,
+                   QVariantMap&& mountedDirectories,
+                   QVariant&& lastTorrents,
+                   QVariant&& addTorrentDialogDirectories)
+        : libtremotesf::Server{std::move(name),
+                               std::move(address),
+                               port,
+                               std::move(apiPath),
+                               https,
+                               selfSignedCertificateEnabled,
+                               std::move(selfSignedCertificate),
+                               clientCertificateEnabled,
+                               std::move(clientCertificate),
+                               authentication,
+                               std::move(username),
+                               std::move(password),
+                               updateInterval,
+                               backgroundUpdateInterval,
+                               timeout},
+          mountedDirectories(std::move(mountedDirectories)),
+          lastTorrents(std::move(lastTorrents)),
+          addTorrentDialogDirectories(std::move(addTorrentDialogDirectories))
+    {
+
+    }
+
     Servers* Servers::instance()
     {
         if (!instancePointer) {
@@ -156,24 +236,9 @@ namespace tremotesf
         return list;
     }
 
-    libtremotesf::Server Servers::currentServer()
+    Server Servers::currentServer() const
     {
-        Server server(getServer(currentServerName()));
-        return {std::move(server.name),
-                std::move(server.address),
-                server.port,
-                std::move(server.apiPath),
-                server.https,
-                server.selfSignedCertificateEnabled,
-                std::move(server.selfSignedCertificate),
-                server.clientCertificateEnabled,
-                std::move(server.clientCertificate),
-                server.authentication,
-                std::move(server.username),
-                std::move(server.password),
-                server.updateInterval,
-                server.backgroundUpdateInterval,
-                server.timeout};
+        return getServer(currentServerName());
     }
 
     QString Servers::currentServerName() const
@@ -394,6 +459,8 @@ namespace tremotesf
             mSettings->setValue(backgroundUpdateIntervalKey, server.backgroundUpdateInterval);
             mSettings->setValue(timeoutKey, server.timeout);
             mSettings->setValue(mountedDirectoriesKey, server.mountedDirectories);
+            mSettings->setValue(lastTorrentsKey, server.lastTorrents);
+            mSettings->setValue(addTorrentDialogDirectoriesKey, server.addTorrentDialogDirectories);
             mSettings->endGroup();
         }
         updateMountedDirectories();
@@ -447,26 +514,27 @@ namespace tremotesf
         updateMountedDirectories();
     }
 
-    Server Servers::getServer(const QString& name)
+    Server Servers::getServer(const QString& name) const
     {
         mSettings->beginGroup(name);
-        const Server server{
-            mSettings->group(),
-            mSettings->value(addressKey).toString(),
-            mSettings->value(portKey).toInt(),
-            mSettings->value(apiPathKey).toString(),
-            mSettings->value(httpsKey, false).toBool(),
-            mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
-            mSettings->value(selfSignedCertificateKey).toByteArray(),
-            mSettings->value(clientCertificateEnabledKey, false).toBool(),
-            mSettings->value(clientCertificateKey).toByteArray(),
-            mSettings->value(authenticationKey, false).toBool(),
-            mSettings->value(usernameKey).toString(),
-            mSettings->value(passwordKey).toString(),
-            mSettings->value(updateIntervalKey, 5).toInt(),
-            mSettings->value(backgroundUpdateIntervalKey, 30).toInt(),
-            mSettings->value(timeoutKey, 30).toInt(),
-            mSettings->value(mountedDirectoriesKey).toMap()};
+        const Server server(mSettings->group(),
+                            mSettings->value(addressKey).toString(),
+                            mSettings->value(portKey).toInt(),
+                            mSettings->value(apiPathKey).toString(),
+                            mSettings->value(httpsKey, false).toBool(),
+                            mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
+                            mSettings->value(selfSignedCertificateKey).toByteArray(),
+                            mSettings->value(clientCertificateEnabledKey, false).toBool(),
+                            mSettings->value(clientCertificateKey).toByteArray(),
+                            mSettings->value(authenticationKey, false).toBool(),
+                            mSettings->value(usernameKey).toString(),
+                            mSettings->value(passwordKey).toString(),
+                            mSettings->value(updateIntervalKey, 5).toInt(),
+                            mSettings->value(backgroundUpdateIntervalKey, 30).toInt(),
+                            mSettings->value(timeoutKey, 30).toInt(),
+                            mSettings->value(mountedDirectoriesKey).toMap(),
+                            mSettings->value(lastTorrentsKey),
+                            mSettings->value(addTorrentDialogDirectoriesKey));
         mSettings->endGroup();
         return server;
     }

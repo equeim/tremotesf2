@@ -51,7 +51,7 @@ namespace tremotesf
                             const QString hashString(torrent->hashString());
                             const auto found = std::find_if(lastTorrents.torrents.cbegin(),
                                                             lastTorrents.torrents.cend(),
-                                                            [&hashString](const LastTorrentsTorrent& torrent) {
+                                                            [&hashString](const LastTorrents::Torrent& torrent) {
                                 return torrent.hashString == hashString;
                             });
                             if (found == lastTorrents.torrents.cend()) {
