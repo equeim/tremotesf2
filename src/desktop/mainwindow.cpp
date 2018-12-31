@@ -120,6 +120,12 @@ namespace tremotesf
                 });
 
                 layout->addWidget(dialogButtonBox);
+
+                QObject::connect(rpc, &Rpc::connectedChanged, this, [=]() {
+                    if (!rpc->isConnected()) {
+                        reject();
+                    }
+                });
             }
 
             QSize sizeHint() const override
