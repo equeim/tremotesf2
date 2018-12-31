@@ -56,6 +56,7 @@ namespace tremotesf
         const QString backgroundUpdateIntervalKey(QLatin1String("backgroundUpdateInterval"));
         const QString timeoutKey(QLatin1String("timeout"));
         const QString mountedDirectoriesKey(QLatin1String("mountedDirectories"));
+        const QString addTorrentDialogDirectoriesKey(QLatin1String("addTorrentDialogDirectories"));
         const QString lastTorrentsKey(QLatin1String("lastTorrents"));
 
         const QString localCertificateKey(QLatin1String("localCertificate"));
@@ -279,6 +280,22 @@ namespace tremotesf
         mSettings->endGroup();
     }
 
+    QStringList Servers::currentServerAddTorrentDialogDirectories() const
+    {
+        QStringList directories;
+        mSettings->beginGroup(currentServerName());
+        directories = mSettings->value(addTorrentDialogDirectoriesKey).toStringList();
+        mSettings->endGroup();
+        return directories;
+    }
+
+    void Servers::setCurrentServerAddTorrentDialogDirectories(const QStringList& directories)
+    {
+        mSettings->beginGroup(currentServerName());
+        mSettings->setValue(addTorrentDialogDirectoriesKey, directories);
+        mSettings->endGroup();
+    }
+
     void Servers::setServer(const QString& oldName,
                             const QString& name,
                             const QString& address,
@@ -308,7 +325,9 @@ namespace tremotesf
             currentChanged = true;
         }
 
+        QStringList addTorrentDialogDirectories;
         if (!oldName.isEmpty() && name != oldName) {
+            addTorrentDialogDirectories = mSettings->value(oldName % QLatin1Char('/') % addTorrentDialogDirectoriesKey).toStringList();
             mSettings->remove(oldName);
         }
 
@@ -328,6 +347,7 @@ namespace tremotesf
         mSettings->setValue(backgroundUpdateIntervalKey, backgroundUpdateInterval);
         mSettings->setValue(timeoutKey, timeout);
         mSettings->setValue(mountedDirectoriesKey, mountedDirectories);
+        mSettings->setValue(addTorrentDialogDirectoriesKey, addTorrentDialogDirectories);
         mSettings->endGroup();
 
         if (currentChanged) {

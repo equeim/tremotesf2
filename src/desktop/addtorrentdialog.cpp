@@ -20,6 +20,7 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCollator>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -30,6 +31,7 @@
 #include <QVBoxLayout>
 
 #include <KColumnResizer>
+#include <KMessageWidget>
 
 #include "../libtremotesf/serversettings.h"
 #include "../localtorrentfilesmodel.h"
@@ -49,8 +51,8 @@ namespace tremotesf
                                        QWidget* parent)
         : QDialog(parent),
           mRpc(rpc),
+          mUrl(filePath),
           mLocalFile(true),
-          mFilePath(filePath),
           mParser(parser),
           mFilesModel(filesModel)
     {
@@ -62,8 +64,8 @@ namespace tremotesf
     AddTorrentDialog::AddTorrentDialog(Rpc* rpc, const QString& url, QWidget* parent)
         : QDialog(parent),
           mRpc(rpc),
-          mLocalFile(false),
-          mUrl(url)
+          mUrl(url),
+          mLocalFile(false)
     {
         setupUi();
     }
@@ -80,7 +82,7 @@ namespace tremotesf
     {
         if (mLocalFile) {
             mRpc->addTorrentFile(mParser->fileData(),
-                                 mDownloadDirectoryWidget->lineEdit()->text(),
+                                 mDownloadDirectoryWidget->text(),
                                  mFilesModel->wantedFiles(),
                                  mFilesModel->unwantedFiles(),
                                  mFilesModel->highPriorityFiles(),
@@ -90,10 +92,13 @@ namespace tremotesf
                                  mStartTorrentCheckBox->isChecked());
         } else {
             mRpc->addTorrentLink(mTorrentLinkLineEdit->text(),
-                                 mDownloadDirectoryWidget->lineEdit()->text(),
+                                 mDownloadDirectoryWidget->text(),
                                  1 - mPriorityComboBox->currentIndex(),
                                  mStartTorrentCheckBox->isChecked());
         }
+
+        Servers::instance()->setCurrentServerAddTorrentDialogDirectories(mDownloadDirectoryWidget->textComboBoxItems());
+
         QDialog::accept();
     }
 
@@ -108,65 +113,74 @@ namespace tremotesf
         auto layout = new QVBoxLayout(this);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
+        auto messageWidget = new KMessageWidget(this);
+        messageWidget->setCloseButtonVisible(false);
+        messageWidget->setMessageType(KMessageWidget::Warning);
+        messageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
+        messageWidget->hide();
+        layout->addWidget(messageWidget);
+
         auto firstFormWidget = new QWidget(this);
         firstFormWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         auto firstFormLayout = new QFormLayout(firstFormWidget);
         firstFormLayout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(firstFormWidget);
 
+        mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
         if (mLocalFile) {
-            auto torrentFileLineEdit = new QLineEdit(mFilePath, this);
-            torrentFileLineEdit->setReadOnly(true);
-            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), torrentFileLineEdit);
+            mTorrentLinkLineEdit->setReadOnly(true);
+            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
         } else {
-            mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
             QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
         }
 
         mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(mRpc->serverSettings()->downloadDirectory(),
-                                                                      mRpc->isLocal(),
+                                                                      mRpc,
                                                                       this);
-        QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
-        mFreeSpaceLabel = new QLabel(this);
+        auto freeSpaceLabel = new QLabel(this);
         if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
-            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=](const QString& text) {
+            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
                 mRpc->getFreeSpaceForPath(text.trimmed());
             });
-            QObject::connect(mRpc, &Rpc::gotFreeSpaceForPath, this, [=](const QString&, bool success, long long bytes) {
-                if (success) {
-                    mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
-                } else {
-                    mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
+            QObject::connect(mRpc, &Rpc::gotFreeSpaceForPath, this, [=](const QString& path, bool success, long long bytes) {
+                if (path == mDownloadDirectoryWidget->text().trimmed()) {
+                    if (success) {
+                        freeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
+                    } else {
+                        freeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
+                    }
                 }
             });
-            firstFormLayout->addRow(nullptr, mFreeSpaceLabel);
-            mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->lineEdit()->text().trimmed());
+            firstFormLayout->addRow(nullptr, freeSpaceLabel);
+            mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->text().trimmed());
         } else {
-            QObject::connect(mDownloadDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=](const QString& text) {
+            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
                 const QString path(text.trimmed());
                 if (path == mRpc->serverSettings()->downloadDirectory()) {
                     mRpc->getDownloadDirFreeSpace();
                 } else {
-                    mFreeSpaceLabel->hide();
-                    mFreeSpaceLabel->clear();
+                    freeSpaceLabel->hide();
+                    freeSpaceLabel->clear();
                 }
             });
 
             QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](long long bytes) {
-                if (mDownloadDirectoryWidget->lineEdit()->text().trimmed() == mRpc->serverSettings()->downloadDirectory()) {
-                    mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
-                    mFreeSpaceLabel->show();
+                if (mDownloadDirectoryWidget->text().trimmed() == mRpc->serverSettings()->downloadDirectory()) {
+                    freeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
+                    freeSpaceLabel->show();
                 }
             });
             mRpc->getDownloadDirFreeSpace();
         }
-        firstFormLayout->addRow(nullptr, mFreeSpaceLabel);
+        firstFormLayout->addRow(nullptr, freeSpaceLabel);
 
+        TorrentFilesView* torrentFilesView = nullptr;
         if (mLocalFile) {
-            layout->addWidget(new TorrentFilesView(mFilesModel, mRpc), 1);
+            torrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
+            layout->addWidget(torrentFilesView, 1);
         }
 
         mPriorityComboBox = new QComboBox(this);
@@ -179,8 +193,9 @@ namespace tremotesf
                                      qApp->translate("tremotesf", "Low")});
         mPriorityComboBox->setCurrentIndex(1);
 
+        QFormLayout* secondFormLayout = nullptr;
         if (mLocalFile) {
-            auto secondFormLayout = new QFormLayout();
+            secondFormLayout = new QFormLayout();
             secondFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
             layout->addLayout(secondFormLayout);
 
@@ -200,16 +215,52 @@ namespace tremotesf
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &AddTorrentDialog::reject);
         layout->addWidget(mDialogButtonBox);
 
-        canAcceptUpdate();
+        const auto updateUi = [=]() {
+            bool enabled = true;
+            if (mRpc->isConnected()) {
+                mDownloadDirectoryWidget->updateComboBox(mRpc->serverSettings()->downloadDirectory());
+            } else {
+                enabled = false;
+            }
+
+            for (int i = 0, max = firstFormLayout->count(); i < max; ++i) {
+                firstFormLayout->itemAt(i)->widget()->setEnabled(enabled);
+            }
+
+            if (torrentFilesView) {
+                torrentFilesView->setEnabled(enabled);
+            }
+
+            if (secondFormLayout) {
+                for (int i = 0, max = secondFormLayout->count(); i < max; ++i) {
+                    secondFormLayout->itemAt(i)->widget()->setEnabled(enabled);
+                }
+            }
+
+            mStartTorrentCheckBox->setEnabled(enabled);
+
+            if (enabled) {
+                messageWidget->animatedHide();
+            } else {
+                messageWidget->animatedShow();
+            }
+
+            canAcceptUpdate();
+        };
+
+        QObject::connect(mRpc, &Rpc::connectedChanged, this, updateUi);
+        QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
+
+        updateUi();
     }
 
     void AddTorrentDialog::canAcceptUpdate()
     {
-        bool can = true;
+        bool can = mRpc->isConnected();
         if (!mLocalFile && mTorrentLinkLineEdit->text().isEmpty()) {
             can = false;
         }
-        if (mDownloadDirectoryWidget->lineEdit()->text().isEmpty()) {
+        if (mDownloadDirectoryWidget->text().isEmpty()) {
             can = false;
         }
         mDialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(can);

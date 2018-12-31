@@ -93,6 +93,9 @@ namespace tremotesf
         LastTorrents currentServerLastTorrents() const;
         Q_INVOKABLE void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
 
+        QStringList currentServerAddTorrentDialogDirectories() const;
+        void setCurrentServerAddTorrentDialogDirectories(const QStringList& directories);
+
         Q_INVOKABLE void setServer(const QString& oldName,
                                    const QString& name,
                                    const QString& address,

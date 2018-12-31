@@ -35,7 +35,6 @@
 #include <QKeySequence>
 #include <QLabel>
 #include <QLayout>
-#include <QLineEdit>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -87,10 +86,10 @@ namespace tremotesf
         {
         public:
             explicit SetLocationDialog(const QString& downloadDirectory,
-                                       bool serverIsLocal,
+                                       Rpc* rpc,
                                        QWidget* parent = nullptr)
                 : QDialog(parent),
-                  mDirectoryWidget(new RemoteDirectorySelectionWidget(downloadDirectory, serverIsLocal, this)),
+                  mDirectoryWidget(new RemoteDirectorySelectionWidget(downloadDirectory, rpc, this)),
                   mMoveFilesCheckBox(new QCheckBox(qApp->translate("tremotesf", "Move files from current directory"), this))
             {
                 setWindowTitle(qApp->translate("tremotesf", "Set Location"));
@@ -103,16 +102,20 @@ namespace tremotesf
                 layout->addWidget(label);
 
                 mDirectoryWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+                mDirectoryWidget->updateComboBox(downloadDirectory);
                 layout->addWidget(mDirectoryWidget);
 
                 mMoveFilesCheckBox->setChecked(true);
                 layout->addWidget(mMoveFilesCheckBox);
 
                 auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-                QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &SetLocationDialog::accept);
+                QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, [=]() {
+                    Servers::instance()->setCurrentServerAddTorrentDialogDirectories(mDirectoryWidget->textComboBoxItems());
+                    accept();
+                });
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
 
-                QObject::connect(mDirectoryWidget->lineEdit(), &QLineEdit::textChanged, this, [=](const QString& text) {
+                QObject::connect(mDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
                     dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(!text.isEmpty());
                 });
 
@@ -126,7 +129,7 @@ namespace tremotesf
 
             QString downloadDirectory() const
             {
-                return mDirectoryWidget->lineEdit()->text();
+                return mDirectoryWidget->text();
             }
 
             bool moveFiles() const
@@ -135,7 +138,7 @@ namespace tremotesf
             }
 
         private:
-            FileSelectionWidget *const mDirectoryWidget;
+            RemoteDirectorySelectionWidget *const mDirectoryWidget;
             QCheckBox *const mMoveFilesCheckBox;
         };
     }
@@ -412,7 +415,7 @@ namespace tremotesf
             if (mTorrentsView->selectionModel()->hasSelection()) {
                 QModelIndexList indexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows()));
                 auto dialog = new SetLocationDialog(mTorrentsModel->torrentAtIndex(indexes.first())->downloadDirectory(),
-                                                    mRpc->isLocal(),
+                                                    mRpc,
                                                     this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 QObject::connect(dialog, &SetLocationDialog::accepted, this, [=]() {

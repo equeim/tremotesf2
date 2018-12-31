@@ -21,6 +21,7 @@
 
 #include <QWidget>
 
+class QComboBox;
 class QLineEdit;
 class QPushButton;
 
@@ -32,21 +33,26 @@ namespace tremotesf
     public:
         explicit FileSelectionWidget(bool directory,
                                      const QString& filter,
-                                     bool connectLineEditWithDialog,
+                                     bool connectTextWithFileDialog,
+                                     bool comboBox,
                                      QWidget* parent = nullptr);
 
-        QLineEdit* lineEdit() const;
-        void setLineEditText(const QString& text);
+        QComboBox* textComboBox() const;
+        QStringList textComboBoxItems() const;
+        QString text() const;
+        void setText(const QString& text);
         QPushButton* selectionButton() const;
         void setFileDialogDirectory(const QString& directory);
 
     private:
-        QLineEdit* mLineEdit;
+        QLineEdit* mTextLineEdit = nullptr;
+        QComboBox* mTextComboBox = nullptr;
         QPushButton* mSelectionButton;
-        bool mConnectLineEditWithDialog;
+        bool mConnectTextWithFileDialog;
         QString mFileDialogDirectory;
 
     signals:
+        void textChanged(const QString& text);
         void fileDialogAccepted(const QString& filePath);
     };
 }

@@ -52,18 +52,14 @@ namespace tremotesf
         void canAcceptUpdate();
 
         Rpc* mRpc;
-
+        QString mUrl;
         bool mLocalFile;
 
-        QString mFilePath;
         TorrentFileParser* mParser = nullptr;
         LocalTorrentFilesModel* mFilesModel = nullptr;
 
-        QString mUrl;
         QLineEdit* mTorrentLinkLineEdit = nullptr;
-
         RemoteDirectorySelectionWidget* mDownloadDirectoryWidget = nullptr;
-        QLabel* mFreeSpaceLabel = nullptr;
         QComboBox* mPriorityComboBox = nullptr;
         QCheckBox* mStartTorrentCheckBox = nullptr;
 

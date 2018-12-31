@@ -23,10 +23,16 @@
 
 namespace tremotesf
 {
+    class Rpc;
+
     class RemoteDirectorySelectionWidget : public FileSelectionWidget
     {
     public:
-        RemoteDirectorySelectionWidget(const QString& directory, bool serverIsLocal, QWidget* parent = nullptr);
+        RemoteDirectorySelectionWidget(const QString& directory, Rpc* rpc, QWidget* parent = nullptr);
+        void updateComboBox(const QString& setAsCurrent);
+
+    private:
+        Rpc* mRpc;
     };
 }
 

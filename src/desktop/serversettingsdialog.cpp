@@ -33,7 +33,6 @@
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QTimeEdit>
 #include <QVBoxLayout>
@@ -93,12 +92,12 @@ namespace tremotesf
 
         settings->setSaveOnSet(false);
 
-        settings->setDownloadDirectory(mDownloadDirectoryWidget->lineEdit()->text());
+        settings->setDownloadDirectory(mDownloadDirectoryWidget->text());
         settings->setStartAddedTorrents(mStartAddedTorrentsCheckBox->isChecked());
         //settings->setTrashTorrentFiles(mTrashTorrentFilesCheckBox->isChecked());
         settings->setRenameIncompleteFiles(mIncompleteFilesCheckBox->isChecked());
         settings->setIncompleteDirectoryEnabled(mIncompleteDirectoryCheckBox->isChecked());
-        settings->setIncompleteDirectory(mIncompleteDirectoryWidget->lineEdit()->text());
+        settings->setIncompleteDirectory(mIncompleteDirectoryWidget->text());
 
         settings->setRatioLimited(mRatioLimitCheckBox->isChecked());
         settings->setRatioLimit(mRatioLimitSpinBox->value());
@@ -166,7 +165,7 @@ namespace tremotesf
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
 
-        mDownloadDirectoryWidget = new FileSelectionWidget(true, QString(), true, this);
+        mDownloadDirectoryWidget = new FileSelectionWidget(true, QString(), true, false, this);
         downloadingPageLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         mStartAddedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start added torrents"), this);
@@ -183,7 +182,7 @@ namespace tremotesf
 
         auto incompleteDirectoryWidgetLayout = new QHBoxLayout();
         downloadingPageLayout->addRow(incompleteDirectoryWidgetLayout);
-        mIncompleteDirectoryWidget = new FileSelectionWidget(true, QString(), true, this);
+        mIncompleteDirectoryWidget = new FileSelectionWidget(true, QString(), true, false, this);
         mIncompleteDirectoryWidget->setEnabled(false);
         QObject::connect(mIncompleteDirectoryCheckBox, &QCheckBox::toggled, mIncompleteDirectoryWidget, &FileSelectionWidget::setEnabled);
         //downloadingPageLayout->addRow(mIncompleteDirectoryCheckBox, mIncompleteDirectoryWidget);
@@ -466,13 +465,13 @@ namespace tremotesf
     {
         const libtremotesf::ServerSettings* settings = mRpc->serverSettings();
 
-        mDownloadDirectoryWidget->setLineEditText(settings->downloadDirectory());
+        mDownloadDirectoryWidget->setText(settings->downloadDirectory());
         mDownloadDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
         mStartAddedTorrentsCheckBox->setChecked(settings->startAddedTorrents());
         //mTrashTorrentFilesCheckBox->setChecked(settings->trashTorrentFiles());
         mIncompleteFilesCheckBox->setChecked(settings->renameIncompleteFiles());
         mIncompleteDirectoryCheckBox->setChecked(settings->isIncompleteDirectoryEnabled());
-        mIncompleteDirectoryWidget->setLineEditText(settings->incompleteDirectory());
+        mIncompleteDirectoryWidget->setText(settings->incompleteDirectory());
         mIncompleteDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
 
         mRatioLimitCheckBox->setChecked(settings->isRatioLimited());

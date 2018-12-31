@@ -18,32 +18,85 @@
 
 #include "fileselectionwidget.h"
 
+#include <QAbstractItemView>
+#include <QComboBox>
 #include <QCoreApplication>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QPushButton>
 
 namespace tremotesf
 {
+    namespace
+    {
+        class ComboBoxViewEventFilter : public QObject
+        {
+        public:
+            explicit ComboBoxViewEventFilter(QComboBox* comboBox)
+                : mComboBox(comboBox)
+            {
+
+            }
+
+        protected:
+            bool eventFilter(QObject* watched, QEvent* event) override
+            {
+                if (event->type() == QEvent::KeyPress &&
+                        static_cast<QKeyEvent*>(event)->matches(QKeySequence::Delete)) {
+                    const QModelIndex index(static_cast<QAbstractItemView*>(watched)->currentIndex());
+                    if (index.isValid()) {
+                        mComboBox->removeItem(index.row());
+                        return true;
+                    }
+                }
+                return QObject::eventFilter(watched, event);
+            }
+
+        private:
+            QComboBox* mComboBox;
+        };
+    }
+
     FileSelectionWidget::FileSelectionWidget(bool directory,
                                              const QString& filter,
-                                             bool connectLineEditWithDialog,
+                                             bool connectTextWithFileDialog,
+                                             bool comboBox,
                                              QWidget* parent)
         : QWidget(parent),
-          mLineEdit(new QLineEdit(this)),
           mSelectionButton(new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this)),
-          mConnectLineEditWithDialog(connectLineEditWithDialog)
+          mConnectTextWithFileDialog(connectTextWithFileDialog)
     {
         auto layout = new QHBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(mLineEdit);
+
+        if (comboBox) {
+            mTextComboBox = new QComboBox(this);
+            mTextComboBox->setEditable(true);
+            mTextComboBox->view()->installEventFilter(new ComboBoxViewEventFilter(mTextComboBox));
+            layout->addWidget(mTextComboBox, 1);
+        } else {
+            mTextLineEdit = new QLineEdit(this);
+            layout->addWidget(mTextLineEdit, 1);
+        }
+
         layout->addWidget(mSelectionButton);
 
-        if (connectLineEditWithDialog) {
-            QObject::connect(mLineEdit, &QLineEdit::textEdited, this, [=](const QString& text) {
-                mFileDialogDirectory = text;
+        if (comboBox) {
+            QObject::connect(mTextComboBox, &QComboBox::currentTextChanged, this, [=](const QString& text) {
+                if (connectTextWithFileDialog) {
+                    mFileDialogDirectory = text;
+                }
+                emit textChanged(text);
+            });
+        } else {
+            QObject::connect(mTextLineEdit, &QLineEdit::textEdited, this, [=](const QString& text) {
+                if (connectTextWithFileDialog) {
+                    mFileDialogDirectory = text;
+                }
+                emit textChanged(text);
             });
         }
 
@@ -62,12 +115,16 @@ namespace tremotesf
             QObject::connect(dialog, &QFileDialog::accepted, this, [=]() {
                 const QString filePath(dialog->selectedFiles().constFirst());
 
-                if (directory && connectLineEditWithDialog) {
+                if (directory && connectTextWithFileDialog) {
                     mFileDialogDirectory = filePath;
                 }
 
-                if (connectLineEditWithDialog) {
-                    mLineEdit->setText(filePath);
+                if (connectTextWithFileDialog) {
+                    if (comboBox) {
+                        mTextComboBox->setCurrentText(filePath);
+                    } else {
+                        mTextLineEdit->setText(filePath);
+                    }
                 }
 
                 emit fileDialogAccepted(filePath);
@@ -81,15 +138,40 @@ namespace tremotesf
         });
     }
 
-    QLineEdit* FileSelectionWidget::lineEdit() const
+    QComboBox* FileSelectionWidget::textComboBox() const
     {
-        return mLineEdit;
+        return mTextComboBox;
     }
 
-    void FileSelectionWidget::setLineEditText(const QString& text)
+    QStringList FileSelectionWidget::textComboBoxItems() const
     {
-        mLineEdit->setText(text);
-        if (mConnectLineEditWithDialog) {
+        QStringList items;
+        items.reserve(mTextComboBox->count() + 1);
+        for (int i = 0, max = mTextComboBox->count(); i < max; ++i) {
+            items.push_back(mTextComboBox->itemText(i));
+        }
+        if (!items.contains(mTextComboBox->currentText())) {
+            items.push_back(mTextComboBox->currentText());
+        }
+        return items;
+    }
+
+    QString FileSelectionWidget::text() const
+    {
+        if (mTextLineEdit) {
+            return mTextLineEdit->text();
+        }
+        return mTextComboBox->currentText();
+    }
+
+    void FileSelectionWidget::setText(const QString& text)
+    {
+        if (mTextLineEdit) {
+            mTextLineEdit->setText(text);
+        } else {
+            mTextComboBox->setCurrentText(text);
+        }
+        if (mConnectTextWithFileDialog) {
             mFileDialogDirectory = text;
         }
     }

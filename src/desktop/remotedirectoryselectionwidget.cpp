@@ -18,29 +18,33 @@
 
 #include "remotedirectoryselectionwidget.h"
 
+#include "libtremotesf/serversettings.h"
+#include "libtremotesf/torrent.h"
+#include "../trpc.h"
 #include "servers.h"
 
+#include <QCollator>
+#include <QComboBox>
 #include <QCoreApplication>
-#include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
 
 namespace tremotesf
 {
-    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& directory, bool serverIsLocal, QWidget* parent)
-        : FileSelectionWidget(true, QString(), serverIsLocal, parent)
+    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& directory, Rpc* rpc, QWidget* parent)
+        : FileSelectionWidget(true, QString(), rpc->isLocal(), true, parent),
+          mRpc(rpc)
     {
         const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
-        selectionButton()->setEnabled(serverIsLocal || mounted);
-        setLineEditText(directory);
-        if (mounted && !serverIsLocal) {
-            const auto onTextEdited = [=](const QString& text) {
+        selectionButton()->setEnabled(rpc || mounted);
+        setText(directory);
+        if (mounted && !rpc) {
+            QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
                 const QString directory(Servers::instance()->fromRemoteToLocalDirectory(text));
                 if (!directory.isEmpty()) {
                     setFileDialogDirectory(directory);
                 }
-            };
-            QObject::connect(lineEdit(), &QLineEdit::textEdited, this, onTextEdited);
+            });
             const QString localDownloadDirectory(Servers::instance()->fromRemoteToLocalDirectory(directory));
             if (localDownloadDirectory.isEmpty()) {
                 setFileDialogDirectory(Servers::instance()->firstLocalDirectory());
@@ -53,10 +57,38 @@ namespace tremotesf
                 if (directory.isEmpty()) {
                     QMessageBox::warning(this, qApp->translate("tremotesf", "Error"), qApp->translate("tremotesf", "Selected directory should be inside mounted directory"));
                 } else {
-                    setLineEditText(directory);
+                    setText(directory);
                     setFileDialogDirectory(filePath);
                 }
             });
         }
+    }
+
+    void RemoteDirectorySelectionWidget::updateComboBox(const QString& setAsCurrent)
+    {
+        QStringList currentServerAddTorrentDialogDirectories(Servers::instance()->currentServerAddTorrentDialogDirectories());
+        const bool wasEmpty = currentServerAddTorrentDialogDirectories.empty();
+
+        currentServerAddTorrentDialogDirectories.push_back(mRpc->serverSettings()->downloadDirectory());
+        for (const auto& torrent : mRpc->torrents()) {
+            currentServerAddTorrentDialogDirectories.push_back(torrent->downloadDirectory());
+        }
+        currentServerAddTorrentDialogDirectories.removeDuplicates();
+        QCollator collator;
+        collator.setCaseSensitivity(Qt::CaseInsensitive);
+        collator.setNumericMode(true);
+        std::sort(currentServerAddTorrentDialogDirectories.begin(),
+                  currentServerAddTorrentDialogDirectories.end(),
+                  [&collator](const QString& first, const QString& second) {
+            return collator.compare(first, second) < 0;
+        });
+
+        if (wasEmpty && !currentServerAddTorrentDialogDirectories.empty()) {
+            Servers::instance()->setCurrentServerAddTorrentDialogDirectories(currentServerAddTorrentDialogDirectories);
+        }
+
+        textComboBox()->clear();
+        textComboBox()->addItems(currentServerAddTorrentDialogDirectories);
+        textComboBox()->setCurrentIndex(currentServerAddTorrentDialogDirectories.indexOf(setAsCurrent));
     }
 }
