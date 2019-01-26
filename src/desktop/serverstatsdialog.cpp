@@ -121,6 +121,6 @@ namespace tremotesf
 
     QSize ServerStatsDialog::sizeHint() const
     {
-        return layout()->totalMinimumSize().expandedTo(QSize(300, 320));
+        return minimumSizeHint().expandedTo(QSize(300, 320));
     }
 }

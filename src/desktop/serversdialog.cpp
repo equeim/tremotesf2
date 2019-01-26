@@ -125,7 +125,7 @@ namespace tremotesf
 
     QSize ServersDialog::sizeHint() const
     {
-        return layout()->totalMinimumSize().expandedTo(QSize(384, 320));
+        return minimumSizeHint().expandedTo(QSize(384, 320));
     }
 
     void ServersDialog::accept()

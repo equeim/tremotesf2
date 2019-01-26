@@ -73,9 +73,9 @@ namespace tremotesf
     QSize AddTorrentDialog::sizeHint() const
     {
         if (mLocalFile) {
-            return layout()->totalMinimumSize().expandedTo(QSize(448, 512));
+            return minimumSizeHint().expandedTo(QSize(448, 512));
         }
-        return layout()->totalMinimumSize().expandedTo(QSize(448, 0));
+        return minimumSizeHint().expandedTo(QSize(448, 0));
     }
 
     void AddTorrentDialog::accept()

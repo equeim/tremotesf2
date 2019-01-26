@@ -67,7 +67,7 @@ namespace tremotesf
 
     QSize TextInputDialog::sizeHint() const
     {
-        return layout()->totalMinimumSize().expandedTo(QSize(256, 0));
+        return minimumSizeHint().expandedTo(QSize(256, 0));
     }
 
     QString TextInputDialog::text() const

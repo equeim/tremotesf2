@@ -104,7 +104,7 @@ namespace tremotesf
 
     QSize TorrentPropertiesDialog::sizeHint() const
     {
-        return layout()->totalMinimumSize();
+        return minimumSizeHint();
     }
 
     void TorrentPropertiesDialog::setupDetailsTab()

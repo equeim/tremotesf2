@@ -104,6 +104,6 @@ namespace tremotesf
 
     QSize AboutDialog::sizeHint() const
     {
-        return layout()->totalMinimumSize().expandedTo(QSize(420, 384));
+        return minimumSizeHint().expandedTo(QSize(420, 384));
     }
 }

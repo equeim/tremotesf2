@@ -332,7 +332,7 @@ namespace tremotesf
 
     QSize MainWindow::sizeHint() const
     {
-        return layout()->totalMinimumSize().expandedTo(QSize(896, 640));
+        return minimumSizeHint().expandedTo(QSize(896, 640));
     }
 
     void MainWindow::showMinimized(bool minimized)
