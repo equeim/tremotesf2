@@ -87,7 +87,7 @@ Page {
                         Label {
                             color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                             font.pixelSize: Theme.fontSizeExtraSmall
-                            text: "\u2191 %1".arg(Utils.formatByteSpeed(modelData.downloadSpeed))
+                            text: "\u2191 %1".arg(Utils.formatByteSpeed(modelData.uploadSpeed))
                         }
                     }
 
