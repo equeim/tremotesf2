@@ -89,6 +89,8 @@ namespace tremotesf
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ServerStatsDialog::reject);
         layout->addWidget(dialogButtonBox);
 
+        setMinimumSize(minimumSizeHint());
+
         QObject::connect(rpc, &Rpc::connectedChanged, this, [=]() {
             if (rpc->isConnected()) {
                 disconnectedWidget->animatedHide();

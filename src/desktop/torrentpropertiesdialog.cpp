@@ -93,6 +93,7 @@ namespace tremotesf
             setTorrent(mRpc->torrentByHash(torrentHash));
         });
 
+        setMinimumSize(minimumSizeHint());
         restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
     }
 

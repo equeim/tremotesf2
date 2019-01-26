@@ -75,6 +75,8 @@ namespace tremotesf
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
         layout->addWidget(dialogButtonBox);
 
+        setMinimumSize(minimumSizeHint());
+
         auto settings = Settings::instance();
         connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());

@@ -459,6 +459,8 @@ namespace tremotesf
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ServerSettingsDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ServerSettingsDialog::reject);
         layout->addWidget(dialogButtonBox);
+
+        setMinimumSize(minimumSizeHint());
     }
 
     void ServerSettingsDialog::loadSettings()

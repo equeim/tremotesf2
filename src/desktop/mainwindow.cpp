@@ -121,6 +121,8 @@ namespace tremotesf
 
                 layout->addWidget(dialogButtonBox);
 
+                setMinimumSize(minimumSizeHint());
+
                 QObject::connect(rpc, &Rpc::connectedChanged, this, [=]() {
                     if (!rpc->isConnected()) {
                         reject();

@@ -100,6 +100,8 @@ namespace tremotesf
         layout->addWidget(dialogButtonBox);
 
         dialogButtonBox->button(QDialogButtonBox::Close)->setDefault(true);
+
+        setMinimumSize(minimumSizeHint());
     }
 
     QSize AboutDialog::sizeHint() const

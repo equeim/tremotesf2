@@ -63,6 +63,8 @@ namespace tremotesf
         });
 
         layout->addWidget(dialogButtonBox);
+
+        setMinimumSize(minimumSizeHint());
     }
 
     QSize TextInputDialog::sizeHint() const
