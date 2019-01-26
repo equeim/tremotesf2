@@ -1,14 +1,16 @@
 # Changelog
 
-## [Unreleased]
+## [1.6.0] - 2019-01-26
 ### Added
 - Desktop: restoring of torrent properties dialog's geometry
+- Desktop: Tremotesf now remebmers used download directories and shows them in combo box when adding torrent / changing location
 
 ### Changed
 - Desktop: toolBarVisible and toolBarArea configuration keys are now deprecated, mainWindowState is used instead
 
 ### Fixed
 - Desktop: fixed restoring state of detached toolbar
+- Sailfish OS: fixed peers' upload speed label
 
 ## [1.5.6] - 2018-12-08
 ### Changed
