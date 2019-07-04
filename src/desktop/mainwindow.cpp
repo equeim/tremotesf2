@@ -983,7 +983,7 @@ namespace tremotesf
                               summary,
                               body,
                               QVariant(QVariant::StringList),
-                              QVariant(QVariant::Map),
+                              QVariantMap{{QLatin1String("desktop-entry"), QLatin1String("org.equeim.Tremotesf")}},
                               -1});
         auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), this);
         QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=]() {
