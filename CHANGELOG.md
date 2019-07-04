@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Fixed notifications not being configurable in KDE Plasma and GNOME
+
 ## [1.6.0] - 2019-01-26
 ### Added
 - Desktop: restoring of torrent properties dialog's geometry
