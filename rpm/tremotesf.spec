@@ -76,7 +76,7 @@ Remote GUI for Transmission BitTorrent client.
 cd %{build_directory}
 %cmake -DCMAKE_BUILD_TYPE=%{build_type} -DSAILFISHOS=ON ..
 %else
-%cmake %{!?suse_version:%{!?mageia:-DCMAKE_BUILD_TYPE=%{build_type}}} .
+%cmake %{!?suse_version:%{!?mageia:-DCMAKE_BUILD_TYPE=%{build_type}}}
 %endif
 %make_build
 
