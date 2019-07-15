@@ -1,6 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## [1.6.1] - 2019-07-16
+### Changed
+- Minor performance improvements
+
 ### Fixed
 - Fixed notifications not being configurable in KDE Plasma and GNOME
 
