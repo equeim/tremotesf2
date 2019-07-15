@@ -68,13 +68,15 @@ namespace libtremotesf
 
     void Tracker::update(const QJsonObject& trackerMap)
     {
-        mAnnounce = trackerMap.value(QLatin1String("announce")).toString();
-
-        const QUrl url(mAnnounce);
-        mSite = url.host();
-        const QString topLevelDomain(url.topLevelDomain());
-        if (!topLevelDomain.isEmpty()) {
-            mSite = mSite.mid(mSite.lastIndexOf('.', -topLevelDomain.size() - 1) + 1);
+        const QString announce(trackerMap.value(QLatin1String("announce")).toString());
+        if (announce != mAnnounce) {
+            mAnnounce = announce;
+            const QUrl url(mAnnounce);
+            mSite = url.host();
+            const int topLevelDomainSize = url.topLevelDomain().size();
+            if (topLevelDomainSize > 0) {
+                mSite.remove(0, mSite.lastIndexOf(QLatin1Char('.'), -1 - topLevelDomainSize) + 1);
+            }
         }
 
         const bool scrapeError = (!trackerMap.value(QLatin1String("lastScrapeSucceeded")).toBool() &&
@@ -107,11 +109,9 @@ namespace libtremotesf
 
         mPeers = trackerMap.value(QLatin1String("lastAnnouncePeerCount")).toInt();
 
-        const long long time = trackerMap.value(QLatin1String("nextAnnounceTime")).toDouble() * 1000;
-        if (time < 0) {
+        mNextUpdate = static_cast<long long>(trackerMap.value(QLatin1String("nextAnnounceTime")).toDouble()) - QDateTime::currentMSecsSinceEpoch() / 1000;
+        if (mNextUpdate < 0) {
             mNextUpdate = -1;
-        } else {
-            mNextUpdate = QDateTime::currentDateTime().secsTo(QDateTime::fromMSecsSinceEpoch(time));
         }
     }
 }

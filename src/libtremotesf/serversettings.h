@@ -103,8 +103,6 @@ namespace libtremotesf
 
         explicit ServerSettings(Rpc* rpc = nullptr, QObject* parent = nullptr);
 
-        void setRpc(Rpc* rpc);
-
         int rpcVersion() const;
         int minimumRpcVersion() const;
 

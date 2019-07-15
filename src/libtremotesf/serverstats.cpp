@@ -63,11 +63,7 @@ namespace libtremotesf
     }
 
     SessionStats::SessionStats(QObject* parent)
-        : QObject(parent),
-          mDownloaded(0),
-          mUploaded(0),
-          mDuration(0),
-          mSessionCount(0)
+        : QObject(parent)
     {
 
     }

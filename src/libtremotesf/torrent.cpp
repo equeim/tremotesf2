@@ -119,15 +119,11 @@ namespace libtremotesf
         }
     }
 
-    const QString Torrent::idKey(QLatin1String("id"));
+    const QLatin1String Torrent::idKey("id");
 
     TorrentFile::TorrentFile(std::vector<QString>&& path, long long size)
         : path(std::move(path)),
-          size(size),
-          completedSize(0),
-          wanted(false),
-          priority(NormalPriority),
-          changed(false)
+          size(size)
     {
 
     }
@@ -644,24 +640,28 @@ namespace libtremotesf
 
         const long long activityDate = torrentMap.value(activityDateKey).toDouble() * 1000;
         if (activityDate > 0) {
-            if (activityDate != mActivityDate.toMSecsSinceEpoch()) {
+            if (activityDate != mActivityDateTime) {
+                mActivityDateTime = activityDate;
                 mActivityDate.setMSecsSinceEpoch(activityDate);
                 mChanged = true;
             }
         } else {
             if (!mActivityDate.isNull()) {
+                mActivityDateTime = -1;
                 mActivityDate = QDateTime();
                 mChanged = true;
             }
         }
         const long long doneDate = torrentMap.value(doneDateKey).toDouble() * 1000;
         if (doneDate > 0) {
-            if (doneDate != mDoneDate.toMSecsSinceEpoch()) {
+            if (doneDate != mDoneDateTime) {
+                mDoneDateTime = doneDate;
                 mDoneDate.setMSecsSinceEpoch(doneDate);
                 mChanged = true;
             }
         } else {
             if (!mDoneDate.isNull()) {
+                mDoneDateTime = -1;
                 mDoneDate = QDateTime();
                 mChanged = true;
             }
@@ -695,12 +695,14 @@ namespace libtremotesf
 
         const long long creationDate = torrentMap.value(creationDateKey).toDouble() * 1000;
         if (creationDate > 0) {
-            if (creationDate != mCreationDate.toMSecsSinceEpoch()) {
+            if (creationDate != mCreationDateTime) {
+                mCreationDateTime = creationDate;
                 mCreationDate.setMSecsSinceEpoch(creationDate);
                 mChanged = true;
             }
         } else {
             if (!mCreationDate.isNull()) {
+                mCreationDateTime = -1;
                 mCreationDate = QDateTime();
                 mChanged = true;
             }
@@ -753,7 +755,7 @@ namespace libtremotesf
                 const QJsonObject fileStatsMap(fileStats[i].toObject());
                 if (empty) {
                     std::vector<QString> path;
-                    QStringList parts(fileMap.value(QLatin1String("name")).toString().split('/', QString::SkipEmptyParts));
+                    QStringList parts(fileMap.value(QLatin1String("name")).toString().split(QLatin1Char('/'), QString::SkipEmptyParts));
                     path.reserve(parts.size());
                     for (QString& part : parts) {
                         path.push_back(std::move(part));
@@ -784,27 +786,34 @@ namespace libtremotesf
 
     void Torrent::updatePeers(const QJsonObject& torrentMap)
     {
-        const QJsonArray peers(torrentMap.value(peersKey).toArray());
-
         std::vector<QString> addresses;
-        addresses.reserve(peers.size());
-        for (const QJsonValue& peer : peers) {
-            addresses.push_back(peer.toObject().value(QLatin1String("address")).toString());
-        }
+        const std::vector<QJsonObject> peers([&]() {
+            std::vector<QJsonObject> p;
+            const QJsonArray peerValues(torrentMap.value(peersKey).toArray());
+            p.reserve(peerValues.size());
+            addresses.reserve(peerValues.size());
 
-        for (std::size_t i = 0, max = mPeers.size(); i < max; ++i) {
+            for (const QJsonValue& peerValue : peerValues) {
+                QJsonObject peerMap(peerValue.toObject());
+                addresses.push_back(peerMap.value(QLatin1String("address")).toString());
+                p.push_back(std::move(peerMap));
+            }
+
+            return p;
+        }());
+
+        for (int i = mPeers.size() - 1; i >= 0; --i) {
             if (!tremotesf::contains(addresses, mPeers[i]->address)) {
                 mPeers.erase(mPeers.begin() + i);
-                i--;
-                max--;
             }
         }
 
         mPeers.reserve(peers.size());
 
-        for (const QJsonValue& peerVariant : peers) {
-            const QJsonObject peerMap(peerVariant.toObject());
-            QString address(peerMap.value(QLatin1String("address")).toString());
+        for (int i = 0, max = peers.size(); i < max; ++i) {
+            const QJsonObject& peerMap = peers[i];
+            QString& address = addresses[i];
+
             int row = -1;
             for (int i = 0, max = mPeers.size(); i < max; ++i) {
                 if (mPeers[i]->address == address) {

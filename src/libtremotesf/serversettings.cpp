@@ -95,11 +95,6 @@ namespace libtremotesf
 
     }
 
-    void ServerSettings::setRpc(Rpc* rpc)
-    {
-        mRpc = rpc;
-    }
-
     int ServerSettings::rpcVersion() const
     {
         return mRpcVersion;

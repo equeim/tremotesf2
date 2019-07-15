@@ -47,11 +47,11 @@ namespace libtremotesf
 
         std::vector<QString> path;
         long long size;
-        long long completedSize;
-        bool wanted;
-        Priority priority;
+        long long completedSize = 0;
+        bool wanted = false;
+        Priority priority = NormalPriority;
 
-        bool changed;
+        bool changed = false;
     };
 
     struct Peer
@@ -140,7 +140,7 @@ namespace libtremotesf
         {
             GlobalRatioLimit,
             SingleRatioLimit,
-            UnlimitedRatio,
+            UnlimitedRatio
         };
         Q_ENUM(RatioLimitMode)
 
@@ -160,7 +160,7 @@ namespace libtremotesf
         };
         Q_ENUM(IdleSeedingLimitMode)
 
-        static const QString idKey;
+        static const QLatin1String idKey;
 
         explicit Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc);
 
@@ -291,7 +291,9 @@ namespace libtremotesf
 
         QDateTime mAddedDate;
         QDateTime mActivityDate;
+        long long mActivityDateTime = -1;
         QDateTime mDoneDate;
+        long long mDoneDateTime = -1;
 
         bool mHonorSessionLimits = false;
         Priority mBandwidthPriority = NormalPriority;
@@ -302,6 +304,7 @@ namespace libtremotesf
         QString mComment;
         QString mCreator;
         QDateTime mCreationDate;
+        long long mCreationDateTime = -1;
 
         bool mFilesEnabled = false;
         bool mFilesLoaded = false;

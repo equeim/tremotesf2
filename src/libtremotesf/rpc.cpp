@@ -70,7 +70,7 @@ namespace libtremotesf
         }
     }
 
-    Rpc::Rpc(ServerSettings* serverSettings, QObject* parent)
+    Rpc::Rpc(bool createServerSettings, QObject* parent)
         : QObject(parent),
           mNetwork(new QNetworkAccessManager(this)),
           mAuthenticationRequested(false),
@@ -86,7 +86,7 @@ namespace libtremotesf
           mTorrentsUpdated(false),
           mServerStatsUpdated(false),
           mUpdateTimer(new QTimer(this)),
-          mServerSettings(serverSettings ? serverSettings : new ServerSettings(this, this)),
+          mServerSettings(createServerSettings ? new ServerSettings(this, this) : nullptr),
           mServerStats(new ServerStats(this)),
           mStatus(Disconnected),
           mError(NoError)
@@ -108,6 +108,11 @@ namespace libtremotesf
     ServerSettings* Rpc::serverSettings() const
     {
         return mServerSettings;
+    }
+
+    void Rpc::setServerSettings(ServerSettings* settings)
+    {
+        mServerSettings = settings;
     }
 
     ServerStats* Rpc::serverStats() const

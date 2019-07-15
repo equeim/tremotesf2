@@ -49,10 +49,22 @@ namespace std {
 namespace tremotesf
 {
     template<class C, class V>
-    inline bool contains(const C& container, const V& value) {
-        return std::find(container.cbegin(), container.cend(), value) != container.cend();
+    inline auto contains_impl(const C& container, const V& value, int) -> decltype(container.find(value), true)
+    {
+        return container.find(value) != end(container);
     }
 
+    template<class C, class V>
+    inline bool contains_impl(const C& container, const V& value, long)
+    {
+        return std::find(begin(container), end(container), value) != end(container);
+    }
+
+    template<class C, class V>
+    inline bool contains(const C& container, const V& value)
+    {
+        return contains_impl(container, value, 0);
+    }
     template<class C, class V>
     inline typename C::difference_type index_of(const C& container, const V& value) {
         return std::find(container.cbegin(), container.cend(), value) - container.cbegin();
