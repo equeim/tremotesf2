@@ -158,8 +158,7 @@ namespace tremotesf
             mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->text().trimmed());
         } else {
             QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
-                const QString path(text.trimmed());
-                if (path == mRpc->serverSettings()->downloadDirectory()) {
+                if (text.trimmed() == mRpc->serverSettings()->downloadDirectory()) {
                     mRpc->getDownloadDirFreeSpace();
                 } else {
                     freeSpaceLabel->hide();
