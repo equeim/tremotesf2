@@ -39,6 +39,7 @@ set(tremotesf_properties
     OUTPUT_NAME "${TREMOTESF_NAME}"
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
 )
 
 set(tremotesf_libs
