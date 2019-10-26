@@ -173,6 +173,7 @@ namespace tremotesf
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this]() {
             if (Servers::instance()->hasServers()) {
                 mRpc->setServer(Servers::instance()->currentServer());
+                mRpc->connect();
             } else {
                 mRpc->resetServer();
             }

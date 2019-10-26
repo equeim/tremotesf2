@@ -18,6 +18,8 @@
 
 #include "torrent.h"
 
+#include <type_traits>
+
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -32,77 +34,69 @@ namespace libtremotesf
 {
     namespace
     {
-        const QString hashStringKey(QLatin1String("hashString"));
-        const QString addedDateKey(QLatin1String("addedDate"));
+        const auto hashStringKey(QJsonKeyStringInit("hashString"));
+        const auto addedDateKey(QJsonKeyStringInit("addedDate"));
 
-        const QString nameKey(QLatin1String("name"));
+        const auto nameKey(QJsonKeyStringInit("name"));
 
-        const QString errorStringKey(QLatin1String("errorString"));
-        const QString queuePositionKey(QLatin1String("queuePosition"));
+        const auto errorStringKey(QJsonKeyStringInit("errorString"));
+        const auto queuePositionKey(QJsonKeyStringInit("queuePosition"));
 
-        const QString totalSizeKey(QLatin1String("totalSize"));
-        const QString completedSizeKey(QLatin1String("haveValid"));
-        const QString leftUntilDoneKey(QLatin1String("leftUntilDone"));
-        const QString sizeWhenDoneKey(QLatin1String("sizeWhenDone"));
-        const QString percentDoneKey(QLatin1String("percentDone"));
-        const QString recheckProgressKey(QLatin1String("recheckProgress"));
-        const QString etaKey(QLatin1String("eta"));
+        const auto totalSizeKey(QJsonKeyStringInit("totalSize"));
+        const auto completedSizeKey(QJsonKeyStringInit("haveValid"));
+        const auto leftUntilDoneKey(QJsonKeyStringInit("leftUntilDone"));
+        const auto sizeWhenDoneKey(QJsonKeyStringInit("sizeWhenDone"));
+        const auto percentDoneKey(QJsonKeyStringInit("percentDone"));
+        const auto recheckProgressKey(QJsonKeyStringInit("recheckProgress"));
+        const auto etaKey(QJsonKeyStringInit("eta"));
 
-        const QString downloadSpeedKey(QLatin1String("rateDownload"));
-        const QString uploadSpeedKey(QLatin1String("rateUpload"));
+        const auto downloadSpeedKey(QJsonKeyStringInit("rateDownload"));
+        const auto uploadSpeedKey(QJsonKeyStringInit("rateUpload"));
 
-        const QString downloadSpeedLimitedKey(QLatin1String("downloadLimited"));
-        const QString downloadSpeedLimitKey(QLatin1String("downloadLimit"));
-        const QString uploadSpeedLimitedKey(QLatin1String("uploadLimited"));
-        const QString uploadSpeedLimitKey(QLatin1String("uploadLimit"));
+        const auto downloadSpeedLimitedKey(QJsonKeyStringInit("downloadLimited"));
+        const auto downloadSpeedLimitKey(QJsonKeyStringInit("downloadLimit"));
+        const auto uploadSpeedLimitedKey(QJsonKeyStringInit("uploadLimited"));
+        const auto uploadSpeedLimitKey(QJsonKeyStringInit("uploadLimit"));
 
-        const QString totalDownloadedKey(QLatin1String("downloadedEver"));
-        const QString totalUploadedKey(QLatin1String("uploadedEver"));
-        const QString ratioKey(QLatin1String("uploadRatio"));
-        const QString ratioLimitModeKey(QLatin1String("seedRatioMode"));
-        const QString ratioLimitKey(QLatin1String("seedRatioLimit"));
+        const auto totalDownloadedKey(QJsonKeyStringInit("downloadedEver"));
+        const auto totalUploadedKey(QJsonKeyStringInit("uploadedEver"));
+        const auto ratioKey(QJsonKeyStringInit("uploadRatio"));
+        const auto ratioLimitModeKey(QJsonKeyStringInit("seedRatioMode"));
+        const auto ratioLimitKey(QJsonKeyStringInit("seedRatioLimit"));
 
-        const QString seedersKey(QLatin1String("peersSendingToUs"));
-        const QString leechersKey(QLatin1String("peersGettingFromUs"));
+        const auto seedersKey(QJsonKeyStringInit("peersSendingToUs"));
+        const auto leechersKey(QJsonKeyStringInit("peersGettingFromUs"));
 
-        const QString errorKey(QLatin1String("error"));
-        const QString statusKey(QLatin1String("status"));
+        const auto errorKey(QJsonKeyStringInit("error"));
+        const auto statusKey(QJsonKeyStringInit("status"));
 
-        const QString activityDateKey(QLatin1String("activityDate"));
-        const QString doneDateKey(QLatin1String("doneDate"));
+        const auto activityDateKey(QJsonKeyStringInit("activityDate"));
+        const auto doneDateKey(QJsonKeyStringInit("doneDate"));
 
-        const QString peersLimitKey(QLatin1String("peer-limit"));
-        const QString honorSessionLimitsKey(QLatin1String("honorsSessionLimits"));
-        const QString bandwidthPriorityKey(QLatin1String("bandwidthPriority"));
-        const QString idleSeedingLimitModeKey(QLatin1String("seedIdleMode"));
-        const QString idleSeedingLimitKey(QLatin1String("seedRatioLimit"));
-        const QString downloadDirectoryKey(QLatin1String("downloadDir"));
-        const QString prioritiesKey(QLatin1String("priorities"));
-        const QString creatorKey(QLatin1String("creator"));
-        const QString creationDateKey(QLatin1String("dateCreated"));
-        const QString commentKey(QLatin1String("comment"));
+        const auto peersLimitKey(QJsonKeyStringInit("peer-limit"));
+        const auto honorSessionLimitsKey(QJsonKeyStringInit("honorsSessionLimits"));
+        const auto bandwidthPriorityKey(QJsonKeyStringInit("bandwidthPriority"));
+        const auto idleSeedingLimitModeKey(QJsonKeyStringInit("seedIdleMode"));
+        const auto idleSeedingLimitKey(QJsonKeyStringInit("seedRatioLimit"));
+        const auto downloadDirectoryKey(QJsonKeyStringInit("downloadDir"));
+        const auto prioritiesKey(QJsonKeyStringInit("priorities"));
+        const auto creatorKey(QJsonKeyStringInit("creator"));
+        const auto creationDateKey(QJsonKeyStringInit("dateCreated"));
+        const auto commentKey(QJsonKeyStringInit("comment"));
 
-        const QString trackerStatsKey(QLatin1String("trackerStats"));
-        const QString trackerIdKey(QLatin1String("id"));
+        const QLatin1String wantedFilesKey("files-wanted");
+        const QLatin1String unwantedFilesKey("files-unwanted");
 
-        const QString filesKey(QLatin1String("files"));
-        const QString fileStatsKey(QLatin1String("fileStats"));
+        const QLatin1String lowPriorityKey("priority-low");
+        const QLatin1String normalPriorityKey("priority-normal");
+        const QLatin1String highPriorityKey("priority-high");
 
-        const QString peersKey(QLatin1String("peers"));
+        const QLatin1String addTrackerKey("trackerAdd");
+        const QLatin1String replaceTrackerKey("trackerReplace");
+        const QLatin1String removeTrackerKey("trackerRemove");
 
-        const QString wantedFilesKey(QLatin1String("files-wanted"));
-        const QString unwantedFilesKey(QLatin1String("files-unwanted"));
-
-        const QString lowPriorityKey(QLatin1String("priority-low"));
-        const QString normalPriorityKey(QLatin1String("priority-normal"));
-        const QString highPriorityKey(QLatin1String("priority-high"));
-
-        const QString addTrackerKey(QLatin1String("trackerAdd"));
-        const QString replaceTrackerKey(QLatin1String("trackerReplace"));
-        const QString removeTrackerKey(QLatin1String("trackerRemove"));
-
-        template<typename T>
-        void setChanged(T& value, const T& newValue, bool& changed)
+        template<typename T, typename std::enable_if<std::is_scalar<T>::value && !std::is_floating_point<T>::value, int>::type = 0>
+        void setChanged(T& value, T newValue, bool& changed)
         {
             if (newValue != value) {
                 value = newValue;
@@ -110,23 +104,56 @@ namespace libtremotesf
             }
         }
 
-        void setChanged(double& value, double newValue, bool& changed)
+        template<typename T, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
+        void setChanged(T& value, T newValue, bool& changed)
         {
             if (!qFuzzyCompare(newValue, value)) {
                 value = newValue;
                 changed = true;
             }
         }
+
+        template<typename T, typename std::enable_if<!std::is_scalar<T>::value, int>::type = 0>
+        void setChanged(T& value, T&& newValue, bool& changed)
+        {
+            if (newValue != value) {
+                value = std::forward<T>(newValue);
+                changed = true;
+            }
+        }
     }
 
-    const QLatin1String Torrent::idKey("id");
+    const QJsonKeyString Torrent::idKey(QJsonKeyStringInit("id"));
 
-    TorrentFile::TorrentFile(std::vector<QString>&& path, long long size)
-        : path(std::move(path)),
-          size(size)
+    TorrentFile::TorrentFile(const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
+        : size(fileMap.value(QJsonKeyStringInit("length")).toDouble())
     {
-
+        QStringList p(fileMap.value(QJsonKeyStringInit("name")).toString().split(QLatin1Char('/'), QString::SkipEmptyParts));
+        path.reserve(p.size());
+        for (QString& part : p) {
+            path.push_back(std::move(part));
+        }
+        update(fileStatsMap);
     }
+
+    bool TorrentFile::update(const QJsonObject& fileStatsMap)
+    {
+        changed = false;
+        setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QJsonKeyStringInit("bytesCompleted")).toDouble()), changed);
+        setChanged(wanted, fileStatsMap.value(QJsonKeyStringInit("wanted")).toBool(), changed);
+        setChanged(priority, [&]() {
+            switch (int priority = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
+            case TorrentFile::LowPriority:
+            case TorrentFile::NormalPriority:
+            case TorrentFile::HighPriority:
+                return static_cast<TorrentFile::Priority>(priority);
+            default:
+                return TorrentFile::NormalPriority;
+            }
+        }(), changed);
+
+        return changed;
+     }
 
     Peer::Peer(QString&& address, const QJsonObject& peerMap)
         : address(std::move(address))
@@ -136,11 +163,11 @@ namespace libtremotesf
 
     void Peer::update(const QJsonObject& peerMap)
     {
-        downloadSpeed = peerMap.value(QLatin1String("rateToClient")).toDouble();
-        uploadSpeed = peerMap.value(QLatin1String("rateToPeer")).toDouble();
-        progress = peerMap.value(QLatin1String("progress")).toDouble();
-        flags = peerMap.value(QLatin1String("flagStr")).toString();
-        client = peerMap.value(QLatin1String("clientName")).toString();
+        downloadSpeed = peerMap.value(QJsonKeyStringInit("rateToClient")).toDouble();
+        uploadSpeed = peerMap.value(QJsonKeyStringInit("rateToPeer")).toDouble();
+        progress = peerMap.value(QJsonKeyStringInit("progress")).toDouble();
+        flags = peerMap.value(QJsonKeyStringInit("flagStr")).toString();
+        client = peerMap.value(QJsonKeyStringInit("clientName")).toString();
     }
 
     Torrent::Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc)
@@ -452,14 +479,14 @@ namespace libtremotesf
         }
     }
 
-    bool Torrent::isFilesUpdated() const
-    {
-        return mFilesUpdated;
-    }
-
     const std::vector<std::shared_ptr<TorrentFile>>& Torrent::files() const
     {
         return mFiles;
+    }
+
+    bool Torrent::isFilesChanged()
+    {
+        return mFilesChanged;
     }
 
     void Torrent::setFilesWanted(const QVariantList& files, bool wanted)
@@ -472,7 +499,7 @@ namespace libtremotesf
 
     void Torrent::setFilesPriority(const QVariantList& files, TorrentFile::Priority priority)
     {
-        QString propertyName;
+        QLatin1String propertyName;
         switch (priority) {
         case TorrentFile::LowPriority:
             propertyName = lowPriorityKey;
@@ -495,6 +522,11 @@ namespace libtremotesf
     const std::vector<std::shared_ptr<Tracker>>& Torrent::trackers() const
     {
         return mTrackers;
+    }
+
+    bool Torrent::isTrackersAddedOrRemoved() const
+    {
+        return mTrackersAddedOrRemoved;
     }
 
     void Torrent::addTracker(const QString& announce)
@@ -533,11 +565,6 @@ namespace libtremotesf
     bool Torrent::isPeersLoaded() const
     {
         return mPeersLoaded;
-    }
-
-    bool Torrent::isPeersUpdated() const
-    {
-        return mPeersUpdated;
     }
 
     const std::vector<std::shared_ptr<Peer>>& Torrent::peers() const
@@ -710,12 +737,13 @@ namespace libtremotesf
 
         setChanged(mComment, torrentMap.value(commentKey).toString(), mChanged);
 
+        mTrackersAddedOrRemoved = false;
         std::vector<std::shared_ptr<Tracker>> trackers;
-        const QJsonArray trackersJson(torrentMap.value(trackerStatsKey).toArray());
+        const QJsonArray trackersJson(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
         trackers.reserve(trackersJson.size());
         for (const QJsonValue& trackerVariant : trackersJson) {
             const QJsonObject trackerMap(trackerVariant.toObject());
-            const int id = trackerMap.value(trackerIdKey).toInt();
+            const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
 
             std::shared_ptr<Tracker> tracker;
             for (const std::shared_ptr<Tracker>& existingTracker : mTrackers) {
@@ -728,9 +756,13 @@ namespace libtremotesf
                 tracker->update(trackerMap);
             } else {
                 tracker = std::make_shared<Tracker>(id, trackerMap);
+                mTrackersAddedOrRemoved = true;
             }
 
             trackers.push_back(std::move(tracker));
+        }
+        if (trackers.size() != mTrackers.size()) {
+            mTrackersAddedOrRemoved = true;
         }
         mTrackers = std::move(trackers);
 
@@ -742,40 +774,23 @@ namespace libtremotesf
 
     void Torrent::updateFiles(const QJsonObject& torrentMap)
     {
-        const QJsonArray files(torrentMap.value(filesKey).toArray());
-        const QJsonArray fileStats(torrentMap.value(fileStatsKey).toArray());
+        mFilesChanged = false;
 
-        if (!files.isEmpty()) {
-            const bool empty = mFiles.empty();
-            if (empty) {
-                mFiles.reserve(files.size());
-            }
-            for (int i = 0, max = files.size(); i < max; ++i) {
-                const QJsonObject fileMap(files[i].toObject());
-                const QJsonObject fileStatsMap(fileStats[i].toObject());
-                if (empty) {
-                    std::vector<QString> path;
-                    QStringList parts(fileMap.value(QLatin1String("name")).toString().split(QLatin1Char('/'), QString::SkipEmptyParts));
-                    path.reserve(parts.size());
-                    for (QString& part : parts) {
-                        path.push_back(std::move(part));
-                    }
-                    mFiles.push_back(std::make_shared<TorrentFile>(std::move(path), fileMap.value(QLatin1String("length")).toDouble()));
+        const QJsonArray fileStats(torrentMap.value(QJsonKeyStringInit("fileStats")).toArray());
+        if (!fileStats.isEmpty()) {
+            if (mFiles.empty()) {
+                mFilesChanged = true;
+                const QJsonArray files(torrentMap.value(QJsonKeyStringInit("files")).toArray());
+                mFiles.reserve(fileStats.size());
+                for (int i = 0, max = fileStats.size(); i < max; ++i) {
+                    mFiles.push_back(std::make_shared<TorrentFile>(files[i].toObject(), fileStats[i].toObject()));
                 }
-                TorrentFile* file = mFiles[i].get();
-                file->changed = false;
-                setChanged(file->completedSize, static_cast<long long>(fileStatsMap.value(QLatin1String("bytesCompleted")).toDouble()), file->changed);
-                setChanged(file->wanted, fileStatsMap.value(QLatin1String("wanted")).toBool(), file->changed);
-                setChanged(file->priority, [&]() {
-                    switch (int priority = fileStatsMap.value(QLatin1String("priority")).toInt()) {
-                    case TorrentFile::LowPriority:
-                    case TorrentFile::NormalPriority:
-                    case TorrentFile::HighPriority:
-                        return static_cast<TorrentFile::Priority>(priority);
-                    default:
-                        return TorrentFile::NormalPriority;
+            } else {
+                for (int i = 0, max = fileStats.size(); i < max; ++i) {
+                    if (mFiles[i]->update(fileStats[i].toObject())) {
+                        mFilesChanged = true;
                     }
-                }(), file->changed);
+                }
             }
         }
 
@@ -789,13 +804,13 @@ namespace libtremotesf
         std::vector<QString> addresses;
         const std::vector<QJsonObject> peers([&]() {
             std::vector<QJsonObject> p;
-            const QJsonArray peerValues(torrentMap.value(peersKey).toArray());
+            const QJsonArray peerValues(torrentMap.value(QJsonKeyStringInit("peers")).toArray());
             p.reserve(peerValues.size());
             addresses.reserve(peerValues.size());
 
             for (const QJsonValue& peerValue : peerValues) {
                 QJsonObject peerMap(peerValue.toObject());
-                addresses.push_back(peerMap.value(QLatin1String("address")).toString());
+                addresses.push_back(peerMap.value(QJsonKeyStringInit("address")).toString());
                 p.push_back(std::move(peerMap));
             }
 
@@ -815,9 +830,9 @@ namespace libtremotesf
             QString& address = addresses[i];
 
             int row = -1;
-            for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                if (mPeers[i]->address == address) {
-                    row = i;
+            for (int j = 0, max = mPeers.size(); j < max; ++j) {
+                if (mPeers[j]->address == address) {
+                    row = j;
                     break;
                 }
             }

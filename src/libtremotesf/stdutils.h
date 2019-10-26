@@ -51,13 +51,13 @@ namespace tremotesf
     template<class C, class V>
     inline auto contains_impl(const C& container, const V& value, int) -> decltype(container.find(value), true)
     {
-        return container.find(value) != end(container);
+        return container.find(value) != std::end(container);
     }
 
     template<class C, class V>
     inline bool contains_impl(const C& container, const V& value, long)
     {
-        return std::find(begin(container), end(container), value) != end(container);
+        return std::find(std::begin(container), std::end(container), value) != std::end(container);
     }
 
     template<class C, class V>
@@ -80,5 +80,13 @@ namespace tremotesf
         return shared.get() == raw;
     }
 }
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 7, 0)
+        using QJsonKeyString = QString;
+#define QJsonKeyStringInit QStringLiteral
+#else
+        using QJsonKeyString = QLatin1String;
+#define QJsonKeyStringInit QLatin1String
+#endif
 
 #endif // TREMOTESF_STDUTILS_H

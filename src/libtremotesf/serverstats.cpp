@@ -17,12 +17,53 @@
  */
 
 #include "serverstats.h"
-#include "rpc.h"
 
 #include <QJsonObject>
 
+#include "rpc.h"
+#include "stdutils.h"
+
 namespace libtremotesf
 {
+    SessionStats::SessionStats(QObject* parent)
+        : QObject(parent),
+          mDownloaded(0),
+          mUploaded(0),
+          mDuration(0),
+          mSessionCount(0)
+    {
+
+    }
+
+    long long SessionStats::downloaded() const
+    {
+        return mDownloaded;
+    }
+
+    long long SessionStats::uploaded() const
+    {
+        return mUploaded;
+    }
+
+    int SessionStats::duration() const
+    {
+        return mDuration;
+    }
+
+    int SessionStats::sessionCount() const
+    {
+        return mSessionCount;
+    }
+
+    void SessionStats::update(const QJsonObject& stats)
+    {
+        mDownloaded = stats.value(QJsonKeyStringInit("downloadedBytes")).toDouble();
+        mUploaded = stats.value(QJsonKeyStringInit("uploadedBytes")).toDouble();
+        mDuration = stats.value(QJsonKeyStringInit("secondsActive")).toInt();
+        mSessionCount = stats.value(QJsonKeyStringInit("sessionCount")).toInt();
+        emit updated();
+    }
+
     ServerStats::ServerStats(QObject* parent)
         : QObject(parent),
           mDownloadSpeed(0),
@@ -55,45 +96,10 @@ namespace libtremotesf
 
     void ServerStats::update(const QJsonObject& serverStats)
     {
-        mDownloadSpeed = serverStats.value(QLatin1String("downloadSpeed")).toDouble();
-        mUploadSpeed = serverStats.value(QLatin1String("uploadSpeed")).toDouble();
-        mCurrentSession->update(serverStats.value(QLatin1String("current-stats")).toObject());
-        mTotal->update(serverStats.value(QLatin1String("cumulative-stats")).toObject());
-        emit updated();
-    }
-
-    SessionStats::SessionStats(QObject* parent)
-        : QObject(parent)
-    {
-
-    }
-
-    long long SessionStats::downloaded() const
-    {
-        return mDownloaded;
-    }
-
-    long long SessionStats::uploaded() const
-    {
-        return mUploaded;
-    }
-
-    int SessionStats::duration() const
-    {
-        return mDuration;
-    }
-
-    int SessionStats::sessionCount() const
-    {
-        return mSessionCount;
-    }
-
-    void SessionStats::update(const QJsonObject& stats)
-    {
-        mDownloaded = stats.value(QLatin1String("downloadedBytes")).toDouble();
-        mUploaded = stats.value(QLatin1String("uploadedBytes")).toDouble();
-        mDuration = stats.value(QLatin1String("secondsActive")).toInt();
-        mSessionCount = stats.value(QLatin1String("sessionCount")).toInt();
+        mDownloadSpeed = serverStats.value(QJsonKeyStringInit("downloadSpeed")).toDouble();
+        mUploadSpeed = serverStats.value(QJsonKeyStringInit("uploadSpeed")).toDouble();
+        mCurrentSession->update(serverStats.value(QJsonKeyStringInit("current-stats")).toObject());
+        mTotal->update(serverStats.value(QJsonKeyStringInit("cumulative-stats")).toObject());
         emit updated();
     }
 }

@@ -164,6 +164,8 @@ namespace libtremotesf
         Q_INVOKABLE void getDownloadDirFreeSpace();
         Q_INVOKABLE void getFreeSpaceForPath(const QString& path);
 
+        Q_INVOKABLE void updateData();
+
     private:
         void setStatus(Status status);
         void setError(Error error, const QString& errorMessage = QString());
@@ -174,7 +176,6 @@ namespace libtremotesf
 
         void checkIfTorrentsUpdated();
         void startUpdateTimer();
-        void updateData();
 
         void onAuthenticationRequired(QNetworkReply*, QAuthenticator* authenticator);
 
@@ -196,6 +197,7 @@ namespace libtremotesf
 
         bool mBackgroundUpdate;
         bool mUpdateDisabled;
+        bool mUpdating;
 
         QUrl mServerUrl;
         bool mAuthentication;

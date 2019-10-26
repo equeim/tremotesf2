@@ -160,10 +160,10 @@ namespace libtremotesf
         Q_INVOKABLE void setAlternativeUploadSpeedLimit(int limit);
         bool isAlternativeSpeedLimitsScheduled() const;
         Q_INVOKABLE void setAlternativeSpeedLimitsScheduled(bool scheduled);
-        const QTime& alternativeSpeedLimitsBeginTime() const;
-        Q_INVOKABLE void setAlternativeSpeedLimitsBeginTime(const QTime& time);
-        const QTime& alternativeSpeedLimitsEndTime() const;
-        Q_INVOKABLE void setAlternativeSpeedLimitsEndTime(const QTime& time);
+        QTime alternativeSpeedLimitsBeginTime() const;
+        Q_INVOKABLE void setAlternativeSpeedLimitsBeginTime(QTime time);
+        QTime alternativeSpeedLimitsEndTime() const;
+        Q_INVOKABLE void setAlternativeSpeedLimitsEndTime(QTime time);
         AlternativeSpeedLimitsDays alternativeSpeedLimitsDays() const;
         Q_INVOKABLE void setAlternativeSpeedLimitsDays(libtremotesf::ServerSettings::AlternativeSpeedLimitsDays days);
 

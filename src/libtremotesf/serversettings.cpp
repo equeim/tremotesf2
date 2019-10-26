@@ -18,55 +18,56 @@
 
 #include "serversettings.h"
 
-#include "rpc.h"
-
 #include <QJsonObject>
+
+#include "rpc.h"
+#include "stdutils.h"
 
 namespace libtremotesf
 {
     namespace
     {
-        const QString downloadDirectoryKey(QLatin1String("download-dir"));
-        const QString trashTorrentFilesKey(QLatin1String("trash-original-torrent-files"));
-        const QString startAddedTorrentsKey(QLatin1String("start-added-torrents"));
-        const QString renameIncompleteFilesKey(QLatin1String("rename-partial-files"));
-        const QString incompleteDirectoryEnabledKey(QLatin1String("incomplete-dir-enabled"));
-        const QString incompleteDirectoryKey(QLatin1String("incomplete-dir"));
+        const auto downloadDirectoryKey(QJsonKeyStringInit("download-dir"));
+        const auto trashTorrentFilesKey(QJsonKeyStringInit("trash-original-torrent-files"));
+        const auto startAddedTorrentsKey(QJsonKeyStringInit("start-added-torrents"));
+        const auto renameIncompleteFilesKey(QJsonKeyStringInit("rename-partial-files"));
+        const auto incompleteDirectoryEnabledKey(QJsonKeyStringInit("incomplete-dir-enabled"));
+        const auto incompleteDirectoryKey(QJsonKeyStringInit("incomplete-dir"));
 
-        const QString ratioLimitedKey(QLatin1String("seedRatioLimited"));
-        const QString ratioLimitKey(QLatin1String("seedRatioLimit"));
-        const QString idleSeedingLimitedKey(QLatin1String("idle-seeding-limit-enabled"));
-        const QString idleSeedingLimitKey(QLatin1String("idle-seeding-limit"));
+        const auto ratioLimitedKey(QJsonKeyStringInit("seedRatioLimited"));
+        const auto ratioLimitKey(QJsonKeyStringInit("seedRatioLimit"));
+        const auto idleSeedingLimitedKey(QJsonKeyStringInit("idle-seeding-limit-enabled"));
+        const auto idleSeedingLimitKey(QJsonKeyStringInit("idle-seeding-limit"));
 
-        const QString downloadQueueEnabledKey(QLatin1String("download-queue-enabled"));
-        const QString downloadQueueSizeKey(QLatin1String("download-queue-size"));
-        const QString seedQueueEnabledKey(QLatin1String("seed-queue-enabled"));
-        const QString seedQueueSizeKey(QLatin1String("seed-queue-size"));
-        const QString idleQueueLimitedKey(QLatin1String("queue-stalled-enabled"));
-        const QString idleQueueLimitKey(QLatin1String("queue-stalled-minutes"));
+        const auto downloadQueueEnabledKey(QJsonKeyStringInit("download-queue-enabled"));
+        const auto downloadQueueSizeKey(QJsonKeyStringInit("download-queue-size"));
+        const auto seedQueueEnabledKey(QJsonKeyStringInit("seed-queue-enabled"));
+        const auto seedQueueSizeKey(QJsonKeyStringInit("seed-queue-size"));
+        const auto idleQueueLimitedKey(QJsonKeyStringInit("queue-stalled-enabled"));
+        const auto idleQueueLimitKey(QJsonKeyStringInit("queue-stalled-minutes"));
 
-        const QString downloadSpeedLimitedKey(QLatin1String("speed-limit-down-enabled"));
-        const QString downloadSpeedLimitKey(QLatin1String("speed-limit-down"));
-        const QString uploadSpeedLimitedKey(QLatin1String("speed-limit-up-enabled"));
-        const QString uploadSpeedLimitKey(QLatin1String("speed-limit-up"));
-        const QString alternativeSpeedLimitsEnabledKey(QLatin1String("alt-speed-enabled"));
-        const QString alternativeDownloadSpeedLimitKey(QLatin1String("alt-speed-down"));
-        const QString alternativeUploadSpeedLimitKey(QLatin1String("alt-speed-up"));
-        const QString alternativeSpeedLimitsScheduledKey(QLatin1String("alt-speed-time-enabled"));
-        const QString alternativeSpeedLimitsBeginTimeKey(QLatin1String("alt-speed-time-begin"));
-        const QString alternativeSpeedLimitsEndTimeKey(QLatin1String("alt-speed-time-end"));
-        const QString alternativeSpeedLimitsDaysKey(QLatin1String("alt-speed-time-day"));
+        const auto downloadSpeedLimitedKey(QJsonKeyStringInit("speed-limit-down-enabled"));
+        const auto downloadSpeedLimitKey(QJsonKeyStringInit("speed-limit-down"));
+        const auto uploadSpeedLimitedKey(QJsonKeyStringInit("speed-limit-up-enabled"));
+        const auto uploadSpeedLimitKey(QJsonKeyStringInit("speed-limit-up"));
+        const auto alternativeSpeedLimitsEnabledKey(QJsonKeyStringInit("alt-speed-enabled"));
+        const auto alternativeDownloadSpeedLimitKey(QJsonKeyStringInit("alt-speed-down"));
+        const auto alternativeUploadSpeedLimitKey(QJsonKeyStringInit("alt-speed-up"));
+        const auto alternativeSpeedLimitsScheduledKey(QJsonKeyStringInit("alt-speed-time-enabled"));
+        const auto alternativeSpeedLimitsBeginTimeKey(QJsonKeyStringInit("alt-speed-time-begin"));
+        const auto alternativeSpeedLimitsEndTimeKey(QJsonKeyStringInit("alt-speed-time-end"));
+        const auto alternativeSpeedLimitsDaysKey(QJsonKeyStringInit("alt-speed-time-day"));
 
-        const QString peerPortKey(QLatin1String("peer-port"));
-        const QString randomPortEnabledKey(QLatin1String("peer-port-random-on-start"));
-        const QString portForwardingEnabledKey(QLatin1String("port-forwarding-enabled"));
+        const auto peerPortKey(QJsonKeyStringInit("peer-port"));
+        const auto randomPortEnabledKey(QJsonKeyStringInit("peer-port-random-on-start"));
+        const auto portForwardingEnabledKey(QJsonKeyStringInit("port-forwarding-enabled"));
 
-        const QString encryptionModeKey(QLatin1String("encryption"));
-        const QString encryptionModeAllowed(QLatin1String("tolerated"));
-        const QString encryptionModePreferred(QLatin1String("preferred"));
-        const QString encryptionModeRequired(QLatin1String("required"));
+        const auto encryptionModeKey(QJsonKeyStringInit("encryption"));
+        const QLatin1String encryptionModeAllowed("tolerated");
+        const QLatin1String encryptionModePreferred("preferred");
+        const QLatin1String encryptionModeRequired("required");
 
-        QString encryptionModeString(ServerSettings::EncryptionMode mode)
+        inline QString encryptionModeString(ServerSettings::EncryptionMode mode)
         {
             switch (mode) {
             case ServerSettings::AllowedEncryption:
@@ -79,12 +80,12 @@ namespace libtremotesf
             return QString();
         }
 
-        const QString utpEnabledKey(QLatin1String("utp-enabled"));
-        const QString pexEnabledKey(QLatin1String("pex-enabled"));
-        const QString dhtEnabledKey(QLatin1String("dht-enabled"));
-        const QString lpdEnabledKey(QLatin1String("lpd-enabled"));
-        const QString maximumPeersPerTorrentKey(QLatin1String("peer-limit-per-torrent"));
-        const QString maximumPeersGloballyKey(QLatin1String("peer-limit-global"));
+        const auto utpEnabledKey(QJsonKeyStringInit("utp-enabled"));
+        const auto pexEnabledKey(QJsonKeyStringInit("pex-enabled"));
+        const auto dhtEnabledKey(QJsonKeyStringInit("dht-enabled"));
+        const auto lpdEnabledKey(QJsonKeyStringInit("lpd-enabled"));
+        const auto maximumPeersPerTorrentKey(QJsonKeyStringInit("peer-limit-per-torrent"));
+        const auto maximumPeersGloballyKey(QJsonKeyStringInit("peer-limit-global"));
     }
 
     ServerSettings::ServerSettings(Rpc* rpc, QObject* parent)
@@ -431,12 +432,12 @@ namespace libtremotesf
         }
     }
 
-    const QTime& ServerSettings::alternativeSpeedLimitsBeginTime() const
+    QTime ServerSettings::alternativeSpeedLimitsBeginTime() const
     {
         return mAlternativeSpeedLimitsBeginTime;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsBeginTime(const QTime& time)
+    void ServerSettings::setAlternativeSpeedLimitsBeginTime(QTime time)
     {
         mAlternativeSpeedLimitsBeginTime = time;
         if (mSaveOnSet) {
@@ -444,12 +445,12 @@ namespace libtremotesf
         }
     }
 
-    const QTime& ServerSettings::alternativeSpeedLimitsEndTime() const
+    QTime ServerSettings::alternativeSpeedLimitsEndTime() const
     {
         return mAlternativeSpeedLimitsEndTime;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsEndTime(const QTime& time)
+    void ServerSettings::setAlternativeSpeedLimitsEndTime(QTime time)
     {
         mAlternativeSpeedLimitsEndTime = time;
         if (mSaveOnSet) {
@@ -630,13 +631,13 @@ namespace libtremotesf
 
     void ServerSettings::update(const QJsonObject& serverSettings)
     {
-        mRpcVersion = serverSettings.value(QLatin1String("rpc-version")).toInt();
-        mMinimumRpcVersion = serverSettings.value(QLatin1String("rpc-version-minimum")).toInt();
+        mRpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version")).toInt();
+        mMinimumRpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version-minimum")).toInt();
 
         mUsingDecimalUnits = (serverSettings
-                                  .value(QLatin1String("units"))
+                                  .value(QJsonKeyStringInit("units"))
                                   .toObject()
-                                  .value(QLatin1String("speed-bytes"))
+                                  .value(QJsonKeyStringInit("speed-bytes"))
                                   .toInt() == 1000);
 
         mDownloadDirectory = serverSettings.value(downloadDirectoryKey).toString();
