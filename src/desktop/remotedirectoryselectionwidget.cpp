@@ -69,6 +69,7 @@ namespace tremotesf
         QStringList currentServerAddTorrentDialogDirectories(Servers::instance()->currentServerAddTorrentDialogDirectories());
         const bool wasEmpty = currentServerAddTorrentDialogDirectories.empty();
 
+        currentServerAddTorrentDialogDirectories.reserve(mRpc->torrents().size() + 1);
         currentServerAddTorrentDialogDirectories.push_back(mRpc->serverSettings()->downloadDirectory());
         for (const auto& torrent : mRpc->torrents()) {
             currentServerAddTorrentDialogDirectories.push_back(torrent->downloadDirectory());
