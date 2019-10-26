@@ -33,7 +33,7 @@ namespace tremotesf
             Q_OBJECT
             Q_CLASSINFO("D-Bus Interface", "org.equeim.Tremotesf")
         public:
-            IpcServerDBusAdaptor(IpcServer* ipcServer)
+            explicit IpcServerDBusAdaptor(IpcServer* ipcServer)
                 : QDBusAbstractAdaptor(ipcServer),
                   mIpcServer(ipcServer)
             {
