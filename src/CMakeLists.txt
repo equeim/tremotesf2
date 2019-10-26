@@ -1,8 +1,7 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5Concurrent REQUIRED CONFIG)
-find_package(Qt5Network REQUIRED CONFIG)
+find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 
 qt5_add_resources(resources resources.qrc)
 
@@ -68,7 +67,7 @@ else()
 endif()
 
 if (SAILFISHOS)
-    find_package(Qt5Quick REQUIRED CONFIG)
+    find_package(Qt5 REQUIRED COMPONENTS Quick)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SAILFISHAPP REQUIRED sailfishapp)
 
@@ -84,8 +83,8 @@ if (SAILFISHOS)
     list(APPEND tremotesf_includes ${SAILFISHAPP_INCLUDE_DIRS})
     list(APPEND tremotesf_cxxflags ${SAILFISHAPP_CFLAGS_OTHER})
 else()
-    find_package(Qt5Widgets REQUIRED CONFIG)
-    find_package(KF5WidgetsAddons REQUIRED CONFIG)
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    find_package(KF5WidgetsAddons REQUIRED)
 
     list(APPEND tremotesf_libs
         Qt5::Widgets
@@ -128,7 +127,7 @@ else()
 endif()
 
 if (UNIX AND NOT APPLE)
-    find_package(Qt5DBus CONFIG REQUIRED)
+    find_package(Qt5 REQUIRED COMPONENTS DBus)
     list(APPEND tremotesf_libs Qt5::DBus)
     list(APPEND tremotesf_sources ipcserver_dbus.cpp)
 else()

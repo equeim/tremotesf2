@@ -1,4 +1,4 @@
-find_package(Qt5LinguistTools CONFIG REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS LinguistTools)
 qt5_add_translation(qm_files
     en.ts
     es.ts
