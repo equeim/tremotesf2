@@ -194,12 +194,7 @@ namespace libtremotesf
     {
         if (background != mBackgroundUpdate) {
             mBackgroundUpdate = background;
-            const int interval = [=]() {
-                if (background) {
-                    return mBackgroundUpdateInterval;
-                }
-                return mUpdateInterval;
-            }();
+            const int interval = background ? mBackgroundUpdateInterval : mUpdateInterval;
             if (mUpdateTimer->isActive()) {
                 mUpdateTimer->stop();
                 mUpdateTimer->setInterval(interval);
@@ -312,15 +307,15 @@ namespace libtremotesf
                              bool start)
     {
         if (isConnected()) {
-            const auto future = QtConcurrent::run([=]() mutable {
+            const auto future = QtConcurrent::run([=]() {
                 return makeRequestData(QLatin1String("torrent-add"),
                                        {{QLatin1String("metainfo"), fileData.toBase64()},
-                                        {QLatin1String("download-dir"), std::move(downloadDirectory)},
-                                        {QLatin1String("files-wanted"), std::move(wantedFiles)},
-                                        {QLatin1String("files-unwanted"), std::move(unwantedFiles)},
-                                        {QLatin1String("priority-high"), std::move(highPriorityFiles)},
-                                        {QLatin1String("priority-normal"), std::move(normalPriorityFiles)},
-                                        {QLatin1String("priority-low"), std::move(lowPriorityFiles)},
+                                        {QLatin1String("download-dir"), downloadDirectory},
+                                        {QLatin1String("files-wanted"), wantedFiles},
+                                        {QLatin1String("files-unwanted"), unwantedFiles},
+                                        {QLatin1String("priority-high"), highPriorityFiles},
+                                        {QLatin1String("priority-normal"), normalPriorityFiles},
+                                        {QLatin1String("priority-low"), lowPriorityFiles},
                                         {QLatin1String("bandwidthPriority"), bandwidthPriority},
                                         {QLatin1String("paused"), !start}});
             });
@@ -651,7 +646,6 @@ namespace libtremotesf
         }
 
         mStatus = status;
-        emit statusChanged();
 
         switch (mStatus) {
         case Disconnected:
@@ -675,6 +669,8 @@ namespace libtremotesf
 
             mTorrents.clear();
 
+            emit statusChanged();
+
             if (wasConnected) {
                 mUpdateTimer->stop();
                 emit connectedChanged();
@@ -686,12 +682,14 @@ namespace libtremotesf
         case Connecting:
             qDebug() << "connecting";
             mUpdating = true;
+            emit statusChanged();
             break;
         case Connected:
         {
             qDebug() << "connected";
-            emit connectedChanged();
             emit torrentsUpdated();
+            emit statusChanged();
+            emit connectedChanged();
             break;
         }
         }
@@ -873,9 +871,9 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::postRequest(const QByteArray& data,
-                          const std::function<void(const QJsonObject&)>& callOnSuccessParse,
-                          const std::function<void()>& callOnSuccess)
+    void Rpc::postRequestImpl(const QByteArray& data,
+                              const std::function<void()>& callOnSuccess,
+                              const std::function<void(const QJsonObject&)>& callOnSuccessParse)
     {
         QNetworkRequest request(mServerUrl);
         static const QVariant contentType(QLatin1String("application/json"));
@@ -935,7 +933,7 @@ namespace libtremotesf
                     if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
                         reply->hasRawHeader(sessionIdHeader)) {
                         mSessionId = reply->rawHeader(sessionIdHeader);
-                        postRequest(data, callOnSuccessParse);
+                        postRequestImpl(data, callOnSuccess, callOnSuccessParse);
                     } else {
                         qWarning() << reply->error() << reply->errorString();
                         setError(ConnectionError, reply->errorString());
@@ -960,14 +958,14 @@ namespace libtremotesf
         timer->start();
     }
 
-    void Rpc::postRequest(const QByteArray& data, const std::function<void(const QJsonObject&)>& callOnSuccess)
-    {
-        postRequest(data, callOnSuccess, nullptr);
-    }
-
     void Rpc::postRequest(const QByteArray& data, const std::function<void()>& callOnSuccess)
     {
-        postRequest(data, nullptr, callOnSuccess);
+        postRequestImpl(data, callOnSuccess, nullptr);
+    }
+
+    void Rpc::postRequest(const QByteArray& data, const std::function<void(const QJsonObject&)>& callOnSuccessParse)
+    {
+        postRequestImpl(data, nullptr, callOnSuccessParse);
     }
 
     std::shared_ptr<Torrent> Rpc::torrentById(int id) const

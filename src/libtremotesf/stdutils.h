@@ -86,7 +86,7 @@ namespace tremotesf
 #define QJsonKeyStringInit QStringLiteral
 #else
         using QJsonKeyString = QLatin1String;
-#define QJsonKeyStringInit QLatin1String
+        using QJsonKeyStringInit = QLatin1String;
 #endif
 
 #endif // TREMOTESF_STDUTILS_H

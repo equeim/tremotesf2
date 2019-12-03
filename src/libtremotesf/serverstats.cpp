@@ -25,16 +25,6 @@
 
 namespace libtremotesf
 {
-    SessionStats::SessionStats(QObject* parent)
-        : QObject(parent),
-          mDownloaded(0),
-          mUploaded(0),
-          mDuration(0),
-          mSessionCount(0)
-    {
-
-    }
-
     long long SessionStats::downloaded() const
     {
         return mDownloaded;
@@ -61,15 +51,14 @@ namespace libtremotesf
         mUploaded = stats.value(QJsonKeyStringInit("uploadedBytes")).toDouble();
         mDuration = stats.value(QJsonKeyStringInit("secondsActive")).toInt();
         mSessionCount = stats.value(QJsonKeyStringInit("sessionCount")).toInt();
-        emit updated();
     }
 
     ServerStats::ServerStats(QObject* parent)
         : QObject(parent),
           mDownloadSpeed(0),
           mUploadSpeed(0),
-          mCurrentSession(new SessionStats(this)),
-          mTotal(new SessionStats(this))
+          mCurrentSession(),
+          mTotal()
     {
 
     }
@@ -84,12 +73,12 @@ namespace libtremotesf
         return mUploadSpeed;
     }
 
-    SessionStats* ServerStats::currentSession() const
+    SessionStats ServerStats::currentSession() const
     {
         return mCurrentSession;
     }
 
-    SessionStats* ServerStats::total() const
+    SessionStats ServerStats::total() const
     {
         return mTotal;
     }
@@ -98,8 +87,8 @@ namespace libtremotesf
     {
         mDownloadSpeed = serverStats.value(QJsonKeyStringInit("downloadSpeed")).toDouble();
         mUploadSpeed = serverStats.value(QJsonKeyStringInit("uploadSpeed")).toDouble();
-        mCurrentSession->update(serverStats.value(QJsonKeyStringInit("current-stats")).toObject());
-        mTotal->update(serverStats.value(QJsonKeyStringInit("cumulative-stats")).toObject());
+        mCurrentSession.update(serverStats.value(QJsonKeyStringInit("current-stats")).toObject());
+        mTotal.update(serverStats.value(QJsonKeyStringInit("cumulative-stats")).toObject());
         emit updated();
     }
 }

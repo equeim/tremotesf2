@@ -27,16 +27,14 @@ namespace libtremotesf
 {
     class Rpc;
 
-    class SessionStats : public QObject
+    class SessionStats
     {
-        Q_OBJECT
-        Q_PROPERTY(long long downloaded READ downloaded NOTIFY updated)
-        Q_PROPERTY(long long uploaded READ uploaded NOTIFY updated)
-        Q_PROPERTY(int duration READ duration NOTIFY updated)
-        Q_PROPERTY(int sessionCount READ sessionCount NOTIFY updated)
+        Q_GADGET
+        Q_PROPERTY(long long downloaded READ downloaded)
+        Q_PROPERTY(long long uploaded READ uploaded)
+        Q_PROPERTY(int duration READ duration)
+        Q_PROPERTY(int sessionCount READ sessionCount)
     public:
-        explicit SessionStats(QObject* parent = nullptr);
-
         long long downloaded() const;
         long long uploaded() const;
         int duration() const;
@@ -49,9 +47,6 @@ namespace libtremotesf
         long long mUploaded;
         int mDuration;
         int mSessionCount;
-
-    signals:
-        void updated();
     };
 
     class ServerStats : public QObject
@@ -59,24 +54,24 @@ namespace libtremotesf
         Q_OBJECT
         Q_PROPERTY(long long downloadSpeed READ downloadSpeed NOTIFY updated)
         Q_PROPERTY(long long uploadSpeed READ uploadSpeed NOTIFY updated)
-        Q_PROPERTY(libtremotesf::SessionStats* currentSession READ currentSession CONSTANT)
-        Q_PROPERTY(libtremotesf::SessionStats* total READ total CONSTANT)
+        Q_PROPERTY(libtremotesf::SessionStats currentSession READ currentSession NOTIFY updated)
+        Q_PROPERTY(libtremotesf::SessionStats total READ total NOTIFY updated)
     public:
         explicit ServerStats(QObject* parent);
 
         long long downloadSpeed() const;
         long long uploadSpeed() const;
 
-        SessionStats* currentSession() const;
-        SessionStats* total() const;
+        SessionStats currentSession() const;
+        SessionStats total() const;
 
         void update(const QJsonObject& serverStats);
 
     private:
         long long mDownloadSpeed;
         long long mUploadSpeed;
-        SessionStats* mCurrentSession;
-        SessionStats* mTotal;
+        SessionStats mCurrentSession;
+        SessionStats mTotal;
     signals:
         void updated();
     };
