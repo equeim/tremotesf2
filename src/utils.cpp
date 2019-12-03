@@ -324,6 +324,7 @@ namespace tremotesf
         qRegisterMetaType<libtremotesf::Server>();
         qmlRegisterUncreatableType<libtremotesf::ServerSettings>(url, versionMajor, versionMinor, "ServerSettings", QString());
         qmlRegisterType<libtremotesf::ServerStats>();
+        qRegisterMetaType<libtremotesf::SessionStats>();
         qmlRegisterUncreatableType<libtremotesf::Torrent>(url, versionMajor, versionMinor, "Torrent", QString());
 
         qmlRegisterType<BaseProxyModel>(url, versionMajor, versionMinor, "BaseProxyModel");

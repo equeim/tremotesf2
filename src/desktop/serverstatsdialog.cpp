@@ -102,20 +102,20 @@ namespace tremotesf
             sessionCountLabel->setEnabled(rpc->isConnected());
         });
 
-        const libtremotesf::SessionStats* currentSessionStats = rpc->serverStats()->currentSession();
-        const libtremotesf::SessionStats* totalStats = rpc->serverStats()->total();
         auto update = [=]() {
-            sessionDownloadedLabel->setText(Utils::formatByteSize(currentSessionStats->downloaded()));
-            sessionUploadedLabel->setText(Utils::formatByteSize(currentSessionStats->uploaded()));
-            sessionRatioLabel->setText(Utils::formatRatio(currentSessionStats->downloaded(), currentSessionStats->uploaded()));
-            sessionDurationLabel->setText(Utils::formatEta(currentSessionStats->duration()));
+            const libtremotesf::SessionStats currentSessionStats(rpc->serverStats()->currentSession());
+            sessionDownloadedLabel->setText(Utils::formatByteSize(currentSessionStats.downloaded()));
+            sessionUploadedLabel->setText(Utils::formatByteSize(currentSessionStats.uploaded()));
+            sessionRatioLabel->setText(Utils::formatRatio(currentSessionStats.downloaded(), currentSessionStats.uploaded()));
+            sessionDurationLabel->setText(Utils::formatEta(currentSessionStats.duration()));
 
-            totalDownloadedLabel->setText(Utils::formatByteSize(totalStats->downloaded()));
-            totalUploadedLabel->setText(Utils::formatByteSize(totalStats->uploaded()));
-            totalRatioLabel->setText(Utils::formatRatio(totalStats->downloaded(), totalStats->uploaded()));
-            totalDurationLabel->setText(Utils::formatEta(totalStats->duration()));
+            const libtremotesf::SessionStats totalStats(rpc->serverStats()->total());
+            totalDownloadedLabel->setText(Utils::formatByteSize(totalStats.downloaded()));
+            totalUploadedLabel->setText(Utils::formatByteSize(totalStats.uploaded()));
+            totalRatioLabel->setText(Utils::formatRatio(totalStats.downloaded(), totalStats.uploaded()));
+            totalDurationLabel->setText(Utils::formatEta(totalStats.duration()));
 
-            sessionCountLabel->setText(qApp->translate("tremotesf", "%n times", nullptr, totalStats->sessionCount()));
+            sessionCountLabel->setText(qApp->translate("tremotesf", "%n times", nullptr, totalStats.sessionCount()));
         };
         QObject::connect(rpc->serverStats(), &libtremotesf::ServerStats::updated, this, update);
         update();
