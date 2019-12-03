@@ -60,9 +60,9 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFilesModelEntry::Priority)
 
 namespace tremotesf
 {
-    class TorrentFilesModelEntryEnums : public QObject
+    class TorrentFilesModelEntryEnums
     {
-        Q_OBJECT
+        Q_GADGET
     public:
         enum WantedState
         {
