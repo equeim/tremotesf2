@@ -91,25 +91,25 @@ namespace tremotesf
 
             void updateItems()
             {
-                item(TorrentsProxyModel::All)->setText(qApp->translate("tremotesf", "All (%1)", "All torrents, %1 - torrents count").arg(mRpc->torrentsCount()));
+                item(TorrentsProxyModel::All)->setText(qApp->translate("tremotesf", "All (%L1)", "All torrents, %L1 - torrents count").arg(mRpc->torrentsCount()));
 
-                //: Active torrents, %1 - torrents count
-                item(TorrentsProxyModel::Active)->setText(qApp->translate("tremotesf", "Active (%1)").arg(mStats->activeTorrents()));
+                //: Active torrents, %L1 - torrents count
+                item(TorrentsProxyModel::Active)->setText(qApp->translate("tremotesf", "Active (%L1)").arg(mStats->activeTorrents()));
 
-                //: Downloading torrents, %1 - torrents count
-                item(TorrentsProxyModel::Downloading)->setText(qApp->translate("tremotesf", "Downloading (%1)").arg(mStats->downloadingTorrents()));
+                //: Downloading torrents, %L1 - torrents count
+                item(TorrentsProxyModel::Downloading)->setText(qApp->translate("tremotesf", "Downloading (%L1)").arg(mStats->downloadingTorrents()));
 
-                //: Seeding torrents, %1 - torrents count
-                item(TorrentsProxyModel::Seeding)->setText(qApp->translate("tremotesf", "Seeding (%1)").arg(mStats->seedingTorrents()));
+                //: Seeding torrents, %L1 - torrents count
+                item(TorrentsProxyModel::Seeding)->setText(qApp->translate("tremotesf", "Seeding (%L1)").arg(mStats->seedingTorrents()));
 
-                //: Paused torrents, %1 - torrents count
-                item(TorrentsProxyModel::Paused)->setText(qApp->translate("tremotesf", "Paused (%1)").arg(mStats->pausedTorrents()));
+                //: Paused torrents, %L1 - torrents count
+                item(TorrentsProxyModel::Paused)->setText(qApp->translate("tremotesf", "Paused (%L1)").arg(mStats->pausedTorrents()));
 
-                //: Checking torrents, %1 - torrents count
-                item(TorrentsProxyModel::Checking)->setText(qApp->translate("tremotesf", "Checking (%1)").arg(mStats->checkingTorrents()));
+                //: Checking torrents, %L1 - torrents count
+                item(TorrentsProxyModel::Checking)->setText(qApp->translate("tremotesf", "Checking (%L1)").arg(mStats->checkingTorrents()));
 
-                //: Errored torrents, %1 - torrents count
-                item(TorrentsProxyModel::Errored)->setText(qApp->translate("tremotesf", "Errored (%1)").arg(mStats->erroredTorrents()));
+                //: Errored torrents, %L1 - torrents count
+                item(TorrentsProxyModel::Errored)->setText(qApp->translate("tremotesf", "Errored (%L1)").arg(mStats->erroredTorrents()));
             }
 
         protected:

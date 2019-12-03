@@ -95,7 +95,7 @@ namespace tremotesf
             case Qt::DecorationRole:
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
-                return qApp->translate("tremotesf", "All (%1)", "All trackers, %1 - torrents count").arg(mRpc->torrentsCount());
+                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(mRpc->torrentsCount());
             }
         } else {
             const int row = index.row() - 1;
@@ -103,7 +103,8 @@ namespace tremotesf
             case Qt::DecorationRole:
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
-                return qApp->translate("tremotesf", "%1 (%2)").arg(mDirectories[row]).arg(mDirectoriesTorrents[row]);
+                //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
+                return qApp->translate("tremotesf", "%1 (%L2)").arg(mDirectories[row]).arg(mDirectoriesTorrents[row]);
             case DirectoryRole:
                 return mDirectories[row];
             }

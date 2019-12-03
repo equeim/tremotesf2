@@ -288,7 +288,7 @@ Page {
         id: selectionPanel
         selectionModel: listView.selectionModel
         parentIndex: delegateModel.rootIndex
-        text: qsTranslate("tremotesf", "%n files selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%Ln files selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {

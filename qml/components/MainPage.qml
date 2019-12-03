@@ -48,6 +48,7 @@ Page {
             title: "Tremotesf"
             description: {
                 if (Servers.hasServers) {
+                    //: %s is server's name, %2 is server's address
                     return qsTranslate("tremotesf", "%1 (%2)").arg(Servers.currentServerName).arg(Servers.currentServerAddress)
                 }
                 return String()
@@ -150,7 +151,7 @@ Page {
     SelectionPanel {
         id: selectionPanel
         selectionModel: torrentsView.selectionModel
-        text: qsTranslate("tremotesf", "%n torrents selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%Ln torrents selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {
@@ -220,7 +221,7 @@ Page {
                 for (var i = 0; i < count; ++i) {
                     notification.addedTorrent(names[i], hashStrings[i], false)
                 }
-                notification.publishGeneric(qsTranslate("tremotesf", "%n torrents added", String(), count))
+                notification.publishGeneric(qsTranslate("tremotesf", "%Ln torrents added", String(), count))
             }
         }
 
@@ -232,7 +233,7 @@ Page {
                 for (var i = 0; i < count; ++i) {
                     notification.finishedTorrent(names[i], hashStrings[i], false)
                 }
-                notification.publishGeneric(qsTranslate("tremotesf", "%n torrents finished", String(), count))
+                notification.publishGeneric(qsTranslate("tremotesf", "%Ln torrents finished", String(), count))
             }
         }
 

@@ -118,8 +118,6 @@ namespace tremotesf
             ZebiByte,
             YobiByte
         };
-
-        QLocale locale;
     }
 
     QString Utils::formatByteSize(double size)
@@ -133,37 +131,37 @@ namespace tremotesf
         QString string;
         switch (unit) {
         case Byte:
-            string = qApp->translate("tremotesf", "%1 B");
+            string = qApp->translate("tremotesf", "%L1 B");
             break;
         case KibiByte:
-            string = qApp->translate("tremotesf", "%1 KiB");
+            string = qApp->translate("tremotesf", "%L1 KiB");
             break;
         case MebiByte:
-            string = qApp->translate("tremotesf", "%1 MiB");
+            string = qApp->translate("tremotesf", "%L1 MiB");
             break;
         case GibiByte:
-            string = qApp->translate("tremotesf", "%1 GiB");
+            string = qApp->translate("tremotesf", "%L1 GiB");
             break;
         case TebiByte:
-            string = qApp->translate("tremotesf", "%1 TiB");
+            string = qApp->translate("tremotesf", "%L1 TiB");
             break;
         case PebiByte:
-            string = qApp->translate("tremotesf", "%1 PiB");
+            string = qApp->translate("tremotesf", "%L1 PiB");
             break;
         case ExbiByte:
-            string = qApp->translate("tremotesf", "%1 EiB");
+            string = qApp->translate("tremotesf", "%L1 EiB");
             break;
         case ZebiByte:
-            string = qApp->translate("tremotesf", "%1 ZiB");
+            string = qApp->translate("tremotesf", "%L1 ZiB");
             break;
         case YobiByte:
-            string = qApp->translate("tremotesf", "%1 YiB");
+            string = qApp->translate("tremotesf", "%L1 YiB");
         }
 
         if (unit == Byte) {
-            return string.arg(locale.toString(size));
+            return string.arg(size);
         }
-        return string.arg(locale.toString(size, 'f', 1));
+        return string.arg(size, 0, 'f', 1);
     }
 
     QString Utils::formatByteSpeed(double speed)
@@ -177,42 +175,42 @@ namespace tremotesf
         QString string;
         switch (unit) {
         case Byte:
-            string = qApp->translate("tremotesf", "%1 B/s");
+            string = qApp->translate("tremotesf", "%L1 B/s");
             break;
         case KibiByte:
-            string = qApp->translate("tremotesf", "%1 KiB/s");
+            string = qApp->translate("tremotesf", "%L1 KiB/s");
             break;
         case MebiByte:
-            string = qApp->translate("tremotesf", "%1 MiB/s");
+            string = qApp->translate("tremotesf", "%L1 MiB/s");
             break;
         case GibiByte:
-            string = qApp->translate("tremotesf", "%1 GiB/s");
+            string = qApp->translate("tremotesf", "%L1 GiB/s");
             break;
         case TebiByte:
-            string = qApp->translate("tremotesf", "%1 TiB/s");
+            string = qApp->translate("tremotesf", "%L1 TiB/s");
             break;
         case PebiByte:
-            string = qApp->translate("tremotesf", "%1 PiB/s");
+            string = qApp->translate("tremotesf", "%L1 PiB/s");
             break;
         case ExbiByte:
-            string = qApp->translate("tremotesf", "%1 EiB/s");
+            string = qApp->translate("tremotesf", "%L1 EiB/s");
             break;
         case ZebiByte:
-            string = qApp->translate("tremotesf", "%1 ZiB/s");
+            string = qApp->translate("tremotesf", "%L1 ZiB/s");
             break;
         case YobiByte:
-            string = qApp->translate("tremotesf", "%1 YiB/s");
+            string = qApp->translate("tremotesf", "%L1 YiB/s");
         }
 
         if (unit == Byte) {
-            return string.arg(locale.toString(speed));
+            return string.arg(speed);
         }
-        return string.arg(locale.toString(speed, 'f', 1));
+        return string.arg(speed, 0, 'f', 1);
     }
 
     QString Utils::formatSpeedLimit(int limit)
     {
-        return qApp->translate("tremotesf", "%1 KiB/s").arg(limit);
+        return qApp->translate("tremotesf", "%L1 KiB/s").arg(limit);
     }
 
     QString Utils::formatProgress(double progress)
@@ -238,7 +236,7 @@ namespace tremotesf
         } else if (ratio >= 10) {
             precision = 1;
         }
-        return locale.toString(ratio, 'f', precision);
+        return QLocale().toString(ratio, 'f', precision);
     }
 
     QString Utils::formatRatio(long long downloaded, long long uploaded)
@@ -262,21 +260,19 @@ namespace tremotesf
         const int minutes = seconds / 60;
         seconds %= 60;
 
-        const QLocale locale;
-
         if (days > 0) {
-            return qApp->translate("tremotesf", "%1 d %2 h").arg(locale.toString(days), locale.toString(hours));
+            return qApp->translate("tremotesf", "%L1 d %L2 h").arg(days).arg(hours);
         }
 
         if (hours > 0) {
-            return qApp->translate("tremotesf", "%1 h %2 m").arg(locale.toString(hours), locale.toString(minutes));
+            return qApp->translate("tremotesf", "%L1 h %L2 m").arg(hours).arg(minutes);
         }
 
         if (minutes > 0) {
-            return qApp->translate("tremotesf", "%1 m %2 s").arg(locale.toString(minutes), locale.toString(seconds));
+            return qApp->translate("tremotesf", "%L1 m %L2 s").arg(minutes).arg(seconds);
         }
 
-        return qApp->translate("tremotesf", "%1 s").arg(locale.toString(seconds));
+        return qApp->translate("tremotesf", "%L1 s").arg(seconds);
     }
 
     QString Utils::license()

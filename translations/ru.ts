@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" sourcelanguage="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ru" sourcelanguage="en">
 <context>
     <name>tremotesf</name>
     <message>
@@ -385,8 +387,12 @@
     <message numerus="yes">
         <location filename="../qml/components/LocalTorrentFilesPage.qml" line="291"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="393"/>
-        <source>%n files selected</source>
-        <translation><numerusform>%n файл выбран</numerusform><numerusform>%n файла выбраны</numerusform><numerusform>%n файлов выбраны</numerusform><numerusform>%n файлов выбраны</numerusform></translation>
+        <source>%Ln files selected</source>
+        <translation>
+            <numerusform>%Ln файл выбран</numerusform>
+            <numerusform>%Ln файла выбраны</numerusform>
+            <numerusform>%Ln файлов выбраны</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="51"/>
@@ -428,8 +434,12 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="153"/>
-        <source>%n torrents selected</source>
-        <translation><numerusform>%n торрент выбран</numerusform><numerusform>%n торрента выбраны</numerusform><numerusform>%n торрентов выбраны</numerusform><numerusform>%n торрентов выбраны</numerusform></translation>
+        <source>%Ln torrents selected</source>
+        <translation>
+            <numerusform>%Ln торрент выбран</numerusform>
+            <numerusform>%Ln торрента выбраны</numerusform>
+            <numerusform>%Ln торрентов выбраны</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="158"/>
@@ -496,14 +506,22 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="223"/>
         <location filename="../src/desktop/mainwindow.cpp" line="938"/>
-        <source>%n torrents added</source>
-        <translation><numerusform>%n торрент добавлен</numerusform><numerusform>%n торрента добавлены</numerusform><numerusform>%n торрентов добавлены</numerusform><numerusform>%n торрентов добавлены</numerusform></translation>
+        <source>%Ln torrents added</source>
+        <translation>
+            <numerusform>%Ln торрент добавлен</numerusform>
+            <numerusform>%Ln торрента добавлены</numerusform>
+            <numerusform>%Ln торрентов добавлены</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="235"/>
         <location filename="../src/desktop/mainwindow.cpp" line="931"/>
-        <source>%n torrents finished</source>
-        <translation><numerusform>%n торрент завершен</numerusform><numerusform>%n торрента завершены</numerusform><numerusform>%n торрентов завершены</numerusform><numerusform>%n торрентов завершены</numerusform></translation>
+        <source>%Ln torrents finished</source>
+        <translation>
+            <numerusform>%Ln торрент завершен</numerusform>
+            <numerusform>%Ln торрента завершены</numerusform>
+            <numerusform>%Ln торрентов завершены</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="239"/>
@@ -682,8 +700,12 @@
     <message numerus="yes">
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="700"/>
-        <source>Are you sure you want to remove %n selected torrents?</source>
-        <translation><numerusform>Вы уверены, что хотите удалить %n выбранный торрент?</numerusform><numerusform>Вы уверены, что хотите удалить %n выбранных торрента?</numerusform><numerusform>Вы уверены, что хотите удалить %n выбранных торрентов?</numerusform><numerusform>Вы уверены, что хотите удалить %n выбранных торрентов?</numerusform></translation>
+        <source>Are you sure you want to remove %Ln selected torrents?</source>
+        <translation>
+            <numerusform>Вы уверены, что хотите удалить %Ln выбранный торрент?</numerusform>
+            <numerusform>Вы уверены, что хотите удалить %Ln выбранных торрента?</numerusform>
+            <numerusform>Вы уверены, что хотите удалить %Ln выбранных торрентов?</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
@@ -897,13 +919,21 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="167"/>
-        <source>%n servers selected</source>
-        <translation><numerusform>%n сервер выбран</numerusform><numerusform>%n сервера выбраны</numerusform><numerusform>%n серверов выбраны</numerusform><numerusform>%n серверов выбраны</numerusform></translation>
+        <source>%Ln servers selected</source>
+        <translation>
+            <numerusform>%Ln сервер выбран</numerusform>
+            <numerusform>%Ln сервера выбраны</numerusform>
+            <numerusform>%Ln серверов выбраны</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="173"/>
-        <source>Removing %n servers</source>
-        <translation><numerusform>Удаление %n сервера</numerusform><numerusform>Удаление %n серверов</numerusform><numerusform>Удаление %n серверов</numerusform><numerusform>Удаление %n серверов</numerusform></translation>
+        <source>Removing %Ln servers</source>
+        <translation>
+            <numerusform>Удаление %Ln сервера</numerusform>
+            <numerusform>Удаление %Ln серверов</numerusform>
+            <numerusform>Удаление %Ln серверов</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="36"/>
@@ -1032,8 +1062,12 @@
     <message numerus="yes">
         <location filename="../qml/components/ServerStatsPage.qml" line="96"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="116"/>
-        <source>%n times</source>
-        <translation><numerusform>%n раз</numerusform><numerusform>%n раза</numerusform><numerusform>%n раз</numerusform><numerusform>%n раз</numerusform></translation>
+        <source>%Ln times</source>
+        <translation>
+            <numerusform>%Ln раз</numerusform>
+            <numerusform>%Ln раза</numerusform>
+            <numerusform>%Ln раз</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="93"/>
@@ -1161,9 +1195,9 @@
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="341"/>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="109"/>
-        <source>Checking (%1)</source>
+        <source>Checking (%L1)</source>
         <extracomment>Checking torrents, %1 - torrents count</extracomment>
-        <translation>Проверяющиеся (%1)</translation>
+        <translation>Проверяющиеся (%L1)</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="104"/>
@@ -1235,7 +1269,7 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="206"/>
         <location filename="../src/torrentsmodel.cpp" line="282"/>
         <source>Completed</source>
-        <extracomment>Torrent's completed size</extracomment>
+        <extracomment>Torrent&apos;s completed size</extracomment>
         <translation>Завершено</translation>
     </message>
     <message>
@@ -1246,14 +1280,14 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="212"/>
         <location filename="../src/torrentsmodel.cpp" line="271"/>
         <source>Downloaded</source>
-        <extracomment>Torrent's downloaded size</extracomment>
+        <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation>Загружено</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="218"/>
         <location filename="../src/torrentsmodel.cpp" line="274"/>
         <source>Uploaded</source>
-        <extracomment>Torrent's uploaded size</extracomment>
+        <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation>Отдано</translation>
     </message>
     <message>
@@ -1344,8 +1378,12 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
-        <source>%n peers</source>
-        <translation><numerusform>%n пир</numerusform><numerusform>%n пира</numerusform><numerusform>%n пиров</numerusform><numerusform>%n пиров</numerusform></translation>
+        <source>%Ln peers</source>
+        <translation>
+            <numerusform>%Ln пир</numerusform>
+            <numerusform>%Ln пира</numerusform>
+            <numerusform>%Ln пиров</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="166"/>
@@ -1359,20 +1397,28 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
-        <source>%n trackers selected</source>
-        <translation><numerusform>%n трекер выбран</numerusform><numerusform>%n трекера выбраны</numerusform><numerusform>%n трекеров выбраны</numerusform><numerusform>%n трекеров выбраны</numerusform></translation>
+        <source>%Ln trackers selected</source>
+        <translation>
+            <numerusform>%Ln трекер выбран</numerusform>
+            <numerusform>%Ln трекера выбраны</numerusform>
+            <numerusform>%Ln трекеров выбраны</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
-        <source>Removing %n trackers</source>
-        <translation><numerusform>Удаление %n трекера</numerusform><numerusform>Удаление %n трекеров</numerusform><numerusform>Удаление %n трекеров</numerusform><numerusform>Удаление %n трекеров</numerusform></translation>
+        <source>Removing %Ln trackers</source>
+        <translation>
+            <numerusform>Удаление %Ln трекера</numerusform>
+            <numerusform>Удаление %Ln трекеров</numerusform>
+            <numerusform>Удаление %Ln трекеров</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="99"/>
         <location filename="../src/downloaddirectoriesmodel.cpp" line="98"/>
-        <source>All (%1)</source>
+        <source>All (%L1)</source>
         <comment>All trackers, %1 - torrents count</comment>
-        <translation>Все (%1)</translation>
+        <translation>Все (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="120"/>
@@ -1640,39 +1686,39 @@
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="94"/>
-        <source>All (%1)</source>
+        <source>All (%L1)</source>
         <comment>All torrents, %1 - torrents count</comment>
-        <translation>Все (%1)</translation>
+        <translation>Все (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="97"/>
-        <source>Active (%1)</source>
+        <source>Active (%L1)</source>
         <extracomment>Active torrents, %1 - torrents count</extracomment>
-        <translation>Активные (%1)</translation>
+        <translation>Активные (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="100"/>
-        <source>Downloading (%1)</source>
+        <source>Downloading (%L1)</source>
         <extracomment>Downloading torrents, %1 - torrents count</extracomment>
-        <translation>Загрузки (%1)</translation>
+        <translation>Загрузки (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="103"/>
-        <source>Seeding (%1)</source>
+        <source>Seeding (%L1)</source>
         <extracomment>Seeding torrents, %1 - torrents count</extracomment>
-        <translation>Раздачи (%1)</translation>
+        <translation>Раздачи (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="106"/>
-        <source>Paused (%1)</source>
+        <source>Paused (%L1)</source>
         <extracomment>Paused torrents, %1 - torrents count</extracomment>
-        <translation>Приостановленные (%1)</translation>
+        <translation>Приостановленные (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="112"/>
-        <source>Errored (%1)</source>
+        <source>Errored (%L1)</source>
         <extracomment>Errored torrents, %1 - torrents count</extracomment>
-        <translation>С ошибкой (%1)</translation>
+        <translation>С ошибкой (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="241"/>
@@ -1884,7 +1930,7 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="118"/>
         <source>Completed:</source>
-        <extracomment>Torrent's completed size</extracomment>
+        <extracomment>Torrent&apos;s completed size</extracomment>
         <translation>Завершено:</translation>
     </message>
     <message>
@@ -1892,7 +1938,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="69"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="121"/>
         <source>Downloaded:</source>
-        <extracomment>Torrent's downloaded size</extracomment>
+        <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation>Загружено:</translation>
     </message>
     <message>
@@ -1900,7 +1946,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="71"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="124"/>
         <source>Uploaded:</source>
-        <extracomment>Torrent's uploaded size</extracomment>
+        <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation>Отдано:</translation>
     </message>
     <message>
@@ -2026,8 +2072,12 @@
     </message>
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="190"/>
-        <source>Are you sure you want to remove %n selected trackers?</source>
-        <translation><numerusform>Вы уверены, что хотите удалить %n выбранный трекер?</numerusform><numerusform>Вы уверены, что хотите удалить %n выбранных трекера?</numerusform><numerusform>Вы уверены, что хотите удалить %n выбранных трекеров?</numerusform><numerusform>Вы уверены, что хотите удалить %n выбранных трекеров?</numerusform></translation>
+        <source>Are you sure you want to remove %Ln selected trackers?</source>
+        <translation>
+            <numerusform>Вы уверены, что хотите удалить %Ln выбранный трекер?</numerusform>
+            <numerusform>Вы уверены, что хотите удалить %Ln выбранных трекера?</numerusform>
+            <numerusform>Вы уверены, что хотите удалить %Ln выбранных трекеров?</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/peersmodel.cpp" line="118"/>
@@ -2114,8 +2164,12 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="330"/>
-        <source>Downloading from %n peers</source>
-        <translation><numerusform>Загружается от %n пира</numerusform><numerusform>Загружается от %n пиров</numerusform><numerusform>Загружается от %n пиров</numerusform><numerusform>Загружается от %n пиров</numerusform></translation>
+        <source>Downloading from %Ln peers</source>
+        <translation>
+            <numerusform>Загружается от %Ln пира</numerusform>
+            <numerusform>Загружается от %Ln пиров</numerusform>
+            <numerusform>Загружается от %Ln пиров</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="81"/>
@@ -2127,8 +2181,12 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="334"/>
-        <source>Seeding to %n peers</source>
-        <translation><numerusform>Раздается к %n пиру</numerusform><numerusform>Раздается к %n пирам</numerusform><numerusform>Раздается к %n пирам</numerusform><numerusform>Раздается к %n пирам</numerusform></translation>
+        <source>Seeding to %Ln peers</source>
+        <translation>
+            <numerusform>Раздается к %Ln пиру</numerusform>
+            <numerusform>Раздается к %Ln пирам</numerusform>
+            <numerusform>Раздается к %Ln пирам</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="336"/>
@@ -2204,7 +2262,7 @@
     <message>
         <location filename="../src/torrentsmodel.cpp" line="277"/>
         <source>Remaining</source>
-        <extracomment>Torrents's remaining size</extracomment>
+        <extracomment>Torrents&apos;s remaining size</extracomment>
         <translation>Осталось</translation>
     </message>
     <message>
@@ -2253,114 +2311,114 @@
     </message>
     <message>
         <location filename="../src/utils.cpp" line="136"/>
-        <source>%1 B</source>
-        <translation>%1 Б</translation>
+        <source>%L1 B</source>
+        <translation>%L1 Б</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="139"/>
-        <source>%1 KiB</source>
-        <translation>%1 КиБ</translation>
+        <source>%L1 KiB</source>
+        <translation>%L1 КиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="142"/>
-        <source>%1 MiB</source>
-        <translation>%1 МиБ</translation>
+        <source>%L1 MiB</source>
+        <translation>%L1 МиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="145"/>
-        <source>%1 GiB</source>
-        <translation>%1 ГиБ</translation>
+        <source>%L1 GiB</source>
+        <translation>%L1 ГиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="148"/>
-        <source>%1 TiB</source>
-        <translation>%1 ТиБ</translation>
+        <source>%L1 TiB</source>
+        <translation>%L1 ТиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="151"/>
-        <source>%1 PiB</source>
-        <translation>%1 ПиБ</translation>
+        <source>%L1 PiB</source>
+        <translation>%L1 ПиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="154"/>
-        <source>%1 EiB</source>
-        <translation>%1 ЭиБ</translation>
+        <source>%L1 EiB</source>
+        <translation>%L1 ЭиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="157"/>
-        <source>%1 ZiB</source>
-        <translation>%1 ЗиБ</translation>
+        <source>%L1 ZiB</source>
+        <translation>%L1 ЗиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="160"/>
-        <source>%1 YiB</source>
-        <translation>%1 ЙиБ</translation>
+        <source>%L1 YiB</source>
+        <translation>%L1 ЙиБ</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="180"/>
-        <source>%1 B/s</source>
-        <translation>%1 Б/с</translation>
+        <source>%L1 B/s</source>
+        <translation>%L1 Б/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="183"/>
         <location filename="../src/utils.cpp" line="215"/>
-        <source>%1 KiB/s</source>
-        <translation>%1 КиБ/с</translation>
+        <source>%L1 KiB/s</source>
+        <translation>%L1 КиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="186"/>
-        <source>%1 MiB/s</source>
-        <translation>%1 МиБ/с</translation>
+        <source>%L1 MiB/s</source>
+        <translation>%L1 МиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="189"/>
-        <source>%1 GiB/s</source>
-        <translation>%1 ГиБ/с</translation>
+        <source>%L1 GiB/s</source>
+        <translation>%L1 ГиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="192"/>
-        <source>%1 TiB/s</source>
-        <translation>%1 ТиБ/с</translation>
+        <source>%L1 TiB/s</source>
+        <translation>%L1 ТиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="195"/>
-        <source>%1 PiB/s</source>
-        <translation>%1 ПиБ/с</translation>
+        <source>%L1 PiB/s</source>
+        <translation>%L1 ПиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="198"/>
-        <source>%1 EiB/s</source>
-        <translation>%1 ЭиБ/с</translation>
+        <source>%L1 EiB/s</source>
+        <translation>%L1 ЭиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="201"/>
-        <source>%1 ZiB/s</source>
-        <translation>%1 ЗиБ/с</translation>
+        <source>%L1 ZiB/s</source>
+        <translation>%L1 ЗиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="204"/>
-        <source>%1 YiB/s</source>
-        <translation>%1 ЙиБ/с</translation>
+        <source>%L1 YiB/s</source>
+        <translation>%L1 ЙиБ/с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="268"/>
-        <source>%1 d %2 h</source>
-        <translation>%1 д %2 ч</translation>
+        <source>%L1 d %L2 h</source>
+        <translation>%L1 д %L2 ч</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="272"/>
-        <source>%1 h %2 m</source>
-        <translation>%1 ч %2 м</translation>
+        <source>%L1 h %L2 m</source>
+        <translation>%L1 ч %L2 м</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="276"/>
-        <source>%1 m %2 s</source>
-        <translation>%1 м %2 с</translation>
+        <source>%L1 m %L2 s</source>
+        <translation>%L1 м %L2 с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="279"/>
-        <source>%1 s</source>
-        <translation>%1 с</translation>
+        <source>%L1 s</source>
+        <translation>%L1 с</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="432"/>

@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en_US" sourcelanguage="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en_US" sourcelanguage="en">
 <context>
     <name>tremotesf</name>
     <message>
@@ -385,8 +387,11 @@
     <message numerus="yes">
         <location filename="../qml/components/LocalTorrentFilesPage.qml" line="291"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="393"/>
-        <source>%n files selected</source>
-        <translation><numerusform>%n file selected</numerusform><numerusform>%n files selected</numerusform></translation>
+        <source>%Ln files selected</source>
+        <translation>
+            <numerusform>%Ln file selected</numerusform>
+            <numerusform>%Ln files selected</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="51"/>
@@ -428,8 +433,11 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="153"/>
-        <source>%n torrents selected</source>
-        <translation><numerusform>%n torrent selected</numerusform><numerusform>%n torrents selected</numerusform></translation>
+        <source>%Ln torrents selected</source>
+        <translation>
+            <numerusform>%Ln torrent selected</numerusform>
+            <numerusform>%Ln torrents selected</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="158"/>
@@ -496,14 +504,20 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="223"/>
         <location filename="../src/desktop/mainwindow.cpp" line="938"/>
-        <source>%n torrents added</source>
-        <translation><numerusform>%n torrent added</numerusform><numerusform>%n torrents added</numerusform></translation>
+        <source>%Ln torrents added</source>
+        <translation>
+            <numerusform>%Ln torrent added</numerusform>
+            <numerusform>%Ln torrents added</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="235"/>
         <location filename="../src/desktop/mainwindow.cpp" line="931"/>
-        <source>%n torrents finished</source>
-        <translation><numerusform>%n torrent finished</numerusform><numerusform>%n torrents finished</numerusform></translation>
+        <source>%Ln torrents finished</source>
+        <translation>
+            <numerusform>%Ln torrent finished</numerusform>
+            <numerusform>%Ln torrents finished</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="239"/>
@@ -682,8 +696,11 @@
     <message numerus="yes">
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="700"/>
-        <source>Are you sure you want to remove %n selected torrents?</source>
-        <translation><numerusform>Are you sure you want to remove %n selected torrent?</numerusform><numerusform>Are you sure you want to remove %n selected torrents?</numerusform></translation>
+        <source>Are you sure you want to remove %Ln selected torrents?</source>
+        <translation>
+            <numerusform>Are you sure you want to remove %Ln selected torrent?</numerusform>
+            <numerusform>Are you sure you want to remove %Ln selected torrents?</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
@@ -897,13 +914,19 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="167"/>
-        <source>%n servers selected</source>
-        <translation><numerusform>%n server selected</numerusform><numerusform>%n servers selected</numerusform></translation>
+        <source>%Ln servers selected</source>
+        <translation>
+            <numerusform>%Ln server selected</numerusform>
+            <numerusform>%Ln servers selected</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="173"/>
-        <source>Removing %n servers</source>
-        <translation><numerusform>Removing %n server</numerusform><numerusform>Removing %n servers</numerusform></translation>
+        <source>Removing %Ln servers</source>
+        <translation>
+            <numerusform>Removing %Ln server</numerusform>
+            <numerusform>Removing %Ln servers</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="36"/>
@@ -1032,8 +1055,11 @@
     <message numerus="yes">
         <location filename="../qml/components/ServerStatsPage.qml" line="96"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="116"/>
-        <source>%n times</source>
-        <translation><numerusform>%n time</numerusform><numerusform>%n times</numerusform></translation>
+        <source>%Ln times</source>
+        <translation>
+            <numerusform>%Ln time</numerusform>
+            <numerusform>%Ln times</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="93"/>
@@ -1161,9 +1187,9 @@
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="341"/>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="109"/>
-        <source>Checking (%1)</source>
+        <source>Checking (%L1)</source>
         <extracomment>Checking torrents, %1 - torrents count</extracomment>
-        <translation>Checking (%1)</translation>
+        <translation>Checking (%L1)</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="104"/>
@@ -1235,7 +1261,7 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="206"/>
         <location filename="../src/torrentsmodel.cpp" line="282"/>
         <source>Completed</source>
-        <extracomment>Torrent's completed size</extracomment>
+        <extracomment>Torrent&apos;s completed size</extracomment>
         <translation>Completed</translation>
     </message>
     <message>
@@ -1246,14 +1272,14 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="212"/>
         <location filename="../src/torrentsmodel.cpp" line="271"/>
         <source>Downloaded</source>
-        <extracomment>Torrent's downloaded size</extracomment>
+        <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation>Downloaded</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="218"/>
         <location filename="../src/torrentsmodel.cpp" line="274"/>
         <source>Uploaded</source>
-        <extracomment>Torrent's uploaded size</extracomment>
+        <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation>Uploaded</translation>
     </message>
     <message>
@@ -1344,8 +1370,11 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
-        <source>%n peers</source>
-        <translation><numerusform>%n peer</numerusform><numerusform>%n peers</numerusform></translation>
+        <source>%Ln peers</source>
+        <translation>
+            <numerusform>%Ln peer</numerusform>
+            <numerusform>%Ln peers</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="166"/>
@@ -1359,20 +1388,26 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
-        <source>%n trackers selected</source>
-        <translation><numerusform>%n tracker selected</numerusform><numerusform>%n trackers selected</numerusform></translation>
+        <source>%Ln trackers selected</source>
+        <translation>
+            <numerusform>%Ln tracker selected</numerusform>
+            <numerusform>%Ln trackers selected</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
-        <source>Removing %n trackers</source>
-        <translation><numerusform>Removing %n tracker</numerusform><numerusform>Removing %n trackers</numerusform></translation>
+        <source>Removing %Ln trackers</source>
+        <translation>
+            <numerusform>Removing %Ln tracker</numerusform>
+            <numerusform>Removing %Ln trackers</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="99"/>
         <location filename="../src/downloaddirectoriesmodel.cpp" line="98"/>
-        <source>All (%1)</source>
+        <source>All (%L1)</source>
         <comment>All trackers, %1 - torrents count</comment>
-        <translation>All (%1)</translation>
+        <translation>All (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="120"/>
@@ -1640,39 +1675,39 @@
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="94"/>
-        <source>All (%1)</source>
+        <source>All (%L1)</source>
         <comment>All torrents, %1 - torrents count</comment>
-        <translation>All (%1)</translation>
+        <translation>All (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="97"/>
-        <source>Active (%1)</source>
+        <source>Active (%L1)</source>
         <extracomment>Active torrents, %1 - torrents count</extracomment>
-        <translation>Active (%1)</translation>
+        <translation>Active (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="100"/>
-        <source>Downloading (%1)</source>
+        <source>Downloading (%L1)</source>
         <extracomment>Downloading torrents, %1 - torrents count</extracomment>
-        <translation>Downloading (%1)</translation>
+        <translation>Downloading (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="103"/>
-        <source>Seeding (%1)</source>
+        <source>Seeding (%L1)</source>
         <extracomment>Seeding torrents, %1 - torrents count</extracomment>
-        <translation>Seeding (%1)</translation>
+        <translation>Seeding (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="106"/>
-        <source>Paused (%1)</source>
+        <source>Paused (%L1)</source>
         <extracomment>Paused torrents, %1 - torrents count</extracomment>
-        <translation>Paused (%1)</translation>
+        <translation>Paused (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="112"/>
-        <source>Errored (%1)</source>
+        <source>Errored (%L1)</source>
         <extracomment>Errored torrents, %1 - torrents count</extracomment>
-        <translation>Errored (%1)</translation>
+        <translation>Errored (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="241"/>
@@ -1884,7 +1919,7 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="118"/>
         <source>Completed:</source>
-        <extracomment>Torrent's completed size</extracomment>
+        <extracomment>Torrent&apos;s completed size</extracomment>
         <translation>Completed:</translation>
     </message>
     <message>
@@ -1892,7 +1927,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="69"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="121"/>
         <source>Downloaded:</source>
-        <extracomment>Torrent's downloaded size</extracomment>
+        <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation>Downloaded:</translation>
     </message>
     <message>
@@ -1900,7 +1935,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="71"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="124"/>
         <source>Uploaded:</source>
-        <extracomment>Torrent's uploaded size</extracomment>
+        <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation>Uploaded:</translation>
     </message>
     <message>
@@ -2026,8 +2061,11 @@
     </message>
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="190"/>
-        <source>Are you sure you want to remove %n selected trackers?</source>
-        <translation><numerusform>Are you sure you want to remove %n selected tracker?</numerusform><numerusform>Are you sure you want to remove %n selected trackers?</numerusform></translation>
+        <source>Are you sure you want to remove %Ln selected trackers?</source>
+        <translation>
+            <numerusform>Are you sure you want to remove %Ln selected tracker?</numerusform>
+            <numerusform>Are you sure you want to remove %Ln selected trackers?</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/peersmodel.cpp" line="118"/>
@@ -2114,8 +2152,11 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="330"/>
-        <source>Downloading from %n peers</source>
-        <translation><numerusform>Downloading from %n peer</numerusform><numerusform>Downloading from %n peers</numerusform></translation>
+        <source>Downloading from %Ln peers</source>
+        <translation>
+            <numerusform>Downloading from %Ln peer</numerusform>
+            <numerusform>Downloading from %Ln peers</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="81"/>
@@ -2127,8 +2168,11 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="334"/>
-        <source>Seeding to %n peers</source>
-        <translation><numerusform>Seeding to %n peer</numerusform><numerusform>Seeding to %n peers</numerusform></translation>
+        <source>Seeding to %Ln peers</source>
+        <translation>
+            <numerusform>Seeding to %Ln peer</numerusform>
+            <numerusform>Seeding to %Ln peers</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="336"/>
@@ -2204,7 +2248,7 @@
     <message>
         <location filename="../src/torrentsmodel.cpp" line="277"/>
         <source>Remaining</source>
-        <extracomment>Torrents's remaining size</extracomment>
+        <extracomment>Torrents&apos;s remaining size</extracomment>
         <translation>Remaining</translation>
     </message>
     <message>
@@ -2253,114 +2297,114 @@
     </message>
     <message>
         <location filename="../src/utils.cpp" line="136"/>
-        <source>%1 B</source>
-        <translation>%1 B</translation>
+        <source>%L1 B</source>
+        <translation>%L1 B</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="139"/>
-        <source>%1 KiB</source>
-        <translation>%1 KiB</translation>
+        <source>%L1 KiB</source>
+        <translation>%L1 KiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="142"/>
-        <source>%1 MiB</source>
-        <translation>%1 MiB</translation>
+        <source>%L1 MiB</source>
+        <translation>%L1 MiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="145"/>
-        <source>%1 GiB</source>
-        <translation>%1 GiB</translation>
+        <source>%L1 GiB</source>
+        <translation>%L1 GiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="148"/>
-        <source>%1 TiB</source>
-        <translation>%1 TiB</translation>
+        <source>%L1 TiB</source>
+        <translation>%L1 TiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="151"/>
-        <source>%1 PiB</source>
-        <translation>%1 PiB</translation>
+        <source>%L1 PiB</source>
+        <translation>%L1 PiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="154"/>
-        <source>%1 EiB</source>
-        <translation>%1 EiB</translation>
+        <source>%L1 EiB</source>
+        <translation>%L1 EiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="157"/>
-        <source>%1 ZiB</source>
-        <translation>%1 ZiB</translation>
+        <source>%L1 ZiB</source>
+        <translation>%L1 ZiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="160"/>
-        <source>%1 YiB</source>
-        <translation>%1 YiB</translation>
+        <source>%L1 YiB</source>
+        <translation>%L1 YiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="180"/>
-        <source>%1 B/s</source>
-        <translation>%1 B/s</translation>
+        <source>%L1 B/s</source>
+        <translation>%L1 B/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="183"/>
         <location filename="../src/utils.cpp" line="215"/>
-        <source>%1 KiB/s</source>
-        <translation>%1 KiB/s</translation>
+        <source>%L1 KiB/s</source>
+        <translation>%L1 KiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="186"/>
-        <source>%1 MiB/s</source>
-        <translation>%1 MiB/s</translation>
+        <source>%L1 MiB/s</source>
+        <translation>%L1 MiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="189"/>
-        <source>%1 GiB/s</source>
-        <translation>%1 GiB/s</translation>
+        <source>%L1 GiB/s</source>
+        <translation>%L1 GiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="192"/>
-        <source>%1 TiB/s</source>
-        <translation>%1 TiB/s</translation>
+        <source>%L1 TiB/s</source>
+        <translation>%L1 TiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="195"/>
-        <source>%1 PiB/s</source>
-        <translation>%1 PiB/s</translation>
+        <source>%L1 PiB/s</source>
+        <translation>%L1 PiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="198"/>
-        <source>%1 EiB/s</source>
-        <translation>%1 EiB/s</translation>
+        <source>%L1 EiB/s</source>
+        <translation>%L1 EiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="201"/>
-        <source>%1 ZiB/s</source>
-        <translation>%1 ZiB/s</translation>
+        <source>%L1 ZiB/s</source>
+        <translation>%L1 ZiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="204"/>
-        <source>%1 YiB/s</source>
-        <translation>%1 YiB/s</translation>
+        <source>%L1 YiB/s</source>
+        <translation>%L1 YiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="268"/>
-        <source>%1 d %2 h</source>
-        <translation>%1 d %2 h</translation>
+        <source>%L1 d %L2 h</source>
+        <translation>%L1 d %L2 h</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="272"/>
-        <source>%1 h %2 m</source>
-        <translation>%1 h %2 m</translation>
+        <source>%L1 h %L2 m</source>
+        <translation>%L1 h %L2 m</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="276"/>
-        <source>%1 m %2 s</source>
-        <translation>%1 m %2 s</translation>
+        <source>%L1 m %L2 s</source>
+        <translation>%L1 m %L2 s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="279"/>
-        <source>%1 s</source>
-        <translation>%1 s</translation>
+        <source>%L1 s</source>
+        <translation>%L1 s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="432"/>

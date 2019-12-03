@@ -93,7 +93,7 @@ Page {
 
             DetailItem {
                 label: qsTranslate("tremotesf", "Started")
-                value: qsTranslate("tremotesf", "%n times", String(), total.sessionCount)
+                value: qsTranslate("tremotesf", "%Ln times", String(), total.sessionCount)
             }
         }
 

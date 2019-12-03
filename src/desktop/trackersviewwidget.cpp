@@ -188,7 +188,7 @@ namespace tremotesf
             dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove this tracker?"));
         } else {
             dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Trackers"));
-            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove %n selected trackers?", nullptr, ids.size()));
+            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove %Ln selected trackers?", nullptr, ids.size()));
         }
 
         if (dialog.exec() == QMessageBox::Ok) {

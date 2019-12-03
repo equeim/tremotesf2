@@ -387,7 +387,7 @@
     <message numerus="yes">
         <location filename="../qml/components/LocalTorrentFilesPage.qml" line="291"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="393"/>
-        <source>%n files selected</source>
+        <source>%Ln files selected</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -433,7 +433,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="153"/>
-        <source>%n torrents selected</source>
+        <source>%Ln torrents selected</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -504,7 +504,7 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="223"/>
         <location filename="../src/desktop/mainwindow.cpp" line="938"/>
-        <source>%n torrents added</source>
+        <source>%Ln torrents added</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -513,7 +513,7 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="235"/>
         <location filename="../src/desktop/mainwindow.cpp" line="931"/>
-        <source>%n torrents finished</source>
+        <source>%Ln torrents finished</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -696,7 +696,7 @@
     <message numerus="yes">
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="700"/>
-        <source>Are you sure you want to remove %n selected torrents?</source>
+        <source>Are you sure you want to remove %Ln selected torrents?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -914,7 +914,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="167"/>
-        <source>%n servers selected</source>
+        <source>%Ln servers selected</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -922,7 +922,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="173"/>
-        <source>Removing %n servers</source>
+        <source>Removing %Ln servers</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -1055,7 +1055,7 @@
     <message numerus="yes">
         <location filename="../qml/components/ServerStatsPage.qml" line="96"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="116"/>
-        <source>%n times</source>
+        <source>%Ln times</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -1187,7 +1187,7 @@
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="341"/>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="109"/>
-        <source>Checking (%1)</source>
+        <source>Checking (%L1)</source>
         <extracomment>Checking torrents, %1 - torrents count</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -1370,7 +1370,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
-        <source>%n peers</source>
+        <source>%Ln peers</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -1388,7 +1388,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
-        <source>%n trackers selected</source>
+        <source>%Ln trackers selected</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -1396,7 +1396,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
-        <source>Removing %n trackers</source>
+        <source>Removing %Ln trackers</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -1405,7 +1405,7 @@
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="99"/>
         <location filename="../src/downloaddirectoriesmodel.cpp" line="98"/>
-        <source>All (%1)</source>
+        <source>All (%L1)</source>
         <comment>All trackers, %1 - torrents count</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -1675,37 +1675,37 @@
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="94"/>
-        <source>All (%1)</source>
+        <source>All (%L1)</source>
         <comment>All torrents, %1 - torrents count</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="97"/>
-        <source>Active (%1)</source>
+        <source>Active (%L1)</source>
         <extracomment>Active torrents, %1 - torrents count</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="100"/>
-        <source>Downloading (%1)</source>
+        <source>Downloading (%L1)</source>
         <extracomment>Downloading torrents, %1 - torrents count</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="103"/>
-        <source>Seeding (%1)</source>
+        <source>Seeding (%L1)</source>
         <extracomment>Seeding torrents, %1 - torrents count</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="106"/>
-        <source>Paused (%1)</source>
+        <source>Paused (%L1)</source>
         <extracomment>Paused torrents, %1 - torrents count</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="112"/>
-        <source>Errored (%1)</source>
+        <source>Errored (%L1)</source>
         <extracomment>Errored torrents, %1 - torrents count</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -2061,7 +2061,7 @@
     </message>
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="190"/>
-        <source>Are you sure you want to remove %n selected trackers?</source>
+        <source>Are you sure you want to remove %Ln selected trackers?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -2152,7 +2152,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="330"/>
-        <source>Downloading from %n peers</source>
+        <source>Downloading from %Ln peers</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -2168,7 +2168,7 @@
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="334"/>
-        <source>Seeding to %n peers</source>
+        <source>Seeding to %Ln peers</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -2297,113 +2297,113 @@
     </message>
     <message>
         <location filename="../src/utils.cpp" line="136"/>
-        <source>%1 B</source>
+        <source>%L1 B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="139"/>
-        <source>%1 KiB</source>
+        <source>%L1 KiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="142"/>
-        <source>%1 MiB</source>
+        <source>%L1 MiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="145"/>
-        <source>%1 GiB</source>
+        <source>%L1 GiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="148"/>
-        <source>%1 TiB</source>
+        <source>%L1 TiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="151"/>
-        <source>%1 PiB</source>
+        <source>%L1 PiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="154"/>
-        <source>%1 EiB</source>
+        <source>%L1 EiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="157"/>
-        <source>%1 ZiB</source>
+        <source>%L1 ZiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="160"/>
-        <source>%1 YiB</source>
+        <source>%L1 YiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="180"/>
-        <source>%1 B/s</source>
+        <source>%L1 B/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="183"/>
         <location filename="../src/utils.cpp" line="215"/>
-        <source>%1 KiB/s</source>
+        <source>%L1 KiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="186"/>
-        <source>%1 MiB/s</source>
+        <source>%L1 MiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="189"/>
-        <source>%1 GiB/s</source>
+        <source>%L1 GiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="192"/>
-        <source>%1 TiB/s</source>
+        <source>%L1 TiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="195"/>
-        <source>%1 PiB/s</source>
+        <source>%L1 PiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="198"/>
-        <source>%1 EiB/s</source>
+        <source>%L1 EiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="201"/>
-        <source>%1 ZiB/s</source>
+        <source>%L1 ZiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="204"/>
-        <source>%1 YiB/s</source>
+        <source>%L1 YiB/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="268"/>
-        <source>%1 d %2 h</source>
+        <source>%L1 d %L2 h</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="272"/>
-        <source>%1 h %2 m</source>
+        <source>%L1 h %L2 m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="276"/>
-        <source>%1 m %2 s</source>
+        <source>%L1 m %L2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="279"/>
-        <source>%1 s</source>
+        <source>%L1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

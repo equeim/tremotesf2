@@ -34,7 +34,7 @@ Dialog {
                 if (ids.length === 1) {
                     return qsTranslate("tremotesf", "Are you sure you want to remove this torrent?")
                 }
-                return qsTranslate("tremotesf", "Are you sure you want to remove %n selected torrents?", String(), ids.length)
+                return qsTranslate("tremotesf", "Are you sure you want to remove %Ln selected torrents?", String(), ids.length)
             }
         }
 

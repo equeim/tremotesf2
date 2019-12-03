@@ -718,7 +718,7 @@ namespace tremotesf
             dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove this torrent?"));
         } else {
             dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Torrents"));
-            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove %n selected torrents?", nullptr, ids.size()));
+            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove %Ln selected torrents?", nullptr, ids.size()));
         }
 
         if (dialog.exec() == QMessageBox::Ok) {
@@ -944,14 +944,14 @@ namespace tremotesf
     void MainWindow::showFinishedNotification(const QStringList& names)
     {
         showTorrentsNotification(names.size() == 1 ? qApp->translate("tremotesf", "Torrent finished")
-                                                   : qApp->translate("tremotesf", "%n torrents finished", nullptr, names.size()),
+                                                   : qApp->translate("tremotesf", "%Ln torrents finished", nullptr, names.size()),
                                  names);
     }
 
     void MainWindow::showAddedNotification(const QStringList& names)
     {
         showTorrentsNotification(names.size() == 1 ? qApp->translate("tremotesf", "Torrent added")
-                                                   : qApp->translate("tremotesf", "%n torrents added", nullptr, names.size()),
+                                                   : qApp->translate("tremotesf", "%Ln torrents added", nullptr, names.size()),
                                  names);
     }
 

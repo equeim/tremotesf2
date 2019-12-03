@@ -164,13 +164,13 @@ Page {
     SelectionPanel {
         id: selectionPanel
         selectionModel: listView.selectionModel
-        text: qsTranslate("tremotesf", "%n servers selected", String(), selectionModel.selectedIndexesCount)
+        text: qsTranslate("tremotesf", "%Ln servers selected", String(), selectionModel.selectedIndexesCount)
 
         PushUpMenu {
             MenuItem {
                 enabled: selectionModel.hasSelection
                 text: qsTranslate("tremotesf", "Remove")
-                onClicked: remorsePopup.execute(qsTranslate("tremotesf", "Removing %n servers", String(), selectionModel.selectedIndexesCount),
+                onClicked: remorsePopup.execute(qsTranslate("tremotesf", "Removing %Ln servers", String(), selectionModel.selectedIndexesCount),
                                                 function() {
                                                     while (selectionModel.hasSelection) {
                                                         serversModel.removeServerAtIndex(proxyModel.sourceIndex(selectionModel.firstSelectedIndex))

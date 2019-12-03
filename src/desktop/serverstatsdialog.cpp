@@ -115,7 +115,7 @@ namespace tremotesf
             totalRatioLabel->setText(Utils::formatRatio(totalStats.downloaded(), totalStats.uploaded()));
             totalDurationLabel->setText(Utils::formatEta(totalStats.duration()));
 
-            sessionCountLabel->setText(qApp->translate("tremotesf", "%n times", nullptr, totalStats.sessionCount()));
+            sessionCountLabel->setText(qApp->translate("tremotesf", "%Ln times", nullptr, totalStats.sessionCount()));
         };
         QObject::connect(rpc->serverStats(), &libtremotesf::ServerStats::updated, this, update);
         update();

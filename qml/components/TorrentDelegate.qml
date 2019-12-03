@@ -327,18 +327,18 @@ ListItem {
                 case Torrent.Paused:
                     return qsTranslate("tremotesf", "Paused", "Torrent status")
                 case Torrent.Downloading:
-                    return qsTranslate("tremotesf", "Downloading from %n peers", String(), torrent.seeders)
+                    return qsTranslate("tremotesf", "Downloading from %Ln peers", String(), torrent.seeders)
                 case Torrent.StalledDownloading:
                     return qsTranslate("tremotesf", "Downloading", "Torrent status")
                 case Torrent.Seeding:
-                    return qsTranslate("tremotesf", "Seeding to %n peers", String(), torrent.leechers)
+                    return qsTranslate("tremotesf", "Seeding to %Ln peers", String(), torrent.leechers)
                 case Torrent.StalledSeeding:
                     return qsTranslate("tremotesf", "Seeding", "Torrent status")
                 case Torrent.QueuedForDownloading:
                 case Torrent.QueuedForSeeding:
                     return qsTranslate("tremotesf", "Queued", "Torrent status")
                 case Torrent.Checking:
-                    return qsTranslate("tremotesf", "Checking (%1)").arg(Utils.formatProgress(torrent.recheckProgress))
+                    return qsTranslate("tremotesf", "Checking (%L1)").arg(Utils.formatProgress(torrent.recheckProgress))
                 case Torrent.QueuedForChecking:
                     return qsTranslate("tremotesf", "Queued for checking")
                 case Torrent.Errored:
