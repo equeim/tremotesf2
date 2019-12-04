@@ -2299,95 +2299,101 @@
         <translation>Volgenden update</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="134"/>
+        <location filename="../src/utils.cpp" line="136"/>
         <source>%L1 B</source>
         <translation>%L1 B</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="137"/>
+        <location filename="../src/utils.cpp" line="139"/>
         <source>%L1 KiB</source>
         <translation>%L1 KiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="140"/>
+        <location filename="../src/utils.cpp" line="142"/>
         <source>%L1 MiB</source>
         <translation>%L1 MiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="143"/>
+        <location filename="../src/utils.cpp" line="145"/>
         <source>%L1 GiB</source>
         <translation>%L1 GiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="146"/>
+        <location filename="../src/utils.cpp" line="148"/>
         <source>%L1 TiB</source>
         <translation>%L1 TiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="149"/>
+        <location filename="../src/utils.cpp" line="151"/>
         <source>%L1 PiB</source>
         <translation>%L1 PiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="152"/>
+        <location filename="../src/utils.cpp" line="154"/>
         <source>%L1 EiB</source>
         <translation>%L1 EiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="155"/>
+        <location filename="../src/utils.cpp" line="157"/>
         <source>%L1 ZiB</source>
         <translation>%L1 ZiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="158"/>
+        <location filename="../src/utils.cpp" line="160"/>
         <source>%L1 YiB</source>
         <translation>%L1 YiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="178"/>
+        <location filename="../src/utils.cpp" line="180"/>
         <source>%L1 B/s</source>
         <translation>%L1 B/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="181"/>
-        <location filename="../src/utils.cpp" line="213"/>
+        <location filename="../src/utils.cpp" line="183"/>
+        <location filename="../src/utils.cpp" line="215"/>
         <source>%L1 KiB/s</source>
         <translation>%L1 KiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="184"/>
+        <location filename="../src/utils.cpp" line="186"/>
         <source>%L1 MiB/s</source>
         <translation>%L1 MiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="187"/>
+        <location filename="../src/utils.cpp" line="189"/>
         <source>%L1 GiB/s</source>
         <translation>%L1 GiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="190"/>
+        <location filename="../src/utils.cpp" line="192"/>
         <source>%L1 TiB/s</source>
         <translation>%L1 TiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="193"/>
+        <location filename="../src/utils.cpp" line="195"/>
         <source>%L1 PiB/s</source>
         <translation>%L1 PiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="196"/>
+        <location filename="../src/utils.cpp" line="198"/>
         <source>%L1 EiB/s</source>
         <translation>%L1 EiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="199"/>
+        <location filename="../src/utils.cpp" line="201"/>
         <source>%L1 ZiB/s</source>
         <translation>%L1 ZiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="202"/>
+        <location filename="../src/utils.cpp" line="204"/>
         <source>%L1 YiB/s</source>
         <translation>%L1 YiB/s</translation>
+    </message>
+    <message>
+        <location filename="../src/utils.cpp" line="221"/>
+        <location filename="../src/utils.cpp" line="223"/>
+        <source>%L1%</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="264"/>

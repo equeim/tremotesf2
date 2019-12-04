@@ -18,6 +18,8 @@
 
 #include "utils.h"
 
+#include <cmath>
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
@@ -215,13 +217,11 @@ namespace tremotesf
 
     QString Utils::formatProgress(double progress)
     {
-        QString numberString;
         if (qFuzzyCompare(progress, 1.0)) {
-            numberString = QLocale().toString(100);
+            return qApp->translate("tremotesf", "%L1%").arg(100);
         } else {
-            numberString = QLocale().toString(int(progress * 1000) / 10.0, 'f', 1);
+            return qApp->translate("tremotesf", "%L1%").arg(std::trunc(progress * 1000.0) / 10.0, 0, 'f', 1);
         }
-        return QStringLiteral("%1%2").arg(numberString).arg(QLocale().percent());
     }
 
     QString Utils::formatRatio(double ratio)
