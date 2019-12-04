@@ -118,96 +118,57 @@ namespace tremotesf
             PebiByte,
             ExbiByte,
             ZebiByte,
-            YobiByte
+            YobiByte,
+            NumberOfByteUnits
         };
+
+        struct ByteUnitStrings
+        {
+            enum Type
+            {
+                Size,
+                Speed
+            };
+            std::array<QString(*)(), 2> strings;
+        };
+
+        // Should be kept in sync with `enum ByteUnit`
+        const std::array<ByteUnitStrings, NumberOfByteUnits> byteUnits{
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 B"); }, []() { return qApp->translate("tremotesf", "%L1 B/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 KiB"); }, []() { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 MiB"); }, []() { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 GiB"); }, []() { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 TiB"); }, []() { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 PiB"); }, []() { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 EiB"); }, []() { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 ZiB"); }, []() { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
+                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 YiB"); }, []() { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
+        };
+
+        QString formatBytes(long long bytes, ByteUnitStrings::Type stringType)
+        {
+            int unit = 0;
+            auto bytes_d = static_cast<double>(bytes);
+            while (bytes_d >= 1024.0 && unit <= NumberOfByteUnits) {
+                bytes_d /= 1024.0;
+                ++unit;
+            }
+
+            if (unit == Byte) {
+                return byteUnits[Byte].strings[stringType]().arg(bytes_d);
+            }
+            return byteUnits[unit].strings[stringType]().arg(bytes_d, 0, 'f', 1);
+        }
     }
 
-    QString Utils::formatByteSize(double size)
+    QString Utils::formatByteSize(long long size)
     {
-        int unit = 0;
-        while (size >= 1024.0 && unit < YobiByte) {
-            size /= 1024.0;
-            ++unit;
-        }
-
-        QString string;
-        switch (unit) {
-        case Byte:
-            string = qApp->translate("tremotesf", "%L1 B");
-            break;
-        case KibiByte:
-            string = qApp->translate("tremotesf", "%L1 KiB");
-            break;
-        case MebiByte:
-            string = qApp->translate("tremotesf", "%L1 MiB");
-            break;
-        case GibiByte:
-            string = qApp->translate("tremotesf", "%L1 GiB");
-            break;
-        case TebiByte:
-            string = qApp->translate("tremotesf", "%L1 TiB");
-            break;
-        case PebiByte:
-            string = qApp->translate("tremotesf", "%L1 PiB");
-            break;
-        case ExbiByte:
-            string = qApp->translate("tremotesf", "%L1 EiB");
-            break;
-        case ZebiByte:
-            string = qApp->translate("tremotesf", "%L1 ZiB");
-            break;
-        case YobiByte:
-            string = qApp->translate("tremotesf", "%L1 YiB");
-        }
-
-        if (unit == Byte) {
-            return string.arg(size);
-        }
-        return string.arg(size, 0, 'f', 1);
+        return formatBytes(size, ByteUnitStrings::Size);
     }
 
-    QString Utils::formatByteSpeed(double speed)
+    QString Utils::formatByteSpeed(long long speed)
     {
-        int unit = 0;
-        while (speed >= 1024.0 && unit < YobiByte) {
-            speed /= 1024.0;
-            ++unit;
-        }
-
-        QString string;
-        switch (unit) {
-        case Byte:
-            string = qApp->translate("tremotesf", "%L1 B/s");
-            break;
-        case KibiByte:
-            string = qApp->translate("tremotesf", "%L1 KiB/s");
-            break;
-        case MebiByte:
-            string = qApp->translate("tremotesf", "%L1 MiB/s");
-            break;
-        case GibiByte:
-            string = qApp->translate("tremotesf", "%L1 GiB/s");
-            break;
-        case TebiByte:
-            string = qApp->translate("tremotesf", "%L1 TiB/s");
-            break;
-        case PebiByte:
-            string = qApp->translate("tremotesf", "%L1 PiB/s");
-            break;
-        case ExbiByte:
-            string = qApp->translate("tremotesf", "%L1 EiB/s");
-            break;
-        case ZebiByte:
-            string = qApp->translate("tremotesf", "%L1 ZiB/s");
-            break;
-        case YobiByte:
-            string = qApp->translate("tremotesf", "%L1 YiB/s");
-        }
-
-        if (unit == Byte) {
-            return string.arg(speed);
-        }
-        return string.arg(speed, 0, 'f', 1);
+        return formatBytes(speed, ByteUnitStrings::Speed);
     }
 
     QString Utils::formatSpeedLimit(int limit)

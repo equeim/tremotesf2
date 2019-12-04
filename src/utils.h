@@ -33,8 +33,8 @@ namespace tremotesf
         Q_PROPERTY(QString license READ license CONSTANT)
         Q_PROPERTY(QString translators READ translators CONSTANT)
     public:
-        Q_INVOKABLE static QString formatByteSize(double size);
-        Q_INVOKABLE static QString formatByteSpeed(double speed);
+        Q_INVOKABLE static QString formatByteSize(long long size);
+        Q_INVOKABLE static QString formatByteSpeed(long long speed);
         Q_INVOKABLE static QString formatSpeedLimit(int limit);
 
         Q_INVOKABLE static QString formatProgress(double progress);
