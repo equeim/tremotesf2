@@ -22,6 +22,7 @@ set(tremotesf_sources
     servers.cpp
     serversmodel.cpp
     settings.cpp
+    signalhandler.cpp
     statusfilterstats.cpp
     torrentfileparser.cpp
     torrentfilesmodel.cpp

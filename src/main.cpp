@@ -25,6 +25,7 @@
 
 #include "ipcserver.h"
 #include "servers.h"
+#include "signalhandler.h"
 #include "utils.h"
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -45,6 +46,12 @@
 
 int main(int argc, char** argv)
 {
+    // Setup handler for UNIX signals or Windows console handler
+    tremotesf::SignalHandler::setupHandlers();
+
+    //
+    // Q(Gui)Application initialization
+    //
 #ifdef Q_OS_WIN
     AllowSetForegroundWindow(ASFW_ANY);
 #endif
@@ -57,9 +64,17 @@ int main(int argc, char** argv)
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication app(argc, argv);
 #endif
+    QCoreApplication::setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
+    //
+    // End of QApplication initialization
+    //
 
-    qApp->setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
+    // Setup socket notifier for UNIX signals
+    tremotesf::SignalHandler::setupNotifier();
 
+    //
+    // Command line parsing
+    //
     QCommandLineParser parser;
 #ifdef TREMOTESF_SAILFISHOS
     parser.addPositionalArgument(QLatin1String("torrent"), QLatin1String("Torrent file or URL"));
@@ -71,7 +86,11 @@ int main(int argc, char** argv)
     parser.addVersionOption();
     parser.process(qApp->arguments());
     const QStringList arguments(parser.positionalArguments());
+    //
+    // End of command line parsing
+    //
 
+    // Send command to another instance
     if (tremotesf::IpcServer::tryToConnect()) {
         qWarning() << "Only one instance of Tremotesf can be run at the same time";
         if (arguments.isEmpty()) {
@@ -93,13 +112,6 @@ int main(int argc, char** argv)
 #endif
 #endif
 
-    signal(SIGINT, [](int) { qApp->quit(); });
-    signal(SIGTERM, [](int) { qApp->quit(); });
-#ifdef Q_OS_UNIX
-    signal(SIGHUP, [](int) { qApp->quit(); });
-    signal(SIGQUIT, [](int) { qApp->quit(); });
-#endif
-
     tremotesf::IpcServer ipcServer;
 
     QTranslator qtTranslator;
@@ -118,6 +130,10 @@ int main(int argc, char** argv)
 
     tremotesf::Servers::migrate();
 
+    if (tremotesf::SignalHandler::exitRequested) {
+        return 0;
+    }
+
 #ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
     view->rootContext()->setContextProperty(QLatin1String("ipcServerServiceName"), tremotesf::IpcServer::serviceName);
@@ -129,12 +145,21 @@ int main(int argc, char** argv)
     view->rootContext()->setContextProperty(QLatin1String("urls"), result.urls);
 
     view->setSource(SailfishApp::pathTo(QLatin1String("qml/main.qml")));
+    if (tremotesf::SignalHandler::exitRequested) {
+        return 0;
+    }
     view->show();
 #else
     tremotesf::MainWindow window(&ipcServer, arguments);
+    if (tremotesf::SignalHandler::exitRequested) {
+        return 0;
+    }
     window.showMinimized(parser.isSet(QLatin1String("minimized")));
-
 #endif
+
+    if (tremotesf::SignalHandler::exitRequested) {
+        return 0;
+    }
 
     const int exitCode = qApp->exec();
 #ifdef Q_OS_WIN
