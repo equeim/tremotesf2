@@ -108,7 +108,7 @@ namespace tremotesf
 
     void SignalHandler::setupHandlers()
     {
-        if (!SetConsoleCtrlHandler(consoleHandler, true)) {
+        if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
             qFatal("SetConsoleCtrlHandler failed");
         }
     }
