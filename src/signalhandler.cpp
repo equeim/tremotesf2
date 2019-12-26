@@ -21,9 +21,10 @@
 #include <QtGlobal>
 
 #ifdef Q_OS_UNIX
+#include <cerrno>
+#include <csignal>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <signal.h>
 #include <unistd.h>
 #include <QSocketNotifier>
 #endif // Q_OS_UNIX
