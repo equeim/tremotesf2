@@ -20,6 +20,7 @@
 
 #include <QDBusAbstractAdaptor>
 #include <QDBusConnection>
+#include <QDBusConnectionInterface>
 #include <QDBusError>
 #include <QDBusMessage>
 #include <QDebug>
@@ -70,16 +71,12 @@ namespace tremotesf
         };
     }
 
-    const QLatin1String IpcServer::serviceName("org.equeim.Tremotesf");
-    const QLatin1String IpcServer::objectPath("/org/equeim/Tremotesf");
-    const QLatin1String IpcServer::interfaceName("org.equeim.Tremotesf");
-
     IpcServer::IpcServer(QObject* parent)
         : QObject(parent)
     {
-        if (QDBusConnection::sessionBus().registerService(serviceName)) {
+        if (QDBusConnection::sessionBus().registerService(serviceName())) {
             qDebug() << "Registered D-Bus service";
-            if (QDBusConnection::sessionBus().registerObject(objectPath, interfaceName, new IpcServerDBusAdaptor(this), QDBusConnection::ExportAllSlots)) {
+            if (QDBusConnection::sessionBus().registerObject(objectPath(), interfaceName(), new IpcServerDBusAdaptor(this), QDBusConnection::ExportAllSlots)) {
                 qDebug() << "Registered D-Bus object";
             } else {
                 qWarning() << "Failed to register D-Bus object";
@@ -89,41 +86,27 @@ namespace tremotesf
         }
     }
 
-    bool IpcServer::tryToConnect()
+    QLatin1String IpcServer::serviceName()
     {
-        const QDBusMessage reply(QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall(serviceName,
-                                                                                                   objectPath,
-                                                                                                   QLatin1String("org.freedesktop.DBus.Peer"),
-                                                                                                   QLatin1String("Ping"))));
-        return reply.type() == QDBusMessage::ReplyMessage;
+        return QLatin1String("org.equeim.Tremotesf");
     }
 
-    void IpcServer::activateWindow()
+    QLatin1String IpcServer::objectPath()
     {
-        qInfo() << "Requesting window activation";
-        const QDBusMessage reply(QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall(serviceName,
-                                                                                                   objectPath,
-                                                                                                   interfaceName,
-                                                                                                   QLatin1String("ActivateWindow"))));
-        if (reply.type() != QDBusMessage::ReplyMessage) {
-            qWarning() << "D-Bus method call failed, error string" << reply.errorMessage();
-        }
+        return QLatin1String("/org/equeim/Tremotesf");
     }
 
-    void IpcServer::sendArguments(const QStringList& arguments)
+    QLatin1String IpcServer::interfaceName()
     {
-        qInfo() << "Sending arguments";
-        QDBusMessage message(QDBusMessage::createMethodCall(serviceName,
-                                                            objectPath,
-                                                            interfaceName,
-                                                            QLatin1String("SetArguments")));
-        const ArgumentsParseResult result(parseArguments(arguments));
-        message.setArguments({result.files, result.urls});
-        const QDBusMessage reply(QDBusConnection::sessionBus().call(message));
-        if (reply.type() != QDBusMessage::ReplyMessage) {
-            qWarning() << "D-Bus method call failed, error string" << reply.errorMessage();
-        }
+        return QLatin1String("org.equeim.Tremotesf");
     }
+
+#ifdef TREMOTESF_SAILFISHOS
+    QLatin1String IpcServer::openTorrentPropertiesPageMethod()
+    {
+        return QLatin1String("OpenTorrentPropertiesPage");
+    }
+#endif
 }
 
 #include "ipcserver_dbus.moc"

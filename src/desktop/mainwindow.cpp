@@ -56,6 +56,7 @@
 #include "../libtremotesf/serversettings.h"
 #include "../libtremotesf/serverstats.h"
 #include "../libtremotesf/torrent.h"
+#include "../ipcclient.h"
 #include "../ipcserver.h"
 #include "../localtorrentfilesmodel.h"
 #include "../servers.h"
@@ -258,7 +259,7 @@ namespace tremotesf
             if (mRpc->isConnected()) {
                 static bool first = true;
                 if (first) {
-                    const ArgumentsParseResult result(IpcServer::parseArguments(arguments));
+                    const ArgumentsParseResult result(IpcClient::parseArguments(arguments));
                     if (!result.files.isEmpty() || !result.urls.isEmpty()) {
                         setWindowState(windowState() & ~Qt::WindowMinimized);
                         if (isHidden()) {

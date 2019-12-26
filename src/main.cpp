@@ -39,6 +39,7 @@
 
 #include "3rdparty/cxxopts.hpp"
 
+#include "ipcclient.h"
 #include "ipcserver.h"
 #include "servers.h"
 #include "signalhandler.h"
@@ -146,14 +147,17 @@ int main(int argc, char** argv)
     tremotesf::SignalHandler::setupNotifier();
 
     // Send command to another instance
-    if (tremotesf::IpcServer::tryToConnect()) {
-        qWarning() << "Only one instance of Tremotesf can be run at the same time";
-        if (torrents.isEmpty()) {
-            tremotesf::IpcServer::activateWindow();
-        } else {
-            tremotesf::IpcServer::sendArguments(torrents);
+    {
+        tremotesf::IpcClient client;
+        if (client.isConnected()) {
+            qWarning("Only one instance of Tremotesf can be run at the same time");
+            if (torrents.isEmpty()) {
+                client.activateWindow();
+            } else {
+                client.sendArguments(torrents);
+            }
+            return 0;
         }
-        return 0;
     }
 
 #ifndef TREMOTESF_SAILFISHOS
@@ -191,11 +195,8 @@ int main(int argc, char** argv)
 
 #ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
-    view->rootContext()->setContextProperty(QLatin1String("ipcServerServiceName"), tremotesf::IpcServer::serviceName);
-    view->rootContext()->setContextProperty(QLatin1String("ipcServerObjectPath"), tremotesf::IpcServer::objectPath);
-    view->rootContext()->setContextProperty(QLatin1String("ipcServerInterfaceName"), tremotesf::IpcServer::interfaceName);
 
-    tremotesf::ArgumentsParseResult result(tremotesf::IpcServer::parseArguments(torrents));
+    tremotesf::ArgumentsParseResult result(tremotesf::IpcClient::parseArguments(torrents));
     view->rootContext()->setContextProperty(QLatin1String("files"), result.files);
     view->rootContext()->setContextProperty(QLatin1String("urls"), result.urls);
 

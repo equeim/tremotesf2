@@ -285,10 +285,10 @@ Page {
             }
             notification.remoteActions = [{
                 "name": "default",
-                "service": ipcServerServiceName,
-                "path": ipcServerObjectPath,
-                "iface": ipcServerInterfaceName,
-                "method": "OpenTorrentPropertiesPage",
+                "service": ipcServer.serviceName,
+                "path": ipcServer.objectPath,
+                "iface": ipcServer.interfaceName,
+                "method": ipcServer.openTorrentPropertiesPageMethod,
                 "arguments": [hashString]
             }]
             notification.replacesId = 0

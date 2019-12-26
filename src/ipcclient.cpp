@@ -1,6 +1,6 @@
 /*
  * Tremotesf
- * Copyright (C) 2015-2018 Alexey Rochev <equeim@gmail.com>
+ * Copyright (C) 2015-2019 Alexey Rochev <equeim@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ipcserver.h"
+#include "ipcclient.h"
 
 #include <QFileInfo>
 #include <QUrl>
 
 namespace tremotesf
 {
-    ArgumentsParseResult IpcServer::parseArguments(const QStringList& arguments)
+    ArgumentsParseResult IpcClient::parseArguments(const QStringList& arguments)
     {
         ArgumentsParseResult result;
         for (const QString& argument : arguments) {

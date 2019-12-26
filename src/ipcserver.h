@@ -23,28 +23,26 @@
 
 namespace tremotesf
 {
-    struct ArgumentsParseResult
-    {
-        QStringList files;
-        QStringList urls;
-    };
-
     class IpcServer : public QObject
     {
         Q_OBJECT
     public:
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-        static const QLatin1String serviceName;
-        static const QLatin1String objectPath;
-        static const QLatin1String interfaceName;
+#ifdef QT_DBUS_LIB
+        Q_PROPERTY(QString serviceName READ serviceName CONSTANT)
+        Q_PROPERTY(QString objectPath READ objectPath CONSTANT)
+        Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT)
+        static QLatin1String serviceName();
+        static QLatin1String objectPath();
+        static QLatin1String interfaceName();
+#ifdef TREMOTESF_SAILFISHOS
+        Q_PROPERTY(QString openTorrentPropertiesPageMethod READ openTorrentPropertiesPageMethod CONSTANT)
+        static QLatin1String openTorrentPropertiesPageMethod();
 #endif
-
+#else
+        static QString socketName();
+#endif
         explicit IpcServer(QObject* parent = nullptr);
 
-        static bool tryToConnect();
-        static void activateWindow();
-        static void sendArguments(const QStringList& arguments);
-        static ArgumentsParseResult parseArguments(const QStringList& arguments);
     signals:
         void windowActivationRequested();
         void filesReceived(const QStringList& files);

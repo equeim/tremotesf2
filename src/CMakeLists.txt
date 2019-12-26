@@ -15,7 +15,8 @@ set(tremotesf_sources
     baseproxymodel.cpp
     basetorrentfilesmodel.cpp
     downloaddirectoriesmodel.cpp
-    ipcserver.cpp
+    ipcclient.cpp
+    ipcserver.h
     localtorrentfilesmodel.cpp
     main.cpp
     peersmodel.cpp
@@ -131,9 +132,9 @@ endif()
 if (UNIX AND NOT APPLE)
     find_package(Qt5 REQUIRED COMPONENTS DBus)
     list(APPEND tremotesf_libs Qt5::DBus)
-    list(APPEND tremotesf_sources ipcserver_dbus.cpp)
+    list(APPEND tremotesf_sources ipcserver_dbus.cpp ipcclient_dbus.cpp)
 else()
-    list(APPEND tremotesf_sources ipcserver_socket.cpp)
+    list(APPEND tremotesf_sources ipcserver_socket.cpp ipcclient_socket.cpp)
 endif()
 
 add_executable(tremotesf ${tremotesf_sources})
