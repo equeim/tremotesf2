@@ -171,8 +171,8 @@ namespace tremotesf
 
         std::unordered_map<QString, int> trackers;
         for (const std::shared_ptr<libtremotesf::Torrent>& torrent : mRpc->torrents()) {
-            for (const std::shared_ptr<libtremotesf::Tracker>& tracker : torrent->trackers()) {
-                const QString& site = tracker->site();
+            for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
+                const QString& site = tracker.site();
 
                 auto found = trackers.find(site);
                 if (found == trackers.end()) {

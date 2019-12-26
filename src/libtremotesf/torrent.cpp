@@ -479,7 +479,7 @@ namespace libtremotesf
         }
     }
 
-    const std::vector<std::shared_ptr<TorrentFile>>& Torrent::files() const
+    const std::vector<TorrentFile>& Torrent::files() const
     {
         return mFiles;
     }
@@ -519,7 +519,7 @@ namespace libtremotesf
         mRpc->renameTorrentFile(mId, path, newName);
     }
 
-    const std::vector<std::shared_ptr<Tracker>>& Torrent::trackers() const
+    const std::vector<Tracker>& Torrent::trackers() const
     {
         return mTrackers;
     }
@@ -567,7 +567,7 @@ namespace libtremotesf
         return mPeersLoaded;
     }
 
-    const std::vector<std::shared_ptr<Peer>>& Torrent::peers() const
+    const std::vector<Peer>& Torrent::peers() const
     {
         return mPeers;
     }
@@ -738,28 +738,24 @@ namespace libtremotesf
         setChanged(mComment, torrentMap.value(commentKey).toString(), mChanged);
 
         mTrackersAddedOrRemoved = false;
-        std::vector<std::shared_ptr<Tracker>> trackers;
+        std::vector<Tracker> trackers;
         const QJsonArray trackersJson(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
         trackers.reserve(trackersJson.size());
         for (const QJsonValue& trackerVariant : trackersJson) {
             const QJsonObject trackerMap(trackerVariant.toObject());
             const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
 
-            std::shared_ptr<Tracker> tracker;
-            for (const std::shared_ptr<Tracker>& existingTracker : mTrackers) {
-                if (existingTracker->id() == id) {
-                    tracker = existingTracker;
-                    break;
-                }
-            }
-            if (tracker) {
-                tracker->update(trackerMap);
-            } else {
-                tracker = std::make_shared<Tracker>(id, trackerMap);
-                mTrackersAddedOrRemoved = true;
-            }
+            const auto found(std::find_if(mTrackers.begin(), mTrackers.end(), [&](const Tracker& tracker) {
+                return tracker.id() == id;
+            }));
 
-            trackers.push_back(std::move(tracker));
+            if (found == mTrackers.end()) {
+                trackers.emplace_back(id, trackerMap);
+                mTrackersAddedOrRemoved = true;
+            } else {
+                found->update(trackerMap);
+                trackers.push_back(std::move(*found));
+            }
         }
         if (trackers.size() != mTrackers.size()) {
             mTrackersAddedOrRemoved = true;
@@ -783,11 +779,11 @@ namespace libtremotesf
                 const QJsonArray files(torrentMap.value(QJsonKeyStringInit("files")).toArray());
                 mFiles.reserve(fileStats.size());
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
-                    mFiles.push_back(std::make_shared<TorrentFile>(files[i].toObject(), fileStats[i].toObject()));
+                    mFiles.emplace_back(files[i].toObject(), fileStats[i].toObject());
                 }
             } else {
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
-                    if (mFiles[i]->update(fileStats[i].toObject())) {
+                    if (mFiles[i].update(fileStats[i].toObject())) {
                         mFilesChanged = true;
                     }
                 }
@@ -818,28 +814,25 @@ namespace libtremotesf
         }());
 
         for (int i = mPeers.size() - 1; i >= 0; --i) {
-            if (!tremotesf::contains(addresses, mPeers[i]->address)) {
+            if (!tremotesf::contains(addresses, mPeers[i].address)) {
                 mPeers.erase(mPeers.begin() + i);
             }
         }
 
         mPeers.reserve(peers.size());
 
-        for (int i = 0, max = peers.size(); i < max; ++i) {
+        for (size_t i = 0, max = peers.size(); i < max; ++i) {
             const QJsonObject& peerMap = peers[i];
             QString& address = addresses[i];
 
-            int row = -1;
-            for (int j = 0, max = mPeers.size(); j < max; ++j) {
-                if (mPeers[j]->address == address) {
-                    row = j;
-                    break;
-                }
-            }
-            if (row == -1) {
-                mPeers.push_back(std::make_shared<Peer>(std::move(address), peerMap));
+            const auto found(std::find_if(mPeers.begin(), mPeers.end(), [&](const Peer& peer) {
+                return peer.address == address;
+            }));
+
+            if (found == mPeers.end()) {
+                mPeers.emplace_back(std::move(address), peerMap);
             } else {
-                mPeers[row]->update(peerMap);
+                found->update(peerMap);
             }
         }
 

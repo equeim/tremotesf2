@@ -32,9 +32,9 @@ namespace tremotesf
 
     namespace
     {
-        QString trackerStatusString(const Tracker* tracker)
+        QString trackerStatusString(const Tracker& tracker)
         {
-            switch (tracker->status()) {
+            switch (tracker.status()) {
             case Tracker::Inactive:
                 //: Tracker status
                 return qApp->translate("tremotesf", "Inactive");
@@ -47,10 +47,10 @@ namespace tremotesf
                 return qApp->translate("tremotesf", "Updating");
             case Tracker::Error:
             {
-                if (tracker->errorMessage().isEmpty()) {
+                if (tracker.errorMessage().isEmpty()) {
                     return qApp->translate("tremotesf", "Error");
                 }
-                return qApp->translate("tremotesf", "Error: %1").arg(tracker->errorMessage());
+                return qApp->translate("tremotesf", "Error: %1").arg(tracker.errorMessage());
             }
             default:
                 return QString();
@@ -76,40 +76,40 @@ namespace tremotesf
 
     QVariant TrackersModel::data(const QModelIndex& index, int role) const
     {
-        const Tracker* tracker = mTrackers[index.row()].get();
+        const Tracker& tracker = mTrackers[index.row()];
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case IdRole:
-            return tracker->id();
+            return tracker.id();
         case AnnounceRole:
-            return tracker->announce();
+            return tracker.announce();
         case StatusStringRole:
             return trackerStatusString(tracker);
         case ErrorRole:
-            return (tracker->status() == Tracker::Error);
+            return (tracker.status() == Tracker::Error);
         case PeersRole:
-            return tracker->peers();
+            return tracker.peers();
         case NextUpdateRole:
-            return tracker->nextUpdate();
+            return tracker.nextUpdate();
         }
 #else
         if (role == Qt::DisplayRole) {
             switch (index.column()) {
             case AnnounceColumn:
-                return tracker->announce();
+                return tracker.announce();
             case StatusColumn:
                 return trackerStatusString(tracker);
             case PeersColumn:
-                return tracker->peers();
+                return tracker.peers();
             case NextUpdateColumn:
-                if (tracker->nextUpdate() != -1) {
-                    return Utils::formatEta(tracker->nextUpdate());
+                if (tracker.nextUpdate() != -1) {
+                    return Utils::formatEta(tracker.nextUpdate());
                 }
                 break;
             }
         } else if (role == SortRole) {
             if (index.column() == NextUpdateColumn) {
-                return tracker->nextUpdate();
+                return tracker.nextUpdate();
             }
             return data(index, Qt::DisplayRole);
         }
@@ -166,19 +166,14 @@ namespace tremotesf
         QVariantList ids;
         ids.reserve(indexes.size());
         for (const QModelIndex& index : indexes) {
-            ids.append(mTrackers[index.row()]->id());
+            ids.append(mTrackers[index.row()].id());
         }
         return ids;
     }
 
-    Tracker* TrackersModel::trackerAtIndex(const QModelIndex& index) const
+    const libtremotesf::Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const
     {
-        return trackerAtRow(index.row());
-    }
-
-    Tracker* TrackersModel::trackerAtRow(int row) const
-    {
-        return mTrackers[row].get();
+        return mTrackers[index.row()];
     }
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -195,7 +190,7 @@ namespace tremotesf
 
     void TrackersModel::update()
     {
-        const std::vector<std::shared_ptr<Tracker>>& trackers = mTorrent->trackers();
+        const std::vector<Tracker>& trackers = mTorrent->trackers();
 
         for (int i = 0, max = mTrackers.size(); i < max; ++i) {
             if (!contains(trackers, mTrackers[i])) {
@@ -209,12 +204,14 @@ namespace tremotesf
 
         mTrackers.reserve(trackers.size());
 
-        for (const std::shared_ptr<Tracker>& tracker : trackers) {
-            if (!contains(mTrackers, tracker)) {
-                const int row = mTrackers.size();
+        for (const Tracker& tracker : trackers) {
+            const int row = index_of(mTrackers, tracker);
+            if (row == mTrackers.size()) {
                 beginInsertRows(QModelIndex(), row, row);
                 mTrackers.push_back(tracker);
                 endInsertRows();
+            } else {
+                mTrackers[row] = tracker;
             }
         }
 

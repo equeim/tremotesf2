@@ -51,6 +51,11 @@ namespace libtremotesf
 
         void update(const QJsonObject& trackerMap);
 
+        inline bool operator==(const Tracker& other) const
+        {
+            return id() == other.id();
+        }
+
     private:
         int mId;
         QString mAnnounce;

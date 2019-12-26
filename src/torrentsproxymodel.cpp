@@ -131,8 +131,8 @@ namespace tremotesf
 
         if (!mTracker.isEmpty()) {
             bool found = false;
-            for (const std::shared_ptr<libtremotesf::Tracker>& tracker : torrent->trackers()) {
-                if (tracker->site() == mTracker) {
+            for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
+                if (tracker.site() == mTracker) {
                     found = true;
                     break;
                 }

@@ -19,7 +19,6 @@
 #ifndef TREMOTESF_PEERSMODEL_H
 #define TREMOTESF_PEERSMODEL_H
 
-#include <memory>
 #include <vector>
 
 #include <QAbstractTableModel>
@@ -84,7 +83,7 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
-        std::vector<std::shared_ptr<libtremotesf::Peer>> mPeers;
+        std::vector<libtremotesf::Peer> mPeers;
         libtremotesf::Torrent* mTorrent;
         bool mLoaded;
     signals:

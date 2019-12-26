@@ -19,7 +19,6 @@
 #ifndef TREMOTESF_TRACKERSMODEL_H
 #define TREMOTESF_TRACKERSMODEL_H
 
-#include <memory>
 #include <vector>
 
 #include <QAbstractTableModel>
@@ -73,8 +72,7 @@ namespace tremotesf
         void setTorrent(libtremotesf::Torrent* torrent);
 
         Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
-        libtremotesf::Tracker* trackerAtIndex(const QModelIndex& index) const;
-        libtremotesf::Tracker* trackerAtRow(int row) const;
+        const libtremotesf::Tracker& trackerAtIndex(const QModelIndex& index) const;
 
 #ifdef TREMOTESF_SAILFISHOS
     protected:
@@ -85,7 +83,7 @@ namespace tremotesf
         void update();
 
         libtremotesf::Torrent* mTorrent;
-        std::vector<std::shared_ptr<libtremotesf::Tracker>> mTrackers;
+        std::vector<libtremotesf::Tracker> mTrackers;
     };
 }
 

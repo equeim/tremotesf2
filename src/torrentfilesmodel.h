@@ -99,10 +99,10 @@ namespace tremotesf
 #endif
 
     private:
-        void update(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files);
-        void createTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files);
+        void update(const std::vector<libtremotesf::TorrentFile>& files);
+        void createTree(const std::vector<libtremotesf::TorrentFile>& files);
         void resetTree();
-        void updateTree(const std::vector<std::shared_ptr<libtremotesf::TorrentFile>>& files, bool emitSignal);
+        void updateTree(const std::vector<libtremotesf::TorrentFile>& files, bool emitSignal);
 
         void setLoaded(bool loaded);
         void setLoading(bool loading);

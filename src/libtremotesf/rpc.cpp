@@ -650,7 +650,7 @@ namespace libtremotesf
         switch (mStatus) {
         case Disconnected:
         {
-            qDebug() << "disconnected";
+            qDebug("Disconnected");
 
             mNetwork->clearAccessCache();
 
@@ -680,13 +680,13 @@ namespace libtremotesf
             break;
         }
         case Connecting:
-            qDebug() << "connecting";
+            qDebug("Connecting");
             mUpdating = true;
             emit statusChanged();
             break;
         case Connected:
         {
-            qDebug() << "connected";
+            qDebug("Connected");
             emit torrentsUpdated();
             emit statusChanged();
             emit connectedChanged();
@@ -906,7 +906,7 @@ namespace libtremotesf
                                 if (result.second) {
                                     callOnSuccessParse(result.first);
                                 } else {
-                                    qWarning() << "parsing error";
+                                    qWarning("Parsing error");
                                     setError(ParseError);
                                     setStatus(Disconnected);
                                 }
@@ -919,13 +919,13 @@ namespace libtremotesf
                     }
                     break;
                 case QNetworkReply::AuthenticationRequiredError:
-                    qWarning() << "authentication error";
+                    qWarning("Authentication error");
                     setError(AuthenticationError);
                     setStatus(Disconnected);
                     break;
                 case QNetworkReply::OperationCanceledError:
                 case QNetworkReply::TimeoutError:
-                    qWarning() << "timed out";
+                    qWarning("Timed out");
                     setError(TimedOut);
                     setStatus(Disconnected);
                     break;

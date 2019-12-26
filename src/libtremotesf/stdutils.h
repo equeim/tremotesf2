@@ -27,8 +27,8 @@
 
 namespace std {
     template<>
-    class hash<QString> {
-    public:
+    struct hash<QString>
+    {
         size_t operator()(const QString& string) const
         {
             return qHash(string);
@@ -36,8 +36,8 @@ namespace std {
     };
 
     template<>
-    class hash<QByteArray> {
-    public:
+    struct hash<QByteArray>
+    {
         size_t operator()(const QByteArray& bytes) const
         {
             return qHash(bytes);

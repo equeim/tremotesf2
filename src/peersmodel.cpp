@@ -56,49 +56,49 @@ namespace tremotesf
 
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
-        const libtremotesf::Peer* peer = mPeers[index.row()].get();
+        const libtremotesf::Peer& peer = mPeers[index.row()];
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case Address:
-            return peer->address;
+            return peer.address;
         case DownloadSpeed:
-            return peer->downloadSpeed;
+            return peer.downloadSpeed;
         case UploadSpeed:
-            return peer->uploadSpeed;
+            return peer.uploadSpeed;
         case Progress:
-            return peer->progress;
+            return peer.progress;
         case Flags:
-            return peer->flags;
+            return peer.flags;
         case Client:
-            return peer->client;
+            return peer.client;
         }
 #else
         switch (role) {
         case Qt::DisplayRole:
             switch (index.column()) {
             case AddressColumn:
-                return peer->address;
+                return peer.address;
             case DownloadSpeedColumn:
-                return Utils::formatByteSpeed(peer->downloadSpeed);
+                return Utils::formatByteSpeed(peer.downloadSpeed);
             case UploadSpeedColumn:
-                return Utils::formatByteSpeed(peer->uploadSpeed);
+                return Utils::formatByteSpeed(peer.uploadSpeed);
             case ProgressColumn:
-                return Utils::formatProgress(peer->progress);
+                return Utils::formatProgress(peer.progress);
             case FlagsColumn:
-                return peer->flags;
+                return peer.flags;
             case ClientColumn:
-                return peer->client;
+                return peer.client;
             }
             break;
         case SortRole:
             switch (index.column()) {
             case DownloadSpeedColumn:
-                return peer->downloadSpeed;
+                return peer.downloadSpeed;
             case UploadSpeedColumn:
-                return peer->uploadSpeed;
+                return peer.uploadSpeed;
             case ProgressBarColumn:
             case ProgressColumn:
-                return peer->progress;
+                return peer.progress;
             default:
                 return data(index, Qt::DisplayRole);
             }
@@ -148,7 +148,7 @@ namespace tremotesf
             mTorrent = torrent;
 
             if (mTorrent) {
-                QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, [=](const std::vector<std::shared_ptr<libtremotesf::Peer>>& peers) {
+                QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, [=](const std::vector<libtremotesf::Peer>& peers) {
                     for (int i = 0, max = mPeers.size(); i < max; ++i) {
                         if (!contains(peers, mPeers[i])) {
                             beginRemoveRows(QModelIndex(), i, i);
@@ -168,6 +168,7 @@ namespace tremotesf
                             mPeers.push_back(peer);
                             endInsertRows();
                         } else {
+                            mPeers[row] = peer;
                             emit dataChanged(index(row, 0), index(row, columnCount() - 1));
                         }
                     }
