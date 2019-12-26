@@ -145,6 +145,6 @@ target_include_directories(tremotesf PRIVATE ${tremotesf_includes})
 target_compile_definitions(tremotesf PRIVATE ${tremotesf_defines})
 target_compile_options(tremotesf PRIVATE ${tremotesf_cxxflags})
 
-if (NOT TEST_BUILD AND NOT WIN32)
+if (NOT TEST_BUILD AND NOT WIN32 AND NOT APPLE)
     install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()
