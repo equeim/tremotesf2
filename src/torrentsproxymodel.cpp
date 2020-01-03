@@ -89,25 +89,25 @@ namespace tremotesf
 
     bool TorrentsProxyModel::statusFilterAcceptsTorrent(const libtremotesf::Torrent* torrent, StatusFilter filter)
     {
-        using libtremotesf::Torrent;
+        using libtremotesf::TorrentData;
         switch (filter) {
         case Active:
-            return (torrent->status() == Torrent::Downloading || torrent->status() == Torrent::Seeding);
+            return (torrent->status() == TorrentData::Downloading || torrent->status() == TorrentData::Seeding);
         case Downloading:
-            return (torrent->status() == Torrent::Downloading ||
-                    torrent->status() == Torrent::StalledDownloading ||
-                    torrent->status() == Torrent::QueuedForDownloading);
+            return (torrent->status() == TorrentData::Downloading ||
+                    torrent->status() == TorrentData::StalledDownloading ||
+                    torrent->status() == TorrentData::QueuedForDownloading);
         case Seeding:
-            return (torrent->status() == Torrent::Seeding ||
-                    torrent->status() == Torrent::StalledSeeding ||
-                    torrent->status() == Torrent::QueuedForSeeding);
+            return (torrent->status() == TorrentData::Seeding ||
+                    torrent->status() == TorrentData::StalledSeeding ||
+                    torrent->status() == TorrentData::QueuedForSeeding);
         case Paused:
-            return torrent->status() == Torrent::Paused;
+            return torrent->status() == TorrentData::Paused;
         case Checking:
-            return (torrent->status() == Torrent::Checking ||
-                    torrent->status() == Torrent::QueuedForChecking);
+            return (torrent->status() == TorrentData::Checking ||
+                    torrent->status() == TorrentData::QueuedForChecking);
         case Errored:
-            return torrent->status() == Torrent::Errored;
+            return torrent->status() == TorrentData::Errored;
         default:
             return true;
         }

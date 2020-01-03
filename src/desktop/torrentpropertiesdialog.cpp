@@ -55,6 +55,7 @@
 namespace tremotesf
 {
     using libtremotesf::Torrent;
+    using libtremotesf::TorrentData;
 
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)
         : QDialog(parent),
@@ -389,17 +390,17 @@ namespace tremotesf
                              static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                              mTorrent,
                              [=](int index) {
-                                 mTorrent->setBandwidthPriority(static_cast<Torrent::Priority>(1 - index));
+                                 mTorrent->setBandwidthPriority(static_cast<TorrentData::Priority>(1 - index));
                              });
 
             switch (mTorrent->ratioLimitMode()) {
-            case Torrent::GlobalRatioLimit:
+            case TorrentData::GlobalRatioLimit:
                 ratioLimitComboBox->setCurrentIndex(0);
                 break;
-            case Torrent::SingleRatioLimit:
+            case TorrentData::SingleRatioLimit:
                 ratioLimitComboBox->setCurrentIndex(2);
                 break;
-            case Torrent::UnlimitedRatio:
+            case TorrentData::UnlimitedRatio:
                 ratioLimitComboBox->setCurrentIndex(1);
             }
 
@@ -409,13 +410,13 @@ namespace tremotesf
                              [=](int index) {
                                  switch (index) {
                                  case 0:
-                                     mTorrent->setRatioLimitMode(Torrent::GlobalRatioLimit);
+                                     mTorrent->setRatioLimitMode(TorrentData::GlobalRatioLimit);
                                      break;
                                  case 1:
-                                     mTorrent->setRatioLimitMode(Torrent::UnlimitedRatio);
+                                     mTorrent->setRatioLimitMode(TorrentData::UnlimitedRatio);
                                      break;
                                  case 2:
-                                     mTorrent->setRatioLimitMode(Torrent::SingleRatioLimit);
+                                     mTorrent->setRatioLimitMode(TorrentData::SingleRatioLimit);
                                  }
                              });
 
@@ -426,13 +427,13 @@ namespace tremotesf
                              &Torrent::setRatioLimit);
 
             switch (mTorrent->idleSeedingLimitMode()) {
-            case Torrent::GlobalIdleSeedingLimit:
+            case TorrentData::GlobalIdleSeedingLimit:
                 idleSeedingLimitComboBox->setCurrentIndex(0);
                 break;
-            case Torrent::SingleIdleSeedingLimit:
+            case TorrentData::SingleIdleSeedingLimit:
                 idleSeedingLimitComboBox->setCurrentIndex(2);
                 break;
-            case Torrent::UnlimitedIdleSeeding:
+            case TorrentData::UnlimitedIdleSeeding:
                 idleSeedingLimitComboBox->setCurrentIndex(1);
             }
             QObject::connect(idleSeedingLimitComboBox,
@@ -441,13 +442,13 @@ namespace tremotesf
                              [=](int index) {
                                  switch (index) {
                                  case 0:
-                                     mTorrent->setIdleSeedingLimitMode(Torrent::GlobalIdleSeedingLimit);
+                                     mTorrent->setIdleSeedingLimitMode(TorrentData::GlobalIdleSeedingLimit);
                                      break;
                                  case 1:
-                                     mTorrent->setIdleSeedingLimitMode(Torrent::UnlimitedIdleSeeding);
+                                     mTorrent->setIdleSeedingLimitMode(TorrentData::UnlimitedIdleSeeding);
                                      break;
                                  case 2:
-                                     mTorrent->setIdleSeedingLimitMode(Torrent::SingleIdleSeedingLimit);
+                                     mTorrent->setIdleSeedingLimitMode(TorrentData::SingleIdleSeedingLimit);
                                  }
                              });
 

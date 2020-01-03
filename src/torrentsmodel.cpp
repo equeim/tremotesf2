@@ -30,6 +30,7 @@
 namespace tremotesf
 {
     using libtremotesf::Torrent;
+    using libtremotesf::TorrentData;
 
     TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent)
         : QAbstractTableModel(parent),
@@ -73,23 +74,23 @@ namespace tremotesf
         case Qt::DecorationRole:
             if (index.column() == NameColumn) {
                 switch (torrent->status()) {
-                case Torrent::Paused:
+                case TorrentData::Paused:
                     return QPixmap(Utils::statusIconPath(Utils::PausedIcon));
-                case Torrent::Seeding:
+                case TorrentData::Seeding:
                     return QPixmap(Utils::statusIconPath(Utils::SeedingIcon));
-                case Torrent::Downloading:
+                case TorrentData::Downloading:
                     return QPixmap(Utils::statusIconPath(Utils::DownloadingIcon));
-                case Torrent::StalledDownloading:
+                case TorrentData::StalledDownloading:
                     return QPixmap(Utils::statusIconPath(Utils::StalledDownloadingIcon));
-                case Torrent::StalledSeeding:
+                case TorrentData::StalledSeeding:
                     return QPixmap(Utils::statusIconPath(Utils::StalledSeedingIcon));
-                case Torrent::QueuedForDownloading:
-                case Torrent::QueuedForSeeding:
+                case TorrentData::QueuedForDownloading:
+                case TorrentData::QueuedForSeeding:
                     return QPixmap(Utils::statusIconPath(Utils::QueuedIcon));
-                case Torrent::Checking:
-                case Torrent::QueuedForChecking:
+                case TorrentData::Checking:
+                case TorrentData::QueuedForChecking:
                     return QPixmap(Utils::statusIconPath(Utils::CheckingIcon));
-                case Torrent::Errored:
+                case TorrentData::Errored:
                     return QPixmap(Utils::statusIconPath(Utils::ErroredIcon));
                 }
             }
@@ -103,28 +104,28 @@ namespace tremotesf
             case TotalSizeColumn:
                 return Utils::formatByteSize(torrent->sizeWhenDone());
             case ProgressColumn:
-                if (torrent->status() == Torrent::Checking) {
+                if (torrent->status() == TorrentData::Checking) {
                     return Utils::formatProgress(torrent->recheckProgress());
                 }
                 return Utils::formatProgress(torrent->percentDone());
             case StatusColumn:
                 switch (torrent->status()) {
-                case Torrent::Paused:
+                case TorrentData::Paused:
                     return qApp->translate("tremotesf", "Paused", "Torrent status");
-                case Torrent::Downloading:
-                case Torrent::StalledDownloading:
+                case TorrentData::Downloading:
+                case TorrentData::StalledDownloading:
                     return qApp->translate("tremotesf", "Downloading", "Torrent status");
-                case Torrent::Seeding:
-                case Torrent::StalledSeeding:
+                case TorrentData::Seeding:
+                case TorrentData::StalledSeeding:
                     return qApp->translate("tremotesf", "Seeding", "Torrent status");
-                case Torrent::QueuedForDownloading:
-                case Torrent::QueuedForSeeding:
+                case TorrentData::QueuedForDownloading:
+                case TorrentData::QueuedForSeeding:
                     return qApp->translate("tremotesf", "Queued", "Torrent status");
-                case Torrent::Checking:
+                case TorrentData::Checking:
                     return qApp->translate("tremotesf", "Checking", "Torrent status");
-                case Torrent::QueuedForChecking:
+                case TorrentData::QueuedForChecking:
                     return qApp->translate("tremotesf", "Queued for checking");
-                case Torrent::Errored:
+                case TorrentData::Errored:
                     return torrent->errorString();
                 }
                 break;
@@ -178,7 +179,7 @@ namespace tremotesf
                 return torrent->totalSize();
             case ProgressBarColumn:
             case ProgressColumn:
-                if (torrent->status() == Torrent::Checking) {
+                if (torrent->status() == TorrentData::Checking) {
                     return torrent->recheckProgress();
                 }
                 return torrent->percentDone();

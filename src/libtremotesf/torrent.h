@@ -48,8 +48,8 @@ namespace libtremotesf
         std::vector<QString> path;
         long long size;
         long long completedSize = 0;
-        bool wanted = false;
         Priority priority = NormalPriority;
+        bool wanted = false;
 
         bool changed = false;
     };
@@ -59,7 +59,7 @@ namespace libtremotesf
         explicit Peer(QString&& address, const QJsonObject& peerMap);
         void update(const QJsonObject& peerMap);
 
-        inline bool operator==(const Peer& other) const {
+        bool operator==(const Peer& other) const {
             return address == other.address;
         }
 
@@ -71,6 +71,109 @@ namespace libtremotesf
         QString client;
     };
 
+    struct TorrentData
+    {
+        Q_GADGET
+    public:
+        enum Status
+        {
+            Paused,
+            Downloading,
+            Seeding,
+            StalledDownloading,
+            StalledSeeding,
+            QueuedForDownloading,
+            QueuedForSeeding,
+            Checking,
+            QueuedForChecking,
+            Errored
+        };
+        Q_ENUM(Status)
+
+        enum Priority
+        {
+            LowPriority = -1,
+            NormalPriority,
+            HighPriority
+        };
+        Q_ENUM(Priority)
+
+        enum RatioLimitMode
+        {
+            GlobalRatioLimit,
+            SingleRatioLimit,
+            UnlimitedRatio
+        };
+        Q_ENUM(RatioLimitMode)
+
+        enum IdleSeedingLimitMode
+        {
+            GlobalIdleSeedingLimit,
+            SingleIdleSeedingLimit,
+            UnlimitedIdleSeeding
+        };
+        Q_ENUM(IdleSeedingLimitMode)
+
+        void update(const QJsonObject& torrentMap, const Rpc* rpc);
+
+        int id = 0;
+        QString hashString;
+        QString name;
+
+        QString errorString;
+        Status status = Paused;
+        int queuePosition = 0;
+
+        long long totalSize = 0;
+        long long completedSize = 0;
+        long long leftUntilDone = 0;
+        long long sizeWhenDone = 0;
+        double percentDone = 0.0;
+        double recheckProgress = 0.0;
+        int eta = 0;
+
+        long long downloadSpeed = 0;
+        long long uploadSpeed = 0;
+
+        bool downloadSpeedLimited = false;
+        int downloadSpeedLimit = 0; // KiB/s
+        bool uploadSpeedLimited = false;
+        int uploadSpeedLimit = 0; // KiB/s
+
+        long long totalDownloaded = 0;
+        long long totalUploaded = 0;
+        double ratio = 0.0;
+        double ratioLimit = 0.0;
+        RatioLimitMode ratioLimitMode = GlobalRatioLimit;
+
+        int seeders = 0;
+        int leechers = 0;
+        int peersLimit = 0;
+
+        QDateTime addedDate;
+        QDateTime activityDate;
+        long long activityDateTime = -1;
+        QDateTime doneDate;
+        long long doneDateTime = -1;
+
+        IdleSeedingLimitMode idleSeedingLimitMode = GlobalIdleSeedingLimit;
+        int idleSeedingLimit = 0;
+        QString downloadDirectory;
+        QString comment;
+        QString creator;
+        QDateTime creationDate;
+        long long creationDateTime = -1;
+        Priority bandwidthPriority = NormalPriority;
+        bool honorSessionLimits = false;
+        bool singleFile = false;
+
+        bool trackersAddedOrRemoved = false;
+
+        bool changed;
+
+        std::vector<Tracker> trackers;
+    };
+
     class Torrent : public QObject
     {
         Q_OBJECT
@@ -79,7 +182,7 @@ namespace libtremotesf
         Q_PROPERTY(QString hashString READ hashString CONSTANT)
         Q_PROPERTY(QString name READ name CONSTANT)
 
-        Q_PROPERTY(Status status READ status NOTIFY updated)
+        Q_PROPERTY(libtremotesf::TorrentData::Status status READ status NOTIFY updated)
         Q_PROPERTY(QString errorString READ errorString NOTIFY updated)
         Q_PROPERTY(int queuePosition READ queuePosition NOTIFY updated)
 
@@ -103,7 +206,7 @@ namespace libtremotesf
         Q_PROPERTY(long long totalDownloaded READ totalDownloaded NOTIFY updated)
         Q_PROPERTY(long long totalUploaded READ totalUploaded NOTIFY updated)
         Q_PROPERTY(double ratio READ ratio NOTIFY updated)
-        Q_PROPERTY(RatioLimitMode ratioLimitMode READ ratioLimitMode WRITE setRatioLimitMode NOTIFY updated)
+        Q_PROPERTY(libtremotesf::TorrentData::RatioLimitMode ratioLimitMode READ ratioLimitMode WRITE setRatioLimitMode NOTIFY updated)
         Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY updated)
 
         Q_PROPERTY(int seeders READ seeders NOTIFY updated)
@@ -115,8 +218,8 @@ namespace libtremotesf
         Q_PROPERTY(QDateTime doneDate READ doneDate NOTIFY updated)
 
         Q_PROPERTY(bool honorSessionLimits READ honorSessionLimits WRITE setHonorSessionLimits)
-        Q_PROPERTY(Priority bandwidthPriority READ bandwidthPriority WRITE setBandwidthPriority)
-        Q_PROPERTY(IdleSeedingLimitMode idleSeedingLimitMode READ idleSeedingLimitMode WRITE setIdleSeedingLimitMode)
+        Q_PROPERTY(libtremotesf::TorrentData::Priority bandwidthPriority READ bandwidthPriority WRITE setBandwidthPriority)
+        Q_PROPERTY(libtremotesf::TorrentData::IdleSeedingLimitMode idleSeedingLimitMode READ idleSeedingLimitMode WRITE setIdleSeedingLimitMode)
         Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit)
         Q_PROPERTY(QString downloadDirectory READ downloadDirectory NOTIFY updated)
         Q_PROPERTY(bool singleFile READ isSingleFile NOTIFY updated)
@@ -125,44 +228,10 @@ namespace libtremotesf
         Q_PROPERTY(QString comment READ comment NOTIFY updated)
 
     public:
-        enum Status
-        {
-            Paused,
-            Downloading,
-            Seeding,
-            StalledDownloading,
-            StalledSeeding,
-            QueuedForDownloading,
-            QueuedForSeeding,
-            Checking,
-            QueuedForChecking,
-            Errored
-        };
-        Q_ENUM(Status)
-
-        enum RatioLimitMode
-        {
-            GlobalRatioLimit,
-            SingleRatioLimit,
-            UnlimitedRatio
-        };
-        Q_ENUM(RatioLimitMode)
-
-        enum Priority
-        {
-            LowPriority = -1,
-            NormalPriority,
-            HighPriority
-        };
-        Q_ENUM(Priority)
-
-        enum IdleSeedingLimitMode
-        {
-            GlobalIdleSeedingLimit,
-            SingleIdleSeedingLimit,
-            UnlimitedIdleSeeding
-        };
-        Q_ENUM(IdleSeedingLimitMode)
+        using Status = TorrentData::Status;
+        using Priority = TorrentData::Priority;
+        using RatioLimitMode = TorrentData::RatioLimitMode;
+        using IdleSeedingLimitMode = TorrentData::IdleSeedingLimitMode;
 
         static const QJsonKeyString idKey;
 
@@ -218,7 +287,7 @@ namespace libtremotesf
         bool honorSessionLimits() const;
         Q_INVOKABLE void setHonorSessionLimits(bool honor);
         Priority bandwidthPriority() const;
-        Q_INVOKABLE void setBandwidthPriority(libtremotesf::Torrent::Priority priority);
+        Q_INVOKABLE void setBandwidthPriority(Priority priority);
         IdleSeedingLimitMode idleSeedingLimitMode() const;
         Q_INVOKABLE void setIdleSeedingLimitMode(libtremotesf::Torrent::IdleSeedingLimitMode mode);
         int idleSeedingLimit() const;
@@ -229,8 +298,17 @@ namespace libtremotesf
         const QDateTime& creationDate() const;
         const QString& comment() const;
 
+        const std::vector<Tracker>& trackers() const;
+        bool isTrackersAddedOrRemoved() const;
+        Q_INVOKABLE void addTracker(const QString& announce);
+        Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
+        Q_INVOKABLE void removeTrackers(const QVariantList& ids);
+
+        bool isChanged() const;
+
+        const TorrentData& data() const;
+
         bool isFilesEnabled() const;
-        bool isFilesLoaded() const;
         Q_INVOKABLE void setFilesEnabled(bool enabled);
         const std::vector<TorrentFile>& files() const;
         bool isFilesChanged();
@@ -239,15 +317,8 @@ namespace libtremotesf
         Q_INVOKABLE void setFilesPriority(const QVariantList& files, libtremotesf::TorrentFile::Priority priority);
         Q_INVOKABLE void renameFile(const QString& path, const QString& newName);
 
-        const std::vector<Tracker>& trackers() const;
-        bool isTrackersAddedOrRemoved() const;
-        Q_INVOKABLE void addTracker(const QString& announce);
-        Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
-        Q_INVOKABLE void removeTrackers(const QVariantList& ids);
-
         bool isPeersEnabled() const;
         Q_INVOKABLE void setPeersEnabled(bool enabled);
-        bool isPeersLoaded() const;
         const std::vector<Peer>& peers() const;
 
         bool isUpdated() const;
@@ -255,78 +326,20 @@ namespace libtremotesf
         void update(const QJsonObject& torrentMap);
         void updateFiles(const QJsonObject& torrentMap);
         void updatePeers(const QJsonObject& torrentMap);
-
-        bool isChanged() const;
-
     private:
-        int mId = 0;
-        QString mHashString;
-        QString mName;
-
-        Status mStatus = Paused;
-        QString mErrorString;
-        int mQueuePosition = 0;
-
-        long long mTotalSize = 0;
-        long long mCompletedSize = 0;
-        long long mLeftUntilDone = 0;
-        long long mSizeWhenDone = 0;
-        double mPercentDone = 0.0;
-        double mRecheckProgress = 0.0;
-        int mEta = 0;
-
-        long long mDownloadSpeed = 0;
-        long long mUploadSpeed = 0;
-
-        bool mDownloadSpeedLimited = false;
-        int mDownloadSpeedLimit = 0; // KiB/s
-        bool mUploadSpeedLimited = false;
-        int mUploadSpeedLimit = 0; // KiB/s
-
-        long long mTotalDownloaded = 0;
-        long long mTotalUploaded = 0;
-        double mRatio = 0.0;
-        RatioLimitMode mRatioLimitMode = GlobalRatioLimit;
-        double mRatioLimit = 0.0;
-
-        int mSeeders = 0;
-        int mLeechers = 0;
-        int mPeersLimit = 0;
-
-        QDateTime mAddedDate;
-        QDateTime mActivityDate;
-        long long mActivityDateTime = -1;
-        QDateTime mDoneDate;
-        long long mDoneDateTime = -1;
-
-        bool mHonorSessionLimits = false;
-        Priority mBandwidthPriority = NormalPriority;
-        IdleSeedingLimitMode mIdleSeedingLimitMode = GlobalIdleSeedingLimit;
-        int mIdleSeedingLimit = 0;
-        QString mDownloadDirectory;
-        bool mSingleFile = false;
-        QString mComment;
-        QString mCreator;
-        QDateTime mCreationDate;
-        long long mCreationDateTime = -1;
-
-        bool mFilesEnabled = false;
-        bool mFilesLoaded = false;
-        bool mFilesUpdated = false;
-        bool mFilesChanged = false;
-        std::vector<TorrentFile> mFiles;
-
-        bool mPeersEnabled = false;
-        bool mPeersLoaded = false;
-        bool mPeersUpdated = false;
-        std::vector<Peer> mPeers;
-
-        std::vector<Tracker> mTrackers;
-        bool mTrackersAddedOrRemoved = false;
-
         Rpc* mRpc;
 
-        bool mChanged;
+        TorrentData mData;
+
+        std::vector<TorrentFile> mFiles;
+        bool mFilesEnabled = false;
+        bool mFilesUpdated = false;
+        bool mFilesChanged = false;
+
+        std::vector<Peer> mPeers;
+        bool mPeersEnabled = false;
+        bool mPeersUpdated = false;
+
     signals:
         void updated();
         void filesUpdated(const std::vector<TorrentFile>& files);

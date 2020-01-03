@@ -140,7 +140,6 @@ namespace libtremotesf
     {
         changed = false;
         setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QJsonKeyStringInit("bytesCompleted")).toDouble()), changed);
-        setChanged(wanted, fileStatsMap.value(QJsonKeyStringInit("wanted")).toBool(), changed);
         setChanged(priority, [&]() {
             switch (int priority = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
             case TorrentFile::LowPriority:
@@ -151,6 +150,7 @@ namespace libtremotesf
                 return TorrentFile::NormalPriority;
             }
         }(), changed);
+        setChanged(wanted, fileStatsMap.value(QJsonKeyStringInit("wanted")).toBool(), changed);
 
         return changed;
      }
@@ -170,290 +170,504 @@ namespace libtremotesf
         client = peerMap.value(QJsonKeyStringInit("clientName")).toString();
     }
 
-    Torrent::Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc)
-        : mId(id),
-          mHashString(torrentMap.value(hashStringKey).toString()),
-          mAddedDate(QDateTime::fromMSecsSinceEpoch(torrentMap.value(addedDateKey).toDouble() * 1000)),
-          mRpc(rpc)
+        void TorrentData::update(const QJsonObject& torrentMap, const Rpc* rpc)
     {
+        changed = false;
+
+        setChanged(name, torrentMap.value(nameKey).toString(), changed);
+
+        setChanged(errorString, torrentMap.value(errorStringKey).toString(), changed);
+        setChanged(queuePosition, torrentMap.value(queuePositionKey).toInt(), changed);
+        setChanged(totalSize, static_cast<long long>(torrentMap.value(totalSizeKey).toDouble()), changed);
+        setChanged(completedSize, static_cast<long long>(torrentMap.value(completedSizeKey).toDouble()), changed);
+        setChanged(leftUntilDone, static_cast<long long>(torrentMap.value(leftUntilDoneKey).toDouble()), changed);
+        setChanged(sizeWhenDone, static_cast<long long>(torrentMap.value(sizeWhenDoneKey).toDouble()), changed);
+        setChanged(percentDone, torrentMap.value(percentDoneKey).toDouble(), changed);
+        setChanged(recheckProgress, torrentMap.value(recheckProgressKey).toDouble(), changed);
+        setChanged(eta, torrentMap.value(etaKey).toInt(), changed);
+
+        setChanged(downloadSpeed, static_cast<long long>(torrentMap.value(downloadSpeedKey).toDouble()), changed);
+        setChanged(uploadSpeed, static_cast<long long>(torrentMap.value(uploadSpeedKey).toDouble()), changed);
+
+        setChanged(downloadSpeedLimited, torrentMap.value(downloadSpeedLimitedKey).toBool(), changed);
+        setChanged(downloadSpeedLimit, rpc->serverSettings()->toKibiBytes(torrentMap.value(downloadSpeedLimitKey).toInt()), changed);
+        setChanged(uploadSpeedLimited, torrentMap.value(uploadSpeedLimitedKey).toBool(), changed);
+        setChanged(uploadSpeedLimit, rpc->serverSettings()->toKibiBytes(torrentMap.value(uploadSpeedLimitKey).toInt()), changed);
+
+        setChanged(totalDownloaded, static_cast<long long>(torrentMap.value(totalDownloadedKey).toDouble()), changed);
+        setChanged(totalUploaded, static_cast<long long>(torrentMap.value(totalUploadedKey).toDouble()), changed);
+        setChanged(ratio, torrentMap.value(ratioKey).toDouble(), changed);
+
+        setChanged(ratioLimitMode, [&]() {
+            switch (int mode = torrentMap.value(ratioLimitModeKey).toInt()) {
+            case GlobalRatioLimit:
+            case SingleRatioLimit:
+            case UnlimitedRatio:
+                return static_cast<RatioLimitMode>(mode);
+            default:
+                return GlobalRatioLimit;
+            }
+        }(), changed);
+        setChanged(ratioLimit, torrentMap.value(ratioLimitKey).toDouble(), changed);
+
+        setChanged(seeders, torrentMap.value(seedersKey).toInt(), changed);
+        setChanged(leechers, torrentMap.value(leechersKey).toInt(), changed);
+
+        const bool stalled = (seeders == 0 && leechers == 0);
+        if (torrentMap.value(errorKey).toInt() == 0) {
+            switch (torrentMap.value(statusKey).toInt()) {
+            case 0:
+                setChanged(status, Paused, changed);
+                break;
+            case 1:
+                setChanged(status, QueuedForChecking, changed);
+                break;
+            case 2:
+                setChanged(status, Checking, changed);
+                break;
+            case 3:
+                setChanged(status, QueuedForDownloading, changed);
+                break;
+            case 4:
+                if (stalled) {
+                    setChanged(status, StalledDownloading, changed);
+                } else {
+                    setChanged(status, Downloading, changed);
+                }
+                break;
+            case 5:
+                setChanged(status, QueuedForSeeding, changed);
+                break;
+            case 6:
+                if (stalled) {
+                    setChanged(status, StalledSeeding, changed);
+                } else {
+                    setChanged(status, Seeding, changed);
+                }
+            }
+        } else {
+            setChanged(status, Errored, changed);
+        }
+
+        setChanged(peersLimit, torrentMap.value(peersLimitKey).toInt(), changed);
+
+        const long long newActivityDateTime = torrentMap.value(activityDateKey).toDouble() * 1000;
+        if (newActivityDateTime > 0) {
+            if (newActivityDateTime != activityDateTime) {
+                activityDateTime = newActivityDateTime;
+                activityDate.setMSecsSinceEpoch(newActivityDateTime);
+                changed = true;
+            }
+        } else {
+            if (!activityDate.isNull()) {
+                activityDateTime = -1;
+                activityDate = QDateTime();
+                changed = true;
+            }
+        }
+        const long long newDoneDateTime = torrentMap.value(doneDateKey).toDouble() * 1000;
+        if (newDoneDateTime > 0) {
+            if (newDoneDateTime != doneDateTime) {
+                doneDateTime = newDoneDateTime;
+                doneDate.setMSecsSinceEpoch(newDoneDateTime);
+                changed = true;
+            }
+        } else {
+            if (!doneDate.isNull()) {
+                doneDateTime = -1;
+                doneDate = QDateTime();
+                changed = true;
+            }
+        }
+
+        setChanged(honorSessionLimits, torrentMap.value(honorSessionLimitsKey).toBool(), changed);
+        setChanged(bandwidthPriority, [&]() {
+            switch (int priority = torrentMap.value(bandwidthPriorityKey).toInt()) {
+            case LowPriority:
+            case NormalPriority:
+            case HighPriority:
+                return static_cast<Priority>(priority);
+            default:
+                return NormalPriority;
+            }
+        }(), changed);
+        setChanged(idleSeedingLimitMode, [&]() {
+            switch (int mode = torrentMap.value(idleSeedingLimitModeKey).toInt()) {
+            case GlobalIdleSeedingLimit:
+            case SingleIdleSeedingLimit:
+            case UnlimitedIdleSeeding:
+                return static_cast<IdleSeedingLimitMode>(mode);
+            default:
+                return GlobalIdleSeedingLimit;
+            }
+        }(), changed);
+        setChanged(idleSeedingLimit, torrentMap.value(idleSeedingLimitKey).toInt(), changed);
+        setChanged(downloadDirectory, torrentMap.value(downloadDirectoryKey).toString(), changed);
+        setChanged(singleFile, torrentMap.value(prioritiesKey).toArray().size() == 1, changed);
+        setChanged(creator, torrentMap.value(creatorKey).toString(), changed);
+
+        const long long newCreationDateTime = torrentMap.value(creationDateKey).toDouble() * 1000;
+        if (newCreationDateTime > 0) {
+            if (newCreationDateTime != creationDateTime) {
+                creationDateTime = newCreationDateTime;
+                creationDate.setMSecsSinceEpoch(newCreationDateTime);
+                changed = true;
+            }
+        } else {
+            if (!creationDate.isNull()) {
+                creationDateTime = -1;
+                creationDate = QDateTime();
+                changed = true;
+            }
+        }
+
+        setChanged(comment, torrentMap.value(commentKey).toString(), changed);
+
+        trackersAddedOrRemoved = false;
+        std::vector<Tracker> newTrackers;
+        const QJsonArray trackerJsons(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
+        newTrackers.reserve(trackerJsons.size());
+        for (const QJsonValue& trackerJson : trackerJsons) {
+            const QJsonObject trackerMap(trackerJson.toObject());
+            const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
+
+            const auto found(std::find_if(newTrackers.begin(), newTrackers.end(), [&](const Tracker& tracker) {
+                return tracker.id() == id;
+            }));
+
+            if (found == newTrackers.end()) {
+                newTrackers.emplace_back(id, trackerMap);
+                trackersAddedOrRemoved = true;
+            } else {
+                found->update(trackerMap);
+                newTrackers.push_back(std::move(*found));
+            }
+        }
+        if (newTrackers.size() != trackers.size()) {
+            trackersAddedOrRemoved = true;
+        }
+        trackers = std::move(newTrackers);
+    }
+
+    Torrent::Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc)
+        : mRpc(rpc)
+    {
+        mData.id = id;
+        mData.hashString = torrentMap.value(hashStringKey).toString();
+        mData.addedDate = QDateTime::fromMSecsSinceEpoch(torrentMap.value(addedDateKey).toDouble() * 1000);
         update(torrentMap);
     }
 
     int Torrent::id() const
     {
-        return mId;
+        return mData.id;
     }
 
     const QString& Torrent::hashString() const
     {
-        return mHashString;
+        return mData.hashString;
     }
 
     const QString& Torrent::name() const
     {
-        return mName;
+        return mData.name;
     }
 
     Torrent::Status Torrent::status() const
     {
-        return mStatus;
+        return mData.status;
     }
 
     QString Torrent::errorString() const
     {
-        return mErrorString;
+        return mData.errorString;
     }
 
     int Torrent::queuePosition() const
     {
-        return mQueuePosition;
+        return mData.queuePosition;
     }
 
     long long Torrent::totalSize() const
     {
-        return mTotalSize;
+        return mData.totalSize;
     }
 
     long long Torrent::completedSize() const
     {
-        return mCompletedSize;
+        return mData.completedSize;
     }
 
     long long Torrent::leftUntilDone() const
     {
-        return mLeftUntilDone;
+        return mData.leftUntilDone;
     }
 
     long long Torrent::sizeWhenDone() const
     {
-        return mSizeWhenDone;
+        return mData.sizeWhenDone;
     }
 
     double Torrent::percentDone() const
     {
-        return mPercentDone;
+        return mData.percentDone;
     }
 
     bool Torrent::isFinished() const
     {
-        return mLeftUntilDone == 0;
+        return mData.leftUntilDone == 0;
     }
 
     double Torrent::recheckProgress() const
     {
-        return mRecheckProgress;
+        return mData.recheckProgress;
     }
 
     int Torrent::eta() const
     {
-        return mEta;
+        return mData.eta;
     }
 
     long long Torrent::downloadSpeed() const
     {
-        return mDownloadSpeed;
+        return mData.downloadSpeed;
     }
 
     long long Torrent::uploadSpeed() const
     {
-        return mUploadSpeed;
+        return mData.uploadSpeed;
     }
 
     bool Torrent::isDownloadSpeedLimited() const
     {
-        return mDownloadSpeedLimited;
+        return mData.downloadSpeedLimited;
     }
 
     void Torrent::setDownloadSpeedLimited(bool limited)
     {
-        mDownloadSpeedLimited = limited;
+        mData.downloadSpeedLimited = limited;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, downloadSpeedLimitedKey, mDownloadSpeedLimited);
+        mRpc->setTorrentProperty(id(), downloadSpeedLimitedKey, limited);
     }
 
     int Torrent::downloadSpeedLimit() const
     {
-        return mDownloadSpeedLimit;
+        return mData.downloadSpeedLimit;
     }
 
     void Torrent::setDownloadSpeedLimit(int limit)
     {
-        mDownloadSpeedLimit = limit;
+        mData.downloadSpeedLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, downloadSpeedLimitKey, mRpc->serverSettings()->fromKibiBytes(mDownloadSpeedLimit));
+        mRpc->setTorrentProperty(id(), downloadSpeedLimitKey, mRpc->serverSettings()->fromKibiBytes(limit));
     }
 
     bool Torrent::isUploadSpeedLimited() const
     {
-        return mUploadSpeedLimited;
+        return mData.uploadSpeedLimited;
     }
 
     void Torrent::setUploadSpeedLimited(bool limited)
     {
-        mUploadSpeedLimited = limited;
+        mData.uploadSpeedLimited = limited;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, uploadSpeedLimitedKey, mUploadSpeedLimited);
+        mRpc->setTorrentProperty(id(), uploadSpeedLimitedKey, limited);
     }
 
     int Torrent::uploadSpeedLimit() const
     {
-        return mUploadSpeedLimit;
+        return mData.uploadSpeedLimit;
     }
 
     void Torrent::setUploadSpeedLimit(int limit)
     {
-        mUploadSpeedLimit = limit;
+        mData.uploadSpeedLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, uploadSpeedLimitKey, mRpc->serverSettings()->fromKibiBytes(mUploadSpeedLimit));
+        mRpc->setTorrentProperty(id(), uploadSpeedLimitKey, mRpc->serverSettings()->fromKibiBytes(limit));
     }
 
     long long Torrent::totalDownloaded() const
     {
-        return mTotalDownloaded;
+        return mData.totalDownloaded;
     }
 
     long long Torrent::totalUploaded() const
     {
-        return mTotalUploaded;
+        return mData.totalUploaded;
     }
 
     double Torrent::ratio() const
     {
-        return mRatio;
+        return mData.ratio;
     }
 
     Torrent::RatioLimitMode Torrent::ratioLimitMode() const
     {
-        return mRatioLimitMode;
+        return mData.ratioLimitMode;
     }
 
     void Torrent::setRatioLimitMode(Torrent::RatioLimitMode mode)
     {
-        mRatioLimitMode = mode;
+        mData.ratioLimitMode = mode;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, ratioLimitModeKey, mRatioLimitMode);
+        mRpc->setTorrentProperty(id(), ratioLimitModeKey, mode);
     }
 
     double Torrent::ratioLimit() const
     {
-        return mRatioLimit;
+        return mData.ratioLimit;
     }
 
     void Torrent::setRatioLimit(double limit)
     {
-        mRatioLimit = limit;
+        mData.ratioLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, ratioLimitKey, mRatioLimit);
+        mRpc->setTorrentProperty(id(), ratioLimitKey, limit);
     }
 
     int Torrent::seeders() const
     {
-        return mSeeders;
+        return mData.seeders;
     }
 
     int Torrent::leechers() const
     {
-        return mLeechers;
+        return mData.leechers;
     }
 
     int Torrent::peersLimit() const
     {
-        return mPeersLimit;
+        return mData.peersLimit;
     }
 
     void Torrent::setPeersLimit(int limit)
     {
-        mPeersLimit = limit;
+        mData.peersLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, peersLimitKey, mPeersLimit);
+        mRpc->setTorrentProperty(id(), peersLimitKey, limit);
     }
 
     const QDateTime& Torrent::addedDate() const
     {
-        return mAddedDate;
+        return mData.addedDate;
     }
 
     const QDateTime& Torrent::activityDate() const
     {
-        return mActivityDate;
+        return mData.activityDate;
     }
 
     const QDateTime& Torrent::doneDate() const
     {
-        return mDoneDate;
+        return mData.doneDate;
     }
 
     bool Torrent::honorSessionLimits() const
     {
-        return mHonorSessionLimits;
+        return mData.honorSessionLimits;
     }
 
     void Torrent::setHonorSessionLimits(bool honor)
     {
-        mHonorSessionLimits = honor;
+        mData.honorSessionLimits = honor;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, honorSessionLimitsKey, mHonorSessionLimits);
+        mRpc->setTorrentProperty(id(), honorSessionLimitsKey, honor);
     }
 
     Torrent::Priority Torrent::bandwidthPriority() const
     {
-        return mBandwidthPriority;
+        return mData.bandwidthPriority;
     }
 
-    void Torrent::setBandwidthPriority(Torrent::Priority priority)
+    void Torrent::setBandwidthPriority(Priority priority)
     {
-        mBandwidthPriority = priority;
+        mData.bandwidthPriority = priority;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, bandwidthPriorityKey, mBandwidthPriority);
+        mRpc->setTorrentProperty(id(), bandwidthPriorityKey, priority);
     }
 
     Torrent::IdleSeedingLimitMode Torrent::idleSeedingLimitMode() const
     {
-        return mIdleSeedingLimitMode;
+        return mData.idleSeedingLimitMode;
     }
 
     void Torrent::setIdleSeedingLimitMode(Torrent::IdleSeedingLimitMode mode)
     {
-        mIdleSeedingLimitMode = mode;
+        mData.idleSeedingLimitMode = mode;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, idleSeedingLimitModeKey, mIdleSeedingLimitMode);
+        mRpc->setTorrentProperty(id(), idleSeedingLimitModeKey, mode);
     }
 
     int Torrent::idleSeedingLimit() const
     {
-        return mIdleSeedingLimit;
+        return mData.idleSeedingLimit;
     }
 
     void Torrent::setIdleSeedingLimit(int limit)
     {
-        mIdleSeedingLimit = limit;
+        mData.idleSeedingLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(mId, idleSeedingLimitKey, mIdleSeedingLimit);
+        mRpc->setTorrentProperty(id(), idleSeedingLimitKey, limit);
     }
 
     const QString& Torrent::downloadDirectory() const
     {
-        return mDownloadDirectory;
+        return mData.downloadDirectory;
     }
 
     bool Torrent::isSingleFile() const
     {
-        return mSingleFile;
+        return mData.singleFile;
     }
 
     const QString& Torrent::creator() const
     {
-        return mCreator;
+        return mData.creator;
     }
 
     const QDateTime& Torrent::creationDate() const
     {
-        return mCreationDate;
+        return mData.creationDate;
     }
 
     const QString& Torrent::comment() const
     {
-        return mComment;
+        return mData.comment;
+    }
+
+    const std::vector<Tracker>& Torrent::trackers() const
+    {
+        return mData.trackers;
+    }
+
+    bool Torrent::isTrackersAddedOrRemoved() const
+    {
+        return mData.trackersAddedOrRemoved;
+    }
+
+    void Torrent::addTracker(const QString& announce)
+    {
+        mRpc->setTorrentProperty(id(), addTrackerKey, QVariantList{announce}, true);
+    }
+
+    void Torrent::setTracker(int trackerId, const QString& announce)
+    {
+        mRpc->setTorrentProperty(id(), replaceTrackerKey, QVariantList{trackerId, announce}, true);
+    }
+
+    void Torrent::removeTrackers(const QVariantList& ids)
+    {
+        mRpc->setTorrentProperty(id(), removeTrackerKey, ids, true);
+    }
+
+    bool Torrent::isChanged() const
+    {
+        return mData.changed;
+    }
+
+    const TorrentData& Torrent::data() const
+    {
+        return mData;
     }
 
     bool Torrent::isFilesEnabled() const
@@ -461,20 +675,14 @@ namespace libtremotesf
         return mFilesEnabled;
     }
 
-    bool Torrent::isFilesLoaded() const
-    {
-        return mFilesLoaded;
-    }
-
     void Torrent::setFilesEnabled(bool enabled)
     {
         if (enabled != mFilesEnabled) {
             mFilesEnabled = enabled;
             if (mFilesEnabled) {
-                mRpc->getTorrentFiles(mId, false);
+                mRpc->getTorrentFiles(id(), false);
             } else {
                 mFiles.clear();
-                mFilesLoaded = false;
             }
         }
     }
@@ -491,7 +699,7 @@ namespace libtremotesf
 
     void Torrent::setFilesWanted(const QVariantList& files, bool wanted)
     {
-        mRpc->setTorrentProperty(mId,
+        mRpc->setTorrentProperty(id(),
                                  wanted ? wantedFilesKey
                                         : unwantedFilesKey,
                                  files);
@@ -511,37 +719,12 @@ namespace libtremotesf
             propertyName = highPriorityKey;
             break;
         }
-        mRpc->setTorrentProperty(mId, propertyName, files);
+        mRpc->setTorrentProperty(id(), propertyName, files);
     }
 
     void Torrent::renameFile(const QString& path, const QString& newName)
     {
-        mRpc->renameTorrentFile(mId, path, newName);
-    }
-
-    const std::vector<Tracker>& Torrent::trackers() const
-    {
-        return mTrackers;
-    }
-
-    bool Torrent::isTrackersAddedOrRemoved() const
-    {
-        return mTrackersAddedOrRemoved;
-    }
-
-    void Torrent::addTracker(const QString& announce)
-    {
-        mRpc->setTorrentProperty(mId, addTrackerKey, QVariantList{announce}, true);
-    }
-
-    void Torrent::setTracker(int trackerId, const QString& announce)
-    {
-        mRpc->setTorrentProperty(mId, replaceTrackerKey, QVariantList{trackerId, announce}, true);
-    }
-
-    void Torrent::removeTrackers(const QVariantList& ids)
-    {
-        mRpc->setTorrentProperty(mId, removeTrackerKey, ids, true);
+        mRpc->renameTorrentFile(id(), path, newName);
     }
 
     bool Torrent::isPeersEnabled() const
@@ -554,17 +737,11 @@ namespace libtremotesf
         if (enabled != mPeersEnabled) {
             mPeersEnabled = enabled;
             if (mPeersEnabled) {
-                mRpc->getTorrentPeers(mId, false);
+                mRpc->getTorrentPeers(id(), false);
             } else {
                 mPeers.clear();
-                mPeersLoaded = false;
             }
         }
-    }
-
-    bool Torrent::isPeersLoaded() const
-    {
-        return mPeersLoaded;
     }
 
     const std::vector<Peer>& Torrent::peers() const
@@ -586,189 +763,13 @@ namespace libtremotesf
 
     void Torrent::update(const QJsonObject& torrentMap)
     {
-        mChanged = false;
-
-        setChanged(mName, torrentMap.value(nameKey).toString(), mChanged);
-
-        setChanged(mErrorString, torrentMap.value(errorStringKey).toString(), mChanged);
-        setChanged(mQueuePosition, torrentMap.value(queuePositionKey).toInt(), mChanged);
-        setChanged(mTotalSize, static_cast<long long>(torrentMap.value(totalSizeKey).toDouble()), mChanged);
-        setChanged(mCompletedSize, static_cast<long long>(torrentMap.value(completedSizeKey).toDouble()), mChanged);
-        setChanged(mLeftUntilDone, static_cast<long long>(torrentMap.value(leftUntilDoneKey).toDouble()), mChanged);
-        setChanged(mSizeWhenDone, static_cast<long long>(torrentMap.value(sizeWhenDoneKey).toDouble()), mChanged);
-        setChanged(mPercentDone, torrentMap.value(percentDoneKey).toDouble(), mChanged);
-        setChanged(mRecheckProgress, torrentMap.value(recheckProgressKey).toDouble(), mChanged);
-        setChanged(mEta, torrentMap.value(etaKey).toInt(), mChanged);
-
-        setChanged(mDownloadSpeed, static_cast<long long>(torrentMap.value(downloadSpeedKey).toDouble()), mChanged);
-        setChanged(mUploadSpeed, static_cast<long long>(torrentMap.value(uploadSpeedKey).toDouble()), mChanged);
-
-        setChanged(mDownloadSpeedLimited, torrentMap.value(downloadSpeedLimitedKey).toBool(), mChanged);
-        setChanged(mDownloadSpeedLimit, mRpc->serverSettings()->toKibiBytes(torrentMap.value(downloadSpeedLimitKey).toInt()), mChanged);
-        setChanged(mUploadSpeedLimited, torrentMap.value(uploadSpeedLimitedKey).toBool(), mChanged);
-        setChanged(mUploadSpeedLimit, mRpc->serverSettings()->toKibiBytes(torrentMap.value(uploadSpeedLimitKey).toInt()), mChanged);
-
-        setChanged(mTotalDownloaded, static_cast<long long>(torrentMap.value(totalDownloadedKey).toDouble()), mChanged);
-        setChanged(mTotalUploaded, static_cast<long long>(torrentMap.value(totalUploadedKey).toDouble()), mChanged);
-        setChanged(mRatio, torrentMap.value(ratioKey).toDouble(), mChanged);
-
-        setChanged(mRatioLimitMode, [&]() {
-            switch (int mode = torrentMap.value(ratioLimitModeKey).toInt()) {
-            case GlobalRatioLimit:
-            case SingleRatioLimit:
-            case UnlimitedRatio:
-                return static_cast<RatioLimitMode>(mode);
-            default:
-                return GlobalRatioLimit;
-            }
-        }(), mChanged);
-        setChanged(mRatioLimit, torrentMap.value(ratioLimitKey).toDouble(), mChanged);
-
-        setChanged(mSeeders, torrentMap.value(seedersKey).toInt(), mChanged);
-        setChanged(mLeechers, torrentMap.value(leechersKey).toInt(), mChanged);
-
-        const bool stalled = (mSeeders == 0 && mLeechers == 0);
-        if (torrentMap.value(errorKey).toInt() == 0) {
-            switch (torrentMap.value(statusKey).toInt()) {
-            case 0:
-                setChanged(mStatus, Paused, mChanged);
-                break;
-            case 1:
-                setChanged(mStatus, QueuedForChecking, mChanged);
-                break;
-            case 2:
-                setChanged(mStatus, Checking, mChanged);
-                break;
-            case 3:
-                setChanged(mStatus, QueuedForDownloading, mChanged);
-                break;
-            case 4:
-                if (stalled) {
-                    setChanged(mStatus, StalledDownloading, mChanged);
-                } else {
-                    setChanged(mStatus, Downloading, mChanged);
-                }
-                break;
-            case 5:
-                setChanged(mStatus, QueuedForSeeding, mChanged);
-                break;
-            case 6:
-                if (stalled) {
-                    setChanged(mStatus, StalledSeeding, mChanged);
-                } else {
-                    setChanged(mStatus, Seeding, mChanged);
-                }
-            }
-        } else {
-            setChanged(mStatus, Errored, mChanged);
-        }
-
-        setChanged(mPeersLimit, torrentMap.value(peersLimitKey).toInt(), mChanged);
-
-        const long long activityDate = torrentMap.value(activityDateKey).toDouble() * 1000;
-        if (activityDate > 0) {
-            if (activityDate != mActivityDateTime) {
-                mActivityDateTime = activityDate;
-                mActivityDate.setMSecsSinceEpoch(activityDate);
-                mChanged = true;
-            }
-        } else {
-            if (!mActivityDate.isNull()) {
-                mActivityDateTime = -1;
-                mActivityDate = QDateTime();
-                mChanged = true;
-            }
-        }
-        const long long doneDate = torrentMap.value(doneDateKey).toDouble() * 1000;
-        if (doneDate > 0) {
-            if (doneDate != mDoneDateTime) {
-                mDoneDateTime = doneDate;
-                mDoneDate.setMSecsSinceEpoch(doneDate);
-                mChanged = true;
-            }
-        } else {
-            if (!mDoneDate.isNull()) {
-                mDoneDateTime = -1;
-                mDoneDate = QDateTime();
-                mChanged = true;
-            }
-        }
-
-        setChanged(mHonorSessionLimits, torrentMap.value(honorSessionLimitsKey).toBool(), mChanged);
-        setChanged(mBandwidthPriority, [&]() {
-            switch (int priority = torrentMap.value(bandwidthPriorityKey).toInt()) {
-            case LowPriority:
-            case NormalPriority:
-            case HighPriority:
-                return static_cast<Priority>(priority);
-            default:
-                return NormalPriority;
-            }
-        }(), mChanged);
-        setChanged(mIdleSeedingLimitMode, [&]() {
-            switch (int mode = torrentMap.value(idleSeedingLimitModeKey).toInt()) {
-            case GlobalIdleSeedingLimit:
-            case SingleIdleSeedingLimit:
-            case UnlimitedIdleSeeding:
-                return static_cast<IdleSeedingLimitMode>(mode);
-            default:
-                return GlobalIdleSeedingLimit;
-            }
-        }(), mChanged);
-        setChanged(mIdleSeedingLimit, torrentMap.value(idleSeedingLimitKey).toInt(), mChanged);
-        setChanged(mDownloadDirectory, torrentMap.value(downloadDirectoryKey).toString(), mChanged);
-        setChanged(mSingleFile, torrentMap.value(prioritiesKey).toArray().size() == 1, mChanged);
-        setChanged(mCreator, torrentMap.value(creatorKey).toString(), mChanged);
-
-        const long long creationDate = torrentMap.value(creationDateKey).toDouble() * 1000;
-        if (creationDate > 0) {
-            if (creationDate != mCreationDateTime) {
-                mCreationDateTime = creationDate;
-                mCreationDate.setMSecsSinceEpoch(creationDate);
-                mChanged = true;
-            }
-        } else {
-            if (!mCreationDate.isNull()) {
-                mCreationDateTime = -1;
-                mCreationDate = QDateTime();
-                mChanged = true;
-            }
-        }
-
-        setChanged(mComment, torrentMap.value(commentKey).toString(), mChanged);
-
-        mTrackersAddedOrRemoved = false;
-        std::vector<Tracker> trackers;
-        const QJsonArray trackersJson(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
-        trackers.reserve(trackersJson.size());
-        for (const QJsonValue& trackerVariant : trackersJson) {
-            const QJsonObject trackerMap(trackerVariant.toObject());
-            const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
-
-            const auto found(std::find_if(mTrackers.begin(), mTrackers.end(), [&](const Tracker& tracker) {
-                return tracker.id() == id;
-            }));
-
-            if (found == mTrackers.end()) {
-                trackers.emplace_back(id, trackerMap);
-                mTrackersAddedOrRemoved = true;
-            } else {
-                found->update(trackerMap);
-                trackers.push_back(std::move(*found));
-            }
-        }
-        if (trackers.size() != mTrackers.size()) {
-            mTrackersAddedOrRemoved = true;
-        }
-        mTrackers = std::move(trackers);
-
+        mData.update(torrentMap, mRpc);
         mFilesUpdated = false;
         mPeersUpdated = false;
-
         emit updated();
     }
 
-    void Torrent::updateFiles(const QJsonObject& torrentMap)
+    void Torrent::updateFiles(const QJsonObject &torrentMap)
     {
         mFilesChanged = false;
 
@@ -776,10 +777,10 @@ namespace libtremotesf
         if (!fileStats.isEmpty()) {
             if (mFiles.empty()) {
                 mFilesChanged = true;
-                const QJsonArray files(torrentMap.value(QJsonKeyStringInit("files")).toArray());
+                const QJsonArray fileJsons(torrentMap.value(QJsonKeyStringInit("files")).toArray());
                 mFiles.reserve(fileStats.size());
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
-                    mFiles.emplace_back(files[i].toObject(), fileStats[i].toObject());
+                    mFiles.emplace_back(fileJsons[i].toObject(), fileStats[i].toObject());
                 }
             } else {
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
@@ -791,14 +792,13 @@ namespace libtremotesf
         }
 
         mFilesUpdated = true;
-        mFilesLoaded = true;
         emit filesUpdated(mFiles);
     }
 
-    void Torrent::updatePeers(const QJsonObject& torrentMap)
+    void Torrent::updatePeers(const QJsonObject &torrentMap)
     {
         std::vector<QString> addresses;
-        const std::vector<QJsonObject> peers([&]() {
+        const std::vector<QJsonObject> peerJsons([&]() {
             std::vector<QJsonObject> p;
             const QJsonArray peerValues(torrentMap.value(QJsonKeyStringInit("peers")).toArray());
             p.reserve(peerValues.size());
@@ -819,10 +819,10 @@ namespace libtremotesf
             }
         }
 
-        mPeers.reserve(peers.size());
+        mPeers.reserve(peerJsons.size());
 
-        for (size_t i = 0, max = peers.size(); i < max; ++i) {
-            const QJsonObject& peerMap = peers[i];
+        for (size_t i = 0, max = peerJsons.size(); i < max; ++i) {
+            const QJsonObject& peerJson = peerJsons[i];
             QString& address = addresses[i];
 
             const auto found(std::find_if(mPeers.begin(), mPeers.end(), [&](const Peer& peer) {
@@ -830,19 +830,13 @@ namespace libtremotesf
             }));
 
             if (found == mPeers.end()) {
-                mPeers.emplace_back(std::move(address), peerMap);
+                mPeers.emplace_back(std::move(address), peerJson);
             } else {
-                found->update(peerMap);
+                found->update(peerJson);
             }
         }
 
         mPeersUpdated = true;
-        mPeersLoaded = true;
         emit peersUpdated(mPeers);
-    }
-
-    bool Torrent::isChanged() const
-    {
-        return mChanged;
     }
 }
