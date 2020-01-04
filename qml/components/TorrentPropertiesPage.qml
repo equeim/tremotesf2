@@ -55,8 +55,8 @@ Page {
         downloadSpeedLabel.value = Utils.formatByteSpeed(torrent.downloadSpeed)
         uploadSpeedLabel.value = Utils.formatByteSpeed(torrent.uploadSpeed)
         etaLabel.value = Utils.formatEta(torrent.eta)
-        seedersLabel.value = torrent.seeders
-        leechersLabel.value = torrent.leechers
+        seedersLabel.value = torrent.seeders.toLocaleString()
+        leechersLabel.value = torrent.leechers.toLocaleString()
         activityLabel.value = torrent.activityDate.toLocaleString(Qt.locale(), Locale.ShortFormat)
         totalSizeLabel.value = Utils.formatByteSize(torrent.totalSize)
         locationLabel.value = torrent.downloadDirectory

@@ -21,7 +21,7 @@ import Sailfish.Silica 1.0
 BackgroundItem {
     property bool current
     property alias text: label.text
-    property alias torrents: torrentsLabel.text
+    property int torrents
 
     Label {
         id: label
@@ -45,5 +45,6 @@ BackgroundItem {
             verticalCenter: parent.verticalCenter
         }
         color: Theme.highlightColor
+        text: torrents.toLocaleString()
     }
 }

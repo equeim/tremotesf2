@@ -25,7 +25,7 @@ Page {
     property bool loaded: false
 
     function loadSettings() {
-        peerPortTextField.text = rpc.serverSettings.peerPort
+        peerPortTextField.text = rpc.serverSettings.peerPort.toLocaleString()
         randomPortSwitch.checked = rpc.serverSettings.randomPortEnabled
         portFormardingSwitch.checked = rpc.serverSettings.portForwardingEnabled
         encryptionComboBox.currentIndex = rpc.serverSettings.encryptionMode
