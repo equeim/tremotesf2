@@ -11,7 +11,10 @@ cd "$_dir"
 
 QT_SELECT=5 $_lupdate ../src ../qml -ts en.ts \
                                         es.ts \
+                                        fr.ts \
+                                        it_IT.ts \
                                         nl_BE.ts \
                                         nl.ts \
                                         ru.ts \
+                                        zh_CN.ts \
                                         source.ts

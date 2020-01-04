@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Alexey Rochev <equeim@gmail.com>
+# This file is distributed under the same license as the tremotesf package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# dumperk <dumperk@hotmail.com>, 2019
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: tremotesf\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-31 19:28+0300\n"
+"PO-Revision-Date: 2018-08-31 13:48+0000\n"
+"Last-Translator: dumperk <dumperk@hotmail.com>, 2019\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/equeim/teams/72280/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: tmp.desktop.in:4 ../org.equeim.Tremotesf.appdata.xml.in:7
+msgid "Tremotesf"
+msgstr "Tremotesf"
+
+#: tmp.desktop.in:5 ../org.equeim.Tremotesf.appdata.xml.in:8
+msgid "Remote GUI for Transmission BitTorrent client"
+msgstr "Transmission远程GUI客户端"
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:11
+msgid ""
+"Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully "
+"control your transmission-daemon instance, manage torrents, set Transmission"
+" settings, view server statistics."
+msgstr ""
+"Tremotesf是一款Transmission远程GUI客户端，你可以完全的控制你的transmission-"
+"daemon实例，管理种子、更改transmission的设置、查看服务器统计数据。"
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:14
+msgid ""
+"You can add several servers profiles and switch between them (only one can "
+"be connected at a time). Tremotesf has support of HTTPS, including self-"
+"signed certificates and client certificate authentication. You can set "
+"mounted directories for servers and quickly open torrents' files and choose "
+"download directory from file dialog."
+msgstr ""
+"你可以添加多个服务器配置并切换它们（同时只能连接一个）。Tremotesf支持HTTPS，包含自签名证书和客户端证书认证。为服务器设置目录映射从而快速的打开种子文件，添加种子时可以选择下载目录。"
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:41
+msgid "Alexey Rochev"
+msgstr "Alexey Rochev"
