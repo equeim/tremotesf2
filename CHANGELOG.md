@@ -1,11 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [1.6.2] - 2020-01-05
 ### Changed
 - Improved UNIX/Windows signals handling
 - Command line options that don't start GUI (such as '-v' or '-h' or
 passing files to already running Tremotesf instance) now don't require X/Wayland session
-- Tremotesf now shows localized numbers instead of Latin ones in most places
+- Tremotesf now shows localized numbers instead of Latin-1 ones (in most places)
 - Updated translations
 
 ### Fixed
