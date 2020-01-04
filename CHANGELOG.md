@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Improved UNIX/Windows signals handling
+- Command line options that don't start GUI (such as '-v' or '-h' or
+passing files to already running Tremotesf instance) now don't require X/Wayland session
+- Tremotesf now shows localized numbers instead of Latin ones in most places
+- Updated translations
+
+### Fixed
+- Fixed compilation with Qt 5.14
+
 ## [1.6.1] - 2019-07-16
 ### Changed
 - Minor performance improvements
