@@ -180,7 +180,7 @@ namespace libtremotesf
 
         Q_PROPERTY(int id READ id CONSTANT)
         Q_PROPERTY(QString hashString READ hashString CONSTANT)
-        Q_PROPERTY(QString name READ name CONSTANT)
+        Q_PROPERTY(QString name READ name NOTIFY updated)
 
         Q_PROPERTY(libtremotesf::TorrentData::Status status READ status NOTIFY updated)
         Q_PROPERTY(QString errorString READ errorString NOTIFY updated)

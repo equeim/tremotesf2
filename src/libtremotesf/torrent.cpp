@@ -170,7 +170,7 @@ namespace libtremotesf
         client = peerMap.value(QJsonKeyStringInit("clientName")).toString();
     }
 
-        void TorrentData::update(const QJsonObject& torrentMap, const Rpc* rpc)
+    void TorrentData::update(const QJsonObject& torrentMap, const Rpc* rpc)
     {
         changed = false;
 
