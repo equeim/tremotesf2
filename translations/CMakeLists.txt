@@ -2,9 +2,12 @@ find_package(Qt5 REQUIRED COMPONENTS LinguistTools)
 qt5_add_translation(qm_files
     en.ts
     es.ts
+    fr.ts
+    it_IT.ts
     nl_BE.ts
     nl.ts
     ru.ts
+    zh_CN.ts
 )
 add_custom_target(translations ALL DEPENDS ${qm_files})
 
