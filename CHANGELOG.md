@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.6.3] - 2020-01-05
+### Fixed
+- Fix installing of new translations
+
 ## [1.6.2] - 2020-01-05
 ### Changed
 - Improved UNIX/Windows signals handling
