@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.6.4] - 2020-01-09
+### Fixed
+- Fixed compilation for Windows
+- Fix RPM validation errors/warnings for Sailfish OS
+
 ## [1.6.3] - 2020-01-05
 ### Fixed
 - Fix installing of new translations

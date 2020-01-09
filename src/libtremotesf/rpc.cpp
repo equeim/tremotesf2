@@ -116,7 +116,7 @@ namespace libtremotesf
         mUpdateTimer->setSingleShot(true);
         QObject::connect(mUpdateTimer, &QTimer::timeout, this, &Rpc::updateData);
 
-        QObject::connect(mNetwork, &QNetworkAccessManager::sslErrors, this, [=](QNetworkReply* reply, const QList<QSslError>& errors) {
+        QObject::connect(mNetwork, &QNetworkAccessManager::sslErrors, this, [=](QNetworkReply*, const QList<QSslError>& errors) {
             for (const auto& error : errors) {
                 if (!mExpectedSslErrors.contains(error)) {
                     qWarning() << error;
