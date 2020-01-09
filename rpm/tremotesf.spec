@@ -29,7 +29,7 @@ BuildRequires: pkgconfig(Qt5DBus)
 BuildRequires: pkgconfig(Qt5Quick)
 BuildRequires: qt5-qttools-linguist
 BuildRequires: pkgconfig(sailfishapp)
-
+%global __provides_exclude mimehandler
 %else
 Requires:      hicolor-icon-theme
 BuildRequires: cmake(Qt5Concurrent)
