@@ -205,7 +205,7 @@ namespace tremotesf
         mTrackers.reserve(trackers.size());
 
         for (const Tracker& tracker : trackers) {
-            const int row = index_of(mTrackers, tracker);
+            const auto row = index_of(mTrackers, tracker);
             if (row == mTrackers.size()) {
                 beginInsertRows(QModelIndex(), row, row);
                 mTrackers.push_back(tracker);
