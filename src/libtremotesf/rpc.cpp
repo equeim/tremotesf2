@@ -525,12 +525,13 @@ namespace libtremotesf
                                                                 .toArray());
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
-                            torrent->updateFiles(torrentsVariants.first().toObject());
+                            if (torrent->isFilesEnabled()) {
+                                torrent->updateFiles(torrentsVariants.first().toObject());
+                                emit gotTorrentFiles(id);
+                            }
                             if (scheduled) {
                                 checkIfTorrentsUpdated();
                                 startUpdateTimer();
-                            } else {
-                                emit gotTorrentFiles(id);
                             }
                         }
                     });
@@ -553,12 +554,13 @@ namespace libtremotesf
                                                                 .toArray());
                         const std::shared_ptr<Torrent> torrent(torrentById(id));
                         if (!torrentsVariants.isEmpty() && torrent) {
-                            torrent->updatePeers(torrentsVariants.first().toObject());
+                            if (torrent->isPeersEnabled()) {
+                                torrent->updatePeers(torrentsVariants.first().toObject());
+                                emit gotTorrentPeers(id);
+                            }
                             if (scheduled) {
                                 checkIfTorrentsUpdated();
                                 startUpdateTimer();
-                            } else {
-                                emit gotTorrentPeers(id);
                             }
                         }
                     });
@@ -838,20 +840,22 @@ namespace libtremotesf
 
     void Rpc::checkIfTorrentsUpdated()
     {
-        for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
-            if (!torrent->isUpdated()) {
-                return;
+        if (mUpdating && !mTorrentsUpdated) {
+            for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
+                if (!torrent->isUpdated()) {
+                    return;
+                }
             }
-        }
-        mTorrentsUpdated = true;
-        if (isConnected()) {
-            emit torrentsUpdated();
+            mTorrentsUpdated = true;
+            if (isConnected()) {
+                emit torrentsUpdated();
+            }
         }
     }
 
     void Rpc::startUpdateTimer()
     {
-        if (mServerSettingsUpdated && mTorrentsUpdated && mServerStatsUpdated) {
+        if (mUpdating && mServerSettingsUpdated && mTorrentsUpdated && mServerStatsUpdated) {
             if (mStatus == Connecting) {
                 setStatus(Connected);
             }
