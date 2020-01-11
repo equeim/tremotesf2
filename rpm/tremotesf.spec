@@ -108,7 +108,7 @@ desktop-file-install \
 %{_datadir}/%{name}
 
 %changelog
-* Sun Jan 09 2020 Alexey Rochev <equeim@gmail.com> - 1.6.4-1
+* Sat Jan 11 2020 Alexey Rochev <equeim@gmail.com> - 1.6.4-1
 - tremotesf-1.6.4
 
 * Sun Jan 05 2020 Alexey Rochev <equeim@gmail.com> - 1.6.3-1
