@@ -6,10 +6,12 @@ find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 qt5_add_resources(resources resources.qrc)
 
 set(tremotesf_sources
+    libtremotesf/peer.cpp
     libtremotesf/rpc.cpp
     libtremotesf/serversettings.cpp
     libtremotesf/serverstats.cpp
     libtremotesf/torrent.cpp
+    libtremotesf/torrentfile.cpp
     libtremotesf/tracker.cpp
     alltrackersmodel.cpp
     baseproxymodel.cpp

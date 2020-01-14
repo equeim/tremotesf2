@@ -527,7 +527,6 @@ namespace libtremotesf
                         if (!torrentsVariants.isEmpty() && torrent) {
                             if (torrent->isFilesEnabled()) {
                                 torrent->updateFiles(torrentsVariants.first().toObject());
-                                emit gotTorrentFiles(id);
                             }
                             if (scheduled) {
                                 checkIfTorrentsUpdated();
@@ -556,7 +555,6 @@ namespace libtremotesf
                         if (!torrentsVariants.isEmpty() && torrent) {
                             if (torrent->isPeersEnabled()) {
                                 torrent->updatePeers(torrentsVariants.first().toObject());
-                                emit gotTorrentPeers(id);
                             }
                             if (scheduled) {
                                 checkIfTorrentsUpdated();

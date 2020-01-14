@@ -1,0 +1,58 @@
+/*
+ * Tremotesf
+ * Copyright (C) 2015-2020 Alexey Rochev <equeim@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "torrentfile.h"
+
+#include <QJsonObject>
+#include <QStringList>
+
+#include "stdutils.h"
+
+namespace libtremotesf
+{
+    TorrentFile::TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
+        : id(id), size(fileMap.value(QJsonKeyStringInit("length")).toDouble())
+    {
+        QStringList p(fileMap.value(QJsonKeyStringInit("name")).toString().split(QLatin1Char('/'), QString::SkipEmptyParts));
+        path.reserve(p.size());
+        for (QString& part : p) {
+            path.push_back(std::move(part));
+        }
+        update(fileStatsMap);
+    }
+
+    bool TorrentFile::update(const QJsonObject& fileStatsMap)
+    {
+        bool changed = false;
+
+        setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QJsonKeyStringInit("bytesCompleted")).toDouble()), changed);
+        setChanged(priority, [&]() {
+            switch (int priority = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
+            case TorrentFile::LowPriority:
+            case TorrentFile::NormalPriority:
+            case TorrentFile::HighPriority:
+                return static_cast<TorrentFile::Priority>(priority);
+            default:
+                return TorrentFile::NormalPriority;
+            }
+        }(), changed);
+        setChanged(wanted, fileStatsMap.value(QJsonKeyStringInit("wanted")).toBool(), changed);
+
+        return changed;
+    }
+}

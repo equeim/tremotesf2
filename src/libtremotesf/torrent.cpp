@@ -28,7 +28,6 @@
 #include "rpc.h"
 #include "serversettings.h"
 #include "stdutils.h"
-#include "tracker.h"
 
 namespace libtremotesf
 {
@@ -94,81 +93,9 @@ namespace libtremotesf
         const QLatin1String addTrackerKey("trackerAdd");
         const QLatin1String replaceTrackerKey("trackerReplace");
         const QLatin1String removeTrackerKey("trackerRemove");
-
-        template<typename T, typename std::enable_if<std::is_scalar<T>::value && !std::is_floating_point<T>::value, int>::type = 0>
-        void setChanged(T& value, T newValue, bool& changed)
-        {
-            if (newValue != value) {
-                value = newValue;
-                changed = true;
-            }
-        }
-
-        template<typename T, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
-        void setChanged(T& value, T newValue, bool& changed)
-        {
-            if (!qFuzzyCompare(newValue, value)) {
-                value = newValue;
-                changed = true;
-            }
-        }
-
-        template<typename T, typename std::enable_if<!std::is_scalar<T>::value, int>::type = 0>
-        void setChanged(T& value, T&& newValue, bool& changed)
-        {
-            if (newValue != value) {
-                value = std::forward<T>(newValue);
-                changed = true;
-            }
-        }
     }
 
     const QJsonKeyString Torrent::idKey(QJsonKeyStringInit("id"));
-
-    TorrentFile::TorrentFile(const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
-        : size(fileMap.value(QJsonKeyStringInit("length")).toDouble())
-    {
-        QStringList p(fileMap.value(QJsonKeyStringInit("name")).toString().split(QLatin1Char('/'), QString::SkipEmptyParts));
-        path.reserve(p.size());
-        for (QString& part : p) {
-            path.push_back(std::move(part));
-        }
-        update(fileStatsMap);
-    }
-
-    bool TorrentFile::update(const QJsonObject& fileStatsMap)
-    {
-        changed = false;
-        setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QJsonKeyStringInit("bytesCompleted")).toDouble()), changed);
-        setChanged(priority, [&]() {
-            switch (int priority = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
-            case TorrentFile::LowPriority:
-            case TorrentFile::NormalPriority:
-            case TorrentFile::HighPriority:
-                return static_cast<TorrentFile::Priority>(priority);
-            default:
-                return TorrentFile::NormalPriority;
-            }
-        }(), changed);
-        setChanged(wanted, fileStatsMap.value(QJsonKeyStringInit("wanted")).toBool(), changed);
-
-        return changed;
-     }
-
-    Peer::Peer(QString&& address, const QJsonObject& peerMap)
-        : address(std::move(address))
-    {
-        update(peerMap);
-    }
-
-    void Peer::update(const QJsonObject& peerMap)
-    {
-        downloadSpeed = peerMap.value(QJsonKeyStringInit("rateToClient")).toDouble();
-        uploadSpeed = peerMap.value(QJsonKeyStringInit("rateToPeer")).toDouble();
-        progress = peerMap.value(QJsonKeyStringInit("progress")).toDouble();
-        flags = peerMap.value(QJsonKeyStringInit("flagStr")).toString();
-        client = peerMap.value(QJsonKeyStringInit("clientName")).toString();
-    }
 
     void TorrentData::update(const QJsonObject& torrentMap, const Rpc* rpc)
     {
@@ -692,11 +619,6 @@ namespace libtremotesf
         return mFiles;
     }
 
-    bool Torrent::isFilesChanged()
-    {
-        return mFilesChanged;
-    }
-
     void Torrent::setFilesWanted(const QVariantList& files, bool wanted)
     {
         mRpc->setTorrentProperty(id(),
@@ -771,28 +693,32 @@ namespace libtremotesf
 
     void Torrent::updateFiles(const QJsonObject &torrentMap)
     {
-        mFilesChanged = false;
+        std::vector<const TorrentFile*> changed;
 
         const QJsonArray fileStats(torrentMap.value(QJsonKeyStringInit("fileStats")).toArray());
         if (!fileStats.isEmpty()) {
             if (mFiles.empty()) {
-                mFilesChanged = true;
                 const QJsonArray fileJsons(torrentMap.value(QJsonKeyStringInit("files")).toArray());
                 mFiles.reserve(fileStats.size());
+                changed.reserve(fileStats.size());
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
-                    mFiles.emplace_back(fileJsons[i].toObject(), fileStats[i].toObject());
+                    mFiles.emplace_back(i, fileJsons[i].toObject(), fileStats[i].toObject());
+                    changed.push_back(&mFiles.back());
                 }
             } else {
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
-                    if (mFiles[i].update(fileStats[i].toObject())) {
-                        mFilesChanged = true;
+                    TorrentFile& file = mFiles[i];
+                    if (file.update(fileStats[i].toObject())) {
+                        changed.push_back(&file);
                     }
                 }
             }
         }
 
         mFilesUpdated = true;
-        emit filesUpdated(mFiles);
+
+        emit filesUpdated(changed);
+        emit mRpc->torrentFilesUpdated(mData.id, changed);
     }
 
     void Torrent::updatePeers(const QJsonObject &torrentMap)
@@ -806,21 +732,25 @@ namespace libtremotesf
 
             for (const QJsonValue& peerValue : peerValues) {
                 QJsonObject peerMap(peerValue.toObject());
-                addresses.push_back(peerMap.value(QJsonKeyStringInit("address")).toString());
+                addresses.push_back(peerMap.value(Peer::addressKey).toString());
                 p.push_back(std::move(peerMap));
             }
 
             return p;
         }());
 
+        std::vector<int> removed;
         for (int i = mPeers.size() - 1; i >= 0; --i) {
-            if (!tremotesf::contains(addresses, mPeers[i].address)) {
+            if (!contains(addresses, mPeers[i].address)) {
                 mPeers.erase(mPeers.begin() + i);
+                removed.push_back(i);
             }
         }
 
         mPeers.reserve(peerJsons.size());
 
+        std::vector<const Peer*> changed;
+        std::vector<const Peer*> added;
         for (size_t i = 0, max = peerJsons.size(); i < max; ++i) {
             const QJsonObject& peerJson = peerJsons[i];
             QString& address = addresses[i];
@@ -831,12 +761,17 @@ namespace libtremotesf
 
             if (found == mPeers.end()) {
                 mPeers.emplace_back(std::move(address), peerJson);
+                added.push_back(&mPeers.back());
             } else {
-                found->update(peerJson);
+                if (found->update(peerJson)) {
+                    changed.push_back(&(*found));
+                }
             }
         }
 
         mPeersUpdated = true;
-        emit peersUpdated(mPeers);
+
+        emit peersUpdated(changed, added, removed);
+        emit mRpc->torrentPeersUpdated(mData.id, changed, added, removed);
     }
 }
