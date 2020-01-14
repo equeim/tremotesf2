@@ -23,6 +23,7 @@
 #include "utils.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
+#include "libtremotesf/torrent_qdebug.h"
 
 namespace tremotesf
 {
@@ -148,37 +149,10 @@ namespace tremotesf
             mTorrent = torrent;
 
             if (mTorrent) {
-                QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, [=](const std::vector<libtremotesf::Peer>& peers) {
-                    for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                        if (!contains(peers, mPeers[i])) {
-                            beginRemoveRows(QModelIndex(), i, i);
-                            mPeers.erase(mPeers.begin() + i);
-                            endRemoveRows();
-                            i--;
-                            max--;
-                        }
-                    }
-
-                    mPeers.reserve(peers.size());
-
-                    for (const auto& peer : peers) {
-                        const auto row = index_of(mPeers, peer);
-                        if (row == mPeers.size()) {
-                            beginInsertRows(QModelIndex(), row, row);
-                            mPeers.push_back(peer);
-                            endInsertRows();
-                        } else {
-                            mPeers[row] = peer;
-                            emit dataChanged(index(row, 0), index(row, columnCount() - 1));
-                        }
-                    }
-
-                    if (!mLoaded) {
-                        mLoaded = true;
-                        emit loadedChanged();
-                    }
-                });
-
+                QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, &PeersModel::update);
+                if (mTorrent->isPeersEnabled()) {
+                    qWarning() << mTorrent << "already has enabled peers, this shouldn't happen";
+                }
                 mTorrent->setPeersEnabled(true);
             } else {
                 beginResetModel();
@@ -204,4 +178,40 @@ namespace tremotesf
                 {Client, "client"}};
     }
 #endif
+
+    void PeersModel::update(const std::vector<const libtremotesf::Peer*>& changed, const std::vector<const libtremotesf::Peer*>& added, const std::vector<int>& removed)
+    {
+        if (!removed.empty()) {
+            const auto begin(mPeers.begin());
+            for (int index : removed) {
+                beginRemoveRows(QModelIndex(), index, index);
+                mPeers.erase(begin + index);
+                endRemoveRows();
+            }
+        }
+
+        if (!changed.empty()) {
+            const auto changedEnd(changed.end());
+            auto changedIter(changed.begin());
+            for (int i = 0, max = mPeers.size(); i < max; ++i) {
+                libtremotesf::Peer& peer = mPeers[i];
+                if (peer.address == (*changedIter)->address) {
+                    peer = **changedIter;
+                    emit dataChanged(index(i, 0), index(i, columnCount() - 1));
+                    ++changedIter;
+                    if (changedIter == changedEnd) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        auto row = mPeers.size();
+        for (const libtremotesf::Peer* peer : added) {
+            beginInsertRows(QModelIndex(), row, row);
+            mPeers.push_back(*peer);
+            endInsertRows();
+            ++row;
+        }
+    }
 }

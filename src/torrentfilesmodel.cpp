@@ -27,6 +27,8 @@
 #include <QStyle>
 #endif
 
+#include "libtremotesf/torrent.h"
+#include "libtremotesf/torrent_qdebug.h"
 #include "libtremotesf/serversettings.h"
 #include "trpc.h"
 #include "utils.h"
@@ -138,9 +140,7 @@ namespace tremotesf
           mRpc(rpc),
           mLoaded(false),
           mLoading(true),
-          mCreatingTree(false),
-          mResetAfterCreate(false),
-          mUpdateAfterCreate(false)
+          mCreatingTree(false)
     {
         setTorrent(torrent);
     }
@@ -282,6 +282,9 @@ namespace tremotesf
             if (mTorrent) {
                 QObject::connect(mTorrent, &libtremotesf::Torrent::filesUpdated, this, &TorrentFilesModel::update);
                 QObject::connect(mTorrent, &libtremotesf::Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
+                if (mTorrent->isFilesEnabled()) {
+                    qWarning() << mTorrent << "already has enabled files, this shouldn't happen";
+                }
                 mTorrent->setFilesEnabled(true);
             } else {
                 resetTree();
@@ -348,7 +351,7 @@ namespace tremotesf
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName)
     {
-        if (!mLoaded || mCreatingTree) {
+        if (!mLoaded) {
             return;
         }
         TorrentFilesModelEntry* entry = mRootDirectory.get();
@@ -384,53 +387,41 @@ namespace tremotesf
         return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() != TorrentFilesModelEntry::Unwanted;
     }
 
-    void TorrentFilesModel::update(const std::vector<libtremotesf::TorrentFile>& files)
+    void TorrentFilesModel::update(const std::vector<const libtremotesf::TorrentFile*>& changed)
     {
-        mResetAfterCreate = false;
-        mUpdateAfterCreate = false;
-
-        if (files.empty()) {
-            if (mLoaded) {
-                resetTree();
-            } else if (mCreatingTree) {
-                mResetAfterCreate = true;
-            }
+        if (mLoaded) {
+            updateTree(changed);
         } else {
-            if (mLoaded) {
-                updateTree(files, true);
-            } else if (mCreatingTree) {
-                mUpdateAfterCreate = true;
-            } else {
-                createTree(files);
-            }
+            createTree(changed);
         }
     }
 
-    void TorrentFilesModel::createTree(const std::vector<libtremotesf::TorrentFile>& files)
+    void TorrentFilesModel::createTree(const std::vector<const libtremotesf::TorrentFile*>& files)
     {
+        if (mCreatingTree) {
+            return;
+        }
+
         mCreatingTree = true;
         setLoading(true);
         beginResetModel();
 
-        const auto future = QtConcurrent::run(doCreateTree, files);
+        const auto toValues = [](const std::vector<const libtremotesf::TorrentFile*>& files) {
+            std::vector<libtremotesf::TorrentFile> v;
+            v.reserve(files.size());
+            for (const libtremotesf::TorrentFile* file : files) {
+                v.push_back(*file);
+            }
+            return v;
+        };
+
+        const auto future = QtConcurrent::run(doCreateTree, toValues(files));
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=]() {
             auto result = watcher->result();
             mRootDirectory = std::move(result.first);
             mFiles = std::move(result.second);
-
-            if (mResetAfterCreate) {
-                mRootDirectory->clearChildren();
-                endResetModel();
-                mFiles.clear();
-                setLoading(false);
-                return;
-            }
-
-            if (mUpdateAfterCreate) {
-                updateTree(mTorrent->files(), false);
-            }
 
             endResetModel();
 
@@ -445,21 +436,35 @@ namespace tremotesf
 
     void TorrentFilesModel::resetTree()
     {
-        beginResetModel();
-        endResetModel();
-        mRootDirectory->clearChildren();
-        endResetModel();
-        mFiles.clear();
-        setLoaded(false);
+        if (mLoaded) {
+            beginResetModel();
+            endResetModel();
+            mRootDirectory->clearChildren();
+            endResetModel();
+            mFiles.clear();
+            setLoaded(false);
+        }
     }
 
-    void TorrentFilesModel::updateTree(const std::vector<libtremotesf::TorrentFile>& files,
-                                       bool emitSignal)
+    void TorrentFilesModel::updateTree(const std::vector<const libtremotesf::TorrentFile*>& changed)
     {
-        for (size_t i = 0, size = files.size(); i < size; i++) {
-            updateFile(mFiles[i], files[i]);
-        }
-        if (emitSignal) {
+        if (!changed.empty()) {
+            auto changedIter(changed.begin());
+            int changedId = (*changedIter)->id;
+            const auto changedEnd(changed.end());
+            for (TorrentFilesModelFile* file : mFiles) {
+                if (file->id() == changedId) {
+                    updateFile(file, **changedIter);
+                    ++changedIter;
+                    if (changedIter == changedEnd) {
+                        changedId = -1;
+                    } else {
+                        changedId = (*changedIter)->id;
+                    }
+                } else {
+                    file->setChanged(false);
+                }
+            }
             updateDirectoryChildren(mRootDirectory.get());
         }
     }
