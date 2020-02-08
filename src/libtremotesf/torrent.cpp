@@ -258,11 +258,11 @@ namespace libtremotesf
             const QJsonObject trackerMap(trackerJson.toObject());
             const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
 
-            const auto found(std::find_if(newTrackers.begin(), newTrackers.end(), [&](const Tracker& tracker) {
+            const auto found(std::find_if(trackers.begin(), trackers.end(), [&](const Tracker& tracker) {
                 return tracker.id() == id;
             }));
 
-            if (found == newTrackers.end()) {
+            if (found == trackers.end()) {
                 newTrackers.emplace_back(id, trackerMap);
                 trackersAddedOrRemoved = true;
             } else {

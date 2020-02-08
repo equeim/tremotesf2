@@ -91,6 +91,8 @@ namespace tremotesf
 #endif
         int rowCount(const QModelIndex&) const override;
 
+        bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
+
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
 
@@ -105,7 +107,7 @@ namespace tremotesf
 #endif
 
     private:
-        void update();
+        void update(const std::vector<int>& removed, const std::vector<int>& changed, int added);
 
         std::vector<std::shared_ptr<libtremotesf::Torrent>> mTorrents;
         Rpc* mRpc;

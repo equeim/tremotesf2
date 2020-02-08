@@ -24,6 +24,7 @@
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 
+#include "modelutils.h"
 #include "trpc.h"
 #include "utils.h"
 
@@ -295,6 +296,15 @@ namespace tremotesf
         return mTorrents.size();
     }
 
+    bool TorrentsModel::removeRows(int row, int count, const QModelIndex& parent)
+    {
+        beginRemoveRows(parent, row, row + count - 1);
+        const auto first(mTorrents.begin() + row);
+        mTorrents.erase(first, first + count);
+        endRemoveRows();
+        return true;
+    }
+
     Rpc* TorrentsModel::rpc() const
     {
         return mRpc;
@@ -304,7 +314,7 @@ namespace tremotesf
     {
         if (rpc && !mRpc) {
             mRpc = rpc;
-            update();
+            update({}, {}, mRpc->torrents().size());
             QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &TorrentsModel::update);
         }
     }
@@ -342,50 +352,46 @@ namespace tremotesf
     }
 #endif
 
-    void TorrentsModel::update()
+    void TorrentsModel::update(const std::vector<int>& removed, const std::vector<int>& changed, int added)
     {
-        const std::vector<std::shared_ptr<Torrent>>& torrents = mRpc->torrents();
-
-        if (torrents.empty()) {
-            if (!mTorrents.empty()) {
-                beginRemoveRows(QModelIndex(), 0, mTorrents.size() - 1);
-                mTorrents.clear();
-                endRemoveRows();
+        if (!removed.empty()) {
+            ModelBatchRemover remover{this};
+            for (int index : removed) {
+                remover.remove(index);
             }
-            return;
+            remover.remove();
         }
 
-        for (int i = 0, max = mTorrents.size(); i < max; ++i) {
-            if (!contains(torrents, mTorrents[i])) {
-                beginRemoveRows(QModelIndex(), i, i);
-                mTorrents.erase(mTorrents.begin() + i);
-                endRemoveRows();
-                i--;
-                max--;
+        if (!changed.empty()) {
+            ModelBatchChanger changer{this};
+            for (int index : changed) {
+                changer.changed(index);
             }
+            changer.changed();
         }
 
-        mTorrents.reserve(torrents.size());
+        if (added > 0) {
+            const int first = static_cast<int>(mTorrents.size());
+            const int last = first + added - 1;
+            beginInsertRows(QModelIndex(), first, last);
+            mTorrents.reserve(static_cast<size_t>(last + 1));
 
-        for (const std::shared_ptr<Torrent>& torrent : torrents) {
-            if (!contains(mTorrents, torrent)) {
-                const int row = mTorrents.size();
-                beginInsertRows(QModelIndex(), row, row);
+            for (auto end = mRpc->torrents().end(), i = end - added; i != end; ++i) {
+                const auto& torrent = *i;
                 mTorrents.push_back(torrent);
-                endInsertRows();
 
                 const Torrent* torrentPointer = torrent.get();
-                QObject::connect(torrentPointer, &Torrent::limitsEdited, this, [=]() {
-                    for (int i = 0, max = mTorrents.size(); i < max; i++) {
-                        if (mTorrents[i].get() == torrentPointer) {
+                QObject::connect(torrentPointer, &Torrent::limitsEdited, this, [=] {
+                    for (int i = 0, max = static_cast<int>(mTorrents.size()); i < max; ++i) {
+                        if (mTorrents[static_cast<size_t>(i)].get() == torrentPointer) {
                             emit dataChanged(index(i, 0), index(i, columnCount() - 1));
                             break;
                         }
                     }
                 });
             }
-        }
 
-        emit dataChanged(index(0, 0), index(mTorrents.size() - 1, columnCount() - 1));
+            endInsertRows();
+        }
     }
 }

@@ -22,6 +22,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <vector>
 
 #include <QtGlobal>
 #include <QHashFunctions>
@@ -116,6 +117,49 @@ namespace libtremotesf
             changed = true;
         }
     }
+
+    template<typename T>
+    struct VectorBatchRemover
+    {
+        std::vector<T>& items;
+
+        std::vector<int>& removedIndexes;
+        std::vector<int>& indexesAfterRemoved;
+
+        const typename std::vector<T>::iterator begin = items.begin();
+
+        int endIndex = -1;
+        int beginIndex = 0;
+
+        void remove(int index) {
+            removedIndexes.push_back(index);
+            if (endIndex == -1) {
+                reset(index);
+            } else {
+                if (index == (beginIndex - 1)) {
+                    beginIndex = index;
+                } else {
+                    remove();
+                    reset(index);
+                }
+            }
+        }
+
+        void remove() {
+            items.erase(begin + beginIndex, begin + endIndex + 1);
+            if (!indexesAfterRemoved.empty()) {
+                const int shift = static_cast<int>(endIndex - beginIndex + 1);
+                for (int& index : indexesAfterRemoved) {
+                    index -= shift;
+                }
+            }
+        }
+
+        void reset(int index) {
+            endIndex = index;
+            beginIndex = index;
+        }
+    };
 }
 
 namespace tremotesf

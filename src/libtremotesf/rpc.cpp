@@ -666,15 +666,22 @@ namespace libtremotesf
             mServerSettingsUpdated = false;
             mTorrentsUpdated = false;
             mServerStatsUpdated = false;
-
-            mTorrents.clear();
+            mUpdateTimer->stop();
 
             emit statusChanged();
 
             if (wasConnected) {
-                mUpdateTimer->stop();
                 emit connectedChanged();
-                emit torrentsUpdated();
+            }
+
+            if (!mTorrents.empty()) {
+                std::vector<int> removed;
+                removed.reserve(mTorrents.size());
+                for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
+                    removed.push_back(i);
+                }
+                mTorrents.clear();
+                emit torrentsUpdated(removed, {}, 0);
             }
 
             break;
@@ -687,7 +694,6 @@ namespace libtremotesf
         case Connected:
         {
             qDebug("Connected");
-            emit torrentsUpdated();
             emit statusChanged();
             emit connectedChanged();
             break;
@@ -780,46 +786,81 @@ namespace libtremotesf
                                       "    \"method\": \"torrent-get\""
                                       "}"),
                     [=](const QJsonObject& parseResult) {
-                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(torrentsKey)
-                                                                .toArray());
+                        std::vector<std::tuple<QJsonObject, int, bool>> newTorrents;
+                        {
+                            const QJsonArray torrentsJsons(getReplyArguments(parseResult)
+                                                            .value(QJsonKeyStringInit("torrents"))
+                                                            .toArray());
+                            newTorrents.reserve(static_cast<size_t>(torrentsJsons.size()));
+                            for (const QJsonValue& torrentValue : torrentsJsons) {
+                                QJsonObject torrentJson(torrentValue.toObject());
+                                const int id = torrentJson.value(Torrent::idKey).toInt();
+                                newTorrents.emplace_back(std::move(torrentJson), id, false);
+                            }
+                        }
 
-                        std::vector<std::shared_ptr<Torrent>> torrents;
-                        torrents.reserve(torrentsVariants.size());
-                        for (const QJsonValue& torrentVariant : torrentsVariants) {
-                            const QJsonObject torrentMap(torrentVariant.toObject());
-                            const int id = torrentMap.value(Torrent::idKey).toInt();
+                        std::vector<int> removed;
+                        if (newTorrents.size() < mTorrents.size()) {
+                            removed.reserve(mTorrents.size() - newTorrents.size());
+                        }
+                        std::vector<int> changed;
+                        {
+                            const auto newTorrentsEnd(newTorrents.end());
+                            VectorBatchRemover<std::shared_ptr<Torrent>> remover{mTorrents, removed, changed};
+                            for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
+                                const auto& torrent = mTorrents[static_cast<size_t>(i)];
+                                const int id = torrent->id();
+                                const auto found(std::find_if(newTorrents.begin(), newTorrents.end(), [id](const auto& t) {
+                                    return std::get<1>(t) == id;
+                                }));
+                                if (found == newTorrentsEnd) {
+                                    remover.remove(i);
+                                } else {
+                                    std::get<2>(*found) = true;
 
-                            std::shared_ptr<Torrent> torrent(torrentById(id));
-                            if (torrent) {
-                                const bool wasFinished = (torrent->isFinished());
-                                torrent->update(torrentMap);
-                                const bool finished = (torrent->isFinished());
-
-                                if (finished && !wasFinished) {
-                                    emit torrentFinished(torrent.get());
-                                }
-
-                                if (torrent->isFilesEnabled()) {
-                                    getTorrentFiles(id, true);
-                                }
-                                if (torrent->isPeersEnabled()) {
-                                    getTorrentPeers(id, true);
-                                }
-                            } else {
-                                torrent = std::make_shared<Torrent>(id, torrentMap, this);
-#ifdef TREMOTESF_SAILFISHOS
-                                // prevent automatic destroying on QML side
-                                QQmlEngine::setObjectOwnership(torrent.get(), QQmlEngine::CppOwnership);
-#endif
-
-                                if (isConnected()) {
-                                    emit torrentAdded(torrent.get());
+                                    const bool wasFinished = torrent->isFinished();
+                                    torrent->update(std::get<0>(*found));
+                                    if (torrent->isChanged()) {
+                                        changed.push_back(i);
+                                        if (!wasFinished && torrent->isFinished()) {
+                                            emit torrentFinished(torrent.get());
+                                        }
+                                    }
+                                    if (torrent->isFilesEnabled()) {
+                                        getTorrentFiles(id, true);
+                                    }
+                                    if (torrent->isPeersEnabled()) {
+                                        getTorrentPeers(id, true);
+                                    }
                                 }
                             }
-                            torrents.push_back(std::move(torrent));
+                            remover.remove();
                         }
-                        mTorrents = std::move(torrents);
+                        std::reverse(changed.begin(), changed.end());
+
+                        int added = 0;
+                        if (newTorrents.size() > mTorrents.size()) {
+                            mTorrents.reserve(newTorrents.size());
+                            for (const auto& t : newTorrents) {
+                                const QJsonObject& torrentJson = std::get<0>(t);
+                                const int id = std::get<1>(t);
+                                const bool existing = std::get<2>(t);
+                                if (!existing) {
+                                    mTorrents.emplace_back(std::make_shared<Torrent>(id, torrentJson, this));
+                                    ++added;
+                                    Torrent* torrent = mTorrents.back().get();
+#ifdef TREMOTESF_SAILFISHOS
+                                    // prevent automatic destroying on QML side
+                                    QQmlEngine::setObjectOwnership(torrent, QQmlEngine::CppOwnership);
+#endif
+                                    if (isConnected()) {
+                                        emit torrentAdded(torrent);
+                                    }
+                                }
+                            }
+                        }
+
+                        emit torrentsUpdated(removed, changed, added);
 
                         checkIfTorrentsUpdated();
                         startUpdateTimer();
@@ -845,9 +886,6 @@ namespace libtremotesf
                 }
             }
             mTorrentsUpdated = true;
-            if (isConnected()) {
-                emit torrentsUpdated();
-            }
         }
     }
 

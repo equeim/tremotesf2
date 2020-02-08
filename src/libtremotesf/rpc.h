@@ -232,7 +232,7 @@ namespace libtremotesf
         void statusChanged();
         void errorChanged();
 
-        void torrentsUpdated();
+        void torrentsUpdated(const std::vector<int>& removed, const std::vector<int>& changed, int added);
 
         void torrentFilesUpdated(int torrentId, const std::vector<const libtremotesf::TorrentFile*>& changed);
         void torrentPeersUpdated(int torrentId, const std::vector<const libtremotesf::Peer*>& changed, const std::vector<const libtremotesf::Peer*>& added, const std::vector<int>& removed);
