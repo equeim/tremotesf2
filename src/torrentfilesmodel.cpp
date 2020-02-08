@@ -387,16 +387,16 @@ namespace tremotesf
         return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() != TorrentFilesModelEntry::Unwanted;
     }
 
-    void TorrentFilesModel::update(const std::vector<const libtremotesf::TorrentFile*>& changed)
+    void TorrentFilesModel::update(const std::vector<int>& changed)
     {
         if (mLoaded) {
             updateTree(changed);
         } else {
-            createTree(changed);
+            createTree();
         }
     }
 
-    void TorrentFilesModel::createTree(const std::vector<const libtremotesf::TorrentFile*>& files)
+    void TorrentFilesModel::createTree()
     {
         if (mCreatingTree) {
             return;
@@ -406,16 +406,7 @@ namespace tremotesf
         setLoading(true);
         beginResetModel();
 
-        const auto toValues = [](const std::vector<const libtremotesf::TorrentFile*>& files) {
-            std::vector<libtremotesf::TorrentFile> v;
-            v.reserve(files.size());
-            for (const libtremotesf::TorrentFile* file : files) {
-                v.push_back(*file);
-            }
-            return v;
-        };
-
-        const auto future = QtConcurrent::run(doCreateTree, toValues(files));
+        const auto future = QtConcurrent::run(doCreateTree, mTorrent->files());
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=]() {
@@ -446,20 +437,24 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesModel::updateTree(const std::vector<const libtremotesf::TorrentFile*>& changed)
+    void TorrentFilesModel::updateTree(const std::vector<int>& changed)
     {
         if (!changed.empty()) {
+            const auto& torrentFiles = mTorrent->files();
+
             auto changedIter(changed.begin());
-            int changedId = (*changedIter)->id;
+            int changedIndex = *changedIter;
             const auto changedEnd(changed.end());
-            for (TorrentFilesModelFile* file : mFiles) {
-                if (file->id() == changedId) {
-                    updateFile(file, **changedIter);
+
+            for (int i = 0, max = static_cast<int>(mFiles.size()); i < max; ++i) {
+                const auto& file = mFiles[static_cast<size_t>(i)];
+                if (i == changedIndex) {
+                    updateFile(file, torrentFiles[static_cast<size_t>(changedIndex)]);
                     ++changedIter;
                     if (changedIter == changedEnd) {
-                        changedId = -1;
+                        changedIndex = -1;
                     } else {
-                        changedId = (*changedIter)->id;
+                        changedIndex = *changedIter;
                     }
                 } else {
                     file->setChanged(false);

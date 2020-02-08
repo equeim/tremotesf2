@@ -693,23 +693,23 @@ namespace libtremotesf
 
     void Torrent::updateFiles(const QJsonObject &torrentMap)
     {
-        std::vector<const TorrentFile*> changed;
+        std::vector<int> changed;
 
         const QJsonArray fileStats(torrentMap.value(QJsonKeyStringInit("fileStats")).toArray());
         if (!fileStats.isEmpty()) {
             if (mFiles.empty()) {
                 const QJsonArray fileJsons(torrentMap.value(QJsonKeyStringInit("files")).toArray());
-                mFiles.reserve(fileStats.size());
-                changed.reserve(fileStats.size());
+                mFiles.reserve(static_cast<size_t>(fileStats.size()));
+                changed.reserve(static_cast<size_t>(fileStats.size()));
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
                     mFiles.emplace_back(i, fileJsons[i].toObject(), fileStats[i].toObject());
-                    changed.push_back(&mFiles.back());
+                    changed.push_back(i);
                 }
             } else {
                 for (int i = 0, max = fileStats.size(); i < max; ++i) {
-                    TorrentFile& file = mFiles[i];
+                    TorrentFile& file = mFiles[static_cast<size_t>(i)];
                     if (file.update(fileStats[i].toObject())) {
-                        changed.push_back(&file);
+                        changed.push_back(i);
                     }
                 }
             }
@@ -718,60 +718,66 @@ namespace libtremotesf
         mFilesUpdated = true;
 
         emit filesUpdated(changed);
-        emit mRpc->torrentFilesUpdated(mData.id, changed);
+        emit mRpc->torrentFilesUpdated(this, changed);
     }
 
     void Torrent::updatePeers(const QJsonObject &torrentMap)
     {
-        std::vector<QString> addresses;
-        const std::vector<QJsonObject> peerJsons([&]() {
-            std::vector<QJsonObject> p;
-            const QJsonArray peerValues(torrentMap.value(QJsonKeyStringInit("peers")).toArray());
-            p.reserve(peerValues.size());
-            addresses.reserve(peerValues.size());
-
-            for (const QJsonValue& peerValue : peerValues) {
-                QJsonObject peerMap(peerValue.toObject());
-                addresses.push_back(peerMap.value(Peer::addressKey).toString());
-                p.push_back(std::move(peerMap));
-            }
-
-            return p;
-        }());
-
-        std::vector<int> removed;
-        for (int i = mPeers.size() - 1; i >= 0; --i) {
-            if (!contains(addresses, mPeers[i].address)) {
-                mPeers.erase(mPeers.begin() + i);
-                removed.push_back(i);
+        std::vector<std::tuple<QJsonObject, QString, bool>> newPeers;
+        {
+            const QJsonArray peerJsons(torrentMap.value(QJsonKeyStringInit("peers")).toArray());
+            newPeers.reserve(static_cast<size_t>(peerJsons.size()));
+            for (const QJsonValue& peerValue : peerJsons) {
+                QJsonObject peerJson(peerValue.toObject());
+                QString address(peerJson.value(Peer::addressKey).toString());
+                newPeers.emplace_back(std::move(peerJson), std::move(address), false);
             }
         }
 
-        mPeers.reserve(peerJsons.size());
+        std::vector<int> removed;
+        if (newPeers.size() < mPeers.size()) {
+            removed.reserve(mPeers.size() - newPeers.size());
+        }
+        std::vector<int> changed;
+        {
+            const auto newPeersBegin(newPeers.begin());
+            const auto newPeersEnd(newPeers.end());
+            VectorBatchRemover<Peer> remover{mPeers, removed, changed};
+            for (int i = static_cast<int>(mPeers.size()) - 1; i >= 0; --i) {
+                Peer& peer = mPeers[static_cast<size_t>(i)];
+                const auto found(std::find_if(newPeersBegin, newPeersEnd, [&peer](const auto& p) {
+                    return std::get<1>(p) == peer.address;
+                }));
+                if (found == newPeersEnd) {
+                    remover.remove(i);
+                } else {
+                    std::get<2>(*found) = true;
+                    if (peer.update(std::get<0>(*found))) {
+                        changed.push_back(i);
+                    }
+                }
+            }
+            remover.remove();
+        }
+        std::reverse(changed.begin(), changed.end());
 
-        std::vector<const Peer*> changed;
-        std::vector<const Peer*> added;
-        for (size_t i = 0, max = peerJsons.size(); i < max; ++i) {
-            const QJsonObject& peerJson = peerJsons[i];
-            QString& address = addresses[i];
-
-            const auto found(std::find_if(mPeers.begin(), mPeers.end(), [&](const Peer& peer) {
-                return peer.address == address;
-            }));
-
-            if (found == mPeers.end()) {
-                mPeers.emplace_back(std::move(address), peerJson);
-                added.push_back(&mPeers.back());
-            } else {
-                if (found->update(peerJson)) {
-                    changed.push_back(&(*found));
+        int added = 0;
+        if (newPeers.size() > mPeers.size()) {
+            added = static_cast<int>(newPeers.size() - mPeers.size());
+            mPeers.reserve(newPeers.size());
+            for (auto& p : newPeers) {
+                const QJsonObject& peerJson = std::get<0>(p);
+                QString& address = std::get<1>(p);
+                const bool existing = std::get<2>(p);
+                if (!existing) {
+                    mPeers.emplace_back(std::move(address), peerJson);
                 }
             }
         }
 
         mPeersUpdated = true;
 
-        emit peersUpdated(changed, added, removed);
-        emit mRpc->torrentPeersUpdated(mData.id, changed, added, removed);
+        emit peersUpdated(removed, changed, added);
+        emit mRpc->torrentPeersUpdated(this, removed, changed, added);
     }
 }

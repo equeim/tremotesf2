@@ -23,9 +23,10 @@
 
 #include <QAbstractTableModel>
 
+#include "libtremotesf/peer.h"
+
 namespace libtremotesf
 {
-    struct Peer;
     class Torrent;
 }
 
@@ -83,7 +84,7 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
-        void update(const std::vector<const libtremotesf::Peer*>& changed, const std::vector<const libtremotesf::Peer*>& added, const std::vector<int>& removed);
+        void update(const std::vector<int>& removed, const std::vector<int>& changed, int added);
 
         std::vector<libtremotesf::Peer> mPeers;
         libtremotesf::Torrent* mTorrent;

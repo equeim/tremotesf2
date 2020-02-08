@@ -20,6 +20,7 @@
 
 #include <QCoreApplication>
 
+#include "modelutils.h"
 #include "utils.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
@@ -179,39 +180,37 @@ namespace tremotesf
     }
 #endif
 
-    void PeersModel::update(const std::vector<const libtremotesf::Peer*>& changed, const std::vector<const libtremotesf::Peer*>& added, const std::vector<int>& removed)
+    void PeersModel::update(const std::vector<int>& removed, const std::vector<int>& changed, int added)
     {
         if (!removed.empty()) {
-            const auto begin(mPeers.begin());
+            ModelBatchRemover remover{this};
             for (int index : removed) {
-                beginRemoveRows(QModelIndex(), index, index);
-                mPeers.erase(begin + index);
-                endRemoveRows();
+                remover.remove(index);
             }
+            remover.remove();
         }
+
+        const auto& newPeers = mTorrent->peers();
 
         if (!changed.empty()) {
-            const auto changedEnd(changed.end());
-            auto changedIter(changed.begin());
-            for (int i = 0, max = mPeers.size(); i < max; ++i) {
-                libtremotesf::Peer& peer = mPeers[i];
-                if (peer.address == (*changedIter)->address) {
-                    peer = **changedIter;
-                    emit dataChanged(index(i, 0), index(i, columnCount() - 1));
-                    ++changedIter;
-                    if (changedIter == changedEnd) {
-                        break;
-                    }
-                }
+            ModelBatchChanger changer{this};
+            for (int index : changed) {
+                const size_t i = static_cast<size_t>(index);
+                mPeers[i] = newPeers[i];
+                changer.changed(index);
             }
+            changer.changed();
         }
 
-        auto row = mPeers.size();
-        for (const libtremotesf::Peer* peer : added) {
-            beginInsertRows(QModelIndex(), row, row);
-            mPeers.push_back(*peer);
+        if (added > 0) {
+            const int first = static_cast<int>(mPeers.size());
+            const int last = first + added - 1;
+            beginInsertRows(QModelIndex(), first, last);
+            mPeers.reserve(static_cast<size_t>(last + 1));
+            for (auto end = newPeers.end(), i = end - added; i != end; ++i) {
+                mPeers.push_back(*i);
+            }
             endInsertRows();
-            ++row;
         }
     }
 }
