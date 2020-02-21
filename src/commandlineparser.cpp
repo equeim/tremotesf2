@@ -20,6 +20,9 @@
 
 #include <iostream>
 
+#include <QFileInfo>
+#include <QUrl>
+
 #include "3rdparty/cxxopts.hpp"
 
 namespace tremotesf
@@ -30,6 +33,26 @@ namespace tremotesf
         {
             const char* sep = strrchr(arg, '/');
             return std::string(sep ? sep + 1 : arg);
+        }
+
+        void parsePositional(const std::string& arg, CommandLineArgs& args)
+        {
+            if (!arg.empty()) {
+                const auto argument(QString::fromStdString(arg));
+                const QFileInfo info(argument);
+                if (info.isFile()) {
+                    args.files.push_back(info.absoluteFilePath());
+                } else {
+                    const QUrl url(argument);
+                    if (url.isLocalFile()) {
+                        if (QFileInfo(url.path()).isFile()) {
+                            args.files.push_back(url.path());
+                        }
+                    } else {
+                        args.urls.push_back(argument);
+                    }
+                }
+            }
         }
     }
 
@@ -58,20 +81,19 @@ namespace tremotesf
             if (result["help"].as<bool>()) {
                 std::cout << opts.help() << std::endl;
                 args.exit = true;
+                return args;
             }
             if (result["version"].as<bool>()) {
                 std::cout << versionString << std::endl;
                 args.exit = true;
+                return args;
             }
 #ifdef TREMOTESF_SAILFISHOS
-            const std::string torrent(result["torrent"].as<std::string>());
-            if (!torrent.empty()) {
-                args.torrents.push_back(QString::fromStdString(torrent));
-            }
+            parsePositional(result["torrent"].as<std::string>(), args);
 #else
             for (const auto& i : result.arguments()) {
                 if (i.key() == "torrents") {
-                    args.torrents.push_back(QString::fromStdString(i.value()));
+                    parsePositional(i.value(), args);
                 }
             }
 #endif

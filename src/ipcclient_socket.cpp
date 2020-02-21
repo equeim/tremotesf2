@@ -63,11 +63,11 @@ namespace tremotesf
         d->sendMessage("ping");
     }
 
-    void IpcClient::sendArguments(const QStringList& arguments)
+    void IpcClient::sendArguments(const QStringList& files, const QStringList& urls)
     {
         qInfo("Sending arguments");
         const ArgumentsParseResult result(parseArguments(arguments));
-        d->sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(result.files)},
-                                                 {QLatin1String("urls"), QJsonArray::fromStringList(result.urls)}}).toJson(QJsonDocument::Compact));
+        d->sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
+                                                 {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
     }
 }

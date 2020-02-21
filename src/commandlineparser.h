@@ -22,7 +22,8 @@ namespace tremotesf
 {
     struct CommandLineArgs
     {
-        QStringList torrents;
+        QStringList files;
+        QStringList urls;
         bool minimized;
 
         bool exit;

@@ -152,7 +152,7 @@ namespace tremotesf
         };
     }
 
-    MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& arguments)
+    MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls)
         : mRpc(new Rpc(this)),
           mTorrentsModel(new TorrentsModel(mRpc, this)),
           mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, TorrentsModel::SortRole, this)),
@@ -259,18 +259,17 @@ namespace tremotesf
             if (mRpc->isConnected()) {
                 static bool first = true;
                 if (first) {
-                    const ArgumentsParseResult result(IpcClient::parseArguments(arguments));
-                    if (!result.files.isEmpty() || !result.urls.isEmpty()) {
+                    if (!files.isEmpty() || !urls.isEmpty()) {
                         setWindowState(windowState() & ~Qt::WindowMinimized);
                         if (isHidden()) {
                             show();
                             runAfterDelay([=]() {
-                                showAddTorrentFileDialogs(result.files);
-                                showAddTorrentLinkDialogs(result.urls);
+                                showAddTorrentFileDialogs(files);
+                                showAddTorrentLinkDialogs(urls);
                             });
                         } else {
-                            showAddTorrentFileDialogs(result.files);
-                            showAddTorrentLinkDialogs(result.urls);
+                            showAddTorrentFileDialogs(files);
+                            showAddTorrentLinkDialogs(urls);
                         }
                     }
                     first = false;

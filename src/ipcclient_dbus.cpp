@@ -54,10 +54,10 @@ namespace tremotesf
         }
     }
 
-    void IpcClient::sendArguments(const QStringList& arguments)
+    void IpcClient::sendArguments(const QStringList& files, const QStringList& urls)
     {
-        const ArgumentsParseResult result(parseArguments(arguments));
-        const QDBusMessage reply(d->interface.call(QLatin1String("SetArguments"), result.files, result.urls));
+        qInfo("Sending arguments");
+        const QDBusMessage reply(d->interface.call(QLatin1String("SetArguments"), files, urls));
         if (reply.type() != QDBusMessage::ReplyMessage) {
             qWarning() << "D-Bus method call failed, error string:" << reply.errorMessage();
         }

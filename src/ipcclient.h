@@ -24,12 +24,6 @@
 
 namespace tremotesf
 {
-    struct ArgumentsParseResult
-    {
-        QStringList files;
-        QStringList urls;
-    };
-
     class IpcClient
     {
     public:
@@ -37,9 +31,7 @@ namespace tremotesf
         ~IpcClient();
         bool isConnected() const;
         void activateWindow();
-        void sendArguments(const QStringList& arguments);
-
-        static ArgumentsParseResult parseArguments(const QStringList& arguments);
+        void sendArguments(const QStringList& files, const QStringList& urls);
 
     private:
         class Private;

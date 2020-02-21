@@ -18,7 +18,6 @@ set(tremotesf_sources
     basetorrentfilesmodel.cpp
     commandlineparser.cpp
     downloaddirectoriesmodel.cpp
-    ipcclient.cpp
     ipcserver.h
     localtorrentfilesmodel.cpp
     main.cpp

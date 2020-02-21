@@ -43,7 +43,7 @@ namespace tremotesf
     class MainWindow final : public QMainWindow
     {
     public:
-        MainWindow(IpcServer* ipcServer, const QStringList& arguments);
+        MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls);
         ~MainWindow() override;
 
         QSize sizeHint() const override;

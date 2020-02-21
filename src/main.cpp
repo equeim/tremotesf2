@@ -89,10 +89,10 @@ int main(int argc, char** argv)
         tremotesf::IpcClient client;
         if (client.isConnected()) {
             qWarning("Only one instance of Tremotesf can be run at the same time");
-            if (args.torrents.isEmpty()) {
+            if (args.files.isEmpty() && args.urls.isEmpty()) {
                 client.activateWindow();
             } else {
-                client.sendArguments(args.torrents);
+                client.sendArguments(args.files, args.urls);
             }
             return 0;
         }
@@ -134,9 +134,8 @@ int main(int argc, char** argv)
 #ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
 
-    tremotesf::ArgumentsParseResult result(tremotesf::IpcClient::parseArguments(args.torrents));
-    view->rootContext()->setContextProperty(QLatin1String("files"), result.files);
-    view->rootContext()->setContextProperty(QLatin1String("urls"), result.urls);
+    view->rootContext()->setContextProperty(QLatin1String("files"), args.files);
+    view->rootContext()->setContextProperty(QLatin1String("urls"), args.urls);
 
     view->setSource(SailfishApp::pathTo(QLatin1String("qml/main.qml")));
     if (tremotesf::SignalHandler::exitRequested) {
@@ -144,7 +143,7 @@ int main(int argc, char** argv)
     }
     view->show();
 #else
-    tremotesf::MainWindow window(&ipcServer, args.torrents);
+    tremotesf::MainWindow window(&ipcServer, args.files, args.urls);
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;
     }
