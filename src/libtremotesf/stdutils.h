@@ -122,9 +122,8 @@ namespace libtremotesf
     struct VectorBatchRemover
     {
         std::vector<T>& items;
-
         std::vector<int>& removedIndexes;
-        std::vector<int>& indexesAfterRemoved;
+        std::vector<int>& indexesToShift;
 
         const typename std::vector<T>::iterator begin = items.begin();
 
@@ -139,17 +138,20 @@ namespace libtremotesf
                 if (index == (beginIndex - 1)) {
                     beginIndex = index;
                 } else {
-                    remove();
+                    doRemove();
                     reset(index);
                 }
             }
         }
 
-        void remove() {
+        void doRemove() {
             items.erase(begin + beginIndex, begin + endIndex + 1);
-            if (!indexesAfterRemoved.empty()) {
+            if (!indexesToShift.empty()) {
                 const int shift = static_cast<int>(endIndex - beginIndex + 1);
-                for (int& index : indexesAfterRemoved) {
+                for (int& index : indexesToShift) {
+                    if (index < beginIndex) {
+                        break;
+                    }
                     index -= shift;
                 }
             }

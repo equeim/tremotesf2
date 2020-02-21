@@ -757,7 +757,7 @@ namespace libtremotesf
                     }
                 }
             }
-            remover.remove();
+            remover.doRemove();
         }
         std::reverse(changed.begin(), changed.end());
 

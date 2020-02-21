@@ -43,18 +43,34 @@ namespace libtremotesf
 
     struct Server
     {
+        enum class ProxyType {
+            Default,
+            Http,
+            Socks5
+        };
+
         QString name;
+
         QString address;
         int port;
         QString apiPath;
+
+        ProxyType proxyType;
+        QString proxyHostname;
+        int proxyPort;
+        QString proxyUser;
+        QString proxyPassword;
+
         bool https;
         bool selfSignedCertificateEnabled;
         QByteArray selfSignedCertificate;
         bool clientCertificateEnabled;
         QByteArray clientCertificate;
+
         bool authentication;
         QString username;
         QString password;
+
         int updateInterval;
         int backgroundUpdateInterval;
         int timeout;
@@ -125,11 +141,10 @@ namespace libtremotesf
 
         Q_INVOKABLE void addTorrentFile(const QByteArray& fileData,
                                         const QString& downloadDirectory,
-                                        const QVariantList& wantedFiles,
                                         const QVariantList& unwantedFiles,
                                         const QVariantList& highPriorityFiles,
-                                        const QVariantList& normalPriorityFiles,
                                         const QVariantList& lowPriorityFiles,
+                                        const QVariantMap& renamedFiles,
                                         int bandwidthPriority,
                                         bool start);
 

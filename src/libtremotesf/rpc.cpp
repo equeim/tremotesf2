@@ -29,6 +29,7 @@
 #include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkInterface>
+#include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QTimer>
 #include <QSslCertificate>
@@ -240,6 +241,26 @@ namespace libtremotesf
             mServerUrl.setScheme(QLatin1String("http"));
         }
 
+        switch (server.proxyType) {
+        case Server::ProxyType::Default:
+            mNetwork->setProxy(QNetworkProxy::applicationProxy());
+            break;
+        case Server::ProxyType::Http:
+            mNetwork->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
+                                             server.proxyHostname,
+                                             static_cast<quint16>(server.proxyPort),
+                                             server.proxyUser,
+                                             server.proxyPassword));
+            break;
+        case Server::ProxyType::Socks5:
+            mNetwork->setProxy(QNetworkProxy(QNetworkProxy::Socks5Proxy,
+                                             server.proxyHostname,
+                                             static_cast<quint16>(server.proxyPort),
+                                             server.proxyUser,
+                                             server.proxyPassword));
+            break;
+        }
+
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
         mExpectedSslErrors.clear();
 
@@ -298,11 +319,10 @@ namespace libtremotesf
 
     void Rpc::addTorrentFile(const QByteArray& fileData,
                              const QString& downloadDirectory,
-                             const QVariantList& wantedFiles,
                              const QVariantList& unwantedFiles,
                              const QVariantList& highPriorityFiles,
-                             const QVariantList& normalPriorityFiles,
                              const QVariantList& lowPriorityFiles,
+                             const QVariantMap& renamedFiles,
                              int bandwidthPriority,
                              bool start)
     {
@@ -311,10 +331,8 @@ namespace libtremotesf
                 return makeRequestData(QLatin1String("torrent-add"),
                                        {{QLatin1String("metainfo"), fileData.toBase64()},
                                         {QLatin1String("download-dir"), downloadDirectory},
-                                        {QLatin1String("files-wanted"), wantedFiles},
                                         {QLatin1String("files-unwanted"), unwantedFiles},
                                         {QLatin1String("priority-high"), highPriorityFiles},
-                                        {QLatin1String("priority-normal"), normalPriorityFiles},
                                         {QLatin1String("priority-low"), lowPriorityFiles},
                                         {QLatin1String("bandwidthPriority"), bandwidthPriority},
                                         {QLatin1String("paused"), !start}});
@@ -324,9 +342,21 @@ namespace libtremotesf
                 if (isConnected()) {
                     postRequest(watcher->result(), [=](const QJsonObject& parseResult) {
                         if (isResultSuccessful(parseResult)) {
-                            if (getReplyArguments(parseResult).contains(torrentDuplicateKey)) {
+                            const auto arguments(getReplyArguments(parseResult));
+                            if (arguments.contains(torrentDuplicateKey)) {
                                 emit torrentAddDuplicate();
                             } else {
+                                if (!renamedFiles.isEmpty()) {
+                                    const QJsonObject torrentJson(arguments.value(QLatin1String("torrent-added")).toObject());
+                                    if (!torrentJson.isEmpty()) {
+                                        const int id = torrentJson.value(Torrent::idKey).toInt();
+                                        for (auto i = renamedFiles.begin(), end = renamedFiles.end();
+                                             i != end;
+                                             ++i) {
+                                            renameTorrentFile(id, i.key(), i.value().toString());
+                                        }
+                                    }
+                                }
                                 updateData();
                             }
                         } else {
@@ -834,7 +864,7 @@ namespace libtremotesf
                                     }
                                 }
                             }
-                            remover.remove();
+                            remover.doRemove();
                         }
                         std::reverse(changed.begin(), changed.end());
 
