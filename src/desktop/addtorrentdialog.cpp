@@ -86,7 +86,7 @@ namespace tremotesf
                                  mFilesModel->unwantedFiles(),
                                  mFilesModel->highPriorityFiles(),
                                  mFilesModel->lowPriorityFiles(),
-                                 {},
+                                 mFilesModel->renamedFiles(),
                                  1 - mPriorityComboBox->currentIndex(),
                                  mStartTorrentCheckBox->isChecked());
         } else {
