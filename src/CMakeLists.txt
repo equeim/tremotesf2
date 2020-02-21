@@ -16,6 +16,7 @@ set(tremotesf_sources
     alltrackersmodel.cpp
     baseproxymodel.cpp
     basetorrentfilesmodel.cpp
+    commandlineparser.cpp
     downloaddirectoriesmodel.cpp
     ipcclient.cpp
     ipcserver.h

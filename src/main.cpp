@@ -37,8 +37,7 @@
 #endif // Q_OS_WIN
 #endif // TREMOTESF_SAILFISHOS
 
-#include "3rdparty/cxxopts.hpp"
-
+#include "commandlineparser.h"
 #include "ipcclient.h"
 #include "ipcserver.h"
 #include "servers.h"
@@ -49,24 +48,6 @@
 #include "desktop/mainwindow.h"
 #endif
 
-namespace {
-    inline std::string parseAppName(const char* arg)
-    {
-        const char* sep = strrchr(arg, '/');
-        return std::string(sep ? sep + 1 : arg);
-    }
-
-    inline QStringList toStringList(const std::vector<std::string>& strings)
-    {
-        QStringList list;
-        list.reserve(strings.size());
-        for (const std::string& str : strings) {
-            list.push_back(QString::fromStdString(str));
-        }
-        return list;
-    }
-}
-
 int main(int argc, char** argv)
 {
     // Setup handler for UNIX signals or Windows console handler
@@ -75,53 +56,10 @@ int main(int argc, char** argv)
     //
     // Command line parsing
     //
-#ifndef TREMOTESF_SAILFISHOS
-    bool minimizedFlag = false;
-#endif
-    QStringList torrents;
-    {
-        const std::string appName(parseAppName(argv[0]));
-        const std::string versionString(appName + " " TREMOTESF_VERSION);
-        cxxopts::Options opts(appName, versionString);
-        opts.add_options()
-            ("v,version", "display version information", cxxopts::value<bool>())
-            ("h,help", "display this help", cxxopts::value<bool>())
-#ifdef TREMOTESF_SAILFISHOS
-            ("torrent", "", cxxopts::value<std::string>()->default_value(""));
-            opts.parse_positional("torrent");
-            opts.positional_help("torrent");
-#else
-            ("m,minimized", "start minimized in notification area", cxxopts::value<bool>(minimizedFlag))
-            ("torrents", "", cxxopts::value<std::vector<std::string>>()->default_value(""));
-            opts.parse_positional("torrents");
-            opts.positional_help("torrents");
-#endif
-        try {
-            const auto result(opts.parse(argc, argv));
-            if (result["help"].as<bool>()) {
-                std::cout << opts.help() << std::endl;
-                return 0;
-            }
-            if (result["version"].as<bool>()) {
-                std::cout << versionString << std::endl;
-                return 0;
-            }
-#ifdef TREMOTESF_SAILFISHOS
-            const std::string torrent(result["torrent"].as<std::string>());
-            if (!torrent.empty()) {
-                torrents.push_back(QString::fromStdString(torrent));
-            }
-#else
-            torrents = toStringList(result["torrents"].as<std::vector<std::string>>());
-#endif
-        } catch (const cxxopts::OptionException& e) {
-            std::cerr << e.what() << std::endl;
-            return 1;
-        }
+    const tremotesf::CommandLineArgs args(tremotesf::parseCommandLine(argc, argv));
+    if (args.exit) {
+        return args.returnCode;
     }
-    //
-    // End of command line parsing
-    //
 
     //
     // Q(Gui)Application initialization
@@ -151,10 +89,10 @@ int main(int argc, char** argv)
         tremotesf::IpcClient client;
         if (client.isConnected()) {
             qWarning("Only one instance of Tremotesf can be run at the same time");
-            if (torrents.isEmpty()) {
+            if (args.torrents.isEmpty()) {
                 client.activateWindow();
             } else {
-                client.sendArguments(torrents);
+                client.sendArguments(args.torrents);
             }
             return 0;
         }
@@ -196,7 +134,7 @@ int main(int argc, char** argv)
 #ifdef TREMOTESF_SAILFISHOS
     view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
 
-    tremotesf::ArgumentsParseResult result(tremotesf::IpcClient::parseArguments(torrents));
+    tremotesf::ArgumentsParseResult result(tremotesf::IpcClient::parseArguments(args.torrents));
     view->rootContext()->setContextProperty(QLatin1String("files"), result.files);
     view->rootContext()->setContextProperty(QLatin1String("urls"), result.urls);
 
@@ -206,11 +144,11 @@ int main(int argc, char** argv)
     }
     view->show();
 #else
-    tremotesf::MainWindow window(&ipcServer, torrents);
+    tremotesf::MainWindow window(&ipcServer, args.torrents);
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;
     }
-    window.showMinimized(minimizedFlag);
+    window.showMinimized(args.minimized);
 #endif
 
     if (tremotesf::SignalHandler::exitRequested) {
