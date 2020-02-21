@@ -40,21 +40,32 @@ namespace tremotesf
         const QString fileName(QLatin1String("servers"));
 
         const QString versionKey(QLatin1String("version"));
+
         const QString currentServerKey(QLatin1String("current"));
         const QString addressKey(QLatin1String("address"));
         const QString portKey(QLatin1String("port"));
         const QString apiPathKey(QLatin1String("apiPath"));
+
+        const QString proxyTypeKey(QLatin1String("proxyType"));
+        const QString proxyHostnameKey(QLatin1String("proxyHostname"));
+        const QString proxyPortKey(QLatin1String("proxyPort"));
+        const QString proxyUserKey(QLatin1String("proxyUser"));
+        const QString proxyPasswordKey(QLatin1String("proxyPassword"));
+
         const QString httpsKey(QLatin1String("https"));
         const QString selfSignedCertificateEnabledKey(QLatin1String("selfSignedCertificateEnabled"));
         const QString selfSignedCertificateKey(QLatin1String("selfSignedCertificate"));
         const QString clientCertificateEnabledKey(QLatin1String("clientCertificateEnabled"));
         const QString clientCertificateKey(QLatin1String("clientCertificate"));
+
         const QString authenticationKey(QLatin1String("authentication"));
         const QString usernameKey(QLatin1String("username"));
         const QString passwordKey(QLatin1String("password"));
+
         const QString updateIntervalKey(QLatin1String("updateInterval"));
         const QString backgroundUpdateIntervalKey(QLatin1String("backgroundUpdateInterval"));
         const QString timeoutKey(QLatin1String("timeout"));
+
         const QString mountedDirectoriesKey(QLatin1String("mountedDirectories"));
         const QString addTorrentDialogDirectoriesKey(QLatin1String("addTorrentDialogDirectories"));
         const QString lastTorrentsKey(QLatin1String("lastTorrents"));
@@ -62,6 +73,37 @@ namespace tremotesf
         const QString localCertificateKey(QLatin1String("localCertificate"));
 
         Servers* instancePointer = nullptr;
+
+        const QLatin1String proxyTypeDefault("Default");
+        const QLatin1String proxyTypeHttp("HTTP");
+        const QLatin1String proxyTypeSocks5("SOCKS5");
+
+        Server::ProxyType proxyTypeFromSettings(const QString& value)
+        {
+            if (value.isEmpty() || value == proxyTypeDefault) {
+                return Server::ProxyType::Default;
+            }
+            if (value == proxyTypeHttp) {
+                return Server::ProxyType::Http;
+            }
+            if (value == proxyTypeSocks5) {
+                return Server::ProxyType::Socks5;
+            }
+            return Server::ProxyType::Default;
+        }
+
+        QLatin1String proxyTypeToSettings(Server::ProxyType type)
+        {
+            switch (type) {
+            case Server::ProxyType::Default:
+                return proxyTypeDefault;
+            case Server::ProxyType::Http:
+                return proxyTypeHttp;
+            case Server::ProxyType::Socks5:
+                return proxyTypeSocks5;
+            }
+            return proxyTypeDefault;
+        }
 
 #ifdef TREMOTESF_SAILFISHOS
         void migrateFrom0()
@@ -128,17 +170,27 @@ namespace tremotesf
                    const QString& address,
                    int port,
                    const QString& apiPath,
+
+                   ProxyType proxyType,
+                   const QString& proxyHostname,
+                   int proxyPort,
+                   const QString& proxyUser,
+                   const QString& proxyPassword,
+
                    bool https,
                    bool selfSignedCertificateEnabled,
                    const QByteArray& selfSignedCertificate,
                    bool clientCertificateEnabled,
                    const QByteArray& clientCertificate,
+
                    bool authentication,
                    const QString& username,
                    const QString& password,
+
                    int updateInterval,
                    int backgroundUpdateInterval,
                    int timeout,
+
                    const QVariantMap& mountedDirectories,
                    const QVariant& lastTorrents,
                    const QVariant& addTorrentDialogDirectories)
@@ -146,60 +198,29 @@ namespace tremotesf
                                address,
                                port,
                                apiPath,
+
+                               proxyType,
+                               proxyHostname,
+                               proxyPort,
+                               proxyUser,
+                               proxyPassword,
+
                                https,
                                selfSignedCertificateEnabled,
                                selfSignedCertificate,
                                clientCertificateEnabled,
                                clientCertificate,
+
                                authentication,
                                username,
                                password,
+
                                updateInterval,
                                backgroundUpdateInterval,
                                timeout},
           mountedDirectories(mountedDirectories),
           lastTorrents(lastTorrents),
           addTorrentDialogDirectories(addTorrentDialogDirectories)
-    {
-
-    }
-
-    Server::Server(QString&& name,
-                   QString&& address,
-                   int port,
-                   QString&& apiPath,
-                   bool https,
-                   bool selfSignedCertificateEnabled,
-                   QByteArray&& selfSignedCertificate,
-                   bool clientCertificateEnabled,
-                   QByteArray&& clientCertificate,
-                   bool authentication,
-                   QString&& username,
-                   QString&& password,
-                   int updateInterval,
-                   int backgroundUpdateInterval,
-                   int timeout,
-                   QVariantMap&& mountedDirectories,
-                   QVariant&& lastTorrents,
-                   QVariant&& addTorrentDialogDirectories)
-        : libtremotesf::Server{std::move(name),
-                               std::move(address),
-                               port,
-                               std::move(apiPath),
-                               https,
-                               selfSignedCertificateEnabled,
-                               std::move(selfSignedCertificate),
-                               clientCertificateEnabled,
-                               std::move(clientCertificate),
-                               authentication,
-                               std::move(username),
-                               std::move(password),
-                               updateInterval,
-                               backgroundUpdateInterval,
-                               timeout},
-          mountedDirectories(std::move(mountedDirectories)),
-          lastTorrents(std::move(lastTorrents)),
-          addTorrentDialogDirectories(std::move(addTorrentDialogDirectories))
     {
 
     }
@@ -366,14 +387,23 @@ namespace tremotesf
                             const QString& address,
                             int port,
                             const QString& apiPath,
+
+                            Server::ProxyType proxyType,
+                            const QString& proxyHostname,
+                            int proxyPort,
+                            const QString& proxyUser,
+                            const QString& proxyPassword,
+
                             bool https,
                             bool selfSignedCertificateEnabled,
                             const QByteArray& selfSignedCertificate,
                             bool clientCertificateEnabled,
                             const QByteArray& clientCertificate,
+
                             bool authentication,
                             const QString& username,
                             const QString& password,
+
                             int updateInterval,
                             int backgroundUpdateInterval,
                             int timeout,
@@ -397,22 +427,33 @@ namespace tremotesf
         }
 
         mSettings->beginGroup(name);
+
         mSettings->setValue(addressKey, address);
         mSettings->setValue(portKey, port);
         mSettings->setValue(apiPathKey, apiPath);
+
+        mSettings->setValue(proxyTypeKey, proxyTypeToSettings(proxyType));
+        mSettings->setValue(proxyHostnameKey, proxyHostname);
+        mSettings->setValue(proxyPortKey, proxyPort);
+        mSettings->setValue(proxyUserKey, proxyUser);
+        mSettings->setValue(proxyPasswordKey, proxyPassword);
+
         mSettings->setValue(httpsKey, https);
         mSettings->setValue(selfSignedCertificateEnabledKey, selfSignedCertificateEnabled);
         mSettings->setValue(selfSignedCertificateKey, selfSignedCertificate);
         mSettings->setValue(clientCertificateEnabledKey, clientCertificateEnabled);
         mSettings->setValue(clientCertificateKey, clientCertificate);
+
         mSettings->setValue(authenticationKey, authentication);
         mSettings->setValue(usernameKey, username);
         mSettings->setValue(passwordKey, password);
+
         mSettings->setValue(updateIntervalKey, updateInterval);
         mSettings->setValue(backgroundUpdateIntervalKey, backgroundUpdateInterval);
         mSettings->setValue(timeoutKey, timeout);
         mSettings->setValue(mountedDirectoriesKey, mountedDirectories);
         mSettings->setValue(addTorrentDialogDirectoriesKey, addTorrentDialogDirectories);
+
         mSettings->endGroup();
 
         if (currentChanged) {
@@ -444,23 +485,34 @@ namespace tremotesf
         mSettings->setValue(currentServerKey, current);
         for (const Server& server : servers) {
             mSettings->beginGroup(server.name);
+
             mSettings->setValue(addressKey, server.address);
             mSettings->setValue(portKey, server.port);
             mSettings->setValue(apiPathKey, server.apiPath);
+
+            mSettings->setValue(proxyTypeKey, proxyTypeToSettings(server.proxyType));
+            mSettings->setValue(proxyHostnameKey, server.proxyHostname);
+            mSettings->setValue(proxyPortKey, server.proxyPort);
+            mSettings->setValue(proxyUserKey, server.proxyUser);
+            mSettings->setValue(proxyPasswordKey, server.proxyPassword);
+
             mSettings->setValue(httpsKey, server.https);
             mSettings->setValue(selfSignedCertificateEnabledKey, server.selfSignedCertificateEnabled);
             mSettings->setValue(selfSignedCertificateKey, server.selfSignedCertificate);
             mSettings->setValue(clientCertificateEnabledKey, server.clientCertificateEnabled);
             mSettings->setValue(clientCertificateKey, server.clientCertificate);
+
             mSettings->setValue(authenticationKey, server.authentication);
             mSettings->setValue(usernameKey, server.username);
             mSettings->setValue(passwordKey, server.password);
+
             mSettings->setValue(updateIntervalKey, server.updateInterval);
             mSettings->setValue(backgroundUpdateIntervalKey, server.backgroundUpdateInterval);
             mSettings->setValue(timeoutKey, server.timeout);
             mSettings->setValue(mountedDirectoriesKey, server.mountedDirectories);
             mSettings->setValue(lastTorrentsKey, server.lastTorrents);
             mSettings->setValue(addTorrentDialogDirectoriesKey, server.addTorrentDialogDirectories);
+
             mSettings->endGroup();
         }
         updateMountedDirectories();
@@ -521,17 +573,27 @@ namespace tremotesf
                             mSettings->value(addressKey).toString(),
                             mSettings->value(portKey).toInt(),
                             mSettings->value(apiPathKey).toString(),
+
+                            proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
+                            mSettings->value(proxyHostnameKey).toString(),
+                            mSettings->value(proxyPortKey).toInt(),
+                            mSettings->value(proxyUserKey).toString(),
+                            mSettings->value(proxyPasswordKey).toString(),
+
                             mSettings->value(httpsKey, false).toBool(),
                             mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
                             mSettings->value(selfSignedCertificateKey).toByteArray(),
                             mSettings->value(clientCertificateEnabledKey, false).toBool(),
                             mSettings->value(clientCertificateKey).toByteArray(),
+
                             mSettings->value(authenticationKey, false).toBool(),
                             mSettings->value(usernameKey).toString(),
                             mSettings->value(passwordKey).toString(),
+
                             mSettings->value(updateIntervalKey, 5).toInt(),
                             mSettings->value(backgroundUpdateIntervalKey, 30).toInt(),
                             mSettings->value(timeoutKey, 30).toInt(),
+
                             mSettings->value(mountedDirectoriesKey).toMap(),
                             mSettings->value(lastTorrentsKey),
                             mSettings->value(addTorrentDialogDirectoriesKey));

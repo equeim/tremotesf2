@@ -83,11 +83,10 @@ namespace tremotesf
         if (mLocalFile) {
             mRpc->addTorrentFile(mParser->fileData(),
                                  mDownloadDirectoryWidget->text(),
-                                 mFilesModel->wantedFiles(),
                                  mFilesModel->unwantedFiles(),
                                  mFilesModel->highPriorityFiles(),
-                                 mFilesModel->normalPriorityFiles(),
                                  mFilesModel->lowPriorityFiles(),
+                                 {},
                                  1 - mPriorityComboBox->currentIndex(),
                                  mStartTorrentCheckBox->isChecked());
         } else {

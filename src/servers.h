@@ -38,39 +38,30 @@ namespace tremotesf
                const QString& address,
                int port,
                const QString& apiPath,
+
+               ProxyType proxyType,
+               const QString& proxyHostname,
+               int proxyPort,
+               const QString& proxyUser,
+               const QString& proxyPassword,
+
                bool https,
                bool selfSignedCertificateEnabled,
                const QByteArray& selfSignedCertificate,
                bool clientCertificateEnabled,
                const QByteArray& clientCertificate,
+
                bool authentication,
                const QString& username,
                const QString& password,
+
                int updateInterval,
                int backgroundUpdateInterval,
                int timeout,
+
                const QVariantMap& mountedDirectories,
                const QVariant& lastTorrents,
                const QVariant& addTorrentDialogDirectories);
-
-        Server(QString&& name,
-               QString&& address,
-               int port,
-               QString&& apiPath,
-               bool https,
-               bool selfSignedCertificateEnabled,
-               QByteArray&& selfSignedCertificate,
-               bool clientCertificateEnabled,
-               QByteArray&& clientCertificate,
-               bool authentication,
-               QString&& username,
-               QString&& password,
-               int updateInterval,
-               int backgroundUpdateInterval,
-               int timeout,
-               QVariantMap&& mountedDirectories,
-               QVariant&& lastTorrents,
-               QVariant&& addTorrentDialogDirectories);
 
         QVariantMap mountedDirectories;
         QVariant lastTorrents;
@@ -128,14 +119,23 @@ namespace tremotesf
                                    const QString& address,
                                    int port,
                                    const QString& apiPath,
+
+                                   Server::ProxyType proxyType,
+                                   const QString& proxyHostname,
+                                   int proxyPort,
+                                   const QString& proxyUser,
+                                   const QString& proxyPassword,
+
                                    bool https,
                                    bool selfSignedCertificateEnabled,
                                    const QByteArray& selfSignedCertificate,
                                    bool clientCertificateEnabled,
                                    const QByteArray& clientCertificate,
+
                                    bool authentication,
                                    const QString& username,
                                    const QString& password,
+
                                    int updateInterval,
                                    int backgroundUpdateInterval,
                                    int timeout,

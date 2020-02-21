@@ -345,14 +345,23 @@ namespace tremotesf
                                      mAddressLineEdit->text(),
                                      mPortSpinBox->value(),
                                      mApiPathLineEdit->text(),
+
+                                     Server::ProxyType::Default,
+                                     QString(),
+                                     0,
+                                     QString(),
+                                     QString(),
+
                                      mHttpsGroupBox->isChecked(),
                                      mSelfSignedCertificateCheckBox->isChecked(),
                                      mSelfSignedCertificateEdit->toPlainText().toLatin1(),
                                      mClientCertificateCheckBox->isChecked(),
                                      mClientCertificateEdit->toPlainText().toLatin1(),
+
                                      mAuthenticationGroupBox->isChecked(),
                                      mUsernameLineEdit->text(),
                                      mPasswordLineEdit->text(),
+
                                      mUpdateIntervalSpinBox->value(),
                                      mBackgroundUpdateIntervalSpinBox->value(),
                                      mTimeoutSpinBox->value(),
@@ -363,14 +372,23 @@ namespace tremotesf
                                            mAddressLineEdit->text(),
                                            mPortSpinBox->value(),
                                            mApiPathLineEdit->text(),
+
+                                           Server::ProxyType::Default,
+                                           QString(),
+                                           0,
+                                           QString(),
+                                           QString(),
+
                                            mHttpsGroupBox->isChecked(),
                                            mSelfSignedCertificateCheckBox->isChecked(),
                                            mSelfSignedCertificateEdit->toPlainText().toLatin1(),
                                            mClientCertificateCheckBox->isChecked(),
                                            mClientCertificateEdit->toPlainText().toLatin1(),
+
                                            mAuthenticationGroupBox->isChecked(),
                                            mUsernameLineEdit->text(),
                                            mPasswordLineEdit->text(),
+
                                            mUpdateIntervalSpinBox->value(),
                                            mBackgroundUpdateIntervalSpinBox->value(),
                                            mTimeoutSpinBox->value(),

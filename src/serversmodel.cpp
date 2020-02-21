@@ -128,17 +128,27 @@ namespace tremotesf
                                  const QString& address,
                                  int port,
                                  const QString& apiPath,
+
+                                 Server::ProxyType proxyType,
+                                 const QString& proxyHostname,
+                                 int proxyPort,
+                                 const QString& proxyUser,
+                                 const QString& proxyPassword,
+
                                  bool https,
                                  bool selfSignedCertificateEnabled,
                                  const QByteArray& selfSignedCertificate,
                                  bool clientCertificateEnabled,
                                  const QByteArray& clientCertificate,
+
                                  bool authentication,
                                  const QString& username,
                                  const QString& password,
+
                                  int updateInterval,
                                  int backgroundUpdateInterval,
                                  int timeout,
+
                                  const QVariantMap& mountedDirectories)
     {
         const int oldRow = serverRow(oldName);
@@ -193,17 +203,27 @@ namespace tremotesf
                                   address,
                                   port,
                                   apiPath,
+
+                                  proxyType,
+                                  proxyHostname,
+                                  proxyPort,
+                                  proxyUser,
+                                  proxyPassword,
+
                                   https,
                                   selfSignedCertificateEnabled,
                                   selfSignedCertificate,
                                   clientCertificateEnabled,
                                   clientCertificate,
+
                                   authentication,
                                   username,
                                   password,
+
                                   updateInterval,
                                   backgroundUpdateInterval,
                                   timeout,
+
                                   mountedDirectories,
                                   QVariant(),
                                   QVariant());

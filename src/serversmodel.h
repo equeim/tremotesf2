@@ -70,17 +70,27 @@ namespace tremotesf
                                    const QString& address,
                                    int port,
                                    const QString& apiPath,
+
+                                   Server::ProxyType proxyType,
+                                   const QString& proxyHostname,
+                                   int proxyPort,
+                                   const QString& proxyUser,
+                                   const QString& proxyPassword,
+
                                    bool https,
                                    bool selfSignedCertificateEnabled,
                                    const QByteArray& selfSignedCertificate,
                                    bool clientCertificateEnabled,
                                    const QByteArray& clientCertificate,
+
                                    bool authentication,
                                    const QString& username,
                                    const QString& password,
+
                                    int updateInterval,
                                    int backgroundUpdateInterval,
                                    int timeout,
+
                                    const QVariantMap& mountedDirectories);
         Q_INVOKABLE void removeServerAtIndex(const QModelIndex& index);
         Q_INVOKABLE void removeServerAtRow(int row);
