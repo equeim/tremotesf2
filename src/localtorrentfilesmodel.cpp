@@ -109,117 +109,17 @@ namespace tremotesf
     }
 
     LocalTorrentFilesModel::LocalTorrentFilesModel(const QVariantMap& parseResult, QObject* parent)
+#ifdef TREMOTESF_SAILFISHOS
         : BaseTorrentFilesModel(parent),
+#else
+        : BaseTorrentFilesModel({NameColumn, SizeColumn, PriorityColumn}, parent),
+#endif
           mLoaded(false)
     {
         if (!parseResult.isEmpty()) {
             load(parseResult);
         }
     }
-
-    int LocalTorrentFilesModel::columnCount(const QModelIndex&) const
-    {
-#ifdef TREMOTESF_SAILFISHOS
-        return 1;
-#else
-        return ColumnCount;
-#endif
-    }
-
-    QVariant LocalTorrentFilesModel::data(const QModelIndex& index, int role) const
-    {
-        const TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-#ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
-        case NameRole:
-            return entry->name();
-        case IsDirectoryRole:
-            return entry->isDirectory();
-        case SizeRole:
-            return entry->size();
-        case WantedStateRole:
-            return entry->wantedState();
-        case PriorityRole:
-            return entry->priority();
-        }
-#else
-        switch (role) {
-        case Qt::CheckStateRole:
-            if (index.column() == NameColumn) {
-                switch (entry->wantedState()) {
-                case TorrentFilesModelEntry::Wanted:
-                    return Qt::Checked;
-                case TorrentFilesModelEntry::Unwanted:
-                    return Qt::Unchecked;
-                case TorrentFilesModelEntry::MixedWanted:
-                    return Qt::PartiallyChecked;
-                }
-            }
-            break;
-        case Qt::DecorationRole:
-            if (index.column() == NameColumn) {
-                if (entry->isDirectory()) {
-                    return qApp->style()->standardIcon(QStyle::SP_DirIcon);
-                }
-                return qApp->style()->standardIcon(QStyle::SP_FileIcon);
-            }
-            break;
-        case Qt::DisplayRole:
-            switch (index.column()) {
-            case NameColumn:
-                return entry->name();
-            case SizeColumn:
-                return Utils::formatByteSize(entry->size());
-            case PriorityColumn:
-                return entry->priorityString();
-            }
-            break;
-        case SortRole:
-            switch (index.column()) {
-            case SizeColumn:
-                return entry->size();
-            case PriorityColumn:
-                return entry->priority();
-            }
-            return data(index, Qt::DisplayRole);
-        }
-#endif
-        return QVariant();
-    }
-
-#ifndef TREMOTESF_SAILFISHOS
-    Qt::ItemFlags LocalTorrentFilesModel::flags(const QModelIndex& index) const
-    {
-        if (index.column() == NameColumn) {
-            return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
-        }
-        return QAbstractItemModel::flags(index);
-    }
-
-    QVariant LocalTorrentFilesModel::headerData(int section, Qt::Orientation, int role) const
-    {
-        if (role == Qt::DisplayRole) {
-            switch (section) {
-            case NameColumn:
-                return qApp->translate("tremotesf", "Name");
-            case SizeColumn:
-                return qApp->translate("tremotesf", "Size");
-            case PriorityColumn:
-                return qApp->translate("tremotesf", "Priority");
-            }
-        }
-        return QVariant();
-    }
-
-    bool LocalTorrentFilesModel::setData(const QModelIndex& index, const QVariant& value, int role)
-    {
-        if (index.column() == NameColumn && role == Qt::CheckStateRole) {
-            setFileWanted(index, (value.toInt() == Qt::Checked));
-            return true;
-        }
-        return false;
-    }
-#endif
 
     void LocalTorrentFilesModel::load(TorrentFileParser* parser)
     {
@@ -286,6 +186,11 @@ namespace tremotesf
         return files;
     }
 
+    const QVariantMap& LocalTorrentFilesModel::renamedFiles() const
+    {
+        return mRenamedFiles;
+    }
+
     void LocalTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
     {
         static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
@@ -312,6 +217,13 @@ namespace tremotesf
             static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
         }
         updateDirectoryChildren(mRootDirectory.get());
+    }
+
+    void LocalTorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName)
+    {
+        auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
+        fileRenamed(entry, newName);
+        mRenamedFiles.insert(entry->path(), newName);
     }
 
 #ifdef TREMOTESF_SAILFISHOS

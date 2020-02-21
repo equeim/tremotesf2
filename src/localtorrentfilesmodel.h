@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <QVariant>
+#include <QVariantMap>
 
 #include "basetorrentfilesmodel.h"
 
@@ -38,35 +39,8 @@ namespace tremotesf
         Q_PROPERTY(QVariantList normalPriorityFiles READ normalPriorityFiles)
         Q_PROPERTY(QVariantList lowPriorityFiles READ lowPriorityFiles)
     public:
-#ifdef TREMOTESF_SAILFISHOS
-        enum Role
-        {
-            NameRole = Qt::UserRole,
-            IsDirectoryRole,
-            SizeRole,
-            WantedStateRole,
-            PriorityRole
-        };
-        Q_ENUMS(Role)
-#else
-        enum Column
-        {
-            NameColumn,
-            SizeColumn,
-            PriorityColumn,
-            ColumnCount
-        };
-#endif
         explicit LocalTorrentFilesModel(const QVariantMap& parseResult = QVariantMap(),
                                         QObject* parent = nullptr);
-
-        int columnCount(const QModelIndex& = QModelIndex()) const override;
-        QVariant data(const QModelIndex& index, int role) const override;
-#ifndef TREMOTESF_SAILFISHOS
-        Qt::ItemFlags flags(const QModelIndex& index) const override;
-        QVariant headerData(int section, Qt::Orientation, int role) const override;
-        bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-#endif
 
         Q_INVOKABLE void load(tremotesf::TorrentFileParser* parser);
 
@@ -78,10 +52,15 @@ namespace tremotesf
         QVariantList normalPriorityFiles() const;
         QVariantList lowPriorityFiles() const;
 
-        Q_INVOKABLE void setFileWanted(const QModelIndex& index, bool wanted) override;
-        Q_INVOKABLE void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
-        Q_INVOKABLE void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) override;
-        Q_INVOKABLE void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) override;
+        const QVariantMap& renamedFiles() const;
+
+        void setFileWanted(const QModelIndex& index, bool wanted) override;
+        void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
+        void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) override;
+        void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) override;
+
+        void renameFile(const QModelIndex& index, const QString& newName) override;
+
 #ifdef TREMOTESF_SAILFISHOS
     protected:
         QHash<int, QByteArray> roleNames() const override;
@@ -91,6 +70,8 @@ namespace tremotesf
 
         std::vector<TorrentFilesModelFile*> mFiles;
         bool mLoaded;
+
+        QVariantMap mRenamedFiles;
     signals:
         void loadedChanged();
     };

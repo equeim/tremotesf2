@@ -20,6 +20,7 @@
 #define TREMOTESF_BASETORRENTFILESMODEL_H
 
 #include <memory>
+#include <vector>
 #include <QAbstractItemModel>
 
 #include "torrentfilesmodelentry.h"
@@ -30,25 +31,63 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-#ifndef TREMOTESF_SAILFISHOS
-        static const int SortRole = Qt::UserRole;
-#endif
+#ifdef TREMOTESF_SAILFISHOS
+        enum Role
+        {
+            NameRole = Qt::UserRole,
+            IsDirectoryRole,
+            CompletedSizeRole,
+            SizeRole,
+            ProgressRole,
+            WantedStateRole,
+            PriorityRole
+        };
+        Q_ENUM(Role)
 
         explicit BaseTorrentFilesModel(QObject* parent = nullptr);
+#else
+        enum Column
+        {
+            NameColumn,
+            SizeColumn,
+            ProgressBarColumn,
+            ProgressColumn,
+            PriorityColumn
+        };
+        static const int SortRole = Qt::UserRole;
+
+        explicit BaseTorrentFilesModel(std::vector<Column>&& columns, QObject* parent = nullptr);
+#endif
+
+        int columnCount(const QModelIndex& = QModelIndex()) const override;
+        QVariant data(const QModelIndex& index, int role) const override;
+#ifndef TREMOTESF_SAILFISHOS
+        Qt::ItemFlags flags(const QModelIndex& index) const override;
+        QVariant headerData(int section, Qt::Orientation, int role) const override;
+        bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+#endif
 
         QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
         QModelIndex parent(const QModelIndex& child) const override;
         int rowCount(const QModelIndex& parent) const override;
 
-        virtual void setFileWanted(const QModelIndex& index, bool wanted) = 0;
-        virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted) = 0;
-        virtual void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) = 0;
-        virtual void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) = 0;
+        Q_INVOKABLE virtual void setFileWanted(const QModelIndex& index, bool wanted);
+        Q_INVOKABLE virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted);
+        Q_INVOKABLE virtual void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority);
+        Q_INVOKABLE virtual void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority);
+
+        Q_INVOKABLE virtual void renameFile(const QModelIndex& index, const QString& newName) = 0;
+        void fileRenamed(TorrentFilesModelEntry* entry, const QString& newName);
 
     protected:
         void updateDirectoryChildren(const TorrentFilesModelDirectory* directory);
 
         std::shared_ptr<TorrentFilesModelDirectory> mRootDirectory;
+
+    private:
+#ifndef TREMOTESF_SAILFISHOS
+        const std::vector<Column> mColumns;
+#endif
     };
 }
 

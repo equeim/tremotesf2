@@ -254,7 +254,7 @@ namespace tremotesf
                                                   qApp->translate("tremotesf", "Rename"),
                                                   this);
                 QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
-                    static_cast<const TorrentFilesModel*>(mModel)->renameFile(index, dialog->text());
+                    mModel->renameFile(index, dialog->text());
                 });
                 dialog->show();
             });
