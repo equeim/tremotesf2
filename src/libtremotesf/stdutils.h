@@ -80,9 +80,15 @@ namespace libtremotesf
     {
         return contains_impl(container, value, 0);
     }
+
     template<class C, class V>
-    inline typename C::size_type index_of(const C& container, const V& value) {
-        return static_cast<typename C::size_type>(std::find(container.cbegin(), container.cend(), value) - container.cbegin());
+    inline size_t index_of(const C& container, const V& value) {
+        return static_cast<size_t>(std::find(std::begin(container), std::end(container), value) - std::begin(container));
+    }
+
+    template<class C, class V>
+    inline int index_of_i(const C& container, const V& value) {
+        return static_cast<int>(std::find(std::begin(container), std::end(container), value) - std::begin(container));
     }
 
     template<class C, class V>
@@ -168,6 +174,7 @@ namespace tremotesf
 {
     using libtremotesf::contains;
     using libtremotesf::index_of;
+    using libtremotesf::index_of_i;
     using libtremotesf::erase_one;
     using libtremotesf::setChanged;
 }
