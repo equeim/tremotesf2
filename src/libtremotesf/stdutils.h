@@ -128,11 +128,13 @@ namespace libtremotesf
     class VectorBatchRemover
     {
     public:
-        explicit VectorBatchRemover(std::vector<T>& items, std::vector<int>& removedIndexes, std::vector<int>& indexesToShift)
+        explicit VectorBatchRemover(std::vector<T>& items, std::vector<int>* removedIndexes = nullptr, std::vector<int>* indexesToShift = nullptr)
             : items(items), removedIndexes(removedIndexes), indexesToShift(indexesToShift) {}
 
         void remove(int index) {
-            removedIndexes.push_back(index);
+            if (removedIndexes) {
+                removedIndexes->push_back(index);
+            }
             if (endIndex == -1) {
                 reset(index);
             } else {
@@ -147,9 +149,9 @@ namespace libtremotesf
 
         void doRemove() {
             items.erase(begin + beginIndex, begin + endIndex + 1);
-            if (!indexesToShift.empty()) {
+            if (indexesToShift && !indexesToShift->empty()) {
                 const int shift = static_cast<int>(endIndex - beginIndex + 1);
-                for (int& index : indexesToShift) {
+                for (int& index : *indexesToShift) {
                     if (index < beginIndex) {
                         break;
                     }
@@ -165,8 +167,8 @@ namespace libtremotesf
         }
 
         std::vector<T>& items;
-        std::vector<int>& removedIndexes;
-        std::vector<int>& indexesToShift;
+        std::vector<int> *const removedIndexes;
+        std::vector<int> *const indexesToShift;
 
         const typename std::vector<T>::iterator begin = items.begin();
 
@@ -182,6 +184,7 @@ namespace tremotesf
     using libtremotesf::index_of_i;
     using libtremotesf::erase_one;
     using libtremotesf::setChanged;
+    using libtremotesf::VectorBatchRemover;
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 7, 0)

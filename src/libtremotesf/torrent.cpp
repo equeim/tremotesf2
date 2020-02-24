@@ -742,7 +742,7 @@ namespace libtremotesf
         {
             const auto newPeersBegin(newPeers.begin());
             const auto newPeersEnd(newPeers.end());
-            VectorBatchRemover<Peer> remover{mPeers, removed, changed};
+            VectorBatchRemover<Peer> remover(mPeers, &removed, &changed);
             for (int i = static_cast<int>(mPeers.size()) - 1; i >= 0; --i) {
                 Peer& peer = mPeers[static_cast<size_t>(i)];
                 const auto found(std::find_if(newPeersBegin, newPeersEnd, [&peer](const auto& p) {

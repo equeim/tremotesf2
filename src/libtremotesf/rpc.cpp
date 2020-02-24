@@ -836,7 +836,7 @@ namespace libtremotesf
                         std::vector<int> changed;
                         {
                             const auto newTorrentsEnd(newTorrents.end());
-                            VectorBatchRemover<std::shared_ptr<Torrent>> remover{mTorrents, removed, changed};
+                            VectorBatchRemover<std::shared_ptr<Torrent>> remover(mTorrents, &removed, &changed);
                             for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
                                 const auto& torrent = mTorrents[static_cast<size_t>(i)];
                                 const int id = torrent->id();
