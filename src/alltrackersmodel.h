@@ -72,12 +72,17 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
+        struct TrackerItem
+        {
+            QString tracker;
+            int torrents;
+        };
+
         void update();
 
         Rpc* mRpc;
         TorrentsProxyModel* mTorrentsProxyModel;
-        std::vector<QString> mTrackers;
-        std::vector<int> mTrackersTorrents;
+        std::vector<TrackerItem> mTrackers;
     };
 }
 
