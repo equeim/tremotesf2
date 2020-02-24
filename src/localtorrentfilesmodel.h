@@ -51,11 +51,6 @@ namespace tremotesf
 
         const QVariantMap& renamedFiles() const;
 
-        void setFileWanted(const QModelIndex& index, bool wanted) override;
-        void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
-        void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) override;
-        void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) override;
-
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
 #ifdef TREMOTESF_SAILFISHOS

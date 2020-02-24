@@ -169,34 +169,6 @@ namespace tremotesf
         return mRenamedFiles;
     }
 
-    void LocalTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
-    {
-        static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
-        updateDirectoryChildren(mRootDirectory.get());
-    }
-
-    void LocalTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted)
-    {
-        for (const QModelIndex& index : indexes) {
-            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
-        }
-        updateDirectoryChildren(mRootDirectory.get());
-    }
-
-    void LocalTorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority)
-    {
-        static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
-        updateDirectoryChildren(mRootDirectory.get());
-    }
-
-    void LocalTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority)
-    {
-        for (const QModelIndex& index : indexes) {
-            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
-        }
-        updateDirectoryChildren(mRootDirectory.get());
-    }
-
     void LocalTorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName)
     {
         auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
