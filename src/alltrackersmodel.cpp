@@ -190,7 +190,7 @@ namespace tremotesf
                 const auto found(trackers.find(mTrackers[static_cast<size_t>(i)].tracker));
                 if (found == trackersEnd) {
                     remover.remove(i);
-                    modelRemover.remove(i);
+                    modelRemover.remove(i + 1);
                 }
             }
             remover.doRemove();
@@ -205,14 +205,14 @@ namespace tremotesf
             const auto found(trackers.find(item.tracker));
             if (found != trackersEnd) {
                 item.torrents = found->second;
-                changer.changed(i);
+                changer.changed(i + 1);
                 trackers.erase(found);
             }
         }
         changer.changed();
 
         if (!trackers.empty()) {
-            const int firstRow = static_cast<int>(mTrackers.size());
+            const int firstRow = static_cast<int>(mTrackers.size() + 1);
             beginInsertRows(QModelIndex(), firstRow, firstRow + static_cast<int>(trackers.size()) - 1);
             for (const auto& i : trackers) {
                 const QString& tracker = i.first;
