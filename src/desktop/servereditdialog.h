@@ -22,7 +22,9 @@
 #include <QDialog>
 
 class QCheckBox;
+class QComboBox;
 class QDialogButtonBox;
+class QFormLayout;
 class QGroupBox;
 class QLineEdit;
 class QPlainTextEdit;
@@ -42,6 +44,7 @@ namespace tremotesf
 
     private:
         void setupUi();
+        void setProxyFieldsVisible();
         void canAcceptUpdate();
         void setServer();
 
@@ -53,17 +56,28 @@ namespace tremotesf
         QLineEdit* mAddressLineEdit = nullptr;
         QSpinBox* mPortSpinBox = nullptr;
         QLineEdit* mApiPathLineEdit = nullptr;
+
+        QFormLayout* mProxyLayout = nullptr;
+        QComboBox* mProxyTypeComboBox = nullptr;
+        QLineEdit* mProxyHostnameLineEdit = nullptr;
+        QSpinBox* mProxyPortSpinBox = nullptr;
+        QLineEdit* mProxyUserLineEdit = nullptr;
+        QLineEdit* mProxyPasswordLineEdit = nullptr;
+
         QGroupBox* mHttpsGroupBox = nullptr;
         QCheckBox* mSelfSignedCertificateCheckBox = nullptr;
         QPlainTextEdit* mSelfSignedCertificateEdit = nullptr;
         QCheckBox* mClientCertificateCheckBox = nullptr;
         QPlainTextEdit* mClientCertificateEdit = nullptr;
+
         QGroupBox* mAuthenticationGroupBox = nullptr;
         QLineEdit* mUsernameLineEdit = nullptr;
         QLineEdit* mPasswordLineEdit = nullptr;
+
         QSpinBox* mUpdateIntervalSpinBox = nullptr;
         QSpinBox* mBackgroundUpdateIntervalSpinBox = nullptr;
         QSpinBox* mTimeoutSpinBox = nullptr;
+
         MountedDirectoriesWidget* mMountedDirectoriesWidget = nullptr;
 
         QDialogButtonBox* mDialogButtonBox = nullptr;

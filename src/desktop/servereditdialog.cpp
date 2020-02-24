@@ -20,6 +20,7 @@
 
 #include <QAbstractButton>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFileDialog>
@@ -45,6 +46,7 @@
 
 #include "../servers.h"
 #include "../serversmodel.h"
+#include "../libtremotesf/stdutils.h"
 #include "../utils.h"
 
 namespace tremotesf
@@ -52,6 +54,12 @@ namespace tremotesf
     namespace
     {
         const QString removeIconName(QLatin1String("list-remove"));
+
+        const Server::ProxyType proxyTypeComboBoxValues[] {
+            Server::ProxyType::Default,
+            Server::ProxyType::Http,
+            Server::ProxyType::Socks5
+        };
     }
 
     class MountedDirectoriesWidget : public QTableWidget
@@ -133,6 +141,7 @@ namespace tremotesf
 
             mPortSpinBox->setValue(9091);
             mApiPathLineEdit->setText(QLatin1String("/transmission/rpc"));
+            mProxyTypeComboBox->setCurrentIndex(index_of_i(proxyTypeComboBoxValues, Server::ProxyType::Default));
             mHttpsGroupBox->setChecked(false);
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
@@ -148,14 +157,23 @@ namespace tremotesf
             mAddressLineEdit->setText(server.address);
             mPortSpinBox->setValue(server.port);
             mApiPathLineEdit->setText(server.apiPath);
+
+            mProxyTypeComboBox->setCurrentIndex(index_of_i(proxyTypeComboBoxValues, server.proxyType));
+            mProxyHostnameLineEdit->setText(server.proxyHostname);
+            mProxyPortSpinBox->setValue(server.proxyPort);
+            mProxyUserLineEdit->setText(server.proxyUser);
+            mProxyPasswordLineEdit->setText(server.proxyPassword);
+
             mHttpsGroupBox->setChecked(server.https);
             mSelfSignedCertificateCheckBox->setChecked(server.selfSignedCertificateEnabled);
             mSelfSignedCertificateEdit->setPlainText(server.selfSignedCertificate);
             mClientCertificateCheckBox->setChecked(server.clientCertificateEnabled);
             mClientCertificateEdit->setPlainText(server.clientCertificate);
+
             mAuthenticationGroupBox->setChecked(server.authentication);
             mUsernameLineEdit->setText(server.username);
             mPasswordLineEdit->setText(server.password);
+
             mUpdateIntervalSpinBox->setValue(server.updateInterval);
             mBackgroundUpdateIntervalSpinBox->setValue(server.backgroundUpdateInterval);
             mTimeoutSpinBox->setValue(server.timeout);
@@ -169,6 +187,8 @@ namespace tremotesf
                 mMountedDirectoriesWidget->setItem(row, 1, new QTableWidgetItem(i.value().toString()));
             }
         }
+
+        setProxyFieldsVisible();
     }
 
     QSize ServerEditDialog::sizeHint() const
@@ -217,16 +237,55 @@ namespace tremotesf
         formLayout->addRow(qApp->translate("tremotesf", "Name:"), mNameLineEdit);
 
         mAddressLineEdit = new QLineEdit(this);
-        mAddressLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(QLatin1String("^\\S+")), this));
+        auto addressValidator = new QRegularExpressionValidator(QRegularExpression(QLatin1String("^\\S+")), this);
+        mAddressLineEdit->setValidator(addressValidator);
         QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Address:"), mAddressLineEdit);
 
         mPortSpinBox = new QSpinBox(this);
-        mPortSpinBox->setMaximum(65535);
+        const int maxPort = 65535;
+        mPortSpinBox->setMaximum(maxPort);
         formLayout->addRow(qApp->translate("tremotesf", "Port:"), mPortSpinBox);
 
         mApiPathLineEdit = new QLineEdit(this);
         formLayout->addRow(qApp->translate("tremotesf", "API path:"), mApiPathLineEdit);
+
+        auto proxyGroupBox = new QGroupBox(qApp->translate("tremotesf", "Proxy"), this);
+        mProxyLayout = new QFormLayout(proxyGroupBox);
+
+        mProxyTypeComboBox = new QComboBox(this);
+        mProxyTypeComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        for (Server::ProxyType type : proxyTypeComboBoxValues) {
+            switch (type) {
+            case Server::ProxyType::Default:
+                mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "Default"));
+                break;
+            case Server::ProxyType::Http:
+                mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "HTTP"));
+                break;
+            case Server::ProxyType::Socks5:
+                mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "SOCKS5"));
+                break;
+            }
+        }
+        QObject::connect(mProxyTypeComboBox, &QComboBox::currentTextChanged, this, &ServerEditDialog::setProxyFieldsVisible);
+        mProxyLayout->addRow(qApp->translate("tremotesf", "Proxy type:"), mProxyTypeComboBox);
+
+        mProxyHostnameLineEdit = new QLineEdit(this);
+        mProxyHostnameLineEdit->setValidator(addressValidator);
+        mProxyLayout->addRow(qApp->translate("tremotesf", "Address:"), mProxyHostnameLineEdit);
+
+        mProxyPortSpinBox = new QSpinBox(this);
+        mProxyPortSpinBox->setMaximum(maxPort);
+        mProxyLayout->addRow(qApp->translate("tremotesf", "Port:"), mProxyPortSpinBox);
+
+        mProxyUserLineEdit = new QLineEdit(this);
+        mProxyLayout->addRow(qApp->translate("tremotesf", "Username:"), mProxyUserLineEdit);
+        mProxyPasswordLineEdit = new QLineEdit(this);
+        mProxyPasswordLineEdit->setEchoMode(QLineEdit::Password);
+        mProxyLayout->addRow(qApp->translate("tremotesf", "Password:"), mProxyPasswordLineEdit);
+
+        formLayout->addRow(proxyGroupBox);
 
         mHttpsGroupBox = new QGroupBox(qApp->translate("tremotesf", "HTTPS"), this);
         mHttpsGroupBox->setCheckable(true);
@@ -318,6 +377,15 @@ namespace tremotesf
         setMinimumSize(minimumSizeHint());
     }
 
+    void ServerEditDialog::setProxyFieldsVisible()
+    {
+        const bool visible = (proxyTypeComboBoxValues[mProxyTypeComboBox->currentIndex()] != Server::ProxyType::Default);
+        for (int i = 1, max = mProxyLayout->rowCount(); i < max; ++i) {
+            mProxyLayout->itemAt(i, QFormLayout::LabelRole)->widget()->setVisible(visible);
+            mProxyLayout->itemAt(i, QFormLayout::FieldRole)->widget()->setVisible(visible);
+        }
+    }
+
     void ServerEditDialog::canAcceptUpdate()
     {
         mDialogButtonBox->button(QDialogButtonBox::Ok)
@@ -339,18 +407,17 @@ namespace tremotesf
         }
 
         if (mServersModel) {
-
             mServersModel->setServer(mServerName,
                                      mNameLineEdit->text(),
                                      mAddressLineEdit->text(),
                                      mPortSpinBox->value(),
                                      mApiPathLineEdit->text(),
 
-                                     Server::ProxyType::Default,
-                                     QString(),
-                                     0,
-                                     QString(),
-                                     QString(),
+                                     proxyTypeComboBoxValues[mProxyTypeComboBox->currentIndex()],
+                                     mProxyHostnameLineEdit->text(),
+                                     mProxyPortSpinBox->value(),
+                                     mProxyUserLineEdit->text(),
+                                     mProxyPasswordLineEdit->text(),
 
                                      mHttpsGroupBox->isChecked(),
                                      mSelfSignedCertificateCheckBox->isChecked(),
@@ -373,11 +440,11 @@ namespace tremotesf
                                            mPortSpinBox->value(),
                                            mApiPathLineEdit->text(),
 
-                                           Server::ProxyType::Default,
-                                           QString(),
-                                           0,
-                                           QString(),
-                                           QString(),
+                                           proxyTypeComboBoxValues[mProxyTypeComboBox->currentIndex()],
+                                           mProxyHostnameLineEdit->text(),
+                                           mProxyPortSpinBox->value(),
+                                           mProxyUserLineEdit->text(),
+                                           mProxyPasswordLineEdit->text(),
 
                                            mHttpsGroupBox->isChecked(),
                                            mSelfSignedCertificateCheckBox->isChecked(),

@@ -171,18 +171,28 @@ namespace tremotesf
             server->address = address;
             server->port = port;
             server->apiPath = apiPath;
+
+            server->proxyType = proxyType;
+            server->proxyHostname = proxyHostname;
+            server->proxyPort = proxyPort;
+            server->proxyUser = proxyUser;
+            server->proxyPassword = proxyPassword;
+
             server->https = https;
             server->selfSignedCertificateEnabled = selfSignedCertificateEnabled;
             server->selfSignedCertificate = selfSignedCertificate;
             server->clientCertificateEnabled = clientCertificateEnabled;
             server->clientCertificate = clientCertificate;
+
             server->authentication = authentication;
             server->username = username;
             server->password = password;
+
             server->updateInterval = updateInterval;
             server->backgroundUpdateInterval = backgroundUpdateInterval;
             server->timeout = timeout;
             server->mountedDirectories = mountedDirectories;
+
             const QModelIndex modelIndex(index(oldRow));
             emit dataChanged(modelIndex, modelIndex);
 
