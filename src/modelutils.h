@@ -26,8 +26,8 @@ namespace tremotesf
     class ModelBatchChanger
     {
     public:
-        explicit ModelBatchChanger(QAbstractItemModel* model)
-            : model(model) {}
+        explicit ModelBatchChanger(QAbstractItemModel* model, const QModelIndex& parent = QModelIndex())
+            : model(model), parent(parent) {}
 
         void changed(int row)
         {
@@ -45,7 +45,7 @@ namespace tremotesf
 
         void changed()
         {
-            emit model->dataChanged(model->index(firstRow, 0), model->index(lastRow, lastColumn));
+            emit model->dataChanged(model->index(firstRow, 0, parent), model->index(lastRow, lastColumn, parent));
         }
 
     private:
@@ -56,6 +56,7 @@ namespace tremotesf
         }
 
         QAbstractItemModel *const model;
+        const QModelIndex parent;
         const int lastColumn = model->columnCount() - 1;
 
         int firstRow = -1;
