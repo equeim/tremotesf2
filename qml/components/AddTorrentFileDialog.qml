@@ -31,11 +31,10 @@ Dialog {
 
     onAccepted: rpc.addTorrentFile(parser.fileData,
                                    downloadDirectoryItem.text,
-                                   filesModel.wantedFiles,
                                    filesModel.unwantedFiles,
                                    filesModel.highPriorityFiles,
-                                   filesModel.normalPriorityFiles,
                                    filesModel.lowPriorityFiles,
+                                   filesModel.renamedFiles,
                                    1 - priorityComboBox.currentIndex,
                                    startSwitch.checked)
 

@@ -131,17 +131,6 @@ namespace tremotesf
         return mLoaded;
     }
 
-    QVariantList LocalTorrentFilesModel::wantedFiles() const
-    {
-        QVariantList files;
-        for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->wantedState() == TorrentFilesModelEntry::Wanted) {
-                files.append(file->id());
-            }
-        }
-        return files;
-    }
-
     QVariantList LocalTorrentFilesModel::unwantedFiles() const
     {
         QVariantList files;
@@ -158,17 +147,6 @@ namespace tremotesf
         QVariantList files;
         for (const TorrentFilesModelFile* file : mFiles) {
             if (file->priority() == TorrentFilesModelEntry::HighPriority) {
-                files.append(file->id());
-            }
-        }
-        return files;
-    }
-
-    QVariantList LocalTorrentFilesModel::normalPriorityFiles() const
-    {
-        QVariantList files;
-        for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::NormalPriority) {
                 files.append(file->id());
             }
         }

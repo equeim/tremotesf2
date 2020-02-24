@@ -129,11 +129,15 @@ namespace tremotesf
     }
 
     TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, Rpc* rpc, QObject* parent)
+#ifdef TREMOTESF_SAILFISHOS
+        : BaseTorrentFilesModel(parent),
+#else
         : BaseTorrentFilesModel({NameColumn,
                                  SizeColumn,
                                  ProgressBarColumn,
                                  ProgressColumn,
                                  PriorityColumn}, parent),
+#endif
           mTorrent(nullptr),
           mRpc(rpc),
           mLoaded(false),

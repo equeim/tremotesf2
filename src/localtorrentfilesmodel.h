@@ -33,11 +33,10 @@ namespace tremotesf
     {
         Q_OBJECT
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
-        Q_PROPERTY(QVariantList wantedFiles READ wantedFiles)
         Q_PROPERTY(QVariantList unwantedFiles READ unwantedFiles)
         Q_PROPERTY(QVariantList highPriorityFiles READ highPriorityFiles)
-        Q_PROPERTY(QVariantList normalPriorityFiles READ normalPriorityFiles)
         Q_PROPERTY(QVariantList lowPriorityFiles READ lowPriorityFiles)
+        Q_PROPERTY(QVariantMap renamedFiles READ renamedFiles)
     public:
         explicit LocalTorrentFilesModel(const QVariantMap& parseResult = QVariantMap(),
                                         QObject* parent = nullptr);
@@ -46,10 +45,8 @@ namespace tremotesf
 
         bool isLoaded() const;
 
-        QVariantList wantedFiles() const;
         QVariantList unwantedFiles() const;
         QVariantList highPriorityFiles() const;
-        QVariantList normalPriorityFiles() const;
         QVariantList lowPriorityFiles() const;
 
         const QVariantMap& renamedFiles() const;
