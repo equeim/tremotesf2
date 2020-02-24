@@ -23,13 +23,11 @@
 
 namespace tremotesf
 {
-    struct ModelBatchChanger
+    class ModelBatchChanger
     {
-        QAbstractItemModel *const model;
-        const int lastColumn = model->columnCount() - 1;
-
-        int firstRow = -1;
-        int lastRow = -1;
+    public:
+        explicit ModelBatchChanger(QAbstractItemModel* model)
+            : model(model) {}
 
         void changed(int row)
         {
@@ -50,19 +48,25 @@ namespace tremotesf
             emit model->dataChanged(model->index(firstRow, 0), model->index(lastRow, lastColumn));
         }
 
+    private:
         void reset(int row)
         {
             firstRow = row;
             lastRow = row;
         }
+
+        QAbstractItemModel *const model;
+        const int lastColumn = model->columnCount() - 1;
+
+        int firstRow = -1;
+        int lastRow = -1;
     };
 
-    struct ModelBatchRemover
+    class ModelBatchRemover
     {
-        QAbstractItemModel *const model;
-
-        int lastRow = -1;
-        int firstRow = -1;
+    public:
+        explicit ModelBatchRemover(QAbstractItemModel* model)
+            : model(model) {}
 
         void remove(int row)
         {
@@ -83,11 +87,17 @@ namespace tremotesf
             model->removeRows(firstRow, lastRow - firstRow + 1);
         }
 
+    private:
         void reset(int row)
         {
             lastRow = row;
             firstRow = row;
         }
+
+        QAbstractItemModel *const model;
+
+        int lastRow = -1;
+        int firstRow = -1;
     };
 }
 
