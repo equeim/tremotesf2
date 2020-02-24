@@ -26,25 +26,31 @@ Dialog {
     onAccepted: filesModel.renameFile(filesProxyModel.sourceIndex(delegateModel.modelIndex(modelData.index)),
                                       textField.text)
 
-    Column {
-        width: parent.width
+    SilicaFlickable {
+        anchors.fill: parent
+        contentHeight: column.height
 
-        DialogHeader {
-            title: qsTranslate("tremotesf", "Rename")
-        }
-
-        TextField {
-            id: textField
-
+        Column {
+            id: column
             width: parent.width
-            errorHighlight: !text
-            label: qsTranslate("tremotesf", "File name")
-            placeholderText: label
-            text: modelData.name
 
-            EnterKey.enabled: text
-            EnterKey.iconSource: "image://theme/icon-m-enter-accept"
-            EnterKey.onClicked: accept()
+            DialogHeader {
+                title: qsTranslate("tremotesf", "Rename")
+            }
+
+            TextField {
+                id: textField
+
+                width: parent.width
+                errorHighlight: !text
+                label: qsTranslate("tremotesf", "File name")
+                placeholderText: label
+                text: modelData.name
+
+                EnterKey.enabled: text
+                EnterKey.iconSource: "image://theme/icon-m-enter-accept"
+                EnterKey.onClicked: accept()
+            }
         }
     }
 }

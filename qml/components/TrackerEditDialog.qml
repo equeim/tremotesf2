@@ -35,25 +35,31 @@ Dialog {
         }
     }
 
-    Column {
-        width: parent.width
+    SilicaFlickable {
+        anchors.fill: parent
+        contentHeight: column.height
 
-        DialogHeader {
-            title: (trackerId === -1) ? qsTranslate("tremotesf", "Add Tracker")
-                                      : qsTranslate("tremotesf", "Edit Tracker")
-        }
-
-        TextField {
-            id: textField
-
+        Column {
+            id: column
             width: parent.width
-            errorHighlight: !text
-            label: qsTranslate("tremotesf", "Tracker announce URL")
-            placeholderText: label
 
-            EnterKey.enabled: text
-            EnterKey.iconSource: "image://theme/icon-m-enter-accept"
-            EnterKey.onClicked: accept()
+            DialogHeader {
+                title: (trackerId === -1) ? qsTranslate("tremotesf", "Add Tracker")
+                                          : qsTranslate("tremotesf", "Edit Tracker")
+            }
+
+            TextField {
+                id: textField
+
+                width: parent.width
+                errorHighlight: !text
+                label: qsTranslate("tremotesf", "Tracker announce URL")
+                placeholderText: label
+
+                EnterKey.enabled: text
+                EnterKey.iconSource: "image://theme/icon-m-enter-accept"
+                EnterKey.onClicked: accept()
+            }
         }
     }
 }

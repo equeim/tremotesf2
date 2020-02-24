@@ -28,24 +28,30 @@ Dialog {
 
     onAccepted: rpc.setTorrentsLocation(ids, downloadDirectoryItem.text, moveFilesSwitch.checked)
 
-    Column {
-        width: parent.width
+    SilicaFlickable {
+        anchors.fill: parent
+        contentHeight: column.height
 
-        DialogHeader {
-            title: qsTranslate("tremotesf", "Set Location")
-        }
+        Column {
+            id: column
+            width: parent.width
 
-        RemoteDirectorySelectionItem {
-            id: downloadDirectoryItem
+            DialogHeader {
+                title: qsTranslate("tremotesf", "Set Location")
+            }
 
-            enterKeyIconSource: "image://theme/icon-m-enter-accept"
-            onEnterKeyClicked: accept()
-        }
+            RemoteDirectorySelectionItem {
+                id: downloadDirectoryItem
 
-        TextSwitch {
-            id: moveFilesSwitch
-            text: qsTranslate("tremotesf", "Move files from current directory")
-            checked: true
+                enterKeyIconSource: "image://theme/icon-m-enter-accept"
+                onEnterKeyClicked: accept()
+            }
+
+            TextSwitch {
+                id: moveFilesSwitch
+                text: qsTranslate("tremotesf", "Move files from current directory")
+                checked: true
+            }
         }
     }
 }
