@@ -43,12 +43,22 @@
 #include <KPageWidget>
 
 #include "../libtremotesf/serversettings.h"
+#include "../libtremotesf/stdutils.h"
 #include "../trpc.h"
 #include "../utils.h"
 #include "fileselectionwidget.h"
 
 namespace tremotesf
 {
+    namespace
+    {
+        const libtremotesf::ServerSettings::EncryptionMode encryptionModeComboBoxItems[] = {
+            libtremotesf::ServerSettings::AllowedEncryption,
+            libtremotesf::ServerSettings::PreferredEncryption,
+            libtremotesf::ServerSettings::RequiredEncryption
+        };
+    }
+
     ServerSettingsDialog::ServerSettingsDialog(const Rpc* rpc, QWidget* parent)
         : QDialog(parent),
           mRpc(rpc)
@@ -127,7 +137,7 @@ namespace tremotesf
         settings->setPeerPort(mPeerPortSpinBox->value());
         settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
         settings->setPortForwardingEnabled(mPortForwardingCheckBox->isChecked());
-        settings->setEncryptionMode(static_cast<libtremotesf::ServerSettings::EncryptionMode>(mEncryptionComboBox->currentIndex()));
+        settings->setEncryptionMode(encryptionModeComboBoxItems[mEncryptionComboBox->currentIndex()]);
         settings->setUtpEnabled(mUtpCheckBox->isChecked());
         settings->setPexEnabled(mPexCheckBox->isChecked());
         settings->setDhtEnabled(mDhtCheckBox->isChecked());
@@ -411,12 +421,23 @@ namespace tremotesf
         connectionGroupBoxLayout->addRow(mPortForwardingCheckBox);
 
         mEncryptionComboBox = new QComboBox();
-        mEncryptionComboBox->addItems({//: Encryption mode
-                                       qApp->translate("tremotesf", "Allow"),
-                                       //: Encryption mode
-                                       qApp->translate("tremotesf", "Prefer"),
-                                       //: Encryption mode
-                                       qApp->translate("tremotesf", "Require")});
+        for (ServerSettings::EncryptionMode mode : encryptionModeComboBoxItems) {
+            switch (mode) {
+            case ServerSettings::AllowedEncryption:
+                //: Encryption mode
+                mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Allow"));
+                break;
+            case ServerSettings::PreferredEncryption:
+                //: Encryption mode
+                mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Prefer"));
+                break;
+            case ServerSettings::RequiredEncryption:
+                //: Encryption mode
+                mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Require"));
+                break;
+            }
+        }
+
         connectionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Encryption:"), mEncryptionComboBox);
 
         mUtpCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable uTP"), this);
@@ -510,7 +531,7 @@ namespace tremotesf
         mPeerPortSpinBox->setValue(settings->peerPort());
         mRandomPortCheckBox->setChecked(settings->isRandomPortEnabled());
         mPortForwardingCheckBox->setChecked(settings->isPortForwardingEnabled());
-        mEncryptionComboBox->setCurrentIndex(settings->encryptionMode());
+        mEncryptionComboBox->setCurrentIndex(index_of_i(encryptionModeComboBoxItems, settings->encryptionMode()));
         mUtpCheckBox->setChecked(settings->isUtpEnabled());
         mPexCheckBox->setChecked(settings->isPexEnabled());
         mDhtCheckBox->setChecked(settings->isDhtEnabled());
