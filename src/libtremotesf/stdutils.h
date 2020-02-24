@@ -125,16 +125,11 @@ namespace libtremotesf
     }
 
     template<typename T>
-    struct VectorBatchRemover
+    class VectorBatchRemover
     {
-        std::vector<T>& items;
-        std::vector<int>& removedIndexes;
-        std::vector<int>& indexesToShift;
-
-        const typename std::vector<T>::iterator begin = items.begin();
-
-        int endIndex = -1;
-        int beginIndex = 0;
+    public:
+        explicit VectorBatchRemover(std::vector<T>& items, std::vector<int>& removedIndexes, std::vector<int>& indexesToShift)
+            : items(items), removedIndexes(removedIndexes), indexesToShift(indexesToShift) {}
 
         void remove(int index) {
             removedIndexes.push_back(index);
@@ -163,10 +158,20 @@ namespace libtremotesf
             }
         }
 
+    private:
         void reset(int index) {
             endIndex = index;
             beginIndex = index;
         }
+
+        std::vector<T>& items;
+        std::vector<int>& removedIndexes;
+        std::vector<int>& indexesToShift;
+
+        const typename std::vector<T>::iterator begin = items.begin();
+
+        int endIndex = -1;
+        int beginIndex = 0;
     };
 }
 
