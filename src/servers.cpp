@@ -37,40 +37,40 @@ namespace tremotesf
         const QSettings::Format settingsFormat = QSettings::NativeFormat;
 #endif
 
-        const QString fileName(QLatin1String("servers"));
+        const QLatin1String fileName("servers");
 
-        const QString versionKey(QLatin1String("version"));
+        const QLatin1String versionKey("version");
 
-        const QString currentServerKey(QLatin1String("current"));
-        const QString addressKey(QLatin1String("address"));
-        const QString portKey(QLatin1String("port"));
-        const QString apiPathKey(QLatin1String("apiPath"));
+        const QLatin1String currentServerKey("current");
+        const QLatin1String addressKey("address");
+        const QLatin1String portKey("port");
+        const QLatin1String apiPathKey("apiPath");
 
-        const QString proxyTypeKey(QLatin1String("proxyType"));
-        const QString proxyHostnameKey(QLatin1String("proxyHostname"));
-        const QString proxyPortKey(QLatin1String("proxyPort"));
-        const QString proxyUserKey(QLatin1String("proxyUser"));
-        const QString proxyPasswordKey(QLatin1String("proxyPassword"));
+        const QLatin1String proxyTypeKey("proxyType");
+        const QLatin1String proxyHostnameKey("proxyHostname");
+        const QLatin1String proxyPortKey("proxyPort");
+        const QLatin1String proxyUserKey("proxyUser");
+        const QLatin1String proxyPasswordKey("proxyPassword");
 
-        const QString httpsKey(QLatin1String("https"));
-        const QString selfSignedCertificateEnabledKey(QLatin1String("selfSignedCertificateEnabled"));
-        const QString selfSignedCertificateKey(QLatin1String("selfSignedCertificate"));
-        const QString clientCertificateEnabledKey(QLatin1String("clientCertificateEnabled"));
-        const QString clientCertificateKey(QLatin1String("clientCertificate"));
+        const QLatin1String httpsKey("https");
+        const QLatin1String selfSignedCertificateEnabledKey("selfSignedCertificateEnabled");
+        const QLatin1String selfSignedCertificateKey("selfSignedCertificate");
+        const QLatin1String clientCertificateEnabledKey("clientCertificateEnabled");
+        const QLatin1String clientCertificateKey("clientCertificate");
 
-        const QString authenticationKey(QLatin1String("authentication"));
-        const QString usernameKey(QLatin1String("username"));
-        const QString passwordKey(QLatin1String("password"));
+        const QLatin1String authenticationKey("authentication");
+        const QLatin1String usernameKey("username");
+        const QLatin1String passwordKey("password");
 
-        const QString updateIntervalKey(QLatin1String("updateInterval"));
-        const QString backgroundUpdateIntervalKey(QLatin1String("backgroundUpdateInterval"));
-        const QString timeoutKey(QLatin1String("timeout"));
+        const QLatin1String updateIntervalKey("updateInterval");
+        const QLatin1String backgroundUpdateIntervalKey("backgroundUpdateInterval");
+        const QLatin1String timeoutKey("timeout");
 
-        const QString mountedDirectoriesKey(QLatin1String("mountedDirectories"));
-        const QString addTorrentDialogDirectoriesKey(QLatin1String("addTorrentDialogDirectories"));
-        const QString lastTorrentsKey(QLatin1String("lastTorrents"));
+        const QLatin1String mountedDirectoriesKey("mountedDirectories");
+        const QLatin1String addTorrentDialogDirectoriesKey("addTorrentDialogDirectories");
+        const QLatin1String lastTorrentsKey("lastTorrents");
 
-        const QString localCertificateKey(QLatin1String("localCertificate"));
+        const QLatin1String localCertificateKey("localCertificate");
 
         Servers* instancePointer = nullptr;
 

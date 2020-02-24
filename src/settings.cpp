@@ -29,31 +29,31 @@ namespace tremotesf
     {
         Settings* instancePointer = nullptr;
 
-        const QString connectOnStartupKey(QLatin1String("connectOnStartup"));
-        const QString notificationOnDisconnectingKey(QLatin1String("notificationOnDisconnecting"));
-        const QString notificationOnAddingTorrentKey(QLatin1String("notificationOnAddingTorrent"));
-        const QString notificationOfFinishedTorrentsKey(QLatin1String("notificationOfFinishedTorrents"));
-        const QString notificationsOnAddedTorrentsSinceLastConnectionKey(QLatin1String("notificationsOnAddedTorrentsSinceLastConnection"));
-        const QString notificationsOnFinishedTorrentsSinceLastConnectionKey(QLatin1String("notificationsOnFinishedTorrentsSinceLastConnection"));
+        const QLatin1String connectOnStartupKey("connectOnStartup");
+        const QLatin1String notificationOnDisconnectingKey("notificationOnDisconnecting");
+        const QLatin1String notificationOnAddingTorrentKey("notificationOnAddingTorrent");
+        const QLatin1String notificationOfFinishedTorrentsKey("notificationOfFinishedTorrents");
+        const QLatin1String notificationsOnAddedTorrentsSinceLastConnectionKey("notificationsOnAddedTorrentsSinceLastConnection");
+        const QLatin1String notificationsOnFinishedTorrentsSinceLastConnectionKey("notificationsOnFinishedTorrentsSinceLastConnection");
 #ifdef TREMOTESF_SAILFISHOS
-        const QString torrentsSortOrderKey(QLatin1String("torrentsSortOrder"));
-        const QString torrentsSortRoleKey(QLatin1String("torrentsSortRole"));
+        const QLatin1String torrentsSortOrderKey("torrentsSortOrder");
+        const QLatin1String torrentsSortRoleKey("torrentsSortRole");
 #else
-        const QString showTrayIconKey(QLatin1String("showTrayIcon"));
-        const QString mainWindowGeometryKey(QLatin1String("mainWindowGeometry"));
-        const QString mainWindowStateKey(QLatin1String("mainWindowState"));
-        const QString toolButtonStyleKey(QLatin1String("toolButtonStyle"));
-        const QString toolBarVisibleKey(QLatin1String("toolBarVisible"));
-        const QString toolBarAreaKey(QLatin1String("toolBarArea"));
-        const QString sideBarVisibleKey(QLatin1String("sideBarVisible"));
-        const QString splitterStateKey(QLatin1String("splitterState"));
-        const QString statusBarVisibleKey(QLatin1String("statusBarVisible"));
-        const QString torrentsViewHeaderStateKey(QLatin1String("torrentsViewHeaderState"));
-        const QString torrentPropertiesDialogGeometryKey(QLatin1String("torrentPropertiesDialogGeometry"));
-        const QString torrentFilesViewHeaderStateKey(QLatin1String("torrentFilesViewHeaderState"));
-        const QString trackersViewHeaderStateKey(QLatin1String("trackersViewHeaderState"));
-        const QString peersViewHeaderStateKey(QLatin1String("peersViewHeaderState"));
-        const QString localTorrentFilesViewHeaderStateKey(QLatin1String("localTorrentFilesViewHeaderState"));
+        const QLatin1String showTrayIconKey("showTrayIcon");
+        const QLatin1String mainWindowGeometryKey("mainWindowGeometry");
+        const QLatin1String mainWindowStateKey("mainWindowState");
+        const QLatin1String toolButtonStyleKey("toolButtonStyle");
+        const QLatin1String toolBarVisibleKey("toolBarVisible");
+        const QLatin1String toolBarAreaKey("toolBarArea");
+        const QLatin1String sideBarVisibleKey("sideBarVisible");
+        const QLatin1String splitterStateKey("splitterState");
+        const QLatin1String statusBarVisibleKey("statusBarVisible");
+        const QLatin1String torrentsViewHeaderStateKey("torrentsViewHeaderState");
+        const QLatin1String torrentPropertiesDialogGeometryKey("torrentPropertiesDialogGeometry");
+        const QLatin1String torrentFilesViewHeaderStateKey("torrentFilesViewHeaderState");
+        const QLatin1String trackersViewHeaderStateKey("trackersViewHeaderState");
+        const QLatin1String peersViewHeaderStateKey("peersViewHeaderState");
+        const QLatin1String localTorrentFilesViewHeaderStateKey("localTorrentFilesViewHeaderState");
 #endif
     }
 

@@ -37,12 +37,6 @@ namespace tremotesf
 {
     namespace
     {
-        const QString nameKey(QLatin1String("name"));
-        const QString sizeKey(QLatin1String("length"));
-        const QString completedSizeKey(QLatin1String("bytesCompleted"));
-        const QString wantedKey(QLatin1String("wanted"));
-        const QString priorityKey(QLatin1String("priority"));
-
         void updateFile(TorrentFilesModelFile* treeFile, const libtremotesf::TorrentFile& file)
         {
             treeFile->setChanged(false);
