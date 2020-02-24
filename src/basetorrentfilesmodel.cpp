@@ -256,6 +256,8 @@ namespace tremotesf
                 changer.changed(child->row());
                 if (child->isDirectory()) {
                     updateDirectoryChildren(index(child->row(), 0, parent));
+                } else {
+                    static_cast<TorrentFilesModelFile*>(child)->setChanged(false);
                 }
             }
         }
