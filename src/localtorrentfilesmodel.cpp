@@ -72,6 +72,7 @@ namespace tremotesf
                                                                        fileMap.value(QLatin1String("length")).toLongLong());
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
+                            childFile->setChanged(false);
                             currentDirectory->addChild(childFile);
                             files.push_back(childFile);
                         } else {
@@ -100,6 +101,7 @@ namespace tremotesf
                                                       infoMap.value(QLatin1String("length")).toLongLong());
                 file->setWanted(true);
                 file->setPriority(TorrentFilesModelEntry::NormalPriority);
+                file->setChanged(false);
                 rootDirectory->addChild(file);
                 files.push_back(file);
             }

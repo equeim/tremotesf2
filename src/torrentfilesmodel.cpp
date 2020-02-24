@@ -105,6 +105,7 @@ namespace tremotesf
                                                                    file.size);
 
                         updateFile(childFile, file);
+                        childFile->setChanged(false);
                         currentDirectory->addChild(childFile);
                         treeFiles.push_back(childFile);
                     } else {
