@@ -41,8 +41,8 @@ namespace tremotesf
 {
     namespace
     {
-        const QString editIconName(QLatin1String("document-properties"));
-        const QString removeIconName(QLatin1String("list-remove"));
+        const QLatin1String editIconName("document-properties");
+        const QLatin1String removeIconName("list-remove");
     }
 
     ServersDialog::ServersDialog(QWidget* parent)

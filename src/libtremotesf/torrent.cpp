@@ -76,7 +76,7 @@ namespace libtremotesf
         const auto honorSessionLimitsKey(QJsonKeyStringInit("honorsSessionLimits"));
         const auto bandwidthPriorityKey(QJsonKeyStringInit("bandwidthPriority"));
         const auto idleSeedingLimitModeKey(QJsonKeyStringInit("seedIdleMode"));
-        const auto idleSeedingLimitKey(QJsonKeyStringInit("seedRatioLimit"));
+        const auto idleSeedingLimitKey(QJsonKeyStringInit("seedIdleLimit"));
         const auto downloadDirectoryKey(QJsonKeyStringInit("downloadDir"));
         const auto prioritiesKey(QJsonKeyStringInit("priorities"));
         const auto creatorKey(QJsonKeyStringInit("creator"));

@@ -53,7 +53,7 @@ namespace tremotesf
 {
     namespace
     {
-        const QString removeIconName(QLatin1String("list-remove"));
+        const QLatin1String removeIconName("list-remove");
 
         const Server::ProxyType proxyTypeComboBoxValues[] {
             Server::ProxyType::Default,
