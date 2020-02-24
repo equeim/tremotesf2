@@ -256,9 +256,9 @@ Page {
             }
             notification.remoteActions = [{
                 "name": "default",
-                "service": ipcServerServiceName,
-                "path": ipcServerObjectPath,
-                "iface": ipcServerInterfaceName,
+                "service": ipcServer.serviceName,
+                "path": ipcServer.objectPath,
+                "iface": ipcServer.interfaceName,
                 "method": "ActivateWindow",
             }]
             notification.replacesId = 0
