@@ -335,7 +335,7 @@ namespace tremotesf
                     file->setChanged(false);
                 }
             }
-            updateDirectoryChildren(mRootDirectory.get());
+            updateDirectoryChildren();
         }
     }
 

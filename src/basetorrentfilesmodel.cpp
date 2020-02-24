@@ -23,6 +23,7 @@
 #include <QStyle>
 #endif
 
+#include "modelutils.h"
 #include "utils.h"
 
 namespace tremotesf
@@ -209,7 +210,7 @@ namespace tremotesf
     void BaseTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
     {
         static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
-        updateDirectoryChildren(mRootDirectory.get());
+        updateDirectoryChildren();
     }
 
     void BaseTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted)
@@ -217,13 +218,13 @@ namespace tremotesf
         for (const QModelIndex& index : indexes) {
             static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
         }
-        updateDirectoryChildren(mRootDirectory.get());
+        updateDirectoryChildren();
     }
 
     void BaseTorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority)
     {
         static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
-        updateDirectoryChildren(mRootDirectory.get());
+        updateDirectoryChildren();
     }
 
     void BaseTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority)
@@ -231,7 +232,7 @@ namespace tremotesf
         for (const QModelIndex& index : indexes) {
             static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
         }
-        updateDirectoryChildren(mRootDirectory.get());
+        updateDirectoryChildren();
     }
 
     void BaseTorrentFilesModel::fileRenamed(TorrentFilesModelEntry* entry, const QString& newName)
@@ -241,17 +242,23 @@ namespace tremotesf
                          createIndex(entry->row(), columnCount() - 1, entry));
     }
 
-    void BaseTorrentFilesModel::updateDirectoryChildren(const TorrentFilesModelDirectory* directory)
+    void BaseTorrentFilesModel::updateDirectoryChildren(const QModelIndex& parent)
     {
-        const int lastColumn = columnCount() - 1;
+        const TorrentFilesModelDirectory* directory;
+        if (parent.isValid()) {
+            directory = static_cast<const TorrentFilesModelDirectory*>(parent.internalPointer());
+        } else {
+            directory = mRootDirectory.get();
+        }
+        ModelBatchChanger changer(this, parent);
         for (TorrentFilesModelEntry* child : directory->children()) {
             if (child->isChanged()) {
-                emit dataChanged(createIndex(child->row(), 0, child),
-                                 createIndex(child->row(), lastColumn, child));
+                changer.changed(child->row());
                 if (child->isDirectory()) {
-                    updateDirectoryChildren(static_cast<const TorrentFilesModelDirectory*>(child));
+                    updateDirectoryChildren(index(child->row(), 0, parent));
                 }
             }
         }
+        changer.changed();
     }
 }

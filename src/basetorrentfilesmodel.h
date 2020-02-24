@@ -80,7 +80,7 @@ namespace tremotesf
         void fileRenamed(TorrentFilesModelEntry* entry, const QString& newName);
 
     protected:
-        void updateDirectoryChildren(const TorrentFilesModelDirectory* directory);
+        void updateDirectoryChildren(const QModelIndex& parent = QModelIndex());
 
         std::shared_ptr<TorrentFilesModelDirectory> mRootDirectory;
 
