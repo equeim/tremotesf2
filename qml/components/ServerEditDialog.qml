@@ -36,40 +36,54 @@ Dialog {
         }
 
         Servers.setServer(modelData ? modelData.name : String(),
-                                      nameField.text,
-                                      addressField.text,
-                                      portField.text,
-                                      apiPathField.text,
-                                      httpsSwitch.checked,
-                                      selfSignedCertificateSwitch.checked,
-                                      selfSignedCertificateTextArea.text,
-                                      clientCertificateSwitch.checked,
-                                      clientCertificateTextArea.text,
-                                      authenticationSwitch.checked,
-                                      usernameField.text,
-                                      passwordField.text,
-                                      updateIntervalField.text,
-                                      backgroundUpdateIntervalField.text,
-                                      timeoutField.text,
-                                      mountedDirectories)
+                          nameField.text,
+                          addressField.text,
+                          portField.text,
+                          apiPathField.text,
+
+                          proxyTypeComboBox.currentProxyType,
+                          proxyHostnameField.text,
+                          proxyPortField.text,
+                          proxyUserField.text,
+                          proxyPasswordField.text,
+
+                          httpsSwitch.checked,
+                          selfSignedCertificateSwitch.checked,
+                          selfSignedCertificateTextArea.text,
+                          clientCertificateSwitch.checked,
+                          clientCertificateTextArea.text,
+                          authenticationSwitch.checked,
+                          usernameField.text,
+                          passwordField.text,
+                          updateIntervalField.text,
+                          backgroundUpdateIntervalField.text,
+                          timeoutField.text,
+                          mountedDirectories)
         if (serversModel) {
             serversModel.setServer(modelData ? modelData.name : String(),
-                                               nameField.text,
-                                               addressField.text,
-                                               portField.text,
-                                               apiPathField.text,
-                                               httpsSwitch.checked,
-                                               selfSignedCertificateSwitch.checked,
-                                               selfSignedCertificateTextArea.text,
-                                               clientCertificateSwitch.checked,
-                                               clientCertificateTextArea.text,
-                                               authenticationSwitch.checked,
-                                               usernameField.text,
-                                               passwordField.text,
-                                               updateIntervalField.text,
-                                               backgroundUpdateIntervalField.text,
-                                               timeoutField.text,
-                                               mountedDirectories)
+                                   nameField.text,
+                                   addressField.text,
+                                   portField.text,
+                                   apiPathField.text,
+
+                                   proxyTypeComboBox.currentProxyType,
+                                   proxyHostnameField.text,
+                                   proxyPortField.text,
+                                   proxyUserField.text,
+                                   proxyPasswordField.text,
+
+                                   httpsSwitch.checked,
+                                   selfSignedCertificateSwitch.checked,
+                                   selfSignedCertificateTextArea.text,
+                                   clientCertificateSwitch.checked,
+                                   clientCertificateTextArea.text,
+                                   authenticationSwitch.checked,
+                                   usernameField.text,
+                                   passwordField.text,
+                                   updateIntervalField.text,
+                                   backgroundUpdateIntervalField.text,
+                                   timeoutField.text,
+                                   mountedDirectories)
         }
     }
 
@@ -210,13 +224,120 @@ Dialog {
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: {
-                    if (httpsSwitch.checked) {
+                    if (proxyHostnameField.visible) {
+                        proxyHostnameField.forceActiveFocus()
+                    } else if (httpsSwitch.checked) {
                         localCertificateTextArea.forceActiveFocus()
                     } else if (authenticationSwitch.checked) {
                         usernameField.forceActiveFocus()
                     } else {
                         updateIntervalField.forceActiveFocus()
                     }
+                }
+            }
+
+            ComboBox {
+                id: proxyTypeComboBox
+
+                property int currentProxyType: currentItem.itemId
+
+                label: qsTranslate("tremotesf", "Proxy type")
+                currentItem: menu.itemForId(modelData ? modelData.proxyType : Server.Default)
+                menu: ContextMenuWithIds {
+                    MenuItemWithId {
+                        itemId: Server.Default
+                        text: qsTranslate("tremotesf", "Default")
+                    }
+                    MenuItemWithId {
+                        itemId: Server.Http
+                        text: qsTranslate("tremotesf", "HTTPS")
+                    }
+                    MenuItemWithId {
+                        itemId: Server.Socks5
+                        text: qsTranslate("tremotesf", "SOCKS5")
+                    }
+                }
+            }
+
+            Column {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                }
+                visible: proxyTypeComboBox.currentProxyType !== Server.Default
+
+                TextField {
+                    id: proxyHostnameField
+
+                    width: parent.width
+
+                    label: qsTranslate("tremotesf", "Address")
+                    placeholderText: label
+
+                    text: modelData ? modelData.proxyHostname : String()
+                    inputMethodHints: Qt.ImhNoAutoUppercase
+                    validator: RegExpValidator {
+                        regExp: /^\S+/
+                    }
+
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.onClicked: proxyPortField.forceActiveFocus()
+                }
+
+                TextField {
+                    id: proxyPortField
+
+                    width: parent.width
+
+                    label: qsTranslate("tremotesf", "Port")
+                    placeholderText: label
+
+                    text: modelData ? modelData.proxyPort : "0"
+                    inputMethodHints: Qt.ImhDigitsOnly
+                    validator: IntValidator {
+                        bottom: 0
+                        top: 65535
+                    }
+
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.onClicked: {
+                        if (httpsSwitch.checked) {
+                            localCertificateTextArea.forceActiveFocus()
+                        } else if (authenticationSwitch.checked) {
+                            usernameField.forceActiveFocus()
+                        } else {
+                            updateIntervalField.forceActiveFocus()
+                        }
+                    }
+                }
+
+                TextField {
+                    id: proxyUserField
+
+                    width: parent.width
+
+                    label: qsTranslate("tremotesf", "Username")
+                    placeholderText: label
+
+                    text: modelData ? modelData.username : String()
+
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.onClicked: passwordField.forceActiveFocus()
+                }
+
+                PasswordField {
+                    id: proxyPasswordField
+
+                    width: parent.width
+
+                    label: qsTranslate("tremotesf", "Password")
+                    placeholderText: label
+
+                    text: modelData ? modelData.password : String()
+
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.onClicked: updateIntervalField.forceActiveFocus()
                 }
             }
 
