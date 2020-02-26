@@ -43,11 +43,14 @@ namespace libtremotesf
 
     struct Server
     {
+        Q_GADGET
+    public:
         enum class ProxyType {
             Default,
             Http,
             Socks5
         };
+        Q_ENUM(ProxyType)
 
         QString name;
 
