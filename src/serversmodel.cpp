@@ -42,6 +42,18 @@ namespace tremotesf
             return server.port;
         case ApiPathRole:
             return server.apiPath;
+
+        case ProxyTypeRole:
+            return static_cast<int>(server.proxyType);
+        case ProxyHostnameRole:
+            return server.proxyHostname;
+        case ProxyPortRole:
+            return server.proxyPort;
+        case ProxyUserRole:
+            return server.proxyUser;
+        case ProxyPasswordRole:
+            return server.proxyPassword;
+
         case HttpsRole:
             return server.https;
         case SelfSignedCertificateEnabledRole:
@@ -270,6 +282,13 @@ namespace tremotesf
                 {AddressRole, "address"},
                 {PortRole, "port"},
                 {ApiPathRole, "apiPath"},
+
+                {ProxyTypeRole, "proxyType"},
+                {ProxyHostnameRole, "proxyHostname"},
+                {ProxyPortRole, "proxyPort"},
+                {ProxyUserRole, "proxyUser"},
+                {ProxyPasswordRole, "proxyPassword"},
+
                 {HttpsRole, "https"},
                 {SelfSignedCertificateEnabledRole, "selfSignedCertificateEnabled"},
                 {SelfSignedCertificateRole, "selfSignedCertificate"},

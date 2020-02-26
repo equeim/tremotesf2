@@ -38,6 +38,13 @@ namespace tremotesf
             AddressRole,
             PortRole,
             ApiPathRole,
+
+            ProxyTypeRole,
+            ProxyHostnameRole,
+            ProxyPortRole,
+            ProxyUserRole,
+            ProxyPasswordRole,
+
             HttpsRole,
             SelfSignedCertificateEnabledRole,
             SelfSignedCertificateRole,
