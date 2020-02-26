@@ -120,7 +120,7 @@ namespace tremotesf
                                    int port,
                                    const QString& apiPath,
 
-                                   Server::ProxyType proxyType,
+                                   libtremotesf::Server::ProxyType proxyType,
                                    const QString& proxyHostname,
                                    int proxyPort,
                                    const QString& proxyUser,

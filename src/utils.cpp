@@ -288,6 +288,8 @@ namespace tremotesf
         qmlRegisterType<BaseProxyModel>(url, versionMajor, versionMinor, "BaseProxyModel");
 
         qmlRegisterType<ServersModel>(url, versionMajor, versionMinor, "ServersModel");
+        qmlRegisterUncreatableType<Server>(url, versionMajor, versionMinor, "Server", QString());
+        qRegisterMetaType<Server::ProxyType>();
 
         qmlRegisterType<StatusFilterStats>(url, versionMajor, versionMinor, "StatusFilterStats");
         qmlRegisterType<AllTrackersModel>(url, versionMajor, versionMinor, "AllTrackersModel");
