@@ -28,8 +28,6 @@
 
 #include "torrentfileparser.h"
 
-Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
-
 #ifdef TREMOTESF_SAILFISHOS
 #include <QModelIndexList>
 #include <qqml.h>
@@ -59,32 +57,7 @@ Q_DECLARE_METATYPE(tremotesf::TorrentFileParser::Error)
 #include "sailfishos/selectionmodel.h"
 
 Q_DECLARE_METATYPE(libtremotesf::Server)
-Q_DECLARE_METATYPE(tremotesf::TorrentFilesModelEntry::Priority)
 
-namespace tremotesf
-{
-    class TorrentFilesModelEntryEnums
-    {
-        Q_GADGET
-    public:
-        enum WantedState
-        {
-            Wanted = TorrentFilesModelEntry::Wanted,
-            Unwanted = TorrentFilesModelEntry::Unwanted,
-            MixedWanted = TorrentFilesModelEntry::MixedWanted
-        };
-        Q_ENUM(WantedState)
-
-        enum Priority
-        {
-            LowPriority = TorrentFilesModelEntry::LowPriority,
-            NormalPriority = TorrentFilesModelEntry::NormalPriority,
-            HighPriority = TorrentFilesModelEntry::HighPriority,
-            MixedPriority = TorrentFilesModelEntry::MixedPriority
-        };
-        Q_ENUM(Priority)
-    };
-}
 #else
 #include <QDesktopServices>
 #include <QDir>
@@ -298,7 +271,7 @@ namespace tremotesf
         qmlRegisterType<TorrentsProxyModel>(url, versionMajor, versionMinor, "TorrentsProxyModel");
 
         qmlRegisterType<TorrentFilesModel>(url, versionMajor, versionMinor, "TorrentFilesModel");
-        qmlRegisterUncreatableType<TorrentFilesModelEntryEnums>(url, versionMajor, versionMinor, "TorrentFilesModelEntry", QString());
+        qmlRegisterUncreatableType<TorrentFilesModelEntry>(url, versionMajor, versionMinor, "TorrentFilesModelEntry", QString());
         qRegisterMetaType<TorrentFilesModelEntry::Priority>();
         qmlRegisterType<TorrentFilesProxyModel>(url, versionMajor, versionMinor, "TorrentFilesProxyModel");
 
