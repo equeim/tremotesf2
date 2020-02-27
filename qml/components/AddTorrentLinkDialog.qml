@@ -29,7 +29,7 @@ Dialog {
 
     onAccepted: rpc.addTorrentLink(torrentLinkTextField.text,
                                    downloadDirectoryItem.text,
-                                   1 - priorityComboBox.currentIndex,
+                                   priorityComboBox.currentPriority,
                                    startSwitch.checked)
 
     TorrentFileParser {
@@ -119,24 +119,30 @@ Dialog {
             ComboBox {
                 id: priorityComboBox
 
+                property int currentPriority: currentItem.itemId
+
                 label: qsTranslate("tremotesf", "Torrent priority")
-                menu: ContextMenu {
-                    MenuItem {
+                menu: ContextMenuWithIds {
+                    MenuItemWithId {
+                        itemId: Torrent.HighPriority
                         //: Priority
                         text: qsTranslate("tremotesf", "High")
                     }
-                    MenuItem {
+
+                    MenuItemWithId {
+                        itemId: Torrent.NormalPriority
                         //: Priority
                         text: qsTranslate("tremotesf", "Normal")
                     }
-                    MenuItem {
+
+                    MenuItemWithId {
+                        itemId: Torrent.LowPriority
                         //: Priority
                         text: qsTranslate("tremotesf", "Low")
                     }
                 }
-                currentIndex: 1
+                currentItem: menu.itemForId(Torrent.NormalPriority)
             }
-
             TextSwitch {
                 id: startSwitch
                 text: qsTranslate("tremotesf", "Start downloading after adding")

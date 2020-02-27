@@ -19,6 +19,8 @@
 import Sailfish.Silica 1.0
 import QtQuick 2.2
 
+import harbour.tremotesf 1.0
+
 Page {
     allowedOrientations: defaultAllowedOrientations
 
@@ -28,7 +30,7 @@ Page {
         peerPortTextField.text = rpc.serverSettings.peerPort.toLocaleString()
         randomPortSwitch.checked = rpc.serverSettings.randomPortEnabled
         portFormardingSwitch.checked = rpc.serverSettings.portForwardingEnabled
-        encryptionComboBox.currentIndex = rpc.serverSettings.encryptionMode
+        encryptionComboBox.update()
         utpSwitch.checked = rpc.serverSettings.utpEnabled
         pexSwitch.checked = rpc.serverSettings.pexEnabled
         dhtSwitch.checked = rpc.serverSettings.dhtEnabled
@@ -124,22 +126,29 @@ Page {
             ComboBox {
                 id: encryptionComboBox
 
+                function update() {
+                    console.log(rpc.serverSettings.encryptionMode)
+                    currentItem = menu.itemForId(rpc.serverSettings.encryptionMode)
+                }
+
                 label: qsTranslate("tremotesf", "Encryption")
-
-                menu: ContextMenu {
-                    MenuItem {
+                menu: ContextMenuWithIds {
+                    MenuItemWithId {
+                        itemId: ServerSettings.AllowedEncryption
                         text: qsTranslate("tremotesf", "Allow")
-                        onClicked: rpc.serverSettings.encryptionMode = ServerSettings.AllowedEncryption
+                        onClicked: rpc.serverSettings.encryptionMode = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: ServerSettings.PreferredEncryption
                         text: qsTranslate("tremotesf", "Prefer")
-                        onClicked: rpc.serverSettings.encryptionMode = ServerSettings.PreferredEncryption
+                        onClicked: rpc.serverSettings.encryptionMode = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: ServerSettings.RequiredEncryption
                         text: qsTranslate("tremotesf", "Require")
-                        onClicked: rpc.serverSettings.encryptionMode = ServerSettings.RequiredEncryption
+                        onClicked: rpc.serverSettings.encryptionMode = itemId
                     }
                 }
             }

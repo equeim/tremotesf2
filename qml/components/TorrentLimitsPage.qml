@@ -42,30 +42,12 @@ Page {
         uploadSpeedLimitSwitch.checked = torrent.uploadSpeedLimited
         uploadSpeedLimitField.text = torrent.uploadSpeedLimit
 
-        priorityComboBox.currentIndex = (1 - torrent.bandwidthPriority)
+        priorityComboBox.update()
 
-        switch (torrent.ratioLimitMode) {
-        case Torrent.GlobalRatioLimit:
-            ratioLimitComboBox.currentIndex = 0
-            break
-        case Torrent.SingleRatioLimit:
-            ratioLimitComboBox.currentIndex = 2
-            break
-        case Torrent.UnlimitedRatio:
-            ratioLimitComboBox.currentIndex = 1
-        }
+        ratioLimitComboBox.update()
         ratioLimitField.text = torrent.ratioLimit.toLocaleString(Qt.locale(), 'f', 2)
 
-        switch (torrent.idleSeedingLimitMode) {
-        case Torrent.GlobalIdleSeedingLimit:
-            idleSeedingComboBox.currentIndex = 0
-            break
-        case Torrent.SingleIdleSeedingLimit:
-            idleSeedingComboBox.currentIndex = 2
-            break
-        case Torrent.UnlimitedIdleSeeding:
-            idleSeedingComboBox.currentIndex = 1
-        }
+        idleSeedingComboBox.update()
         idleSeedingField.text = torrent.idleSeedingLimit
 
         peersLimitField.text = torrent.peersLimit
@@ -145,9 +127,9 @@ Page {
                 EnterKey.onClicked: {
                     if (uploadSpeedLimitSwitch.checked) {
                         uploadSpeedLimitField.forceActiveFocus()
-                    } else if (ratioLimitComboBox.currentIndex == 2) {
+                    } else if (ratioLimitField.visible) {
                         ratioLimitField.forceActiveFocus()
-                    } else if (idleSeedingComboBox.currentIndex == 2) {
+                    } else if (idleSeedingField.visible) {
                         idleSeedingField.forceActiveFocus()
                     } else {
                         peersLimitField.forceActiveFocus()
@@ -193,9 +175,9 @@ Page {
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: {
-                    if (ratioLimitComboBox.currentIndex == 2) {
+                    if (ratioLimitField.visible) {
                         ratioLimitField.forceActiveFocus()
-                    } else if (idleSeedingComboBox.currentIndex == 2) {
+                    } else if (idleSeedingField.visible) {
                         idleSeedingField.forceActiveFocus()
                     } else {
                         peersLimitField.forceActiveFocus()
@@ -206,25 +188,32 @@ Page {
             ComboBox {
                 id: priorityComboBox
 
+                function update() {
+                    currentItem = menu.itemForId(torrent.bandwidthPriority)
+                }
+
                 enabled: torrent
                 label: qsTranslate("tremotesf", "Torrent priority")
-                menu: ContextMenu {
-                    MenuItem {
+                menu: ContextMenuWithIds {
+                    MenuItemWithId {
+                        itemId: Torrent.HighPriority
                         //: Priority
                         text: qsTranslate("tremotesf", "High")
-                        onClicked: torrent.bandwidthPriority = Torrent.HighPriority
+                        onClicked: torrent.bandwidthPriority = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: Torrent.NormalPriority
                         //: Priority
                         text: qsTranslate("tremotesf", "Normal")
-                        onClicked: torrent.bandwidthPriority = Torrent.NormalPriority
+                        onClicked: torrent.bandwidthPriority = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: Torrent.LowPriority
                         //: Priority
                         text: qsTranslate("tremotesf", "Low")
-                        onClicked: torrent.bandwidthPriority = Torrent.LowPriority
+                        onClicked: torrent.bandwidthPriority = itemId
                     }
                 }
             }
@@ -236,22 +225,31 @@ Page {
             ComboBox {
                 id: ratioLimitComboBox
 
+                property int currentRatioLimitMode: currentItem.itemId
+
+                function update() {
+                    currentItem = menu.itemForId(torrent.ratioLimitMode)
+                }
+
                 enabled: torrent
                 label: qsTranslate("tremotesf", "Ratio limit mode")
-                menu: ContextMenu {
-                    MenuItem {
+                menu: ContextMenuWithIds {
+                    MenuItemWithId {
+                        itemId: Torrent.GlobalRatioLimit
                         text: qsTranslate("tremotesf", "Use global settings")
-                        onClicked: torrent.ratioLimitMode = Torrent.GlobalRatioLimit
+                        onClicked: torrent.ratioLimitMode = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: Torrent.UnlimitedRatio
                         text: qsTranslate("tremotesf", "Seed regardless of ratio")
-                        onClicked: torrent.ratioLimitMode = Torrent.UnlimitedRatio
+                        onClicked: torrent.ratioLimitMode = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: Torrent.SingleRatioLimit
                         text: qsTranslate("tremotesf", "Stop seeding at ratio:")
-                        onClicked: torrent.ratioLimitMode = Torrent.SingleRatioLimit
+                        onClicked: torrent.ratioLimitMode = itemId
                     }
                 }
             }
@@ -264,7 +262,7 @@ Page {
                     leftMargin: Theme.paddingLarge
                     right: parent.right
                 }
-                visible: ratioLimitComboBox.currentIndex === 2
+                visible: ratioLimitComboBox.currentRatioLimitMode === Torrent.SingleRatioLimit
 
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
@@ -287,7 +285,7 @@ Page {
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: {
-                    if (idleSeedingComboBox.currentIndex == 2) {
+                    if (idleSeedingField.visible) {
                         idleSeedingField.forceActiveFocus()
                     } else {
                         peersLimitField.forceActiveFocus()
@@ -298,22 +296,31 @@ Page {
             ComboBox {
                 id: idleSeedingComboBox
 
+                property int currentIdleSeedingLimitMode: currentItem.itemId
+
+                function update() {
+                    currentItem = menu.itemForId(torrent.idleSeedingLimitMode)
+                }
+
                 enabled: torrent
                 label: qsTranslate("tremotesf", "Idle seeding mode")
-                menu: ContextMenu {
-                    MenuItem {
+                menu: ContextMenuWithIds {
+                    MenuItemWithId {
+                        itemId: Torrent.GlobalIdleSeedingLimit
                         text: qsTranslate("tremotesf", "Use global settings")
-                        onClicked: torrent.idleSeedingLimitMode = Torrent.GlobalIdleSeedingLimit
+                        onClicked: torrent.idleSeedingLimitMode = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: Torrent.UnlimitedIdleSeeding
                         text: qsTranslate("tremotesf", "Seed regardless of activity")
-                        onClicked: torrent.idleSeedingLimitMode = Torrent.UnlimitedIdleSeeding
+                        onClicked: torrent.idleSeedingLimitMode = itemId
                     }
 
-                    MenuItem {
+                    MenuItemWithId {
+                        itemId: Torrent.SingleIdleSeedingLimit
                         text: qsTranslate("tremotesf", "Stop seeding if idle for:")
-                        onClicked: torrent.idleSeedingLimitMode = Torrent.SingleIdleSeedingLimit
+                        onClicked: torrent.idleSeedingLimitMode = itemId
                     }
                 }
             }
@@ -326,7 +333,7 @@ Page {
                     leftMargin: Theme.paddingLarge
                     right: parent.right
                 }
-                visible: idleSeedingComboBox.currentIndex === 2
+                visible: idleSeedingComboBox.currentIdleSeedingLimitMode === Torrent.SingleIdleSeedingLimit
 
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
