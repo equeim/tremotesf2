@@ -22,6 +22,7 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 ListItem {
+    property int torrentId: model.id
     property var torrent
 
     property string localTorrentFilesPath: torrent ? rpc.localTorrentFilesPath(torrent) : String()
@@ -54,27 +55,27 @@ ListItem {
                     }
                 }
                 text: qsTranslate("tremotesf", "Start")
-                onClicked: rpc.startTorrents([torrent.id])
+                onClicked: rpc.startTorrents([torrentId])
             }
             MenuItem {
                 visible: startMenuItem.visible
                 text: qsTranslate("tremotesf", "Start Now")
-                onClicked: rpc.startTorrentsNow([torrent.id])
+                onClicked: rpc.startTorrentsNow([torrentId])
             }
             MenuItem {
                 visible: !startMenuItem.visible
                 text: qsTranslate("tremotesf", "Pause")
-                onClicked: rpc.pauseTorrents([torrent.id])
+                onClicked: rpc.pauseTorrents([torrentId])
             }
             MenuItem {
                 text: qsTranslate("tremotesf", "Remove")
-                onClicked: pageStack.push("RemoveTorrentsDialog.qml", {"ids": [torrent.id]})
+                onClicked: pageStack.push("RemoveTorrentsDialog.qml", {"ids": [torrentId]})
             }
             MenuItem {
                 text: qsTranslate("tremotesf", "Set Location")
                 onClicked: pageStack.push("SetLocationDialog.qml",
                                           {"directory": torrent.downloadDirectory,
-                                           "ids": [torrent.id]})
+                                           "ids": [torrentId]})
             }
             MenuItem {
                 visible: torrentIsLocal
@@ -88,11 +89,11 @@ ListItem {
             }*/
             MenuItem {
                 text: qsTranslate("tremotesf", "Check Local Data")
-                onClicked: rpc.checkTorrents([torrent.id])
+                onClicked: rpc.checkTorrents([torrentId])
             }
             MenuItem {
                 text: qsTranslate("tremotesf", "Reannounce")
-                onClicked: rpc.reannounceTorrents([torrent.id])
+                onClicked: rpc.reannounceTorrents([torrentId])
             }
         }
     }
@@ -113,8 +114,10 @@ ListItem {
         }
     }
 
+    onTorrentIdChanged: torrent = model.torrent
+
     Component.onCompleted: {
-        torrent = torrentsModel.torrentAtIndex(torrentsProxyModel.sourceIndex(model.index))
+        torrent = model.torrent
         selected = selectionModel.isSelected(model.index)
     }
 

@@ -51,7 +51,7 @@ namespace tremotesf
 
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
-        const Torrent* torrent = mTorrents[index.row()].get();
+        Torrent* torrent = mTorrents[index.row()].get();
 
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
@@ -69,6 +69,10 @@ namespace tremotesf
             return torrent->ratio();
         case AddedDateRole:
             return torrent->addedDate();
+        case IdRole:
+            return torrent->id();
+        case TorrentRole:
+            return QVariant::fromValue(torrent);
         }
 #else
         switch (role) {
@@ -348,7 +352,9 @@ namespace tremotesf
                 {PercentDoneRole, "percentDone"},
                 {EtaRole, "eta"},
                 {RatioRole, "ratio"},
-                {AddedDateRole, "addedDate"}};
+                {AddedDateRole, "addedDate"},
+                {IdRole, "id"},
+                {TorrentRole, "torrent"}};
     }
 #endif
 

@@ -47,7 +47,9 @@ namespace tremotesf
             PercentDoneRole,
             EtaRole,
             RatioRole,
-            AddedDateRole
+            AddedDateRole,
+            IdRole,
+            TorrentRole
         };
         Q_ENUMS(Role)
 #else
