@@ -90,7 +90,7 @@ namespace tremotesf
         case PeersRole:
             return tracker.peers();
         case NextUpdateRole:
-            return tracker.nextUpdate();
+            return tracker.nextUpdateEta();
         }
 #else
         if (role == Qt::DisplayRole) {
@@ -102,14 +102,14 @@ namespace tremotesf
             case PeersColumn:
                 return tracker.peers();
             case NextUpdateColumn:
-                if (tracker.nextUpdate() != -1) {
-                    return Utils::formatEta(tracker.nextUpdate());
+                if (tracker.nextUpdateEta() >= 0) {
+                    return Utils::formatEta(tracker.nextUpdateEta());
                 }
                 break;
             }
         } else if (role == SortRole) {
             if (index.column() == NextUpdateColumn) {
-                return tracker.nextUpdate();
+                return tracker.nextUpdateTime();
             }
             return data(index, Qt::DisplayRole);
         }
