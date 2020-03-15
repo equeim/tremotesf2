@@ -27,6 +27,22 @@
 
 namespace libtremotesf
 {
+    namespace
+    {
+        Tracker::Status statusFromInt(int status)
+        {
+            switch (status) {
+            case Tracker::Inactive:
+            case Tracker::Active:
+            case Tracker::Queued:
+            case Tracker::Updating:
+            case Tracker::Error:
+                return static_cast<Tracker::Status>(status);
+            }
+            return Tracker::Inactive;
+        }
+    }
+
     Tracker::Tracker(int id, const QJsonObject& trackerMap)
         : mId(id)
     {
@@ -63,15 +79,23 @@ namespace libtremotesf
         return mPeers;
     }
 
-    int Tracker::nextUpdate() const
+    long long Tracker::nextUpdateTime() const
     {
-        return mNextUpdate;
+        return mNextUpdateTime;
     }
 
-    void Tracker::update(const QJsonObject& trackerMap)
+    int Tracker::nextUpdateEta() const
     {
+        return mNextUpdateEta;
+    }
+
+    bool Tracker::update(const QJsonObject& trackerMap)
+    {
+        bool changed = false;
+
         QString announce(trackerMap.value(QJsonKeyStringInit("announce")).toString());
         if (announce != mAnnounce) {
+            changed = true;
             mAnnounce = std::move(announce);
             const QUrl url(mAnnounce);
             mSite = url.host();
@@ -88,11 +112,11 @@ namespace libtremotesf
                                     trackerMap.value(QJsonKeyStringInit("lastAnnounceTime")).toInt() != 0);
 
         if (scrapeError || announceError) {
-            mStatus = Error;
+            setChanged(mStatus, Error, changed);
             if (scrapeError) {
-                mErrorMessage = trackerMap.value(QJsonKeyStringInit("lastScrapeResult")).toString();
+                setChanged(mErrorMessage, trackerMap.value(QJsonKeyStringInit("lastScrapeResult")).toString(), changed);
             } else {
-                mErrorMessage = trackerMap.value(QJsonKeyStringInit("lastAnnounceResult")).toString();
+                setChanged(mErrorMessage, trackerMap.value(QJsonKeyStringInit("lastAnnounceResult")).toString(), changed);
             }
         } else {
             switch (int status = trackerMap.value(QJsonKeyStringInit("announceState")).toInt()) {
@@ -101,21 +125,32 @@ namespace libtremotesf
             case Queued:
             case Updating:
             case Error:
-                mStatus = static_cast<Status>(status);
+                setChanged(mStatus, statusFromInt(status), changed);
                 break;
             default:
-                mStatus = Error;
+                setChanged(mStatus, Error, changed);
+                break;
+            }
+            if (!mErrorMessage.isEmpty()) {
+                changed = true;
             }
             mErrorMessage.clear();
         }
 
-        mPeers = trackerMap.value(QJsonKeyStringInit("lastAnnouncePeerCount")).toInt();
+        setChanged(mPeers, trackerMap.value(QJsonKeyStringInit("lastAnnouncePeerCount")).toInt(), changed);
 
-        const long long nextUpdate = static_cast<long long>(trackerMap.value(QJsonKeyStringInit("nextAnnounceTime")).toDouble()) - QDateTime::currentMSecsSinceEpoch() / 1000;
-        if (nextUpdate < 0 || nextUpdate > std::numeric_limits<int>::max()) {
-            mNextUpdate = -1;
-        } else {
-            mNextUpdate = nextUpdate;
+        const long long nextUpdateTime = static_cast<long long>(trackerMap.value(QJsonKeyStringInit("nextAnnounceTime")).toDouble());
+        if (nextUpdateTime != mNextUpdateTime) {
+            mNextUpdateTime = nextUpdateTime;
+            changed = true;
         }
+        const long long nextUpdateEta = nextUpdateTime - QDateTime::currentMSecsSinceEpoch() / 1000;
+        if (nextUpdateEta < 0 || nextUpdateEta > std::numeric_limits<int>::max()) {
+            mNextUpdateEta = -1;
+        } else {
+            mNextUpdateEta = static_cast<int>(nextUpdateEta);
+        }
+
+        return changed;
     }
 }

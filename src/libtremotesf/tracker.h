@@ -47,9 +47,10 @@ namespace libtremotesf
         QString errorMessage() const;
 
         int peers() const;
-        int nextUpdate() const;
+        long long nextUpdateTime() const;
+        int nextUpdateEta() const;
 
-        void update(const QJsonObject& trackerMap);
+        bool update(const QJsonObject& trackerMap);
 
         inline bool operator==(const Tracker& other) const
         {
@@ -57,14 +58,18 @@ namespace libtremotesf
         }
 
     private:
-        int mId;
         QString mAnnounce;
         QString mSite;
 
-        Status mStatus = Inactive;
         QString mErrorMessage;
+        Status mStatus = Inactive;
+
+        int mNextUpdateEta = -1;
+        long long mNextUpdateTime = 0;
+
         int mPeers = 0;
-        int mNextUpdate = 0;
+
+        int mId;
     };
 }
 

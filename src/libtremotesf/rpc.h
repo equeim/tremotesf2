@@ -190,6 +190,7 @@ namespace libtremotesf
 
         void getServerSettings();
         void getTorrents();
+        void checkTorrentSingleFile(int torrentId);
         void getServerStats();
 
         void checkIfTorrentsUpdated();

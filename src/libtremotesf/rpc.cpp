@@ -788,13 +788,13 @@ namespace libtremotesf
                                       "            \"honorsSessionLimits\","
                                       "            \"id\","
                                       "            \"leftUntilDone\","
+                                      "            \"metadataPercentComplete\","
                                       "            \"name\","
                                       "            \"peer-limit\","
                                       "            \"peersConnected\","
                                       "            \"peersGettingFromUs\","
                                       "            \"peersSendingToUs\","
                                       "            \"percentDone\","
-                                      "            \"priorities\","
                                       "            \"queuePosition\","
                                       "            \"rateDownload\","
                                       "            \"rateUpload\","
@@ -849,11 +849,15 @@ namespace libtremotesf
                                     std::get<2>(*found) = true;
 
                                     const bool wasFinished = torrent->isFinished();
-                                    torrent->update(std::get<0>(*found));
-                                    if (torrent->isChanged()) {
+                                    const bool metadataWasComplete = torrent->isMetadataComplete();
+                                    if (torrent->update(std::get<0>(*found))) {
                                         changed.push_back(i);
                                         if (!wasFinished && torrent->isFinished()) {
                                             emit torrentFinished(torrent.get());
+                                        }
+                                        if (!metadataWasComplete && torrent->isMetadataComplete()) {
+                                            torrent->startCheckingSingleFile();
+                                            checkTorrentSingleFile(id);
                                         }
                                     }
                                     if (torrent->isFilesEnabled()) {
@@ -886,6 +890,11 @@ namespace libtremotesf
                                     if (isConnected()) {
                                         emit torrentAdded(torrent);
                                     }
+
+                                    if (torrent->isMetadataComplete()) {
+                                        torrent->startCheckingSingleFile();
+                                        checkTorrentSingleFile(id);
+                                    }
                                 }
                             }
                         }
@@ -894,6 +903,31 @@ namespace libtremotesf
 
                         checkIfTorrentsUpdated();
                         startUpdateTimer();
+        });
+    }
+
+    void Rpc::checkTorrentSingleFile(int torrentId)
+    {
+        postRequest(QStringLiteral("{"
+                                   "    \"arguments\": {"
+                                   "        \"fields\": [\"priorities\"],"
+                                   "        \"ids\": [%1]"
+                                   "    },"
+                                   "    \"method\": \"torrent-get\""
+                                   "}")
+                        .arg(torrentId)
+                        .toLatin1(),
+                    [=](const QJsonObject& parseResult) {
+                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
+                                                                .value(torrentsKey)
+                                                                .toArray());
+                        const std::shared_ptr<Torrent> torrent(torrentById(torrentId));
+
+                        if (!torrentsVariants.isEmpty() && torrent) {
+                            torrent->checkSingleFile(torrentsVariants.first().toObject());
+                            checkIfTorrentsUpdated();
+                            startUpdateTimer();
+                        }
                     });
     }
 

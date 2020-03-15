@@ -78,7 +78,7 @@ namespace libtremotesf
         };
         Q_ENUM(IdleSeedingLimitMode)
 
-        void update(const QJsonObject& torrentMap, const Rpc* rpc);
+        bool update(const QJsonObject& torrentMap, const Rpc* rpc);
 
         int id = 0;
         QString hashString;
@@ -92,9 +92,12 @@ namespace libtremotesf
         long long completedSize = 0;
         long long leftUntilDone = 0;
         long long sizeWhenDone = 0;
+
         double percentDone = 0.0;
         double recheckProgress = 0.0;
         int eta = 0;
+
+        bool metadataComplete = false;
 
         long long downloadSpeed = 0;
         long long uploadSpeed = 0;
@@ -129,11 +132,10 @@ namespace libtremotesf
         long long creationDateTime = -1;
         Priority bandwidthPriority = NormalPriority;
         bool honorSessionLimits = false;
-        bool singleFile = false;
+
+        bool singleFile = true;
 
         bool trackersAddedOrRemoved = false;
-
-        bool changed;
 
         std::vector<Tracker> trackers;
     };
@@ -144,52 +146,52 @@ namespace libtremotesf
 
         Q_PROPERTY(int id READ id CONSTANT)
         Q_PROPERTY(QString hashString READ hashString CONSTANT)
-        Q_PROPERTY(QString name READ name NOTIFY updated)
+        Q_PROPERTY(QString name READ name NOTIFY changed)
 
-        Q_PROPERTY(libtremotesf::TorrentData::Status status READ status NOTIFY updated)
-        Q_PROPERTY(QString errorString READ errorString NOTIFY updated)
-        Q_PROPERTY(int queuePosition READ queuePosition NOTIFY updated)
+        Q_PROPERTY(libtremotesf::TorrentData::Status status READ status NOTIFY changed)
+        Q_PROPERTY(QString errorString READ errorString NOTIFY changed)
+        Q_PROPERTY(int queuePosition READ queuePosition NOTIFY changed)
 
-        Q_PROPERTY(long long totalSize READ totalSize NOTIFY updated)
-        Q_PROPERTY(long long completedSize READ completedSize NOTIFY updated)
-        Q_PROPERTY(long long leftUntilDone READ leftUntilDone NOTIFY updated)
-        Q_PROPERTY(long long sizeWhenDone READ sizeWhenDone NOTIFY updated)
-        Q_PROPERTY(double percentDone READ percentDone NOTIFY updated)
-        Q_PROPERTY(bool finished READ isFinished NOTIFY updated)
-        Q_PROPERTY(double recheckProgress READ recheckProgress NOTIFY updated)
-        Q_PROPERTY(int eta READ eta NOTIFY updated)
+        Q_PROPERTY(long long totalSize READ totalSize NOTIFY changed)
+        Q_PROPERTY(long long completedSize READ completedSize NOTIFY changed)
+        Q_PROPERTY(long long leftUntilDone READ leftUntilDone NOTIFY changed)
+        Q_PROPERTY(long long sizeWhenDone READ sizeWhenDone NOTIFY changed)
+        Q_PROPERTY(double percentDone READ percentDone NOTIFY changed)
+        Q_PROPERTY(bool finished READ isFinished NOTIFY changed)
+        Q_PROPERTY(double recheckProgress READ recheckProgress NOTIFY changed)
+        Q_PROPERTY(int eta READ eta NOTIFY changed)
 
-        Q_PROPERTY(long long downloadSpeed READ downloadSpeed NOTIFY updated)
-        Q_PROPERTY(long long uploadSpeed READ uploadSpeed NOTIFY updated)
+        Q_PROPERTY(long long downloadSpeed READ downloadSpeed NOTIFY changed)
+        Q_PROPERTY(long long uploadSpeed READ uploadSpeed NOTIFY changed)
 
         Q_PROPERTY(bool downloadSpeedLimited READ isDownloadSpeedLimited WRITE setDownloadSpeedLimited)
         Q_PROPERTY(int downloadSpeedLimit READ downloadSpeedLimit WRITE setDownloadSpeedLimit)
         Q_PROPERTY(bool uploadSpeedLimited READ isUploadSpeedLimited WRITE setUploadSpeedLimited)
         Q_PROPERTY(int uploadSpeedLimit READ uploadSpeedLimit WRITE setUploadSpeedLimit)
 
-        Q_PROPERTY(long long totalDownloaded READ totalDownloaded NOTIFY updated)
-        Q_PROPERTY(long long totalUploaded READ totalUploaded NOTIFY updated)
-        Q_PROPERTY(double ratio READ ratio NOTIFY updated)
-        Q_PROPERTY(libtremotesf::TorrentData::RatioLimitMode ratioLimitMode READ ratioLimitMode WRITE setRatioLimitMode NOTIFY updated)
-        Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY updated)
+        Q_PROPERTY(long long totalDownloaded READ totalDownloaded NOTIFY changed)
+        Q_PROPERTY(long long totalUploaded READ totalUploaded NOTIFY changed)
+        Q_PROPERTY(double ratio READ ratio NOTIFY changed)
+        Q_PROPERTY(libtremotesf::TorrentData::RatioLimitMode ratioLimitMode READ ratioLimitMode WRITE setRatioLimitMode NOTIFY changed)
+        Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY changed)
 
-        Q_PROPERTY(int seeders READ seeders NOTIFY updated)
-        Q_PROPERTY(int leechers READ leechers NOTIFY updated)
-        Q_PROPERTY(int peersLimit READ peersLimit WRITE setPeersLimit NOTIFY updated)
+        Q_PROPERTY(int seeders READ seeders NOTIFY changed)
+        Q_PROPERTY(int leechers READ leechers NOTIFY changed)
+        Q_PROPERTY(int peersLimit READ peersLimit WRITE setPeersLimit NOTIFY changed)
 
         Q_PROPERTY(QDateTime addedDate READ addedDate CONSTANT)
-        Q_PROPERTY(QDateTime activityDate READ activityDate NOTIFY updated)
-        Q_PROPERTY(QDateTime doneDate READ doneDate NOTIFY updated)
+        Q_PROPERTY(QDateTime activityDate READ activityDate NOTIFY changed)
+        Q_PROPERTY(QDateTime doneDate READ doneDate NOTIFY changed)
 
         Q_PROPERTY(bool honorSessionLimits READ honorSessionLimits WRITE setHonorSessionLimits)
         Q_PROPERTY(libtremotesf::TorrentData::Priority bandwidthPriority READ bandwidthPriority WRITE setBandwidthPriority)
         Q_PROPERTY(libtremotesf::TorrentData::IdleSeedingLimitMode idleSeedingLimitMode READ idleSeedingLimitMode WRITE setIdleSeedingLimitMode)
         Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit)
-        Q_PROPERTY(QString downloadDirectory READ downloadDirectory NOTIFY updated)
-        Q_PROPERTY(bool singleFile READ isSingleFile NOTIFY updated)
-        Q_PROPERTY(QString creator READ creator NOTIFY updated)
-        Q_PROPERTY(QDateTime creationDate READ creationDate NOTIFY updated)
-        Q_PROPERTY(QString comment READ comment NOTIFY updated)
+        Q_PROPERTY(QString downloadDirectory READ downloadDirectory NOTIFY changed)
+        Q_PROPERTY(bool singleFile READ isSingleFile NOTIFY changed)
+        Q_PROPERTY(QString creator READ creator NOTIFY changed)
+        Q_PROPERTY(QDateTime creationDate READ creationDate NOTIFY changed)
+        Q_PROPERTY(QString comment READ comment NOTIFY changed)
 
     public:
         using Status = TorrentData::Status;
@@ -217,6 +219,8 @@ namespace libtremotesf
         bool isFinished() const;
         double recheckProgress() const;
         int eta() const;
+
+        bool isMetadataComplete() const;
 
         long long downloadSpeed() const;
         long long uploadSpeed() const;
@@ -268,8 +272,6 @@ namespace libtremotesf
         Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
         Q_INVOKABLE void removeTrackers(const QVariantList& ids);
 
-        bool isChanged() const;
-
         const TorrentData& data() const;
 
         bool isFilesEnabled() const;
@@ -286,9 +288,12 @@ namespace libtremotesf
 
         bool isUpdated() const;
 
-        void update(const QJsonObject& torrentMap);
+        bool update(const QJsonObject& torrentMap);
         void updateFiles(const QJsonObject& torrentMap);
         void updatePeers(const QJsonObject& torrentMap);
+
+        void startCheckingSingleFile();
+        void checkSingleFile(const QJsonObject& torrentMap);
     private:
         Rpc* mRpc;
 
@@ -302,8 +307,12 @@ namespace libtremotesf
         bool mPeersEnabled = false;
         bool mPeersUpdated = false;
 
+        bool mCheckingSingleFile = false;
+
     signals:
         void updated();
+        void changed();
+
         void filesUpdated(const std::vector<int>& changed);
         void peersUpdated(const std::vector<int>& removed, const std::vector<int>& changed, int added);
         void fileRenamed(const QString& filePath, const QString& newName);
