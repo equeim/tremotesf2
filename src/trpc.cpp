@@ -30,7 +30,7 @@
 namespace tremotesf
 {
     Rpc::Rpc(QObject* parent)
-        : libtremotesf::Rpc(true, parent),
+        : libtremotesf::Rpc(parent),
           mIncompleteDirectoryMounted(false)
     {
         QObject::connect(this, &Rpc::statusChanged, this, &Rpc::statusStringChanged);

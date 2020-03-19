@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Tremotesf
  * Copyright (C) 2015-2018 Alexey Rochev <equeim@gmail.com>
  *
@@ -28,55 +28,9 @@ namespace libtremotesf
 {
     class Rpc;
 
-    class ServerSettings : public QObject
+    struct ServerSettingsData
     {
-        Q_OBJECT
-
-        Q_PROPERTY(bool canRenameFiles READ canRenameFiles)
-        Q_PROPERTY(bool canShowFreeSpaceForPath READ canShowFreeSpaceForPath)
-
-        Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory)
-        Q_PROPERTY(bool startAddedTorrents READ startAddedTorrents WRITE setStartAddedTorrents)
-        Q_PROPERTY(bool trashTorrentFiles READ trashTorrentFiles WRITE setTrashTorrentFiles)
-        Q_PROPERTY(bool renameIncompleteFiles READ renameIncompleteFiles WRITE setRenameIncompleteFiles)
-        Q_PROPERTY(bool incompleteDirectoryEnabled READ isIncompleteDirectoryEnabled WRITE setIncompleteDirectoryEnabled)
-        Q_PROPERTY(QString incompleteDirectory READ incompleteDirectory WRITE setIncompleteDirectory)
-
-        Q_PROPERTY(bool ratioLimited READ isRatioLimited WRITE setRatioLimited)
-        Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit)
-        Q_PROPERTY(bool idleSeedingLimited READ isIdleSeedingLimited WRITE setIdleSeedingLimited)
-        Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit)
-
-        Q_PROPERTY(bool downloadQueueEnabled READ isDownloadQueueEnabled WRITE setDownloadQueueEnabled)
-        Q_PROPERTY(int downloadQueueSize READ downloadQueueSize WRITE setDownloadQueueSize)
-        Q_PROPERTY(bool seedQueueEnabled READ isSeedQueueEnabled WRITE setSeedQueueEnabled)
-        Q_PROPERTY(int seedQueueSize READ seedQueueSize WRITE setSeedQueueSize)
-        Q_PROPERTY(bool idleQueueLimited READ isIdleQueueLimited WRITE setIdleQueueLimited)
-        Q_PROPERTY(int idleQueueLimit READ idleQueueLimit WRITE setIdleQueueLimit)
-
-        Q_PROPERTY(bool downloadSpeedLimited READ isDownloadSpeedLimited WRITE setDownloadSpeedLimited)
-        Q_PROPERTY(int downloadSpeedLimit READ downloadSpeedLimit WRITE setDownloadSpeedLimit)
-        Q_PROPERTY(bool uploadSpeedLimited READ isUploadSpeedLimited WRITE setUploadSpeedLimited)
-        Q_PROPERTY(int uploadSpeedLimit READ uploadSpeedLimit WRITE setUploadSpeedLimit)
-        Q_PROPERTY(bool alternativeSpeedLimitsEnabled READ isAlternativeSpeedLimitsEnabled WRITE setAlternativeSpeedLimitsEnabled)
-        Q_PROPERTY(int alternativeDownloadSpeedLimit READ alternativeDownloadSpeedLimit WRITE setAlternativeDownloadSpeedLimit)
-        Q_PROPERTY(int alternativeUploadSpeedLimit READ alternativeUploadSpeedLimit WRITE setAlternativeUploadSpeedLimit)
-        Q_PROPERTY(bool alternativeSpeedLimitsScheduled READ isAlternativeSpeedLimitsScheduled WRITE setAlternativeSpeedLimitsScheduled)
-        Q_PROPERTY(QTime alternativeSpeedLimitsBeginTime READ alternativeSpeedLimitsBeginTime WRITE setAlternativeSpeedLimitsBeginTime)
-        Q_PROPERTY(QTime alternativeSpeedLimitsEndTime READ alternativeSpeedLimitsEndTime WRITE setAlternativeSpeedLimitsEndTime)
-        Q_PROPERTY(AlternativeSpeedLimitsDays alternativeSpeedLimitsDays READ alternativeSpeedLimitsDays WRITE setAlternativeSpeedLimitsDays)
-
-        Q_PROPERTY(int peerPort READ peerPort WRITE setPeerPort)
-        Q_PROPERTY(bool randomPortEnabled READ isRandomPortEnabled WRITE setRandomPortEnabled)
-        Q_PROPERTY(bool portForwardingEnabled READ isPortForwardingEnabled WRITE setPortForwardingEnabled)
-        Q_PROPERTY(EncryptionMode encryptionMode READ encryptionMode WRITE setEncryptionMode)
-        Q_PROPERTY(bool utpEnabled READ isUtpEnabled WRITE setUtpEnabled)
-        Q_PROPERTY(bool pexEnabled READ isPexEnabled WRITE setPexEnabled)
-        Q_PROPERTY(bool dhtEnabled READ isDhtEnabled WRITE setDhtEnabled)
-        Q_PROPERTY(bool lpdEnabled READ isLpdEnabled WRITE setLpdEnabled)
-        Q_PROPERTY(int maximumPeerPerTorrent READ maximumPeersPerTorrent WRITE setMaximumPeersPerTorrent)
-        Q_PROPERTY(int maximumPeersGlobally READ maximumPeersGlobally WRITE setMaximumPeersGlobally)
-
+        Q_GADGET
     public:
         enum AlternativeSpeedLimitsDays
         {
@@ -101,6 +55,105 @@ namespace libtremotesf
         };
         Q_ENUM(EncryptionMode)
 
+        bool canRenameFiles() const;
+        bool canShowFreeSpaceForPath() const;
+
+        int rpcVersion = 0;
+        int minimumRpcVersion = 0;
+
+        QString downloadDirectory;
+        bool startAddedTorrents = false;
+        bool trashTorrentFiles = false;
+        bool renameIncompleteFiles = false;
+        bool incompleteDirectoryEnabled = false;
+        QString incompleteDirectory;
+
+        bool ratioLimited = false;
+        double ratioLimit = 0.0;
+        bool idleSeedingLimited = false;
+        int idleSeedingLimit = 0;
+
+        bool downloadQueueEnabled = false;
+        int downloadQueueSize = 0;
+        bool seedQueueEnabled = false;
+        int seedQueueSize = 0;
+        bool idleQueueLimited = false;
+        int idleQueueLimit = 0;
+
+        bool downloadSpeedLimited = false;
+        int downloadSpeedLimit = 0;
+        bool uploadSpeedLimited = false;
+        int uploadSpeedLimit = 0;
+        bool alternativeSpeedLimitsEnabled = false;
+        int alternativeDownloadSpeedLimit = 0;
+        int alternativeUploadSpeedLimit = 0;
+        bool alternativeSpeedLimitsScheduled = false;
+        QTime alternativeSpeedLimitsBeginTime;
+        QTime alternativeSpeedLimitsEndTime;
+        AlternativeSpeedLimitsDays alternativeSpeedLimitsDays = All;
+
+        int peerPort = 0;
+        bool randomPortEnabled = false;
+        bool portForwardingEnabled = false;
+        EncryptionMode encryptionMode = PreferredEncryption;
+        bool utpEnabled = false;
+        bool pexEnabled = false;
+        bool dhtEnabled = false;
+        bool lpdEnabled = false;
+        int maximumPeersPerTorrent = 0;
+        int maximumPeersGlobally = 0;
+    };
+
+    class ServerSettings : public QObject
+    {
+        Q_OBJECT
+
+        Q_PROPERTY(bool canRenameFiles READ canRenameFiles NOTIFY changed)
+        Q_PROPERTY(bool canShowFreeSpaceForPath READ canShowFreeSpaceForPath NOTIFY changed)
+
+        Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory NOTIFY changed)
+        Q_PROPERTY(bool startAddedTorrents READ startAddedTorrents WRITE setStartAddedTorrents NOTIFY changed)
+        Q_PROPERTY(bool trashTorrentFiles READ trashTorrentFiles WRITE setTrashTorrentFiles NOTIFY changed)
+        Q_PROPERTY(bool renameIncompleteFiles READ renameIncompleteFiles WRITE setRenameIncompleteFiles NOTIFY changed)
+        Q_PROPERTY(bool incompleteDirectoryEnabled READ isIncompleteDirectoryEnabled WRITE setIncompleteDirectoryEnabled NOTIFY changed)
+        Q_PROPERTY(QString incompleteDirectory READ incompleteDirectory WRITE setIncompleteDirectory NOTIFY changed)
+
+        Q_PROPERTY(bool ratioLimited READ isRatioLimited WRITE setRatioLimited NOTIFY changed)
+        Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY changed)
+        Q_PROPERTY(bool idleSeedingLimited READ isIdleSeedingLimited WRITE setIdleSeedingLimited NOTIFY changed)
+        Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit NOTIFY changed)
+
+        Q_PROPERTY(bool downloadQueueEnabled READ isDownloadQueueEnabled WRITE setDownloadQueueEnabled NOTIFY changed)
+        Q_PROPERTY(int downloadQueueSize READ downloadQueueSize WRITE setDownloadQueueSize NOTIFY changed)
+        Q_PROPERTY(bool seedQueueEnabled READ isSeedQueueEnabled WRITE setSeedQueueEnabled NOTIFY changed)
+        Q_PROPERTY(int seedQueueSize READ seedQueueSize WRITE setSeedQueueSize NOTIFY changed)
+        Q_PROPERTY(bool idleQueueLimited READ isIdleQueueLimited WRITE setIdleQueueLimited NOTIFY changed)
+        Q_PROPERTY(int idleQueueLimit READ idleQueueLimit WRITE setIdleQueueLimit NOTIFY changed)
+
+        Q_PROPERTY(bool downloadSpeedLimited READ isDownloadSpeedLimited WRITE setDownloadSpeedLimited NOTIFY changed)
+        Q_PROPERTY(int downloadSpeedLimit READ downloadSpeedLimit WRITE setDownloadSpeedLimit NOTIFY changed)
+        Q_PROPERTY(bool uploadSpeedLimited READ isUploadSpeedLimited WRITE setUploadSpeedLimited NOTIFY changed)
+        Q_PROPERTY(int uploadSpeedLimit READ uploadSpeedLimit WRITE setUploadSpeedLimit NOTIFY changed)
+        Q_PROPERTY(bool alternativeSpeedLimitsEnabled READ isAlternativeSpeedLimitsEnabled WRITE setAlternativeSpeedLimitsEnabled NOTIFY changed)
+        Q_PROPERTY(int alternativeDownloadSpeedLimit READ alternativeDownloadSpeedLimit WRITE setAlternativeDownloadSpeedLimit NOTIFY changed)
+        Q_PROPERTY(int alternativeUploadSpeedLimit READ alternativeUploadSpeedLimit WRITE setAlternativeUploadSpeedLimit NOTIFY changed)
+        Q_PROPERTY(bool alternativeSpeedLimitsScheduled READ isAlternativeSpeedLimitsScheduled WRITE setAlternativeSpeedLimitsScheduled NOTIFY changed)
+        Q_PROPERTY(QTime alternativeSpeedLimitsBeginTime READ alternativeSpeedLimitsBeginTime WRITE setAlternativeSpeedLimitsBeginTime NOTIFY changed)
+        Q_PROPERTY(QTime alternativeSpeedLimitsEndTime READ alternativeSpeedLimitsEndTime WRITE setAlternativeSpeedLimitsEndTime NOTIFY changed)
+        Q_PROPERTY(libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays alternativeSpeedLimitsDays READ alternativeSpeedLimitsDays WRITE setAlternativeSpeedLimitsDays NOTIFY changed)
+
+        Q_PROPERTY(int peerPort READ peerPort WRITE setPeerPort NOTIFY changed)
+        Q_PROPERTY(bool randomPortEnabled READ isRandomPortEnabled WRITE setRandomPortEnabled NOTIFY changed)
+        Q_PROPERTY(bool portForwardingEnabled READ isPortForwardingEnabled WRITE setPortForwardingEnabled NOTIFY changed)
+        Q_PROPERTY(libtremotesf::ServerSettingsData::EncryptionMode encryptionMode READ encryptionMode WRITE setEncryptionMode NOTIFY changed)
+        Q_PROPERTY(bool utpEnabled READ isUtpEnabled WRITE setUtpEnabled NOTIFY changed)
+        Q_PROPERTY(bool pexEnabled READ isPexEnabled WRITE setPexEnabled NOTIFY changed)
+        Q_PROPERTY(bool dhtEnabled READ isDhtEnabled WRITE setDhtEnabled NOTIFY changed)
+        Q_PROPERTY(bool lpdEnabled READ isLpdEnabled WRITE setLpdEnabled NOTIFY changed)
+        Q_PROPERTY(int maximumPeerPerTorrent READ maximumPeersPerTorrent WRITE setMaximumPeersPerTorrent NOTIFY changed)
+        Q_PROPERTY(int maximumPeersGlobally READ maximumPeersGlobally WRITE setMaximumPeersGlobally NOTIFY changed)
+
+    public:
         explicit ServerSettings(Rpc* rpc = nullptr, QObject* parent = nullptr);
 
         int rpcVersion() const;
@@ -164,8 +217,8 @@ namespace libtremotesf
         Q_INVOKABLE void setAlternativeSpeedLimitsBeginTime(QTime time);
         QTime alternativeSpeedLimitsEndTime() const;
         Q_INVOKABLE void setAlternativeSpeedLimitsEndTime(QTime time);
-        AlternativeSpeedLimitsDays alternativeSpeedLimitsDays() const;
-        Q_INVOKABLE void setAlternativeSpeedLimitsDays(libtremotesf::ServerSettings::AlternativeSpeedLimitsDays days);
+        ServerSettingsData::AlternativeSpeedLimitsDays alternativeSpeedLimitsDays() const;
+        Q_INVOKABLE void setAlternativeSpeedLimitsDays(libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays days);
 
         int peerPort() const;
         Q_INVOKABLE void setPeerPort(int port);
@@ -173,8 +226,8 @@ namespace libtremotesf
         Q_INVOKABLE void setRandomPortEnabled(bool enabled);
         bool isPortForwardingEnabled() const;
         Q_INVOKABLE void setPortForwardingEnabled(bool enabled);
-        EncryptionMode encryptionMode() const;
-        Q_INVOKABLE void setEncryptionMode(libtremotesf::ServerSettings::EncryptionMode mode);
+        ServerSettingsData::EncryptionMode encryptionMode() const;
+        Q_INVOKABLE void setEncryptionMode(libtremotesf::ServerSettingsData::EncryptionMode mode);
         bool isUtpEnabled() const;
         Q_INVOKABLE void setUtpEnabled(bool enabled);
         bool isPexEnabled() const;
@@ -197,57 +250,15 @@ namespace libtremotesf
         void update(const QJsonObject& serverSettings);
         void save() const;
 
+        const ServerSettingsData& data() const;
     private:
         Rpc* mRpc;
-
-        int mRpcVersion = 0;
-        int mMinimumRpcVersion = 0;
-
+        ServerSettingsData mData;
         bool mUsingDecimalUnits = false;
-
-        QString mDownloadDirectory;
-        bool mStartAddedTorrents = false;
-        bool mTrashTorrentFiles = false;
-        bool mRenameIncompleteFiles = false;
-        bool mIncompleteDirectoryEnabled = false;
-        QString mIncompleteDirectory;
-
-        bool mRatioLimited = false;
-        double mRatioLimit = 0.0;
-        bool mIdleSeedingLimited = false;
-        int mIdleSeedingLimit = 0;
-
-        bool mDownloadQueueEnabled = false;
-        int mDownloadQueueSize = 0;
-        bool mSeedQueueEnabled = false;
-        int mSeedQueueSize = 0;
-        bool mIdleQueueLimited = false;
-        int mIdleQueueLimit = 0;
-
-        bool mDownloadSpeedLimited = false;
-        int mDownloadSpeedLimit = 0;
-        bool mUploadSpeedLimited = false;
-        int mUploadSpeedLimit = 0;
-        bool mAlternativeSpeedLimitsEnabled = false;
-        int mAlternativeDownloadSpeedLimit = 0;
-        int mAlternativeUploadSpeedLimit = 0;
-        bool mAlternativeSpeedLimitsScheduled = false;
-        QTime mAlternativeSpeedLimitsBeginTime;
-        QTime mAlternativeSpeedLimitsEndTime;
-        AlternativeSpeedLimitsDays mAlternativeSpeedLimitsDays = All;
-
-        int mPeerPort = 0;
-        bool mRandomPortEnabled = false;
-        bool mPortForwardingEnabled = false;
-        EncryptionMode mEncryptionMode = PreferredEncryption;
-        bool mUtpEnabled = false;
-        bool mPexEnabled = false;
-        bool mDhtEnabled = false;
-        bool mLpdEnabled = false;
-        int mMaximumPeersPerTorrent = 0;
-        int mMaximumPeersGlobally = 0;
-
         bool mSaveOnSet;
+
+    signals:
+        void changed();
     };
 }
 

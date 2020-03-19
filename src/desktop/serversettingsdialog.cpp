@@ -52,10 +52,10 @@ namespace tremotesf
 {
     namespace
     {
-        const libtremotesf::ServerSettings::EncryptionMode encryptionModeComboBoxItems[] = {
-            libtremotesf::ServerSettings::AllowedEncryption,
-            libtremotesf::ServerSettings::PreferredEncryption,
-            libtremotesf::ServerSettings::RequiredEncryption
+        const libtremotesf::ServerSettingsData::EncryptionMode encryptionModeComboBoxItems[] = {
+            libtremotesf::ServerSettingsData::AllowedEncryption,
+            libtremotesf::ServerSettingsData::PreferredEncryption,
+            libtremotesf::ServerSettingsData::RequiredEncryption
         };
     }
 
@@ -132,7 +132,7 @@ namespace tremotesf
         settings->setAlternativeSpeedLimitsBeginTime(mLimitScheduleBeginTimeEdit->time());
         settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time());
 
-        settings->setAlternativeSpeedLimitsDays(static_cast<libtremotesf::ServerSettings::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt()));
+        settings->setAlternativeSpeedLimitsDays(static_cast<libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt()));
 
         settings->setPeerPort(mPeerPortSpinBox->value());
         settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
@@ -342,12 +342,12 @@ namespace tremotesf
         mLimitScheduleEndTimeEdit = new QTimeEdit(this);
         scheduleTimeLayout->addWidget(mLimitScheduleEndTimeEdit, 1);
 
-        using libtremotesf::ServerSettings;
+        using libtremotesf::ServerSettingsData;
 
         mLimitScheduleDaysComboBox = new QComboBox(this);
-        mLimitScheduleDaysComboBox->addItem(qApp->translate("tremotesf", "Every day"), ServerSettings::All);
-        mLimitScheduleDaysComboBox->addItem(qApp->translate("tremotesf", "Weekdays"), ServerSettings::Weekdays);
-        mLimitScheduleDaysComboBox->addItem(qApp->translate("tremotesf", "Weekends"), ServerSettings::Weekends);
+        mLimitScheduleDaysComboBox->addItem(qApp->translate("tremotesf", "Every day"), ServerSettingsData::All);
+        mLimitScheduleDaysComboBox->addItem(qApp->translate("tremotesf", "Weekdays"), ServerSettingsData::Weekdays);
+        mLimitScheduleDaysComboBox->addItem(qApp->translate("tremotesf", "Weekends"), ServerSettingsData::Weekends);
         mLimitScheduleDaysComboBox->insertSeparator(mLimitScheduleDaysComboBox->count());
         {
             auto nextDay = [](Qt::DayOfWeek day) {
@@ -360,21 +360,21 @@ namespace tremotesf
             auto daysFromQtDay = [](Qt::DayOfWeek day) {
                 switch (day) {
                 case Qt::Monday:
-                    return ServerSettings::Monday;
+                    return ServerSettingsData::Monday;
                 case Qt::Tuesday:
-                    return ServerSettings::Tuesday;
+                    return ServerSettingsData::Tuesday;
                 case Qt::Wednesday:
-                    return ServerSettings::Wednesday;
+                    return ServerSettingsData::Wednesday;
                 case Qt::Thursday:
-                    return ServerSettings::Thursday;
+                    return ServerSettingsData::Thursday;
                 case Qt::Friday:
-                    return ServerSettings::Friday;
+                    return ServerSettingsData::Friday;
                 case Qt::Saturday:
-                    return ServerSettings::Saturday;
+                    return ServerSettingsData::Saturday;
                 case Qt::Sunday:
-                    return ServerSettings::Sunday;
+                    return ServerSettingsData::Sunday;
                 }
-                return ServerSettings::All;
+                return ServerSettingsData::All;
             };
 
             const QLocale locale;
@@ -421,17 +421,17 @@ namespace tremotesf
         connectionGroupBoxLayout->addRow(mPortForwardingCheckBox);
 
         mEncryptionComboBox = new QComboBox();
-        for (ServerSettings::EncryptionMode mode : encryptionModeComboBoxItems) {
+        for (ServerSettingsData::EncryptionMode mode : encryptionModeComboBoxItems) {
             switch (mode) {
-            case ServerSettings::AllowedEncryption:
+            case ServerSettingsData::AllowedEncryption:
                 //: Encryption mode
                 mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Allow"));
                 break;
-            case ServerSettings::PreferredEncryption:
+            case ServerSettingsData::PreferredEncryption:
                 //: Encryption mode
                 mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Prefer"));
                 break;
-            case ServerSettings::RequiredEncryption:
+            case ServerSettingsData::RequiredEncryption:
                 //: Encryption mode
                 mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Require"));
                 break;
@@ -520,7 +520,7 @@ namespace tremotesf
         mLimitScheduleBeginTimeEdit->setTime(settings->alternativeSpeedLimitsBeginTime());
         mLimitScheduleEndTimeEdit->setTime(settings->alternativeSpeedLimitsEndTime());
 
-        const libtremotesf::ServerSettings::AlternativeSpeedLimitsDays days = settings->alternativeSpeedLimitsDays();
+        const libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays days = settings->alternativeSpeedLimitsDays();
         for (int i = 0, max = mLimitScheduleDaysComboBox->count(); i < max; i++) {
             if (mLimitScheduleDaysComboBox->itemData(i).toInt() == days) {
                 mLimitScheduleDaysComboBox->setCurrentIndex(i);

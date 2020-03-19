@@ -112,10 +112,9 @@ namespace libtremotesf
         };
         Q_ENUM(Error)
 
-        explicit Rpc(bool createServerSettings = true, QObject* parent = nullptr);
+        explicit Rpc(QObject* parent = nullptr);
 
         ServerSettings* serverSettings() const;
-        void setServerSettings(ServerSettings* settings);
         ServerStats* serverStats() const;
 
         const std::vector<std::shared_ptr<Torrent>>& torrents() const;

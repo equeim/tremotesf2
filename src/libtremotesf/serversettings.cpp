@@ -58,6 +58,24 @@ namespace libtremotesf
         const auto alternativeSpeedLimitsEndTimeKey(QJsonKeyStringInit("alt-speed-time-end"));
         const auto alternativeSpeedLimitsDaysKey(QJsonKeyStringInit("alt-speed-time-day"));
 
+        inline ServerSettingsData::AlternativeSpeedLimitsDays daysFromInt(int days)
+        {
+            switch (days) {
+            case ServerSettingsData::Sunday:
+            case ServerSettingsData::Monday:
+            case ServerSettingsData::Tuesday:
+            case ServerSettingsData::Wednesday:
+            case ServerSettingsData::Thursday:
+            case ServerSettingsData::Friday:
+            case ServerSettingsData::Saturday:
+            case ServerSettingsData::Weekdays:
+            case ServerSettingsData::Weekends:
+            case ServerSettingsData::All:
+                return static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(days);
+            }
+            return ServerSettingsData::All;
+        }
+
         const auto peerPortKey(QJsonKeyStringInit("peer-port"));
         const auto randomPortEnabledKey(QJsonKeyStringInit("peer-port-random-on-start"));
         const auto portForwardingEnabledKey(QJsonKeyStringInit("port-forwarding-enabled"));
@@ -67,14 +85,14 @@ namespace libtremotesf
         const QLatin1String encryptionModePreferred("preferred");
         const QLatin1String encryptionModeRequired("required");
 
-        inline QString encryptionModeString(ServerSettings::EncryptionMode mode)
+        inline QString encryptionModeString(ServerSettingsData::EncryptionMode mode)
         {
             switch (mode) {
-            case ServerSettings::AllowedEncryption:
+            case ServerSettingsData::AllowedEncryption:
                 return encryptionModeAllowed;
-            case ServerSettings::PreferredEncryption:
+            case ServerSettingsData::PreferredEncryption:
                 return encryptionModePreferred;
-            case ServerSettings::RequiredEncryption:
+            case ServerSettingsData::RequiredEncryption:
                 return encryptionModeRequired;
             }
             return QString();
@@ -88,6 +106,16 @@ namespace libtremotesf
         const auto maximumPeersGloballyKey(QJsonKeyStringInit("peer-limit-global"));
     }
 
+    bool ServerSettingsData::canRenameFiles() const
+    {
+        return (rpcVersion >= 15);
+    }
+
+    bool ServerSettingsData::canShowFreeSpaceForPath() const
+    {
+        return (rpcVersion >= 15);
+    }
+
     ServerSettings::ServerSettings(Rpc* rpc, QObject* parent)
         : QObject(parent),
           mRpc(rpc),
@@ -98,428 +126,428 @@ namespace libtremotesf
 
     int ServerSettings::rpcVersion() const
     {
-        return mRpcVersion;
+        return mData.rpcVersion;
     }
 
     int ServerSettings::minimumRpcVersion() const
     {
-        return mMinimumRpcVersion;
+        return mData.minimumRpcVersion;
     }
 
     bool ServerSettings::canRenameFiles() const
     {
-        return (mRpcVersion >= 15);
+        return mData.canRenameFiles();
     }
 
     bool ServerSettings::canShowFreeSpaceForPath() const
     {
-        return (mRpcVersion >= 15);
+        return mData.canShowFreeSpaceForPath();
     }
 
     const QString& ServerSettings::downloadDirectory() const
     {
-        return mDownloadDirectory;
+        return mData.downloadDirectory;
     }
 
     void ServerSettings::setDownloadDirectory(const QString& directory)
     {
-        if (directory != mDownloadDirectory) {
-            mDownloadDirectory = directory;
+        if (directory != mData.downloadDirectory) {
+            mData.downloadDirectory = directory;
             if (mSaveOnSet) {
-                mRpc->setSessionProperty(downloadDirectoryKey, mDownloadDirectory);
+                mRpc->setSessionProperty(downloadDirectoryKey, mData.downloadDirectory);
             }
         }
     }
 
     bool ServerSettings::startAddedTorrents() const
     {
-        return mStartAddedTorrents;
+        return mData.startAddedTorrents;
     }
 
     void ServerSettings::setStartAddedTorrents(bool start)
     {
-        mStartAddedTorrents = start;
+        mData.startAddedTorrents = start;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(startAddedTorrentsKey, mStartAddedTorrents);
+            mRpc->setSessionProperty(startAddedTorrentsKey, mData.startAddedTorrents);
         }
     }
 
     bool ServerSettings::trashTorrentFiles() const
     {
-        return mTrashTorrentFiles;
+        return mData.trashTorrentFiles;
     }
 
     void ServerSettings::setTrashTorrentFiles(bool trash)
     {
-        mTrashTorrentFiles = trash;
+        mData.trashTorrentFiles = trash;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(trashTorrentFilesKey, mTrashTorrentFiles);
+            mRpc->setSessionProperty(trashTorrentFilesKey, mData.trashTorrentFiles);
         }
     }
 
     bool ServerSettings::renameIncompleteFiles() const
     {
-        return mRenameIncompleteFiles;
+        return mData.renameIncompleteFiles;
     }
 
     void ServerSettings::setRenameIncompleteFiles(bool rename)
     {
-        mRenameIncompleteFiles = rename;
+        mData.renameIncompleteFiles = rename;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(renameIncompleteFilesKey, mRenameIncompleteFiles);
+            mRpc->setSessionProperty(renameIncompleteFilesKey, mData.renameIncompleteFiles);
         }
     }
 
     bool ServerSettings::isIncompleteDirectoryEnabled() const
     {
-        return mIncompleteDirectoryEnabled;
+        return mData.incompleteDirectoryEnabled;
     }
 
     void ServerSettings::setIncompleteDirectoryEnabled(bool enabled)
     {
-        mIncompleteDirectoryEnabled = enabled;
+        mData.incompleteDirectoryEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(incompleteDirectoryEnabledKey, mIncompleteDirectoryEnabled);
+            mRpc->setSessionProperty(incompleteDirectoryEnabledKey, mData.incompleteDirectoryEnabled);
         }
     }
 
     const QString& ServerSettings::incompleteDirectory() const
     {
-        return mIncompleteDirectory;
+        return mData.incompleteDirectory;
     }
 
     void ServerSettings::setIncompleteDirectory(const QString& directory)
     {
-        if (directory != mIncompleteDirectory) {
-            mIncompleteDirectory = directory;
+        if (directory != mData.incompleteDirectory) {
+            mData.incompleteDirectory = directory;
             if (mSaveOnSet) {
-                mRpc->setSessionProperty(incompleteDirectoryKey, mIncompleteDirectory);
+                mRpc->setSessionProperty(incompleteDirectoryKey, mData.incompleteDirectory);
             }
         }
     }
 
     bool ServerSettings::isRatioLimited() const
     {
-        return mRatioLimited;
+        return mData.ratioLimited;
     }
 
     void ServerSettings::setRatioLimited(bool limited)
     {
-        mRatioLimited = limited;
+        mData.ratioLimited = limited;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(ratioLimitedKey, mRatioLimited);
+            mRpc->setSessionProperty(ratioLimitedKey, mData.ratioLimited);
         }
     }
 
     double ServerSettings::ratioLimit() const
     {
-        return mRatioLimit;
+        return mData.ratioLimit;
     }
 
     void ServerSettings::setRatioLimit(double limit)
     {
-        mRatioLimit = limit;
+        mData.ratioLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(ratioLimitKey, mRatioLimit);
+            mRpc->setSessionProperty(ratioLimitKey, mData.ratioLimit);
         }
     }
 
     bool ServerSettings::isIdleSeedingLimited() const
     {
-        return mIdleSeedingLimited;
+        return mData.idleSeedingLimited;
     }
 
     void ServerSettings::setIdleSeedingLimited(bool limited)
     {
-        mIdleSeedingLimited = limited;
+        mData.idleSeedingLimited = limited;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(idleSeedingLimitedKey, mIdleSeedingLimited);
+            mRpc->setSessionProperty(idleSeedingLimitedKey, mData.idleSeedingLimited);
         }
     }
 
     int ServerSettings::idleSeedingLimit() const
     {
-        return mIdleSeedingLimit;
+        return mData.idleSeedingLimit;
     }
 
     void ServerSettings::setIdleSeedingLimit(int limit)
     {
-        mIdleSeedingLimit = limit;
+        mData.idleSeedingLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(idleSeedingLimitKey, mIdleSeedingLimit);
+            mRpc->setSessionProperty(idleSeedingLimitKey, mData.idleSeedingLimit);
         }
     }
 
     bool ServerSettings::isDownloadQueueEnabled() const
     {
-        return mDownloadQueueEnabled;
+        return mData.downloadQueueEnabled;
     }
 
     void ServerSettings::setDownloadQueueEnabled(bool enabled)
     {
-        mDownloadQueueEnabled = enabled;
+        mData.downloadQueueEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(downloadQueueEnabledKey, mDownloadQueueEnabled);
+            mRpc->setSessionProperty(downloadQueueEnabledKey, mData.downloadQueueEnabled);
         }
     }
 
     int ServerSettings::downloadQueueSize() const
     {
-        return mDownloadQueueSize;
+        return mData.downloadQueueSize;
     }
 
     void ServerSettings::setDownloadQueueSize(int size)
     {
-        mDownloadQueueSize = size;
+        mData.downloadQueueSize = size;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(downloadQueueSizeKey, mDownloadQueueSize);
+            mRpc->setSessionProperty(downloadQueueSizeKey, mData.downloadQueueSize);
         }
     }
 
     bool ServerSettings::isSeedQueueEnabled() const
     {
-        return mSeedQueueEnabled;
+        return mData.seedQueueEnabled;
     }
 
     void ServerSettings::setSeedQueueEnabled(bool enabled)
     {
-        mSeedQueueEnabled = enabled;
+        mData.seedQueueEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(seedQueueEnabledKey, mSeedQueueEnabled);
+            mRpc->setSessionProperty(seedQueueEnabledKey, mData.seedQueueEnabled);
         }
     }
 
     int ServerSettings::seedQueueSize() const
     {
-        return mSeedQueueSize;
+        return mData.seedQueueSize;
     }
 
     void ServerSettings::setSeedQueueSize(int size)
     {
-        mSeedQueueSize = size;
+        mData.seedQueueSize = size;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(seedQueueSizeKey, mSeedQueueSize);
+            mRpc->setSessionProperty(seedQueueSizeKey, mData.seedQueueSize);
         }
     }
 
     bool ServerSettings::isIdleQueueLimited() const
     {
-        return mIdleQueueLimited;
+        return mData.idleQueueLimited;
     }
 
     void ServerSettings::setIdleQueueLimited(bool limited)
     {
-        mIdleQueueLimited = limited;
+        mData.idleQueueLimited = limited;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(idleQueueLimitedKey, mIdleQueueLimited);
+            mRpc->setSessionProperty(idleQueueLimitedKey, mData.idleQueueLimited);
         }
     }
 
     int ServerSettings::idleQueueLimit() const
     {
-        return mIdleQueueLimit;
+        return mData.idleQueueLimit;
     }
 
     void ServerSettings::setIdleQueueLimit(int limit)
     {
-        mIdleQueueLimit = limit;
+        mData.idleQueueLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(idleQueueLimitKey, mIdleQueueLimit);
+            mRpc->setSessionProperty(idleQueueLimitKey, mData.idleQueueLimit);
         }
     }
 
     bool ServerSettings::isDownloadSpeedLimited() const
     {
-        return mDownloadSpeedLimited;
+        return mData.downloadSpeedLimited;
     }
 
     void ServerSettings::setDownloadSpeedLimited(bool limited)
     {
-        mDownloadSpeedLimited = limited;
+        mData.downloadSpeedLimited = limited;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(downloadSpeedLimitedKey, mDownloadSpeedLimited);
+            mRpc->setSessionProperty(downloadSpeedLimitedKey, mData.downloadSpeedLimited);
         }
     }
 
     int ServerSettings::downloadSpeedLimit() const
     {
-        return mDownloadSpeedLimit;
+        return mData.downloadSpeedLimit;
     }
 
     void ServerSettings::setDownloadSpeedLimit(int limit)
     {
-        mDownloadSpeedLimit = limit;
+        mData.downloadSpeedLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(downloadSpeedLimitKey, mDownloadSpeedLimit);
+            mRpc->setSessionProperty(downloadSpeedLimitKey, mData.downloadSpeedLimit);
         }
     }
 
     bool ServerSettings::isUploadSpeedLimited() const
     {
-        return mUploadSpeedLimited;
+        return mData.uploadSpeedLimited;
     }
 
     void ServerSettings::setUploadSpeedLimited(bool limited)
     {
-        mUploadSpeedLimited = limited;
+        mData.uploadSpeedLimited = limited;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(uploadSpeedLimitedKey, mUploadSpeedLimited);
+            mRpc->setSessionProperty(uploadSpeedLimitedKey, mData.uploadSpeedLimited);
         }
     }
 
     int ServerSettings::uploadSpeedLimit() const
     {
-        return mUploadSpeedLimit;
+        return mData.uploadSpeedLimit;
     }
 
     void ServerSettings::setUploadSpeedLimit(int limit)
     {
-        mUploadSpeedLimit = limit;
+        mData.uploadSpeedLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(uploadSpeedLimitKey, mUploadSpeedLimit);
+            mRpc->setSessionProperty(uploadSpeedLimitKey, mData.uploadSpeedLimit);
         }
     }
 
     bool ServerSettings::isAlternativeSpeedLimitsEnabled() const
     {
-        return mAlternativeSpeedLimitsEnabled;
+        return mData.alternativeSpeedLimitsEnabled;
     }
 
     void ServerSettings::setAlternativeSpeedLimitsEnabled(bool enabled)
     {
-        mAlternativeSpeedLimitsEnabled = enabled;
+        mData.alternativeSpeedLimitsEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(alternativeSpeedLimitsEnabledKey, mAlternativeSpeedLimitsEnabled);
+            mRpc->setSessionProperty(alternativeSpeedLimitsEnabledKey, mData.alternativeSpeedLimitsEnabled);
         }
     }
 
     int ServerSettings::alternativeDownloadSpeedLimit() const
     {
-        return mAlternativeDownloadSpeedLimit;
+        return mData.alternativeDownloadSpeedLimit;
     }
 
     void ServerSettings::setAlternativeDownloadSpeedLimit(int limit)
     {
-        mAlternativeDownloadSpeedLimit = limit;
+        mData.alternativeDownloadSpeedLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(alternativeDownloadSpeedLimitKey, mAlternativeDownloadSpeedLimit);
+            mRpc->setSessionProperty(alternativeDownloadSpeedLimitKey, mData.alternativeDownloadSpeedLimit);
         }
     }
 
     int ServerSettings::alternativeUploadSpeedLimit() const
     {
-        return mAlternativeUploadSpeedLimit;
+        return mData.alternativeUploadSpeedLimit;
     }
 
     void ServerSettings::setAlternativeUploadSpeedLimit(int limit)
     {
-        mAlternativeUploadSpeedLimit = limit;
+        mData.alternativeUploadSpeedLimit = limit;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(alternativeUploadSpeedLimitKey, mAlternativeUploadSpeedLimit);
+            mRpc->setSessionProperty(alternativeUploadSpeedLimitKey, mData.alternativeUploadSpeedLimit);
         }
     }
 
     bool ServerSettings::isAlternativeSpeedLimitsScheduled() const
     {
-        return mAlternativeSpeedLimitsScheduled;
+        return mData.alternativeSpeedLimitsScheduled;
     }
 
     void ServerSettings::setAlternativeSpeedLimitsScheduled(bool scheduled)
     {
-        mAlternativeSpeedLimitsScheduled = scheduled;
+        mData.alternativeSpeedLimitsScheduled = scheduled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(alternativeSpeedLimitsScheduledKey, mAlternativeSpeedLimitsScheduled);
+            mRpc->setSessionProperty(alternativeSpeedLimitsScheduledKey, mData.alternativeSpeedLimitsScheduled);
         }
     }
 
     QTime ServerSettings::alternativeSpeedLimitsBeginTime() const
     {
-        return mAlternativeSpeedLimitsBeginTime;
+        return mData.alternativeSpeedLimitsBeginTime;
     }
 
     void ServerSettings::setAlternativeSpeedLimitsBeginTime(QTime time)
     {
-        mAlternativeSpeedLimitsBeginTime = time;
+        mData.alternativeSpeedLimitsBeginTime = time;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(alternativeSpeedLimitsBeginTimeKey, mAlternativeSpeedLimitsBeginTime.msecsSinceStartOfDay() / 60000);
+            mRpc->setSessionProperty(alternativeSpeedLimitsBeginTimeKey, mData.alternativeSpeedLimitsBeginTime.msecsSinceStartOfDay() / 60000);
         }
     }
 
     QTime ServerSettings::alternativeSpeedLimitsEndTime() const
     {
-        return mAlternativeSpeedLimitsEndTime;
+        return mData.alternativeSpeedLimitsEndTime;
     }
 
     void ServerSettings::setAlternativeSpeedLimitsEndTime(QTime time)
     {
-        mAlternativeSpeedLimitsEndTime = time;
+        mData.alternativeSpeedLimitsEndTime = time;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(alternativeSpeedLimitsEndTimeKey, mAlternativeSpeedLimitsEndTime.msecsSinceStartOfDay() / 60000);
+            mRpc->setSessionProperty(alternativeSpeedLimitsEndTimeKey, mData.alternativeSpeedLimitsEndTime.msecsSinceStartOfDay() / 60000);
         }
     }
 
-    ServerSettings::AlternativeSpeedLimitsDays ServerSettings::alternativeSpeedLimitsDays() const
+    ServerSettingsData::AlternativeSpeedLimitsDays ServerSettings::alternativeSpeedLimitsDays() const
     {
-        return mAlternativeSpeedLimitsDays;
+        return mData.alternativeSpeedLimitsDays;
     }
 
-    void ServerSettings::setAlternativeSpeedLimitsDays(ServerSettings::AlternativeSpeedLimitsDays days)
+    void ServerSettings::setAlternativeSpeedLimitsDays(ServerSettingsData::AlternativeSpeedLimitsDays days)
     {
-        if (days != mAlternativeSpeedLimitsDays) {
-            mAlternativeSpeedLimitsDays = days;
+        if (days != mData.alternativeSpeedLimitsDays) {
+            mData.alternativeSpeedLimitsDays = days;
             if (mSaveOnSet) {
-                mRpc->setSessionProperty(alternativeSpeedLimitsDaysKey, mAlternativeSpeedLimitsDays);
+                mRpc->setSessionProperty(alternativeSpeedLimitsDaysKey, mData.alternativeSpeedLimitsDays);
             }
         }
     }
 
     int ServerSettings::peerPort() const
     {
-        return mPeerPort;
+        return mData.peerPort;
     }
 
     void ServerSettings::setPeerPort(int port)
     {
-        mPeerPort = port;
+        mData.peerPort = port;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(peerPortKey, mPeerPort);
+            mRpc->setSessionProperty(peerPortKey, mData.peerPort);
         }
     }
 
     bool ServerSettings::isRandomPortEnabled() const
     {
-        return mRandomPortEnabled;
+        return mData.randomPortEnabled;
     }
 
     void ServerSettings::setRandomPortEnabled(bool enabled)
     {
-        mRandomPortEnabled = enabled;
+        mData.randomPortEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(randomPortEnabledKey, mRandomPortEnabled);
+            mRpc->setSessionProperty(randomPortEnabledKey, mData.randomPortEnabled);
         }
     }
 
     bool ServerSettings::isPortForwardingEnabled() const
     {
-        return mPortForwardingEnabled;
+        return mData.portForwardingEnabled;
     }
 
     void ServerSettings::setPortForwardingEnabled(bool enabled)
     {
-        mPortForwardingEnabled = enabled;
+        mData.portForwardingEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(portForwardingEnabledKey, mPortForwardingEnabled);
+            mRpc->setSessionProperty(portForwardingEnabledKey, mData.portForwardingEnabled);
         }
     }
 
-    ServerSettings::EncryptionMode ServerSettings::encryptionMode() const
+    ServerSettingsData::EncryptionMode ServerSettings::encryptionMode() const
     {
-        return mEncryptionMode;
+        return mData.encryptionMode;
     }
 
-    void ServerSettings::setEncryptionMode(ServerSettings::EncryptionMode mode)
+    void ServerSettings::setEncryptionMode(ServerSettingsData::EncryptionMode mode)
     {
-        mEncryptionMode = mode;
+        mData.encryptionMode = mode;
         if (mSaveOnSet) {
             mRpc->setSessionProperty(encryptionModeKey, encryptionModeString(mode));
         }
@@ -527,72 +555,80 @@ namespace libtremotesf
 
     bool ServerSettings::isUtpEnabled() const
     {
-        return mUtpEnabled;
+        return mData.utpEnabled;
     }
 
     void ServerSettings::setUtpEnabled(bool enabled)
     {
-        mUtpEnabled = enabled;
+        mData.utpEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(utpEnabledKey, mUtpEnabled);
+            mRpc->setSessionProperty(utpEnabledKey, mData.utpEnabled);
         }
     }
 
     bool ServerSettings::isPexEnabled() const
     {
-        return mPexEnabled;
+        return mData.pexEnabled;
     }
 
     void ServerSettings::setPexEnabled(bool enabled)
     {
-        mPexEnabled = enabled;
+        mData.pexEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(pexEnabledKey, mPexEnabled);
+            mRpc->setSessionProperty(pexEnabledKey, mData.pexEnabled);
         }
     }
 
     bool ServerSettings::isDhtEnabled() const
     {
-        return mDhtEnabled;
+        return mData.dhtEnabled;
     }
 
     void ServerSettings::setDhtEnabled(bool enabled)
     {
-        mDhtEnabled = enabled;
+        mData.dhtEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(dhtEnabledKey, mDhtEnabled);
+            mRpc->setSessionProperty(dhtEnabledKey, mData.dhtEnabled);
         }
     }
 
     bool ServerSettings::isLpdEnabled() const
     {
-        return mLpdEnabled;
+        return mData.lpdEnabled;
     }
 
     void ServerSettings::setLpdEnabled(bool enabled)
     {
-        mLpdEnabled = enabled;
+        mData.lpdEnabled = enabled;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(lpdEnabledKey, mLpdEnabled);
+            mRpc->setSessionProperty(lpdEnabledKey, mData.lpdEnabled);
         }
     }
 
     int ServerSettings::maximumPeersPerTorrent() const
     {
-        return mMaximumPeersPerTorrent;
+        return mData.maximumPeersPerTorrent;
     }
 
     void ServerSettings::setMaximumPeersPerTorrent(int peers)
     {
-        mMaximumPeersPerTorrent = peers;
+        mData.maximumPeersPerTorrent = peers;
         if (mSaveOnSet) {
-            mRpc->setSessionProperty(maximumPeersPerTorrentKey, mMaximumPeersPerTorrent);
+            mRpc->setSessionProperty(maximumPeersPerTorrentKey, mData.maximumPeersPerTorrent);
         }
     }
 
     int ServerSettings::maximumPeersGlobally() const
     {
-        return mMaximumPeersGlobally;
+        return mData.maximumPeersGlobally;
+    }
+
+    void ServerSettings::setMaximumPeersGlobally(int peers)
+    {
+        mData.maximumPeersGlobally = peers;
+        if (mSaveOnSet) {
+            mRpc->setSessionProperty(maximumPeersGloballyKey, mData.maximumPeersGlobally);
+        }
     }
 
     bool ServerSettings::saveOnSet() const
@@ -603,14 +639,6 @@ namespace libtremotesf
     void ServerSettings::setSaveOnSet(bool save)
     {
         mSaveOnSet = save;
-    }
-
-    void ServerSettings::setMaximumPeersGlobally(int peers)
-    {
-        mMaximumPeersGlobally = peers;
-        if (mSaveOnSet) {
-            mRpc->setSessionProperty(maximumPeersGloballyKey, mMaximumPeersGlobally);
-        }
     }
 
     int ServerSettings::toKibiBytes(int kiloBytesOrKibiBytes) const
@@ -631,124 +659,122 @@ namespace libtremotesf
 
     void ServerSettings::update(const QJsonObject& serverSettings)
     {
-        mRpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version")).toInt();
-        mMinimumRpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version-minimum")).toInt();
+        bool changed = false;
 
-        mUsingDecimalUnits = (serverSettings
-                                  .value(QJsonKeyStringInit("units"))
-                                  .toObject()
-                                  .value(QJsonKeyStringInit("speed-bytes"))
-                                  .toInt() == 1000);
+        mData.rpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version")).toInt();
+        mData.minimumRpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version-minimum")).toInt();
 
-        mDownloadDirectory = serverSettings.value(downloadDirectoryKey).toString();
-        mTrashTorrentFiles = serverSettings.value(trashTorrentFilesKey).toBool();
-        mStartAddedTorrents = serverSettings.value(startAddedTorrentsKey).toBool();
-        mRenameIncompleteFiles = serverSettings.value(renameIncompleteFilesKey).toBool();
-        mIncompleteDirectoryEnabled = serverSettings.value(incompleteDirectoryEnabledKey).toBool();
-        mIncompleteDirectory = serverSettings.value(incompleteDirectoryKey).toString();
 
-        mRatioLimited = serverSettings.value(ratioLimitedKey).toBool();
-        mRatioLimit = serverSettings.value(ratioLimitKey).toDouble();
-        mIdleSeedingLimited = serverSettings.value(idleSeedingLimitedKey).toBool();
-        mIdleSeedingLimit = serverSettings.value(idleSeedingLimitKey).toInt();
+        const bool usingDecimalUnits = (serverSettings
+                                            .value(QJsonKeyStringInit("units"))
+                                            .toObject()
+                                            .value(QJsonKeyStringInit("speed-bytes"))
+                                            .toInt() == 1000);
+        setChanged(mUsingDecimalUnits, usingDecimalUnits, changed);
 
-        mDownloadQueueEnabled = serverSettings.value(downloadQueueEnabledKey).toBool();
-        mDownloadQueueSize = serverSettings.value(downloadQueueSizeKey).toInt();
-        mSeedQueueEnabled = serverSettings.value(seedQueueEnabledKey).toBool();
-        mSeedQueueSize = serverSettings.value(seedQueueSizeKey).toInt();
-        mIdleQueueLimited = serverSettings.value(idleQueueLimitedKey).toBool();
-        mIdleQueueLimit = serverSettings.value(idleQueueLimitKey).toInt();
+        setChanged(mData.downloadDirectory, serverSettings.value(downloadDirectoryKey).toString(), changed);
+        setChanged(mData.trashTorrentFiles, serverSettings.value(trashTorrentFilesKey).toBool(), changed);
+        setChanged(mData.startAddedTorrents, serverSettings.value(startAddedTorrentsKey).toBool(), changed);
+        setChanged(mData.renameIncompleteFiles, serverSettings.value(renameIncompleteFilesKey).toBool(), changed);
+        setChanged(mData.incompleteDirectoryEnabled, serverSettings.value(incompleteDirectoryEnabledKey).toBool(), changed);
+        setChanged(mData.incompleteDirectory, serverSettings.value(incompleteDirectoryKey).toString(), changed);
 
-        mDownloadSpeedLimited = serverSettings.value(downloadSpeedLimitedKey).toBool();
-        mDownloadSpeedLimit = toKibiBytes(serverSettings.value(downloadSpeedLimitKey).toInt());
-        mUploadSpeedLimited = serverSettings.value(uploadSpeedLimitedKey).toBool();
-        mUploadSpeedLimit = toKibiBytes(serverSettings.value(uploadSpeedLimitKey).toInt());
-        mAlternativeSpeedLimitsEnabled = serverSettings.value(alternativeSpeedLimitsEnabledKey).toBool();
-        mAlternativeDownloadSpeedLimit = toKibiBytes(serverSettings.value(alternativeDownloadSpeedLimitKey).toInt());
-        mAlternativeUploadSpeedLimit = toKibiBytes(serverSettings.value(alternativeUploadSpeedLimitKey).toInt());
-        mAlternativeSpeedLimitsScheduled = serverSettings.value(alternativeSpeedLimitsScheduledKey).toBool();
-        mAlternativeSpeedLimitsBeginTime = QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsBeginTimeKey).toInt() * 60000);
-        mAlternativeSpeedLimitsEndTime = QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsEndTimeKey).toInt() * 60000);
-        switch (int days = serverSettings.value(alternativeSpeedLimitsDaysKey).toInt()) {
-        case Sunday:
-        case Monday:
-        case Tuesday:
-        case Wednesday:
-        case Thursday:
-        case Friday:
-        case Saturday:
-        case Weekdays:
-        case Weekends:
-        case All:
-            mAlternativeSpeedLimitsDays = static_cast<AlternativeSpeedLimitsDays>(days);
-            break;
-        default:
-            mAlternativeSpeedLimitsDays = All;
-        }
+        setChanged(mData.ratioLimited, serverSettings.value(ratioLimitedKey).toBool(), changed);
+        setChanged(mData.ratioLimit, serverSettings.value(ratioLimitKey).toDouble(), changed);
+        setChanged(mData.idleSeedingLimited, serverSettings.value(idleSeedingLimitedKey).toBool(), changed);
+        setChanged(mData.idleSeedingLimit, serverSettings.value(idleSeedingLimitKey).toInt(), changed);
 
-        mPeerPort = serverSettings.value(peerPortKey).toInt();
-        mRandomPortEnabled = serverSettings.value(randomPortEnabledKey).toBool();
-        mPortForwardingEnabled = serverSettings.value(portForwardingEnabledKey).toBool();
+        setChanged(mData.downloadQueueEnabled, serverSettings.value(downloadQueueEnabledKey).toBool(), changed);
+        setChanged(mData.downloadQueueSize, serverSettings.value(downloadQueueSizeKey).toInt(), changed);
+        setChanged(mData.seedQueueEnabled, serverSettings.value(seedQueueEnabledKey).toBool(), changed);
+        setChanged(mData.seedQueueSize, serverSettings.value(seedQueueSizeKey).toInt(), changed);
+        setChanged(mData.idleQueueLimited, serverSettings.value(idleQueueLimitedKey).toBool(), changed);
+        setChanged(mData.idleQueueLimit, serverSettings.value(idleQueueLimitKey).toInt(), changed);
+
+        setChanged(mData.downloadSpeedLimited, serverSettings.value(downloadSpeedLimitedKey).toBool(), changed);
+        setChanged(mData.downloadSpeedLimit, toKibiBytes(serverSettings.value(downloadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.uploadSpeedLimited, serverSettings.value(uploadSpeedLimitedKey).toBool(), changed);
+        setChanged(mData.uploadSpeedLimit, toKibiBytes(serverSettings.value(uploadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.alternativeSpeedLimitsEnabled, serverSettings.value(alternativeSpeedLimitsEnabledKey).toBool(), changed);
+        setChanged(mData.alternativeDownloadSpeedLimit, toKibiBytes(serverSettings.value(alternativeDownloadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.alternativeUploadSpeedLimit, toKibiBytes(serverSettings.value(alternativeUploadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.alternativeSpeedLimitsScheduled, serverSettings.value(alternativeSpeedLimitsScheduledKey).toBool(), changed);
+        setChanged(mData.alternativeSpeedLimitsBeginTime, QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsBeginTimeKey).toInt() * 60000), changed);
+        setChanged(mData.alternativeSpeedLimitsEndTime, QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsEndTimeKey).toInt() * 60000), changed);
+        setChanged(mData.alternativeSpeedLimitsDays, daysFromInt(serverSettings.value(alternativeSpeedLimitsDaysKey).toInt()), changed);
+
+        setChanged(mData.peerPort, serverSettings.value(peerPortKey).toInt(), changed);
+        setChanged(mData.randomPortEnabled, serverSettings.value(randomPortEnabledKey).toBool(), changed);
+        setChanged(mData.portForwardingEnabled, serverSettings.value(portForwardingEnabledKey).toBool(), changed);
 
         const QString encryption(serverSettings.value(encryptionModeKey).toString());
         if (encryption == encryptionModeAllowed) {
-            mEncryptionMode = AllowedEncryption;
+            setChanged(mData.encryptionMode, ServerSettingsData::AllowedEncryption, changed);
         } else if (encryption == encryptionModePreferred) {
-            mEncryptionMode = PreferredEncryption;
+            setChanged(mData.encryptionMode, ServerSettingsData::PreferredEncryption, changed);
         } else {
-            mEncryptionMode = RequiredEncryption;
+            setChanged(mData.encryptionMode, ServerSettingsData::RequiredEncryption, changed);
         }
 
-        mUtpEnabled = serverSettings.value(utpEnabledKey).toBool();
-        mPexEnabled = serverSettings.value(pexEnabledKey).toBool();
-        mDhtEnabled = serverSettings.value(dhtEnabledKey).toBool();
-        mLpdEnabled = serverSettings.value(lpdEnabledKey).toBool();
-        mMaximumPeersPerTorrent = serverSettings.value(maximumPeersPerTorrentKey).toInt();
-        mMaximumPeersGlobally = serverSettings.value(maximumPeersGloballyKey).toInt();
+        setChanged(mData.utpEnabled, serverSettings.value(utpEnabledKey).toBool(), changed);
+        setChanged(mData.pexEnabled, serverSettings.value(pexEnabledKey).toBool(), changed);
+        setChanged(mData.dhtEnabled, serverSettings.value(dhtEnabledKey).toBool(), changed);
+        setChanged(mData.lpdEnabled, serverSettings.value(lpdEnabledKey).toBool(), changed);
+        setChanged(mData.maximumPeersPerTorrent, serverSettings.value(maximumPeersPerTorrentKey).toInt(), changed);
+        setChanged(mData.maximumPeersGlobally, serverSettings.value(maximumPeersGloballyKey).toInt(), changed);
+
+        if (changed) {
+            emit this->changed();
+        }
     }
 
     void ServerSettings::save() const
     {
-        mRpc->setSessionProperties({{downloadDirectoryKey, mDownloadDirectory},
-                                    {trashTorrentFilesKey, mTrashTorrentFiles},
-                                    {startAddedTorrentsKey, mStartAddedTorrents},
-                                    {renameIncompleteFilesKey, mRenameIncompleteFiles},
-                                    {incompleteDirectoryEnabledKey, mIncompleteDirectoryEnabled},
-                                    {incompleteDirectoryKey, mIncompleteDirectory},
+        mRpc->setSessionProperties({{downloadDirectoryKey, mData.downloadDirectory},
+                                    {trashTorrentFilesKey, mData.trashTorrentFiles},
+                                    {startAddedTorrentsKey, mData.startAddedTorrents},
+                                    {renameIncompleteFilesKey, mData.renameIncompleteFiles},
+                                    {incompleteDirectoryEnabledKey, mData.incompleteDirectoryEnabled},
+                                    {incompleteDirectoryKey, mData.incompleteDirectory},
 
-                                    {ratioLimitedKey, mRatioLimited},
-                                    {ratioLimitKey, mRatioLimit},
-                                    {idleSeedingLimitedKey, mIdleSeedingLimit},
-                                    {idleSeedingLimitKey, mIdleSeedingLimit},
+                                    {ratioLimitedKey, mData.ratioLimited},
+                                    {ratioLimitKey, mData.ratioLimit},
+                                    {idleSeedingLimitedKey, mData.idleSeedingLimit},
+                                    {idleSeedingLimitKey, mData.idleSeedingLimit},
 
-                                    {downloadQueueEnabledKey, mDownloadQueueEnabled},
-                                    {downloadQueueSizeKey, mDownloadQueueSize},
-                                    {seedQueueEnabledKey, mSeedQueueEnabled},
-                                    {seedQueueSizeKey, mSeedQueueSize},
-                                    {idleQueueLimitedKey, mIdleQueueLimited},
-                                    {idleQueueLimitKey, mIdleQueueLimit},
+                                    {downloadQueueEnabledKey, mData.downloadQueueEnabled},
+                                    {downloadQueueSizeKey, mData.downloadQueueSize},
+                                    {seedQueueEnabledKey, mData.seedQueueEnabled},
+                                    {seedQueueSizeKey, mData.seedQueueSize},
+                                    {idleQueueLimitedKey, mData.idleQueueLimited},
+                                    {idleQueueLimitKey, mData.idleQueueLimit},
 
-                                    {downloadSpeedLimitedKey, mDownloadSpeedLimited},
-                                    {downloadSpeedLimitKey, mDownloadSpeedLimit},
-                                    {uploadSpeedLimitedKey, mUploadSpeedLimited},
-                                    {uploadSpeedLimitKey, mUploadSpeedLimit},
-                                    {alternativeSpeedLimitsEnabledKey, mAlternativeSpeedLimitsEnabled},
-                                    {alternativeDownloadSpeedLimitKey, mAlternativeDownloadSpeedLimit},
-                                    {alternativeUploadSpeedLimitKey, mAlternativeUploadSpeedLimit},
-                                    {alternativeSpeedLimitsScheduledKey, mAlternativeSpeedLimitsScheduled},
-                                    {alternativeSpeedLimitsBeginTimeKey, mAlternativeSpeedLimitsBeginTime.msecsSinceStartOfDay() / 60000},
-                                    {alternativeSpeedLimitsEndTimeKey, mAlternativeSpeedLimitsEndTime.msecsSinceStartOfDay() / 60000},
-                                    {alternativeSpeedLimitsDaysKey, mAlternativeSpeedLimitsDays},
+                                    {downloadSpeedLimitedKey, mData.downloadSpeedLimited},
+                                    {downloadSpeedLimitKey, mData.downloadSpeedLimit},
+                                    {uploadSpeedLimitedKey, mData.uploadSpeedLimited},
+                                    {uploadSpeedLimitKey, mData.uploadSpeedLimit},
+                                    {alternativeSpeedLimitsEnabledKey, mData.alternativeSpeedLimitsEnabled},
+                                    {alternativeDownloadSpeedLimitKey, mData.alternativeDownloadSpeedLimit},
+                                    {alternativeUploadSpeedLimitKey, mData.alternativeUploadSpeedLimit},
+                                    {alternativeSpeedLimitsScheduledKey, mData.alternativeSpeedLimitsScheduled},
+                                    {alternativeSpeedLimitsBeginTimeKey, mData.alternativeSpeedLimitsBeginTime.msecsSinceStartOfDay() / 60000},
+                                    {alternativeSpeedLimitsEndTimeKey, mData.alternativeSpeedLimitsEndTime.msecsSinceStartOfDay() / 60000},
+                                    {alternativeSpeedLimitsDaysKey, mData.alternativeSpeedLimitsDays},
 
-                                    {peerPortKey, mPeerPort},
-                                    {randomPortEnabledKey, mRandomPortEnabled},
-                                    {portForwardingEnabledKey, mPortForwardingEnabled},
-                                    {encryptionModeKey, encryptionModeString(mEncryptionMode)},
-                                    {utpEnabledKey, mUtpEnabled},
-                                    {pexEnabledKey, mPexEnabled},
-                                    {dhtEnabledKey, mDhtEnabled},
-                                    {lpdEnabledKey, mLpdEnabled},
-                                    {maximumPeersPerTorrentKey, mMaximumPeersPerTorrent},
-                                    {maximumPeersGloballyKey, mMaximumPeersGlobally}});
+                                    {peerPortKey, mData.peerPort},
+                                    {randomPortEnabledKey, mData.randomPortEnabled},
+                                    {portForwardingEnabledKey, mData.portForwardingEnabled},
+                                    {encryptionModeKey, encryptionModeString(mData.encryptionMode)},
+                                    {utpEnabledKey, mData.utpEnabled},
+                                    {pexEnabledKey, mData.pexEnabled},
+                                    {dhtEnabledKey, mData.dhtEnabled},
+                                    {lpdEnabledKey, mData.lpdEnabled},
+                                    {maximumPeersPerTorrentKey, mData.maximumPeersPerTorrent},
+                                    {maximumPeersGloballyKey, mData.maximumPeersGlobally}});
+    }
+
+    const ServerSettingsData& ServerSettings::data() const
+    {
+        return mData;
     }
 }
