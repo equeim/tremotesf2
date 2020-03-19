@@ -218,7 +218,7 @@ namespace tremotesf
         };
 
         mUpdateDetailsTab();
-        QObject::connect(mTorrent, &Torrent::updated, this, mUpdateDetailsTab);
+        QObject::connect(mTorrent, &Torrent::changed, this, mUpdateDetailsTab);
     }
 
     void TorrentPropertiesDialog::setupPeersTab()
@@ -493,7 +493,7 @@ namespace tremotesf
                     mTabWidget->widget(i)->setEnabled(true);
                 }
 
-                QObject::connect(mTorrent, &Torrent::updated, this, mUpdateDetailsTab);
+                QObject::connect(mTorrent, &Torrent::changed, this, mUpdateDetailsTab);
                 mUpdateDetailsTab();
 
                 mUpdateLimitsTab();
