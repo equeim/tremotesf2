@@ -73,6 +73,7 @@ namespace tremotesf
         QVariant headerData(int section, Qt::Orientation, int role) const override;
 #endif
         int rowCount(const QModelIndex&) const override;
+        bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);

@@ -60,6 +60,7 @@ namespace tremotesf
 
         QVariant data(const QModelIndex& index, int role) const override;
         int rowCount(const QModelIndex&) const override;
+        bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);

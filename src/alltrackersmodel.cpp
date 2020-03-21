@@ -120,6 +120,15 @@ namespace tremotesf
         return mTrackers.size() + 1;
     }
 
+    bool AllTrackersModel::removeRows(int row, int count, const QModelIndex& parent)
+    {
+        beginRemoveRows(parent, row, row + count - 1);
+        const auto first(mTrackers.begin() + row - 1);
+        mTrackers.erase(first, first + count);
+        endRemoveRows();
+        return true;
+    }
+
     Rpc* AllTrackersModel::rpc() const
     {
         return mRpc;
@@ -184,16 +193,13 @@ namespace tremotesf
         const auto trackersEnd(trackers.end());
 
         {
-            VectorBatchRemover<TrackerItem> remover(mTrackers);
             ModelBatchRemover modelRemover(this);
             for (int i = static_cast<int>(mTrackers.size()) - 1; i >= 0; --i) {
                 const auto found(trackers.find(mTrackers[static_cast<size_t>(i)].tracker));
                 if (found == trackersEnd) {
-                    remover.remove(i);
                     modelRemover.remove(i + 1);
                 }
             }
-            remover.doRemove();
             modelRemover.remove();
         }
 

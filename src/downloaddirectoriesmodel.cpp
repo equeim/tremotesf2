@@ -119,6 +119,15 @@ namespace tremotesf
         return mDirectories.size() + 1;
     }
 
+    bool DownloadDirectoriesModel::removeRows(int row, int count, const QModelIndex& parent)
+    {
+        beginRemoveRows(parent, row, row + count - 1);
+        const auto first(mDirectories.begin() + row - 1);
+        mDirectories.erase(first, first + count);
+        endRemoveRows();
+        return true;
+    }
+
     Rpc* DownloadDirectoriesModel::rpc() const
     {
         return mRpc;
@@ -181,16 +190,13 @@ namespace tremotesf
         const auto directoriesEnd(directories.end());
 
         {
-            VectorBatchRemover<DirectoryItem> remover(mDirectories);
             ModelBatchRemover modelRemover(this);
             for (int i = static_cast<int>(mDirectories.size()) - 1; i >= 0; --i) {
                 const auto found(directories.find(mDirectories[static_cast<size_t>(i)].directory));
                 if (found == directoriesEnd) {
-                    remover.remove(i);
                     modelRemover.remove(i + 1);
                 }
             }
-            remover.doRemove();
             modelRemover.remove();
         }
 

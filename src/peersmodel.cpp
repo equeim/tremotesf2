@@ -139,6 +139,15 @@ namespace tremotesf
         return mPeers.size();
     }
 
+    bool PeersModel::removeRows(int row, int count, const QModelIndex& parent)
+    {
+        beginRemoveRows(parent, row, row + count - 1);
+        const auto first(mPeers.begin() + row);
+        mPeers.erase(first, first + count);
+        endRemoveRows();
+        return true;
+    }
+
     libtremotesf::Torrent* PeersModel::torrent() const
     {
         return mTorrent;
