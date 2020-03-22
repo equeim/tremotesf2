@@ -179,10 +179,13 @@ namespace tremotesf
 
         std::unordered_map<QString, int> directories;
         for (const auto& torrent : mRpc->torrents()) {
-            const QString& directory = torrent->downloadDirectory();
+            QString directory(torrent->downloadDirectory());
+            if (directory.endsWith(QLatin1Char('/'))) {
+                directory.chop(1);
+            }
             auto found = directories.find(directory);
             if (found == directories.end()) {
-                directories.emplace(directory, 1);
+                directories.emplace(std::move(directory), 1);
             } else {
                 ++(found->second);
             }
