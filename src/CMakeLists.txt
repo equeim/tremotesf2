@@ -63,7 +63,20 @@ endif()
 if (MSVC)
     target_compile_options(tremotesf PRIVATE /W3)
 else()
-    target_compile_options(tremotesf PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(tremotesf PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wnon-virtual-dtor
+        -Wcast-align
+        -Woverloaded-virtual
+        -Wconversion
+        -Wsign-conversion
+        -Wlogical-op
+        -Wdouble-promotion
+        -Wformat=2
+        -Werror=format
+    )
 endif()
 
 if (SAILFISHOS)
