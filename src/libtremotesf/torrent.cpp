@@ -182,7 +182,7 @@ namespace libtremotesf
 
         setChanged(peersLimit, torrentMap.value(peersLimitKey).toInt(), changed);
 
-        const long long newActivityDateTime = torrentMap.value(activityDateKey).toDouble() * 1000;
+        const auto newActivityDateTime = static_cast<long long>(torrentMap.value(activityDateKey).toDouble()) * 1000;
         if (newActivityDateTime > 0) {
             if (newActivityDateTime != activityDateTime) {
                 activityDateTime = newActivityDateTime;
@@ -196,7 +196,7 @@ namespace libtremotesf
                 changed = true;
             }
         }
-        const long long newDoneDateTime = torrentMap.value(doneDateKey).toDouble() * 1000;
+        const auto newDoneDateTime = static_cast<long long>(torrentMap.value(doneDateKey).toDouble()) * 1000;
         if (newDoneDateTime > 0) {
             if (newDoneDateTime != doneDateTime) {
                 doneDateTime = newDoneDateTime;
@@ -236,7 +236,7 @@ namespace libtremotesf
         setChanged(downloadDirectory, torrentMap.value(downloadDirectoryKey).toString(), changed);
         setChanged(creator, torrentMap.value(creatorKey).toString(), changed);
 
-        const long long newCreationDateTime = torrentMap.value(creationDateKey).toDouble() * 1000;
+        const auto newCreationDateTime = static_cast<long long>(torrentMap.value(creationDateKey).toDouble()) * 1000;
         if (newCreationDateTime > 0) {
             if (newCreationDateTime != creationDateTime) {
                 creationDateTime = newCreationDateTime;
@@ -256,7 +256,7 @@ namespace libtremotesf
         trackersAddedOrRemoved = false;
         std::vector<Tracker> newTrackers;
         const QJsonArray trackerJsons(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
-        newTrackers.reserve(trackerJsons.size());
+        newTrackers.reserve(static_cast<size_t>(trackerJsons.size()));
         for (const QJsonValue& trackerJson : trackerJsons) {
             const QJsonObject trackerMap(trackerJson.toObject());
             const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
@@ -291,7 +291,7 @@ namespace libtremotesf
     {
         mData.id = id;
         mData.hashString = torrentMap.value(hashStringKey).toString();
-        mData.addedDate = QDateTime::fromMSecsSinceEpoch(torrentMap.value(addedDateKey).toDouble() * 1000);
+        mData.addedDate = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(torrentMap.value(addedDateKey).toDouble()) * 1000);
         update(torrentMap);
     }
 

@@ -26,10 +26,10 @@
 namespace libtremotesf
 {
     TorrentFile::TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
-        : id(id), size(fileMap.value(QJsonKeyStringInit("length")).toDouble())
+        : id(id), size(static_cast<long long>(fileMap.value(QJsonKeyStringInit("length")).toDouble()))
     {
         QStringList p(fileMap.value(QJsonKeyStringInit("name")).toString().split(QLatin1Char('/'), QString::SkipEmptyParts));
-        path.reserve(p.size());
+        path.reserve(static_cast<size_t>(p.size()));
         for (QString& part : p) {
             path.push_back(std::move(part));
         }
