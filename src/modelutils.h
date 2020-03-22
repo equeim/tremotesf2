@@ -26,10 +26,10 @@ namespace tremotesf
     class ModelBatchChanger
     {
     public:
-        explicit ModelBatchChanger(QAbstractItemModel* model, const QModelIndex& parent = QModelIndex())
+        inline explicit ModelBatchChanger(QAbstractItemModel* model, const QModelIndex& parent = QModelIndex())
             : model(model), parent(parent) {}
 
-        void changed(int row)
+        inline void changed(int row)
         {
             if (firstRow == -1) {
                 reset(row);
@@ -43,7 +43,7 @@ namespace tremotesf
             }
         }
 
-        void changed()
+        inline void changed()
         {
             if (firstRow != -1) {
                 emit model->dataChanged(model->index(firstRow, 0, parent), model->index(lastRow, lastColumn, parent));
@@ -51,7 +51,7 @@ namespace tremotesf
         }
 
     private:
-        void reset(int row)
+        inline void reset(int row)
         {
             firstRow = row;
             lastRow = row;
@@ -68,10 +68,10 @@ namespace tremotesf
     class ModelBatchRemover
     {
     public:
-        explicit ModelBatchRemover(QAbstractItemModel* model)
+        inline explicit ModelBatchRemover(QAbstractItemModel* model)
             : model(model) {}
 
-        void remove(int row)
+        inline void remove(int row)
         {
             if (firstRow == -1) {
                 reset(row);
@@ -85,7 +85,7 @@ namespace tremotesf
             }
         }
 
-        void remove()
+        inline void remove()
         {
             if (firstRow != -1) {
                 model->removeRows(firstRow, lastRow - firstRow + 1);
@@ -93,7 +93,7 @@ namespace tremotesf
         }
 
     private:
-        void reset(int row)
+        inline void reset(int row)
         {
             firstRow = row;
             lastRow = row;
