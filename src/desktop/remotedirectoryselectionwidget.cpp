@@ -31,6 +31,16 @@
 
 namespace tremotesf
 {
+    namespace
+    {
+        inline QString chopTrailingSeparator(QString directory) {
+            if (directory.endsWith(QLatin1Char('/'))) {
+                directory.chop(1);
+            }
+            return directory;
+        }
+    }
+
     RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& directory, Rpc* rpc, QWidget* parent)
         : FileSelectionWidget(true, QString(), rpc->isLocal(), true, parent),
           mRpc(rpc)
@@ -70,9 +80,9 @@ namespace tremotesf
         const bool wasEmpty = currentServerAddTorrentDialogDirectories.empty();
 
         currentServerAddTorrentDialogDirectories.reserve(mRpc->torrents().size() + 1);
-        currentServerAddTorrentDialogDirectories.push_back(mRpc->serverSettings()->downloadDirectory());
+        currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(mRpc->serverSettings()->downloadDirectory()));
         for (const auto& torrent : mRpc->torrents()) {
-            currentServerAddTorrentDialogDirectories.push_back(torrent->downloadDirectory());
+            currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(torrent->downloadDirectory()));
         }
         currentServerAddTorrentDialogDirectories.removeDuplicates();
         QCollator collator;
