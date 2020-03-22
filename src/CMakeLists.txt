@@ -61,7 +61,7 @@ if (TEST_BUILD)
 endif()
 
 if (MSVC)
-    target_compile_options(tremotesf PRIVATE /W3)
+    target_compile_options(tremotesf PRIVATE /W4)
 else()
     target_compile_options(tremotesf PRIVATE
         -Wall
