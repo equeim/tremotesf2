@@ -52,7 +52,7 @@ namespace tremotesf
                 rootDirectory->addChild(torrentDirectory);
 
                 const QVariantList fileMaps(infoMap.value(QLatin1String("files")).toList());
-                files.reserve(fileMaps.size());
+                files.reserve(static_cast<size_t>(fileMaps.size()));
                 for (int fileIndex = 0, filesCount = fileMaps.size(); fileIndex < filesCount; ++fileIndex) {
                     const QVariantMap fileMap(fileMaps.at(fileIndex).toMap());
 
@@ -64,7 +64,7 @@ namespace tremotesf
                         path += '/';
                         path += part;
                         if (partIndex == lastPartIndex) {
-                            auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
+                            auto childFile = new TorrentFilesModelFile(static_cast<int>(currentDirectory->children().size()),
                                                                        currentDirectory,
                                                                        fileIndex,
                                                                        part,
@@ -81,7 +81,7 @@ namespace tremotesf
                             if (found != childrenHash.end()) {
                                 currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                             } else {
-                                auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
+                                auto childDirectory = new TorrentFilesModelDirectory(static_cast<int>(currentDirectory->children().size()),
                                                                                      currentDirectory,
                                                                                      part,
                                                                                      path);

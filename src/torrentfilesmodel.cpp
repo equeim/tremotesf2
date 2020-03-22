@@ -97,9 +97,9 @@ namespace tremotesf
                     path += part;
 
                     if (partIndex == lastPartIndex) {
-                        auto childFile = new TorrentFilesModelFile(currentDirectory->children().size(),
+                        auto childFile = new TorrentFilesModelFile(static_cast<int>(currentDirectory->children().size()),
                                                                    currentDirectory,
-                                                                   fileIndex,
+                                                                   static_cast<int>(fileIndex),
                                                                    part,
                                                                    path,
                                                                    file.size);
@@ -114,7 +114,7 @@ namespace tremotesf
                         if (found != childrenHash.end()) {
                             currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                         } else {
-                            auto childDirectory = new TorrentFilesModelDirectory(currentDirectory->children().size(),
+                            auto childDirectory = new TorrentFilesModelDirectory(static_cast<int>(currentDirectory->children().size()),
                                                                                  currentDirectory,
                                                                                  part,
                                                                                  path);

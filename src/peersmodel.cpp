@@ -58,7 +58,7 @@ namespace tremotesf
 
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
-        const libtremotesf::Peer& peer = mPeers[index.row()];
+        const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case Address:
@@ -136,7 +136,7 @@ namespace tremotesf
 
     int PeersModel::rowCount(const QModelIndex&) const
     {
-        return mPeers.size();
+        return static_cast<int>(mPeers.size());
     }
 
     bool PeersModel::removeRows(int row, int count, const QModelIndex& parent)

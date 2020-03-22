@@ -117,7 +117,7 @@ namespace tremotesf
 
     int AllTrackersModel::rowCount(const QModelIndex&) const
     {
-        return mTrackers.size() + 1;
+        return static_cast<int>(mTrackers.size() + 1);
     }
 
     bool AllTrackersModel::removeRows(int row, int count, const QModelIndex& parent)

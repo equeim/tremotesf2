@@ -250,7 +250,7 @@ namespace tremotesf
     {
         std::vector<Server> list;
         const QStringList groups(mSettings->childGroups());
-        list.reserve(groups.size());
+        list.reserve(static_cast<size_t>(groups.size()));
         for (const QString& group : groups) {
             list.push_back(getServer(group));
         }
@@ -342,7 +342,7 @@ namespace tremotesf
         if (lastTorrentsVariant.isValid() && lastTorrentsVariant.type() == QVariant::List) {
             lastTorrents.saved = true;
             const QVariantList torrentVariants(lastTorrentsVariant.toList());
-            lastTorrents.torrents.reserve(torrentVariants.size());
+            lastTorrents.torrents.reserve(static_cast<size_t>(torrentVariants.size()));
             for (const QVariant& variant : torrentVariants) {
                 const QVariantMap torrentMap(variant.toMap());
                 lastTorrents.torrents.push_back({torrentMap[QLatin1String("hashString")].toString(),
@@ -357,7 +357,7 @@ namespace tremotesf
     {
         mSettings->beginGroup(currentServerName());
         QVariantList torrents;
-        torrents.reserve(rpc->torrents().size());
+        torrents.reserve(static_cast<int>(rpc->torrents().size()));
         for (const auto& torrent : rpc->torrents()) {
             torrents.push_back(QVariantMap{{QLatin1String("hashString"), torrent->hashString()},
                                            {QLatin1String("finished"), torrent->isFinished()}});
@@ -604,7 +604,7 @@ namespace tremotesf
     void Servers::updateMountedDirectories(const QVariantMap& directories)
     {
         mCurrentServerMountedDirectories.clear();
-        mCurrentServerMountedDirectories.reserve(directories.size());
+        mCurrentServerMountedDirectories.reserve(static_cast<size_t>(directories.size()));
         for (auto i = directories.cbegin(), end = directories.cend(); i != end; ++i) {
             mCurrentServerMountedDirectories.emplace_back(QDir(i.key()).absolutePath(), QDir(i.value().toString()).absolutePath());
         }

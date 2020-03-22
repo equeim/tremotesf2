@@ -51,7 +51,7 @@ namespace tremotesf
 
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
-        Torrent* torrent = mTorrents[index.row()].get();
+        Torrent* torrent = mTorrents[static_cast<size_t>(index.row())].get();
 
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
@@ -297,7 +297,7 @@ namespace tremotesf
 
     int TorrentsModel::rowCount(const QModelIndex&) const
     {
-        return mTorrents.size();
+        return static_cast<int>(mTorrents.size());
     }
 
     bool TorrentsModel::removeRows(int row, int count, const QModelIndex& parent)
@@ -318,7 +318,7 @@ namespace tremotesf
     {
         if (rpc && !mRpc) {
             mRpc = rpc;
-            update({}, {}, mRpc->torrents().size());
+            update({}, {}, static_cast<int>(mRpc->torrents().size()));
             QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &TorrentsModel::update);
         }
     }
@@ -330,7 +330,7 @@ namespace tremotesf
 
     Torrent* TorrentsModel::torrentAtRow(int row) const
     {
-        return mTorrents[row].get();
+        return mTorrents[static_cast<size_t>(row)].get();
     }
 
     QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const
@@ -338,7 +338,7 @@ namespace tremotesf
         QVariantList ids;
         ids.reserve(indexes.size());
         for (const QModelIndex& index : indexes) {
-            ids.append(mTorrents[index.row()]->id());
+            ids.append(mTorrents[static_cast<size_t>(index.row())]->id());
         }
         return ids;
     }

@@ -116,7 +116,7 @@ namespace tremotesf
 
     int DownloadDirectoriesModel::rowCount(const QModelIndex&) const
     {
-        return mDirectories.size() + 1;
+        return static_cast<int>(mDirectories.size() + 1);
     }
 
     bool DownloadDirectoriesModel::removeRows(int row, int count, const QModelIndex& parent)

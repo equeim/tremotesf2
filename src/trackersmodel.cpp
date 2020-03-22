@@ -76,7 +76,7 @@ namespace tremotesf
 
     QVariant TrackersModel::data(const QModelIndex& index, int role) const
     {
-        const Tracker& tracker = mTrackers[index.row()];
+        const Tracker& tracker = mTrackers[static_cast<size_t>(index.row())];
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case IdRole:
@@ -138,7 +138,7 @@ namespace tremotesf
 
     int TrackersModel::rowCount(const QModelIndex&) const
     {
-        return mTrackers.size();
+        return static_cast<int>(mTrackers.size());
     }
 
     libtremotesf::Torrent* TrackersModel::torrent() const
@@ -166,14 +166,14 @@ namespace tremotesf
         QVariantList ids;
         ids.reserve(indexes.size());
         for (const QModelIndex& index : indexes) {
-            ids.append(mTrackers[index.row()].id());
+            ids.append(mTrackers[static_cast<size_t>(index.row())].id());
         }
         return ids;
     }
 
     const libtremotesf::Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const
     {
-        return mTrackers[index.row()];
+        return mTrackers[static_cast<size_t>(index.row())];
     }
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -192,8 +192,8 @@ namespace tremotesf
     {
         const std::vector<Tracker>& trackers = mTorrent->trackers();
 
-        for (int i = 0, max = mTrackers.size(); i < max; ++i) {
-            if (!contains(trackers, mTrackers[i])) {
+        for (int i = 0, max = static_cast<int>(mTrackers.size()); i < max; ++i) {
+            if (!contains(trackers, mTrackers[static_cast<size_t>(i)])) {
                 beginRemoveRows(QModelIndex(), i, i);
                 mTrackers.erase(mTrackers.begin() + i);
                 endRemoveRows();
@@ -207,7 +207,7 @@ namespace tremotesf
         for (const Tracker& tracker : trackers) {
             const auto row = index_of(mTrackers, tracker);
             if (row == mTrackers.size()) {
-                beginInsertRows(QModelIndex(), row, row);
+                beginInsertRows(QModelIndex(), static_cast<int>(row), static_cast<int>(row));
                 mTrackers.push_back(tracker);
                 endInsertRows();
             } else {
@@ -215,6 +215,6 @@ namespace tremotesf
             }
         }
 
-        emit dataChanged(index(0, 0), index(mTrackers.size() - 1, columnCount() - 1));
+        emit dataChanged(index(0, 0), index(static_cast<int>(mTrackers.size()) - 1, columnCount() - 1));
     }
 }

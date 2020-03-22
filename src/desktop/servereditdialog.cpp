@@ -148,7 +148,7 @@ namespace tremotesf
             mBackgroundUpdateIntervalSpinBox->setValue(30);
             mTimeoutSpinBox->setValue(30);
         } else {
-            const Server& server = mServersModel->servers()[row];
+            const Server& server = mServersModel->servers()[static_cast<size_t>(row)];
 
             mServerName = server.name;
             setWindowTitle(mServerName);

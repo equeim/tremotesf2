@@ -29,7 +29,7 @@ namespace tremotesf
 
     QVariant ServersModel::data(const QModelIndex& index, int role) const
     {
-        const Server& server = mServers[index.row()];
+        const Server& server = mServers[static_cast<size_t>(index.row())];
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case NameRole:
@@ -100,7 +100,7 @@ namespace tremotesf
 
     int ServersModel::rowCount(const QModelIndex&) const
     {
-        return mServers.size();
+        return static_cast<int>(mServers.size());
     }
 
     bool ServersModel::setData(const QModelIndex& modelIndex, const QVariant& value, int role)
@@ -110,10 +110,10 @@ namespace tremotesf
 #else
         if (role == Qt::CheckStateRole && value.toInt() == Qt::Checked) {
 #endif
-            const QString current(mServers[modelIndex.row()].name);
+            const QString current(mServers[static_cast<size_t>(modelIndex.row())].name);
             if (current != mCurrentServer) {
                 mCurrentServer = current;
-                emit dataChanged(index(0), index(mServers.size() - 1));
+                emit dataChanged(index(0), index(static_cast<int>(mServers.size()) - 1));
                 return true;
             }
         }
@@ -168,10 +168,10 @@ namespace tremotesf
 
         Server *const server = [=]() -> Server* {
             if (oldRow != -1) {
-                return &mServers[oldRow];
+                return &mServers[static_cast<size_t>(oldRow)];
             }
             if (row != -1) {
-                return &mServers[row];
+                return &mServers[static_cast<size_t>(row)];
             }
             return nullptr;
         }();
@@ -219,7 +219,7 @@ namespace tremotesf
                 mCurrentServer = name;
             }
         } else {
-            row = mServers.size();
+            row = static_cast<int>(mServers.size());
             beginInsertRows(QModelIndex(), row, row);
             mServers.emplace_back(name,
                                   address,
@@ -263,7 +263,7 @@ namespace tremotesf
 
     void ServersModel::removeServerAtRow(int row)
     {
-        const bool current = (mServers[row].name == mCurrentServer);
+        const bool current = (mServers[static_cast<size_t>(row)].name == mCurrentServer);
         beginRemoveRows(QModelIndex(), row, row);
         mServers.erase(mServers.begin() + row);
         endRemoveRows();
@@ -306,9 +306,9 @@ namespace tremotesf
 
     int ServersModel::serverRow(const QString& name) const
     {
-        for (int i = 0, max = mServers.size(); i < max; ++i) {
+        for (size_t i = 0, max = mServers.size(); i < max; ++i) {
             if (mServers[i].name == name) {
-                return i;
+                return static_cast<int>(i);
             }
         }
         return -1;

@@ -146,7 +146,7 @@ namespace tremotesf
     {
         const long long bytes = size();
         if (bytes > 0) {
-            return completedSize() / static_cast<double>(bytes);
+            return static_cast<double>(completedSize()) / static_cast<double>(bytes);
         }
         return 0;
     }
@@ -154,7 +154,7 @@ namespace tremotesf
     TorrentFilesModelEntry::WantedState TorrentFilesModelDirectory::wantedState() const
     {
         const TorrentFilesModelEntry::WantedState first = mChildren.front()->wantedState();
-        for (int i = 1, max = mChildren.size(); i < max; ++i) {
+        for (size_t i = 1, max = mChildren.size(); i < max; ++i) {
             if (mChildren[i]->wantedState() != first) {
                 return MixedWanted;
             }
@@ -172,7 +172,7 @@ namespace tremotesf
     TorrentFilesModelEntry::Priority TorrentFilesModelDirectory::priority() const
     {
         const Priority first = mChildren.front()->priority();
-        for (int i = 1, max = mChildren.size(); i < max; ++i) {
+        for (size_t i = 1, max = mChildren.size(); i < max; ++i) {
             if (mChildren[i]->priority() != first) {
                 return MixedPriority;
             }
@@ -268,7 +268,7 @@ namespace tremotesf
     double TorrentFilesModelFile::progress() const
     {
         if (mSize > 0) {
-            return mCompletedSize / static_cast<double>(mSize);
+            return static_cast<double>(mCompletedSize) / static_cast<double>(mSize);
         }
         return 0;
     }

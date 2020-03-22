@@ -121,7 +121,7 @@ namespace tremotesf
 
         QString formatBytes(long long bytes, ByteUnitStrings::Type stringType)
         {
-            int unit = 0;
+            size_t unit = 0;
             auto bytes_d = static_cast<double>(bytes);
             while (bytes_d >= 1024.0 && unit <= NumberOfByteUnits) {
                 bytes_d /= 1024.0;
@@ -179,7 +179,7 @@ namespace tremotesf
         if (downloaded == 0) {
             return formatRatio(0);
         }
-        return formatRatio(static_cast<double>(uploaded) / downloaded);
+        return formatRatio(static_cast<double>(uploaded) / static_cast<double>(downloaded));
     }
 
     QString Utils::formatEta(int seconds)

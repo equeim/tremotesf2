@@ -53,7 +53,7 @@ namespace tremotesf
 
     QVariant DirectoryContentModel::data(const QModelIndex& index, int role) const
     {
-        const File& file = mFiles[index.row()];
+        const File& file = mFiles[static_cast<size_t>(index.row())];
         switch (role) {
         case PathRole:
             return file.path;
@@ -67,7 +67,7 @@ namespace tremotesf
 
     int DirectoryContentModel::rowCount(const QModelIndex&) const
     {
-        return mFiles.size();
+        return static_cast<int>(mFiles.size());
     }
 
     const QString& DirectoryContentModel::directory() const
@@ -133,7 +133,7 @@ namespace tremotesf
 
     void DirectoryContentModel::loadDirectory()
     {
-        beginRemoveRows(QModelIndex(), 0, mFiles.size() - 1);
+        beginRemoveRows(QModelIndex(), 0, static_cast<int>(mFiles.size()) - 1);
         mFiles.clear();
         endRemoveRows();
 
@@ -146,7 +146,7 @@ namespace tremotesf
 
         beginInsertRows(QModelIndex(), 0, files.size() - 1);
 
-        mFiles.reserve(files.size());
+        mFiles.reserve(static_cast<size_t>(files.size()));
         for (const QFileInfo& info : files) {
             mFiles.push_back({info.filePath(),
                               info.fileName(),
