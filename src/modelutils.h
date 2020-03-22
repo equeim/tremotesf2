@@ -45,7 +45,9 @@ namespace tremotesf
 
         void changed()
         {
-            emit model->dataChanged(model->index(firstRow, 0, parent), model->index(lastRow, lastColumn, parent));
+            if (firstRow != -1) {
+                emit model->dataChanged(model->index(firstRow, 0, parent), model->index(lastRow, lastColumn, parent));
+            }
         }
 
     private:
@@ -71,7 +73,7 @@ namespace tremotesf
 
         void remove(int row)
         {
-            if (lastRow == -1) {
+            if (firstRow == -1) {
                 reset(row);
             } else {
                 if (row == (firstRow - 1)) {
@@ -85,20 +87,22 @@ namespace tremotesf
 
         void remove()
         {
-            model->removeRows(firstRow, lastRow - firstRow + 1);
+            if (firstRow != -1) {
+                model->removeRows(firstRow, lastRow - firstRow + 1);
+            }
         }
 
     private:
         void reset(int row)
         {
-            lastRow = row;
             firstRow = row;
+            lastRow = row;
         }
 
         QAbstractItemModel *const model;
 
-        int lastRow = -1;
         int firstRow = -1;
+        int lastRow = -1;
     };
 }
 
