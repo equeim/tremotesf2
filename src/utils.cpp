@@ -540,7 +540,3 @@ namespace tremotesf
     }
 #endif // TREMOTESF_SAILFISHOS
 }
-
-#ifdef TREMOTESF_SAILFISHOS
-#include "utils.moc"
-#endif
