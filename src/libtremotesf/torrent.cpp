@@ -259,10 +259,10 @@ namespace libtremotesf
         newTrackers.reserve(static_cast<size_t>(trackerJsons.size()));
         for (const QJsonValue& trackerJson : trackerJsons) {
             const QJsonObject trackerMap(trackerJson.toObject());
-            const int id = trackerMap.value(QJsonKeyStringInit("id")).toInt();
+            const int trackerId = trackerMap.value(QJsonKeyStringInit("id")).toInt();
 
             const auto found(std::find_if(trackers.begin(), trackers.end(), [&](const Tracker& tracker) {
-                return tracker.id() == id;
+                return tracker.id() == trackerId;
             }));
 
             if (found == trackers.end()) {
