@@ -99,7 +99,7 @@ namespace tremotesf
 #ifdef Q_OS_WIN
     namespace
     {
-        WINBOOL WINAPI consoleHandler(DWORD)
+        BOOL WINAPI consoleHandler(DWORD)
         {
             SignalHandler::exitRequested = true;
             QCoreApplication::quit();

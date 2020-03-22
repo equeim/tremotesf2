@@ -66,7 +66,6 @@ namespace tremotesf
     void IpcClient::sendArguments(const QStringList& files, const QStringList& urls)
     {
         qInfo("Sending arguments");
-        const ArgumentsParseResult result(parseArguments(arguments));
         d->sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
                                                  {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
     }
