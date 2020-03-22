@@ -86,7 +86,7 @@ namespace tremotesf
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
         finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
 
-        QObject::connect(this, &SettingsDialog::accepted, this, [=]() {
+        QObject::connect(this, &SettingsDialog::accepted, this, [=] {
             auto settings = Settings::instance();
             settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
             settings->setNotificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());

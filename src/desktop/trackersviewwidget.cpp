@@ -114,13 +114,13 @@ namespace tremotesf
         QObject::connect(removeButton, &QPushButton::clicked, this, &TrackersViewWidget::removeTrackers);
         buttonsLayout->addWidget(removeButton);
         auto reannounceButton = new QPushButton(QIcon::fromTheme(QLatin1String("view-refresh")), qApp->translate("tremotesf", "Reanno&unce"), this);
-        QObject::connect(reannounceButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(reannounceButton, &QPushButton::clicked, this, [=] {
             mRpc->reannounceTorrents({mTorrent->id()});
         });
         buttonsLayout->addWidget(reannounceButton);
         buttonsLayout->addStretch();
 
-        QObject::connect(mTrackersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
+        QObject::connect(mTrackersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=] {
             const bool hasSelection = mTrackersView->selectionModel()->hasSelection();
             editButton->setEnabled(hasSelection);
             removeButton->setEnabled(hasSelection);
@@ -145,7 +145,7 @@ namespace tremotesf
                                           QString(),
                                           qApp->translate("tremotesf", "Add"),
                                           this);
-        QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
+        QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
             mTorrent->addTracker(dialog->text());
         });
         dialog->show();
@@ -162,7 +162,7 @@ namespace tremotesf
                                               tracker.announce(),
                                               QString(),
                                               this);
-            QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
+            QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
                 mTorrent->setTracker(id, dialog->text());
             });
             dialog->show();

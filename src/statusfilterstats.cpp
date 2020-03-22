@@ -44,7 +44,7 @@ namespace tremotesf
     {
         if (rpc) {
             mRpc = rpc;
-            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=]() {
+            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] {
                 mActiveTorrents = 0;
                 mDownloadingTorrents = 0;
                 mSeedingTorrents = 0;

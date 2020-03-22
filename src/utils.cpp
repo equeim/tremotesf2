@@ -108,15 +108,15 @@ namespace tremotesf
 
         // Should be kept in sync with `enum ByteUnit`
         const std::array<ByteUnitStrings, NumberOfByteUnits> byteUnits{
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 B"); }, []() { return qApp->translate("tremotesf", "%L1 B/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 KiB"); }, []() { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 MiB"); }, []() { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 GiB"); }, []() { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 TiB"); }, []() { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 PiB"); }, []() { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 EiB"); }, []() { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 ZiB"); }, []() { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
-                ByteUnitStrings{[]() { return qApp->translate("tremotesf", "%L1 YiB"); }, []() { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 B"); }, [] { return qApp->translate("tremotesf", "%L1 B/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 KiB"); }, [] { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 MiB"); }, [] { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 GiB"); }, [] { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 TiB"); }, [] { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 PiB"); }, [] { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 EiB"); }, [] { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 ZiB"); }, [] { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
+                ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 YiB"); }, [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
         };
 
         QString formatBytes(long long bytes, ByteUnitStrings::Type stringType)
@@ -390,14 +390,14 @@ namespace tremotesf
             }
         };
 
-        const auto openParentDirectoryForAll = [=]() {
+        const auto openParentDirectoryForAll = [=] {
             for (const QString& filePath : files) {
                 openParentDirectory(filePath);
             }
         };
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-        const auto showInFreedesktopFileManager = [=]() {
+        const auto showInFreedesktopFileManager = [=] {
             qDebug() << "executing org.freedesktop.FileManager1 dbus call";
             QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.freedesktop.FileManager1"),
                                                                 QLatin1String("/org/freedesktop/FileManager1"),
@@ -405,7 +405,7 @@ namespace tremotesf
                                                                 QLatin1String("ShowItems")));
             message.setArguments({files, QVariant::String});
             auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), qApp);
-            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=]() {
+            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
                 QDBusPendingReply<void> reply(*watcher);
                 if (reply.isError()) {
                     qWarning() << "org.freedesktop.FileManager1 dbus call failed, error string" << reply.error();
@@ -439,7 +439,7 @@ namespace tremotesf
                 process->deleteLater();
             });
 
-            const auto onFailedToStart = [=]() {
+            const auto onFailedToStart = [=] {
                 qWarning() << "process" << process->program()
                            << "failed to start, error" << process->error() << process->errorString();
                 process->deleteLater();
@@ -504,7 +504,7 @@ namespace tremotesf
                     const QFileInfo info(filePath);
                     message.setArguments({info.path(), info.fileName(), QVariant(QVariant::String), QVariant(QVariant::String)});
                     auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), qApp);
-                    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=]() {
+                    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
                         QDBusPendingReply<void> reply(*watcher);
                         if (reply.isError()) {
                             qWarning() << "thunar dbus call failed, error string" << reply.error();

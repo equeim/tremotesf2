@@ -36,7 +36,7 @@ namespace tremotesf
         QObject::connect(this, &Rpc::statusChanged, this, &Rpc::statusStringChanged);
         QObject::connect(this, &Rpc::errorChanged, this, &Rpc::statusStringChanged);
 
-        QObject::connect(this, &Rpc::connectedChanged, this, [=]() {
+        QObject::connect(this, &Rpc::connectedChanged, this, [=] {
             if (isConnected()) {
                 const bool notifyOnAdded = Settings::instance()->notificationsOnAddedTorrentsSinceLastConnection();
                 const bool notifyOnFinished = Settings::instance()->notificationsOnFinishedTorrentsSinceLastConnection();
@@ -92,11 +92,11 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(this, &Rpc::aboutToDisconnect, this, [=]() {
+        QObject::connect(this, &Rpc::aboutToDisconnect, this, [=] {
             Servers::instance()->saveCurrentServerLastTorrents(this);
         });
 
-        QObject::connect(this, &Rpc::torrentsUpdated, this, [=]() {
+        QObject::connect(this, &Rpc::torrentsUpdated, this, [=] {
             mMountedIncompleteDirectory = Servers::instance()->fromRemoteToLocalDirectory(serverSettings()->incompleteDirectory());
             mIncompleteDirectoryMounted = !mMountedIncompleteDirectory.isEmpty();
         });

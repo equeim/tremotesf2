@@ -129,7 +129,7 @@ namespace libtremotesf
         setChanged(totalUploaded, static_cast<long long>(torrentMap.value(totalUploadedKey).toDouble()), changed);
         setChanged(ratio, torrentMap.value(ratioKey).toDouble(), changed);
 
-        setChanged(ratioLimitMode, [&]() {
+        setChanged(ratioLimitMode, [&] {
             switch (int mode = torrentMap.value(ratioLimitModeKey).toInt()) {
             case GlobalRatioLimit:
             case SingleRatioLimit:
@@ -212,7 +212,7 @@ namespace libtremotesf
         }
 
         setChanged(honorSessionLimits, torrentMap.value(honorSessionLimitsKey).toBool(), changed);
-        setChanged(bandwidthPriority, [&]() {
+        setChanged(bandwidthPriority, [&] {
             switch (int priority = torrentMap.value(bandwidthPriorityKey).toInt()) {
             case LowPriority:
             case NormalPriority:
@@ -222,7 +222,7 @@ namespace libtremotesf
                 return NormalPriority;
             }
         }(), changed);
-        setChanged(idleSeedingLimitMode, [&]() {
+        setChanged(idleSeedingLimitMode, [&] {
             switch (int mode = torrentMap.value(idleSeedingLimitModeKey).toInt()) {
             case GlobalIdleSeedingLimit:
             case SingleIdleSeedingLimit:

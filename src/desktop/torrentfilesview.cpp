@@ -96,7 +96,7 @@ namespace tremotesf
         setModel(mProxyModel);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-        QObject::connect(mModel, &BaseTorrentFilesModel::modelReset, this, [=]() {
+        QObject::connect(mModel, &BaseTorrentFilesModel::modelReset, this, [=] {
             if (mModel->rowCount(mModel->index(0, 0)) == 0) {
                 setRootIsDecorated(false);
             } else {
@@ -147,7 +147,7 @@ namespace tremotesf
 
                 QAction* openAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("document-open")), qApp->translate("tremotesf", "&Open"));
                 openAction->setEnabled(!disableBoth && !disableOpen);
-                QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes]() {
+                QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes] {
                     for (const QModelIndex& index : sourceIndexes) {
                         Utils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index), this);
                     }
@@ -155,7 +155,7 @@ namespace tremotesf
 
                 QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("go-jump")), qApp->translate("tremotesf", "Show In &File Manager"));
                 showInFileManagerAction->setEnabled(!disableBoth);
-                QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes]() {
+                QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes] {
                     QStringList files;
                     files.reserve(sourceIndexes.size());
                     for (const QModelIndex& index : sourceIndexes) {
@@ -169,12 +169,12 @@ namespace tremotesf
         contextMenu.addSeparator();
 
         QAction* downloadAction = contextMenu.addAction(qApp->translate("tremotesf", "&Download", "File menu item, verb"));
-        QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes]() {
+        QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, true);
         });
 
         QAction* notDownloadAction = contextMenu.addAction(qApp->translate("tremotesf", "&Not Download"));
-        QObject::connect(notDownloadAction, &QAction::triggered, this, [=, &sourceIndexes]() {
+        QObject::connect(notDownloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, false);
         });
 
@@ -245,7 +245,7 @@ namespace tremotesf
             contextMenu.addSeparator();
             QAction* renameAction = contextMenu.addAction(qApp->translate("tremotesf", "&Rename"));
             renameAction->setEnabled(sourceIndexes.size() == 1);
-            QObject::connect(renameAction, &QAction::triggered, this, [=]() {
+            QObject::connect(renameAction, &QAction::triggered, this, [=] {
                 const QModelIndex& index = sourceIndexes.first();
                 auto entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
                 auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Rename"),
@@ -253,7 +253,7 @@ namespace tremotesf
                                                   entry->name(),
                                                   qApp->translate("tremotesf", "Rename"),
                                                   this);
-                QObject::connect(dialog, &TextInputDialog::accepted, this, [=]() {
+                QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
                     mModel->renameFile(index, dialog->text());
                 });
                 dialog->show();

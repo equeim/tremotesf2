@@ -284,7 +284,7 @@ namespace tremotesf
         const auto future = QtConcurrent::run(doCreateTree, mTorrent->files());
 
         auto watcher = new FutureWatcher(this);
-        QObject::connect(watcher, &FutureWatcher::finished, this, [=]() {
+        QObject::connect(watcher, &FutureWatcher::finished, this, [=] {
             auto result = watcher->result();
             mRootDirectory = std::move(result.first);
             mFiles = std::move(result.second);

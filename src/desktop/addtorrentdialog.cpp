@@ -234,7 +234,7 @@ namespace tremotesf
 
         setMinimumSize(minimumSizeHint());
 
-        const auto updateUi = [=]() {
+        const auto updateUi = [=] {
             bool enabled = true;
             if (mRpc->isConnected()) {
                 mDownloadDirectoryWidget->updateComboBox(mRpc->serverSettings()->downloadDirectory());

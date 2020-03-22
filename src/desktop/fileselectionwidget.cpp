@@ -100,7 +100,7 @@ namespace tremotesf
             });
         }
 
-        QObject::connect(mSelectionButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(mSelectionButton, &QPushButton::clicked, this, [=] {
             QFileDialog* dialog;
             if (directory) {
                 dialog = new QFileDialog(this, qApp->translate("tremotesf", "Select Directory"), mFileDialogDirectory);
@@ -112,7 +112,7 @@ namespace tremotesf
             }
             dialog->setAttribute(Qt::WA_DeleteOnClose);
 
-            QObject::connect(dialog, &QFileDialog::accepted, this, [=]() {
+            QObject::connect(dialog, &QFileDialog::accepted, this, [=] {
                 const QString filePath(dialog->selectedFiles().constFirst());
 
                 if (directory && connectTextWithFileDialog) {

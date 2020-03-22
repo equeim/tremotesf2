@@ -208,12 +208,12 @@ namespace tremotesf
         auto worker = std::make_shared<Worker>();
 
         const QString& filePath = mFilePath;
-        const auto future = QtConcurrent::run([=]() {
+        const auto future = QtConcurrent::run([=] {
             worker->parse(filePath);
         });
 
         auto watcher = new QFutureWatcher<void>(this);
-        QObject::connect(watcher, &QFutureWatcher<void>::finished, this, [=]() {
+        QObject::connect(watcher, &QFutureWatcher<void>::finished, this, [=] {
             mFileData = worker->fileData;
             mParseResult = worker->parseResult;
             mError = worker->error;

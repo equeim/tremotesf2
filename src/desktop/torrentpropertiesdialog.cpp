@@ -111,7 +111,7 @@ namespace tremotesf
         dialogButtonBox->button(QDialogButtonBox::Close)->setDefault(true);
 
         const QString torrentHash(mTorrent->hashString());
-        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=]() {
+        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] {
             setTorrent(mRpc->torrentByHash(torrentHash));
         });
 
@@ -187,7 +187,7 @@ namespace tremotesf
         resizer->addWidgetsFromLayout(activityGroupBoxLayout);
         resizer->addWidgetsFromLayout(infoGroupBoxLayout);
 
-        mUpdateDetailsTab = [=]() {
+        mUpdateDetailsTab = [=] {
             setWindowTitle(mTorrent->name());
 
             //: e.g. 100 MiB of 200 MiB (50%)
@@ -413,7 +413,7 @@ namespace tremotesf
         resizer->addWidgetsFromLayout(seedingGroupBoxLayout);
         resizer->addWidgetsFromLayout(peersGroupBoxLayout);
 
-        mUpdateLimitsTab = [=]() {
+        mUpdateLimitsTab = [=] {
             globalLimitsCheckBox->setChecked(mTorrent->honorSessionLimits());
             QObject::connect(globalLimitsCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setHonorSessionLimits);
 

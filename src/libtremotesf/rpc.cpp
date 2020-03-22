@@ -322,7 +322,7 @@ namespace libtremotesf
                              bool start)
     {
         if (isConnected()) {
-            const auto future = QtConcurrent::run([=]() {
+            const auto future = QtConcurrent::run([=] {
                 return makeRequestData(QLatin1String("torrent-add"),
                                        {{QLatin1String("metainfo"), fileData.toBase64()},
                                         {QLatin1String("download-dir"), downloadDirectory},
@@ -333,7 +333,7 @@ namespace libtremotesf
                                         {QLatin1String("paused"), !start}});
             });
             auto watcher = new QFutureWatcher<QByteArray>(this);
-            QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=]() {
+            QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=] {
                 if (isConnected()) {
                     postRequest(QLatin1String("torrent-add"), watcher->result(), [=](const QJsonObject& parseResult, bool success) {
                         if (success) {
@@ -1043,7 +1043,7 @@ namespace libtremotesf
 
         reply->ignoreSslErrors(mExpectedSslErrors);
 
-        QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
+        QObject::connect(reply, &QNetworkReply::finished, this, [=] {
             if (mStatus != Disconnected) {
                 mNetworkRequests.erase(reply);
 
@@ -1108,7 +1108,7 @@ namespace libtremotesf
             reply->deleteLater();
         });
 
-        QObject::connect(this, &Rpc::connectedChanged, reply, [=]() {
+        QObject::connect(this, &Rpc::connectedChanged, reply, [=] {
             if (!isConnected()) {
                 reply->abort();
             }

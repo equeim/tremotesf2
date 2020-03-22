@@ -90,10 +90,10 @@ namespace tremotesf
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout, 0, 1, 2, 1);
         auto addServerButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add..."), this);
-        QObject::connect(addServerButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(addServerButton, &QPushButton::clicked, this, [=] {
             auto dialog = new ServerEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
-            QObject::connect(dialog, &ServerEditDialog::accepted, this, [=]() {
+            QObject::connect(dialog, &ServerEditDialog::accepted, this, [=] {
                 if (mModel->servers().size() == 1) {
                     mNoServersWidget->animatedHide();
                 }
@@ -111,7 +111,7 @@ namespace tremotesf
         buttonsLayout->addWidget(removeButton);
         buttonsLayout->addStretch();
 
-        QObject::connect(mServersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
+        QObject::connect(mServersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=] {
             const bool hasSelection = mServersView->selectionModel()->hasSelection();
             editButton->setEnabled(hasSelection);
             removeButton->setEnabled(hasSelection);

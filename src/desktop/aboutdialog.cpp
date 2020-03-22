@@ -61,12 +61,12 @@ namespace tremotesf
         auto donatePage = new QTabWidget(this);
         auto donatePageLayout = new QVBoxLayout(donatePage);
         auto paypalButton = new QPushButton(QLatin1String("PayPal"), this);
-        QObject::connect(paypalButton, &QPushButton::clicked, this, []() {
+        QObject::connect(paypalButton, &QPushButton::clicked, this, [] {
             QDesktopServices::openUrl(QUrl(QLatin1String("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DDQTRHTY5YV2G&item_name=Support%20Tremotesf%20development&no_note=1&item_number=3&no_shipping=1&currency_code=EUR")));
         });
         donatePageLayout->addWidget(paypalButton);
         auto yandexButton = new QPushButton(QLatin1String("Yandex.Money"), this);
-        QObject::connect(yandexButton, &QPushButton::clicked, this, []() {
+        QObject::connect(yandexButton, &QPushButton::clicked, this, [] {
             QDesktopServices::openUrl(QUrl(QLatin1String("https://yasobe.ru/na/equeim_tremotesf")));
         });
         donatePageLayout->addWidget(yandexButton);

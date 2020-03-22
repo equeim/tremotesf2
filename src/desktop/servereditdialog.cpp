@@ -82,7 +82,7 @@ namespace tremotesf
             removeAction->setShortcut(QKeySequence::Delete);
             addAction(removeAction);
 
-            QObject::connect(removeAction, &QAction::triggered, this, [=]() {
+            QObject::connect(removeAction, &QAction::triggered, this, [=] {
                 const auto items(selectionModel()->selectedIndexes());
                 if (!items.isEmpty()) {
                     removeRow(items.first().row());
@@ -348,7 +348,7 @@ namespace tremotesf
         mMountedDirectoriesWidget = new MountedDirectoriesWidget(0, 2);
         mountedDirectoriesLayout->addWidget(mMountedDirectoriesWidget, 0, 0, 1, 2);
         auto addDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add"), this);
-        QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=] {
             const QString directory(QFileDialog::getExistingDirectory(this));
             if (!directory.isEmpty()) {
                 const int row = mMountedDirectoriesWidget->rowCount();
@@ -358,7 +358,7 @@ namespace tremotesf
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
         auto removeDirectoriesButton = new QPushButton(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "Remove"), this);
-        QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=] {
             const auto items(mMountedDirectoriesWidget->selectionModel()->selectedIndexes());
             if (!items.isEmpty()) {
                 mMountedDirectoriesWidget->removeRow(items.first().row());
