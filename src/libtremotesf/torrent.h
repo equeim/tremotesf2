@@ -270,6 +270,7 @@ namespace libtremotesf
         bool isTrackersAddedOrRemoved() const;
         Q_INVOKABLE void addTracker(const QString& announce);
         Q_INVOKABLE void addTrackers(const std::vector<QString>& announceUrls);
+        Q_INVOKABLE void addTrackers(const QStringList& announceUrls);
         Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
         Q_INVOKABLE void removeTrackers(const QVariantList& ids);
 
@@ -293,7 +294,6 @@ namespace libtremotesf
         void updateFiles(const QJsonObject& torrentMap);
         void updatePeers(const QJsonObject& torrentMap);
 
-        void startCheckingSingleFile();
         void checkSingleFile(const QJsonObject& torrentMap);
     private:
         Rpc* mRpc;
@@ -307,8 +307,6 @@ namespace libtremotesf
         std::vector<Peer> mPeers;
         bool mPeersEnabled = false;
         bool mPeersUpdated = false;
-
-        bool mCheckingSingleFile = false;
 
     signals:
         void updated();

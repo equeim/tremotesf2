@@ -60,7 +60,7 @@ namespace libtremotesf
         {
             return QJsonDocument::fromVariant(QVariantMap{{QStringLiteral("method"), method},
                                                           {QStringLiteral("arguments"), arguments}})
-                .toJson();
+                .toJson(QJsonDocument::Compact);
         }
 
         inline QJsonObject getReplyArguments(const QJsonObject& parseResult)
@@ -561,14 +561,14 @@ namespace libtremotesf
     {
         postRequest(QLatin1String("torrent-get"),
                     QStringLiteral("{"
-                                   "    \"arguments\": {"
-                                   "        \"fields\": ["
-                                   "            \"files\","
-                                   "            \"fileStats\""
-                                   "        ],"
-                                   "        \"ids\": [%1]"
-                                   "    },"
-                                   "    \"method\": \"torrent-get\""
+                                        "\"arguments\":{"
+                                            "\"fields\":["
+                                                "\"files\","
+                                                "\"fileStats\""
+                                            "],"
+                                            "\"ids\":[%1]"
+                                        "},"
+                                        "\"method\":\"torrent-get\""
                                    "}")
                         .arg(id)
                         .toLatin1(),
@@ -595,11 +595,11 @@ namespace libtremotesf
     {
         postRequest(QLatin1String("torrent-get"),
                     QStringLiteral("{"
-                                   "    \"arguments\": {"
-                                   "        \"fields\": [\"peers\"],"
-                                   "        \"ids\": [%1]"
-                                   "    },"
-                                   "    \"method\": \"torrent-get\""
+                                       "\"arguments\":{"
+                                           "\"fields\":[\"peers\"],"
+                                           "\"ids\":[%1]"
+                                       "},"
+                                       "\"method\":\"torrent-get\""
                                    "}")
                         .arg(id)
                         .toLatin1(),
@@ -651,12 +651,12 @@ namespace libtremotesf
             postRequest(QLatin1String("download-dir-free-space"),
                         QByteArrayLiteral(
                         "{"
-                        "    \"arguments\": {"
-                        "        \"fields\": ["
-                        "            \"download-dir-free-space\""
-                        "        ]"
-                        "    },"
-                        "    \"method\": \"session-get\""
+                            "\"arguments\":{"
+                                "\"fields\":["
+                                    "\"download-dir-free-space\""
+                                "]"
+                            "},"
+                            "\"method\":\"session-get\""
                         "}"),
                         [=](const QJsonObject& parseResult, bool success) {
                             if (success) {
@@ -786,7 +786,7 @@ namespace libtremotesf
 
     void Rpc::getServerSettings()
     {
-        postRequest(QLatin1String("session-get"), QByteArrayLiteral("{\"method\": \"session-get\"}"),
+        postRequest(QLatin1String("session-get"), QByteArrayLiteral("{\"method\":\"session-get\"}"),
                     [=](const QJsonObject& parseResult, bool success) {
                         if (success) {
                             mServerSettings->update(getReplyArguments(parseResult));
@@ -814,53 +814,53 @@ namespace libtremotesf
     {
         postRequest(QLatin1String("torrent-get"),
                     QByteArrayLiteral("{"
-                                      "    \"arguments\": {"
-                                      "        \"fields\": ["
-                                      "            \"activityDate\","
-                                      "            \"addedDate\","
-                                      "            \"bandwidthPriority\","
-                                      "            \"comment\","
-                                      "            \"creator\","
-                                      "            \"dateCreated\","
-                                      "            \"doneDate\","
-                                      "            \"downloadDir\","
-                                      "            \"downloadedEver\","
-                                      "            \"downloadLimit\","
-                                      "            \"downloadLimited\","
-                                      "            \"error\","
-                                      "            \"errorString\","
-                                      "            \"eta\","
-                                      "            \"hashString\","
-                                      "            \"haveValid\","
-                                      "            \"honorsSessionLimits\","
-                                      "            \"id\","
-                                      "            \"leftUntilDone\","
-                                      "            \"metadataPercentComplete\","
-                                      "            \"name\","
-                                      "            \"peer-limit\","
-                                      "            \"peersConnected\","
-                                      "            \"peersGettingFromUs\","
-                                      "            \"peersSendingToUs\","
-                                      "            \"percentDone\","
-                                      "            \"queuePosition\","
-                                      "            \"rateDownload\","
-                                      "            \"rateUpload\","
-                                      "            \"recheckProgress\","
-                                      "            \"seedIdleLimit\","
-                                      "            \"seedIdleMode\","
-                                      "            \"seedRatioLimit\","
-                                      "            \"seedRatioMode\","
-                                      "            \"sizeWhenDone\","
-                                      "            \"status\","
-                                      "            \"totalSize\","
-                                      "            \"trackerStats\","
-                                      "            \"uploadedEver\","
-                                      "            \"uploadLimit\","
-                                      "            \"uploadLimited\","
-                                      "            \"uploadRatio\""
-                                      "        ]"
-                                      "    },"
-                                      "    \"method\": \"torrent-get\""
+                                          "\"arguments\":{"
+                                              "\"fields\":["
+                                                  "\"activityDate\","
+                                                  "\"addedDate\","
+                                                  "\"bandwidthPriority\","
+                                                  "\"comment\","
+                                                  "\"creator\","
+                                                  "\"dateCreated\","
+                                                  "\"doneDate\","
+                                                  "\"downloadDir\","
+                                                  "\"downloadedEver\","
+                                                  "\"downloadLimit\","
+                                                  "\"downloadLimited\","
+                                                  "\"error\","
+                                                  "\"errorString\","
+                                                  "\"eta\","
+                                                  "\"hashString\","
+                                                  "\"haveValid\","
+                                                  "\"honorsSessionLimits\","
+                                                  "\"id\","
+                                                  "\"leftUntilDone\","
+                                                  "\"metadataPercentComplete\","
+                                                  "\"name\","
+                                                  "\"peer-limit\","
+                                                  "\"peersConnected\","
+                                                  "\"peersGettingFromUs\","
+                                                  "\"peersSendingToUs\","
+                                                  "\"percentDone\","
+                                                  "\"queuePosition\","
+                                                  "\"rateDownload\","
+                                                  "\"rateUpload\","
+                                                  "\"recheckProgress\","
+                                                  "\"seedIdleLimit\","
+                                                  "\"seedIdleMode\","
+                                                  "\"seedRatioLimit\","
+                                                  "\"seedRatioMode\","
+                                                  "\"sizeWhenDone\","
+                                                  "\"status\","
+                                                  "\"totalSize\","
+                                                  "\"trackerStats\","
+                                                  "\"uploadedEver\","
+                                                  "\"uploadLimit\","
+                                                  "\"uploadLimited\","
+                                                  "\"uploadRatio\""
+                                              "]"
+                                          "},"
+                                          "\"method\":\"torrent-get\""
                                       "}"),
                     [=](const QJsonObject& parseResult, bool success) {
                         if (!success) {
@@ -907,7 +907,6 @@ namespace libtremotesf
                                             emit torrentFinished(torrent.get());
                                         }
                                         if (!metadataWasComplete && torrent->isMetadataComplete()) {
-                                            torrent->startCheckingSingleFile();
                                             checkTorrentSingleFile(id);
                                         }
                                     }
@@ -943,7 +942,6 @@ namespace libtremotesf
                                     }
 
                                     if (torrent->isMetadataComplete()) {
-                                        torrent->startCheckingSingleFile();
                                         checkTorrentSingleFile(id);
                                     }
                                 }
@@ -961,11 +959,11 @@ namespace libtremotesf
     {
         postRequest(QLatin1String("torrent-get"),
                     QStringLiteral("{"
-                                   "    \"arguments\": {"
-                                   "        \"fields\": [\"priorities\"],"
-                                   "        \"ids\": [%1]"
-                                   "    },"
-                                   "    \"method\": \"torrent-get\""
+                                       "\"arguments\":{"
+                                           "\"fields\":[\"priorities\"],"
+                                           "\"ids\":[%1]"
+                                       "},"
+                                       "\"method\":\"torrent-get\""
                                    "}")
                         .arg(torrentId)
                         .toLatin1(),
@@ -986,7 +984,7 @@ namespace libtremotesf
 
     void Rpc::getServerStats()
     {
-        postRequest(QLatin1String("session-stats"), QByteArrayLiteral("{\"method\": \"session-stats\"}"),
+        postRequest(QLatin1String("session-stats"), QByteArrayLiteral("{\"method\":\"session-stats\"}"),
                     [=](const QJsonObject& parseResult, bool success) {
                         if (success) {
                             mServerStats->update(getReplyArguments(parseResult));
