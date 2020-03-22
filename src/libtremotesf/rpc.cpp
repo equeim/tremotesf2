@@ -335,8 +335,8 @@ namespace libtremotesf
             auto watcher = new QFutureWatcher<QByteArray>(this);
             QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=]() {
                 if (isConnected()) {
-                    postRequest(watcher->result(), [=](const QJsonObject& parseResult) {
-                        if (isResultSuccessful(parseResult)) {
+                    postRequest(QLatin1String("torrent-add"), watcher->result(), [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
                             const auto arguments(getReplyArguments(parseResult));
                             if (arguments.contains(torrentDuplicateKey)) {
                                 emit torrentAddDuplicate();
@@ -370,17 +370,14 @@ namespace libtremotesf
                              int bandwidthPriority,
                              bool start)
     {
-        if (!isConnected()) {
-            return;
-        }
-
-        postRequest(makeRequestData(QLatin1String("torrent-add"),
-                                    {{QLatin1String("filename"), link},
-                                     {QLatin1String("download-dir"), downloadDirectory},
-                                     {QLatin1String("bandwidthPriority"), bandwidthPriority},
-                                     {QLatin1String("paused"), !start}}),
-                    [=](const QJsonObject& parseResult) {
-                        if (isResultSuccessful(parseResult)) {
+        if (isConnected()) {
+            postRequest(QLatin1String("torrent-add"),
+                        {{QLatin1String("filename"), link},
+                         {QLatin1String("download-dir"), downloadDirectory},
+                         {QLatin1String("bandwidthPriority"), bandwidthPriority},
+                         {QLatin1String("paused"), !start}},
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
                             if (getReplyArguments(parseResult).contains(torrentDuplicateKey)) {
                                 emit torrentAddDuplicate();
                             } else {
@@ -390,140 +387,170 @@ namespace libtremotesf
                             emit torrentAddError();
                         }
                     });
+        }
     }
 
     void Rpc::startTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-start"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("torrent-start"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::startTorrentsNow(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-start-now"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("torrent-start-now"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::pauseTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-stop"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("torrent-stop"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::removeTorrents(const QVariantList& ids, bool deleteFiles)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-remove"),
-                                        {{QLatin1String("ids"), ids},
-                                         {QLatin1String("delete-local-data"), deleteFiles}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("torrent-remove"),
+                        {{QLatin1String("ids"), ids},
+                         {QLatin1String("delete-local-data"), deleteFiles}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::checkTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-verify"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("torrent-verify"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::moveTorrentsToTop(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("queue-move-top"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("queue-move-top"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::moveTorrentsUp(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("queue-move-up"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("queue-move-up"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::moveTorrentsDown(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("queue-move-down"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("queue-move-down"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::moveTorrentsToBottom(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("queue-move-bottom"),
-                                        {{QLatin1String("ids"), ids}}),
-                        [=]() { updateData(); });
+            postRequest(QLatin1String("queue-move-bottom"),
+                        {{QLatin1String("ids"), ids}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success) {
+                                updateData();
+                            }
+                        });
         }
     }
 
     void Rpc::reannounceTorrents(const QVariantList& ids)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-reannounce"),
-                                        {{QLatin1String("ids"), ids}}));
+            postRequest(QLatin1String("torrent-reannounce"),
+                        {{QLatin1String("ids"), ids}});
         }
     }
 
     void Rpc::setSessionProperty(const QString& property, const QVariant& value)
     {
-        if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("session-set"), {{property, value}}));
-        }
+        setSessionProperties({{property, value}});
     }
 
     void Rpc::setSessionProperties(const QVariantMap& properties)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("session-set"), properties));
+            postRequest(QLatin1String("session-set"), properties);
         }
     }
 
     void Rpc::setTorrentProperty(int id, const QString& property, const QVariant& value, bool updateIfSuccessful)
     {
         if (isConnected()) {
-           QByteArray requestData(makeRequestData(QLatin1String("torrent-set"),
-                                                  {{QLatin1String("ids"), QVariantList{id}},
-                                                   {property, value}}));
-
-           if (updateIfSuccessful) {
-               postRequest(QByteArray(std::move(requestData)), [=](const QJsonObject& parseResult) {
-                   if (isResultSuccessful(parseResult)) {
-                       updateData();
-                   }
-               });
-           } else {
-               postRequest(QByteArray(std::move(requestData)));
-           }
+            postRequest(QLatin1String("torrent-set"),
+                        {{QLatin1String("ids"), QVariantList{id}},
+                         {property, value}},
+                        [=](const QJsonObject&, bool success) {
+                            if (success && updateIfSuccessful) {
+                                updateData();
+                            }
+            });
         }
     }
 
     void Rpc::setTorrentsLocation(const QVariantList& ids, const QString& location, bool moveFiles)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-set-location"),
-                                        {{QLatin1String("ids"), ids},
-                                         {QLatin1String("location"), location},
-                                         {QLatin1String("move"), moveFiles}}),
-                        [=](const QJsonObject& parseResult) {
-                if (isResultSuccessful(parseResult)) {
+            postRequest(QLatin1String("torrent-set-location"),
+                        {{QLatin1String("ids"), ids},
+                         {QLatin1String("location"), location},
+                         {QLatin1String("move"), moveFiles}},
+                        [=](const QJsonObject&, bool success) {
+                if (success) {
                     updateData();
                 }
             });
@@ -532,7 +559,8 @@ namespace libtremotesf
 
     void Rpc::getTorrentFiles(int id, bool scheduled)
     {
-        postRequest(QStringLiteral("{"
+        postRequest(QLatin1String("torrent-get"),
+                    QStringLiteral("{"
                                    "    \"arguments\": {"
                                    "        \"fields\": ["
                                    "            \"files\","
@@ -544,18 +572,20 @@ namespace libtremotesf
                                    "}")
                         .arg(id)
                         .toLatin1(),
-                    [=](const QJsonObject& parseResult) {
-                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(torrentsKey)
-                                                                .toArray());
-                        const std::shared_ptr<Torrent> torrent(torrentById(id));
-                        if (!torrentsVariants.isEmpty() && torrent) {
-                            if (torrent->isFilesEnabled()) {
-                                torrent->updateFiles(torrentsVariants.first().toObject());
-                            }
-                            if (scheduled) {
-                                checkIfTorrentsUpdated();
-                                startUpdateTimer();
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
+                            const QJsonArray torrentsVariants(getReplyArguments(parseResult)
+                                                                    .value(torrentsKey)
+                                                                    .toArray());
+                            Torrent* torrent = torrentById(id);
+                            if (!torrentsVariants.isEmpty() && torrent) {
+                                if (torrent->isFilesEnabled()) {
+                                    torrent->updateFiles(torrentsVariants.first().toObject());
+                                }
+                                if (scheduled) {
+                                    checkIfTorrentsUpdated();
+                                    startUpdateTimer();
+                                }
                             }
                         }
                     });
@@ -563,7 +593,8 @@ namespace libtremotesf
 
     void Rpc::getTorrentPeers(int id, bool scheduled)
     {
-        postRequest(QStringLiteral("{"
+        postRequest(QLatin1String("torrent-get"),
+                    QStringLiteral("{"
                                    "    \"arguments\": {"
                                    "        \"fields\": [\"peers\"],"
                                    "        \"ids\": [%1]"
@@ -572,18 +603,20 @@ namespace libtremotesf
                                    "}")
                         .arg(id)
                         .toLatin1(),
-                    [=](const QJsonObject& parseResult) {
-                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(torrentsKey)
-                                                                .toArray());
-                        const std::shared_ptr<Torrent> torrent(torrentById(id));
-                        if (!torrentsVariants.isEmpty() && torrent) {
-                            if (torrent->isPeersEnabled()) {
-                                torrent->updatePeers(torrentsVariants.first().toObject());
-                            }
-                            if (scheduled) {
-                                checkIfTorrentsUpdated();
-                                startUpdateTimer();
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
+                            const QJsonArray torrentsVariants(getReplyArguments(parseResult)
+                                                                    .value(torrentsKey)
+                                                                    .toArray());
+                            Torrent* torrent = torrentById(id);
+                            if (!torrentsVariants.isEmpty() && torrent) {
+                                if (torrent->isPeersEnabled()) {
+                                    torrent->updatePeers(torrentsVariants.first().toObject());
+                                }
+                                if (scheduled) {
+                                    checkIfTorrentsUpdated();
+                                    startUpdateTimer();
+                                }
                             }
                         }
                     });
@@ -592,19 +625,21 @@ namespace libtremotesf
     void Rpc::renameTorrentFile(int torrentId, const QString& filePath, const QString& newName)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QLatin1String("torrent-rename-path"),
-                                        {{QLatin1String("ids"), QVariantList{torrentId}},
-                                         {QLatin1String("path"), filePath},
-                                         {QLatin1String("name"), newName}}),
-                        [=](const QJsonObject& parseResult) {
-                            const std::shared_ptr<Torrent> torrent(torrentById(torrentId));
-                            if (torrent) {
-                                const QJsonObject arguments(getReplyArguments(parseResult));
-                                const QString path(arguments.value(QLatin1String("path")).toString());
-                                const QString newName(arguments.value(QLatin1String("name")).toString());
-                                emit torrent->fileRenamed(path, newName);
-                                emit torrentFileRenamed(torrentId, path, newName);
-                                updateData();
+            postRequest(QLatin1String("torrent-rename-path"),
+                        {{QLatin1String("ids"), QVariantList{torrentId}},
+                         {QLatin1String("path"), filePath},
+                         {QLatin1String("name"), newName}},
+                        [=](const QJsonObject& parseResult, bool success) {
+                            if (success) {
+                                Torrent* torrent = torrentById(torrentId);
+                                if (torrent) {
+                                    const QJsonObject arguments(getReplyArguments(parseResult));
+                                    const QString path(arguments.value(QLatin1String("path")).toString());
+                                    const QString newName(arguments.value(QLatin1String("name")).toString());
+                                    emit torrent->fileRenamed(path, newName);
+                                    emit torrentFileRenamed(torrentId, path, newName);
+                                    updateData();
+                                }
                             }
                         });
         }
@@ -613,7 +648,8 @@ namespace libtremotesf
     void Rpc::getDownloadDirFreeSpace()
     {
         if (isConnected()) {
-            postRequest(QByteArrayLiteral(
+            postRequest(QLatin1String("download-dir-free-space"),
+                        QByteArrayLiteral(
                         "{"
                         "    \"arguments\": {"
                         "        \"fields\": ["
@@ -622,8 +658,10 @@ namespace libtremotesf
                         "    },"
                         "    \"method\": \"session-get\""
                         "}"),
-                        [=](const QJsonObject& parseResult) {
-                            emit gotDownloadDirFreeSpace(getReplyArguments(parseResult).value(QJsonKeyStringInit("download-dir-free-space")).toDouble());
+                        [=](const QJsonObject& parseResult, bool success) {
+                            if (success) {
+                                emit gotDownloadDirFreeSpace(getReplyArguments(parseResult).value(QJsonKeyStringInit("download-dir-free-space")).toDouble());
+                            }
                         });
         }
     }
@@ -631,12 +669,14 @@ namespace libtremotesf
     void Rpc::getFreeSpaceForPath(const QString& path)
     {
         if (isConnected()) {
-            postRequest(makeRequestData(QStringLiteral("free-space"),
-                                        {{QStringLiteral("path"), path}}),
-                        [=](const QJsonObject& parseResult) {
-                            emit gotFreeSpaceForPath(path,
-                                                     isResultSuccessful(parseResult),
-                                                     getReplyArguments(parseResult).value(QJsonKeyStringInit("size-bytes")).toDouble());
+            postRequest(QLatin1String("free-space"),
+                        {{QLatin1String("path"), path}},
+                        [=](const QJsonObject& parseResult, bool success) {
+                            if (success) {
+                                emit gotFreeSpaceForPath(path,
+                                                         isResultSuccessful(parseResult),
+                                                         getReplyArguments(parseResult).value(QJsonKeyStringInit("size-bytes")).toDouble());
+                            }
                         });
         }
     }
@@ -656,6 +696,15 @@ namespace libtremotesf
             getTorrents();
             getServerStats();
         }
+    }
+
+    Torrent* Rpc::torrentById(int id) const
+    {
+        const auto end(mTorrents.end());
+        const auto found(std::find_if(mTorrents.begin(), mTorrents.end(), [id](const std::shared_ptr<Torrent>& torrent) {
+            return (torrent->id() == id);
+        }));
+        return (found == end) ? nullptr : found->get();
     }
 
     void Rpc::setStatus(Status status)
@@ -737,23 +786,25 @@ namespace libtremotesf
 
     void Rpc::getServerSettings()
     {
-        postRequest(QByteArrayLiteral("{\"method\": \"session-get\"}"),
-                    [=](const QJsonObject& parseResult) {
-                        mServerSettings->update(getReplyArguments(parseResult));
-                        mServerSettingsUpdated = true;
-                        if (mRpcVersionChecked) {
-                            startUpdateTimer();
-                        } else {
-                            mRpcVersionChecked = true;
-                            if (mServerSettings->minimumRpcVersion() > minimumRpcVersion) {
-                                setError(ServerIsTooNew);
-                                setStatus(Disconnected);
-                            } else if (mServerSettings->rpcVersion() < minimumRpcVersion) {
-                                setError(ServerIsTooOld);
-                                setStatus(Disconnected);
+        postRequest(QLatin1String("session-get"), QByteArrayLiteral("{\"method\": \"session-get\"}"),
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
+                            mServerSettings->update(getReplyArguments(parseResult));
+                            mServerSettingsUpdated = true;
+                            if (mRpcVersionChecked) {
+                                startUpdateTimer();
                             } else {
-                                getTorrents();
-                                getServerStats();
+                                mRpcVersionChecked = true;
+                                if (mServerSettings->minimumRpcVersion() > minimumRpcVersion) {
+                                    setError(ServerIsTooNew);
+                                    setStatus(Disconnected);
+                                } else if (mServerSettings->rpcVersion() < minimumRpcVersion) {
+                                    setError(ServerIsTooOld);
+                                    setStatus(Disconnected);
+                                } else {
+                                    getTorrents();
+                                    getServerStats();
+                                }
                             }
                         }
                     });
@@ -761,7 +812,8 @@ namespace libtremotesf
 
     void Rpc::getTorrents()
     {
-        postRequest(QByteArrayLiteral("{"
+        postRequest(QLatin1String("torrent-get"),
+                    QByteArrayLiteral("{"
                                       "    \"arguments\": {"
                                       "        \"fields\": ["
                                       "            \"activityDate\","
@@ -810,7 +862,11 @@ namespace libtremotesf
                                       "    },"
                                       "    \"method\": \"torrent-get\""
                                       "}"),
-                    [=](const QJsonObject& parseResult) {
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (!success) {
+                            return;
+                        }
+
                         std::vector<std::tuple<QJsonObject, int, bool>> newTorrents;
                         {
                             const QJsonArray torrentsJsons(getReplyArguments(parseResult)
@@ -903,7 +959,8 @@ namespace libtremotesf
 
     void Rpc::checkTorrentSingleFile(int torrentId)
     {
-        postRequest(QStringLiteral("{"
+        postRequest(QLatin1String("torrent-get"),
+                    QStringLiteral("{"
                                    "    \"arguments\": {"
                                    "        \"fields\": [\"priorities\"],"
                                    "        \"ids\": [%1]"
@@ -912,27 +969,30 @@ namespace libtremotesf
                                    "}")
                         .arg(torrentId)
                         .toLatin1(),
-                    [=](const QJsonObject& parseResult) {
-                        const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                .value(torrentsKey)
-                                                                .toArray());
-                        const std::shared_ptr<Torrent> torrent(torrentById(torrentId));
-
-                        if (!torrentsVariants.isEmpty() && torrent) {
-                            torrent->checkSingleFile(torrentsVariants.first().toObject());
-                            checkIfTorrentsUpdated();
-                            startUpdateTimer();
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
+                            const QJsonArray torrentsVariants(getReplyArguments(parseResult)
+                                                                    .value(torrentsKey)
+                                                                    .toArray());
+                            Torrent* torrent = torrentById(torrentId);
+                            if (!torrentsVariants.isEmpty() && torrent) {
+                                torrent->checkSingleFile(torrentsVariants.first().toObject());
+                                checkIfTorrentsUpdated();
+                                startUpdateTimer();
+                            }
                         }
                     });
     }
 
     void Rpc::getServerStats()
     {
-        postRequest(QByteArrayLiteral("{\"method\": \"session-stats\"}"),
-                    [=](const QJsonObject& parseResult) {
-                        mServerStats->update(getReplyArguments(parseResult));
-                        mServerStatsUpdated = true;
-                        startUpdateTimer();
+        postRequest(QLatin1String("session-stats"), QByteArrayLiteral("{\"method\": \"session-stats\"}"),
+                    [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
+                            mServerStats->update(getReplyArguments(parseResult));
+                            mServerStatsUpdated = true;
+                            startUpdateTimer();
+                        }
                     });
     }
 
@@ -970,9 +1030,7 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::postRequestImpl(const QByteArray& data,
-                              const std::function<void()>& callOnSuccess,
-                              const std::function<void(const QJsonObject&)>& callOnSuccessParse)
+    void Rpc::postRequest(const QLatin1String& method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
     {
         QNetworkRequest request(mServerUrl);
         static const QVariant contentType(QLatin1String("application/json"));
@@ -991,32 +1049,39 @@ namespace libtremotesf
 
                 switch (reply->error()) {
                 case QNetworkReply::NoError:
-                    if (callOnSuccessParse) {
-                        const QByteArray replyData(reply->readAll());
-                        const auto future = QtConcurrent::run([=]() {
-                            QJsonParseError error;
-                            QJsonObject result(QJsonDocument::fromJson(replyData, &error).object());
-                            return std::pair<QJsonObject, bool>(std::move(result), error.error == QJsonParseError::NoError);
-                        });
-                        auto watcher = new QFutureWatcher<std::pair<QJsonObject, bool>>(this);
-                        QObject::connect(watcher, &QFutureWatcher<std::pair<QJsonObject, bool>>::finished, this, [=]() {
-                            const auto result = watcher->result();
-                            if (mStatus != Disconnected) {
-                                if (result.second) {
-                                    callOnSuccessParse(result.first);
-                                } else {
-                                    qWarning("Parsing error");
-                                    setError(ParseError);
-                                    setStatus(Disconnected);
+                {
+                    const QByteArray replyData(reply->readAll());
+                    const auto future = QtConcurrent::run([replyData] {
+                        QJsonParseError error{};
+                        QJsonObject result(QJsonDocument::fromJson(replyData, &error).object());
+                        const bool parsedOk = (error.error == QJsonParseError::NoError);
+                        return std::pair<QJsonObject, bool>(std::move(result), parsedOk);
+                    });
+                    auto watcher = new QFutureWatcher<std::pair<QJsonObject, bool>>(this);
+                    QObject::connect(watcher, &QFutureWatcher<std::pair<QJsonObject, bool>>::finished, this, [=] {
+                        const auto result = watcher->result();
+                        if (mStatus != Disconnected) {
+                            const QJsonObject& parseResult = result.first;
+                            const bool parsedOk = result.second;
+                            if (parsedOk) {
+                                const bool success = isResultSuccessful(parseResult);
+                                if (!success) {
+                                    qWarning() << "method" << method << "failed, response:" << parseResult;
                                 }
+                                if (callOnSuccessParse) {
+                                    callOnSuccessParse(parseResult, success);
+                                }
+                            } else {
+                                qWarning("Parsing error");
+                                setError(ParseError);
+                                setStatus(Disconnected);
                             }
-                            watcher->deleteLater();
-                        });
-                        watcher->setFuture(future);
-                    } else if (callOnSuccess) {
-                        callOnSuccess();
-                    }
+                        }
+                        watcher->deleteLater();
+                    });
+                    watcher->setFuture(future);
                     break;
+                }
                 case QNetworkReply::AuthenticationRequiredError:
                     qWarning("Authentication error");
                     setError(AuthenticationError);
@@ -1032,7 +1097,7 @@ namespace libtremotesf
                     if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
                         reply->hasRawHeader(sessionIdHeader)) {
                         mSessionId = reply->rawHeader(sessionIdHeader);
-                        postRequestImpl(data, callOnSuccess, callOnSuccessParse);
+                        postRequest(method, data, callOnSuccessParse);
                     } else {
                         qWarning() << reply->error() << reply->errorString();
                         setError(ConnectionError, reply->errorString());
@@ -1057,24 +1122,8 @@ namespace libtremotesf
         timer->start();
     }
 
-    void Rpc::postRequest(const QByteArray& data, const std::function<void()>& callOnSuccess)
+    void Rpc::postRequest(const QLatin1String& method, const QVariantMap& arguments, const std::function<void (const QJsonObject&, bool)>& callOnSuccessParse)
     {
-        postRequestImpl(data, callOnSuccess, nullptr);
-    }
-
-    void Rpc::postRequest(const QByteArray& data, const std::function<void(const QJsonObject&)>& callOnSuccessParse)
-    {
-        postRequestImpl(data, nullptr, callOnSuccessParse);
-    }
-
-    std::shared_ptr<Torrent> Rpc::torrentById(int id) const
-    {
-        const auto found = std::find_if(mTorrents.cbegin(), mTorrents.cend(), [id](const std::shared_ptr<Torrent>& torrent) {
-            return (torrent->id() == id);
-        });
-        if (found != mTorrents.cend()) {
-            return *found;
-        }
-        return {};
+        postRequest(method, makeRequestData(method, arguments), callOnSuccessParse);
     }
 }
