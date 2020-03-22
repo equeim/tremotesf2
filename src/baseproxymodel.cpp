@@ -64,7 +64,7 @@ namespace tremotesf
     {
         QVariant leftVariant(left.data(sortRole()));
         QVariant rightVariant(right.data(sortRole()));
-        if (leftVariant.userType() == QVariant::String) {
+        if (leftVariant.userType() == QMetaType::QString) {
             return (mCollator.compare(leftVariant.toString(), rightVariant.toString()) < 0);
         }
         return QSortFilterProxyModel::lessThan(left, right);
