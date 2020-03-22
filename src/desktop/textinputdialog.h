@@ -22,6 +22,7 @@
 #include <QDialog>
 
 class QLineEdit;
+class QPlainTextEdit;
 
 namespace tremotesf
 {
@@ -32,12 +33,14 @@ namespace tremotesf
                                  const QString& labelText,
                                  const QString& text,
                                  const QString& okButtonText,
+                                 bool multiline,
                                  QWidget* parent = nullptr);
         QSize sizeHint() const override;
         QString text() const;
 
     private:
-        QLineEdit* mLineEdit;
+        QLineEdit* mLineEdit = nullptr;
+        QPlainTextEdit* mPlainTextEdit = nullptr;
     };
 }
 

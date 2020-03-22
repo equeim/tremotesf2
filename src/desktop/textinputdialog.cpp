@@ -21,6 +21,7 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -30,9 +31,9 @@ namespace tremotesf
                                      const QString& labelText,
                                      const QString& text,
                                      const QString& okButtonText,
+                                     bool multiline,
                                      QWidget* parent)
-        : QDialog(parent),
-          mLineEdit(new QLineEdit(text, this))
+        : QDialog(parent)
     {
         setWindowTitle(title);
 
@@ -42,7 +43,14 @@ namespace tremotesf
         auto label = new QLabel(labelText, this);
         label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         layout->addWidget(label);
-        layout->addWidget(mLineEdit);
+
+        if (multiline) {
+            mPlainTextEdit = new QPlainTextEdit(text, this);
+            layout->addWidget(mPlainTextEdit);
+        } else {
+            mLineEdit = new QLineEdit(text, this);
+            layout->addWidget(mLineEdit);
+        }
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         if (!okButtonText.isEmpty()) {
@@ -54,13 +62,22 @@ namespace tremotesf
         if (text.isEmpty()) {
             dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
-        QObject::connect(mLineEdit, &QLineEdit::textChanged, this, [=](const QString& text) {
+
+        const auto onTextChanged = [=](const QString& text) {
             if (text.isEmpty()) {
                 dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             } else {
                 dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
             }
-        });
+        };
+
+        if (multiline) {
+            QObject::connect(mPlainTextEdit, &QPlainTextEdit::textChanged, this, [=] {
+                onTextChanged(mPlainTextEdit->toPlainText());
+            });
+        } else {
+            QObject::connect(mLineEdit, &QLineEdit::textChanged, this, onTextChanged);
+        }
 
         layout->addWidget(dialogButtonBox);
 
@@ -74,6 +91,6 @@ namespace tremotesf
 
     QString TextInputDialog::text() const
     {
-        return mLineEdit->text();
+        return mLineEdit ? mLineEdit->text() : mPlainTextEdit->toPlainText();
     }
 }

@@ -41,7 +41,7 @@ namespace tremotesf
         void setTorrent(libtremotesf::Torrent* torrent);
 
     private:
-        void addTracker();
+        void addTrackers();
         void showEditDialogs();
         void removeTrackers();
 

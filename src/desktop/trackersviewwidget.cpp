@@ -102,9 +102,9 @@ namespace tremotesf
 
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout);
-        auto addTrackerButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add..."), this);
-        QObject::connect(addTrackerButton, &QPushButton::clicked, this, &TrackersViewWidget::addTracker);
-        buttonsLayout->addWidget(addTrackerButton);
+        auto addTrackersButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add..."), this);
+        QObject::connect(addTrackersButton, &QPushButton::clicked, this, &TrackersViewWidget::addTrackers);
+        buttonsLayout->addWidget(addTrackersButton);
         auto editButton = new QPushButton(QIcon::fromTheme(QLatin1String("document-properties")), qApp->translate("tremotesf", "Edit..."), this);
         QObject::connect(editButton, &QPushButton::clicked, this, &TrackersViewWidget::showEditDialogs);
         editButton->setEnabled(false);
@@ -138,15 +138,16 @@ namespace tremotesf
         mModel->setTorrent(torrent);
     }
 
-    void TrackersViewWidget::addTracker()
+    void TrackersViewWidget::addTrackers()
     {
-        auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Add Tracker"),
-                                          qApp->translate("tremotesf", "Tracker announce URL:"),
+        auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Add Trackers"),
+                                          qApp->translate("tremotesf", "Trackers announce URLs:"),
                                           QString(),
                                           qApp->translate("tremotesf", "Add"),
+                                          true,
                                           this);
         QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
-            mTorrent->addTracker(dialog->text());
+            mTorrent->addTrackers(dialog->text().split(QLatin1Char('\n'), QString::SkipEmptyParts));
         });
         dialog->show();
     }
@@ -161,6 +162,7 @@ namespace tremotesf
                                               qApp->translate("tremotesf", "Tracker announce URL:"),
                                               tracker.announce(),
                                               QString(),
+                                              false,
                                               this);
             QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
                 mTorrent->setTracker(id, dialog->text());

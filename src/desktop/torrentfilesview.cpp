@@ -252,6 +252,7 @@ namespace tremotesf
                                                   qApp->translate("tremotesf", "File name:"),
                                                   entry->name(),
                                                   qApp->translate("tremotesf", "Rename"),
+                                                  false,
                                                   this);
                 QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
                     mModel->renameFile(index, dialog->text());
