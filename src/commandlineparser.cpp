@@ -23,6 +23,7 @@
 #include <QFileInfo>
 #include <QUrl>
 
+#define CXXOPTS_VECTOR_DELIMITER '\0'
 #include "3rdparty/cxxopts.hpp"
 
 namespace tremotesf
@@ -35,21 +36,23 @@ namespace tremotesf
             return std::string(sep ? sep + 1 : arg);
         }
 
-        void parsePositional(const std::string& arg, CommandLineArgs& args)
+        void parsePositionals(const std::vector<std::string>& torrents, CommandLineArgs& args)
         {
-            if (!arg.empty()) {
-                const auto argument(QString::fromStdString(arg));
-                const QFileInfo info(argument);
-                if (info.isFile()) {
-                    args.files.push_back(info.absoluteFilePath());
-                } else {
-                    const QUrl url(argument);
-                    if (url.isLocalFile()) {
-                        if (QFileInfo(url.path()).isFile()) {
-                            args.files.push_back(url.path());
-                        }
+            for (const std::string& arg : torrents) {
+                if (!arg.empty()) {
+                    const auto argument(QString::fromStdString(arg));
+                    const QFileInfo info(argument);
+                    if (info.isFile()) {
+                        args.files.push_back(info.absoluteFilePath());
                     } else {
-                        args.urls.push_back(argument);
+                        const QUrl url(argument);
+                        if (url.isLocalFile()) {
+                            if (QFileInfo(url.path()).isFile()) {
+                                args.files.push_back(url.path());
+                            }
+                        } else {
+                            args.urls.push_back(argument);
+                        }
                     }
                 }
             }
@@ -63,16 +66,17 @@ namespace tremotesf
         const std::string appName(parseAppName(argv[0]));
         const std::string versionString(appName + " " TREMOTESF_VERSION);
         cxxopts::Options opts(appName, versionString);
+        std::vector<std::string> torrents;
         opts.add_options()
             ("v,version", "display version information", cxxopts::value<bool>())
             ("h,help", "display this help", cxxopts::value<bool>())
 #ifdef TREMOTESF_SAILFISHOS
-            ("torrent", "", cxxopts::value<std::string>()->default_value(""));
+            ("torrent", "", cxxopts::value<std::string>(*torrents.emplace(torrents.end())));
             opts.parse_positional("torrent");
             opts.positional_help("torrent");
 #else
             ("m,minimized", "start minimized in notification area", cxxopts::value<bool>(args.minimized))
-            ("torrents", "", cxxopts::value<std::vector<std::string>>());
+            ("torrents", "", cxxopts::value<decltype(torrents)>(torrents));
             opts.parse_positional("torrents");
             opts.positional_help("torrents");
 #endif
@@ -88,15 +92,7 @@ namespace tremotesf
                 args.exit = true;
                 return args;
             }
-#ifdef TREMOTESF_SAILFISHOS
-            parsePositional(result["torrent"].as<std::string>(), args);
-#else
-            for (const auto& i : result.arguments()) {
-                if (i.key() == "torrents") {
-                    parsePositional(i.value(), args);
-                }
-            }
-#endif
+            parsePositionals(torrents, args);
         } catch (const cxxopts::OptionException& e) {
             std::cerr << e.what() << std::endl;
             args.exit = true;
