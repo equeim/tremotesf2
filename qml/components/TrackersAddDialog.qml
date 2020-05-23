@@ -1,6 +1,6 @@
 /*
  * Tremotesf
- * Copyright (C) 2015-2018 Alexey Rochev <equeim@gmail.com>
+ * Copyright (C) 2015-2020 Alexey Rochev <equeim@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.2
+import QtQuick 2.6
 import Sailfish.Silica 1.0
+
+import harbour.tremotesf 1.0
 
 Dialog {
     property var torrent
-    property int trackerId
-    property alias announce: textField.text
 
     allowedOrientations: defaultAllowedOrientations
-    canAccept: !textField.errorHighlight
+    canAccept: !textArea.errorHighlight
 
-    onAccepted: torrent.setTracker(trackerId, announce)
+    onAccepted: torrent.addTrackers(Utils.splitByNewlines(textArea.text))
 
     SilicaFlickable {
         anchors.fill: parent
@@ -38,21 +38,21 @@ Dialog {
             width: parent.width
 
             DialogHeader {
-                title: qsTranslate("tremotesf", "Edit Tracker")
+                title: qsTranslate("tremotesf", "Add Trackers")
             }
 
-            TextField {
-                id: textField
+            TextArea {
+                id: textArea
 
                 width: parent.width
-                errorHighlight: !text
-                label: qsTranslate("tremotesf", "Tracker announce URL")
-                placeholderText: label
+                height: Theme.pixelRatio * 240
+                //height: Theme.itemSizeHuge * 2
 
-                EnterKey.enabled: text
-                EnterKey.iconSource: "image://theme/icon-m-enter-accept"
-                EnterKey.onClicked: accept()
+                errorHighlight: !text
+                label: qsTranslate("tremotesf", "Trackers announce URLs")
+                placeholderText: label
             }
         }
     }
 }
+

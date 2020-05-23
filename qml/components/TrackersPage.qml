@@ -190,7 +190,7 @@ Page {
             MenuItem {
                 enabled: torrent
                 text: qsTranslate("tremotesf", "Add...")
-                onClicked: pageStack.push("TrackerEditDialog.qml", {"torrent": torrent})
+                onClicked: pageStack.push("TrackersAddDialog.qml", {"torrent": torrent})
             }
         }
 
