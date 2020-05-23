@@ -49,7 +49,10 @@ namespace tremotesf
         {
             SignalHandler::exitRequested = true;
             char tmp = 0;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
             write(signalsFd[0], &tmp, sizeof(tmp));
+#pragma GCC diagnostic pop
         }
     }
 
@@ -89,7 +92,10 @@ namespace tremotesf
             // This lambda will be executed only after calling QCoreApplication::exec()
             notifier->setEnabled(false);
             char tmp;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
             read(socket, &tmp, sizeof(tmp));
+#pragma GCC diagnostic pop
             QCoreApplication::quit();
             notifier->setEnabled(true);
         });
