@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Added support of configuring per-server HTTP/SOCKS5 proxies
+- Added support of renaming torrent's files when adding it
+
+### Changed
+- Minimum CMake version raised to 3.10
+- C++ standard version raised to C++14 (Sailfish OS GCC 4.9 toolchain is still supported)
+
+### Fixed
+- Fixed passing command line arguments and opening files with commas
+- Sailfish OS: fixed opening app from notifications
+
 ## [1.6.4] - 2020-01-11
 ### Fixed
 - Fixed compilation for Windows
