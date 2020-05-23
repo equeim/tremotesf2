@@ -63,35 +63,35 @@ QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH_BY_CREF(QByteArray)
 
 namespace libtremotesf
 {
-    template<class C, class V>
+    template<typename C, typename V>
     inline auto contains_impl(const C& container, const V& value, int) -> decltype(container.find(value), true)
     {
         return container.find(value) != std::end(container);
     }
 
-    template<class C, class V>
+    template<typename C, typename V>
     inline bool contains_impl(const C& container, const V& value, long)
     {
         return std::find(std::begin(container), std::end(container), value) != std::end(container);
     }
 
-    template<class C, class V>
+    template<typename C, typename V>
     inline bool contains(const C& container, const V& value)
     {
         return contains_impl(container, value, 0);
     }
 
-    template<class C, class V>
+    template<typename C, typename V>
     inline size_t index_of(const C& container, const V& value) {
         return static_cast<size_t>(std::find(std::begin(container), std::end(container), value) - std::begin(container));
     }
 
-    template<class C, class V>
+    template<typename C, typename V>
     inline int index_of_i(const C& container, const V& value) {
         return static_cast<int>(std::find(std::begin(container), std::end(container), value) - std::begin(container));
     }
 
-    template<class C, class V>
+    template<typename C, typename V>
     inline void erase_one(C& container, const V& value) {
         container.erase(std::find(container.begin(), container.end(), value));
     }

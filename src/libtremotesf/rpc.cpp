@@ -151,6 +151,15 @@ namespace libtremotesf
         return nullptr;
     }
 
+    Torrent* Rpc::torrentById(int id) const
+    {
+        const auto end(mTorrents.end());
+        const auto found(std::find_if(mTorrents.begin(), mTorrents.end(), [id](const std::shared_ptr<Torrent>& torrent) {
+            return (torrent->id() == id);
+        }));
+        return (found == end) ? nullptr : found->get();
+    }
+
     bool Rpc::isConnected() const
     {
         return (mStatus == Connected);
@@ -696,15 +705,6 @@ namespace libtremotesf
         }
     }
 
-    Torrent* Rpc::torrentById(int id) const
-    {
-        const auto end(mTorrents.end());
-        const auto found(std::find_if(mTorrents.begin(), mTorrents.end(), [id](const std::shared_ptr<Torrent>& torrent) {
-            return (torrent->id() == id);
-        }));
-        return (found == end) ? nullptr : found->get();
-    }
-
     void Rpc::setStatus(Status status)
     {
         if (status == mStatus) {
@@ -883,6 +883,11 @@ namespace libtremotesf
                             removed.reserve(mTorrents.size() - newTorrents.size());
                         }
                         std::vector<int> changed;
+                        QVariantList checkSingleFile;
+                        if (newTorrents.size() > mTorrents.size()) {
+                            checkSingleFile.reserve(newTorrents.size() - mTorrents.size());
+                        }
+
                         {
                             const auto newTorrentsEnd(newTorrents.end());
                             VectorBatchRemover<std::shared_ptr<Torrent>> remover(mTorrents, &removed, &changed);
@@ -905,7 +910,7 @@ namespace libtremotesf
                                             emit torrentFinished(torrent.get());
                                         }
                                         if (!metadataWasComplete && torrent->isMetadataComplete()) {
-                                            checkTorrentSingleFile(id);
+                                            checkSingleFile.push_back(id);
                                         }
                                     }
                                     if (torrent->isFilesEnabled()) {
@@ -940,7 +945,7 @@ namespace libtremotesf
                                     }
 
                                     if (torrent->isMetadataComplete()) {
-                                        checkTorrentSingleFile(id);
+                                        checkSingleFile.push_back(id);
                                     }
                                 }
                             }
@@ -950,31 +955,26 @@ namespace libtremotesf
 
                         checkIfTorrentsUpdated();
                         startUpdateTimer();
+
+                        checkTorrentsSingleFile(checkSingleFile);
         });
     }
 
-    void Rpc::checkTorrentSingleFile(int torrentId)
+    void Rpc::checkTorrentsSingleFile(const QVariantList& torrentIds)
     {
         postRequest(QLatin1String("torrent-get"),
-                    QStringLiteral("{"
-                                       "\"arguments\":{"
-                                           "\"fields\":[\"priorities\"],"
-                                           "\"ids\":[%1]"
-                                       "},"
-                                       "\"method\":\"torrent-get\""
-                                   "}")
-                        .arg(torrentId)
-                        .toLatin1(),
+                    {{QLatin1String("fields"), QVariantList{QLatin1String("id"), QLatin1String("priorities")}},
+                     {QLatin1String("ids"), torrentIds}},
                     [=](const QJsonObject& parseResult, bool success) {
                         if (success) {
-                            const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                    .value(torrentsKey)
-                                                                    .toArray());
-                            Torrent* torrent = torrentById(torrentId);
-                            if (!torrentsVariants.isEmpty() && torrent) {
-                                torrent->checkSingleFile(torrentsVariants.first().toObject());
-                                checkIfTorrentsUpdated();
-                                startUpdateTimer();
+                            const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
+                            for (const QJsonValue& torrentValue : torrents) {
+                                const QJsonObject torrentMap(torrentValue.toObject());
+                                const int torrentId = torrentMap.value(Torrent::idKey).toInt();
+                                Torrent* torrent = torrentById(torrentId);
+                                if (torrent) {
+                                    torrent->checkSingleFile(torrentMap);
+                                }
                             }
                         }
                     });
