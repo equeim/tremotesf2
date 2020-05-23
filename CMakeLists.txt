@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10)
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.17)
 
 project(tremotesf VERSION 1.6.4 LANGUAGES CXX)
