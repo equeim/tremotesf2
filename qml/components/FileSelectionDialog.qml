@@ -47,6 +47,8 @@ Dialog {
         anchors.fill: parent
 
         header: Column {
+            property int extraHeight: height - dialogHeader.height
+
             width: listView.width
 
             onHeightChanged: {
@@ -56,6 +58,7 @@ Dialog {
             }
 
             DialogHeader {
+                id: dialogHeader
                 title: showFiles ? qsTranslate("tremotesf", "Select File")
                                  : qsTranslate("tremotesf", "Select Directory")
             }
@@ -150,6 +153,7 @@ Dialog {
         ViewPlaceholder {
             enabled: !listView.count
             text: qsTranslate("tremotesf", "No files")
+            verticalOffset: listView.headerItem.extraHeight
         }
 
         VerticalScrollDecorator { }
