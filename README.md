@@ -25,8 +25,8 @@ Table of Contents
 ## Installation
 ### Desktop
 #### Dependencies
-- C++11 compiler (GCC, MinGW and MSVC are supported)
-- CMake 3.0 or newer (3.1 for Qt >= 5.11)
+- C++14 compiler
+- CMake 3.10 or newer
 - Gettext 0.19.7 or newer
 - Qt 5.6 or newer (core, network, concurrent, gui, widgets and dbus for GNU/Linux)
 - KWidgetsAddons from KDE Frameworks 5
@@ -46,10 +46,9 @@ make install
 
 - Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
-Only 9.0 (Stretch) is supported.
 ```sh
-wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_9.0/Release.key -O - | sudo apt-key add -
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_9.0/ /"
+wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_10/Release.key -O - | sudo apt-key add -
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_10/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
@@ -70,19 +69,16 @@ dnf install tremotesf
 
 - openSUSE - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 ```sh
-#zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
-zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.0/home:equeim:tremotesf.repo
+#zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.1/home:equeim:tremotesf.repo
+zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
 zypper in tremotesf
 ```
 
 - Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
-Only 18.04 and 17.10 are supported.
 ```sh
-#wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_17.10/Release.key -O - | sudo apt-key add -
-wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_18.04/Release.key -O - | sudo apt-key add -
-#sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_17.10/ /"
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_18.04/ /"
+wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_20.04/Release.key -O - | sudo apt-key add -
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_20.04/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
@@ -93,7 +89,7 @@ Windows builds are available at [releases](https://github.com/equeim/tremotesf2/
 ### Sailfish OS
 Tremotesf is available in Jolla Store and [OpenRepos.net](https://openrepos.net/content/equeim/tremotesf).
 #### Dependencies
-Sailfish OS 1.1.9 or newer
+Sailfish OS 3.0.3 or newer
 #### Building
 SSH/chroot into SDK, then:
 ```sh
