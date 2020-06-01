@@ -23,6 +23,8 @@
 
 #ifndef TREMOTESF_SAILFISHOS
 class QWidget;
+#else
+class QQuickItem;
 #endif
 
 namespace tremotesf
@@ -53,6 +55,8 @@ namespace tremotesf
         static QString sdcardPath();
 
         Q_INVOKABLE static bool fileExists(const QString& filePath);
+
+        Q_INVOKABLE static QQuickItem* nextItemInFocusChainNotLooping(QQuickItem* rootItem, QQuickItem* currentItem);
 #else
         enum StatusIcon
         {

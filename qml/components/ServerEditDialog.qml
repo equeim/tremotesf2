@@ -140,7 +140,7 @@ Dialog {
                 title: modelData ? qsTranslate("tremotesf", "Edit Server") : qsTranslate("tremotesf", "Add Server")
             }
 
-            TextField {
+            FormTextField {
                 id: nameField
 
                 property string name
@@ -157,25 +157,14 @@ Dialog {
 
                 onTextChanged: {
                     if (serversModel) {
-                        if (text !== name && serversModel.hasServer(text)) {
-                            overwrite = true
-                        } else {
-                            overwrite = false
-                        }
+                        overwrite = (text !== name && serversModel.hasServer(text))
                     }
                 }
 
-                Component.onCompleted: {
-                    if (modelData) {
-                        name = modelData.name
-                    }
-                }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: addressField.forceActiveFocus()
+                Component.onCompleted: name = (modelData ? modelData.name : "")
             }
 
-            TextField {
+            FormTextField {
                 id: addressField
 
                 width: parent.width
@@ -188,12 +177,9 @@ Dialog {
                 validator: RegExpValidator {
                     regExp: /^\S+/
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: portField.forceActiveFocus()
             }
 
-            TextField {
+            FormTextField {
                 id: portField
 
                 width: parent.width
@@ -207,12 +193,9 @@ Dialog {
                     bottom: 0
                     top: 65535
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: apiPathField.forceActiveFocus()
             }
 
-            TextField {
+            FormTextField {
                 id: apiPathField
 
                 width: parent.width
@@ -221,19 +204,6 @@ Dialog {
                 placeholderText: label
 
                 text: modelData ? modelData.apiPath : "/transmission/rpc"
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: {
-                    if (proxyHostnameField.visible) {
-                        proxyHostnameField.forceActiveFocus()
-                    } else if (httpsSwitch.checked) {
-                        localCertificateTextArea.forceActiveFocus()
-                    } else if (authenticationSwitch.checked) {
-                        usernameField.forceActiveFocus()
-                    } else {
-                        updateIntervalField.forceActiveFocus()
-                    }
-                }
             }
 
             ComboBox {
@@ -267,7 +237,7 @@ Dialog {
                 }
                 visible: proxyTypeComboBox.currentProxyType !== Server.Default
 
-                TextField {
+                FormTextField {
                     id: proxyHostnameField
 
                     width: parent.width
@@ -280,12 +250,9 @@ Dialog {
                     validator: RegExpValidator {
                         regExp: /^\S+/
                     }
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: proxyPortField.forceActiveFocus()
                 }
 
-                TextField {
+                FormTextField {
                     id: proxyPortField
 
                     width: parent.width
@@ -299,20 +266,9 @@ Dialog {
                         bottom: 0
                         top: 65535
                     }
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: {
-                        if (httpsSwitch.checked) {
-                            localCertificateTextArea.forceActiveFocus()
-                        } else if (authenticationSwitch.checked) {
-                            usernameField.forceActiveFocus()
-                        } else {
-                            updateIntervalField.forceActiveFocus()
-                        }
-                    }
                 }
 
-                TextField {
+                FormTextField {
                     id: proxyUserField
 
                     width: parent.width
@@ -321,12 +277,9 @@ Dialog {
                     placeholderText: label
 
                     text: modelData ? modelData.username : String()
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: passwordField.forceActiveFocus()
                 }
 
-                PasswordField {
+                FormPasswordField {
                     id: proxyPasswordField
 
                     width: parent.width
@@ -335,9 +288,6 @@ Dialog {
                     placeholderText: label
 
                     text: modelData ? modelData.password : String()
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: updateIntervalField.forceActiveFocus()
                 }
             }
 
@@ -367,20 +317,12 @@ Dialog {
                     width: parent.width
                     height: Theme.itemSizeHuge * 2
                     visible: selfSignedCertificateSwitch.checked
+                    activeFocusOnTab: true
 
                     label: qsTranslate("tremotesf", "Server's certificate in PEM format")
                     placeholderText: label
 
                     text: modelData ? modelData.selfSignedCertificate : String()
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: {
-                        if (authenticationSwitch.checked) {
-                            usernameField.forceActiveFocus()
-                        } else {
-                            updateIntervalField.forceActiveFocus()
-                        }
-                    }
                 }
 
                 TextSwitch {
@@ -395,20 +337,12 @@ Dialog {
                     width: parent.width
                     height: Theme.itemSizeHuge * 2
                     visible: clientCertificateSwitch.checked
+                    activeFocusOnTab: true
 
                     label: qsTranslate("tremotesf", "Certificate in PEM format with private key")
                     placeholderText: label
 
                     text: modelData ? modelData.clientCertificate : String()
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: {
-                        if (authenticationSwitch.checked) {
-                            usernameField.forceActiveFocus()
-                        } else {
-                            updateIntervalField.forceActiveFocus()
-                        }
-                    }
                 }
             }
 
@@ -427,7 +361,7 @@ Dialog {
                 }
                 visible: authenticationSwitch.checked
 
-                TextField {
+                FormTextField {
                     id: usernameField
 
                     width: parent.width
@@ -436,12 +370,9 @@ Dialog {
                     placeholderText: label
 
                     text: modelData ? modelData.username : String()
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: passwordField.forceActiveFocus()
                 }
 
-                PasswordField {
+                FormPasswordField {
                     id: passwordField
 
                     width: parent.width
@@ -450,13 +381,10 @@ Dialog {
                     placeholderText: label
 
                     text: modelData ? modelData.password : String()
-
-                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                    EnterKey.onClicked: updateIntervalField.forceActiveFocus()
                 }
             }
 
-            TextField {
+            FormTextField {
                 id: updateIntervalField
 
                 width: parent.width
@@ -470,12 +398,9 @@ Dialog {
                     bottom: 1
                     top: 3600
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: backgroundUpdateIntervalField.forceActiveFocus()
             }
             
-            TextField {
+            FormTextField {
                 id: backgroundUpdateIntervalField
 
                 width: parent.width
@@ -489,12 +414,9 @@ Dialog {
                     bottom: 1
                     top: 3600
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: timeoutField.forceActiveFocus()
             }
 
-            TextField {
+            FormTextField {
                 id: timeoutField
 
                 width: parent.width
@@ -507,16 +429,6 @@ Dialog {
                 validator: IntValidator {
                     bottom: 5
                     top: 60
-                }
-
-                EnterKey.enabled: directoriesRepeater.count ? true : canAccept
-                EnterKey.iconSource: directoriesRepeater.count ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-accept"
-                EnterKey.onClicked: {
-                    if (directoriesRepeater.count) {
-                        directoriesRepeater.itemAt(0).localDirectoryTextField.forceActiveFocus()
-                    } else {
-                        accept()
-                    }
                 }
             }
 
@@ -565,13 +477,10 @@ Dialog {
                         text: local
 
                         onTextChanged: local = text
-
-                        enterKeyIconSource: "image://theme/icon-m-enter-next"
-                        onEnterKeyClicked: remoteDirectoryTextField.forceActiveFocus()
                     }
 
                     Row {
-                        TextField {
+                        FormTextField {
                             id: remoteDirectoryTextField
 
                             width: column.width - removeButton.width - Theme.horizontalPageMargin
@@ -580,16 +489,6 @@ Dialog {
                             label: qsTranslate("tremotesf", "Remote directory")
                             placeholderText: label
                             onTextChanged: remote = text
-
-                            EnterKey.enabled: lastItem ? canAccept : true
-                            EnterKey.iconSource: lastItem ? "image://theme/icon-m-enter-accept" : "image://theme/icon-m-enter-next"
-                            EnterKey.onClicked: {
-                                if (lastItem) {
-                                    accept()
-                                } else {
-                                    directoriesRepeater.itemAt(index + 1).forceActiveFocus()
-                                }
-                            }
                         }
 
                         IconButton {

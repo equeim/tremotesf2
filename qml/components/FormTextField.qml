@@ -16,42 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.6
 import Sailfish.Silica 1.0
-
 import harbour.tremotesf 1.0
 
-Dialog {
-    property var torrent
+TextField {
+    id: formTextField
 
-    allowedOrientations: defaultAllowedOrientations
-    canAccept: !textArea.errorHighlight
+    readonly property bool _pageIsDialog: (typeof pageStack.currentPage.canAccept) === "boolean"
+    property var _nextTextInput
 
-    onAccepted: torrent.addTrackers(Utils.splitByNewlines(textArea.text))
+    activeFocusOnTab: true
 
-    SilicaFlickable {
-        anchors.fill: parent
-        contentHeight: column.height
+    onActiveFocusChanged: {
+        if (activeFocus) {
+            _nextTextInput = Utils.nextItemInFocusChainNotLooping(pageStack.currentPage, formTextField)
+        }
+    }
 
-        Column {
-            id: column
-            width: parent.width
-
-            DialogHeader {
-                title: qsTranslate("tremotesf", "Add Trackers")
-            }
-
-            TextArea {
-                id: textArea
-
-                width: parent.width
-                height: Theme.pixelRatio * 240
-
-                errorHighlight: !text
-                label: qsTranslate("tremotesf", "Trackers announce URLs")
-                placeholderText: label
-            }
+    EnterKey.iconSource: _nextTextInput ? "image://theme/icon-m-enter-next" : (_pageIsDialog ? "image://theme/icon-m-enter-accept" : "image://theme/icon-m-enter-close")
+    EnterKey.onClicked: {
+        if (_nextTextInput) {
+            _nextTextInput.forceActiveFocus()
+        } else if (_pageIsDialog) {
+            pageStack.currentPage.accept()
+        } else {
+            focus = false
         }
     }
 }
-

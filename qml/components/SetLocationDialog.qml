@@ -42,9 +42,6 @@ Dialog {
 
             RemoteDirectorySelectionItem {
                 id: downloadDirectoryItem
-
-                enterKeyIconSource: "image://theme/icon-m-enter-accept"
-                onEnterKeyClicked: accept()
             }
 
             TextSwitch {

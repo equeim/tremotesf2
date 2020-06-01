@@ -89,7 +89,7 @@ Page {
                 text: qsTranslate("tremotesf", "Connection")
             }
 
-            TextField {
+            FormTextField {
                 id: peerPortTextField
 
                 width: parent.width
@@ -106,9 +106,6 @@ Page {
                         rpc.serverSettings.peerPort = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: peersPerTorrentTextField.forceActiveFocus()
             }
 
             TextSwitch {
@@ -181,7 +178,7 @@ Page {
                 text: qsTranslate("tremotesf", "Peer Limits")
             }
 
-            TextField {
+            FormTextField {
                 id: peersPerTorrentTextField
 
                 width: parent.width
@@ -197,12 +194,9 @@ Page {
                         rpc.serverSettings.maximumPeerPerTorrent = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: peersGloballyTextField.forceActiveFocus()
             }
 
-            TextField {
+            FormTextField {
                 id: peersGloballyTextField
 
                 width: parent.width
@@ -218,8 +212,6 @@ Page {
                         rpc.serverSettings.maximumPeersGlobally = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 

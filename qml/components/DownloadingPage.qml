@@ -88,13 +88,6 @@ Page {
                         rpc.serverSettings.downloadDirectory = text
                     }
                 }
-
-                enterKeyIconSource: incompleteDirectorySwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
-                onEnterKeyClicked:{
-                    if (incompleteDirectorySwitch.checked) {
-                        incompleteDirectoryItem.forceActiveFocus()
-                    }
-                }
             }
 
             TextSwitch {
@@ -138,8 +131,6 @@ Page {
                         rpc.serverSettings.incompleteDirectory = text
                     }
                 }
-
-                enterKeyIconSource: "image://theme/icon-m-enter-close"
             }
         }
 

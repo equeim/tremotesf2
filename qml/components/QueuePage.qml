@@ -81,7 +81,7 @@ Page {
                 onClicked: rpc.serverSettings.downloadQueueEnabled = checked
             }
 
-            TextField {
+            FormTextField {
                 id: downloadQueueTextField
 
                 anchors {
@@ -100,15 +100,6 @@ Page {
                         rpc.serverSettings.downloadQueueSize = text
                     }
                 }
-
-                EnterKey.iconSource: seedQueueSwitch.checked || idleQueueSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
-                EnterKey.onClicked: {
-                    if (seedQueueSwitch.checked) {
-                        seedQueueTextField.forceActiveFocus()
-                    } else if (idleQueueSwitch.checked) {
-                        idleQueueTextField.forceActiveFocus()
-                    }
-                }
             }
 
             TextSwitch {
@@ -117,7 +108,7 @@ Page {
                 onClicked: rpc.serverSettings.seedQueueEnabled = checked
             }
 
-            TextField {
+            FormTextField {
                 id: seedQueueTextField
 
                 anchors {
@@ -136,13 +127,6 @@ Page {
                         rpc.serverSettings.seedQueueSize = text
                     }
                 }
-
-                EnterKey.iconSource: idleQueueSwitch.checked ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
-                EnterKey.onClicked: {
-                    if (idleQueueSwitch.checked) {
-                        idleQueueTextField.forceActiveFocus()
-                    }
-                }
             }
 
             TextSwitch {
@@ -151,7 +135,7 @@ Page {
                 onClicked: rpc.serverSettings.idleQueueLimited = checked
             }
 
-            TextField {
+            FormTextField {
                 id: idleQueueTextField
 
                 anchors {
@@ -173,8 +157,6 @@ Page {
                         rpc.serverSettings.idleQueueLimit = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 

@@ -30,6 +30,7 @@
 
 #ifdef TREMOTESF_SAILFISHOS
 #include <QModelIndexList>
+#include <QQuickItem>
 #include <qqml.h>
 
 #include "alltrackersmodel.h"
@@ -313,6 +314,36 @@ namespace tremotesf
     bool Utils::fileExists(const QString& filePath)
     {
         return QFile::exists(filePath);
+    }
+
+    namespace
+    {
+        QQuickItem* nextItemInFocusChainNotLoopingRecursive(QQuickItem* parent, QQuickItem* currentItem, bool& foundCurrent)
+        {
+            for (QQuickItem* child : parent->childItems()) {
+                if (child->isVisible() && child->isEnabled()) {
+                    if (foundCurrent) {
+                        if (child->activeFocusOnTab()) {
+                            // Found
+                            return child;
+                        }
+                    } else if (child == currentItem) {
+                        foundCurrent = true;
+                    }
+                    QQuickItem* recursive = nextItemInFocusChainNotLoopingRecursive(child, currentItem, foundCurrent);
+                    if (recursive) {
+                        return recursive;
+                    }
+                }
+            }
+            return nullptr;
+        }
+    }
+
+    QQuickItem* Utils::nextItemInFocusChainNotLooping(QQuickItem* rootItem, QQuickItem* currentItem)
+    {
+        bool foundCurrent = false;
+        return nextItemInFocusChainNotLoopingRecursive(rootItem, currentItem, foundCurrent);
     }
 #else
     QString Utils::statusIconPath(Utils::StatusIcon icon)

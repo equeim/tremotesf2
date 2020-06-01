@@ -94,7 +94,7 @@ Page {
                 onClicked: torrent.downloadSpeedLimited = checked
             }
 
-            TextField {
+            FormTextField {
                 id: downloadSpeedLimitField
 
                 anchors {
@@ -122,19 +122,6 @@ Page {
                         torrent.downloadSpeedLimit = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: {
-                    if (uploadSpeedLimitSwitch.checked) {
-                        uploadSpeedLimitField.forceActiveFocus()
-                    } else if (ratioLimitField.visible) {
-                        ratioLimitField.forceActiveFocus()
-                    } else if (idleSeedingField.visible) {
-                        idleSeedingField.forceActiveFocus()
-                    } else {
-                        peersLimitField.forceActiveFocus()
-                    }
-                }
             }
 
             TextSwitch {
@@ -144,7 +131,7 @@ Page {
                 onClicked: torrent.uploadSpeedLimited = checked
             }
 
-            TextField {
+            FormTextField {
                 id: uploadSpeedLimitField
 
                 anchors {
@@ -170,17 +157,6 @@ Page {
                 onTextChanged: {
                     if (!updating) {
                         torrent.uploadSpeedLimit = text
-                    }
-                }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: {
-                    if (ratioLimitField.visible) {
-                        ratioLimitField.forceActiveFocus()
-                    } else if (idleSeedingField.visible) {
-                        idleSeedingField.forceActiveFocus()
-                    } else {
-                        peersLimitField.forceActiveFocus()
                     }
                 }
             }
@@ -254,7 +230,7 @@ Page {
                 }
             }
 
-            TextField {
+            FormTextField {
                 id: ratioLimitField
 
                 anchors {
@@ -280,15 +256,6 @@ Page {
                 onTextChanged: {
                     if (!updating) {
                         torrent.ratioLimit = Number.fromLocaleString(Qt.locale(), text)
-                    }
-                }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: {
-                    if (idleSeedingField.visible) {
-                        idleSeedingField.forceActiveFocus()
-                    } else {
-                        peersLimitField.forceActiveFocus()
                     }
                 }
             }
@@ -325,7 +292,7 @@ Page {
                 }
             }
 
-            TextField {
+            FormTextField {
                 id: idleSeedingField
 
                 anchors {
@@ -353,16 +320,13 @@ Page {
                         torrent.idleSeedingLimit = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: peersLimitField.forceActiveFocus()
             }
 
             SectionHeader {
                 text: qsTranslate("tremotesf", "Peers")
             }
 
-            TextField {
+            FormTextField {
                 id: peersLimitField
 
                 width: parent.width
@@ -384,8 +348,6 @@ Page {
                         torrent.peersLimit = text
                     }
                 }
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-close"
             }
         }
 
