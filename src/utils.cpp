@@ -316,6 +316,11 @@ namespace tremotesf
         return QFile::exists(filePath);
     }
 
+    QStringList Utils::splitByNewlines(const QString& string)
+    {
+        return string.split(QLatin1Char('\n'), QString::SkipEmptyParts);
+    }
+
     namespace
     {
         QQuickItem* nextItemInFocusChainNotLoopingRecursive(QQuickItem* parent, QQuickItem* currentItem, bool& foundCurrent)

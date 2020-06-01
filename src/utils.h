@@ -56,6 +56,8 @@ namespace tremotesf
 
         Q_INVOKABLE static bool fileExists(const QString& filePath);
 
+        Q_INVOKABLE static QStringList splitByNewlines(const QString& string);
+
         Q_INVOKABLE static QQuickItem* nextItemInFocusChainNotLooping(QQuickItem* rootItem, QQuickItem* currentItem);
 #else
         enum StatusIcon
