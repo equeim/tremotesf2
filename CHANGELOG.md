@@ -4,6 +4,7 @@
 ### Added
 - Added support of configuring per-server HTTP/SOCKS5 proxies
 - Added support of renaming torrent's files when adding it
+- Added ability to add multiple trackers at a time
 
 ### Changed
 - Minimum CMake version raised to 3.10
