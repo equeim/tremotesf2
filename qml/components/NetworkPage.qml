@@ -124,7 +124,6 @@ Page {
                 id: encryptionComboBox
 
                 function update() {
-                    console.log(rpc.serverSettings.encryptionMode)
                     currentItem = menu.itemForId(rpc.serverSettings.encryptionMode)
                 }
 
