@@ -1264,7 +1264,7 @@
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="228"/>
         <source>Download speed</source>
-        <translation>Velocidad de bajar</translation>
+        <translation>Velocidad a bajar</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="233"/>
