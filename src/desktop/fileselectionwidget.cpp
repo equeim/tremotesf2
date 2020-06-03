@@ -146,12 +146,14 @@ namespace tremotesf
     QStringList FileSelectionWidget::textComboBoxItems() const
     {
         QStringList items;
-        items.reserve(mTextComboBox->count() + 1);
-        for (int i = 0, max = mTextComboBox->count(); i < max; ++i) {
-            items.push_back(mTextComboBox->itemText(i));
-        }
-        if (!items.contains(mTextComboBox->currentText())) {
-            items.push_back(mTextComboBox->currentText());
+        if (mTextComboBox) {
+            items.reserve(mTextComboBox->count() + 1);
+            for (int i = 0, max = mTextComboBox->count(); i < max; ++i) {
+                items.push_back(mTextComboBox->itemText(i));
+            }
+            if (!items.contains(mTextComboBox->currentText())) {
+                items.push_back(mTextComboBox->currentText());
+            }
         }
         return items;
     }
