@@ -66,7 +66,7 @@
     <message>
         <location filename="../qml/components/DownloadingPage.qml" line="82"/>
         <source>Download directory</source>
-        <translation>Descargar directorio</translation>
+        <translation>Directorio bajado</translation>
     </message>
     <message>
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="137"/>
@@ -138,14 +138,14 @@
         <location filename="../src/torrentfilesmodelentry.cpp" line="98"/>
         <source>Low</source>
         <extracomment>Priority</extracomment>
-        <translation>Baja</translation>
+        <translation>Bajo</translation>
     </message>
     <message>
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="198"/>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="148"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="226"/>
         <source>Start downloading after adding</source>
-        <translation>Comenzar a descargar después de agregar</translation>
+        <translation>Empezar a bajar después de agregar</translation>
     </message>
     <message>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="48"/>
@@ -207,13 +207,13 @@
         <location filename="../src/desktop/serversettingsdialog.cpp" line="173"/>
         <source>Downloading</source>
         <comment>Noun</comment>
-        <translation>Descargando</translation>
+        <translation>Bajando</translation>
     </message>
     <message>
         <location filename="../qml/components/DownloadingPage.qml" line="102"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="181"/>
         <source>Start added torrents</source>
-        <translation>Iniciar torrentes agregados</translation>
+        <translation>Empezar torrentes agregados</translation>
     </message>
     <message>
         <location filename="../qml/components/DownloadingPage.qml" line="114"/>
@@ -295,7 +295,7 @@
         <location filename="../qml/components/FilterTorrentsPage.qml" line="92"/>
         <source>Downloading</source>
         <comment>Downloading torrents</comment>
-        <translation>Descargando</translation>
+        <translation>Bajando</translation>
     </message>
     <message>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="103"/>
@@ -345,13 +345,13 @@
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="34"/>
         <source>Download</source>
         <comment>File menu item, verb</comment>
-        <translation>Descargar</translation>
+        <translation>Bajar</translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="70"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="43"/>
         <source>Not Download</source>
-        <translation>No descargar</translation>
+        <translation>No bajado</translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="80"/>
@@ -452,7 +452,7 @@
         <location filename="../src/desktop/trackersviewwidget.cpp" line="112"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="184"/>
         <source>Remove</source>
-        <translation>Remover</translation>
+        <translation>Quitar</translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="180"/>
@@ -638,12 +638,12 @@
     <message>
         <location filename="../qml/components/QueuePage.qml" line="80"/>
         <source>Maximum active downloads</source>
-        <translation>Máximas descargas activas</translation>
+        <translation>Máximos bajados activos</translation>
     </message>
     <message>
         <location filename="../qml/components/QueuePage.qml" line="116"/>
         <source>Maximum active uploads</source>
-        <translation>Máximas cargas activas</translation>
+        <translation>Máximos subidos activos</translation>
     </message>
     <message>
         <location filename="../qml/components/QueuePage.qml" line="150"/>
@@ -662,19 +662,19 @@
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="35"/>
         <location filename="../src/desktop/mainwindow.cpp" line="718"/>
         <source>Are you sure you want to remove this torrent?</source>
-        <translation>Seguro que quieres eliminar este torrente?</translation>
+        <translation>Estas seguro que quitar este torrente?</translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="721"/>
         <source>Are you sure you want to remove %Ln selected torrents?</source>
-        <translation><numerusform>Seguro que quieres eliminar %Ln torrentes seleccionados?</numerusform><numerusform>Seguro que quieres eliminar %Ln torrentes seleccionados?</numerusform></translation>
+        <translation><numerusform>Estas seguro que quieres quitar %Ln torrentes seleccionados?</numerusform><numerusform>Seguro que quieres eliminar %Ln torrentes seleccionados?</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
         <location filename="../src/desktop/mainwindow.cpp" line="712"/>
         <source>Also delete the files on the hard disk</source>
-        <translation>También eliminar los archivos en el disco duro</translation>
+        <translation>También quitar los archivos en el disco duro</translation>
     </message>
     <message>
         <location filename="../qml/components/SeedingPage.qml" line="71"/>
@@ -684,7 +684,7 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="317"/>
         <source>Seeding</source>
         <comment>Noun</comment>
-        <translation>Sustantivo</translation>
+        <translation>Semillando</translation>
     </message>
     <message>
         <location filename="../qml/components/SeedingPage.qml" line="76"/>
@@ -754,13 +754,13 @@
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="287"/>
         <source>Proxy type</source>
-        <translation type="unfinished"/>
+        <translation/>Tipo de proxy</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="292"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="261"/>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation/>Predeterminado</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="296"/>
@@ -773,7 +773,7 @@
         <location filename="../qml/components/ServerEditDialog.qml" line="300"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="267"/>
         <source>SOCKS5</source>
-        <translation type="unfinished"/>
+        <translation/>SOCKS5</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="403"/>
@@ -785,7 +785,7 @@
         <location filename="../qml/components/ServerEditDialog.qml" line="414"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="298"/>
         <source>Server&apos;s certificate in PEM format</source>
-        <translation>Certificado del servidor en formato PEM</translation>
+        <translation>Certificado de servidor es formato PEM</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="431"/>
@@ -877,7 +877,7 @@
         <location filename="../qml/components/ToolsPage.qml" line="50"/>
         <location filename="../src/desktop/serversdialog.cpp" line="55"/>
         <source>Servers</source>
-        <translation>Servidor</translation>
+        <translation>Servidores</translation>
     </message>
     <message>
         <location filename="../qml/components/ServersPage.qml" line="70"/>
@@ -891,7 +891,7 @@
         <location filename="../qml/components/ServersPage.qml" line="77"/>
         <location filename="../qml/components/TrackersPage.qml" line="87"/>
         <source>Removing %1</source>
-        <translation>Removiendo %1</translation>
+        <translation>Quitando %1</translation>
     </message>
     <message>
         <location filename="../qml/components/ServersPage.qml" line="149"/>
@@ -974,12 +974,12 @@
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="44"/>
         <source>Ascending</source>
-        <translation>Ascendiendo</translation>
+        <translation>Ascendente</translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="49"/>
         <source>Descending</source>
-        <translation>Desendiendo</translation>
+        <translation>Descendente</translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="78"/>
@@ -1099,7 +1099,7 @@
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="191"/>
         <source>Download, KiB/s</source>
-        <translation>Descargar, KiB/s</translation>
+        <translation>Bajar, KiB/s</translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="215"/>
@@ -1252,7 +1252,7 @@
         <location filename="../src/torrentsmodel.cpp" line="277"/>
         <source>Downloaded</source>
         <extracomment>Torrent's downloaded size</extracomment>
-        <translation>Descargado</translation>
+        <translation>Bajado</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="218"/>
@@ -1264,12 +1264,12 @@
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="228"/>
         <source>Download speed</source>
-        <translation>Velocidad de descarga</translation>
+        <translation>Velocidad a bajar</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="233"/>
         <source>Upload speed</source>
-        <translation>Velocidad de subida</translation>
+        <translation>Velocidad a subir</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="243"/>
@@ -1369,7 +1369,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
         <source>Removing %Ln trackers</source>
-        <translation><numerusform>Removiendo %Ln rastreadores</numerusform><numerusform>Removiendo %Ln rastreadores</numerusform></translation>
+        <translation><numerusform>Quitando %Ln rastreadores</numerusform><numerusform>Removiendo %Ln rastreadores</numerusform></translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="140"/>
@@ -1386,7 +1386,7 @@
         <location filename="../src/desktop/mainwindow.cpp" line="101"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="179"/>
         <source>Download directory:</source>
-        <translation>Directorio de descarga:</translation>
+        <translation>Directorio de bajado:</translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="216"/>
@@ -1451,7 +1451,7 @@
         <location filename="../src/desktop/serversdialog.cpp" line="73"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="86"/>
         <source>&amp;Remove</source>
-        <translation>&amp;Remover</translation>
+        <translation>&amp;Quitar</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="422"/>
@@ -1538,12 +1538,12 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="717"/>
         <source>Remove Torrent</source>
-        <translation>Remover torrente</translation>
+        <translation>Quitar torrente</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="720"/>
         <source>Remove Torrents</source>
-        <translation>Remover torrentes</translation>
+        <translation>Quitar torrentes</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="731"/>
@@ -1651,7 +1651,7 @@
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="100"/>
         <source>Downloading (%L1)</source>
         <extracomment>Downloading torrents, %L1 - torrents count</extracomment>
-        <translation>Descargando (%L1)</translation>
+        <translation>Bajando (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="103"/>
@@ -1785,12 +1785,12 @@
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="240"/>
         <source>Maximum active downloads:</source>
-        <translation>Máximas descargas activas:</translation>
+        <translation>Máximos bajados  activos:</translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="249"/>
         <source>Maximum active uploads:</source>
-        <translation>Máximas subidas activas:</translation>
+        <translation>Máximos subidos activos:</translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="258"/>
@@ -1803,7 +1803,7 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="263"/>
         <source>Download:</source>
         <extracomment>Noun</extracomment>
-        <translation>Descargar:</translation>
+        <translation>Bajar:</translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="298"/>
@@ -1826,7 +1826,7 @@
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="441"/>
         <source>Encryption:</source>
-        <translation>Encripción:</translation>
+        <translation>Cifrado:</translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="463"/>
@@ -1852,12 +1852,12 @@
         <location filename="../src/desktop/torrentfilesview.cpp" line="171"/>
         <source>&amp;Download</source>
         <comment>File menu item, verb</comment>
-        <translation>&amp;Descargar</translation>
+        <translation>&amp;Bajar</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="176"/>
         <source>&amp;Not Download</source>
-        <translation>&amp;No descargar</translation>
+        <translation>&amp;No hay bajados</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentfilesview.cpp" line="183"/>
@@ -1909,7 +1909,7 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="147"/>
         <source>Downloaded:</source>
         <extracomment>Torrent's downloaded size</extracomment>
-        <translation>Descargado:</translation>
+        <translation>Bajado:</translation>
     </message>
     <message>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="57"/>
@@ -1940,17 +1940,17 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="154"/>
         <source>Download speed:</source>
-        <translation>Velocidad de descarga:</translation>
+        <translation>Velocidad a bajar:</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="156"/>
         <source>Upload speed:</source>
-        <translation>Velocidad de subida:</translation>
+        <translation>Velocidad a subir:</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="158"/>
         <source>ETA:</source>
-        <translation>ETA:</translation>
+        <translation>HEA:</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="160"/>
@@ -2012,7 +2012,7 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="358"/>
         <source>Idle seeding mode:</source>
-        <translation>Modo de simillero inactivo:</translation>
+        <translation>Modo semillero inactivo:</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="405"/>
@@ -2022,37 +2022,37 @@
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="143"/>
         <source>Add Trackers</source>
-        <translation type="unfinished"/>
+        <translation/>Agregar rastreadores</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="144"/>
         <source>Trackers announce URLs:</source>
-        <translation type="unfinished"/>
+        <translation/>Rastreadores anuncian URLs:</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="162"/>
         <source>Tracker announce URL:</source>
-        <translation>Rastreador anuncia LUR:</translation>
+        <translation>Rastreador anuncia URL:</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="189"/>
         <source>Remove Tracker</source>
-        <translation>Remover rastreador</translation>
+        <translation>Quitar rastreador</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="190"/>
         <source>Are you sure you want to remove this tracker?</source>
-        <translation>Seguro que quieres eliminar este rastreador?</translation>
+        <translation>Estas seguro que quieres quitar este rastreador?</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="192"/>
         <source>Remove Trackers</source>
-        <translation>Remover rastreadores</translation>
+        <translation>Quitar rastreadores</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="193"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
-        <translation><numerusform>Seguro que quieres eliminar %Ln rastreadores seleccionados?</numerusform><numerusform>Seguro que quieres eliminar %Ln rastreadores seleccionados?</numerusform></translation>
+        <translation><numerusform>Estas seguro que quieres quitar %Ln rastreadores seleccionados?</numerusform><numerusform>Seguro que quieres eliminar %Ln rastreadores seleccionados?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/peersmodel.cpp" line="120"/>
@@ -2135,12 +2135,12 @@
         <location filename="../src/torrentsmodel.cpp" line="122"/>
         <source>Downloading</source>
         <comment>Torrent status</comment>
-        <translation>Descargando</translation>
+        <translation>Bajando</translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="333"/>
         <source>Downloading from %Ln peers</source>
-        <translation><numerusform>Descargando de %Ln pares</numerusform><numerusform>Descargando de %Ln pares</numerusform></translation>
+        <translation><numerusform>Bajando de %Ln pares</numerusform><numerusform>Bajados de %Ln pares</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="52"/>
@@ -2235,7 +2235,7 @@
     <message>
         <location filename="../src/torrentsmodel.cpp" line="285"/>
         <source>Download Directory</source>
-        <translation>Descargar directorio</translation>
+        <translation>Directorio de bajado</translation>
     </message>
     <message>
         <location filename="../src/torrentsmodel.cpp" line="290"/>
@@ -2438,14 +2438,14 @@
         <location filename="../src/downloaddirectoriesmodel.cpp" line="99"/>
         <source>All (%L1)</source>
         <comment>All trackers, %L1 - torrents count</comment>
-        <translation type="unfinished"/>
+        <translation/>Todos (%L1)</translation>
     </message>
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="109"/>
         <location filename="../src/downloaddirectoriesmodel.cpp" line="108"/>
         <source>%1 (%L2)</source>
         <extracomment>%1 is a string (directory name or tracker domain name), %L2 is number of torrents</extracomment>
-        <translation type="unfinished"/>
+        <translation/>%1 (%L2)</translation>
     </message>
 </context>
 </TS>
