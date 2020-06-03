@@ -46,7 +46,7 @@ namespace tremotesf
           mRpc(rpc)
     {
         const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
-        selectionButton()->setEnabled(rpc || mounted);
+        selectionButton()->setEnabled(rpc->isLocal() || mounted);
         setText(directory);
         if (mounted && !rpc) {
             QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
