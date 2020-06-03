@@ -754,13 +754,13 @@
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="287"/>
         <source>Proxy type</source>
-        <translation/>Tipo de proxy</translation>
+        <translation>Tipo de proxy</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="292"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="261"/>
         <source>Default</source>
-        <translation/>Predeterminado</translation>
+        <translation>Predeterminado</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="296"/>
@@ -773,7 +773,7 @@
         <location filename="../qml/components/ServerEditDialog.qml" line="300"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="267"/>
         <source>SOCKS5</source>
-        <translation/>SOCKS5</translation>
+        <translation>SOCKS5</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="403"/>
@@ -2022,12 +2022,12 @@
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="143"/>
         <source>Add Trackers</source>
-        <translation/>Agregar rastreadores</translation>
+        <translation>Agregar rastreadores</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="144"/>
         <source>Trackers announce URLs:</source>
-        <translation/>Rastreadores anuncian URLs:</translation>
+        <translation>Rastreadores anuncian URLs:</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="162"/>
@@ -2438,14 +2438,14 @@
         <location filename="../src/downloaddirectoriesmodel.cpp" line="99"/>
         <source>All (%L1)</source>
         <comment>All trackers, %L1 - torrents count</comment>
-        <translation/>Todos (%L1)</translation>
+        <translation>Todos (%L1)</translation>
     </message>
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="109"/>
         <location filename="../src/downloaddirectoriesmodel.cpp" line="108"/>
         <source>%1 (%L2)</source>
         <extracomment>%1 is a string (directory name or tracker domain name), %L2 is number of torrents</extracomment>
-        <translation/>%1 (%L2)</translation>
+        <translation>%1 (%L2)</translation>
     </message>
 </context>
 </TS>
