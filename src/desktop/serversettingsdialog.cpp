@@ -46,7 +46,7 @@
 #include "../libtremotesf/stdutils.h"
 #include "../trpc.h"
 #include "../utils.h"
-#include "fileselectionwidget.h"
+#include "remotedirectoryselectionwidget.h"
 
 namespace tremotesf
 {
@@ -175,7 +175,7 @@ namespace tremotesf
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
 
-        mDownloadDirectoryWidget = new FileSelectionWidget(true, QString(), true, false, this);
+        mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(QString(), mRpc, false, this);
         downloadingPageLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         mStartAddedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start added torrents"), this);
@@ -192,7 +192,7 @@ namespace tremotesf
 
         auto incompleteDirectoryWidgetLayout = new QHBoxLayout();
         downloadingPageLayout->addRow(incompleteDirectoryWidgetLayout);
-        mIncompleteDirectoryWidget = new FileSelectionWidget(true, QString(), true, false, this);
+        mIncompleteDirectoryWidget = new RemoteDirectorySelectionWidget(QString(), mRpc, false, this);
         mIncompleteDirectoryWidget->setEnabled(false);
         QObject::connect(mIncompleteDirectoryCheckBox, &QCheckBox::toggled, mIncompleteDirectoryWidget, &FileSelectionWidget::setEnabled);
         //downloadingPageLayout->addRow(mIncompleteDirectoryCheckBox, mIncompleteDirectoryWidget);
@@ -489,13 +489,11 @@ namespace tremotesf
         const libtremotesf::ServerSettings* settings = mRpc->serverSettings();
 
         mDownloadDirectoryWidget->setText(settings->downloadDirectory());
-        mDownloadDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
         mStartAddedTorrentsCheckBox->setChecked(settings->startAddedTorrents());
         //mTrashTorrentFilesCheckBox->setChecked(settings->trashTorrentFiles());
         mIncompleteFilesCheckBox->setChecked(settings->renameIncompleteFiles());
         mIncompleteDirectoryCheckBox->setChecked(settings->isIncompleteDirectoryEnabled());
         mIncompleteDirectoryWidget->setText(settings->incompleteDirectory());
-        mIncompleteDirectoryWidget->selectionButton()->setEnabled(mRpc->isLocal());
 
         mRatioLimitCheckBox->setChecked(settings->isRatioLimited());
         mRatioLimitSpinBox->setValue(settings->ratioLimit());

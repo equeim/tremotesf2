@@ -41,8 +41,8 @@ namespace tremotesf
         }
     }
 
-    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& directory, Rpc* rpc, QWidget* parent)
-        : FileSelectionWidget(true, QString(), rpc->isLocal(), true, parent),
+    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& directory, const Rpc* rpc, bool comboBox, QWidget* parent)
+        : FileSelectionWidget(true, QString(), rpc->isLocal(), comboBox, parent),
           mRpc(rpc)
     {
         const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
@@ -76,6 +76,10 @@ namespace tremotesf
 
     void RemoteDirectorySelectionWidget::updateComboBox(const QString& setAsCurrent)
     {
+        if (!textComboBox()) {
+            return;
+        }
+
         QStringList currentServerAddTorrentDialogDirectories(Servers::instance()->currentServerAddTorrentDialogDirectories());
         const bool wasEmpty = currentServerAddTorrentDialogDirectories.empty();
 

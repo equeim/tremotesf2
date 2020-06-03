@@ -90,7 +90,7 @@ namespace tremotesf
                                        Rpc* rpc,
                                        QWidget* parent = nullptr)
                 : QDialog(parent),
-                  mDirectoryWidget(new RemoteDirectorySelectionWidget(downloadDirectory, rpc, this)),
+                  mDirectoryWidget(new RemoteDirectorySelectionWidget(downloadDirectory, rpc, true, this)),
                   mMoveFilesCheckBox(new QCheckBox(qApp->translate("tremotesf", "Move files from current directory"), this))
             {
                 setWindowTitle(qApp->translate("tremotesf", "Set Location"));

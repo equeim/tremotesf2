@@ -145,6 +145,7 @@ namespace tremotesf
 
         mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(mRpc->serverSettings()->downloadDirectory(),
                                                                       mRpc,
+                                                                      true,
                                                                       this);
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 

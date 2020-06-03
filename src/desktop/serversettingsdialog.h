@@ -32,7 +32,7 @@ class KMessageWidget;
 
 namespace tremotesf
 {
-    class FileSelectionWidget;
+    class RemoteDirectorySelectionWidget;
     class Rpc;
 
     class ServerSettingsDialog : public QDialog
@@ -52,12 +52,12 @@ namespace tremotesf
         KMessageWidget* mDisconnectedMessageWidget = nullptr;
 
         QWidget* mDownloadingPageWidget = nullptr;
-        FileSelectionWidget* mDownloadDirectoryWidget = nullptr;
+        RemoteDirectorySelectionWidget* mDownloadDirectoryWidget = nullptr;
         QCheckBox* mStartAddedTorrentsCheckBox = nullptr;
         //QCheckBox* mTrashTorrentFilesCheckBox = nullptr;
         QCheckBox* mIncompleteFilesCheckBox = nullptr;
         QCheckBox* mIncompleteDirectoryCheckBox = nullptr;
-        FileSelectionWidget* mIncompleteDirectoryWidget = nullptr;
+        RemoteDirectorySelectionWidget* mIncompleteDirectoryWidget = nullptr;
 
         QWidget* mSeedingPageWidget = nullptr;
         QCheckBox* mRatioLimitCheckBox = nullptr;
