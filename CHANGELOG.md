@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.7.0] - 2020-06-05
 ### Added
 - Added support of configuring per-server HTTP/SOCKS5 proxies
 - Added support of renaming torrent's files when adding it
@@ -13,6 +13,7 @@
 ### Fixed
 - Fixed passing command line arguments and opening files with commas
 - Sailfish OS: fixed opening app from notifications
+- Sailfish OS: fixed reconnecting to server when its connection settings are changed
 
 ## [1.6.4] - 2020-01-11
 ### Fixed
