@@ -39,6 +39,7 @@ ApplicationWindow {
         onCurrentServerChanged: {
             if (Servers.hasServers) {
                 rpc.setServer(Servers.currentServer)
+                rpc.connect()
             } else {
                 rpc.resetServer()
             }
