@@ -1,4 +1,4 @@
-%if %{?_vendor} == "meego"
+%if "%{?_vendor}" == "meego"
 %global sailfishos 1
 Name:       harbour-tremotesf
 %else
