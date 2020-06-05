@@ -67,7 +67,7 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %prep
-%setup -n tremotesf2-%{version}
+%setup -q -n tremotesf2-%{version}
 
 
 %build
