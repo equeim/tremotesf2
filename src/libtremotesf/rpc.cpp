@@ -885,7 +885,7 @@ namespace libtremotesf
                         std::vector<int> changed;
                         QVariantList checkSingleFile;
                         if (newTorrents.size() > mTorrents.size()) {
-                            checkSingleFile.reserve(newTorrents.size() - mTorrents.size());
+                            checkSingleFile.reserve(static_cast<int>(newTorrents.size() - mTorrents.size()));
                         }
 
                         {
