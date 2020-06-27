@@ -69,24 +69,24 @@
         <translation>保存目录</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="137"/>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="144"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="103"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="110"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="134"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="141"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="97"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="104"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="159"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="179"/>
         <source>Free space: %1</source>
         <translation>可用空间: %1</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="146"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="112"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="143"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="106"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="161"/>
         <source>Error getting free space</source>
         <translation>获取可用空间时出错</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="162"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="159"/>
         <location filename="../qml/components/LocalTorrentFilesPage.qml" line="53"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="57"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="176"/>
@@ -95,18 +95,18 @@
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="173"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="124"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="196"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="170"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="118"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="172"/>
         <source>Torrent priority</source>
         <translation>优先级</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="178"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="129"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="175"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="123"/>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="86"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="57"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="201"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="177"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="199"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="298"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="104"/>
@@ -115,11 +115,11 @@
         <translation>高</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="184"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="135"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="181"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="129"/>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="97"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="67"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="208"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="184"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="203"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="302"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="101"/>
@@ -128,11 +128,11 @@
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="190"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="141"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="187"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="135"/>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="108"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="77"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="215"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="191"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="207"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="306"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="98"/>
@@ -141,8 +141,8 @@
         <translation>低</translation>
     </message>
     <message>
-        <location filename="../qml/components/AddTorrentFileDialog.qml" line="198"/>
-        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="148"/>
+        <location filename="../qml/components/AddTorrentFileDialog.qml" line="195"/>
+        <location filename="../qml/components/AddTorrentLinkDialog.qml" line="142"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="226"/>
         <source>Start downloading after adding</source>
         <translation>添加后开始下载</translation>
@@ -210,19 +210,19 @@
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../qml/components/DownloadingPage.qml" line="102"/>
+        <location filename="../qml/components/DownloadingPage.qml" line="95"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="181"/>
         <source>Start added torrents</source>
-        <translation>开始添加torrents</translation>
+        <translation>自动开始新添加的种子</translation>
     </message>
     <message>
-        <location filename="../qml/components/DownloadingPage.qml" line="114"/>
+        <location filename="../qml/components/DownloadingPage.qml" line="107"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="187"/>
         <source>Append &quot;.part&quot; to names of incomplete files</source>
         <translation>在未完成的文件名后加上“.part”后缀</translation>
     </message>
     <message>
-        <location filename="../qml/components/DownloadingPage.qml" line="120"/>
+        <location filename="../qml/components/DownloadingPage.qml" line="113"/>
         <source>Directory for incomplete files</source>
         <translation>启用临时目录</translation>
     </message>
@@ -240,29 +240,29 @@
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../qml/components/FileSelectionDialog.qml" line="59"/>
+        <location filename="../qml/components/FileSelectionDialog.qml" line="62"/>
         <location filename="../src/desktop/fileselectionwidget.cpp" line="110"/>
         <source>Select File</source>
         <translation>选择文件</translation>
     </message>
     <message>
-        <location filename="../qml/components/FileSelectionDialog.qml" line="60"/>
+        <location filename="../qml/components/FileSelectionDialog.qml" line="63"/>
         <location filename="../src/desktop/fileselectionwidget.cpp" line="106"/>
         <source>Select Directory</source>
         <translation>选择目录</translation>
     </message>
     <message>
-        <location filename="../qml/components/FileSelectionDialog.qml" line="128"/>
+        <location filename="../qml/components/FileSelectionDialog.qml" line="131"/>
         <source>SD Card</source>
         <translation>SD卡</translation>
     </message>
     <message>
-        <location filename="../qml/components/FileSelectionDialog.qml" line="139"/>
+        <location filename="../qml/components/FileSelectionDialog.qml" line="142"/>
         <source>Home Directory</source>
         <translation>主目录</translation>
     </message>
     <message>
-        <location filename="../qml/components/FileSelectionDialog.qml" line="152"/>
+        <location filename="../qml/components/FileSelectionDialog.qml" line="155"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="148"/>
         <source>No files</source>
         <translation>没有文件</translation>
@@ -372,7 +372,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="29"/>
         <source>%Ln files selected</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 选中文件</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="52"/>
@@ -414,7 +414,7 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="154"/>
         <source>%Ln torrents selected</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 选中种子</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="159"/>
@@ -482,13 +482,13 @@
         <location filename="../qml/components/MainPage.qml" line="224"/>
         <location filename="../src/desktop/mainwindow.cpp" line="954"/>
         <source>%Ln torrents added</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 添加种子</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="236"/>
         <location filename="../src/desktop/mainwindow.cpp" line="947"/>
         <source>%Ln torrents finished</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 种子已完成</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="240"/>
@@ -536,86 +536,86 @@
         <translation>端口</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="116"/>
+        <location filename="../qml/components/NetworkPage.qml" line="113"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="417"/>
         <source>Random port on Transmission start</source>
         <translation>启用随机端口</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="122"/>
+        <location filename="../qml/components/NetworkPage.qml" line="119"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="420"/>
         <source>Enable port forwarding</source>
         <translation>启用端口转发</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="134"/>
+        <location filename="../qml/components/NetworkPage.qml" line="130"/>
         <source>Encryption</source>
         <translation>加密</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="138"/>
+        <location filename="../qml/components/NetworkPage.qml" line="134"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="428"/>
         <source>Allow</source>
         <extracomment>Encryption mode</extracomment>
         <translation>关闭加密</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="144"/>
+        <location filename="../qml/components/NetworkPage.qml" line="140"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="432"/>
         <source>Prefer</source>
         <extracomment>Encryption mode</extracomment>
         <translation>开启加密</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="150"/>
+        <location filename="../qml/components/NetworkPage.qml" line="146"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="436"/>
         <source>Require</source>
         <extracomment>Encryption mode</extracomment>
         <translation>强制加密</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="158"/>
+        <location filename="../qml/components/NetworkPage.qml" line="154"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="443"/>
         <source>Enable uTP</source>
         <translation>启用 uTP</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="164"/>
+        <location filename="../qml/components/NetworkPage.qml" line="160"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="446"/>
         <source>Enable PEX</source>
         <translation>启用 PEX</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="170"/>
+        <location filename="../qml/components/NetworkPage.qml" line="166"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="449"/>
         <source>Enable DHT</source>
         <translation>启用 DHT</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="176"/>
+        <location filename="../qml/components/NetworkPage.qml" line="172"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="452"/>
         <source>Enable LPD</source>
         <translation>启用 LPD</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="181"/>
+        <location filename="../qml/components/NetworkPage.qml" line="177"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="457"/>
         <source>Peer Limits</source>
         <translation>连接限制</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="188"/>
+        <location filename="../qml/components/NetworkPage.qml" line="184"/>
         <source>Maximum peers per torrent</source>
         <translation>单种最大连接数</translation>
     </message>
     <message>
-        <location filename="../qml/components/NetworkPage.qml" line="209"/>
+        <location filename="../qml/components/NetworkPage.qml" line="202"/>
         <source>Maximum peers globally</source>
         <translation>全局最大连接数</translation>
     </message>
     <message>
         <location filename="../qml/components/PeersPage.qml" line="44"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="362"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="326"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="188"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="240"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="399"/>
@@ -641,19 +641,19 @@
         <translation>最大活动下载数</translation>
     </message>
     <message>
-        <location filename="../qml/components/QueuePage.qml" line="116"/>
+        <location filename="../qml/components/QueuePage.qml" line="107"/>
         <source>Maximum active uploads</source>
         <translation>最大活动上传数</translation>
     </message>
     <message>
-        <location filename="../qml/components/QueuePage.qml" line="150"/>
+        <location filename="../qml/components/QueuePage.qml" line="134"/>
         <source>Ignore queue position if idle for</source>
         <translation>当未完成的种子超过这个时间没有收到数据时，自动停止下载：</translation>
     </message>
     <message>
-        <location filename="../qml/components/QueuePage.qml" line="164"/>
-        <location filename="../qml/components/SeedingPage.qml" line="124"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="342"/>
+        <location filename="../qml/components/QueuePage.qml" line="148"/>
+        <location filename="../qml/components/SeedingPage.qml" line="117"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="309"/>
         <source>min</source>
         <extracomment>Minutes</extracomment>
         <translation>分</translation>
@@ -668,7 +668,7 @@
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="721"/>
         <source>Are you sure you want to remove %Ln selected torrents?</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>你确定要删除 %Ln 选定的种子吗?</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
@@ -679,7 +679,7 @@
     <message>
         <location filename="../qml/components/SeedingPage.qml" line="71"/>
         <location filename="../qml/components/ServerSettingsPage.qml" line="49"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="222"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="198"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="204"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="317"/>
         <source>Seeding</source>
@@ -692,7 +692,7 @@
         <translation>当种子的分享率达到这个数时，自动停止做种</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedingPage.qml" line="110"/>
+        <location filename="../qml/components/SeedingPage.qml" line="103"/>
         <source>Stop seeding if idle for</source>
         <translation>当种子超过这个时间没有流量时，自动停止做种</translation>
     </message>
@@ -702,30 +702,30 @@
         <translation>没有</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="163"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="120"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="210"/>
         <source>Overwrite</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="164"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="121"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="206"/>
         <source>Server already exists</source>
         <translation>服务器已存在</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="183"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="140"/>
         <source>Edit Server</source>
         <translation>编辑服务器</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="183"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="140"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="140"/>
         <source>Add Server</source>
         <translation>添加服务器</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="193"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="150"/>
         <location filename="../qml/components/SortTorrentsPage.qml" line="68"/>
         <location filename="../src/basetorrentfilesmodel.cpp" line="143"/>
         <location filename="../src/torrentsmodel.cpp" line="240"/>
@@ -733,125 +733,125 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="226"/>
-        <location filename="../qml/components/ServerEditDialog.qml" line="318"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="172"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="245"/>
         <location filename="../src/peersmodel.cpp" line="118"/>
         <location filename="../src/trackersmodel.cpp" line="126"/>
         <source>Address</source>
         <translation>地址</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="244"/>
-        <location filename="../qml/components/ServerEditDialog.qml" line="336"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="187"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="260"/>
         <source>Port</source>
         <translation>端口</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="263"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="203"/>
         <source>API path</source>
         <translation>API路径</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="287"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="214"/>
         <source>Proxy type</source>
-        <translation type="unfinished"/>
+        <translation>代理类型</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="292"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="219"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="261"/>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation>默认</translation>
     </message>
     <message>
+        <location filename="../qml/components/ServerEditDialog.qml" line="223"/>
         <location filename="../qml/components/ServerEditDialog.qml" line="296"/>
-        <location filename="../qml/components/ServerEditDialog.qml" line="389"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="290"/>
         <source>HTTPS</source>
         <translation>HTTPS</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="300"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="227"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="267"/>
         <source>SOCKS5</source>
-        <translation type="unfinished"/>
+        <translation>SOCKS5</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="403"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="310"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="295"/>
         <source>Server uses self-signed certificate</source>
         <translation>服务器使用自签名证书</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="414"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="322"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="298"/>
         <source>Server&apos;s certificate in PEM format</source>
         <translation>PEM格式的服务器证书</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="431"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="330"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="304"/>
         <source>Use client certificate authentication</source>
         <translation>使用客户端证书认证</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="442"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="342"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="307"/>
         <source>Certificate in PEM format with private key</source>
         <translation>具有私钥的PEM格式的证书</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="461"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="352"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="315"/>
         <source>Authentication</source>
         <translation>验证</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="363"/>
-        <location filename="../qml/components/ServerEditDialog.qml" line="478"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="276"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="369"/>
         <source>Username</source>
         <translation>用户名</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="377"/>
-        <location filename="../qml/components/ServerEditDialog.qml" line="492"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="287"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="380"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="507"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="392"/>
         <source>Update interval, s</source>
         <translation>刷新间隔，秒</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="526"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="408"/>
         <source>Background update interval, s</source>
         <translation>后台刷新间隔，秒</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="545"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="424"/>
         <source>Timeout, s</source>
         <translation>超时，秒</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="567"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="436"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="346"/>
         <source>Mounted directories</source>
         <translation>安装目录 </translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="606"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="475"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="73"/>
         <source>Local directory</source>
         <translation>本地目录</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="623"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="489"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="74"/>
         <source>Remote directory</source>
         <translation>远程目录</translation>
     </message>
     <message>
-        <location filename="../qml/components/ServerEditDialog.qml" line="651"/>
+        <location filename="../qml/components/ServerEditDialog.qml" line="507"/>
         <location filename="../src/desktop/servereditdialog.cpp" line="350"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="146"/>
         <source>Add</source>
@@ -904,12 +904,12 @@
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="167"/>
         <source>%Ln servers selected</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 选中服务器</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="173"/>
         <source>Removing %Ln servers</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>删除 %Ln 服务器</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="36"/>
@@ -945,7 +945,7 @@
         <location filename="../qml/components/SettingsPage.qml" line="62"/>
         <location filename="../src/desktop/settingsdialog.cpp" line="53"/>
         <source>Notify on finished torrents</source>
-        <translation>通知已完成的torrents</translation>
+        <translation>通知已完成的Torrents</translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="68"/>
@@ -1039,7 +1039,7 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="96"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="118"/>
         <source>%Ln times</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 次</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="93"/>
@@ -1071,79 +1071,79 @@
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="116"/>
-        <location filename="../qml/components/SpeedPage.qml" line="153"/>
+        <location filename="../qml/components/SpeedPage.qml" line="144"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="110"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="160"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="147"/>
         <source>KiB/s</source>
         <translation>KiB/s</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="141"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="143"/>
+        <location filename="../qml/components/SpeedPage.qml" line="132"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="130"/>
         <source>Upload</source>
         <extracomment>Noun</extracomment>
         <translation>已上传</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="174"/>
+        <location filename="../qml/components/SpeedPage.qml" line="158"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="312"/>
         <source>Alternative Limits</source>
         <translation>备选速度限制</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="179"/>
+        <location filename="../qml/components/SpeedPage.qml" line="163"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="315"/>
         <source>Enable</source>
         <translation>启用</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="191"/>
+        <location filename="../qml/components/SpeedPage.qml" line="175"/>
         <source>Download, KiB/s</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="215"/>
+        <location filename="../qml/components/SpeedPage.qml" line="196"/>
         <source>Upload, KiB/s</source>
         <translation>上传</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="232"/>
+        <location filename="../qml/components/SpeedPage.qml" line="211"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="331"/>
         <source>Scheduled</source>
         <translation>定时计划</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="248"/>
+        <location filename="../qml/components/SpeedPage.qml" line="227"/>
         <source>From</source>
         <extracomment>e.g. inside &quot;From 1:00 AM to 5:00 AM&quot;</extracomment>
         <translation>从</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="260"/>
+        <location filename="../qml/components/SpeedPage.qml" line="239"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="341"/>
         <source>to</source>
         <extracomment>e.g. inside &quot;From 1:00 AM to 5:00 AM&quot;</extracomment>
         <translation>到</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="279"/>
+        <location filename="../qml/components/SpeedPage.qml" line="258"/>
         <source>Days</source>
         <translation>日期</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="283"/>
+        <location filename="../qml/components/SpeedPage.qml" line="262"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="348"/>
         <source>Every day</source>
         <translation>每一天</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="288"/>
+        <location filename="../qml/components/SpeedPage.qml" line="267"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="349"/>
         <source>Weekdays</source>
         <translation>工作日</translation>
     </message>
     <message>
-        <location filename="../qml/components/SpeedPage.qml" line="293"/>
+        <location filename="../qml/components/SpeedPage.qml" line="272"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="350"/>
         <source>Weekends</source>
         <translation>周末</translation>
@@ -1168,7 +1168,7 @@
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="109"/>
         <source>Checking (%L1)</source>
         <extracomment>Checking torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation>校验中 (%L1)</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="86"/>
@@ -1177,56 +1177,56 @@
         <translation>以全局设置为准</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="235"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="211"/>
         <source>Ratio limit mode</source>
         <translation>分享率限制模式</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="239"/>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="310"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="215"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="277"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="328"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="364"/>
         <source>Use global settings</source>
         <translation>使用全局设置</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="245"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="221"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="334"/>
         <source>Seed regardless of ratio</source>
         <translation>种子与分享率无关</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="251"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="227"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="209"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="331"/>
         <source>Stop seeding at ratio:</source>
         <translation>停止做种的比率：</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="270"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="246"/>
         <source>Ratio limit</source>
         <translation>分享率限制</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="306"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="273"/>
         <source>Idle seeding mode</source>
         <translation>闲置做种模式</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="316"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="283"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="370"/>
         <source>Seed regardless of activity</source>
         <translation>种子与活动无关</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="322"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="289"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="218"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="367"/>
         <source>Stop seeding if idle for:</source>
         <translation>无活动自动停止：</translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentLimitsPage.qml" line="373"/>
+        <location filename="../qml/components/TorrentLimitsPage.qml" line="337"/>
         <source>Maximum peers</source>
         <translation>最大连接数</translation>
     </message>
@@ -1331,25 +1331,20 @@
         <translation>移除Torrent</translation>
     </message>
     <message>
-        <location filename="../qml/components/TrackerEditDialog.qml" line="47"/>
-        <source>Add Tracker</source>
-        <translation>添加Tracker</translation>
-    </message>
-    <message>
-        <location filename="../qml/components/TrackerEditDialog.qml" line="48"/>
+        <location filename="../qml/components/TrackerEditDialog.qml" line="41"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="161"/>
         <source>Edit Tracker</source>
         <translation>编辑Tracker</translation>
     </message>
     <message>
-        <location filename="../qml/components/TrackerEditDialog.qml" line="56"/>
+        <location filename="../qml/components/TrackerEditDialog.qml" line="49"/>
         <source>Tracker announce URL</source>
         <translation>Tracker announce URL</translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
         <source>%Ln peers</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln peers</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="166"/>
@@ -1364,12 +1359,12 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
         <source>%Ln trackers selected</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln 选中 trackers</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
         <source>Removing %Ln trackers</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>删除 %Ln trackers</numerusform></translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="140"/>
@@ -1530,8 +1525,8 @@
         <location filename="../src/desktop/mainwindow.cpp" line="601"/>
         <location filename="../src/desktop/remotedirectoryselectionwidget.cpp" line="68"/>
         <location filename="../src/trackersmodel.cpp" line="51"/>
-        <location filename="../src/utils.cpp" line="365"/>
-        <location filename="../src/utils.cpp" line="383"/>
+        <location filename="../src/utils.cpp" line="401"/>
+        <location filename="../src/utils.cpp" line="419"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -1639,37 +1634,37 @@
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="94"/>
         <source>All (%L1)</source>
         <comment>All torrents, %L1 - torrents count</comment>
-        <translation type="unfinished"/>
+        <translation>全部(%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="97"/>
         <source>Active (%L1)</source>
         <extracomment>Active torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation>活动 (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="100"/>
         <source>Downloading (%L1)</source>
         <extracomment>Downloading torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation>下载中 (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="103"/>
         <source>Seeding (%L1)</source>
         <extracomment>Seeding torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation>做种中 (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="106"/>
         <source>Paused (%L1)</source>
         <extracomment>Paused torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation>暂停 (%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="112"/>
         <source>Errored (%L1)</source>
         <extracomment>Errored torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation>错误(%L1)</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="241"/>
@@ -1711,17 +1706,17 @@
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="253"/>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>代理</translation>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="264"/>
         <source>HTTP</source>
-        <translation type="unfinished"/>
+        <translation>HTTP</translation>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="272"/>
         <source>Proxy type:</source>
-        <translation type="unfinished"/>
+        <translation>代理类型:</translation>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="283"/>
@@ -1772,7 +1767,7 @@
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="190"/>
         <source>Directory for incomplete files:</source>
-        <translation>不完整文件的目录：</translation>
+        <translation>未完成文件目录：</translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="225"/>
@@ -1821,7 +1816,7 @@
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="415"/>
         <source>Peer port:</source>
-        <translation>对等端口：</translation>
+        <translation>端口：</translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="441"/>
@@ -1935,7 +1930,7 @@
     <message>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="77"/>
         <source>Started:</source>
-        <translation>起动：</translation>
+        <translation>启动：</translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="154"/>
@@ -2020,19 +2015,25 @@
         <translation>最大连接数：</translation>
     </message>
     <message>
+        <location filename="../qml/components/TrackersAddDialog.qml" line="41"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="143"/>
         <source>Add Trackers</source>
+        <translation>添加 Trackers</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/TrackersAddDialog.qml" line="51"/>
+        <source>Trackers announce URLs</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="144"/>
         <source>Trackers announce URLs:</source>
-        <translation type="unfinished"/>
+        <translation>Trackers 宣告链接:</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="162"/>
         <source>Tracker announce URL:</source>
-        <translation>Tracker announce URL:</translation>
+        <translation>Trackers 宣告链接:</translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="189"/>
@@ -2052,7 +2053,7 @@
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="193"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>你确定你想要删除 %Ln 选中 trackers?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/peersmodel.cpp" line="120"/>
@@ -2140,7 +2141,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="333"/>
         <source>Downloading from %Ln peers</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>从 %Ln 个节点下载</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="52"/>
@@ -2153,7 +2154,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="337"/>
         <source>Seeding to %Ln peers</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>为 %Ln 个节点上传</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="339"/>
@@ -2277,125 +2278,125 @@
         <translation>下一次更新</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="111"/>
+        <location filename="../src/utils.cpp" line="112"/>
         <source>%L1 B</source>
-        <translation type="unfinished"/>
+        <translation>%L1 B</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="112"/>
+        <location filename="../src/utils.cpp" line="113"/>
         <source>%L1 KiB</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/utils.cpp" line="113"/>
-        <source>%L1 MiB</source>
-        <translation type="unfinished"/>
+        <translation>%L1 KiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="114"/>
-        <source>%L1 GiB</source>
-        <translation type="unfinished"/>
+        <source>%L1 MiB</source>
+        <translation>%L1 MiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="115"/>
-        <source>%L1 TiB</source>
-        <translation type="unfinished"/>
+        <source>%L1 GiB</source>
+        <translation>%L1 GiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="116"/>
-        <source>%L1 PiB</source>
-        <translation type="unfinished"/>
+        <source>%L1 TiB</source>
+        <translation>%L1 TiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="117"/>
-        <source>%L1 EiB</source>
-        <translation type="unfinished"/>
+        <source>%L1 PiB</source>
+        <translation>%L1 PiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="118"/>
-        <source>%L1 ZiB</source>
-        <translation type="unfinished"/>
+        <source>%L1 EiB</source>
+        <translation>%L1 EiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="119"/>
-        <source>%L1 YiB</source>
-        <translation type="unfinished"/>
+        <source>%L1 ZiB</source>
+        <translation>%L1 ZiB</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="111"/>
-        <source>%L1 B/s</source>
-        <translation type="unfinished"/>
+        <location filename="../src/utils.cpp" line="120"/>
+        <source>%L1 YiB</source>
+        <translation>%L1 YiB</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="112"/>
-        <location filename="../src/utils.cpp" line="150"/>
-        <source>%L1 KiB/s</source>
-        <translation type="unfinished"/>
+        <source>%L1 B/s</source>
+        <translation>%L1 B/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="113"/>
-        <source>%L1 MiB/s</source>
-        <translation type="unfinished"/>
+        <location filename="../src/utils.cpp" line="151"/>
+        <source>%L1 KiB/s</source>
+        <translation>%L1 KiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="114"/>
-        <source>%L1 GiB/s</source>
-        <translation type="unfinished"/>
+        <source>%L1 MiB/s</source>
+        <translation>%L1 MiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="115"/>
-        <source>%L1 TiB/s</source>
-        <translation type="unfinished"/>
+        <source>%L1 GiB/s</source>
+        <translation>%L1 GiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="116"/>
-        <source>%L1 PiB/s</source>
-        <translation type="unfinished"/>
+        <source>%L1 TiB/s</source>
+        <translation>%L1 TiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="117"/>
-        <source>%L1 EiB/s</source>
-        <translation type="unfinished"/>
+        <source>%L1 PiB/s</source>
+        <translation>%L1 PiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="118"/>
-        <source>%L1 ZiB/s</source>
-        <translation type="unfinished"/>
+        <source>%L1 EiB/s</source>
+        <translation>%L1 EiB/s</translation>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="119"/>
+        <source>%L1 ZiB/s</source>
+        <translation>%L1 ZiB/s</translation>
+    </message>
+    <message>
+        <location filename="../src/utils.cpp" line="120"/>
         <source>%L1 YiB/s</source>
-        <translation type="unfinished"/>
+        <translation>%L1 YiB/s</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="156"/>
-        <location filename="../src/utils.cpp" line="158"/>
+        <location filename="../src/utils.cpp" line="157"/>
+        <location filename="../src/utils.cpp" line="159"/>
         <source>%L1%</source>
-        <translation type="unfinished"/>
+        <translation>%L1%</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="199"/>
+        <location filename="../src/utils.cpp" line="200"/>
         <source>%L1 d %L2 h</source>
-        <translation type="unfinished"/>
+        <translation>%L1 天 %L2 小时</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="203"/>
+        <location filename="../src/utils.cpp" line="204"/>
         <source>%L1 h %L2 m</source>
-        <translation type="unfinished"/>
+        <translation>%L1 小时 %L2 分</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="207"/>
+        <location filename="../src/utils.cpp" line="208"/>
         <source>%L1 m %L2 s</source>
-        <translation type="unfinished"/>
+        <translation>%L1 分 %L2 秒</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="210"/>
+        <location filename="../src/utils.cpp" line="211"/>
         <source>%L1 s</source>
-        <translation type="unfinished"/>
+        <translation>%L1 秒</translation>
     </message>
     <message>
-        <location filename="../src/utils.cpp" line="366"/>
-        <location filename="../src/utils.cpp" line="384"/>
+        <location filename="../src/utils.cpp" line="402"/>
+        <location filename="../src/utils.cpp" line="420"/>
         <source>Error opening %1</source>
         <translation>打开时出错 %1</translation>
     </message>
@@ -2423,7 +2424,7 @@
         <translation>所选目录不在挂载目录中</translation>
     </message>
     <message>
-        <location filename="../qml/components/SetLocationDialog.qml" line="52"/>
+        <location filename="../qml/components/SetLocationDialog.qml" line="49"/>
         <location filename="../src/desktop/mainwindow.cpp" line="94"/>
         <source>Move files from current directory</source>
         <translation>从当前目录移动文件</translation>
@@ -2438,14 +2439,14 @@
         <location filename="../src/downloaddirectoriesmodel.cpp" line="99"/>
         <source>All (%L1)</source>
         <comment>All trackers, %L1 - torrents count</comment>
-        <translation type="unfinished"/>
+        <translation>全部 (%L1)</translation>
     </message>
     <message>
         <location filename="../src/alltrackersmodel.cpp" line="109"/>
         <location filename="../src/downloaddirectoriesmodel.cpp" line="108"/>
         <source>%1 (%L2)</source>
         <extracomment>%1 is a string (directory name or tracker domain name), %L2 is number of torrents</extracomment>
-        <translation type="unfinished"/>
+        <translation>%1 (%L2)</translation>
     </message>
 </context>
 </TS>
