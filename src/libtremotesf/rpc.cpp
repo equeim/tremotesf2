@@ -333,7 +333,7 @@ namespace libtremotesf
         if (isConnected()) {
             const auto future = QtConcurrent::run([=] {
                 return makeRequestData(QLatin1String("torrent-add"),
-                                       {{QLatin1String("metainfo"), fileData.toBase64()},
+                                       {{QLatin1String("metainfo"), QString::fromLatin1(fileData.toBase64())},
                                         {QLatin1String("download-dir"), downloadDirectory},
                                         {QLatin1String("files-unwanted"), unwantedFiles},
                                         {QLatin1String("priority-high"), highPriorityFiles},
