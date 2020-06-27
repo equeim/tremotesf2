@@ -75,15 +75,15 @@
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="141"/>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="97"/>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="104"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="159"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="179"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="160"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="180"/>
         <source>Free space: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="143"/>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="106"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="161"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="162"/>
         <source>Error getting free space</source>
         <translation type="unfinished"></translation>
     </message>
@@ -91,7 +91,7 @@
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="159"/>
         <location filename="../qml/components/LocalTorrentFilesPage.qml" line="53"/>
         <location filename="../qml/components/TorrentFilesPage.qml" line="57"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="176"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="178"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="100"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
@@ -109,7 +109,7 @@
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="86"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="57"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="177"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="199"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="200"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="298"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="104"/>
         <source>High</source>
@@ -122,7 +122,7 @@
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="97"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="67"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="184"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="203"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="204"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="302"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="101"/>
         <source>Normal</source>
@@ -135,7 +135,7 @@
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="108"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="77"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="191"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="207"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="208"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="306"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="98"/>
         <source>Low</source>
@@ -145,7 +145,7 @@
     <message>
         <location filename="../qml/components/AddTorrentFileDialog.qml" line="195"/>
         <location filename="../qml/components/AddTorrentLinkDialog.qml" line="142"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="226"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="227"/>
         <source>Start downloading after adding</source>
         <translation type="unfinished"></translation>
     </message>
@@ -330,7 +330,7 @@
     </message>
     <message>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="193"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="182"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="184"/>
         <location filename="../qml/components/TrackersPage.qml" line="50"/>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="269"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="101"/>
@@ -427,21 +427,21 @@
     <message>
         <location filename="../qml/components/MainPage.qml" line="159"/>
         <location filename="../qml/components/TorrentDelegate.qml" line="57"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="146"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="148"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="164"/>
         <location filename="../qml/components/TorrentDelegate.qml" line="62"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="129"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="131"/>
         <source>Start Now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="169"/>
         <location filename="../qml/components/TorrentDelegate.qml" line="67"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="123"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="125"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
@@ -630,7 +630,7 @@
     <message>
         <location filename="../qml/components/PeersPage.qml" line="44"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="326"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="188"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="190"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="240"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="399"/>
         <location filename="../src/trackersmodel.cpp" line="132"/>
@@ -1014,7 +1014,7 @@
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="83"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="238"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="240"/>
         <location filename="../src/torrentsmodel.cpp" line="264"/>
         <source>ETA</source>
         <translation type="unfinished"></translation>
@@ -1036,7 +1036,7 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="61"/>
         <location filename="../qml/components/ServerStatsPage.qml" line="85"/>
         <location filename="../qml/components/SortTorrentsPage.qml" line="88"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="223"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="225"/>
         <location filename="../src/torrentsmodel.cpp" line="266"/>
         <source>Ratio</source>
         <translation type="unfinished"></translation>
@@ -1082,7 +1082,7 @@
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="99"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="76"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="194"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="196"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="280"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="246"/>
         <source>Limits</source>
@@ -1257,13 +1257,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="200"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="202"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="140"/>
         <source>Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="206"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="208"/>
         <location filename="../src/torrentsmodel.cpp" line="288"/>
         <source>Completed</source>
         <extracomment>Torrent&apos;s completed size</extracomment>
@@ -1274,79 +1274,79 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="56"/>
         <location filename="../qml/components/ServerStatsPage.qml" line="75"/>
         <location filename="../qml/components/ServerStatsPage.qml" line="80"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="212"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="214"/>
         <location filename="../src/torrentsmodel.cpp" line="277"/>
         <source>Downloaded</source>
         <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="218"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="220"/>
         <location filename="../src/torrentsmodel.cpp" line="280"/>
         <source>Uploaded</source>
         <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="228"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="230"/>
         <source>Download speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="233"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="235"/>
         <source>Upload speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="243"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="245"/>
         <location filename="../src/torrentsmodel.cpp" line="256"/>
         <source>Seeders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="248"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="250"/>
         <location filename="../src/torrentsmodel.cpp" line="258"/>
         <source>Leechers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="253"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="255"/>
         <source>Last activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="257"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="259"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="167"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="262"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="264"/>
         <source>Total size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="267"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="269"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="271"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="273"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="277"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="279"/>
         <source>Created by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="282"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="284"/>
         <source>Created on</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="287"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="289"/>
         <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1412,15 +1412,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="149"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="150"/>
         <location filename="../src/desktop/mainwindow.cpp" line="101"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="179"/>
         <source>Download directory:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="216"/>
-        <location filename="../src/desktop/addtorrentdialog.cpp" line="223"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="217"/>
+        <location filename="../src/desktop/addtorrentdialog.cpp" line="224"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="310"/>
         <source>Torrent priority:</source>
         <translation type="unfinished"></translation>
@@ -2446,7 +2446,7 @@
     </message>
     <message>
         <location filename="../src/desktop/aboutdialog.cpp" line="52"/>
-        <source>&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
+        <source>&lt;p&gt;&amp;#169; 2015-2020 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>

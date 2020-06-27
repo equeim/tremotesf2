@@ -69,7 +69,7 @@ Page {
                 width: parent.width
                 font.pixelSize: Theme.fontSizeExtraSmall
                 text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) +
-                      "\u00a9 2015-2018 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
+                      "\u00a9 2015-2020 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
                 textFormat: Text.RichText
                 truncationMode: TruncationMode.Fade
 

@@ -49,7 +49,7 @@ namespace tremotesf
 
         auto aboutPage = new QWidget(this);
         auto aboutPageLayout = new QVBoxLayout(aboutPage);
-        auto aboutPageLabel = new QLabel(qApp->translate("tremotesf", "<p>&#169; 2015-2018 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>\n"
+        auto aboutPageLabel = new QLabel(qApp->translate("tremotesf", "<p>&#169; 2015-2020 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>\n"
                                                                       "<p>Source code: <a href=\"https://github.com/equeim/tremotesf2\">https://github.com/equeim/tremotesf2</a></p>\n"
                                                                       "<p>Translations: <a href=\"https://www.transifex.com/equeim/tremotesf\">https://www.transifex.com/equeim/tremotesf</a></p>"),
                                          this);
