@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.1] = 2020-06-27
+### Changed
+- Updated translations
+- Enabled LTO for release build on Windows
+
+### Fixed
+- Fixed adding torrents with Qt 5.15
+
 ## [1.7.0] - 2020-06-05
 ### Added
 - Added support of configuring per-server HTTP/SOCKS5 proxies
