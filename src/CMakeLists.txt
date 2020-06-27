@@ -126,6 +126,7 @@ else()
 
     if (WIN32)
         target_sources(tremotesf PRIVATE desktop/tremotesf.rc)
+        set_target_properties(tremotesf PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
         string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
         if (NOT build_type STREQUAL "debug")
             set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE ON)
