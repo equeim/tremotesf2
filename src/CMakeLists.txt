@@ -72,11 +72,13 @@ else()
         -Woverloaded-virtual
         -Wconversion
         -Wsign-conversion
-        -Wlogical-op
         -Wdouble-promotion
         -Wformat=2
         -Werror=format
     )
+    if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(tremotesf PRIVATE -Wlogical-op)
+    endif()
 endif()
 
 if (SAILFISHOS)
