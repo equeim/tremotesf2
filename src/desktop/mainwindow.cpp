@@ -47,10 +47,10 @@
 
 #ifdef QT_DBUS_LIB
 #include <QDBusConnection>
-#include <QDBusMessage>
 #include <QDBusPendingCall>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
+#include "org.freedesktop.Notifications.h"
 #endif
 
 #include "../libtremotesf/serversettings.h"
@@ -971,35 +971,42 @@ namespace tremotesf
     void MainWindow::showNotification(const QString& summary, const QString& body)
     {
 #ifdef QT_DBUS_LIB
-        //
-        // https://developer.gnome.org/notification-spec
-        //
-        QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.freedesktop.Notifications"),
-                                                            QLatin1String("/org/freedesktop/Notifications"),
-                                                            QLatin1String("org.freedesktop.Notifications"),
-                                                            QLatin1String("Notify")));
-        message.setArguments({QLatin1String("Tremotesf"),
-                              uint(0),
-                              QLatin1String("org.equeim.Tremotesf"),
-                              summary,
-                              body,
-                              QVariant(QVariant::StringList),
-                              QVariantMap{{QLatin1String("desktop-entry"), QLatin1String("org.equeim.Tremotesf")}},
-                              -1});
-        auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), this);
-        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
-            QDBusPendingReply<uint> reply(*watcher);
-            if (reply.isError()) {
-                qWarning() << reply.error();
-                if (mTrayIcon->isVisible()) {
-                    mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
+        setupNotificationsInterface();
+        if (mNotificationsInterface->isValid()) {
+            const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String("Tremotesf"),
+                                                                        0,
+                                                                        QLatin1String("org.equeim.Tremotesf"),
+                                                                        summary,
+                                                                        body,
+                                                                        {},
+                                                                        {{QLatin1String("desktop-entry"), QLatin1String("org.equeim.Tremotesf")}},
+                                                                        -1));
+            auto watcher = new QDBusPendingCallWatcher(call, this);
+            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
+                QDBusPendingReply<quint32> reply(*watcher);
+                if (reply.isError()) {
+                    qWarning() << "Notify error" << reply.error();
+                    if (mTrayIcon->isVisible()) {
+                        mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
+                    }
                 }
-            }
-            watcher->deleteLater();
-        });
-#else
+                watcher->deleteLater();
+            });
+        } else
+#endif
         if (mTrayIcon->isVisible()) {
             mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
+        }
+    }
+
+    void MainWindow::setupNotificationsInterface()
+    {
+#ifdef QT_DBUS_LIB
+        if (!mNotificationsInterface) {
+            mNotificationsInterface = new OrgFreedesktopNotificationsInterface(QLatin1String("org.freedesktop.Notifications"),
+                                                                               QLatin1String("/org/freedesktop/Notifications"),
+                                                                               QDBusConnection::sessionBus(),
+                                                                               this);
         }
 #endif
     }

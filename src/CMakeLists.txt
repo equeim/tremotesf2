@@ -139,7 +139,11 @@ endif()
 if (UNIX AND NOT APPLE)
     find_package(Qt5 REQUIRED COMPONENTS DBus)
     target_link_libraries(tremotesf Qt5::DBus)
-    target_sources(tremotesf PRIVATE ipcserver_dbus.cpp ipcclient_dbus.cpp)
+
+    set_source_files_properties(desktop/org.freedesktop.Notifications.xml PROPERTIES NO_NAMESPACE ON)
+    qt5_add_dbus_interface(notifications desktop/org.freedesktop.Notifications.xml org.freedesktop.Notifications)
+
+    target_sources(tremotesf PRIVATE ipcserver_dbus.cpp ipcclient_dbus.cpp ${notifications})
 else()
     target_sources(tremotesf PRIVATE ipcserver_socket.cpp ipcclient_socket.cpp)
 endif()
