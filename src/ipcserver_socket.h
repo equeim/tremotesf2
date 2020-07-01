@@ -1,6 +1,6 @@
-/*
+ /*
  * Tremotesf
- * Copyright (C) 2015-2018 Alexey Rochev <equeim@gmail.com>
+ * Copyright (C) 2015-2020 Alexey Rochev <equeim@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ipcserver_dbus.h"
+#ifndef TREMOTESF_IPCSERVER_SOCKET_H
+#define TREMOTESF_IPCSERVER_SOCKET_H
 
-#include <QDBusConnection>
-#include <QDebug>
+#include "ipcserver.h"
 
 namespace tremotesf
 {
-    IpcServer* IpcServer::createInstance(QObject* parent)
+    class IpcServerSocket final : public IpcServer
     {
-        return new IpcServerDbus(parent);
-    }
+    public:
+        static QString socketName();
+        explicit IpcServerSocket(QObject* parent = nullptr);
+    };
 }
+
+#endif // TREMOTESF_IPCSERVER_SOCKET_H

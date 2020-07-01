@@ -27,29 +27,14 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-#ifdef QT_DBUS_LIB
-        Q_PROPERTY(QString serviceName READ serviceName CONSTANT)
-        Q_PROPERTY(QString objectPath READ objectPath CONSTANT)
-        Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT)
-        static QLatin1String serviceName();
-        static QLatin1String objectPath();
-        static QLatin1String interfaceName();
-#ifdef TREMOTESF_SAILFISHOS
-        Q_PROPERTY(QString openTorrentPropertiesPageMethod READ openTorrentPropertiesPageMethod CONSTANT)
-        static QLatin1String openTorrentPropertiesPageMethod();
-#endif
-#else
-        static QString socketName();
-#endif
-        explicit IpcServer(QObject* parent = nullptr);
+        static IpcServer* createInstance(QObject* parent = nullptr);
+
+        inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent) {};
 
     signals:
         void windowActivationRequested();
         void filesReceived(const QStringList& files);
         void urlsReceived(const QStringList& urls);
-#ifdef TREMOTESF_SAILFISHOS
-        void torrentPropertiesPageRequested(const QString& hashString);
-#endif
     };
 }
 

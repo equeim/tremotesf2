@@ -86,13 +86,13 @@ int main(int argc, char** argv)
 
     // Send command to another instance
     {
-        tremotesf::IpcClient client;
-        if (client.isConnected()) {
+        const auto client(tremotesf::IpcClient::createInstance());
+        if (client->isConnected()) {
             qWarning("Only one instance of Tremotesf can be run at the same time");
             if (args.files.isEmpty() && args.urls.isEmpty()) {
-                client.activateWindow();
+                client->activateWindow();
             } else {
-                client.sendArguments(args.files, args.urls);
+                client->sendArguments(args.files, args.urls);
             }
             return 0;
         }
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 #endif
 #endif
 
-    tremotesf::IpcServer ipcServer;
+    auto ipcServer = tremotesf::IpcServer::createInstance(qApp);
 
     QTranslator qtTranslator;
     qtTranslator.load(QLocale(), QLatin1String("qt"), QLatin1String("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
@@ -132,7 +132,7 @@ int main(int argc, char** argv)
     }
 
 #ifdef TREMOTESF_SAILFISHOS
-    view->rootContext()->setContextProperty(QLatin1String("ipcServer"), &ipcServer);
+    view->rootContext()->setContextProperty(QLatin1String("ipcServer"), ipcServer);
 
     view->rootContext()->setContextProperty(QLatin1String("files"), args.files);
     view->rootContext()->setContextProperty(QLatin1String("urls"), args.urls);
@@ -143,7 +143,7 @@ int main(int argc, char** argv)
     }
     view->show();
 #else
-    tremotesf::MainWindow window(&ipcServer, args.files, args.urls);
+    tremotesf::MainWindow window(ipcServer, args.files, args.urls);
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;
     }

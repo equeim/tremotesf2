@@ -27,15 +27,12 @@ namespace tremotesf
     class IpcClient
     {
     public:
-        IpcClient();
-        ~IpcClient();
-        bool isConnected() const;
-        void activateWindow();
-        void sendArguments(const QStringList& files, const QStringList& urls);
+        static std::unique_ptr<IpcClient> createInstance();
 
-    private:
-        class Private;
-        std::unique_ptr<Private> d;
+        virtual ~IpcClient() = default;
+        virtual bool isConnected() const = 0;
+        virtual void activateWindow() = 0;
+        virtual void sendArguments(const QStringList& files, const QStringList& urls) = 0;
     };
 }
 

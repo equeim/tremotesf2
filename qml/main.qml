@@ -100,8 +100,8 @@ ApplicationWindow {
         onTorrentPropertiesPageRequested: {
             activate()
             pageStack.pop(mainPage, PageStackAction.Immediate)
-            pageStack.push("components/TorrentPropertiesPage.qml", {"torrentHash": hashString,
-                                                                    "torrent": rpc.torrentByHash(hashString)}, PageStackAction.Immediate)
+            pageStack.push("components/TorrentPropertiesPage.qml", {"torrentHash": torrentHash,
+                                                                    "torrent": rpc.torrentByHash(torrentHash)}, PageStackAction.Immediate)
         }
 
         onFilesReceived: {

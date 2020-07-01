@@ -21,45 +21,49 @@
 #include <QDBusInterface>
 #include <QDebug>
 
-#include "ipcserver.h"
+#include "ipcclient_dbus_interface.h"
+#include "ipcserver_dbus.h"
 
 namespace tremotesf
 {
-    class IpcClient::Private
+    namespace
+    {
+        inline void waitForReply(QDBusPendingReply<>&& pending)
+        {
+            pending.waitForFinished();
+            const auto reply(pending.reply());
+            if (reply.type() != QDBusMessage::ReplyMessage) {
+                qWarning() << "D-Bus method call failed, error string:" << reply.errorMessage();
+            }
+        }
+    }
+
+    class IpcClientDbus final : public IpcClient
     {
     public:
-        QDBusInterface interface;
+        bool isConnected() const override
+        {
+            return mInterface.isValid();
+        }
+
+        void activateWindow() override
+        {
+            qInfo("Requesting window activation");
+            waitForReply(mInterface.ActivateWindow());
+        }
+
+        void sendArguments(const QStringList& files, const QStringList& urls) override
+        {
+            qInfo("Sending arguments");
+            waitForReply(mInterface.SetArguments(files, urls));
+        }
+
+    private:
+        IpcDbusInterface mInterface{IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus()};
     };
 
-    IpcClient::IpcClient() : d(new Private{{IpcServer::serviceName(),
-                                            IpcServer::objectPath(),
-                                            IpcServer::interfaceName()}})
+    std::unique_ptr<IpcClient> IpcClient::createInstance()
     {
-
-    }
-
-    IpcClient::~IpcClient() = default;
-
-    bool IpcClient::isConnected() const
-    {
-        return d->interface.isValid();
-    }
-
-    void IpcClient::activateWindow()
-    {
-        qInfo("Requesting window activation");
-        const QDBusMessage reply(d->interface.call(QLatin1String("ActivateWindow")));
-        if (reply.type() != QDBusMessage::ReplyMessage) {
-            qWarning() << "D-Bus method call failed, error string:" << reply.errorMessage();
-        }
-    }
-
-    void IpcClient::sendArguments(const QStringList& files, const QStringList& urls)
-    {
-        qInfo("Sending arguments");
-        const QDBusMessage reply(d->interface.call(QLatin1String("SetArguments"), files, urls));
-        if (reply.type() != QDBusMessage::ReplyMessage) {
-            qWarning() << "D-Bus method call failed, error string:" << reply.errorMessage();
-        }
+        return std::make_unique<IpcClientDbus>();
     }
 }

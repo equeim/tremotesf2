@@ -23,50 +23,54 @@
 #include <QJsonObject>
 #include <QLocalSocket>
 
-#include "ipcserver.h"
+#include "ipcserver_socket.h"
 
 namespace tremotesf
 {
-    class IpcClient::Private
+    class IpcClientSocket final : public IpcClient
     {
     public:
+        IpcClientSocket()
+        {
+            mSocket.connectToServer(IpcServerSocket::socketName());
+            mSocket.waitForConnected();
+        }
+
+        bool isConnected() const override
+        {
+            return mSocket.state() == QLocalSocket::ConnectedState;
+        }
+
+        void activateWindow() override
+        {
+            qInfo("Requesting window activation");
+            sendMessage("ping");
+        }
+
+        void sendArguments(const QStringList& files, const QStringList& urls) override
+        {
+            qInfo("Sending arguments");
+            sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
+                                                  {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
+        }
+
+    private:
         void sendMessage(const QByteArray& message)
         {
-            const qint64 written = socket.write(message);
+            const qint64 written = mSocket.write(message);
             if (written != message.size()) {
                 qWarning() << "Failed to write to socket," << written << "bytes written";
             }
-            if (!socket.waitForBytesWritten()) {
+            if (!mSocket.waitForBytesWritten()) {
                 qWarning("Timed out when waiting for bytes written");
             }
         }
 
-        QLocalSocket socket;
+        QLocalSocket mSocket;
     };
 
-    IpcClient::IpcClient() : d(new Private())
+    std::unique_ptr<IpcClient> IpcClient::createInstance()
     {
-        d->socket.connectToServer(IpcServer::socketName());
-        d->socket.waitForConnected();
-    }
-
-    IpcClient::~IpcClient() = default;
-
-    bool IpcClient::isConnected() const
-    {
-        return d->socket.state() == QLocalSocket::ConnectedState;
-    }
-
-    void IpcClient::activateWindow()
-    {
-        qInfo("Requesting window activation");
-        d->sendMessage("ping");
-    }
-
-    void IpcClient::sendArguments(const QStringList& files, const QStringList& urls)
-    {
-        qInfo("Sending arguments");
-        d->sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
-                                                 {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
+        return std::make_unique<IpcClientSocket>();
     }
 }

@@ -288,7 +288,7 @@ Page {
                 "service": ipcServer.serviceName,
                 "path": ipcServer.objectPath,
                 "iface": ipcServer.interfaceName,
-                "method": ipcServer.openTorrentPropertiesPageMethod,
+                "method": "OpenTorrentPropertiesPage",
                 "arguments": [hashString]
             }]
             notification.replacesId = 0

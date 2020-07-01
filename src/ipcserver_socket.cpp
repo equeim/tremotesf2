@@ -16,12 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ipcserver.h"
+#include "ipcserver_socket.h"
 
 #include <QDebug>
-#include <QJsonArray>
 #include <QJsonDocument>
-#include <QJsonObject>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QTimer>
@@ -32,8 +30,8 @@
 
 namespace tremotesf
 {
-    IpcServer::IpcServer(QObject* parent)
-        : QObject(parent)
+    IpcServerSocket::IpcServerSocket(QObject* parent)
+        : IpcServer(parent)
     {
         auto server = new QLocalServer(this);
 
@@ -61,10 +59,7 @@ namespace tremotesf
 
         QObject::connect(server, &QLocalServer::newConnection, this, [=]() {
             QLocalSocket* socket = server->nextPendingConnection();
-            QObject::connect(socket, &QLocalSocket::disconnected, socket, [=]() {
-                qInfo("disconnected");
-                socket->deleteLater();
-            });
+            QObject::connect(socket, &QLocalSocket::disconnected, socket, &QLocalSocket::deleteLater);
             QTimer::singleShot(30000, socket, &QLocalSocket::disconnectFromServer);
             QObject::connect(socket, &QLocalSocket::readyRead, this, [=]() {
                 const QByteArray message(socket->readAll());
@@ -88,7 +83,7 @@ namespace tremotesf
         });
     }
 
-    QString IpcServer::socketName()
+    QString IpcServerSocket::socketName()
     {
             QString name(QLatin1String("tremotesf"));
 #ifdef Q_OS_WIN
@@ -98,5 +93,10 @@ namespace tremotesf
             name += QString::number(sessionId);
 #endif
             return name;
+    }
+
+    IpcServer* IpcServer::createInstance(QObject* parent)
+    {
+        return new IpcServerSocket(parent);
     }
 }

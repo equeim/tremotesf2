@@ -1,6 +1,6 @@
-/*
+ /*
  * Tremotesf
- * Copyright (C) 2015-2018 Alexey Rochev <equeim@gmail.com>
+ * Copyright (C) 2015-2020 Alexey Rochev <equeim@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ipcserver_dbus.h"
+#ifndef TREMOTESF_IPCSERVER_DBUS_SERVICE_H
+#define TREMOTESF_IPCSERVER_DBUS_SERVICE_H
 
-#include <QDBusConnection>
-#include <QDebug>
+#include <QObject>
 
 namespace tremotesf
 {
-    IpcServer* IpcServer::createInstance(QObject* parent)
+    class IpcServerDbus;
+
+    class IpcDbusService final : public QObject
     {
-        return new IpcServerDbus(parent);
-    }
+        Q_OBJECT
+        Q_CLASSINFO("D-Bus Interface", "org.equeim.Tremotesf")
+    public:
+        explicit IpcDbusService(IpcServerDbus* ipcServer);
+
+    public slots:
+        void ActivateWindow();
+        void SetArguments(const QStringList& files, const QStringList& urls);
+        void OpenTorrentPropertiesPage(const QString& torrentHash);
+
+    private:
+        IpcServerDbus* mIpcServer;
+    };
 }
+
+#endif // TREMOTESF_IPCSERVER_DBUS_SERVICE_H
