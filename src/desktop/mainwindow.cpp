@@ -978,7 +978,7 @@ namespace tremotesf
                                                                         QLatin1String("org.equeim.Tremotesf"),
                                                                         summary,
                                                                         body,
-                                                                        {},
+                                                                        {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
                                                                         {{QLatin1String("desktop-entry"), QLatin1String("org.equeim.Tremotesf")}},
                                                                         -1));
             auto watcher = new QDBusPendingCallWatcher(call, this);
@@ -1007,6 +1007,7 @@ namespace tremotesf
                                                                                QLatin1String("/org/freedesktop/Notifications"),
                                                                                QDBusConnection::sessionBus(),
                                                                                this);
+            QObject::connect(mNotificationsInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, &MainWindow::showWindow);
         }
 #endif
     }
