@@ -65,7 +65,7 @@ Q_DECLARE_METATYPE(libtremotesf::Server)
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QUrl>
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+#ifdef QT_DBUS_LIB
 #include <functional>
 #include <QDBusConnection>
 #include <QDBusMessage>
@@ -74,6 +74,10 @@ Q_DECLARE_METATYPE(libtremotesf::Server)
 #include <QProcess>
 #include <QRegularExpression>
 #include <QVersionNumber>
+
+#include "org.freedesktop.FileManager1.h"
+#include "org.xfce.FileManager.h"
+
 #elif defined(Q_OS_WIN)
 #include <shlobj.h>
 #endif
@@ -407,14 +411,208 @@ namespace tremotesf
         }
     }
 
-    void Utils::selectFilesInFileManager(const QStringList& files, QWidget* parent)
+    namespace
     {
-        const auto openParentDirectory = [=](const QString& filePath) {
-            const QString directory(QFileInfo(filePath).path());
-            qDebug() << "executing QDesktopServices::openUrl" << directory;
-            if (!QDesktopServices::openUrl(QUrl::fromLocalFile(directory))) {
-                qWarning() << "QDesktopServices::openUrl" << directory << "failed";
-                if (parent) {
+        class FileManagerLauncher
+        {
+        public:
+            explicit FileManagerLauncher(const QStringList& files, QWidget* parentWidget)
+                : mFiles(files),
+                  mParentWidget(parentWidget)
+            {
+
+            }
+
+            void showInFileManager()
+            {
+#ifdef QT_DBUS_LIB
+                executeProcess(QLatin1String("xdg-mime"), {QLatin1String("query"),
+                                                           QLatin1String("default"),
+                                                           QLatin1String("inode/directory")},
+                               [=](QProcess* xdgMimeProcess) {
+                    const QByteArray fileManager(xdgMimeProcess->readLine().trimmed());
+                    qDebug() << "Detected file manager" << fileManager;
+                    if (fileManager == "dolphin.desktop" || fileManager == "org.kde.dolphin.desktop") {
+                        launchFileManagerProcess("Dolphin", QLatin1String("dolphin"), mFiles);
+                    } else if (fileManager == "nautilus.desktop" || fileManager == "org.gnome.Nautilus.desktop" || fileManager == "nautilus-folder-handler.desktop") {
+                        showInNautilusOrOpenParentDirectories();
+                    } else if (fileManager == "nemo.desktop") {
+                        launchFileManagerProcess("Nemo", QLatin1String("nemo"), mFiles);
+                    } else if (fileManager == "Thunar.desktop" || fileManager == "Thunar-folder-handler.desktop") {
+                        showInThunarOrOpenParentDirectories();
+                    } else {
+                        showInFreedesktopFileManagerOrOpenParentDirectories();
+                    }
+                }, [=] { showInFreedesktopFileManagerOrOpenParentDirectories(); });
+
+#elif defined(Q_OS_WIN)
+                for (const QString& filePath : files) {
+                    const QString nativePath(QDir::toNativeSeparators(filePath));
+                    PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativePath.utf16()));
+                    if (directory) {
+                        qDebug() << "executing SHOpenFolderAndSelectItems" << nativePath;
+                        if (SHOpenFolderAndSelectItems(directory, 0, nullptr, 0) != S_OK) {
+                            qWarning() << "SHOpenFolderAndSelectItems" << nativePath << "failed";
+                            openParentDirectory(filePath);
+                        }
+                        ILFree(directory);
+                    } else {
+                        qWarning() << "ILCreateFromPathW" << nativePath << "failed";
+                        openParentDirectory(filePath);
+                    }
+                }
+#else
+                openParentDirectoriesForFiles();
+#endif
+            }
+
+        private:
+#ifdef QT_DBUS_LIB
+            void showInFreedesktopFileManagerOrOpenParentDirectories()
+            {
+                qDebug("Executing org.freedesktop.FileManager1 D-Bus call");
+                OrgFreedesktopFileManager1Interface interface(QLatin1String("org.freedesktop.FileManager1"),
+                                                              QLatin1String("/org/freedesktop/FileManager1"),
+                                                              QDBusConnection::sessionBus());
+                if (interface.isValid()) {
+                    auto pending(interface.ShowItems(mFiles, QString()));
+                    auto watcher = new QDBusPendingCallWatcher(pending, qApp);
+                    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
+                        if (watcher->isError()) {
+                            qWarning() << "org.freedesktop.FileManager1 D-Bus call failed" << watcher->error();
+                            openParentDirectoriesForFiles();
+                        }
+                        qDebug("Executed org.freedesktop.FileManager1 D-Bus call");
+                        watcher->deleteLater();
+                    });
+                } else {
+                    qDebug("org.freedesktop.FileManager1 is not a valid interface");
+                    openParentDirectoriesForFiles();
+                }
+            }
+
+            void showInThunarOrOpenParentDirectories()
+            {
+                qDebug("Executing thunar D-Bus calls");
+                OrgXfceFileManagerInterface interface(QLatin1String("org.xfce.FileManager"),
+                                                      QLatin1String("/org/xfce/FileManager"),
+                                                      QDBusConnection::sessionBus());
+                if (interface.isValid()) {
+                    for (const QString& filePath : mFiles) {
+                        const QFileInfo info(filePath);
+                        auto pending(interface.DisplayFolderAndSelect(info.path(), info.fileName(), {}, {}));
+                        auto watcher = new QDBusPendingCallWatcher(pending, qApp);
+                        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
+                            if (watcher->isError()) {
+                                qWarning() << "Thunar D-Bus call failed, error string" << watcher->error();
+                                openParentDirectory(filePath, mParentWidget);
+                            }
+                            watcher->deleteLater();
+                        });
+                    }
+                    qDebug("Finished executing Thunar D-Bus calls");
+                } else {
+                    qWarning("org.xfce.FileManager is not a valid interface");
+                    openParentDirectoriesForFiles();
+                }
+            }
+
+            void executeProcess(QLatin1String exeName,
+                                const QStringList& arguments,
+                                const std::function<void(QProcess*)>& onSuccess,
+                                const std::function<void()>& onFailure)
+            {
+                auto process = new QProcess(qApp);
+
+                const auto onFailedToStart = [=] {
+                    qWarning() << "Process" << process->program()
+                               << "failed to start, error" << process->error() << process->errorString();
+                    process->deleteLater();
+                    onFailure();
+                };
+
+                QObject::connect(process, &QProcess::errorOccurred, qApp, [=](QProcess::ProcessError error) {
+                    if (error == QProcess::FailedToStart) {
+                        onFailedToStart();
+                    }
+                });
+
+                QObject::connect(process,
+                                 static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+                                 qApp,
+                                 [=](int exitCode, QProcess::ExitStatus exitStatus) {
+                    if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                        onSuccess(process);
+                    } else {
+                        qWarning().nospace() << "Process " << process->program()
+                                   << ' ' << process->arguments()
+                                   << " failed, exitStatus " << exitStatus
+                                   << ", exitCode " << exitCode
+                                   << ", error string " << process->errorString()
+                                   << ", stderr:";
+                        qWarning() << QString(process->readAllStandardError());
+                        onFailure();
+                    }
+                    process->deleteLater();
+                });
+
+                qDebug() << "Executing" << exeName << "with arguments" << arguments;
+                process->start(exeName, arguments);
+
+                if (process->state() == QProcess::NotRunning) {
+                    onFailedToStart();
+                }
+            }
+
+            void launchFileManagerProcess(const char* fileManagerName, QLatin1String exeName, const QStringList& args)
+            {
+                qDebug("Launching %s", fileManagerName);
+                if (!QProcess::startDetached(exeName, args)) {
+                    qWarning("Failed to launch %s", fileManagerName);
+                    openParentDirectoriesForFiles();
+                }
+            }
+
+            void showInNautilusOrOpenParentDirectories()
+            {
+                executeProcess(QLatin1String("nautilus"), {QLatin1String("--version")}, [=](QProcess* nautilusProcess) {
+                    const QByteArray processOutput(nautilusProcess->readLine().trimmed());
+                    const QVersionNumber version(QVersionNumber::fromString(QRegularExpression(QLatin1String("[0-9.]+")).match(processOutput).captured()));
+                    if (version.isNull()) {
+                        qWarning() << "Failed to detect Nautilus version, process output was" << processOutput;
+                        openParentDirectoriesForFiles();
+                    } else {
+                        qDebug() << "Detected Nautilus version" << version;
+                        if (version < QVersionNumber(3, 8, 0)) {
+                            qDebug("Nautilus version is too old");
+                            openParentDirectoriesForFiles();
+                        } else {
+                            QStringList args{QLatin1String("--select")};
+                            if (version < QVersionNumber(3, 28, 0)) {
+                                args.push_back(QLatin1String("--no-desktop"));
+                            }
+                            launchFileManagerProcess("Nautilus", QLatin1String("nautilus"), args + mFiles);
+                        }
+                    }
+                }, [=] { openParentDirectoriesForFiles(); });
+            }
+#endif
+
+#ifndef Q_OS_WIN
+            void openParentDirectoriesForFiles()
+            {
+                for (const QString& filePath : mFiles) {
+                    openParentDirectory(filePath, mParentWidget);
+                }
+            }
+#endif
+
+            void openParentDirectory(const QString& filePath, QWidget* parent)
+            {
+                const QString directory(QFileInfo(filePath).path());
+                qDebug() << "Executing QDesktopServices::openUrl() for" << directory;
+                if (!QDesktopServices::openUrl(QUrl::fromLocalFile(directory))) {
+                    qWarning("QDesktopServices::openUrl() failed");
                     auto dialog = new QMessageBox(QMessageBox::Warning,
                                                   qApp->translate("tremotesf", "Error"),
                                                   qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(directory)),
@@ -424,155 +622,16 @@ namespace tremotesf
                     dialog->show();
                 }
             }
+
+            const QStringList mFiles;
+            QWidget* mParentWidget;
         };
+    }
 
-        const auto openParentDirectoryForAll = [=] {
-            for (const QString& filePath : files) {
-                openParentDirectory(filePath);
-            }
-        };
-
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-        const auto showInFreedesktopFileManager = [=] {
-            qDebug() << "executing org.freedesktop.FileManager1 dbus call";
-            QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.freedesktop.FileManager1"),
-                                                                QLatin1String("/org/freedesktop/FileManager1"),
-                                                                QLatin1String("org.freedesktop.FileManager1"),
-                                                                QLatin1String("ShowItems")));
-            message.setArguments({files, QVariant::String});
-            auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), qApp);
-            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
-                QDBusPendingReply<void> reply(*watcher);
-                if (reply.isError()) {
-                    qWarning() << "org.freedesktop.FileManager1 dbus call failed, error string" << reply.error();
-                    openParentDirectoryForAll();
-                }
-                watcher->deleteLater();
-            });
-        };
-
-        const auto executeProcess = [](const QString& exeName,
-                                       const QStringList& arguments,
-                                       const std::function<void(QProcess*)>& onSuccess,
-                                       const std::function<void()>& onFailure) {
-            auto process = new QProcess(qApp);
-            QObject::connect(process,
-                             static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
-                             qApp,
-                             [=](int exitCode, QProcess::ExitStatus exitStatus) {
-                if (exitStatus == QProcess::NormalExit && exitCode == 0) {
-                    onSuccess(process);
-                } else {
-                    qWarning().nospace() << "process " << process->program()
-                               << ' ' << process->arguments()
-                               << " failed, exitStatus " << exitStatus
-                               << ", exitCode " << exitCode
-                               << ", error string " << process->errorString()
-                               << ", stderr:";
-                    qWarning() << QString(process->readAllStandardError());
-                    onFailure();
-                }
-                process->deleteLater();
-            });
-
-            const auto onFailedToStart = [=] {
-                qWarning() << "process" << process->program()
-                           << "failed to start, error" << process->error() << process->errorString();
-                process->deleteLater();
-                onFailure();
-            };
-
-            QObject::connect(process, &QProcess::errorOccurred, qApp, [=](QProcess::ProcessError error) {
-                if (error == QProcess::FailedToStart) {
-                    onFailedToStart();
-                }
-            });
-
-            qDebug() << "executing" << exeName << arguments;
-            process->start(exeName, arguments);
-
-            if (process->state() == QProcess::NotRunning) {
-                onFailedToStart();
-            }
-        };
-
-        executeProcess(QLatin1String("xdg-mime"), {QLatin1String("query"),
-                                                   QLatin1String("default"),
-                                                   QLatin1String("inode/directory")},
-                       [=](QProcess* xdgMimeProcess) {
-            const QByteArray fileManager(xdgMimeProcess->readLine().trimmed());
-            qDebug() << "detected file manager:" << fileManager;
-            if (fileManager == "dolphin.desktop" || fileManager == "org.kde.dolphin.desktop") {
-                qDebug() << "launching dolphin";
-                QProcess::startDetached(QLatin1String("dolphin"), QStringList{QLatin1String("--select")} + files);
-            } else if (fileManager == "nautilus.desktop" || fileManager == "org.gnome.Nautilus.desktop" || fileManager == "nautilus-folder-handler.desktop") {
-                executeProcess(QLatin1String("nautilus"), {QLatin1String("--version")},
-                               [=](QProcess* nautilusProcess) {
-                    const QByteArray processOutput(nautilusProcess->readLine().trimmed());
-                    const QVersionNumber version(QVersionNumber::fromString(QRegularExpression(QLatin1String("[0-9.]+")).match(processOutput).captured()));
-                    if (version.isNull()) {
-                        qWarning() << "failed to detect nautilus version, \"nautilus --version\" output was" << processOutput;
-                    } else {
-                        qDebug() << "detected nautilus version:" << version;
-                        if (version >= QVersionNumber(3, 28, 0)) {
-                            qDebug() << "launching nautilus";
-                            QProcess::startDetached(QLatin1String("nautilus"), QStringList{QLatin1String("--select")} + files);
-                        } else if (version >= QVersionNumber(3, 8, 0)) {
-                            qDebug() << "launching nautilus";
-                            QProcess::startDetached(QLatin1String("nautilus"), QStringList{QLatin1String("--no-desktop"), QLatin1String("--select")} + files);
-                        } else {
-                            qWarning() << "nautilus version is too old";
-                            showInFreedesktopFileManager();
-                        }
-                    }
-                }, showInFreedesktopFileManager);
-            } else if (fileManager == "nemo.desktop") {
-                qDebug() << "launching nemo";
-                QProcess::startDetached(QLatin1String("nemo"), files);
-            } else if (fileManager == "Thunar.desktop" || fileManager == "Thunar-folder-handler.desktop") {
-                qDebug() << "executing thunar dbus calls";
-
-                for (const QString& filePath : files) {
-                    QDBusMessage message(QDBusMessage::createMethodCall(QLatin1String("org.xfce.FileManager"),
-                                                                        QLatin1String("/org/xfce/FileManager"),
-                                                                        QLatin1String("org.xfce.FileManager"),
-                                                                        QLatin1String("DisplayFolderAndSelect")));
-                    const QFileInfo info(filePath);
-                    message.setArguments({info.path(), info.fileName(), QVariant(QVariant::String), QVariant(QVariant::String)});
-                    auto watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message), qApp);
-                    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
-                        QDBusPendingReply<void> reply(*watcher);
-                        if (reply.isError()) {
-                            qWarning() << "thunar dbus call failed, error string" << reply.error();
-                            openParentDirectory(filePath);
-                        }
-                        watcher->deleteLater();
-                    });
-                }
-            } else {
-                showInFreedesktopFileManager();
-            }
-        }, showInFreedesktopFileManager);
-
-#elif defined(Q_OS_WIN)
-        for (const QString& filePath : files) {
-            const QString nativePath(QDir::toNativeSeparators(filePath));
-            PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativePath.utf16()));
-            if (directory) {
-                qDebug() << "executing SHOpenFolderAndSelectItems" << nativePath;
-                if (SHOpenFolderAndSelectItems(directory, 0, nullptr, 0) != S_OK) {
-                    qWarning() << "SHOpenFolderAndSelectItems" << nativePath << "failed";
-                    openParentDirectory(filePath);
-                }
-                ILFree(directory);
-            } else {
-                qWarning() << "ILCreateFromPathW" << nativePath << "failed";
-                openParentDirectory(filePath);
-            }
-        }
-#else
-        openParentDirectoryForAll();
-#endif
+    void Utils::selectFilesInFileManager(const QStringList& files, QWidget* parent)
+    {
+        FileManagerLauncher launcher(files, parent);
+        launcher.showInFileManager();
     }
 #endif // TREMOTESF_SAILFISHOS
 }

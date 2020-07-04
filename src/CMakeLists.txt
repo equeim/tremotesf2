@@ -142,17 +142,24 @@ if (UNIX AND NOT APPLE)
 
     qt5_generate_dbus_interface(ipcserver_dbus_service.h org.equeim.Tremotesf.xml)
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/org.equeim.Tremotesf.xml PROPERTIES CLASSNAME IpcDbusInterface NO_NAMESPACE ON)
-    qt5_add_dbus_adaptor(ipc ${CMAKE_CURRENT_BINARY_DIR}/org.equeim.Tremotesf.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)
-    qt5_add_dbus_interface(ipc ${CMAKE_CURRENT_BINARY_DIR}/org.equeim.Tremotesf.xml ipcclient_dbus_interface)
+    qt5_add_dbus_adaptor(dbus_generated ${CMAKE_CURRENT_BINARY_DIR}/org.equeim.Tremotesf.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)
+    qt5_add_dbus_interface(dbus_generated ${CMAKE_CURRENT_BINARY_DIR}/org.equeim.Tremotesf.xml ipcclient_dbus_interface)
 
-    set_source_files_properties(desktop/org.freedesktop.Notifications.xml PROPERTIES NO_NAMESPACE ON)
-    qt5_add_dbus_interface(notifications desktop/org.freedesktop.Notifications.xml org.freedesktop.Notifications)
+    set_source_files_properties(
+        desktop/org.freedesktop.Notifications.xml
+        desktop/org.freedesktop.FileManager1.xml
+        desktop/org.xfce.FileManager.xml
+        PROPERTIES NO_NAMESPACE ON
+    )
+    qt5_add_dbus_interface(dbus_generated desktop/org.freedesktop.Notifications.xml org.freedesktop.Notifications)
+    qt5_add_dbus_interface(dbus_generated desktop/org.freedesktop.FileManager1.xml org.freedesktop.FileManager1)
+    qt5_add_dbus_interface(dbus_generated desktop/org.xfce.FileManager.xml org.xfce.FileManager)
 
     if (Qt5_VERSION VERSION_LESS 5.9.2)
-        set_source_files_properties(${ipc} ${notifications} PROPERTIES SKIP_AUTOMOC ON)
+        set_source_files_properties(${dbus_generated} PROPERTIES SKIP_AUTOMOC ON)
     endif()
 
-    target_sources(tremotesf PRIVATE ipcserver_dbus.cpp ipcserver_dbus_service.cpp ipcclient_dbus.cpp ${ipc} ${notifications})
+    target_sources(tremotesf PRIVATE ipcserver_dbus.cpp ipcserver_dbus_service.cpp ipcclient_dbus.cpp ${dbus_generated})
 else()
     target_sources(tremotesf PRIVATE ipcserver_socket.cpp ipcclient_socket.cpp)
 endif()

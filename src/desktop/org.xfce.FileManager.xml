@@ -1,0 +1,11 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.xfce.FileManager">
+    <method name="DisplayFolderAndSelect">
+      <arg direction="in" name="uri" type="s" />
+      <arg direction="in" name="filename" type="s" />
+      <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
+    </method>
+  </interface>
+</node>
