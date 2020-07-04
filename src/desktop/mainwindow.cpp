@@ -925,10 +925,33 @@ namespace tremotesf
 
     void MainWindow::showWindow()
     {
-        show();
         setWindowState(windowState() & ~Qt::WindowMinimized);
+        show();
         raise();
-        activateWindow();
+
+        QWidget* lastDialog = nullptr;
+        for (QWidget* widget : qApp->topLevelWidgets()) {
+            if (widget->windowType() == Qt::Dialog) {
+                widget->show();
+                lastDialog = widget;
+            }
+        }
+        if (lastDialog) {
+            lastDialog->activateWindow();
+        } else {
+            activateWindow();
+        }
+    }
+
+    void MainWindow::hideWindow()
+    {
+        // Hide main window and dialogs
+        hide();
+        for (QWidget* widget : qApp->topLevelWidgets()) {
+            if (widget->windowType() == Qt::Dialog) {
+                widget->hide();
+            }
+        }
     }
 
     void MainWindow::runAfterDelay(const std::function<void()>& function)

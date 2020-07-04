@@ -73,6 +73,7 @@ namespace tremotesf
         void setupTrayIcon();
 
         void showWindow();
+        void hideWindow();
 
         void runAfterDelay(const std::function<void()>& function);
 
