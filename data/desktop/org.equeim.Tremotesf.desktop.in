@@ -6,4 +6,5 @@ Categories=Network;P2P;
 Icon=org.equeim.Tremotesf
 Exec=tremotesf %U
 StartupNotify=false
+StartupWMClass=tremotesf
 MimeType=application/x-bittorrent;x-scheme-handler/magnet;
