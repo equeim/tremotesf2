@@ -7,4 +7,5 @@ Icon=org.equeim.Tremotesf
 Exec=tremotesf %U
 StartupNotify=false
 StartupWMClass=tremotesf
+X-GNOME-SingleWindow=true
 MimeType=application/x-bittorrent;x-scheme-handler/magnet;
