@@ -27,6 +27,7 @@
 
 #ifdef QT_DBUS_LIB
 #include <functional>
+#include <unordered_set>
 #include <QDBusConnection>
 #include <QDBusPendingCallWatcher>
 #include <QProcess>
@@ -102,11 +103,13 @@ namespace tremotesf
 
         namespace
         {
-            class FileManagerLauncher
+            class FileManagerLauncher : public QObject
             {
+                Q_OBJECT
             public:
                 explicit FileManagerLauncher(const QStringList& files, QWidget* parentWidget)
-                    : mFiles(files),
+                    : QObject(qApp),
+                      mFiles(files),
                       mParentWidget(parentWidget)
                 {
 
@@ -132,7 +135,9 @@ namespace tremotesf
                         } else {
                             showInFreedesktopFileManagerOrOpenParentDirectories();
                         }
-                    }, [=] { showInFreedesktopFileManagerOrOpenParentDirectories(); });
+                    }, [=] {
+                        showInFreedesktopFileManagerOrOpenParentDirectories();
+                    });
 
 #elif defined(Q_OS_WIN)
                     for (const QString& filePath : files) {
@@ -150,8 +155,10 @@ namespace tremotesf
                             openParentDirectory(filePath);
                         }
                     }
+                    emit done();
 #else
                     openParentDirectoriesForFiles();
+                    emit done();
 #endif
                 }
 
@@ -165,14 +172,15 @@ namespace tremotesf
                                                                   QDBusConnection::sessionBus());
                     if (interface.isValid()) {
                         auto pending(interface.ShowItems(mFiles, QString()));
-                        auto watcher = new QDBusPendingCallWatcher(pending, qApp);
-                        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
+                        auto watcher = new QDBusPendingCallWatcher(pending, this);
+                        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
                             if (watcher->isError()) {
                                 qWarning() << "org.freedesktop.FileManager1 D-Bus call failed" << watcher->error();
                                 openParentDirectoriesForFiles();
+                            } else {
+                                qDebug("Executed org.freedesktop.FileManager1 D-Bus call");
+                                emit done();
                             }
-                            qDebug("Executed org.freedesktop.FileManager1 D-Bus call");
-                            watcher->deleteLater();
                         });
                     } else {
                         qDebug("org.freedesktop.FileManager1 is not a valid interface");
@@ -190,16 +198,21 @@ namespace tremotesf
                         for (const QString& filePath : mFiles) {
                             const QFileInfo info(filePath);
                             auto pending(interface.DisplayFolderAndSelect(info.path(), info.fileName(), {}, {}));
-                            auto watcher = new QDBusPendingCallWatcher(pending, qApp);
-                            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, qApp, [=] {
+                            auto watcher = new QDBusPendingCallWatcher(pending, this);
+                            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
                                 if (watcher->isError()) {
                                     qWarning() << "Thunar D-Bus call failed, error string" << watcher->error();
                                     openParentDirectory(filePath, mParentWidget);
                                 }
+                                mPendingWatchers.erase(watcher);
                                 watcher->deleteLater();
+                                if (mPendingWatchers.empty()) {
+                                    qDebug("Finished executing Thunar D-Bus calls");
+                                    emit done();
+                                }
                             });
+                            mPendingWatchers.insert(watcher);
                         }
-                        qDebug("Finished executing Thunar D-Bus calls");
                     } else {
                         qWarning("org.xfce.FileManager is not a valid interface");
                         openParentDirectoriesForFiles();
@@ -211,16 +224,15 @@ namespace tremotesf
                                     const std::function<void(QProcess*)>& onSuccess,
                                     const std::function<void()>& onFailure)
                 {
-                    auto process = new QProcess(qApp);
+                    auto process = new QProcess(this);
 
                     const auto onFailedToStart = [=] {
                         qWarning() << "Process" << process->program()
                                    << "failed to start, error" << process->error() << process->errorString();
-                        process->deleteLater();
                         onFailure();
                     };
 
-                    QObject::connect(process, &QProcess::errorOccurred, qApp, [=](QProcess::ProcessError error) {
+                    QObject::connect(process, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error) {
                         if (error == QProcess::FailedToStart) {
                             onFailedToStart();
                         }
@@ -228,7 +240,7 @@ namespace tremotesf
 
                     QObject::connect(process,
                                      static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
-                                     qApp,
+                                     this,
                                      [=](int exitCode, QProcess::ExitStatus exitStatus) {
                         if (exitStatus == QProcess::NormalExit && exitCode == 0) {
                             onSuccess(process);
@@ -242,7 +254,6 @@ namespace tremotesf
                             qWarning() << QString(process->readAllStandardError());
                             onFailure();
                         }
-                        process->deleteLater();
                     });
 
                     qDebug() << "Executing" << exeName << "with arguments" << arguments;
@@ -256,7 +267,9 @@ namespace tremotesf
                 void launchFileManagerProcess(const char* fileManagerName, QLatin1String exeName, const QStringList& args)
                 {
                     qDebug("Launching %s", fileManagerName);
-                    if (!QProcess::startDetached(exeName, args)) {
+                    if (QProcess::startDetached(exeName, args)) {
+                        emit done();
+                    } else {
                         qWarning("Failed to launch %s", fileManagerName);
                         openParentDirectoriesForFiles();
                     }
@@ -293,6 +306,7 @@ namespace tremotesf
                     for (const QString& filePath : mFiles) {
                         openParentDirectory(filePath, mParentWidget);
                     }
+                    emit done();
                 }
 #endif
 
@@ -314,13 +328,23 @@ namespace tremotesf
 
                 const QStringList mFiles;
                 QWidget* mParentWidget;
+
+#ifdef QT_DBUS_LIB
+                std::unordered_set<QDBusPendingCallWatcher*> mPendingWatchers;
+#endif
+
+            signals:
+                void done();
             };
         }
 
         void selectFilesInFileManager(const QStringList& files, QWidget* parent)
         {
-            FileManagerLauncher launcher(files, parent);
-            launcher.showInFileManager();
+            const auto launcher = new FileManagerLauncher(files, parent);
+            QObject::connect(launcher, &FileManagerLauncher::done, launcher, &QObject::deleteLater);
+            launcher->showInFileManager();
         }
     }
 }
+
+#include "desktoputils.moc"
