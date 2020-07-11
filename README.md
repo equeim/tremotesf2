@@ -28,11 +28,12 @@ Table of Contents
 - C++14 compiler
 - CMake 3.10 or newer
 - Qt 5.6 or newer (Core, Network, Concurrent, Gui, Widgets)
+- KWidgetsAddons
 
 On GNU/Linux and BSD:
 - Gettext 0.19.7 or newer
 - Qt D-Bus, Qt X11 Extras
-- KWidgetsAddons, KWindowSystem
+- KWindowSystem
 
 #### Building
 ```sh
