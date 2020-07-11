@@ -125,7 +125,7 @@ namespace tremotesf
                         const QByteArray fileManager(xdgMimeProcess->readLine().trimmed());
                         qDebug() << "Detected file manager" << fileManager;
                         if (fileManager == "dolphin.desktop" || fileManager == "org.kde.dolphin.desktop") {
-                            launchFileManagerProcess("Dolphin", QLatin1String("dolphin"), mFiles);
+                            launchFileManagerProcess("Dolphin", QLatin1String("dolphin"), QStringList{QLatin1String("--select")} + mFiles);
                         } else if (fileManager == "nautilus.desktop" || fileManager == "org.gnome.Nautilus.desktop" || fileManager == "nautilus-folder-handler.desktop") {
                             showInNautilusOrOpenParentDirectories();
                         } else if (fileManager == "nemo.desktop") {
