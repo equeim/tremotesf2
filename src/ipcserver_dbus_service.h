@@ -21,6 +21,9 @@
 
 #include <QObject>
 
+class IpcDbusServiceAdaptor;
+class IpcDbusServiceDeprecatedAdaptor;
+
 namespace tremotesf
 {
     class IpcServerDbus;
@@ -28,16 +31,29 @@ namespace tremotesf
     class IpcDbusService final : public QObject
     {
         Q_OBJECT
-        Q_CLASSINFO("D-Bus Interface", "org.equeim.Tremotesf")
     public:
+        static const QLatin1String desktopStartupIdField;
+        static const QLatin1String torrentHashField;
+
         explicit IpcDbusService(IpcServerDbus* ipcServer);
 
-    public slots:
+    private:
+        /*
+         * org.freedesktop.Application methods
+         */
+        friend IpcDbusServiceAdaptor;
+        void Activate(const QVariantMap& platform_data);
+        void Open(const QStringList& uris, const QVariantMap& platform_data);
+        void ActivateAction(const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data);
+
+        /*
+         * org.equeim.Tremotesf methods, deprecated
+         */
+        friend IpcDbusServiceDeprecatedAdaptor;
         void ActivateWindow();
         void SetArguments(const QStringList& files, const QStringList& urls);
         void OpenTorrentPropertiesPage(const QString& torrentHash);
 
-    private:
         IpcServerDbus* mIpcServer;
     };
 }

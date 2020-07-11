@@ -18,9 +18,6 @@
 
 #include "ipcserver_dbus.h"
 
-#include <QDBusConnection>
-#include <QDebug>
-
 namespace tremotesf
 {
     IpcServer* IpcServer::createInstance(QObject* parent)

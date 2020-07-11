@@ -95,25 +95,23 @@ ApplicationWindow {
     Connections {
         target: ipcServer
 
-        onWindowActivationRequested: activate()
-
-        onTorrentPropertiesPageRequested: {
+        onWindowActivationRequested: {
             activate()
-            pageStack.pop(mainPage, PageStackAction.Immediate)
-            pageStack.push("components/TorrentPropertiesPage.qml", {"torrentHash": torrentHash,
-                                                                    "torrent": rpc.torrentByHash(torrentHash)}, PageStackAction.Immediate)
+            if (torrentHash.length > 0) {
+                pageStack.pop(mainPage, PageStackAction.Immediate)
+                pageStack.push("components/TorrentPropertiesPage.qml", {"torrentHash": torrentHash,
+                                                                        "torrent": rpc.torrentByHash(torrentHash)}, PageStackAction.Immediate)
+            }
         }
 
-        onFilesReceived: {
+        onTorrentsAddingRequested: {
             activate()
             pageStack.pop(mainPage, PageStackAction.Immediate)
-            addTorrentFile(files[0], PageStackAction.Immediate)
-        }
-
-        onUrlsReceived: {
-            activate()
-            pageStack.pop(mainPage, PageStackAction.Immediate)
-            pageStack.push("components/AddTorrentLinkDialog.qml", {"url": urls[0]}, PageStackAction.Immediate)
+            if (files.length > 0) {
+                addTorrentFile(files[0], PageStackAction.Immediate)
+            } else if (urls.length > 0) {
+                pageStack.push("components/AddTorrentLinkDialog.qml", {"url": urls[0]}, PageStackAction.Immediate)
+            }
         }
     }
 

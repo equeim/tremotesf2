@@ -18,11 +18,14 @@
 
 #include "ipcclient.h"
 
-#include <QDBusInterface>
+#include <QtGlobal>
 #include <QDebug>
+#include <QUrl>
 
-#include "ipcclient_dbus_interface.h"
 #include "ipcserver_dbus.h"
+#include "ipcclient_dbus_interface.h"
+#include "ipcclient_dbus_interface_deprecated.h"
+#include "ipcserver_dbus_service.h"
 
 namespace tremotesf
 {
@@ -41,25 +44,55 @@ namespace tremotesf
     class IpcClientDbus final : public IpcClient
     {
     public:
+        explicit IpcClientDbus()
+        {
+            if (!mInterface.isValid()) {
+                mDeprecatedInterface = new IpcDbusInterfaceDeprecated(IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus(), &mInterface);
+            }
+        }
+
         bool isConnected() const override
         {
-            return mInterface.isValid();
+            return mDeprecatedInterface ? mDeprecatedInterface->isValid() : mInterface.isValid();
         }
 
         void activateWindow() override
         {
             qInfo("Requesting window activation");
-            waitForReply(mInterface.ActivateWindow());
+            if (mDeprecatedInterface) {
+                waitForReply(mDeprecatedInterface->ActivateWindow());
+            } else {
+                waitForReply(mInterface.Activate(getPlatformData()));
+            }
         }
 
-        void sendArguments(const QStringList& files, const QStringList& urls) override
+        void addTorrents(const QStringList& files, const QStringList& urls) override
         {
-            qInfo("Sending arguments");
-            waitForReply(mInterface.SetArguments(files, urls));
+            qInfo("Requesting torrents adding");
+            if (mDeprecatedInterface) {
+                waitForReply(mDeprecatedInterface->SetArguments(files, urls));
+            } else {
+                QStringList uris;
+                uris.reserve(files.size() + urls.size());
+                for (const QString& filePath : files) {
+                    uris.push_back(QUrl::fromLocalFile(filePath).toString());
+                }
+                uris.append(urls);
+                waitForReply(mInterface.Open(uris, getPlatformData()));
+            }
         }
 
     private:
+        inline QVariantMap getPlatformData()
+        {
+            if (qEnvironmentVariableIsSet("DESKTOP_STARTUP_ID")) {
+                return {{IpcDbusService::desktopStartupIdField, qgetenv("DESKTOP_STARTUP_ID")}};
+            }
+            return {};
+        }
+
         IpcDbusInterface mInterface{IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus()};
+        IpcDbusInterfaceDeprecated* mDeprecatedInterface{nullptr};
     };
 
     std::unique_ptr<IpcClient> IpcClient::createInstance()

@@ -72,7 +72,7 @@ namespace tremotesf
         void setupToolBar();
         void setupTrayIcon();
 
-        void showWindow();
+        void showWindow(const QByteArray& newStartupNotificationId = {});
         void hideWindow();
 
         void runAfterDelay(const std::function<void()>& function);

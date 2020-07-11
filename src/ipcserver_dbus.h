@@ -23,6 +23,7 @@
 
 #include "ipcserver.h"
 #include "ipcserver_dbus_service.h"
+//#include "ipcserver_dbus_service_deprecated.h"
 
 namespace tremotesf
 {
@@ -35,7 +36,7 @@ namespace tremotesf
     public:
         static inline QLatin1String serviceName() { return QLatin1String("org.equeim.Tremotesf"); };
         static inline QLatin1String objectPath() { return QLatin1String("/org/equeim/Tremotesf"); };
-        static inline QLatin1String interfaceName() { return QLatin1String("org.equeim.Tremotesf"); };
+        static inline QLatin1String interfaceName() { return QLatin1String("org.freedesktop.Application"); };
 
         inline explicit IpcServerDbus(QObject* parent = nullptr) : IpcServer(parent) {};
 

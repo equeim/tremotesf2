@@ -47,9 +47,9 @@ namespace tremotesf
             sendMessage("ping");
         }
 
-        void sendArguments(const QStringList& files, const QStringList& urls) override
+        void addTorrents(const QStringList& files, const QStringList& urls) override
         {
-            qInfo("Sending arguments");
+            qInfo("Requesting torrents adding");
             sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
                                                   {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
         }

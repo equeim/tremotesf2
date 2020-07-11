@@ -66,18 +66,13 @@ namespace tremotesf
                 qInfo() << "read" << message;
                 if (message == "ping") {
                     qInfo("Window activation requested");
-                    emit windowActivationRequested();
+                    emit windowActivationRequested({}, {});
                 } else {
                     const QVariantMap arguments(QJsonDocument::fromJson(message).toVariant().toMap());
                     qInfo() << "Arguments received" << arguments;
                     const QStringList files(arguments.value(QLatin1String("files")).toStringList());
-                    if (!files.isEmpty()) {
-                        emit filesReceived(files);
-                    }
                     const QStringList urls(arguments.value(QLatin1String("urls")).toStringList());
-                    if (!urls.isEmpty()) {
-                        emit urlsReceived(urls);
-                    }
+                    emit torrentsAddingRequested(files, urls, {});
                 }
             });
         });

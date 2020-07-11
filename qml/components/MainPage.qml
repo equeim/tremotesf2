@@ -259,7 +259,7 @@ Page {
                 "service": ipcServer.serviceName,
                 "path": ipcServer.objectPath,
                 "iface": ipcServer.interfaceName,
-                "method": "ActivateWindow",
+                "method": "Activate",
             }]
             notification.replacesId = 0
             notification.publish()
@@ -288,8 +288,8 @@ Page {
                 "service": ipcServer.serviceName,
                 "path": ipcServer.objectPath,
                 "iface": ipcServer.interfaceName,
-                "method": "OpenTorrentPropertiesPage",
-                "arguments": [hashString]
+                "method": "Activate",
+                "arguments": [{"torrent-hash": hashString}]
             }]
             notification.replacesId = 0
             notification.publish()

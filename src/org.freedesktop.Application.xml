@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.freedesktop.Application">
+    <method name="Activate">
+      <arg name="platform_data" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+    <method name="Open">
+      <arg name="uris" type="as" direction="in"/>
+      <arg name="platform_data" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="ActivateAction">
+      <arg name="action_name" type="s" direction="in"/>
+      <arg name="parameter" type="av" direction="in"/>
+      <arg name="platform_data" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="QVariantMap"/>
+    </method>
+  </interface>
+</node>

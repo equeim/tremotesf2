@@ -225,31 +225,21 @@ namespace tremotesf
         Settings::instance()->clearToolBarArea();
         mToolBarAction->setChecked(!mToolBar->isHidden());
 
-        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, &MainWindow::showWindow);
-
-        QObject::connect(ipcServer, &IpcServer::filesReceived, this, [=](const QStringList& files) {
-            if (mRpc->isConnected()) {
-                setWindowState(windowState() & ~Qt::WindowMinimized);
-                if (isHidden()) {
-                    show();
-                    runAfterDelay([=] {
-                        showAddTorrentFileDialogs(files);
-                    });
-                } else {
-                    showAddTorrentFileDialogs(files);
-                }
-            }
+        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const QString&, const QByteArray& startupNoficationId) {
+            showWindow(startupNoficationId);
         });
 
-        QObject::connect(ipcServer, &IpcServer::urlsReceived, this, [=](const QStringList& urls) {
+        QObject::connect(ipcServer, &IpcServer::torrentsAddingRequested, this, [=](const QStringList& files, const QStringList& urls) {
             if (mRpc->isConnected()) {
-                setWindowState(windowState() & ~Qt::WindowMinimized);
-                if (isHidden()) {
-                    show();
+                const bool hidden = isHidden();
+                showWindow();
+                if (hidden) {
                     runAfterDelay([=] {
+                        showAddTorrentFileDialogs(files);
                         showAddTorrentLinkDialogs(urls);
                     });
                 } else {
+                    showAddTorrentFileDialogs(files);
                     showAddTorrentLinkDialogs(urls);
                 }
             }
@@ -894,7 +884,7 @@ namespace tremotesf
                 if (isHidden() || isMinimized()) {
                     showWindow();
                 } else {
-                    hide();
+                    hideWindow();
                 }
             }
         });
@@ -923,7 +913,7 @@ namespace tremotesf
         });
     }
 
-    void MainWindow::showWindow()
+    void MainWindow::showWindow(const QByteArray& newStartupNotificationId)
     {
         setWindowState(windowState() & ~Qt::WindowMinimized);
         show();
@@ -1030,7 +1020,7 @@ namespace tremotesf
                                                                                QLatin1String("/org/freedesktop/Notifications"),
                                                                                QDBusConnection::sessionBus(),
                                                                                this);
-            QObject::connect(mNotificationsInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, &MainWindow::showWindow);
+            QObject::connect(mNotificationsInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, [=] { showWindow(); });
         }
 #endif
     }
