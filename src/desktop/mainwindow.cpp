@@ -50,6 +50,8 @@
 #include <QDBusPendingCall>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
+#include <QX11Info>
+#include <KStartupInfo>
 #include "org.freedesktop.Notifications.h"
 #endif
 
@@ -915,6 +917,18 @@ namespace tremotesf
 
     void MainWindow::showWindow(const QByteArray& newStartupNotificationId)
     {
+#ifdef QT_DBUS_LIB
+        if (!newStartupNotificationId.isEmpty()) {
+            if (isHidden() && QX11Info::isPlatformX11()) {
+                QX11Info::setNextStartupId(newStartupNotificationId);
+            } else {
+                KStartupInfo::appStarted(newStartupNotificationId);
+            }
+        }
+#else
+        Q_UNUSED(newStartupNotificationId)
+#endif
+
         setWindowState(windowState() & ~Qt::WindowMinimized);
         show();
         raise();

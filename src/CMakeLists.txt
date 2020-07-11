@@ -140,6 +140,12 @@ if (UNIX AND NOT APPLE)
     find_package(Qt5 REQUIRED COMPONENTS DBus)
     target_link_libraries(tremotesf Qt5::DBus)
 
+    if (NOT SAILFISHOS)
+        find_package(Qt5 REQUIRED COMPONENTS X11Extras)
+        find_package(KF5WindowSystem REQUIRED)
+        target_link_libraries(tremotesf Qt5::X11Extras KF5::WindowSystem)
+    endif()
+
     set_source_files_properties(org.freedesktop.Application.xml PROPERTIES CLASSNAME IpcDbusInterface NO_NAMESPACE ON)
     qt5_add_dbus_adaptor(dbus_generated org.freedesktop.Application.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)
     qt5_add_dbus_interface(dbus_generated org.freedesktop.Application.xml ipcclient_dbus_interface)
