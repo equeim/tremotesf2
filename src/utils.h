@@ -21,12 +21,6 @@
 
 #include <QObject>
 
-#ifndef TREMOTESF_SAILFISHOS
-class QWidget;
-#else
-class QQuickItem;
-#endif
-
 namespace tremotesf
 {
     class Utils : public QObject
@@ -49,34 +43,6 @@ namespace tremotesf
         static QString translators();
 
         static void registerTypes();
-
-#ifdef TREMOTESF_SAILFISHOS
-        Q_PROPERTY(QString sdcardPath READ sdcardPath)
-        static QString sdcardPath();
-
-        Q_INVOKABLE static bool fileExists(const QString& filePath);
-
-        Q_INVOKABLE static QStringList splitByNewlines(const QString& string);
-
-        Q_INVOKABLE static QQuickItem* nextItemInFocusChainNotLooping(QQuickItem* rootItem, QQuickItem* currentItem);
-#else
-        enum StatusIcon
-        {
-            ActiveIcon,
-            CheckingIcon,
-            DownloadingIcon,
-            ErroredIcon,
-            PausedIcon,
-            QueuedIcon,
-            SeedingIcon,
-            StalledDownloadingIcon,
-            StalledSeedingIcon
-        };
-        static QString statusIconPath(StatusIcon icon);
-
-        static void openFile(const QString& filePath, QWidget* parent = nullptr);
-        static void selectFilesInFileManager(const QStringList& files, QWidget* parent = nullptr);
-#endif
     };
 }
 

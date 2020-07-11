@@ -88,6 +88,7 @@ if (SAILFISHOS)
 
     target_sources(tremotesf PRIVATE
         sailfishos/directorycontentmodel.cpp
+        sailfishos/sailfishosutils.cpp
         sailfishos/selectionmodel.cpp
     )
     target_link_libraries(tremotesf Qt5::Quick ${SAILFISHAPP_LDFLAGS})
@@ -108,6 +109,7 @@ else()
         desktop/basetreeview.cpp
         desktop/commondelegate.cpp
         desktop/fileselectionwidget.cpp
+        desktop/desktoputils.cpp
         desktop/mainwindow.cpp
         desktop/mainwindowsidebar.cpp
         desktop/mainwindowstatusbar.cpp
