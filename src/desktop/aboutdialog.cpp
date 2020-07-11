@@ -42,7 +42,7 @@ namespace tremotesf
 
         auto titleWidget = new KTitleWidget(this);
         titleWidget->setPixmap(qApp->windowIcon(), KTitleWidget::ImageLeft);
-        titleWidget->setText(QString::fromLatin1("Tremotesf %1").arg(qApp->applicationVersion()));
+        titleWidget->setText(QString::fromLatin1("%1 %2").arg(QLatin1String(TREMOTESF_APP_NAME), qApp->applicationVersion()));
         layout->addWidget(titleWidget);
 
         auto tabWidget = new QTabWidget(this);

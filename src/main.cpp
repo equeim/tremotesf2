@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 
 #ifndef TREMOTESF_SAILFISHOS
     qApp->setOrganizationName(qApp->applicationName());
-    qApp->setWindowIcon(QIcon::fromTheme(QLatin1String("org.equeim.Tremotesf")));
+    qApp->setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
     qApp->setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);

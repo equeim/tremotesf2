@@ -124,7 +124,11 @@ else()
         desktop/trackersviewwidget.cpp
     )
 
-    target_compile_definitions(tremotesf PRIVATE ICONS_PATH="${ICONS_PATH}")
+    target_compile_definitions(tremotesf PRIVATE
+        ICONS_PATH="${ICONS_PATH}"
+        TREMOTESF_APP_ID="org.equeim.Tremotesf"
+        TREMOTESF_APP_NAME="Tremotesf"
+    )
 
     if (WIN32)
         target_sources(tremotesf PRIVATE desktop/tremotesf.rc)

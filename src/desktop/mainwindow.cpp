@@ -163,7 +163,7 @@ namespace tremotesf
           mTorrentsView(new TorrentsView(mTorrentsProxyModel, this)),
           mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QLatin1String("tremotesf-tray-icon"), windowIcon()), this))
     {
-        setWindowTitle(QLatin1String("Tremotesf"));
+        setWindowTitle(QLatin1String(TREMOTESF_APP_NAME));
         setMinimumSize(minimumSizeHint().expandedTo(QSize(384, 256)));
 
         setContextMenuPolicy(Qt::NoContextMenu);
@@ -1000,13 +1000,13 @@ namespace tremotesf
 #ifdef QT_DBUS_LIB
         setupNotificationsInterface();
         if (mNotificationsInterface->isValid()) {
-            const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String("Tremotesf"),
+            const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String(TREMOTESF_APP_NAME),
                                                                         0,
-                                                                        QLatin1String("org.equeim.Tremotesf"),
+                                                                        QLatin1String(TREMOTESF_APP_ID),
                                                                         summary,
                                                                         body,
                                                                         {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
-                                                                        {{QLatin1String("desktop-entry"), QLatin1String("org.equeim.Tremotesf")}},
+                                                                        {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)}},
                                                                         -1));
             auto watcher = new QDBusPendingCallWatcher(call, this);
             QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
