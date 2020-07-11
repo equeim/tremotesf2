@@ -1,6 +1,17 @@
 # Changelog
 
-## [1.7.1] = 2020-06-27
+## Unreleased
+### Added
+- Tremotesf now implements org.freedesktop.Application D-Bus interface on relevant platforms
+- Desktop: added support of startup notifications on X11
+- Desktop: added dependencies on Qt X11 Extras and KWindowSystem on Unix-like platforms
+
+### Changed
+- org.equeim.Tremotesf D-Bus interface is deprecated
+- Desktop: notifications on Unix-like platforms are now clickable
+- Desktop: when application window is hidden to tray icon, open dialogs are now hidden too
+
+## [1.7.1] - 2020-06-27
 ### Changed
 - Updated translations
 - Enabled LTO for release build on Windows
