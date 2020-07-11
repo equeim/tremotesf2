@@ -1006,7 +1006,8 @@ namespace tremotesf
                                                                         summary,
                                                                         body,
                                                                         {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
-                                                                        {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)}},
+                                                                        {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)},
+                                                                         {QLatin1String("x-kde-origin-name"), Servers::instance()->currentServerName()}},
                                                                         -1));
             auto watcher = new QDBusPendingCallWatcher(call, this);
             QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
