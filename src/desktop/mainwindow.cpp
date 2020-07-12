@@ -933,19 +933,12 @@ namespace tremotesf
         setWindowState(windowState() & ~Qt::WindowMinimized);
         show();
         raise();
-
-        QWindow* lastDialog = nullptr;
         for (QWindow* window : qApp->topLevelWindows()) {
             if (window->type() == Qt::Dialog) {
                 window->show();
-                lastDialog = window;
             }
         }
-        if (lastDialog) {
-            lastDialog->requestActivate();
-        } else {
-            activateWindow();
-        }
+        activateWindow();
     }
 
     void MainWindow::hideWindow()
