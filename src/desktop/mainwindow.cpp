@@ -1044,8 +1044,8 @@ namespace tremotesf
     {
         const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
         for (const QModelIndex& index : selectedRows) {
-            Utils::openFile(mRpc->localTorrentFilesPath(mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index))),
-                            this);
+            desktoputils::openFile(mRpc->localTorrentFilesPath(mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index))),
+                                   this);
         }
     }
 
@@ -1060,6 +1060,6 @@ namespace tremotesf
             files.push_back(mRpc->localTorrentFilesPath(torrent));
         }
 
-        Utils::selectFilesInFileManager(files, this);
+        desktoputils::selectFilesInFileManager(files, this);
     }
 }

@@ -34,9 +34,9 @@
 #include "../torrentfilesmodel.h"
 #include "../torrentfilesproxymodel.h"
 #include "../trpc.h"
-#include "../utils.h"
 
 #include "commondelegate.h"
+#include "desktoputils.h"
 #include "textinputdialog.h"
 
 namespace tremotesf
@@ -76,7 +76,7 @@ namespace tremotesf
             if (!entry->isDirectory() &&
                     mRpc->isTorrentLocalMounted(static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
                     entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
-                Utils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
+                desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
             }
         });
     }
@@ -149,7 +149,7 @@ namespace tremotesf
                 openAction->setEnabled(!disableBoth && !disableOpen);
                 QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes] {
                     for (const QModelIndex& index : sourceIndexes) {
-                        Utils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index), this);
+                        desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index), this);
                     }
                 });
 
@@ -161,7 +161,7 @@ namespace tremotesf
                     for (const QModelIndex& index : sourceIndexes) {
                         files.push_back(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index));
                     }
-                    Utils::selectFilesInFileManager(files, this);
+                    desktoputils::selectFilesInFileManager(files, this);
                 });
             }
         }

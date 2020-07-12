@@ -34,6 +34,7 @@
 #include "../torrentsproxymodel.h"
 #include "../trpc.h"
 #include "../utils.h"
+#include "desktoputils.h"
 
 namespace tremotesf
 {
@@ -55,13 +56,14 @@ namespace tremotesf
 
                 setIconSize(QSize(16, 16));
 
+                using namespace desktoputils;
                 addItem(new QListWidgetItem(QApplication::style()->standardIcon(QStyle::SP_DirIcon), QString(), this));
-                addItem(new QListWidgetItem(QIcon(Utils::statusIconPath(Utils::ActiveIcon)), QString(), this));
-                addItem(new QListWidgetItem(QIcon(Utils::statusIconPath(Utils::DownloadingIcon)), QString(), this));
-                addItem(new QListWidgetItem(QIcon(Utils::statusIconPath(Utils::SeedingIcon)), QString(), this));
-                addItem(new QListWidgetItem(QIcon(Utils::statusIconPath(Utils::PausedIcon)), QString(), this));
-                addItem(new QListWidgetItem(QIcon(Utils::statusIconPath(Utils::CheckingIcon)), QString(), this));
-                addItem(new QListWidgetItem(QIcon(Utils::statusIconPath(Utils::ErroredIcon)), QString(), this));
+                addItem(new QListWidgetItem(QIcon(statusIconPath(ActiveIcon)), QString(), this));
+                addItem(new QListWidgetItem(QIcon(statusIconPath(DownloadingIcon)), QString(), this));
+                addItem(new QListWidgetItem(QIcon(statusIconPath(SeedingIcon)), QString(), this));
+                addItem(new QListWidgetItem(QIcon(statusIconPath(PausedIcon)), QString(), this));
+                addItem(new QListWidgetItem(QIcon(statusIconPath(CheckingIcon)), QString(), this));
+                addItem(new QListWidgetItem(QIcon(statusIconPath(ErroredIcon)), QString(), this));
                 setCurrentRow(0);
 
                 updateItems();

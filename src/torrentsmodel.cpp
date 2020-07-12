@@ -28,6 +28,10 @@
 #include "trpc.h"
 #include "utils.h"
 
+#ifndef TREMOTESF_SAILFISHOS
+#include "desktop/desktoputils.h"
+#endif
+
 namespace tremotesf
 {
     using libtremotesf::Torrent;
@@ -78,25 +82,26 @@ namespace tremotesf
         switch (role) {
         case Qt::DecorationRole:
             if (index.column() == NameColumn) {
+                using namespace desktoputils;
                 switch (torrent->status()) {
                 case TorrentData::Paused:
-                    return QPixmap(Utils::statusIconPath(Utils::PausedIcon));
+                    return QPixmap(statusIconPath(PausedIcon));
                 case TorrentData::Seeding:
-                    return QPixmap(Utils::statusIconPath(Utils::SeedingIcon));
+                    return QPixmap(statusIconPath(SeedingIcon));
                 case TorrentData::Downloading:
-                    return QPixmap(Utils::statusIconPath(Utils::DownloadingIcon));
+                    return QPixmap(statusIconPath(DownloadingIcon));
                 case TorrentData::StalledDownloading:
-                    return QPixmap(Utils::statusIconPath(Utils::StalledDownloadingIcon));
+                    return QPixmap(statusIconPath(StalledDownloadingIcon));
                 case TorrentData::StalledSeeding:
-                    return QPixmap(Utils::statusIconPath(Utils::StalledSeedingIcon));
+                    return QPixmap(statusIconPath(StalledSeedingIcon));
                 case TorrentData::QueuedForDownloading:
                 case TorrentData::QueuedForSeeding:
-                    return QPixmap(Utils::statusIconPath(Utils::QueuedIcon));
+                    return QPixmap(statusIconPath(QueuedIcon));
                 case TorrentData::Checking:
                 case TorrentData::QueuedForChecking:
-                    return QPixmap(Utils::statusIconPath(Utils::CheckingIcon));
+                    return QPixmap(statusIconPath(CheckingIcon));
                 case TorrentData::Errored:
-                    return QPixmap(Utils::statusIconPath(Utils::ErroredIcon));
+                    return QPixmap(statusIconPath(ErroredIcon));
                 }
             }
             break;
