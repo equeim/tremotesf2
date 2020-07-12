@@ -84,17 +84,15 @@ endif()
 if (SAILFISHOS)
     find_package(Qt5 REQUIRED COMPONENTS Quick)
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SAILFISHAPP REQUIRED sailfishapp)
+    pkg_check_modules(SailfishApp REQUIRED IMPORTED_TARGET sailfishapp)
 
     target_sources(tremotesf PRIVATE
         sailfishos/directorycontentmodel.cpp
         sailfishos/sailfishosutils.cpp
         sailfishos/selectionmodel.cpp
     )
-    target_link_libraries(tremotesf Qt5::Quick ${SAILFISHAPP_LDFLAGS})
+    target_link_libraries(tremotesf Qt5::Quick PkgConfig::SailfishApp)
     target_compile_definitions(tremotesf PRIVATE TREMOTESF_SAILFISHOS)
-    target_include_directories(tremotesf PRIVATE ${SAILFISHAPP_INCLUDE_DIRS})
-    target_compile_options(tremotesf PRIVATE ${SAILFISHAPP_CFLAGS_OTHER})
 else()
     find_package(Qt5 REQUIRED COMPONENTS Widgets)
     find_package(KF5WidgetsAddons REQUIRED)
