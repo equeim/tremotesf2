@@ -934,15 +934,15 @@ namespace tremotesf
         show();
         raise();
 
-        QWidget* lastDialog = nullptr;
-        for (QWidget* widget : qApp->topLevelWidgets()) {
-            if (widget->windowType() == Qt::Dialog) {
-                widget->show();
-                lastDialog = widget;
+        QWindow* lastDialog = nullptr;
+        for (QWindow* window : qApp->topLevelWindows()) {
+            if (window->type() == Qt::Dialog) {
+                window->show();
+                lastDialog = window;
             }
         }
         if (lastDialog) {
-            lastDialog->activateWindow();
+            lastDialog->requestActivate();
         } else {
             activateWindow();
         }
@@ -952,9 +952,9 @@ namespace tremotesf
     {
         // Hide main window and dialogs
         hide();
-        for (QWidget* widget : qApp->topLevelWidgets()) {
-            if (widget->windowType() == Qt::Dialog) {
-                widget->hide();
+        for (QWindow* window : qApp->topLevelWindows()) {
+            if (window->isVisible() && window->type() == Qt::Dialog) {
+                window->hide();
             }
         }
     }
