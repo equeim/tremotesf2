@@ -187,22 +187,18 @@ namespace tremotesf
                     OrgFreedesktopFileManager1Interface interface(QLatin1String("org.freedesktop.FileManager1"),
                                                                   QLatin1String("/org/freedesktop/FileManager1"),
                                                                   QDBusConnection::sessionBus());
-                    if (interface.isValid()) {
-                        auto pending(interface.ShowItems(mFiles, QString()));
-                        auto watcher = new QDBusPendingCallWatcher(pending, this);
-                        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
-                            if (watcher->isError()) {
-                                qWarning() << "org.freedesktop.FileManager1 D-Bus call failed" << watcher->error();
-                                openParentDirectoriesForFiles();
-                            } else {
-                                qDebug("Executed org.freedesktop.FileManager1 D-Bus call");
-                                emit done();
-                            }
-                        });
-                    } else {
-                        qDebug("org.freedesktop.FileManager1 is not a valid interface");
-                        openParentDirectoriesForFiles();
-                    }
+                    interface.setTimeout(defaultDbusTimeout);
+                    auto pending(interface.ShowItems(mFiles, QString()));
+                    auto watcher = new QDBusPendingCallWatcher(pending, this);
+                    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
+                        if (watcher->isError()) {
+                            qWarning() << "org.freedesktop.FileManager1 D-Bus call failed" << watcher->error();
+                            openParentDirectoriesForFiles();
+                        } else {
+                            qDebug("Executed org.freedesktop.FileManager1 D-Bus call");
+                            emit done();
+                        }
+                    });
                 }
 
                 void showInThunarOrOpenParentDirectories()
@@ -211,28 +207,24 @@ namespace tremotesf
                     OrgXfceFileManagerInterface interface(QLatin1String("org.xfce.FileManager"),
                                                           QLatin1String("/org/xfce/FileManager"),
                                                           QDBusConnection::sessionBus());
-                    if (interface.isValid()) {
-                        for (const QString& filePath : mFiles) {
-                            const QFileInfo info(filePath);
-                            auto pending(interface.DisplayFolderAndSelect(info.path(), info.fileName(), {}, {}));
-                            auto watcher = new QDBusPendingCallWatcher(pending, this);
-                            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
-                                if (watcher->isError()) {
-                                    qWarning() << "Thunar D-Bus call failed, error string" << watcher->error();
-                                    openParentDirectory(filePath, mParentWidget);
-                                }
-                                mPendingWatchers.erase(watcher);
-                                watcher->deleteLater();
-                                if (mPendingWatchers.empty()) {
-                                    qDebug("Finished executing Thunar D-Bus calls");
-                                    emit done();
-                                }
-                            });
-                            mPendingWatchers.insert(watcher);
-                        }
-                    } else {
-                        qWarning("org.xfce.FileManager is not a valid interface");
-                        openParentDirectoriesForFiles();
+                    interface.setTimeout(defaultDbusTimeout);
+                    for (const QString& filePath : mFiles) {
+                        const QFileInfo info(filePath);
+                        auto pending(interface.DisplayFolderAndSelect(info.path(), info.fileName(), {}, {}));
+                        auto watcher = new QDBusPendingCallWatcher(pending, this);
+                        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
+                            if (watcher->isError()) {
+                                qWarning() << "Thunar D-Bus call failed, error string" << watcher->error();
+                                openParentDirectory(filePath, mParentWidget);
+                            }
+                            mPendingWatchers.erase(watcher);
+                            watcher->deleteLater();
+                            if (mPendingWatchers.empty()) {
+                                qDebug("Finished executing Thunar D-Bus calls");
+                                emit done();
+                            }
+                        });
+                        mPendingWatchers.insert(watcher);
                     }
                 }
 

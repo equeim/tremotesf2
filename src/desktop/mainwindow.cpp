@@ -70,6 +70,7 @@
 #include "../utils.h"
 #include "aboutdialog.h"
 #include "addtorrentdialog.h"
+#include "desktoputils.h"
 #include "mainwindowsidebar.h"
 #include "mainwindowstatusbar.h"
 #include "remotedirectoryselectionwidget.h"
@@ -999,28 +1000,26 @@ namespace tremotesf
     {
 #ifdef QT_DBUS_LIB
         setupNotificationsInterface();
-        if (mNotificationsInterface->isValid()) {
-            const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String(TREMOTESF_APP_NAME),
-                                                                        0,
-                                                                        QLatin1String(TREMOTESF_APP_ID),
-                                                                        summary,
-                                                                        body,
-                                                                        {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
-                                                                        {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)},
-                                                                         {QLatin1String("x-kde-origin-name"), Servers::instance()->currentServerName()}},
-                                                                        -1));
-            auto watcher = new QDBusPendingCallWatcher(call, this);
-            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
-                QDBusPendingReply<quint32> reply(*watcher);
-                if (reply.isError()) {
-                    qWarning() << "Notify error" << reply.error();
-                    if (mTrayIcon->isVisible()) {
-                        mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
-                    }
+        const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String(TREMOTESF_APP_NAME),
+                                                                    0,
+                                                                    QLatin1String(TREMOTESF_APP_ID),
+                                                                    summary,
+                                                                    body,
+                                                                    {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
+                                                                    {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)},
+                                                                     {QLatin1String("x-kde-origin-name"), Servers::instance()->currentServerName()}},
+                                                                    -1));
+        auto watcher = new QDBusPendingCallWatcher(call, this);
+        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
+            QDBusPendingReply<quint32> reply(*watcher);
+            if (reply.isError()) {
+                qWarning() << "Notify error" << reply.error();
+                if (mTrayIcon->isVisible()) {
+                    mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
                 }
-                watcher->deleteLater();
-            });
-        } else
+            }
+            watcher->deleteLater();
+        });
 #endif
         if (mTrayIcon->isVisible()) {
             mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
@@ -1035,6 +1034,7 @@ namespace tremotesf
                                                                                QLatin1String("/org/freedesktop/Notifications"),
                                                                                QDBusConnection::sessionBus(),
                                                                                this);
+            mNotificationsInterface->setTimeout(desktoputils::defaultDbusTimeout);
             QObject::connect(mNotificationsInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, [=] { showWindow(); });
         }
 #endif

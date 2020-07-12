@@ -27,6 +27,8 @@ namespace tremotesf
 {
     namespace desktoputils
     {
+        constexpr int defaultDbusTimeout = 2000; // 2 seconds
+
         enum StatusIcon
         {
             ActiveIcon,
@@ -42,6 +44,7 @@ namespace tremotesf
         QString statusIconPath(StatusIcon icon);
 
         void openFile(const QString& filePath, QWidget* parent = nullptr);
+
         void selectFilesInFileManager(const QStringList& files, QWidget* parent = nullptr);
     }
 }
