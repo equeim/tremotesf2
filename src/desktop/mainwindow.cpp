@@ -1013,10 +1013,11 @@ namespace tremotesf
             }
             watcher->deleteLater();
         });
-#endif
+#else
         if (mTrayIcon->isVisible()) {
             mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
         }
+#endif
     }
 
     void MainWindow::setupNotificationsInterface()
