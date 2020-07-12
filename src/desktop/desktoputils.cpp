@@ -188,7 +188,12 @@ namespace tremotesf
                                                                   QLatin1String("/org/freedesktop/FileManager1"),
                                                                   QDBusConnection::sessionBus());
                     interface.setTimeout(defaultDbusTimeout);
-                    auto pending(interface.ShowItems(mFiles, QString()));
+                    QStringList uris;
+                    uris.reserve(mFiles.size());
+                    for (const QString& filePath : mFiles) {
+                        uris.push_back(QUrl::fromLocalFile(filePath).toString());
+                    }
+                    auto pending(interface.ShowItems(uris, {}));
                     auto watcher = new QDBusPendingCallWatcher(pending, this);
                     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
                         if (watcher->isError()) {
