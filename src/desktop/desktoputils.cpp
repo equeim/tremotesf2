@@ -135,19 +135,20 @@ namespace tremotesf
                                                                QLatin1String("default"),
                                                                QLatin1String("inode/directory")},
                                    [=](QProcess* xdgMimeProcess) {
-                        const QByteArray fileManager(xdgMimeProcess->readLine().trimmed());
+                        const QString fileManager(xdgMimeProcess->readLine().trimmed());
                         qDebug() << "Detected file manager" << fileManager;
-                        if (fileManager == "dolphin.desktop" || fileManager == "org.kde.dolphin.desktop") {
+                        const QString lower(fileManager.toLower());
+                        if (lower == "dolphin.desktop" || lower == "org.kde.dolphin.desktop") {
                             launchFileManagerProcessOrOpenParentDirectories("Dolphin",
-                                                                            getDesktopEntryExec(QLatin1String(fileManager)),
+                                                                            getDesktopEntryExec(fileManager),
                                                                             QStringList{QLatin1String("--select")} + mFiles);
-                        } else if (fileManager == "nautilus.desktop" || fileManager == "org.gnome.Nautilus.desktop" || fileManager == "nautilus-folder-handler.desktop") {
-                            showInNautilusOrOpenParentDirectories(QLatin1String(fileManager));
-                        } else if (fileManager == "nemo.desktop") {
+                        } else if (lower == QLatin1String("nautilus.desktop") || lower == QLatin1String("org.gnome.nautilus.desktop") || lower == QLatin1String("nautilus-folder-handler.desktop")) {
+                            showInNautilusOrOpenParentDirectories(fileManager);
+                        } else if (lower == QLatin1String("nemo.desktop")) {
                             launchFileManagerProcessOrOpenParentDirectories("Nemo",
-                                                                            getDesktopEntryExec(QLatin1String(fileManager)),
+                                                                            getDesktopEntryExec(fileManager),
                                                                             mFiles);
-                        } else if (fileManager == "Thunar.desktop" || fileManager == "Thunar-folder-handler.desktop") {
+                        } else if (lower == QLatin1String("thunar.desktop") || lower == QLatin1String("thunar-folder-handler.desktop")) {
                             showInThunarOrOpenParentDirectories();
                         } else {
                             showInFreedesktopFileManagerOrOpenParentDirectories();
