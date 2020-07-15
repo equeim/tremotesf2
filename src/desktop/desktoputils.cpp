@@ -144,10 +144,6 @@ namespace tremotesf
                                                                             QStringList{QLatin1String("--select")} + mFiles);
                         } else if (lower == QLatin1String("nautilus.desktop") || lower == QLatin1String("org.gnome.nautilus.desktop") || lower == QLatin1String("nautilus-folder-handler.desktop")) {
                             showInNautilusOrOpenParentDirectories(fileManager);
-                        } else if (lower == QLatin1String("nemo.desktop")) {
-                            launchFileManagerProcessOrOpenParentDirectories("Nemo",
-                                                                            getDesktopEntryExec(fileManager),
-                                                                            mFiles);
                         } else if (lower == QLatin1String("thunar.desktop") || lower == QLatin1String("thunar-folder-handler.desktop")) {
                             showInThunarOrOpenParentDirectories();
                         } else {
