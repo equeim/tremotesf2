@@ -288,6 +288,8 @@ namespace libtremotesf
         const std::vector<Peer>& peers() const;
 
         bool isUpdated() const;
+        void checkThatFilesUpdated();
+        void checkThatPeersUpdated();
 
         bool update(const QJsonObject& torrentMap);
         void updateFiles(const QJsonObject& torrentMap);

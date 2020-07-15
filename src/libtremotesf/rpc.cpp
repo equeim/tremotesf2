@@ -566,32 +566,24 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::getTorrentFiles(int id, bool scheduled)
+    void Rpc::getTorrentsFiles(const QVariantList& ids, bool scheduled)
     {
-        postRequest(QLatin1String("torrent-get"),
-                    QStringLiteral("{"
-                                        "\"arguments\":{"
-                                            "\"fields\":["
-                                                "\"files\","
-                                                "\"fileStats\""
-                                            "],"
-                                            "\"ids\":[%1]"
-                                        "},"
-                                        "\"method\":\"torrent-get\""
-                                   "}")
-                        .arg(id)
-                        .toLatin1(),
+        postRequest(QLatin1String("torrent-get"), {{QLatin1String("fields"), QStringList{QLatin1String("id"), QLatin1String("files"), QLatin1String("fileStats")}},
+                                                   {QLatin1String("ids"), ids}},
                     [=](const QJsonObject& parseResult, bool success) {
                         if (success) {
-                            const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                    .value(torrentsKey)
-                                                                    .toArray());
-                            Torrent* torrent = torrentById(id);
-                            if (!torrentsVariants.isEmpty() && torrent) {
-                                if (torrent->isFilesEnabled()) {
-                                    torrent->updateFiles(torrentsVariants.first().toObject());
+                            const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
+                            for (const QJsonValue& torrentValue : torrents) {
+                                const QJsonObject torrentMap(torrentValue.toObject());
+                                const int torrentId = torrentMap.value(Torrent::idKey).toInt();
+                                Torrent* torrent = torrentById(torrentId);
+                                if (torrent && torrent->isFilesEnabled()) {
+                                    torrent->updateFiles(torrentMap);
                                 }
                                 if (scheduled) {
+                                    for (const auto& torrent : mTorrents) {
+                                        torrent->checkThatFilesUpdated();
+                                    }
                                     checkIfTorrentsUpdated();
                                     startUpdateTimer();
                                 }
@@ -600,29 +592,24 @@ namespace libtremotesf
                     });
     }
 
-    void Rpc::getTorrentPeers(int id, bool scheduled)
+    void Rpc::getTorrentsPeers(const QVariantList& ids, bool scheduled)
     {
-        postRequest(QLatin1String("torrent-get"),
-                    QStringLiteral("{"
-                                       "\"arguments\":{"
-                                           "\"fields\":[\"peers\"],"
-                                           "\"ids\":[%1]"
-                                       "},"
-                                       "\"method\":\"torrent-get\""
-                                   "}")
-                        .arg(id)
-                        .toLatin1(),
+        postRequest(QLatin1String("torrent-get"), {{QLatin1String("fields"), QStringList{QLatin1String("id"), QLatin1String("peers")}},
+                                                   {QLatin1String("ids"), ids}},
                     [=](const QJsonObject& parseResult, bool success) {
                         if (success) {
-                            const QJsonArray torrentsVariants(getReplyArguments(parseResult)
-                                                                    .value(torrentsKey)
-                                                                    .toArray());
-                            Torrent* torrent = torrentById(id);
-                            if (!torrentsVariants.isEmpty() && torrent) {
-                                if (torrent->isPeersEnabled()) {
-                                    torrent->updatePeers(torrentsVariants.first().toObject());
+                            const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
+                            for (const QJsonValue& torrentValue : torrents) {
+                                const QJsonObject torrentMap(torrentValue.toObject());
+                                const int torrentId = torrentMap.value(Torrent::idKey).toInt();
+                                Torrent* torrent = torrentById(torrentId);
+                                if (torrent && torrent->isPeersEnabled()) {
+                                    torrent->updatePeers(torrentMap);
                                 }
                                 if (scheduled) {
+                                    for (const auto& torrent : mTorrents) {
+                                        torrent->checkThatPeersUpdated();
+                                    }
                                     checkIfTorrentsUpdated();
                                     startUpdateTimer();
                                 }
@@ -883,10 +870,14 @@ namespace libtremotesf
                             removed.reserve(mTorrents.size() - newTorrents.size());
                         }
                         std::vector<int> changed;
-                        QVariantList checkSingleFile;
+
+                        QVariantList checkSingleFileIds;
                         if (newTorrents.size() > mTorrents.size()) {
-                            checkSingleFile.reserve(static_cast<int>(newTorrents.size() - mTorrents.size()));
+                            checkSingleFileIds.reserve(static_cast<int>(newTorrents.size() - mTorrents.size()));
                         }
+
+                        QVariantList getFilesIds;
+                        QVariantList getPeersIds;
 
                         {
                             const auto newTorrentsEnd(newTorrents.end());
@@ -910,14 +901,14 @@ namespace libtremotesf
                                             emit torrentFinished(torrent.get());
                                         }
                                         if (!metadataWasComplete && torrent->isMetadataComplete()) {
-                                            checkSingleFile.push_back(id);
+                                            checkSingleFileIds.push_back(id);
                                         }
                                     }
                                     if (torrent->isFilesEnabled()) {
-                                        getTorrentFiles(id, true);
+                                        getFilesIds.push_back(id);
                                     }
                                     if (torrent->isPeersEnabled()) {
-                                        getTorrentPeers(id, true);
+                                        getPeersIds.push_back(id);
                                     }
                                 }
                             }
@@ -945,7 +936,7 @@ namespace libtremotesf
                                     }
 
                                     if (torrent->isMetadataComplete()) {
-                                        checkSingleFile.push_back(id);
+                                        checkSingleFileIds.push_back(id);
                                     }
                                 }
                             }
@@ -956,7 +947,15 @@ namespace libtremotesf
                         checkIfTorrentsUpdated();
                         startUpdateTimer();
 
-                        checkTorrentsSingleFile(checkSingleFile);
+                        if (!checkSingleFileIds.isEmpty()) {
+                            checkTorrentsSingleFile(checkSingleFileIds);
+                        }
+                        if (!getFilesIds.isEmpty()) {
+                            getTorrentsFiles(getFilesIds, true);
+                        }
+                        if (!getPeersIds.isEmpty()) {
+                            getTorrentsPeers(getPeersIds, true);
+                        }
         });
     }
 

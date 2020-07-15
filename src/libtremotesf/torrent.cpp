@@ -28,6 +28,7 @@
 #include "rpc.h"
 #include "serversettings.h"
 #include "stdutils.h"
+#include "torrent_qdebug.h"
 
 namespace libtremotesf
 {
@@ -619,7 +620,7 @@ namespace libtremotesf
         if (enabled != mFilesEnabled) {
             mFilesEnabled = enabled;
             if (mFilesEnabled) {
-                mRpc->getTorrentFiles(id(), false);
+                mRpc->getTorrentsFiles({id()}, false);
             } else {
                 mFiles.clear();
             }
@@ -671,7 +672,7 @@ namespace libtremotesf
         if (enabled != mPeersEnabled) {
             mPeersEnabled = enabled;
             if (mPeersEnabled) {
-                mRpc->getTorrentPeers(id(), false);
+                mRpc->getTorrentsPeers({id()}, false);
             } else {
                 mPeers.clear();
             }
@@ -693,6 +694,22 @@ namespace libtremotesf
             updated = false;
         }
         return updated;
+    }
+
+    void Torrent::checkThatFilesUpdated()
+    {
+        if (mFilesEnabled && !mFilesUpdated) {
+            qWarning() << "Warning: files were not updated for" << *this;
+            mFilesUpdated = true;
+        }
+    }
+
+    void Torrent::checkThatPeersUpdated()
+    {
+        if (mPeersEnabled && !mPeersUpdated) {
+            qWarning() << "Warning: peers were not updated for" << *this;
+            mPeersUpdated = true;
+        }
     }
 
     bool Torrent::update(const QJsonObject& torrentMap)
