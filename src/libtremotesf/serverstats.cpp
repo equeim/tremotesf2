@@ -20,7 +20,6 @@
 
 #include <QJsonObject>
 
-#include "rpc.h"
 #include "stdutils.h"
 
 namespace libtremotesf

@@ -199,17 +199,17 @@ namespace libtremotesf
 
         bool isDownloadSpeedLimited() const;
         Q_INVOKABLE void setDownloadSpeedLimited(bool limited);
-        int downloadSpeedLimit() const;
+        int downloadSpeedLimit() const; // kB/s
         Q_INVOKABLE void setDownloadSpeedLimit(int limit);
         bool isUploadSpeedLimited() const;
         Q_INVOKABLE void setUploadSpeedLimited(bool limited);
-        int uploadSpeedLimit() const;
+        int uploadSpeedLimit() const; // kB/s
         Q_INVOKABLE void setUploadSpeedLimit(int limit);
         bool isAlternativeSpeedLimitsEnabled() const;
         Q_INVOKABLE void setAlternativeSpeedLimitsEnabled(bool enabled);
-        int alternativeDownloadSpeedLimit() const;
-        Q_INVOKABLE void setAlternativeDownloadSpeedLimit(int limit);
-        int alternativeUploadSpeedLimit() const;
+        int alternativeDownloadSpeedLimit() const; // kB/s
+        Q_INVOKABLE void setAlternativeDownloadSpeedLimit(int limit); // kB/s
+        int alternativeUploadSpeedLimit() const; // kB/s
         Q_INVOKABLE void setAlternativeUploadSpeedLimit(int limit);
         bool isAlternativeSpeedLimitsScheduled() const;
         Q_INVOKABLE void setAlternativeSpeedLimitsScheduled(bool scheduled);
@@ -244,9 +244,6 @@ namespace libtremotesf
         bool saveOnSet() const;
         void setSaveOnSet(bool save);
 
-        int toKibiBytes(int kiloBytesOrKibiBytes) const;
-        int fromKibiBytes(int kibiBytes) const;
-
         void update(const QJsonObject& serverSettings);
         void save() const;
 
@@ -254,7 +251,6 @@ namespace libtremotesf
     private:
         Rpc* mRpc;
         ServerSettingsData mData;
-        bool mUsingDecimalUnits = false;
         bool mSaveOnSet;
 
     signals:

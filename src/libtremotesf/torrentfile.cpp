@@ -42,11 +42,11 @@ namespace libtremotesf
 
         setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QJsonKeyStringInit("bytesCompleted")).toDouble()), changed);
         setChanged(priority, [&] {
-            switch (int priority = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
+            switch (int p = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
             case TorrentFile::LowPriority:
             case TorrentFile::NormalPriority:
             case TorrentFile::HighPriority:
-                return static_cast<TorrentFile::Priority>(priority);
+                return static_cast<TorrentFile::Priority>(p);
             default:
                 return TorrentFile::NormalPriority;
             }

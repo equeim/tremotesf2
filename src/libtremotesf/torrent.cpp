@@ -100,7 +100,7 @@ namespace libtremotesf
 
     const QJsonKeyString Torrent::idKey(QJsonKeyStringInit("id"));
 
-    bool TorrentData::update(const QJsonObject& torrentMap, const Rpc* rpc)
+    bool TorrentData::update(const QJsonObject& torrentMap)
     {
         bool changed = false;
 
@@ -122,9 +122,9 @@ namespace libtremotesf
         setChanged(uploadSpeed, static_cast<long long>(torrentMap.value(uploadSpeedKey).toDouble()), changed);
 
         setChanged(downloadSpeedLimited, torrentMap.value(downloadSpeedLimitedKey).toBool(), changed);
-        setChanged(downloadSpeedLimit, rpc->serverSettings()->toKibiBytes(torrentMap.value(downloadSpeedLimitKey).toInt()), changed);
+        setChanged(downloadSpeedLimit, torrentMap.value(downloadSpeedLimitKey).toInt(), changed);
         setChanged(uploadSpeedLimited, torrentMap.value(uploadSpeedLimitedKey).toBool(), changed);
-        setChanged(uploadSpeedLimit, rpc->serverSettings()->toKibiBytes(torrentMap.value(uploadSpeedLimitKey).toInt()), changed);
+        setChanged(uploadSpeedLimit, torrentMap.value(uploadSpeedLimitKey).toInt(), changed);
 
         setChanged(totalDownloaded, static_cast<long long>(torrentMap.value(totalDownloadedKey).toDouble()), changed);
         setChanged(totalUploaded, static_cast<long long>(torrentMap.value(totalUploadedKey).toDouble()), changed);
@@ -267,7 +267,7 @@ namespace libtremotesf
             }));
 
             if (found == trackers.end()) {
-                newTrackers.emplace_back(id, trackerMap);
+                newTrackers.emplace_back(trackerId, trackerMap);
                 trackersAddedOrRemoved = true;
             } else {
                 if (found->update(trackerMap)) {
@@ -404,7 +404,7 @@ namespace libtremotesf
     {
         mData.downloadSpeedLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(id(), downloadSpeedLimitKey, mRpc->serverSettings()->fromKibiBytes(limit));
+        mRpc->setTorrentProperty(id(), downloadSpeedLimitKey, limit);
     }
 
     bool Torrent::isUploadSpeedLimited() const
@@ -428,7 +428,7 @@ namespace libtremotesf
     {
         mData.uploadSpeedLimit = limit;
         emit limitsEdited();
-        mRpc->setTorrentProperty(id(), uploadSpeedLimitKey, mRpc->serverSettings()->fromKibiBytes(limit));
+        mRpc->setTorrentProperty(id(), uploadSpeedLimitKey, limit);
     }
 
     long long Torrent::totalDownloaded() const
@@ -716,7 +716,7 @@ namespace libtremotesf
     {
         mFilesUpdated = false;
         mPeersUpdated = false;
-        const bool c = mData.update(torrentMap, mRpc);
+        const bool c = mData.update(torrentMap);
         emit updated();
         if (c) {
             emit changed();

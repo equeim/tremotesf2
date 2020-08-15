@@ -72,8 +72,9 @@ namespace libtremotesf
             case ServerSettingsData::Weekends:
             case ServerSettingsData::All:
                 return static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(days);
+            default:
+                return ServerSettingsData::All;
             }
-            return ServerSettingsData::All;
         }
 
         const auto peerPortKey(QJsonKeyStringInit("peer-port"));
@@ -641,36 +642,12 @@ namespace libtremotesf
         mSaveOnSet = save;
     }
 
-    int ServerSettings::toKibiBytes(int kiloBytesOrKibiBytes) const
-    {
-        if (mUsingDecimalUnits) {
-            return kiloBytesOrKibiBytes * 1000 / 1024;
-        }
-        return kiloBytesOrKibiBytes;
-    }
-
-    int ServerSettings::fromKibiBytes(int kibiBytes) const
-    {
-        if (mUsingDecimalUnits) {
-            return kibiBytes * 1024 / 1000;
-        }
-        return kibiBytes;
-    }
-
     void ServerSettings::update(const QJsonObject& serverSettings)
     {
         bool changed = false;
 
         mData.rpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version")).toInt();
         mData.minimumRpcVersion = serverSettings.value(QJsonKeyStringInit("rpc-version-minimum")).toInt();
-
-
-        const bool usingDecimalUnits = (serverSettings
-                                            .value(QJsonKeyStringInit("units"))
-                                            .toObject()
-                                            .value(QJsonKeyStringInit("speed-bytes"))
-                                            .toInt() == 1000);
-        setChanged(mUsingDecimalUnits, usingDecimalUnits, changed);
 
         setChanged(mData.downloadDirectory, serverSettings.value(downloadDirectoryKey).toString(), changed);
         setChanged(mData.trashTorrentFiles, serverSettings.value(trashTorrentFilesKey).toBool(), changed);
@@ -692,12 +669,12 @@ namespace libtremotesf
         setChanged(mData.idleQueueLimit, serverSettings.value(idleQueueLimitKey).toInt(), changed);
 
         setChanged(mData.downloadSpeedLimited, serverSettings.value(downloadSpeedLimitedKey).toBool(), changed);
-        setChanged(mData.downloadSpeedLimit, toKibiBytes(serverSettings.value(downloadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.downloadSpeedLimit, serverSettings.value(downloadSpeedLimitKey).toInt(), changed);
         setChanged(mData.uploadSpeedLimited, serverSettings.value(uploadSpeedLimitedKey).toBool(), changed);
-        setChanged(mData.uploadSpeedLimit, toKibiBytes(serverSettings.value(uploadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.uploadSpeedLimit, serverSettings.value(uploadSpeedLimitKey).toInt(), changed);
         setChanged(mData.alternativeSpeedLimitsEnabled, serverSettings.value(alternativeSpeedLimitsEnabledKey).toBool(), changed);
-        setChanged(mData.alternativeDownloadSpeedLimit, toKibiBytes(serverSettings.value(alternativeDownloadSpeedLimitKey).toInt()), changed);
-        setChanged(mData.alternativeUploadSpeedLimit, toKibiBytes(serverSettings.value(alternativeUploadSpeedLimitKey).toInt()), changed);
+        setChanged(mData.alternativeDownloadSpeedLimit, serverSettings.value(alternativeDownloadSpeedLimitKey).toInt(), changed);
+        setChanged(mData.alternativeUploadSpeedLimit, serverSettings.value(alternativeUploadSpeedLimitKey).toInt(), changed);
         setChanged(mData.alternativeSpeedLimitsScheduled, serverSettings.value(alternativeSpeedLimitsScheduledKey).toBool(), changed);
         setChanged(mData.alternativeSpeedLimitsBeginTime, QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsBeginTimeKey).toInt() * 60000), changed);
         setChanged(mData.alternativeSpeedLimitsEndTime, QTime::fromMSecsSinceStartOfDay(serverSettings.value(alternativeSpeedLimitsEndTimeKey).toInt() * 60000), changed);

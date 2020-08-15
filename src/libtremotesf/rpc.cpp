@@ -1090,7 +1090,8 @@ namespace libtremotesf
                     break;
                 default:
                     if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
-                        reply->hasRawHeader(sessionIdHeader)) {
+                            reply->hasRawHeader(sessionIdHeader) &&
+                            reply->rawHeader(sessionIdHeader) != mSessionId) {
                         mSessionId = reply->rawHeader(sessionIdHeader);
                         postRequest(method, data, callOnSuccessParse);
                     } else {

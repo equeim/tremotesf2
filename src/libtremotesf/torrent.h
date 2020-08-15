@@ -78,7 +78,7 @@ namespace libtremotesf
         };
         Q_ENUM(IdleSeedingLimitMode)
 
-        bool update(const QJsonObject& torrentMap, const Rpc* rpc);
+        bool update(const QJsonObject& torrentMap);
 
         int id = 0;
         QString hashString;
@@ -103,9 +103,9 @@ namespace libtremotesf
         long long uploadSpeed = 0;
 
         bool downloadSpeedLimited = false;
-        int downloadSpeedLimit = 0; // KiB/s
+        int downloadSpeedLimit = 0; // kB/s
         bool uploadSpeedLimited = false;
-        int uploadSpeedLimit = 0; // KiB/s
+        int uploadSpeedLimit = 0; // kB/s
 
         long long totalDownloaded = 0;
         long long totalUploaded = 0;
