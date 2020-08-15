@@ -53,7 +53,7 @@ Page {
             }
 
             DetailItem {
-                label: qsTranslate("tremotesf", "Downloaded")
+                label: qsTranslate("tremotesf", "Uploaded")
                 value: Utils.formatByteSize(currentSession.uploaded)
             }
 
@@ -77,7 +77,7 @@ Page {
             }
 
             DetailItem {
-                label: qsTranslate("tremotesf", "Downloaded")
+                label: qsTranslate("tremotesf", "Uploaded")
                 value: Utils.formatByteSize(total.uploaded)
             }
 
