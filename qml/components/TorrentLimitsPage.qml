@@ -107,7 +107,7 @@ Page {
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
 
-                label: qsTranslate("tremotesf", "KiB/s")
+                label: qsTranslate("tremotesf", "kB/s")
                 placeholderText: label
 
                 inputMethodHints: Qt.ImhDigitsOnly
@@ -144,7 +144,7 @@ Page {
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
 
-                label: qsTranslate("tremotesf", "KiB/s")
+                label: qsTranslate("tremotesf", "kB/s")
                 placeholderText: label
 
                 inputMethodHints: Qt.ImhDigitsOnly

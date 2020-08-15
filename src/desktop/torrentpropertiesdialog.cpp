@@ -268,7 +268,7 @@ namespace tremotesf
         auto downloadSpeedSpinBox = new QSpinBox(this);
         downloadSpeedSpinBox->setEnabled(false);
         downloadSpeedSpinBox->setMaximum(maxSpeedLimit);
-        downloadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " KiB/s"));
+        downloadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " kB/s"));
 
         QObject::connect(downloadSpeedCheckBox, &QCheckBox::toggled, downloadSpeedSpinBox, &QSpinBox::setEnabled);
 
@@ -283,7 +283,7 @@ namespace tremotesf
         auto uploadSpeedSpinBox = new QSpinBox(this);
         uploadSpeedSpinBox->setEnabled(false);
         uploadSpeedSpinBox->setMaximum(maxSpeedLimit);
-        uploadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " KiB/s"));
+        uploadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " kB/s"));
 
         QObject::connect(uploadSpeedCheckBox, &QCheckBox::toggled, uploadSpeedSpinBox, &QSpinBox::setEnabled);
 

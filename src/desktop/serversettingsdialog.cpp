@@ -281,7 +281,7 @@ namespace tremotesf
         auto speedLimitsGroupBoxLayout = new QGridLayout(speedLimitsGroupBox);
 
         const int maxSpeedLimit = std::numeric_limits<uint>::max() / 1024;
-        const QString suffix(qApp->translate("tremotesf", " KiB/s"));
+        const QString suffix(qApp->translate("tremotesf", " kB/s"));
 
         //: Noun
         mDownloadSpeedLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);

@@ -113,7 +113,7 @@ Page {
                     right: parent.right
                 }
                 visible: downloadSpeedLimitSwitch.checked
-                label: qsTranslate("tremotesf", "KiB/s")
+                label: qsTranslate("tremotesf", "kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 0
@@ -141,7 +141,7 @@ Page {
                     right: parent.right
                 }
                 visible: uploadSpeedLimitSwitch.checked
-                label: qsTranslate("tremotesf", "KiB/s")
+                label: qsTranslate("tremotesf", "kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 0
@@ -172,7 +172,7 @@ Page {
                     right: parent.right
                 }
                 visible: alternativeLimitsSwitch.checked
-                label: qsTranslate("tremotesf", "Download, KiB/s")
+                label: qsTranslate("tremotesf", "Download, kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 0
@@ -193,7 +193,7 @@ Page {
                     right: parent.right
                 }
                 visible: alternativeLimitsSwitch.checked
-                label: qsTranslate("tremotesf", "Upload, KiB/s")
+                label: qsTranslate("tremotesf", "Upload, kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 0
