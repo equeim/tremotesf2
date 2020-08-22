@@ -221,5 +221,10 @@ namespace tremotesf
             }
             endInsertRows();
         }
+
+        if (!mLoaded) {
+            mLoaded = true;
+            emit loadedChanged();
+        }
     }
 }
