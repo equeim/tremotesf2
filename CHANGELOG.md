@@ -1,15 +1,17 @@
 # Changelog
 
-## Unreleased
+## [Unreleased]
 ### Added
 - Tremotesf now implements org.freedesktop.Application D-Bus interface on relevant platforms
 - Desktop: added support of startup notifications on X11
 - Desktop: added dependencies on Qt X11 Extras and KWindowSystem on Unix-like platforms
+- Desktop: added menu item to copy torrent's magnet link
 
 ### Changed
 - org.equeim.Tremotesf D-Bus interface is deprecated
 - Desktop: notifications on Unix-like platforms are now clickable
 - Desktop: when application window is hidden to tray icon, open dialogs are now hidden too
+- Updated translations
 
 ## [1.7.1] - 2020-06-27
 ### Changed
