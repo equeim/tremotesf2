@@ -1,11 +1,11 @@
 find_package(Qt5 REQUIRED COMPONENTS LinguistTools)
 qt5_add_translation(qm_files
     en.ts
-    es.ts
     fr.ts
     it_IT.ts
     nl_BE.ts
     nl.ts
+    pl.ts
     ru.ts
     zh_CN.ts
 )
