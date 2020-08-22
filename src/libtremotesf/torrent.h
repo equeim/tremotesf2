@@ -83,6 +83,7 @@ namespace libtremotesf
         int id = 0;
         QString hashString;
         QString name;
+        QString magnetLink;
 
         QString errorString;
         Status status = Paused;

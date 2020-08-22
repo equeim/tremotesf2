@@ -39,6 +39,8 @@ namespace libtremotesf
 
         const auto nameKey(QJsonKeyStringInit("name"));
 
+        const auto magnetLinkKey(QJsonKeyStringInit("magnetLink"));
+
         const auto errorStringKey(QJsonKeyStringInit("errorString"));
         const auto queuePositionKey(QJsonKeyStringInit("queuePosition"));
 
@@ -105,6 +107,7 @@ namespace libtremotesf
         bool changed = false;
 
         setChanged(name, torrentMap.value(nameKey).toString(), changed);
+        setChanged(magnetLink, torrentMap.value(magnetLinkKey).toString(), changed);
 
         setChanged(errorString, torrentMap.value(errorStringKey).toString(), changed);
         setChanged(queuePosition, torrentMap.value(queuePositionKey).toInt(), changed);

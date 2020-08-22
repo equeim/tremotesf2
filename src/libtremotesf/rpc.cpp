@@ -820,6 +820,7 @@ namespace libtremotesf
                                                   "\"honorsSessionLimits\","
                                                   "\"id\","
                                                   "\"leftUntilDone\","
+                                                  "\"magnetLink\","
                                                   "\"metadataPercentComplete\","
                                                   "\"name\","
                                                   "\"peer-limit\","
