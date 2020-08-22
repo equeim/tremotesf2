@@ -26,6 +26,7 @@
 #include <QActionGroup>
 #include <QApplication>
 #include <QCheckBox>
+#include <QClipboard>
 #include <QCloseEvent>
 #include <QCursor>
 #include <QDialogButtonBox>
@@ -404,6 +405,19 @@ namespace tremotesf
         mPauseTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("media-playback-pause")), qApp->translate("tremotesf", "P&ause"));
         QObject::connect(mPauseTorrentAction, &QAction::triggered, this, [=] {
             mRpc->pauseTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
+        });
+
+        mTorrentMenu->addSeparator();
+
+        QAction* copyMagnetLinkAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("edit-copy")), qApp->translate("tremotesf", "Copy &Magnet Link"));
+        QObject::connect(copyMagnetLinkAction, &QAction::triggered, this, [=] {
+            const auto indexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows()));
+            QStringList links;
+            links.reserve(indexes.size());
+            for (const auto& index : indexes) {
+                links.push_back(mTorrentsModel->torrentAtIndex(index)->data().magnetLink);
+            }
+            qApp->clipboard()->setText(links.join(QLatin1Char('\n')));
         });
 
         mTorrentMenu->addSeparator();
