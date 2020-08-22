@@ -113,6 +113,7 @@ Page {
                     right: parent.right
                 }
                 visible: downloadSpeedLimitSwitch.checked
+                //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
                 label: qsTranslate("tremotesf", "kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
@@ -141,6 +142,7 @@ Page {
                     right: parent.right
                 }
                 visible: uploadSpeedLimitSwitch.checked
+                //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
                 label: qsTranslate("tremotesf", "kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
@@ -172,6 +174,7 @@ Page {
                     right: parent.right
                 }
                 visible: alternativeLimitsSwitch.checked
+                //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
                 label: qsTranslate("tremotesf", "Download, kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
@@ -193,6 +196,7 @@ Page {
                     right: parent.right
                 }
                 visible: alternativeLimitsSwitch.checked
+                //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
                 label: qsTranslate("tremotesf", "Upload, kB/s")
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {

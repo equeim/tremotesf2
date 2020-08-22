@@ -107,6 +107,7 @@ Page {
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
 
+                //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
                 label: qsTranslate("tremotesf", "kB/s")
                 placeholderText: label
 
@@ -144,6 +145,7 @@ Page {
                 enabled: torrent
                 opacity: enabled ? 1.0 : 0.4
 
+                //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
                 label: qsTranslate("tremotesf", "kB/s")
                 placeholderText: label
 

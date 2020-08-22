@@ -63,13 +63,21 @@ namespace tremotesf
         // Should be kept in sync with `enum ByteUnit`
         const std::array<ByteUnitStrings, NumberOfByteUnits> byteUnits{
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 B"); }, [] { return qApp->translate("tremotesf", "%L1 B/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 KiB"); }, [] { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 MiB"); }, [] { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 GiB"); }, [] { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 TiB"); }, [] { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 PiB"); }, [] { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 EiB"); }, [] { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 ZiB"); }, [] { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
+                //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
                 ByteUnitStrings{[] { return qApp->translate("tremotesf", "%L1 YiB"); }, [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
         };
 

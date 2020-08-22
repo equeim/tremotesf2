@@ -281,6 +281,7 @@ namespace tremotesf
         auto speedLimitsGroupBoxLayout = new QGridLayout(speedLimitsGroupBox);
 
         const int maxSpeedLimit = std::numeric_limits<uint>::max() / 1024;
+        //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
         const QString suffix(qApp->translate("tremotesf", " kB/s"));
 
         //: Noun

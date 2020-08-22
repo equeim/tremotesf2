@@ -15,6 +15,7 @@ QT_SELECT=5 $_lupdate ../src ../qml -ts en.ts \
                                         it_IT.ts \
                                         nl_BE.ts \
                                         nl.ts \
+                                        pl.ts \
                                         ru.ts \
                                         zh_CN.ts \
                                         source.ts
