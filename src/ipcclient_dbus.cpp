@@ -31,54 +31,51 @@ namespace tremotesf
 {
     namespace
     {
-        inline void waitForReply(QDBusPendingReply<>&& pending)
+        inline bool waitForReply(QDBusPendingReply<>&& pending)
         {
             pending.waitForFinished();
             const auto reply(pending.reply());
             if (reply.type() != QDBusMessage::ReplyMessage) {
                 qWarning() << "D-Bus method call failed, error string:" << reply.errorMessage();
+                return false;
             }
+            return true;
         }
     }
 
     class IpcClientDbus final : public IpcClient
     {
     public:
-        explicit IpcClientDbus()
-        {
-            if (!mInterface.isValid()) {
-                mDeprecatedInterface = new IpcDbusInterfaceDeprecated(IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus(), &mInterface);
-            }
-        }
-
         bool isConnected() const override
         {
-            return mDeprecatedInterface ? mDeprecatedInterface->isValid() : mInterface.isValid();
+            return mInterface.isValid();
         }
 
         void activateWindow() override
         {
             qInfo("Requesting window activation");
-            if (mDeprecatedInterface) {
-                waitForReply(mDeprecatedInterface->ActivateWindow());
-            } else {
-                waitForReply(mInterface.Activate(getPlatformData()));
+            if (mInterface.isValid()) {
+                if (!waitForReply(mInterface.Activate(getPlatformData()))) {
+                    qWarning("Trying deprecated interface");
+                    waitForReply(mDeprecatedInterface.ActivateWindow());
+                }
             }
         }
 
         void addTorrents(const QStringList& files, const QStringList& urls) override
         {
             qInfo("Requesting torrents adding");
-            if (mDeprecatedInterface) {
-                waitForReply(mDeprecatedInterface->SetArguments(files, urls));
-            } else {
+            if (mInterface.isValid()) {
                 QStringList uris;
                 uris.reserve(files.size() + urls.size());
                 for (const QString& filePath : files) {
                     uris.push_back(QUrl::fromLocalFile(filePath).toString());
                 }
                 uris.append(urls);
-                waitForReply(mInterface.Open(uris, getPlatformData()));
+                if (!waitForReply(mInterface.Open(uris, getPlatformData()))) {
+                    qWarning("Trying deprecated interface");
+                    waitForReply(mDeprecatedInterface.SetArguments(files, urls));
+                }
             }
         }
 
@@ -92,7 +89,7 @@ namespace tremotesf
         }
 
         IpcDbusInterface mInterface{IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus()};
-        IpcDbusInterfaceDeprecated* mDeprecatedInterface{nullptr};
+        IpcDbusInterfaceDeprecated mDeprecatedInterface{IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus()};
     };
 
     std::unique_ptr<IpcClient> IpcClient::createInstance()
