@@ -48,7 +48,7 @@ namespace tremotesf
         const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
         selectionButton()->setEnabled(rpc->isLocal() || mounted);
         setText(directory);
-        if (mounted && !rpc) {
+        if (mounted && !rpc->isLocal()) {
             QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
                 const QString directory(Servers::instance()->fromRemoteToLocalDirectory(text));
                 if (!directory.isEmpty()) {
