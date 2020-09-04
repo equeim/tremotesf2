@@ -18,17 +18,42 @@
 
 #include "commondelegate.h"
 
+#include <QAbstractItemView>
 #include <QApplication>
+#include <QFontMetrics>
+#include <QHelpEvent>
 #include <QProxyStyle>
 #include <QStyle>
 #include <QStyleOptionProgressBar>
+#include <QToolTip>
 
 namespace tremotesf
 {
+    namespace
+    {
+        bool isTextElided(const QString& text, const QStyleOptionViewItem& option)
+        {
+            const QFontMetrics metrics(option.font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+            const int textWidth = metrics.horizontalAdvance(text);
+#else
+            const int textWidth = metrics.width(text);
+#endif
+
+            const auto style = option.widget ? option.widget->style() : qApp->style();
+            QRect textRect(style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget));
+            const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, option.widget) + 1;
+            textRect.adjust(textMargin, 0, -textMargin, 0);
+
+            return textWidth > textRect.width();
+        }
+    }
+
     CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, QObject* parent)
-        : QStyledItemDelegate(parent),
+        : BaseDelegate(parent),
           mProgressBarColumn(progressBarColumn),
-          mProgressBarRole(progressBarRole)
+          mProgressBarRole(progressBarRole),
+          mMaxHeight(0)
     {
     }
 
@@ -51,27 +76,75 @@ namespace tremotesf
             }
             progressBar.state = option.state;
 
+            const auto style = option.widget ? option.widget->style() : qApp->style();
+
 #ifdef Q_OS_WIN
             // hack to remove progress bar animation
-            if (qApp->style()->objectName() == QLatin1String("windowsvista")) {
+            if (style->objectName() == QLatin1String("windowsvista")) {
                 QProxyStyle(QLatin1String("windowsvista")).drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
                 return;
             }
 #endif
-            qApp->style()->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
+            style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
         }
     }
 
     // same height for all indexes
     QSize CommonDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
     {
-        static int height = 0;
         QSize size(QStyledItemDelegate::sizeHint(option, index));
-        if (size.height() > height) {
-            height = size.height();
+        if (size.height() > mMaxHeight) {
+            mMaxHeight = size.height();
         } else {
-            size.setHeight(height);
+            size.setHeight(mMaxHeight);
         }
         return size;
     }
+
+    void BaseDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+    {
+        QStyledItemDelegate::paint(painter, option, index);
+    }
+
+    bool BaseDelegate::helpEvent(QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index)
+    {
+        if (event->type() != QEvent::ToolTip) {
+            return QStyledItemDelegate::helpEvent(event, view, option, index);
+        }
+
+        if (!index.isValid()) {
+            event->ignore();
+            return false;
+        }
+
+        QStyleOptionViewItem opt(option);
+        initStyleOption(&opt, index);
+
+        const QString tooltip(displayText(index.data(Qt::ToolTipRole), opt.locale));
+        if (tooltip.isEmpty()) {
+            event->ignore();
+            return false;
+        }
+
+        if (QToolTip::isVisible() && QToolTip::text() == tooltip) {
+            event->accept();
+            return true;
+        }
+
+        // Get real item rect
+        const QRect intersected(opt.rect.intersected(view->viewport()->rect()));
+        opt.rect.setLeft(intersected.left());
+        opt.rect.setRight(intersected.right());
+
+        // Show tooltip only if display text is elided
+        if (isTextElided(displayText(index.data(Qt::DisplayRole), opt.locale), opt)) {
+            QToolTip::showText(event->globalPos(), tooltip, view->viewport(), opt.rect);
+            event->accept();
+            return true;
+        }
+
+        event->ignore();
+        return false;
+    }
+
 }

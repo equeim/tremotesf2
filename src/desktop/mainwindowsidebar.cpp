@@ -34,6 +34,7 @@
 #include "../torrentsproxymodel.h"
 #include "../trpc.h"
 #include "../utils.h"
+#include "commondelegate.h"
 #include "desktoputils.h"
 
 namespace tremotesf
@@ -213,6 +214,8 @@ namespace tremotesf
                 QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
                     mTorrentsProxyModel->setDownloadDirectory(current.data(DownloadDirectoriesModel::DirectoryRole).toString());
                 });
+
+                setItemDelegate(new BaseDelegate(this));
             }
 
         protected:
