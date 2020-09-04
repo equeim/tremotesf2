@@ -97,6 +97,7 @@ namespace tremotesf
             case Qt::DecorationRole:
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
+            case Qt::ToolTipRole:
                 return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(mRpc->torrentsCount());
             }
         } else {
@@ -105,6 +106,7 @@ namespace tremotesf
             case Qt::DecorationRole:
                 return QIcon::fromTheme(QLatin1String("network-server"));
             case Qt::DisplayRole:
+            case Qt::ToolTipRole:
                 //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
                 return qApp->translate("tremotesf", "%1 (%L2)").arg(item.tracker).arg(item.torrents);
             case TrackerRole:

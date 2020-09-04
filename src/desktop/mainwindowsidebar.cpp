@@ -173,6 +173,8 @@ namespace tremotesf
             explicit TrackersListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
                 : BaseListView(proxyModel, parent)
             {
+                setItemDelegate(new BaseDelegate(this));
+                setTextElideMode(Qt::ElideMiddle);
                 auto model = new AllTrackersModel(rpc, mTorrentsProxyModel, this);
                 setModel(model);
                 setCurrentIndex(model->index(0));
@@ -203,6 +205,7 @@ namespace tremotesf
             explicit DirectoriesListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
                 : BaseListView(proxyModel, parent)
             {
+                setItemDelegate(new BaseDelegate(this));
                 setTextElideMode(Qt::ElideMiddle);
                 auto model = new DownloadDirectoriesModel(rpc, mTorrentsProxyModel, this);
                 setModel(model);
@@ -214,8 +217,6 @@ namespace tremotesf
                 QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
                     mTorrentsProxyModel->setDownloadDirectory(current.data(DownloadDirectoriesModel::DirectoryRole).toString());
                 });
-
-                setItemDelegate(new BaseDelegate(this));
             }
 
         protected:
