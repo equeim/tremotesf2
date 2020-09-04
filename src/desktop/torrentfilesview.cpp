@@ -65,7 +65,7 @@ namespace tremotesf
           mRpc(rpc)
     {
         init();
-        setItemDelegate(new CommonDelegate(TorrentFilesModel::ProgressBarColumn, TorrentFilesModel::SortRole, this));
+        setItemDelegate(new CommonDelegate(TorrentFilesModel::ProgressBarColumn, TorrentFilesModel::SortRole, -1, this));
         if (!header()->restoreState(Settings::instance()->torrentFilesViewHeaderState())) {
             sortByColumn(TorrentFilesModel::NameColumn, Qt::AscendingOrder);
         }

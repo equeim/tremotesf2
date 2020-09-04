@@ -230,6 +230,11 @@ namespace tremotesf
             default:
                 return data(index, Qt::DisplayRole);
             }
+        case TextElideModeRole:
+            if (index.column() == DownloadDirectoryColumn) {
+                return Qt::ElideMiddle;
+            }
+            return Qt::ElideRight;
         }
 #endif
 

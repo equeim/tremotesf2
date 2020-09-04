@@ -37,13 +37,14 @@ namespace tremotesf
     class CommonDelegate : public BaseDelegate
     {
     public:
-        explicit CommonDelegate(int progressBarColumn, int progressBarRole, QObject* parent = nullptr);
+        explicit CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent = nullptr);
         void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
     private:
         int mProgressBarColumn;
         int mProgressBarRole;
+        int mTextElideModeRole;
         mutable int mMaxHeight;
     };
 }

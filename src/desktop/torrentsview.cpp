@@ -31,7 +31,7 @@ namespace tremotesf
         : BaseTreeView(parent)
     {
         setContextMenuPolicy(Qt::CustomContextMenu);
-        setItemDelegate(new CommonDelegate(TorrentsModel::ProgressBarColumn, TorrentsModel::SortRole, this));
+        setItemDelegate(new CommonDelegate(TorrentsModel::ProgressBarColumn, TorrentsModel::SortRole, TorrentsModel::TextElideModeRole, this));
         setModel(model);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setRootIsDecorated(false);

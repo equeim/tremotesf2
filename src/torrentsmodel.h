@@ -81,7 +81,11 @@ namespace tremotesf
             ActivityDateColumn,
             ColumnCount
         };
-        static const int SortRole = Qt::UserRole;
+        enum Role
+        {
+            SortRole = Qt::UserRole,
+            TextElideModeRole
+        };
 #endif
 
         explicit TorrentsModel(Rpc* rpc = nullptr, QObject* parent = nullptr);

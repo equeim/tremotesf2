@@ -49,21 +49,27 @@ namespace tremotesf
         }
     }
 
-    CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, QObject* parent)
+    CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent)
         : BaseDelegate(parent),
           mProgressBarColumn(progressBarColumn),
           mProgressBarRole(progressBarRole),
+          mTextElideModeRole(textElideModeRole),
           mMaxHeight(0)
     {
     }
 
     void CommonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
     {
-        QStyledItemDelegate::paint(painter, option, index);
+        QStyleOptionViewItem opt(option);
+        if (mTextElideModeRole != -1) {
+            opt.textElideMode = index.data(mTextElideModeRole).value<Qt::TextElideMode>();
+        }
+
+        QStyledItemDelegate::paint(painter, opt, index);
         if (index.column() == mProgressBarColumn) {
             QStyleOptionProgressBar progressBar;
 
-            QRect rect(option.rect);
+            QRect rect(opt.rect);
             rect.setHeight(rect.height() - 2);
             rect.setY(rect.y() + 1);
 
@@ -74,9 +80,9 @@ namespace tremotesf
             if (progressBar.progress == 0) {
                 progressBar.progress = 1;
             }
-            progressBar.state = option.state;
+            progressBar.state = opt.state;
 
-            const auto style = option.widget ? option.widget->style() : qApp->style();
+            const auto style = opt.widget ? opt.widget->style() : qApp->style();
 
 #ifdef Q_OS_WIN
             // hack to remove progress bar animation
