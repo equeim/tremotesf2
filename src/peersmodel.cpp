@@ -92,6 +92,13 @@ namespace tremotesf
                 return peer.client;
             }
             break;
+        case Qt::ToolTipRole:
+            switch (index.column()) {
+            case AddressColumn:
+            case ClientColumn:
+                return data(index, Qt::DisplayRole);
+            }
+            break;
         case SortRole:
             switch (index.column()) {
             case DownloadSpeedColumn:

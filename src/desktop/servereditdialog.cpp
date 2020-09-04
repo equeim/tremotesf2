@@ -44,6 +44,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include "commondelegate.h"
 #include "../servers.h"
 #include "../serversmodel.h"
 #include "../libtremotesf/stdutils.h"
@@ -70,6 +71,7 @@ namespace tremotesf
         {
             setMinimumHeight(192);
             setSelectionMode(QAbstractItemView::SingleSelection);
+            setItemDelegate(new BaseDelegate(this));
             setHorizontalHeaderLabels({qApp->translate("tremotesf", "Local directory"),
                                        qApp->translate("tremotesf", "Remote directory")});
             horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -108,10 +110,26 @@ namespace tremotesf
                 if (executed && executed == selectAction) {
                     const QString directory(QFileDialog::getExistingDirectory(this));
                     if (!directory.isEmpty()) {
-                        model()->setData(index, directory);
+                        const auto item = this->item(index.row(), index.column());
+                        if (item) {
+                            item->setText(directory);
+                            item->setToolTip(directory);
+                        }
                     }
                 }
             });
+        }
+
+        void addRow(const QString& localDirectory, const QString& remoteDirectory)
+        {
+            const int row = rowCount();
+            insertRow(row);
+            const auto localItem = new QTableWidgetItem(localDirectory);
+            localItem->setToolTip(localDirectory);
+            setItem(row, 0, localItem);
+            const auto remoteItem = new QTableWidgetItem(remoteDirectory);
+            remoteItem->setToolTip(remoteDirectory);
+            setItem(row, 1, remoteItem);
         }
 
     protected:
@@ -181,10 +199,7 @@ namespace tremotesf
             for (auto i = server.mountedDirectories.cbegin(), end = server.mountedDirectories.cend();
                  i != end;
                  ++i) {
-                const int row = mMountedDirectoriesWidget->rowCount();
-                mMountedDirectoriesWidget->insertRow(row);
-                mMountedDirectoriesWidget->setItem(row, 0, new QTableWidgetItem(i.key()));
-                mMountedDirectoriesWidget->setItem(row, 1, new QTableWidgetItem(i.value().toString()));
+                mMountedDirectoriesWidget->addRow(i.key(), i.value().toString());
             }
         }
 
@@ -351,9 +366,7 @@ namespace tremotesf
         QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=] {
             const QString directory(QFileDialog::getExistingDirectory(this));
             if (!directory.isEmpty()) {
-                const int row = mMountedDirectoriesWidget->rowCount();
-                mMountedDirectoriesWidget->insertRow(row);
-                mMountedDirectoriesWidget->setItem(row, 0, new QTableWidgetItem(directory));
+                mMountedDirectoriesWidget->addRow(directory, QString());
             }
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);

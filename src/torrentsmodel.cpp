@@ -181,6 +181,17 @@ namespace tremotesf
                 return torrent->activityDate();
             }
             break;
+        case Qt::ToolTipRole:
+            switch (index.column()) {
+            case NameColumn:
+            case StatusColumn:
+            case AddedDateColumn:
+            case DoneDateColumn:
+            case DownloadDirectoryColumn:
+            case ActivityDateColumn:
+                return data(index, Qt::DisplayRole);
+            }
+            break;
         case SortRole:
             switch (index.column()) {
             case SizeWhenDoneColumn:

@@ -109,6 +109,11 @@ namespace tremotesf
                 break;
             }
             break;
+        case Qt::ToolTipRole:
+            if (index.column() == NameColumn) {
+                return entry->name();
+            }
+            break;
         case SortRole:
             switch (column) {
             case SizeColumn:
