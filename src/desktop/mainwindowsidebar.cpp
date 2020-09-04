@@ -202,6 +202,7 @@ namespace tremotesf
             explicit DirectoriesListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
                 : BaseListView(proxyModel, parent)
             {
+                setTextElideMode(Qt::ElideMiddle);
                 auto model = new DownloadDirectoriesModel(rpc, mTorrentsProxyModel, this);
                 setModel(model);
                 setCurrentIndex(model->index(0));
