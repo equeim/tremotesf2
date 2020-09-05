@@ -40,6 +40,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QShortcut>
 #include <QScreen>
 #include <QSplitter>
 #include <QSystemTrayIcon>
@@ -425,7 +426,10 @@ namespace tremotesf
 
         mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
         mRemoveTorrentAction->setShortcut(QKeySequence::Delete);
-        QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, &MainWindow::removeSelectedTorrents);
+        QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, [=] { removeSelectedTorrents(false); });
+
+        const auto removeTorrentWithFilesShortcut = new QShortcut(QKeySequence(Qt::SHIFT + Qt::Key_Delete), this);
+        QObject::connect(removeTorrentWithFilesShortcut, &QShortcut::activated, this, [=] { removeSelectedTorrents(true); });
 
         QAction* setLocationAction = mTorrentMenu->addAction(qApp->translate("tremotesf", "Set &Location"));
         QObject::connect(setLocationAction, &QAction::triggered, this, [=] {
@@ -708,17 +712,24 @@ namespace tremotesf
         }
     }
 
-    void MainWindow::removeSelectedTorrents()
+    void MainWindow::removeSelectedTorrents(bool deleteFiles)
     {
         QMessageBox dialog(this);
         dialog.setIcon(QMessageBox::Warning);
 
         dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-        dialog.button(QMessageBox::Ok)->setText(qApp->translate("tremotesf", "Remove"));
         dialog.setDefaultButton(QMessageBox::Cancel);
 
         QCheckBox deleteFilesCheckBox(qApp->translate("tremotesf", "Also delete the files on the hard disk"));
+        deleteFilesCheckBox.setChecked(deleteFiles);
         dialog.setCheckBox(&deleteFilesCheckBox);
+
+        auto setRemoveText = [&] {
+            dialog.button(QMessageBox::Ok)->setText(deleteFilesCheckBox.isChecked() ? qApp->translate("tremotesf", "Remove with files")
+                                                                                    : qApp->translate("tremotesf", "Remove"));
+        };
+        setRemoveText();
+        QObject::connect(&deleteFilesCheckBox, &QCheckBox::toggled, this, setRemoveText);
 
         const QVariantList ids(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         if (ids.size() == 1) {

@@ -66,7 +66,7 @@ namespace tremotesf
 
         void updateTorrentActions();
         void showTorrentsPropertiesDialogs();
-        void removeSelectedTorrents();
+        void removeSelectedTorrents(bool deleteFiles);
 
         void setupMenuBar();
         void setupToolBar();
