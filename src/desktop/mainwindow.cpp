@@ -424,7 +424,7 @@ namespace tremotesf
 
         mTorrentMenu->addSeparator();
 
-        mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("list-remove")), qApp->translate("tremotesf", "&Remove"));
+        mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("edit-delete")), qApp->translate("tremotesf", "&Delete"));
         mRemoveTorrentAction->setShortcut(QKeySequence::Delete);
         QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, [=] { removeSelectedTorrents(false); });
 
@@ -719,25 +719,29 @@ namespace tremotesf
 
         dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         dialog.setDefaultButton(QMessageBox::Cancel);
+        const auto okButton = dialog.button(QMessageBox::Ok);
+        if (dialog.style()->styleHint(QStyle::SH_DialogButtonBox_ButtonsHaveIcons)) {
+            okButton->setIcon(QIcon::fromTheme(QLatin1String("edit-delete")));
+        }
 
         QCheckBox deleteFilesCheckBox(qApp->translate("tremotesf", "Also delete the files on the hard disk"));
         deleteFilesCheckBox.setChecked(deleteFiles);
         dialog.setCheckBox(&deleteFilesCheckBox);
 
         auto setRemoveText = [&] {
-            dialog.button(QMessageBox::Ok)->setText(deleteFilesCheckBox.isChecked() ? qApp->translate("tremotesf", "Remove with files")
-                                                                                    : qApp->translate("tremotesf", "Remove"));
+            okButton->setText(deleteFilesCheckBox.isChecked() ? qApp->translate("tremotesf", "Delete with files")
+                                                              : qApp->translate("tremotesf", "Delete"));
         };
         setRemoveText();
         QObject::connect(&deleteFilesCheckBox, &QCheckBox::toggled, this, setRemoveText);
 
         const QVariantList ids(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         if (ids.size() == 1) {
-            dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Torrent"));
-            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove this torrent?"));
+            dialog.setWindowTitle(qApp->translate("tremotesf", "Delete Torrent"));
+            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to delete this torrent?"));
         } else {
-            dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Torrents"));
-            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove %Ln selected torrents?", nullptr, ids.size()));
+            dialog.setWindowTitle(qApp->translate("tremotesf", "Delete Torrents"));
+            dialog.setText(qApp->translate("tremotesf", "Are you sure you want to delete %Ln selected torrents?", nullptr, ids.size()));
         }
 
         if (dialog.exec() == QMessageBox::Ok) {
