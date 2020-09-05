@@ -57,6 +57,7 @@ namespace libtremotesf
 
         bool canRenameFiles() const;
         bool canShowFreeSpaceForPath() const;
+        bool hasSessionIdFile() const;
 
         int rpcVersion = 0;
         int minimumRpcVersion = 0;
@@ -161,6 +162,7 @@ namespace libtremotesf
 
         bool canRenameFiles() const;
         bool canShowFreeSpaceForPath() const;
+        bool hasSessionIdFile() const;
 
         const QString& downloadDirectory() const;
         Q_INVOKABLE void setDownloadDirectory(const QString& directory);

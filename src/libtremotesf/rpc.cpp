@@ -34,6 +34,7 @@
 #include <QTimer>
 #include <QSslCertificate>
 #include <QSslKey>
+#include <QStandardPaths>
 #include <QtConcurrentRun>
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -52,9 +53,19 @@ namespace libtremotesf
         // Transmission 2.40+
         const int minimumRpcVersion = 14;
 
+        const int maxRetryAttempts = 3;
+
         const QByteArray sessionIdHeader(QByteArrayLiteral("X-Transmission-Session-Id"));
         const auto torrentsKey(QJsonKeyStringInit("torrents"));
         const QLatin1String torrentDuplicateKey("torrent-duplicate");
+
+#ifdef Q_OS_WIN
+        constexpr auto sessionIdFileLocation = QStandardPaths::GenericDataLocation;
+        const QLatin1String sessionIdFilePrefix("Transmission/tr_session_id_");
+#else
+        constexpr auto sessionIdFileLocation = QStandardPaths::TempLocation;
+        const QLatin1String sessionIdFilePrefix("tr_session_id_");
+#endif
 
         inline QByteArray makeRequestData(const QString& method, const QVariantMap& arguments)
         {
@@ -287,8 +298,6 @@ namespace libtremotesf
         mUpdateInterval = server.updateInterval * 1000; // msecs
         mBackgroundUpdateInterval = server.backgroundUpdateInterval * 1000; // msecs
         mUpdateTimer->setInterval(mUpdateInterval);
-
-        mLocal = isAddressLocal(server.address);
     }
 
     void Rpc::resetServer()
@@ -713,10 +722,12 @@ namespace libtremotesf
 
             mNetwork->clearAccessCache();
 
-            for (QNetworkReply* reply : mNetworkRequests) {
+            const auto activeRequests(mActiveNetworkRequests);
+            mActiveNetworkRequests.clear();
+            mRetryingNetworkRequests.clear();
+            for (QNetworkReply* reply : activeRequests) {
                 reply->abort();
             }
-            mNetworkRequests.clear();
 
             mUpdating = false;
 
@@ -780,6 +791,7 @@ namespace libtremotesf
                                 startUpdateTimer();
                             } else {
                                 mRpcVersionChecked = true;
+
                                 if (mServerSettings->minimumRpcVersion() > minimumRpcVersion) {
                                     setError(ServerIsTooNew);
                                     setStatus(Disconnected);
@@ -787,6 +799,11 @@ namespace libtremotesf
                                     setError(ServerIsTooOld);
                                     setStatus(Disconnected);
                                 } else {
+                                    mLocal = isSessionIdFileExists();
+                                    if (!mLocal) {
+                                        mLocal = isAddressLocal(mServerUrl.host());
+                                    }
+
                                     getTorrents();
                                     getServerStats();
                                 }
@@ -1026,26 +1043,25 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::postRequest(const QLatin1String& method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
+    QNetworkReply* Rpc::postRequest(Request&& request)
     {
-        QNetworkRequest request(mServerUrl);
-        static const QVariant contentType(QLatin1String("application/json"));
-        request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
-        request.setRawHeader(sessionIdHeader, mSessionId);
-        request.setSslConfiguration(mSslConfiguration);
-
-        QNetworkReply* reply = mNetwork->post(request, data);
-        mNetworkRequests.insert(reply);
+        QNetworkReply* reply = mNetwork->post(request.request, request.data);
+        mActiveNetworkRequests.insert(reply);
 
         reply->ignoreSslErrors(mExpectedSslErrors);
 
-        QObject::connect(reply, &QNetworkReply::finished, this, [=] {
-            if (mStatus != Disconnected) {
-                mNetworkRequests.erase(reply);
+        QObject::connect(reply, &QNetworkReply::finished, this, [=, request = std::move(request)]() mutable {
+            if (mActiveNetworkRequests.erase(reply) == 0) {
+                reply->deleteLater();
+                return;
+            }
 
+            if (mStatus != Disconnected) {
                 switch (reply->error()) {
                 case QNetworkReply::NoError:
                 {
+                    mRetryingNetworkRequests.erase(reply);
+
                     const QByteArray replyData(reply->readAll());
                     const auto future = QtConcurrent::run([replyData] {
                         QJsonParseError error{};
@@ -1062,10 +1078,10 @@ namespace libtremotesf
                             if (parsedOk) {
                                 const bool success = isResultSuccessful(parseResult);
                                 if (!success) {
-                                    qWarning() << "method" << method << "failed, response:" << parseResult;
+                                    qWarning() << "method" << request.method << "failed, response:" << parseResult;
                                 }
-                                if (callOnSuccessParse) {
-                                    callOnSuccessParse(parseResult, success);
+                                if (request.callOnSuccessParse) {
+                                    request.callOnSuccessParse(parseResult, success);
                                 }
                             } else {
                                 qWarning("Parsing error");
@@ -1086,22 +1102,39 @@ namespace libtremotesf
                 case QNetworkReply::OperationCanceledError:
                 case QNetworkReply::TimeoutError:
                     qWarning("Timed out");
-                    setError(TimedOut);
-                    setStatus(Disconnected);
+                    if (!retryRequest(std::move(request), reply)) {
+                        setError(TimedOut);
+                        setStatus(Disconnected);
+                    }
                     break;
                 default:
-                    if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 409 &&
-                            reply->hasRawHeader(sessionIdHeader) &&
-                            reply->rawHeader(sessionIdHeader) != mSessionId) {
-                        mSessionId = reply->rawHeader(sessionIdHeader);
-                        postRequest(method, data, callOnSuccessParse);
-                    } else {
-                        qWarning() << reply->error() << reply->errorString();
+                {
+                    if (reply->error() == QNetworkReply::ContentConflictError && reply->hasRawHeader(sessionIdHeader)) {
+                        const auto newSessionId(reply->rawHeader(sessionIdHeader));
+                        if (newSessionId != request.request.rawHeader(sessionIdHeader)) {
+                            qInfo() << "Session id changed, retrying" << request.method << "request";
+                            mSessionId = reply->rawHeader(sessionIdHeader);
+                            // Retry without incrementing retryAttempts
+                            request.setSessionId(mSessionId);
+                            postRequest(std::move(request));
+                            return;
+                        }
+                    }
+
+                    const auto httpStatusCode(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute));
+                    qWarning() << request.method << "request error" << reply->error() << reply->errorString();
+                    if (httpStatusCode.isValid()) {
+                        qWarning("HTTP status code %d", httpStatusCode.toInt());
+                    }
+
+                    if (!retryRequest(std::move(request), reply)) {
                         setError(ConnectionError, reply->errorString());
                         setStatus(Disconnected);
                     }
                 }
+                }
             }
+
             reply->deleteLater();
         });
 
@@ -1117,10 +1150,62 @@ namespace libtremotesf
         QObject::connect(timer, &QTimer::timeout, reply, &QNetworkReply::abort);
         QObject::connect(timer, &QTimer::timeout, timer, &QObject::deleteLater);
         timer->start();
+
+        return reply;
+    }
+
+    bool Rpc::retryRequest(Request&& request, QNetworkReply* previousAttempt)
+    {
+        int retryAttempts;
+        {
+            const auto found(mRetryingNetworkRequests.find(previousAttempt));
+            if (found != mRetryingNetworkRequests.end()) {
+                retryAttempts = found->second;
+                mRetryingNetworkRequests.erase(found);
+            } else {
+                retryAttempts = 0;
+            }
+        }
+        ++retryAttempts;
+        if (retryAttempts > maxRetryAttempts) {
+            return false;
+        }
+
+        request.setSessionId(mSessionId);
+
+        qWarning() << "Retrying" << request.method << "request, retry attempts =" << retryAttempts;
+        QNetworkReply* reply = postRequest(std::move(request));
+        mRetryingNetworkRequests.emplace(reply, retryAttempts);
+
+        return true;
+    }
+
+    void Rpc::postRequest(const QLatin1String& method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
+    {
+        Request request{method, QNetworkRequest(mServerUrl), data, callOnSuccessParse};
+        request.setSessionId(mSessionId);
+        request.request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/json"));
+        request.request.setSslConfiguration(mSslConfiguration);
+        postRequest(std::move(request));
     }
 
     void Rpc::postRequest(const QLatin1String& method, const QVariantMap& arguments, const std::function<void (const QJsonObject&, bool)>& callOnSuccessParse)
     {
         postRequest(method, makeRequestData(method, arguments), callOnSuccessParse);
+    }
+
+    bool Rpc::isSessionIdFileExists() const
+    {
+#ifndef Q_OS_ANDROID
+        if (mServerSettings->hasSessionIdFile()) {
+            return !QStandardPaths::locate(sessionIdFileLocation, sessionIdFilePrefix + mSessionId).isEmpty();
+        }
+#endif
+        return false;
+    }
+
+    void Rpc::Request::setSessionId(const QByteArray& sessionId)
+    {
+        request.setRawHeader(sessionIdHeader, sessionId);
     }
 }

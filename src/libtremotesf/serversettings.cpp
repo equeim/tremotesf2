@@ -117,6 +117,11 @@ namespace libtremotesf
         return (rpcVersion >= 15);
     }
 
+    bool ServerSettingsData::hasSessionIdFile() const
+    {
+        return (rpcVersion >= 16);
+    }
+
     ServerSettings::ServerSettings(Rpc* rpc, QObject* parent)
         : QObject(parent),
           mRpc(rpc),
@@ -143,6 +148,11 @@ namespace libtremotesf
     bool ServerSettings::canShowFreeSpaceForPath() const
     {
         return mData.canShowFreeSpaceForPath();
+    }
+
+    bool ServerSettings::hasSessionIdFile() const
+    {
+        return mData.hasSessionIdFile();
     }
 
     const QString& ServerSettings::downloadDirectory() const
