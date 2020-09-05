@@ -43,6 +43,7 @@ namespace tremotesf
         const QLatin1String mainWindowGeometryKey("mainWindowGeometry");
         const QLatin1String mainWindowStateKey("mainWindowState");
         const QLatin1String toolButtonStyleKey("toolButtonStyle");
+        const QLatin1String toolBarLockedKey("toolBarLocked");
         const QLatin1String toolBarVisibleKey("toolBarVisible");
         const QLatin1String toolBarAreaKey("toolBarArea");
         const QLatin1String sideBarVisibleKey("sideBarVisible");
@@ -187,6 +188,16 @@ namespace tremotesf
     void Settings::setToolButtonStyle(Qt::ToolButtonStyle style)
     {
         mSettings->setValue(toolButtonStyleKey, style);
+    }
+
+    bool Settings::isToolBarLocked() const
+    {
+        return mSettings->value(toolBarLockedKey, true).toBool();
+    }
+
+    void Settings::setToolBarLocked(bool locked)
+    {
+        mSettings->setValue(toolBarLockedKey, locked);
     }
 
     bool Settings::isToolBarVisible() const

@@ -805,6 +805,15 @@ namespace tremotesf
             Settings::instance()->setStatusBarVisible(checked);
         });
 
+        viewMenu->addSeparator();
+        QAction* lockToolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Lock Toolbar"));
+        lockToolBarAction->setCheckable(true);
+        lockToolBarAction->setChecked(!mToolBar->isMovable());
+        QObject::connect(lockToolBarAction, &QAction::triggered, mToolBar, [=](bool checked) {
+            mToolBar->setMovable(!checked);
+            Settings::instance()->setToolBarLocked(checked);
+        });
+
         QMenu* toolsMenu = menuBar()->addMenu(qApp->translate("tremotesf", "T&ools"));
 
         QAction* settingsAction = toolsMenu->addAction(QIcon::fromTheme(QLatin1String("configure"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Options"));
@@ -868,6 +877,7 @@ namespace tremotesf
         mToolBar = new QToolBar(this);
         mToolBar->setObjectName(QLatin1String("toolBar"));
         mToolBar->setContextMenuPolicy(Qt::CustomContextMenu);
+        mToolBar->setMovable(!Settings::instance()->isToolBarLocked());
         addToolBar(mToolBar);
 
         mToolBar->addAction(mConnectAction);

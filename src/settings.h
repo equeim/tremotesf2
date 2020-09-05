@@ -76,6 +76,9 @@ namespace tremotesf
         Qt::ToolButtonStyle toolButtonStyle() const;
         void setToolButtonStyle(Qt::ToolButtonStyle style);
 
+        bool isToolBarLocked() const;
+        void setToolBarLocked(bool locked);
+
         // Deprecated
         bool isToolBarVisible() const;
         void setToolBarVisible(bool visible);
