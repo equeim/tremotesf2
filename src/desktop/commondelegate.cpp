@@ -51,6 +51,9 @@ namespace tremotesf
 
     CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent)
         : BaseDelegate(parent),
+#ifdef Q_OS_WIN
+          mProxyStyle(QLatin1String("fusion")),
+#endif
           mProgressBarColumn(progressBarColumn),
           mProgressBarRole(progressBarRole),
           mTextElideModeRole(textElideModeRole),
@@ -69,11 +72,7 @@ namespace tremotesf
         if (index.column() == mProgressBarColumn) {
             QStyleOptionProgressBar progressBar;
 
-            QRect rect(opt.rect);
-            rect.setHeight(rect.height() - 2);
-            rect.setY(rect.y() + 1);
-
-            progressBar.rect = rect;
+            progressBar.rect = opt.rect.marginsRemoved(QMargins(0, 1, 0, 1));
             progressBar.minimum = 0;
             progressBar.maximum = 100;
             progressBar.progress = static_cast<int>(index.data(mProgressBarRole).toDouble() * 100);
@@ -82,14 +81,11 @@ namespace tremotesf
             }
             progressBar.state = opt.state;
 
-            const auto style = opt.widget ? opt.widget->style() : qApp->style();
-
 #ifdef Q_OS_WIN
             // hack to remove progress bar animation
-            if (style->objectName() == QLatin1String("windowsvista")) {
-                QProxyStyle(QLatin1String("windowsvista")).drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
-                return;
-            }
+            const auto style = &mProxyStyle;
+#else
+            const auto style = opt.widget ? opt.widget->style() : qApp->style();
 #endif
             style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
         }

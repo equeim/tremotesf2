@@ -21,6 +21,10 @@
 
 #include <QStyledItemDelegate>
 
+#ifdef Q_OS_WIN
+#include <QProxyStyle>
+#endif
+
 namespace tremotesf
 {
     class BaseDelegate : public QStyledItemDelegate
@@ -42,6 +46,9 @@ namespace tremotesf
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
     private:
+#ifdef Q_OS_WIN
+        QProxyStyle mProxyStyle;
+#endif
         int mProgressBarColumn;
         int mProgressBarRole;
         int mTextElideModeRole;
