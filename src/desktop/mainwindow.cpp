@@ -320,7 +320,6 @@ namespace tremotesf
 
         Settings::instance()->setMainWindowGeometry(saveGeometry());
         Settings::instance()->setMainWindowState(saveState());
-        Settings::instance()->setToolButtonStyle(toolButtonStyle());
         Settings::instance()->setSplitterState(mSplitter->saveState());
 
         mTrayIcon->hide();
