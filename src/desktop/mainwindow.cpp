@@ -45,6 +45,7 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QToolBar>
+#include <QWindow>
 
 #ifdef QT_DBUS_LIB
 #include <QDBusConnection>

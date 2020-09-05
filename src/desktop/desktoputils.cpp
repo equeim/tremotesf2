@@ -154,19 +154,19 @@ namespace tremotesf
                     });
 
 #elif defined(Q_OS_WIN)
-                    for (const QString& filePath : files) {
+                    for (const QString& filePath : mFiles) {
                         const QString nativePath(QDir::toNativeSeparators(filePath));
                         PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativePath.utf16()));
                         if (directory) {
                             qDebug() << "executing SHOpenFolderAndSelectItems" << nativePath;
                             if (SHOpenFolderAndSelectItems(directory, 0, nullptr, 0) != S_OK) {
                                 qWarning() << "SHOpenFolderAndSelectItems" << nativePath << "failed";
-                                openParentDirectory(filePath);
+                                openParentDirectory(filePath, mParentWidget);
                             }
                             ILFree(directory);
                         } else {
                             qWarning() << "ILCreateFromPathW" << nativePath << "failed";
-                            openParentDirectory(filePath);
+                            openParentDirectory(filePath, mParentWidget);
                         }
                     }
                     emit done();
