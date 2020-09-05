@@ -50,7 +50,7 @@ namespace tremotesf
     }
 
     CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent)
-        : BaseDelegate(parent),
+        : QStyledItemDelegate(parent),
 #ifdef Q_OS_WIN
           mProxyStyle(QLatin1String("fusion")),
 #endif
@@ -69,6 +69,11 @@ namespace tremotesf
         }
 
         QStyledItemDelegate::paint(painter, opt, index);
+
+        if (mProgressBarColumn == -1 || mProgressBarRole == -1) {
+            return;
+        }
+
         if (index.column() == mProgressBarColumn) {
             QStyleOptionProgressBar progressBar;
 
@@ -95,20 +100,15 @@ namespace tremotesf
     QSize CommonDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
     {
         QSize size(QStyledItemDelegate::sizeHint(option, index));
-        if (size.height() > mMaxHeight) {
+        /*if (size.height() > mMaxHeight) {
             mMaxHeight = size.height();
         } else {
             size.setHeight(mMaxHeight);
-        }
+        }*/
         return size;
     }
 
-    void BaseDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-    {
-        QStyledItemDelegate::paint(painter, option, index);
-    }
-
-    bool BaseDelegate::helpEvent(QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index)
+    bool CommonDelegate::helpEvent(QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index)
     {
         if (event->type() != QEvent::ToolTip) {
             return QStyledItemDelegate::helpEvent(event, view, option, index);

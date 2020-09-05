@@ -49,6 +49,7 @@ namespace tremotesf
           mRpc(rpc)
     {
         init();
+        setItemDelegate(new CommonDelegate(this));
         expand(mProxyModel->index(0, 0));
         if (!header()->restoreState(Settings::instance()->localTorrentFilesViewHeaderState())) {
             sortByColumn(LocalTorrentFilesModel::NameColumn, Qt::AscendingOrder);

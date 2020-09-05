@@ -71,7 +71,7 @@ namespace tremotesf
         {
             setMinimumHeight(192);
             setSelectionMode(QAbstractItemView::SingleSelection);
-            setItemDelegate(new BaseDelegate(this));
+            setItemDelegate(new CommonDelegate(this));
             setHorizontalHeaderLabels({qApp->translate("tremotesf", "Local directory"),
                                        qApp->translate("tremotesf", "Remote directory")});
             horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
