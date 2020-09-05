@@ -224,11 +224,8 @@ namespace tremotesf
         }
 
         if (!restoreState(Settings::instance()->mainWindowState())) {
-            addToolBar(Settings::instance()->toolBarArea(), mToolBar);
-            mToolBar->setVisible(Settings::instance()->isToolBarVisible());
+            addToolBar(Qt::TopToolBarArea, mToolBar);
         }
-        Settings::instance()->clearToolBarVisible();
-        Settings::instance()->clearToolBarArea();
         mToolBarAction->setChecked(!mToolBar->isHidden());
 
         QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const QString&, const QByteArray& startupNoficationId) {

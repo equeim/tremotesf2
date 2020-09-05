@@ -79,16 +79,6 @@ namespace tremotesf
         bool isToolBarLocked() const;
         void setToolBarLocked(bool locked);
 
-        // Deprecated
-        bool isToolBarVisible() const;
-        void setToolBarVisible(bool visible);
-        void clearToolBarVisible();
-
-        // Deprecated
-        Qt::ToolBarArea toolBarArea() const;
-        void setToolBarArea(Qt::ToolBarArea area);
-        void clearToolBarArea();
-
         bool isSideBarVisible() const;
         void setSideBarVisible(bool visible);
 
