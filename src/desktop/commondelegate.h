@@ -33,7 +33,6 @@ namespace tremotesf
         explicit CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent = nullptr);
         inline explicit CommonDelegate(QObject* parent = nullptr) : CommonDelegate(-1, -1, -1, parent) {}
         void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
         bool helpEvent(QHelpEvent* event,
                        QAbstractItemView* view,
@@ -47,7 +46,6 @@ namespace tremotesf
         int mProgressBarColumn;
         int mProgressBarRole;
         int mTextElideModeRole;
-        mutable int mMaxHeight;
     };
 }
 

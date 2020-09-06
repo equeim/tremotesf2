@@ -56,8 +56,7 @@ namespace tremotesf
 #endif
           mProgressBarColumn(progressBarColumn),
           mProgressBarRole(progressBarRole),
-          mTextElideModeRole(textElideModeRole),
-          mMaxHeight(0)
+          mTextElideModeRole(textElideModeRole)
     {
     }
 
@@ -94,18 +93,6 @@ namespace tremotesf
 #endif
             style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
         }
-    }
-
-    // same height for all indexes
-    QSize CommonDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-    {
-        QSize size(QStyledItemDelegate::sizeHint(option, index));
-        /*if (size.height() > mMaxHeight) {
-            mMaxHeight = size.height();
-        } else {
-            size.setHeight(mMaxHeight);
-        }*/
-        return size;
     }
 
     bool CommonDelegate::helpEvent(QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index)
