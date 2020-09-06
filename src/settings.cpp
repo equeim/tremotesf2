@@ -27,8 +27,6 @@ namespace tremotesf
 {
     namespace
     {
-        Settings* instancePointer = nullptr;
-
         const QLatin1String connectOnStartupKey("connectOnStartup");
         const QLatin1String notificationOnDisconnectingKey("notificationOnDisconnecting");
         const QLatin1String notificationOnAddingTorrentKey("notificationOnAddingTorrent");
@@ -58,10 +56,8 @@ namespace tremotesf
 
     Settings* Settings::instance()
     {
-        if (!instancePointer) {
-            instancePointer = new Settings(qApp);
-        }
-        return instancePointer;
+        static auto* const instance = new Settings(qApp);
+        return instance;
     }
 
     bool Settings::connectOnStartup() const

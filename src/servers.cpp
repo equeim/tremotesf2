@@ -70,8 +70,6 @@ namespace tremotesf
 
         const QLatin1String localCertificateKey("localCertificate");
 
-        Servers* instancePointer = nullptr;
-
         const QLatin1String proxyTypeDefault("Default");
         const QLatin1String proxyTypeHttp("HTTP");
         const QLatin1String proxyTypeSocks5("SOCKS5");
@@ -227,10 +225,8 @@ namespace tremotesf
 
     Servers* Servers::instance()
     {
-        if (!instancePointer) {
-            instancePointer = new Servers(qApp);
-        }
-        return instancePointer;
+        static auto* const instance = new Servers(qApp);
+        return instance;
     }
 
     void Servers::migrate()
