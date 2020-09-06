@@ -108,7 +108,7 @@ namespace tremotesf
         QObject::connect(this, &TorrentFilesView::customContextMenuRequested, this, &TorrentFilesView::showContextMenu);
     }
 
-    void TorrentFilesView::showContextMenu(const QPoint& pos)
+    void TorrentFilesView::showContextMenu(QPoint pos)
     {
         if (!indexAt(pos).isValid()) {
             return;

@@ -211,7 +211,7 @@ namespace tremotesf
         if (!changed.empty()) {
             ModelBatchChanger changer{this};
             for (int index : changed) {
-                const size_t i = static_cast<size_t>(index);
+                const auto i = static_cast<size_t>(index);
                 mPeers[i] = newPeers[i];
                 changer.changed(index);
             }
@@ -222,7 +222,7 @@ namespace tremotesf
             const int first = static_cast<int>(mPeers.size());
             const int last = first + added - 1;
             beginInsertRows(QModelIndex(), first, last);
-            mPeers.reserve(static_cast<size_t>(last + 1));
+            mPeers.reserve(static_cast<size_t>(last) + 1);
             for (auto end = newPeers.end(), i = end - added; i != end; ++i) {
                 mPeers.push_back(*i);
             }

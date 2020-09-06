@@ -225,7 +225,7 @@ namespace tremotesf
             for (const auto& i : trackers) {
                 const QString& tracker = i.first;
                 const int torrents = i.second;
-                mTrackers.push_back(TrackerItem{std::move(tracker), torrents});
+                mTrackers.push_back(TrackerItem{tracker, torrents});
             }
             endInsertRows();
         }

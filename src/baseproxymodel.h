@@ -29,7 +29,9 @@ namespace tremotesf
     {
         Q_OBJECT
         Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder)
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
         Q_PROPERTY(int sortRole READ sortRole WRITE setSortRole NOTIFY sortRoleChanged)
+#endif
     public:
         explicit BaseProxyModel(QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
 
@@ -37,7 +39,9 @@ namespace tremotesf
         Q_INVOKABLE QModelIndex sourceIndex(int proxyRow) const;
         Q_INVOKABLE QModelIndexList sourceIndexes(const QModelIndexList& proxyIndexes) const;
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
         void setSortRole(int role);
+#endif
 
         Q_INVOKABLE void sort(int column = 0, Qt::SortOrder order = Qt::AscendingOrder) override;
 
@@ -46,8 +50,10 @@ namespace tremotesf
 
     private:
         QCollator mCollator;
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
     signals:
         void sortRoleChanged();
+#endif
     };
 }
 

@@ -270,7 +270,7 @@ namespace tremotesf
     QString Servers::currentServerAddress()
     {
         mSettings->beginGroup(currentServerName());
-        const QString address(mSettings->value(addressKey).toString());
+        QString address(mSettings->value(addressKey).toString());
         mSettings->endGroup();
         return address;
     }
@@ -569,34 +569,34 @@ namespace tremotesf
     Server Servers::getServer(const QString& name) const
     {
         mSettings->beginGroup(name);
-        const Server server(mSettings->group(),
-                            mSettings->value(addressKey).toString(),
-                            mSettings->value(portKey).toInt(),
-                            mSettings->value(apiPathKey).toString(),
+        Server server(mSettings->group(),
+                      mSettings->value(addressKey).toString(),
+                      mSettings->value(portKey).toInt(),
+                      mSettings->value(apiPathKey).toString(),
 
-                            proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
-                            mSettings->value(proxyHostnameKey).toString(),
-                            mSettings->value(proxyPortKey).toInt(),
-                            mSettings->value(proxyUserKey).toString(),
-                            mSettings->value(proxyPasswordKey).toString(),
+                      proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
+                      mSettings->value(proxyHostnameKey).toString(),
+                      mSettings->value(proxyPortKey).toInt(),
+                      mSettings->value(proxyUserKey).toString(),
+                      mSettings->value(proxyPasswordKey).toString(),
 
-                            mSettings->value(httpsKey, false).toBool(),
-                            mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
-                            mSettings->value(selfSignedCertificateKey).toByteArray(),
-                            mSettings->value(clientCertificateEnabledKey, false).toBool(),
-                            mSettings->value(clientCertificateKey).toByteArray(),
+                      mSettings->value(httpsKey, false).toBool(),
+                      mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
+                      mSettings->value(selfSignedCertificateKey).toByteArray(),
+                      mSettings->value(clientCertificateEnabledKey, false).toBool(),
+                      mSettings->value(clientCertificateKey).toByteArray(),
 
-                            mSettings->value(authenticationKey, false).toBool(),
-                            mSettings->value(usernameKey).toString(),
-                            mSettings->value(passwordKey).toString(),
+                      mSettings->value(authenticationKey, false).toBool(),
+                      mSettings->value(usernameKey).toString(),
+                      mSettings->value(passwordKey).toString(),
 
-                            mSettings->value(updateIntervalKey, 5).toInt(),
-                            mSettings->value(backgroundUpdateIntervalKey, 30).toInt(),
-                            mSettings->value(timeoutKey, 30).toInt(),
+                      mSettings->value(updateIntervalKey, 5).toInt(),
+                      mSettings->value(backgroundUpdateIntervalKey, 30).toInt(),
+                      mSettings->value(timeoutKey, 30).toInt(),
 
-                            mSettings->value(mountedDirectoriesKey).toMap(),
-                            mSettings->value(lastTorrentsKey),
-                            mSettings->value(addTorrentDialogDirectoriesKey));
+                      mSettings->value(mountedDirectoriesKey).toMap(),
+                      mSettings->value(lastTorrentsKey),
+                      mSettings->value(addTorrentDialogDirectoriesKey));
         mSettings->endGroup();
         return server;
     }

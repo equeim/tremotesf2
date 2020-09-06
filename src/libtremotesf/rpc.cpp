@@ -1180,7 +1180,7 @@ namespace libtremotesf
         return true;
     }
 
-    void Rpc::postRequest(const QLatin1String& method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
+    void Rpc::postRequest(QLatin1String method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
     {
         Request request{method, QNetworkRequest(mServerUrl), data, callOnSuccessParse};
         request.setSessionId(mSessionId);
@@ -1189,7 +1189,7 @@ namespace libtremotesf
         postRequest(std::move(request));
     }
 
-    void Rpc::postRequest(const QLatin1String& method, const QVariantMap& arguments, const std::function<void (const QJsonObject&, bool)>& callOnSuccessParse)
+    void Rpc::postRequest(QLatin1String method, const QVariantMap& arguments, const std::function<void (const QJsonObject&, bool)>& callOnSuccessParse)
     {
         postRequest(method, makeRequestData(method, arguments), callOnSuccessParse);
     }

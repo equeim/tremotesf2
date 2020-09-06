@@ -401,7 +401,7 @@ namespace tremotesf
             const int first = static_cast<int>(mTorrents.size());
             const int last = first + added - 1;
             beginInsertRows(QModelIndex(), first, last);
-            mTorrents.reserve(static_cast<size_t>(last + 1));
+            mTorrents.reserve(static_cast<size_t>(last) + 1);
 
             for (auto end = mRpc->torrents().end(), i = end - added; i != end; ++i) {
                 const auto& torrent = *i;

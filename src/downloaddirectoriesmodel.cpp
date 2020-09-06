@@ -225,7 +225,7 @@ namespace tremotesf
             for (const auto& i : directories) {
                 const QString& tracker = i.first;
                 const int torrents = i.second;
-                mDirectories.push_back(DirectoryItem{std::move(tracker), torrents});
+                mDirectories.push_back(DirectoryItem{tracker, torrents});
             }
             endInsertRows();
         }

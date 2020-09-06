@@ -80,7 +80,7 @@ namespace tremotesf
         }
 
     private:
-        inline QVariantMap getPlatformData()
+        static inline QVariantMap getPlatformData()
         {
             if (qEnvironmentVariableIsSet("DESKTOP_STARTUP_ID")) {
                 return {{IpcDbusService::desktopStartupIdField, qgetenv("DESKTOP_STARTUP_ID")}};

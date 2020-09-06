@@ -40,7 +40,7 @@ namespace tremotesf
 
     private:
         void init();
-        void showContextMenu(const QPoint& pos);
+        void showContextMenu(QPoint pos);
 
     private:
         bool mLocalFile;

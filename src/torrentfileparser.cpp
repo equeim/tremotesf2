@@ -116,7 +116,7 @@ namespace tremotesf
 
                 const int length = fileData.mid(mIndex, separatorIndex - mIndex).toInt();
                 mIndex = separatorIndex + 1;
-                const QString string(fileData.mid(mIndex, length));
+                QString string(fileData.mid(mIndex, length));
                 mIndex += length;
                 return string;
             }

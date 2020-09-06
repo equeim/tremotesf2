@@ -290,7 +290,7 @@ namespace tremotesf
                     }
                 }
 
-                std::pair<QString, QStringList> getDesktopEntryExec(const QString& desktopEntryFileName)
+                static std::pair<QString, QStringList> getDesktopEntryExec(const QString& desktopEntryFileName)
                 {
                     std::pair<QString, QStringList> exec;
 
@@ -345,7 +345,7 @@ namespace tremotesf
                     return exec;
                 }
 
-                QString locateDesktopEntry(const QString& desktopEntryFileName)
+                static QString locateDesktopEntry(const QString& desktopEntryFileName)
                 {
                     const QString relativePath(QLatin1String("applications/") % desktopEntryFileName);
                     QString filePath(QStandardPaths::locate(QStandardPaths::GenericConfigLocation, relativePath));
@@ -395,7 +395,7 @@ namespace tremotesf
                 }
 #endif
 
-                void openParentDirectory(const QString& filePath, QWidget* parent)
+                static void openParentDirectory(const QString& filePath, QWidget* parent)
                 {
                     const QString directory(QFileInfo(filePath).path());
                     qDebug() << "Executing QDesktopServices::openUrl() for" << directory;

@@ -195,7 +195,7 @@ namespace tremotesf
 
         mSplitter->addWidget(mTorrentsView);
         mSplitter->setStretchFactor(1, 1);
-        QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](const QPoint& point) {
+        QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](QPoint point) {
             if (mTorrentsView->indexAt(point).isValid()) {
                 mTorrentMenu->popup(QCursor::pos());
             }

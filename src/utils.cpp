@@ -116,9 +116,8 @@ namespace tremotesf
     {
         if (qFuzzyCompare(progress, 1.0)) {
             return qApp->translate("tremotesf", "%L1%").arg(100);
-        } else {
-            return qApp->translate("tremotesf", "%L1%").arg(std::trunc(progress * 1000.0) / 10.0, 0, 'f', 1);
         }
+        return qApp->translate("tremotesf", "%L1%").arg(std::trunc(progress * 1000.0) / 10.0, 0, 'f', 1);
     }
 
     QString Utils::formatRatio(double ratio)
