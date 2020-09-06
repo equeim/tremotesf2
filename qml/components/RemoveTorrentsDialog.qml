@@ -29,12 +29,12 @@ Dialog {
         width: parent.width
 
         DialogHeader {
-            acceptText: qsTranslate("tremotesf", "Remove")
+            acceptText: qsTranslate("tremotesf", "Delete")
             title: {
                 if (ids.length === 1) {
-                    return qsTranslate("tremotesf", "Are you sure you want to remove this torrent?")
+                    return qsTranslate("tremotesf", "Are you sure you want to delete this torrent?")
                 }
-                return qsTranslate("tremotesf", "Are you sure you want to remove %Ln selected torrents?", String(), ids.length)
+                return qsTranslate("tremotesf", "Are you sure you want to delete %Ln selected torrents?", String(), ids.length)
             }
         }
 

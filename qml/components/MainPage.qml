@@ -171,7 +171,7 @@ Page {
             }
             MenuItem {
                 enabled: selectionModel.hasSelection
-                text: qsTranslate("tremotesf", "Remove")
+                text: qsTranslate("tremotesf", "Delete")
                 onClicked: pageStack.push("RemoveTorrentsDialog.qml",
                                           {"ids": torrentsModel.idsFromIndexes(torrentsProxyModel.sourceIndexes(selectionModel.selectedIndexes))})
             }

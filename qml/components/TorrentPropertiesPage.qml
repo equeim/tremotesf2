@@ -114,7 +114,7 @@ Page {
             }
             MenuItem {
                 enabled: torrent
-                text: qsTranslate("tremotesf", "Remove")
+                text: qsTranslate("tremotesf", "Delete")
                 onClicked: pageStack.push("RemoveTorrentsDialog.qml", {ids: [torrent.id],
                                                                        acceptDestination: pageStack.previousPage(torrentPropertiesPage),
                                                                        acceptDestinationAction: PageStackAction.Pop})

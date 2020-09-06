@@ -68,7 +68,7 @@ ListItem {
                 onClicked: rpc.pauseTorrents([torrentId])
             }
             MenuItem {
-                text: qsTranslate("tremotesf", "Remove")
+                text: qsTranslate("tremotesf", "Delete")
                 onClicked: pageStack.push("RemoveTorrentsDialog.qml", {"ids": [torrentId]})
             }
             MenuItem {
