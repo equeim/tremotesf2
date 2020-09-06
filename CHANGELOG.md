@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.8.0] - 2020-09-06
 ### Added
 - Tremotesf now implements org.freedesktop.Application D-Bus interface on relevant platforms
 - Desktop: added support of startup notifications on X11
@@ -11,7 +11,11 @@
 - org.equeim.Tremotesf D-Bus interface is deprecated
 - Desktop: notifications on Unix-like platforms are now clickable
 - Desktop: when application window is hidden to tray icon, open dialogs are now hidden too
+- Desktop: minor UI improvements
 - Updated translations
+
+### Fixed
+- Fixed support of mounted remote directories
 
 ## [1.7.1] - 2020-06-27
 ### Changed

@@ -44,6 +44,7 @@
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2020-09-06" version="1.8.0"/>
     <release date="2020-06-27" version="1.7.1"/>
     <release date="2020-06-05" version="1.7.0"/>
     <release date="2020-01-11" version="1.6.4"/>
