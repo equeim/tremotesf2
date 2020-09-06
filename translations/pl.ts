@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" sourcelanguage="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="pl" sourcelanguage="en">
 <context>
     <name>tremotesf</name>
     <message>
@@ -193,7 +195,7 @@
         <location filename="../qml/components/MainPage.qml" line="212"/>
         <location filename="../qml/components/TorrentRemovedHeader.qml" line="29"/>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="127"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="273"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="272"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="162"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="45"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="504"/>
@@ -229,8 +231,8 @@
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="129"/>
         <location filename="../qml/components/FileRenameDialog.qml" line="38"/>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="251"/>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="254"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="252"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="255"/>
         <source>Rename</source>
         <translation>Zmiana nazwy</translation>
     </message>
@@ -270,8 +272,8 @@
     <message>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="45"/>
         <location filename="../qml/components/SortTorrentsPage.qml" line="73"/>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="253"/>
-        <location filename="../src/torrentsmodel.cpp" line="259"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="258"/>
+        <location filename="../src/torrentsmodel.cpp" line="275"/>
         <location filename="../src/trackersmodel.cpp" line="128"/>
         <source>Status</source>
         <translation>Stan</translation>
@@ -279,7 +281,7 @@
     <message>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="70"/>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="176"/>
-        <location filename="../qml/components/FilterTorrentsPage.qml" line="217"/>
+        <location filename="../qml/components/FilterTorrentsPage.qml" line="218"/>
         <location filename="../qml/components/SelectionPanel.qml" line="91"/>
         <source>All</source>
         <extracomment>All torrents</extracomment>
@@ -322,15 +324,15 @@
     </message>
     <message>
         <location filename="../qml/components/FilterTorrentsPage.qml" line="152"/>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="262"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="267"/>
         <source>Directories</source>
         <translation>Katalogi</translation>
     </message>
     <message>
-        <location filename="../qml/components/FilterTorrentsPage.qml" line="193"/>
+        <location filename="../qml/components/FilterTorrentsPage.qml" line="194"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="184"/>
         <location filename="../qml/components/TrackersPage.qml" line="50"/>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="271"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="276"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="101"/>
         <source>Trackers</source>
         <translation>Trackery</translation>
@@ -351,19 +353,19 @@
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="70"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="43"/>
         <source>Not Download</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="80"/>
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="51"/>
-        <location filename="../src/basetorrentfilesmodel.cpp" line="151"/>
-        <location filename="../src/torrentsmodel.cpp" line="255"/>
+        <location filename="../src/basetorrentfilesmodel.cpp" line="156"/>
+        <location filename="../src/torrentsmodel.cpp" line="271"/>
         <source>Priority</source>
         <translation>Priorytet</translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="120"/>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="214"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="215"/>
         <location filename="../src/torrentfilesmodelentry.cpp" line="107"/>
         <source>Mixed</source>
         <extracomment>Priority</extracomment>
@@ -372,12 +374,16 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="29"/>
         <source>%Ln files selected</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="52"/>
         <source>%1 (%2)</source>
-        <extracomment>%s is server's name, %2 is server's address</extracomment>
+        <extracomment>%s is server&apos;s name, %2 is server&apos;s address</extracomment>
         <translation>%1 (%2)</translation>
     </message>
     <message>
@@ -389,12 +395,12 @@
     <message>
         <location filename="../qml/components/MainPage.qml" line="93"/>
         <source>Add Torrent Link...</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="99"/>
         <source>Add Torrent File...</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="113"/>
@@ -414,7 +420,11 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="154"/>
         <source>%Ln torrents selected</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="159"/>
@@ -438,16 +448,11 @@
         <translation>Zatrzymaj</translation>
     </message>
     <message>
-        <location filename="../qml/components/MainPage.qml" line="174"/>
-        <location filename="../qml/components/RemoveTorrentsDialog.qml" line="32"/>
         <location filename="../qml/components/ServersPage.qml" line="76"/>
         <location filename="../qml/components/ServersPage.qml" line="172"/>
-        <location filename="../qml/components/TorrentDelegate.qml" line="71"/>
-        <location filename="../qml/components/TorrentPropertiesPage.qml" line="117"/>
         <location filename="../qml/components/TrackersPage.qml" line="86"/>
         <location filename="../qml/components/TrackersPage.qml" line="212"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="716"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="360"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="373"/>
         <location filename="../src/desktop/serversdialog.cpp" line="108"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="112"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="184"/>
@@ -459,7 +464,7 @@
         <location filename="../qml/components/SetLocationDialog.qml" line="40"/>
         <location filename="../qml/components/TorrentDelegate.qml" line="75"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="110"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="100"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="102"/>
         <source>Set Location</source>
         <translation>Ustaw lokalizację</translation>
     </message>
@@ -476,44 +481,52 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="90"/>
         <location filename="../qml/components/TrackersPage.qml" line="180"/>
         <source>Reannounce</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="224"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="989"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="1011"/>
         <source>%Ln torrents added</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="236"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="982"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="1004"/>
         <source>%Ln torrents finished</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="240"/>
         <location filename="../qml/components/MainPage.qml" line="241"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="288"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="287"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="294"/>
         <location filename="../src/desktop/mainwindow.cpp" line="295"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="296"/>
         <source>Error adding torrent</source>
         <translation>Błąd podczas dodawania torrent</translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="240"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="289"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="288"/>
         <source>This torrent is already added</source>
         <translation>Ten torrent jest już dodany</translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="269"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="988"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="1010"/>
         <source>Torrent added</source>
         <translation>Dodano torrent</translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="273"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="981"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="1003"/>
         <source>Torrent finished</source>
         <translation>Torrent ukończony</translation>
     </message>
@@ -533,7 +546,7 @@
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="96"/>
         <source>Peer port</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="113"/>
@@ -601,17 +614,17 @@
         <location filename="../qml/components/NetworkPage.qml" line="177"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="458"/>
         <source>Peer Limits</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="184"/>
         <source>Maximum peers per torrent</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/NetworkPage.qml" line="202"/>
         <source>Maximum peers globally</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/PeersPage.qml" line="44"/>
@@ -621,12 +634,12 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="401"/>
         <location filename="../src/trackersmodel.cpp" line="132"/>
         <source>Peers</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/PeersPage.qml" line="122"/>
         <source>No peers</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/QueuePage.qml" line="75"/>
@@ -659,20 +672,12 @@
         <translation>min</translation>
     </message>
     <message>
-        <location filename="../qml/components/RemoveTorrentsDialog.qml" line="35"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="725"/>
         <source>Are you sure you want to remove this torrent?</source>
-        <translation>Czy na pewno chcesz usunąć ten torrent?</translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="728"/>
-        <source>Are you sure you want to remove %Ln selected torrents?</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="vanished">Czy na pewno chcesz usunąć ten torrent?</translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="719"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="723"/>
         <source>Also delete the files on the hard disk</source>
         <translation>Usuń także pliki z dysku twardego</translation>
     </message>
@@ -684,17 +689,17 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="319"/>
         <source>Seeding</source>
         <comment>Noun</comment>
-        <translation type="unfinished"/>
+        <translation type="unfinished">Dystrybucja</translation>
     </message>
     <message>
         <location filename="../qml/components/SeedingPage.qml" line="76"/>
         <source>Stop seeding at ratio</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/SeedingPage.qml" line="103"/>
         <source>Stop seeding if idle for</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/SelectionPanel.qml" line="101"/>
@@ -703,13 +708,13 @@
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="120"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="210"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="225"/>
         <source>Overwrite</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="121"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="206"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="221"/>
         <source>Server already exists</source>
         <translation>Serwer już istnieje</translation>
     </message>
@@ -720,22 +725,22 @@
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="140"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="140"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="158"/>
         <source>Add Server</source>
         <translation>Dodaj serwer</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="150"/>
         <location filename="../qml/components/SortTorrentsPage.qml" line="68"/>
-        <location filename="../src/basetorrentfilesmodel.cpp" line="143"/>
-        <location filename="../src/torrentsmodel.cpp" line="245"/>
+        <location filename="../src/basetorrentfilesmodel.cpp" line="148"/>
+        <location filename="../src/torrentsmodel.cpp" line="261"/>
         <source>Name</source>
         <translation>Nazwa</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="172"/>
         <location filename="../qml/components/ServerEditDialog.qml" line="245"/>
-        <location filename="../src/peersmodel.cpp" line="118"/>
+        <location filename="../src/peersmodel.cpp" line="125"/>
         <location filename="../src/trackersmodel.cpp" line="126"/>
         <source>Address</source>
         <translation>Adres</translation>
@@ -758,50 +763,50 @@
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="219"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="261"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="276"/>
         <source>Default</source>
         <translation>Domyślny</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="223"/>
         <location filename="../qml/components/ServerEditDialog.qml" line="296"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="290"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="305"/>
         <source>HTTPS</source>
         <translation>HTTPS</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="227"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="267"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="282"/>
         <source>SOCKS5</source>
         <translation>SOCKS5</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="310"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="295"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="310"/>
         <source>Server uses self-signed certificate</source>
         <translation>Serwer używa certyfikatu z podpisem własnym</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="322"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="298"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="313"/>
         <source>Server&apos;s certificate in PEM format</source>
         <translation>Certyfikat serwera w formacie PEM</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="330"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="304"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="319"/>
         <source>Use client certificate authentication</source>
         <translation>Użyj uwierzytelnienia certyfikatu klienta</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="342"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="307"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="322"/>
         <source>Certificate in PEM format with private key</source>
         <translation>Certyfikat w formacie PEM z kluczem prywatnym</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="352"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="315"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="330"/>
         <source>Authentication</source>
         <translation>Uwierzytelnienie</translation>
     </message>
@@ -834,25 +839,25 @@
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="436"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="346"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="361"/>
         <source>Mounted directories</source>
         <translation>Zamontowane katalogi</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="475"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="73"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="75"/>
         <source>Local directory</source>
         <translation>Katalog lokalny</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="489"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="74"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="76"/>
         <source>Remote directory</source>
         <translation>Katalog zdalny</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerEditDialog.qml" line="507"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="350"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="365"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="146"/>
         <source>Add</source>
         <translation>Dodaj</translation>
@@ -904,12 +909,20 @@
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="167"/>
         <source>%Ln servers selected</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ServersPage.qml" line="173"/>
         <source>Removing %Ln servers</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="36"/>
@@ -983,16 +996,16 @@
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="78"/>
-        <location filename="../src/basetorrentfilesmodel.cpp" line="149"/>
-        <location filename="../src/peersmodel.cpp" line="126"/>
-        <location filename="../src/torrentsmodel.cpp" line="253"/>
+        <location filename="../src/basetorrentfilesmodel.cpp" line="154"/>
+        <location filename="../src/peersmodel.cpp" line="133"/>
+        <location filename="../src/torrentsmodel.cpp" line="269"/>
         <source>Progress</source>
         <translation>Postęp</translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="83"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="240"/>
-        <location filename="../src/torrentsmodel.cpp" line="269"/>
+        <location filename="../src/torrentsmodel.cpp" line="285"/>
         <source>ETA</source>
         <translation>ETA</translation>
     </message>
@@ -1014,7 +1027,7 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="85"/>
         <location filename="../qml/components/SortTorrentsPage.qml" line="88"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="225"/>
-        <location filename="../src/torrentsmodel.cpp" line="271"/>
+        <location filename="../src/torrentsmodel.cpp" line="287"/>
         <source>Ratio</source>
         <translation>Wskaźnik</translation>
     </message>
@@ -1022,7 +1035,7 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="66"/>
         <location filename="../qml/components/ServerStatsPage.qml" line="90"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/ServerStatsPage.qml" line="71"/>
@@ -1039,12 +1052,16 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="96"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="118"/>
         <source>%Ln times</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="93"/>
-        <location filename="../src/basetorrentfilesmodel.cpp" line="145"/>
-        <location filename="../src/torrentsmodel.cpp" line="247"/>
+        <location filename="../src/basetorrentfilesmodel.cpp" line="150"/>
+        <location filename="../src/torrentsmodel.cpp" line="263"/>
         <source>Size</source>
         <translation>Rozmiar</translation>
     </message>
@@ -1094,20 +1111,20 @@
         <location filename="../qml/components/TorrentLimitsPage.qml" line="111"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="149"/>
         <source>kB/s</source>
-        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"/>
+        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="178"/>
         <source>Download, kB/s</source>
-        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"/>
+        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="200"/>
         <source>Upload, kB/s</source>
-        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"/>
+        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="215"/>
@@ -1168,7 +1185,7 @@
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="344"/>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="111"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="112"/>
         <source>Checking (%L1)</source>
         <extracomment>Checking torrents, %L1 - torrents count</extracomment>
         <translation>Sprawdzanie (%L1)</translation>
@@ -1182,7 +1199,7 @@
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="213"/>
         <source>Ratio limit mode</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="217"/>
@@ -1196,14 +1213,14 @@
         <location filename="../qml/components/TorrentLimitsPage.qml" line="223"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="336"/>
         <source>Seed regardless of ratio</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="229"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="209"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="333"/>
         <source>Stop seeding at ratio:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="248"/>
@@ -1219,49 +1236,49 @@
         <location filename="../qml/components/TorrentLimitsPage.qml" line="285"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="372"/>
         <source>Seed regardless of activity</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="291"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="218"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="369"/>
         <source>Stop seeding if idle for:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="339"/>
         <source>Maximum peers</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="202"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="140"/>
         <source>Activity</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="208"/>
-        <location filename="../src/torrentsmodel.cpp" line="293"/>
+        <location filename="../src/torrentsmodel.cpp" line="309"/>
         <source>Completed</source>
-        <extracomment>Torrent's completed size</extracomment>
+        <extracomment>Torrent&apos;s completed size</extracomment>
         <translation>Zakończone</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerStatsPage.qml" line="51"/>
         <location filename="../qml/components/ServerStatsPage.qml" line="75"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="214"/>
-        <location filename="../src/torrentsmodel.cpp" line="282"/>
+        <location filename="../src/torrentsmodel.cpp" line="298"/>
         <source>Downloaded</source>
-        <extracomment>Torrent's downloaded size</extracomment>
+        <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation>Pobrano</translation>
     </message>
     <message>
         <location filename="../qml/components/ServerStatsPage.qml" line="56"/>
         <location filename="../qml/components/ServerStatsPage.qml" line="80"/>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="220"/>
-        <location filename="../src/torrentsmodel.cpp" line="285"/>
+        <location filename="../src/torrentsmodel.cpp" line="301"/>
         <source>Uploaded</source>
-        <extracomment>Torrent's uploaded size</extracomment>
+        <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation>Przesłano</translation>
     </message>
     <message>
@@ -1276,15 +1293,15 @@
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="245"/>
-        <location filename="../src/torrentsmodel.cpp" line="261"/>
+        <location filename="../src/torrentsmodel.cpp" line="277"/>
         <source>Seeders</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="250"/>
-        <location filename="../src/torrentsmodel.cpp" line="263"/>
+        <location filename="../src/torrentsmodel.cpp" line="279"/>
         <source>Leechers</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="255"/>
@@ -1310,7 +1327,7 @@
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="273"/>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="279"/>
@@ -1342,12 +1359,16 @@
     <message>
         <location filename="../qml/components/TrackerEditDialog.qml" line="49"/>
         <source>Tracker announce URL</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
         <source>%Ln peers</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="166"/>
@@ -1362,12 +1383,20 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
         <source>%Ln trackers selected</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
         <source>Removing %Ln trackers</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="140"/>
@@ -1381,7 +1410,7 @@
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="150"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="105"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="107"/>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="179"/>
         <source>Download directory:</source>
         <translation>Pobierz katalog:</translation>
@@ -1394,375 +1423,422 @@
         <translation>Priorytet torrenta:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="352"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="350"/>
         <source>&amp;Connect</source>
         <translation>&amp;Połączono</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="355"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="353"/>
         <source>&amp;Disconnect</source>
         <translation>&amp;Rozłączono</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="365"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="363"/>
         <source>&amp;Add Torrent File...</source>
         <translation>&amp;Dodaj plik torrenta...</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="369"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="367"/>
         <source>Add Torrent &amp;Link...</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="405"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="403"/>
         <source>P&amp;ause</source>
         <translation>Z&amp;atrzymaj</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="746"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="423"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/desktop/mainwindow.cpp" line="728"/>
+        <source>Delete with files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/components/MainPage.qml" line="174"/>
+        <location filename="../qml/components/RemoveTorrentsDialog.qml" line="32"/>
+        <location filename="../qml/components/TorrentDelegate.qml" line="71"/>
+        <location filename="../qml/components/TorrentPropertiesPage.qml" line="117"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="729"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/desktop/mainwindow.cpp" line="736"/>
+        <source>Delete Torrent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/components/RemoveTorrentsDialog.qml" line="35"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="737"/>
+        <source>Are you sure you want to delete this torrent?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/desktop/mainwindow.cpp" line="739"/>
+        <source>Delete Torrents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="740"/>
+        <source>Are you sure you want to delete %Ln selected torrents?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/desktop/mainwindow.cpp" line="758"/>
         <source>&amp;Quit</source>
         <translation>&amp;Wyjdź</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="388"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="386"/>
         <source>&amp;Torrent</source>
         <translation>&amp;Torrent</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="390"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="388"/>
         <source>&amp;Properties</source>
         <translation>&amp;Właściwości</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="395"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="393"/>
         <source>&amp;Start</source>
         <translation>&amp;Uruchom</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="400"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="398"/>
         <source>Start &amp;Now</source>
         <translation>Uruchom &amp;Teraz</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="412"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="410"/>
         <source>Copy &amp;Magnet Link</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="425"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="81"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="83"/>
         <location filename="../src/desktop/serversdialog.cpp" line="73"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="86"/>
         <source>&amp;Remove</source>
         <translation>&amp;Usuń</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="429"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="430"/>
         <source>Set &amp;Location</source>
         <translation>Ustaw &amp;Lokalizację</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="446"/>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="148"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="447"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="149"/>
         <source>&amp;Open</source>
         <translation>&amp;Otwórz</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="449"/>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="156"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="450"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="157"/>
         <source>Show In &amp;File Manager</source>
         <translation>Pokaż w &amp; Menedżer plików</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="454"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="455"/>
         <source>&amp;Check Local Data</source>
         <translation>&amp;Sprawdź dane lokalne</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="459"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="460"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="116"/>
         <source>Reanno&amp;unce</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="466"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="467"/>
         <source>&amp;Queue</source>
         <translation>&amp;Kolejki</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="468"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="469"/>
         <source>Move To &amp;Top</source>
         <translation>Przenieś do &amp;Góry</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="473"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="474"/>
         <source>Move &amp;Up</source>
         <translation>Przejdź &amp;w górę</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="478"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="479"/>
         <source>Move &amp;Down</source>
         <translation>Przejdź &amp;w dół</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="483"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="484"/>
         <source>Move To &amp;Bottom</source>
         <translation>Przejdź na &amp;dół</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="488"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="489"/>
         <source>&amp;Server Options</source>
         <translation>&amp;Opcje serwera</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="504"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="505"/>
         <source>Server S&amp;tats</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="563"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="564"/>
         <source>Select Files</source>
         <translation>Wybierz pliki</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="565"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="566"/>
         <source>Torrent Files (*.torrent)</source>
         <translation>Pliki torrent (*.torrent)</translation>
     </message>
     <message>
         <location filename="../src/desktop/desktoputils.cpp" line="98"/>
         <location filename="../src/desktop/desktoputils.cpp" line="405"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="608"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="609"/>
         <location filename="../src/desktop/remotedirectoryselectionwidget.cpp" line="68"/>
         <location filename="../src/trackersmodel.cpp" line="51"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="724"/>
         <source>Remove Torrent</source>
-        <translation>Usuń Torrent</translation>
+        <translation type="vanished">Usuń Torrent</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="727"/>
         <source>Remove Torrents</source>
-        <translation>Usuń Torrent</translation>
+        <translation type="vanished">Usuń Torrent</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="738"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="750"/>
         <source>&amp;File</source>
         <translation>&amp;Plik</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="754"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="766"/>
         <source>&amp;Edit</source>
         <translation>&amp;Edycja</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="756"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="768"/>
         <source>Select &amp;All</source>
         <translation>Zaznacz &amp;Wszystko</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="760"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="772"/>
         <source>&amp;Invert Selection</source>
         <translation>&amp;Odwróć zaznaczenie</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="770"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="782"/>
         <source>&amp;View</source>
         <translation>&amp;Widok</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="772"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="784"/>
         <source>&amp;Toolbar</source>
         <translation>&amp;Pasek narzędzi</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="776"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="788"/>
         <source>&amp;Sidebar</source>
         <translation>&amp;Pasek boczny</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="784"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="796"/>
         <source>St&amp;atusbar</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="792"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="805"/>
+        <source>&amp;Lock Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/desktop/mainwindow.cpp" line="813"/>
         <source>T&amp;ools</source>
         <translation>T&amp;narzędzia</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="794"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="815"/>
         <source>&amp;Options</source>
         <translation>&amp;Opcje</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="811"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="832"/>
         <source>&amp;Servers</source>
         <translation>&amp;Serwery</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="831"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="852"/>
         <source>&amp;Help</source>
         <translation>&amp;Pomoc</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="833"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="854"/>
         <source>&amp;About</source>
         <translation>&amp;O programie</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="871"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="893"/>
         <source>Icon Only</source>
         <translation>Tylko ikona</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="872"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="894"/>
         <source>Text Only</source>
         <translation>Tylko tekst</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="873"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="895"/>
         <source>Text Beside Icon</source>
         <translation>Tekst Obok Ikony</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="874"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="896"/>
         <source>Text Under Icon</source>
         <translation>Tekst Pod Ikoną</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="875"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="897"/>
         <source>Follow System Style</source>
         <translation>Postępuj zgodnie ze stylem systemu</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="1015"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="1037"/>
         <source>Show Tremotesf</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="96"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="97"/>
         <source>All (%L1)</source>
         <comment>All torrents, %L1 - torrents count</comment>
         <translation>Wszystkie (%L1)</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="99"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="100"/>
         <source>Active (%L1)</source>
         <extracomment>Active torrents, %L1 - torrents count</extracomment>
         <translation>Aktywne  (%L1)</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="102"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="103"/>
         <source>Downloading (%L1)</source>
         <extracomment>Downloading torrents, %L1 - torrents count</extracomment>
         <translation>Pobrane  (%L1)</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="105"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="106"/>
         <source>Seeding (%L1)</source>
         <extracomment>Seeding torrents, %L1 - torrents count</extracomment>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="108"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="109"/>
         <source>Paused (%L1)</source>
         <extracomment>Paused torrents, %L1 - torrents count</extracomment>
         <translation>Zatrzymane  (%L1)</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="114"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="115"/>
         <source>Errored (%L1)</source>
         <extracomment>Errored torrents, %L1 - torrents count</extracomment>
         <translation>Błąd (%L1)</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindowsidebar.cpp" line="243"/>
+        <location filename="../src/desktop/mainwindowsidebar.cpp" line="248"/>
         <source>Search...</source>
         <translation>Szukanie...</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="102"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="104"/>
         <source>&amp;Select...</source>
         <translation>&amp;Wybieranie...</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="205"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="220"/>
         <source>Overwrite Server</source>
         <translation>Zastępowanie serwera</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="237"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="252"/>
         <source>Name:</source>
         <translation>Nazwa:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="243"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="276"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="258"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="291"/>
         <source>Address:</source>
         <translation>Adres:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="248"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="280"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="263"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="295"/>
         <source>Port:</source>
         <translation>Port:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="251"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="266"/>
         <source>API path:</source>
         <translation>Ścieżka API:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="253"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="268"/>
         <source>Proxy</source>
         <translation>Proxy</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="264"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="279"/>
         <source>HTTP</source>
         <translation>HTTP</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="272"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="287"/>
         <source>Proxy type:</source>
         <translation>Typ proxy:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="283"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="319"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="298"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="334"/>
         <source>Username:</source>
         <translation>Nazwa Użytkownika:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="286"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="322"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="301"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="337"/>
         <source>Password:</source>
         <translation>Hasło:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="329"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="336"/>
-        <location filename="../src/desktop/servereditdialog.cpp" line="343"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="344"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="351"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="358"/>
         <source> s</source>
         <extracomment>Seconds</extracomment>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="330"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="345"/>
         <source>Update interval:</source>
         <translation>Interwał aktualizacji:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="337"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="352"/>
         <source>Background update interval:</source>
         <translation>Interwał aktualizacji w tle:</translation>
     </message>
     <message>
-        <location filename="../src/desktop/servereditdialog.cpp" line="344"/>
+        <location filename="../src/desktop/servereditdialog.cpp" line="359"/>
         <source>Timeout:</source>
         <translation>Limit czasu:</translation>
     </message>
@@ -1810,8 +1886,8 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="272"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="288"/>
         <source> kB/s</source>
-        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"/>
+        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="288"/>
@@ -1837,7 +1913,7 @@
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="416"/>
         <source>Peer port:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="442"/>
@@ -1847,12 +1923,12 @@
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="464"/>
         <source>Maximum peers per torrent:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="468"/>
         <source>Maximum peers globally:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/settingsdialog.cpp" line="35"/>
@@ -1865,46 +1941,46 @@
         <translation>Pokaż ikonę w obszarze powiadomień</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="171"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="172"/>
         <source>&amp;Download</source>
         <comment>File menu item, verb</comment>
         <translation>&amp;Pobierz</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="176"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="177"/>
         <source>&amp;Not Download</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="183"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="184"/>
         <source>&amp;Priority</source>
         <translation>&amp;Priorytet</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="188"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="189"/>
         <source>&amp;High</source>
         <extracomment>Priority</extracomment>
         <translation>&amp;Wysoki</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="197"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="198"/>
         <source>&amp;Normal</source>
         <extracomment>Priority</extracomment>
         <translation>&amp;Normalny</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="206"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="207"/>
         <source>&amp;Low</source>
         <extracomment>Priority</extracomment>
         <translation>&amp;Niski</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="246"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="247"/>
         <source>&amp;Rename</source>
         <translation>&amp;Zmień nazwę</translation>
     </message>
     <message>
-        <location filename="../src/desktop/torrentfilesview.cpp" line="252"/>
+        <location filename="../src/desktop/torrentfilesview.cpp" line="253"/>
         <source>File name:</source>
         <translation>Nazwa pliku:</translation>
     </message>
@@ -1916,7 +1992,7 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="144"/>
         <source>Completed:</source>
-        <extracomment>Torrent's completed size</extracomment>
+        <extracomment>Torrent&apos;s completed size</extracomment>
         <translation>Zakończony:</translation>
     </message>
     <message>
@@ -1924,7 +2000,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="69"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="147"/>
         <source>Downloaded:</source>
-        <extracomment>Torrent's downloaded size</extracomment>
+        <extracomment>Torrent&apos;s downloaded size</extracomment>
         <translation>Pobrano:</translation>
     </message>
     <message>
@@ -1932,7 +2008,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="71"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="150"/>
         <source>Uploaded:</source>
-        <extracomment>Torrent's uploaded size</extracomment>
+        <extracomment>Torrent&apos;s uploaded size</extracomment>
         <translation>Przesłano:</translation>
     </message>
     <message>
@@ -1940,7 +2016,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="73"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="152"/>
         <source>Ratio:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="61"/>
@@ -1971,12 +2047,12 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="160"/>
         <source>Seeders:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="162"/>
         <source>Leechers:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="164"/>
@@ -1996,7 +2072,7 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="176"/>
         <source>Hash:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="178"/>
@@ -2016,17 +2092,17 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="324"/>
         <source>Ratio limit mode:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="360"/>
         <source>Idle seeding mode:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="407"/>
         <source>Maximum peers:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersAddDialog.qml" line="41"/>
@@ -2037,17 +2113,17 @@
     <message>
         <location filename="../qml/components/TrackersAddDialog.qml" line="51"/>
         <source>Trackers announce URLs</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="144"/>
         <source>Trackers announce URLs:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="162"/>
         <source>Tracker announce URL:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="189"/>
@@ -2067,34 +2143,38 @@
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="193"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/peersmodel.cpp" line="120"/>
-        <location filename="../src/torrentsmodel.cpp" line="265"/>
+        <location filename="../src/peersmodel.cpp" line="127"/>
+        <location filename="../src/torrentsmodel.cpp" line="281"/>
         <source>Down Speed</source>
         <translation>Dolna Prędkość</translation>
     </message>
     <message>
-        <location filename="../src/peersmodel.cpp" line="122"/>
-        <location filename="../src/torrentsmodel.cpp" line="267"/>
+        <location filename="../src/peersmodel.cpp" line="129"/>
+        <location filename="../src/torrentsmodel.cpp" line="283"/>
         <source>Up Speed</source>
         <translation>Górna Prędkość</translation>
     </message>
     <message>
-        <location filename="../src/basetorrentfilesmodel.cpp" line="147"/>
-        <location filename="../src/peersmodel.cpp" line="124"/>
-        <location filename="../src/torrentsmodel.cpp" line="251"/>
+        <location filename="../src/basetorrentfilesmodel.cpp" line="152"/>
+        <location filename="../src/peersmodel.cpp" line="131"/>
+        <location filename="../src/torrentsmodel.cpp" line="267"/>
         <source>Progress Bar</source>
         <translation>Pasek postępu</translation>
     </message>
     <message>
-        <location filename="../src/peersmodel.cpp" line="128"/>
+        <location filename="../src/peersmodel.cpp" line="135"/>
         <source>Flags</source>
         <translation>Flagi</translation>
     </message>
     <message>
-        <location filename="../src/peersmodel.cpp" line="130"/>
+        <location filename="../src/peersmodel.cpp" line="137"/>
         <source>Client</source>
         <translation>Klient</translation>
     </message>
@@ -2155,7 +2235,11 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="333"/>
         <source>Downloading from %Ln peers</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="52"/>
@@ -2168,14 +2252,18 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="337"/>
         <source>Seeding to %Ln peers</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="339"/>
         <location filename="../src/torrentsmodel.cpp" line="130"/>
         <source>Seeding</source>
         <comment>Torrent status</comment>
-        <translation type="unfinished"/>
+        <translation type="unfinished">Dystrybucja</translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="342"/>
@@ -2212,48 +2300,48 @@
         <translation>Błąd podczas analizowania pliku torrent</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="249"/>
+        <location filename="../src/torrentsmodel.cpp" line="265"/>
         <source>Total Size</source>
         <translation>Całkowity rozmiar</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="257"/>
+        <location filename="../src/torrentsmodel.cpp" line="273"/>
         <source>Queue Position</source>
         <translation>Kolejka Pozycji</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="273"/>
+        <location filename="../src/torrentsmodel.cpp" line="289"/>
         <source>Added on</source>
         <translation>Dodano na</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="275"/>
+        <location filename="../src/torrentsmodel.cpp" line="291"/>
         <source>Completed on</source>
         <translation>Ukończono na</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="277"/>
+        <location filename="../src/torrentsmodel.cpp" line="293"/>
         <source>Down Limit</source>
         <translation>Limit dolny</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="279"/>
+        <location filename="../src/torrentsmodel.cpp" line="295"/>
         <source>Up Limit</source>
         <translation>Górny limit</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="288"/>
+        <location filename="../src/torrentsmodel.cpp" line="304"/>
         <source>Remaining</source>
-        <extracomment>Torrents's remaining size</extracomment>
+        <extracomment>Torrents&apos;s remaining size</extracomment>
         <translation>Pozostały</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="290"/>
+        <location filename="../src/torrentsmodel.cpp" line="306"/>
         <source>Download Directory</source>
         <translation>Pobierz katalog</translation>
     </message>
     <message>
-        <location filename="../src/torrentsmodel.cpp" line="295"/>
+        <location filename="../src/torrentsmodel.cpp" line="311"/>
         <source>Last Activity</source>
         <translation>Ostatnia aktywność</translation>
     </message>
@@ -2427,7 +2515,7 @@
         <source>&lt;p&gt;&amp;#169; 2015-2020 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/desktop/aboutdialog.cpp" line="78"/>
@@ -2445,7 +2533,7 @@
     </message>
     <message>
         <location filename="../qml/components/SetLocationDialog.qml" line="49"/>
-        <location filename="../src/desktop/mainwindow.cpp" line="98"/>
+        <location filename="../src/desktop/mainwindow.cpp" line="100"/>
         <source>Move files from current directory</source>
         <translation>Przenieś pliki z bieżącego katalogu</translation>
     </message>
@@ -2455,15 +2543,15 @@
         <translation>Wybrany katalog powinien znajdować się w katalogu zamontowanym</translation>
     </message>
     <message>
-        <location filename="../src/alltrackersmodel.cpp" line="100"/>
-        <location filename="../src/downloaddirectoriesmodel.cpp" line="99"/>
+        <location filename="../src/alltrackersmodel.cpp" line="101"/>
+        <location filename="../src/downloaddirectoriesmodel.cpp" line="100"/>
         <source>All (%L1)</source>
         <comment>All trackers, %L1 - torrents count</comment>
         <translation>Wszystkie (%L1)</translation>
     </message>
     <message>
-        <location filename="../src/alltrackersmodel.cpp" line="109"/>
-        <location filename="../src/downloaddirectoriesmodel.cpp" line="108"/>
+        <location filename="../src/alltrackersmodel.cpp" line="111"/>
+        <location filename="../src/downloaddirectoriesmodel.cpp" line="110"/>
         <source>%1 (%L2)</source>
         <extracomment>%1 is a string (directory name or tracker domain name), %L2 is number of torrents</extracomment>
         <translation>%1 (%L2)</translation>
