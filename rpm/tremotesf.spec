@@ -36,6 +36,7 @@ BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5Network)
 BuildRequires: cmake(Qt5DBus)
 BuildRequires: cmake(Qt5Widgets)
+BuildRequires: cmake(Qt5X11Extras)
 BuildRequires: cmake(Qt5LinguistTools)
 BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: gettext
