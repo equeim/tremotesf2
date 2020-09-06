@@ -718,7 +718,7 @@ namespace libtremotesf
         switch (mStatus) {
         case Disconnected:
         {
-            qDebug("Disconnected");
+            qInfo("Disconnected");
 
             mNetwork->clearAccessCache();
 
@@ -757,13 +757,13 @@ namespace libtremotesf
             break;
         }
         case Connecting:
-            qDebug("Connecting");
+            qInfo("Connecting");
             mUpdating = true;
             emit statusChanged();
             break;
         case Connected:
         {
-            qDebug("Connected");
+            qInfo("Connected");
             emit statusChanged();
             emit connectedChanged();
             break;
