@@ -39,6 +39,7 @@ BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5X11Extras)
 BuildRequires: cmake(Qt5LinguistTools)
 BuildRequires: cmake(KF5WidgetsAddons)
+BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: gettext
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 %if 0%{?suse_version}
