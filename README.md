@@ -73,7 +73,7 @@ dnf install tremotesf
 
 - openSUSE - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 ```sh
-#zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.1/home:equeim:tremotesf.repo
+#zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.2/home:equeim:tremotesf.repo
 zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
 zypper in tremotesf
 ```
