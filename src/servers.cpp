@@ -39,8 +39,6 @@ namespace tremotesf
 
         const QLatin1String fileName("servers");
 
-        const QLatin1String versionKey("version");
-
         const QLatin1String currentServerKey("current");
         const QLatin1String addressKey("address");
         const QLatin1String portKey("port");
@@ -106,6 +104,8 @@ namespace tremotesf
         }
 
 #ifdef TREMOTESF_SAILFISHOS
+        const QLatin1String versionKey("version");
+
         void migrateFrom0()
         {
             QSettings settings;
