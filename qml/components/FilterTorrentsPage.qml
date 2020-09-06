@@ -174,6 +174,7 @@ Page {
 
                         current: modelData.directory === torrentsProxyModel.downloadDirectory
                         text: (modelData.index > 0) ? modelData.directory : qsTranslate("tremotesf", "All")
+                        elide: Text.ElideMiddle
                         torrents: modelData.torrents
 
                         onClicked: {
