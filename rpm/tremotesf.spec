@@ -53,10 +53,6 @@ BuildRequires: hicolor-icon-theme
 
 %if 0%{?sailfishos}
 %global build_directory build-%{_arch}
-%else
-%if 0%{?mageia}
-%global build_directory %{_cmake_builddir}
-%endif
 %endif
 
 %if ! 0%{?make_build:1}
@@ -74,23 +70,32 @@ Remote GUI for Transmission BitTorrent client.
 
 %build
 %if 0%{?sailfishos}
-%{__mkdir_p} %{build_directory}
-cd %{build_directory}
-%cmake -DCMAKE_BUILD_TYPE=%{build_type} -DSAILFISHOS=ON ..
+    %{__mkdir_p} %{build_directory}
+    cd %{build_directory}
+    %cmake -DCMAKE_BUILD_TYPE=%{build_type} -DSAILFISHOS=ON ..
+    %make_build
 %else
-%cmake %{!?suse_version:%{!?mageia:-DCMAKE_BUILD_TYPE=%{build_type}}}
+    %cmake %{!?suse_version:%{!?mageia:-DCMAKE_BUILD_TYPE=%{build_type}}}
+    %if 0%{?cmake_build:1}
+        %cmake_build
+    %else
+        %make_build
+    %endif
 %endif
-%make_build
-
 
 %install
-%if 0%{?suse_version}
-%cmake_install
+%if 0%{?sailfishos}
+    cd %{build_directory}
+    %make_install
 %else
-%if 0%{?build_directory:1}
-cd %{build_directory}
-%endif
-%make_install
+    %if 0%{?cmake_install:1}
+        %cmake_install
+    %else
+        %if 0%{?mga7}
+            cd %{_cmake_builddir}
+        %endif
+        %make_install
+    %endif
 %endif
 
 desktop-file-install \
