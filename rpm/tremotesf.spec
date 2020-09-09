@@ -1,13 +1,16 @@
 %if "%{?_vendor}" == "meego"
 %global sailfishos 1
+%global app_id harbour-tremotesf
 Name:       harbour-tremotesf
 %else
+%global app_id org.equeim.Tremotesf
 Name:       tremotesf
 %endif
+
 Version:    1.8.0
-Release:    1%{!?sailfishos:%{!?suse_version:%{dist}}}
+Release:    1%{!?sailfishos:%{!?suse_version:%{?dist}}}
 Summary:    Remote GUI for transmission-daemon
-%if 0%{?suse_version}
+%if %{defined suse_version}
 Group:      Productivity/Networking/Other
 License:    GPL-3.0-or-later
 %else
@@ -20,7 +23,7 @@ Source0:    https://github.com/equeim/tremotesf2/archive/%{version}.tar.gz
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
 
-%if 0%{?sailfishos}
+%if %{defined sailfishos}
 Requires:      sailfishsilica-qt5
 Requires:      nemo-qml-plugin-notifications-qt5
 BuildRequires: pkgconfig(Qt5Concurrent)
@@ -41,22 +44,16 @@ BuildRequires: cmake(Qt5LinguistTools)
 BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: gettext
+BuildRequires: libappstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
-%if 0%{?suse_version}
+%if %{defined suse_version}
 BuildRequires: hicolor-icon-theme
 %endif
 %endif
 
-
-%global build_type RelWithDebInfo
-#%%global build_type Debug
-
-%if 0%{?sailfishos}
-%global build_directory build-%{_arch}
-%endif
-
-%if ! 0%{?make_build:1}
-%global make_build %{__make} %{?_smp_mflags}
+%if %{defined sailfishos}
+%global build_directory %{_builddir}/build-%{_target}-%(version | awk '{print $3}')
+%global debug 0
 %endif
 
 
@@ -69,14 +66,21 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %build
-%if 0%{?sailfishos}
-    %{__mkdir_p} %{build_directory}
+%if %{defined sailfishos}
+# Enable -O0 for debug builds
+# This also requires disabling _FORTIFY_SOURCE
+    %if %{debug}
+        export CFLAGS="${CFLAGS:-%optflags} -O0 -Wp,-U_FORTIFY_SOURCE"
+        export CXXFLAGS="${CXXFLAGS:-%optflags} -O0 -Wp,-U_FORTIFY_SOURCE"
+    %endif
+
+    mkdir -p %{build_directory}
     cd %{build_directory}
-    %cmake -DCMAKE_BUILD_TYPE=%{build_type} -DSAILFISHOS=ON ..
+    %cmake -DSAILFISHOS=ON ..
     %make_build
 %else
-    %cmake %{!?suse_version:%{!?mageia:-DCMAKE_BUILD_TYPE=%{build_type}}}
-    %if 0%{?cmake_build:1}
+    %cmake
+    %if %{defined cmake_build}
         %cmake_build
     %else
         %make_build
@@ -84,33 +88,30 @@ Remote GUI for Transmission BitTorrent client.
 %endif
 
 %install
-%if 0%{?sailfishos}
+%if %{defined sailfishos}
     cd %{build_directory}
     %make_install
 %else
-    %if 0%{?cmake_install:1}
+    %if %{defined cmake_install}
         %cmake_install
     %else
-        %if 0%{?mga7}
+        %if %{defined mga7}
             cd %{_cmake_builddir}
         %endif
         %make_install
     %endif
+
+    appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{app_id}.appdata.xml
 %endif
 
-desktop-file-install \
-    --delete-original \
-    --dir "%{buildroot}/%{_datadir}/applications" \
-    "%{buildroot}/%{_datadir}/applications/"*.desktop
-
+desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 
 %files
-%defattr(-,root,root)
 %{_bindir}/%{name}
-%{_datadir}/icons/hicolor/*/apps/*
-%{_datadir}/applications/*.desktop
-%if ! 0%{?sailfishos:1}
-%{_datadir}/metainfo/org.equeim.Tremotesf.appdata.xml
+%{_datadir}/icons/hicolor/*/apps/%{app_id}.*
+%{_datadir}/applications/%{app_id}.desktop
+%if ! %{defined sailfishos}
+%{_metainfodir}/%{app_id}.appdata.xml
 %endif
 %{_datadir}/%{name}
 
