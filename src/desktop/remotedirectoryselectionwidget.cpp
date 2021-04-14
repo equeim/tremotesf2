@@ -49,7 +49,7 @@ namespace tremotesf
         selectionButton()->setEnabled(rpc->isLocal() || mounted);
         setText(directory);
         if (mounted && !rpc->isLocal()) {
-            QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
+            QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
                 const QString directory(Servers::instance()->fromRemoteToLocalDirectory(text));
                 if (!directory.isEmpty()) {
                     setFileDialogDirectory(directory);
@@ -62,7 +62,7 @@ namespace tremotesf
                 setFileDialogDirectory(localDownloadDirectory);
             }
 
-            QObject::connect(this, &FileSelectionWidget::fileDialogAccepted, this, [=](const QString& filePath) {
+            QObject::connect(this, &FileSelectionWidget::fileDialogAccepted, this, [=](const auto& filePath) {
                 const QString directory(Servers::instance()->fromLocalToRemoteDirectory(filePath));
                 if (directory.isEmpty()) {
                     QMessageBox::warning(this, qApp->translate("tremotesf", "Error"), qApp->translate("tremotesf", "Selected directory should be inside mounted directory"));
@@ -94,9 +94,7 @@ namespace tremotesf
         collator.setNumericMode(true);
         std::sort(currentServerAddTorrentDialogDirectories.begin(),
                   currentServerAddTorrentDialogDirectories.end(),
-                  [&collator](const QString& first, const QString& second) {
-            return collator.compare(first, second) < 0;
-        });
+                  [&collator](const auto& first, const auto& second) { return collator.compare(first, second) < 0; });
 
         if (wasEmpty && !currentServerAddTorrentDialogDirectories.empty()) {
             Servers::instance()->setCurrentServerAddTorrentDialogDirectories(currentServerAddTorrentDialogDirectories);

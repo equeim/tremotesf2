@@ -243,7 +243,7 @@ namespace tremotesf
                         onFailure();
                     };
 
-                    QObject::connect(process, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error) {
+                    QObject::connect(process, &QProcess::errorOccurred, this, [=](auto error) {
                         if (error == QProcess::FailedToStart) {
                             onFailedToStart();
                         }

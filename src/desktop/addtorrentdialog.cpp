@@ -151,7 +151,7 @@ namespace tremotesf
 
         auto freeSpaceLabel = new QLabel(this);
         if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
-            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
+            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
                 mRpc->getFreeSpaceForPath(text.trimmed());
             });
             QObject::connect(mRpc, &Rpc::gotFreeSpaceForPath, this, [=](const QString& path, bool success, long long bytes) {
@@ -166,7 +166,7 @@ namespace tremotesf
             firstFormLayout->addRow(nullptr, freeSpaceLabel);
             mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->text().trimmed());
         } else {
-            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
+            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
                 if (text.trimmed() == mRpc->serverSettings()->downloadDirectory()) {
                     mRpc->getDownloadDirFreeSpace();
                 } else {
@@ -175,7 +175,7 @@ namespace tremotesf
                 }
             });
 
-            QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](long long bytes) {
+            QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](auto bytes) {
                 if (mDownloadDirectoryWidget->text().trimmed() == mRpc->serverSettings()->downloadDirectory()) {
                     freeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
                     freeSpaceLabel->show();

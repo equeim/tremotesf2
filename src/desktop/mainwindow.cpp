@@ -122,7 +122,7 @@ namespace tremotesf
                 });
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
 
-                QObject::connect(mDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const QString& text) {
+                QObject::connect(mDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
                     dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(!text.isEmpty());
                 });
 
@@ -195,7 +195,7 @@ namespace tremotesf
 
         mSplitter->addWidget(mTorrentsView);
         mSplitter->setStretchFactor(1, 1);
-        QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](QPoint point) {
+        QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](auto point) {
             if (mTorrentsView->indexAt(point).isValid()) {
                 mTorrentMenu->popup(QCursor::pos());
             }
@@ -228,11 +228,11 @@ namespace tremotesf
         }
         mToolBarAction->setChecked(!mToolBar->isHidden());
 
-        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const QString&, const QByteArray& startupNoficationId) {
+        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const auto&, const auto& startupNoficationId) {
             showWindow(startupNoficationId);
         });
 
-        QObject::connect(ipcServer, &IpcServer::torrentsAddingRequested, this, [=](const QStringList& files, const QStringList& urls) {
+        QObject::connect(ipcServer, &IpcServer::torrentsAddingRequested, this, [=](const auto& files, const auto& urls) {
             if (mRpc->isConnected()) {
                 const bool hidden = isHidden();
                 showWindow();
@@ -274,11 +274,11 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(mRpc, &Rpc::addedNotificationRequested, this, [=](const QStringList&, const QStringList& names) {
+        QObject::connect(mRpc, &Rpc::addedNotificationRequested, this, [=](const auto&, const auto& names) {
             showAddedNotification(names);
         });
 
-        QObject::connect(mRpc, &Rpc::finishedNotificationRequested, this, [=](const QStringList&, const QStringList& names) {
+        QObject::connect(mRpc, &Rpc::finishedNotificationRequested, this, [=](const auto&, const auto& names) {
             showFinishedNotification(names);
         });
 
@@ -922,7 +922,7 @@ namespace tremotesf
         mTrayIcon->setContextMenu(contextMenu);
         mTrayIcon->setToolTip(mRpc->statusString());
 
-        QObject::connect(mTrayIcon, &QSystemTrayIcon::activated, this, [=](QSystemTrayIcon::ActivationReason reason) {
+        QObject::connect(mTrayIcon, &QSystemTrayIcon::activated, this, [=](auto reason) {
             if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
                 if (isHidden() || isMinimized()) {
                     showWindow();

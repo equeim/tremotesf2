@@ -51,7 +51,7 @@ namespace tremotesf
                             const QString hashString(torrent->hashString());
                             const auto found = std::find_if(lastTorrents.torrents.cbegin(),
                                                             lastTorrents.torrents.cend(),
-                                                            [&hashString](const LastTorrents::Torrent& torrent) {
+                                                            [&hashString](const auto& torrent) {
                                 return torrent.hashString == hashString;
                             });
                             if (found == lastTorrents.torrents.cend()) {
@@ -80,13 +80,13 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(this, &Rpc::torrentAdded, this, [=](const libtremotesf::Torrent* torrent) {
+        QObject::connect(this, &Rpc::torrentAdded, this, [=](const auto* torrent) {
             if (Settings::instance()->notificationOnAddingTorrent()) {
                 emit addedNotificationRequested({torrent->hashString()}, {torrent->name()});
             }
         });
 
-        QObject::connect(this, &Rpc::torrentFinished, this, [=](const libtremotesf::Torrent* torrent) {
+        QObject::connect(this, &Rpc::torrentFinished, this, [=](const auto* torrent) {
             if (Settings::instance()->notificationOfFinishedTorrents()) {
                 emit finishedNotificationRequested({torrent->hashString()}, {torrent->name()});
             }

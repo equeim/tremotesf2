@@ -183,7 +183,7 @@ namespace tremotesf
                 QObject::connect(model, &AllTrackersModel::rowsInserted, this, &TrackersListView::updateGeometry);
                 QObject::connect(model, &AllTrackersModel::rowsRemoved, this, &TrackersListView::updateGeometry);
 
-                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
+                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const auto& current) {
                     mTorrentsProxyModel->setTracker(current.data(AllTrackersModel::TrackerRole).toString());
                 });
             }
@@ -215,7 +215,7 @@ namespace tremotesf
                 QObject::connect(model, &DownloadDirectoriesModel::rowsInserted, this, &TrackersListView::updateGeometry);
                 QObject::connect(model, &DownloadDirectoriesModel::rowsRemoved, this, &TrackersListView::updateGeometry);
 
-                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
+                QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const auto& current) {
                     mTorrentsProxyModel->setDownloadDirectory(current.data(DownloadDirectoriesModel::DirectoryRole).toString());
                 });
             }
@@ -247,7 +247,7 @@ namespace tremotesf
         auto searchLineEdit = new QLineEdit(this);
         searchLineEdit->setClearButtonEnabled(true);
         searchLineEdit->setPlaceholderText(qApp->translate("tremotesf", "Search..."));
-        QObject::connect(searchLineEdit, &QLineEdit::textChanged, this, [proxyModel](const QString& text) {
+        QObject::connect(searchLineEdit, &QLineEdit::textChanged, this, [proxyModel](const auto& text) {
             proxyModel->setSearchString(text);
         });
         layout->addWidget(searchLineEdit);

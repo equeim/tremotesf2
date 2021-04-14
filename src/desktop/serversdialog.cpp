@@ -75,7 +75,7 @@ namespace tremotesf
         mServersView->addAction(removeAction);
         QObject::connect(removeAction, &QAction::triggered, this, &ServersDialog::removeServers);
 
-        QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=](QPoint pos) {
+        QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=](auto pos) {
             if (mServersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(QIcon::fromTheme(editIconName), qApp->translate("tremotesf", "&Edit..."));

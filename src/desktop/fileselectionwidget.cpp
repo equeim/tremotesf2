@@ -85,14 +85,14 @@ namespace tremotesf
         layout->addWidget(mSelectionButton);
 
         if (comboBox) {
-            QObject::connect(mTextComboBox, &QComboBox::currentTextChanged, this, [=](const QString& text) {
+            QObject::connect(mTextComboBox, &QComboBox::currentTextChanged, this, [=](const auto& text) {
                 if (connectTextWithFileDialog) {
                     mFileDialogDirectory = text;
                 }
                 emit textChanged(text);
             });
         } else {
-            QObject::connect(mTextLineEdit, &QLineEdit::textEdited, this, [=](const QString& text) {
+            QObject::connect(mTextLineEdit, &QLineEdit::textEdited, this, [=](const auto& text) {
                 if (connectTextWithFileDialog) {
                     mFileDialogDirectory = text;
                 }

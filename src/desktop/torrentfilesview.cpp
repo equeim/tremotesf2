@@ -71,7 +71,7 @@ namespace tremotesf
             sortByColumn(TorrentFilesModel::NameColumn, Qt::AscendingOrder);
         }
 
-        QObject::connect(this, &TorrentFilesView::activated, this, [=](const QModelIndex& index) {
+        QObject::connect(this, &TorrentFilesView::activated, this, [=](const auto& index) {
             const QModelIndex sourceIndex(mProxyModel->sourceIndex(index));
             const TorrentFilesModelEntry* entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->sourceIndex(index).internalPointer());
             if (!entry->isDirectory() &&
