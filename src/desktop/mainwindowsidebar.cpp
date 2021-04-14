@@ -27,6 +27,7 @@
 #include <QListWidget>
 #include <QStyle>
 #include <QVBoxLayout>
+#include <QShortcut>
 
 #include "../alltrackersmodel.h"
 #include "../downloaddirectoriesmodel.h"
@@ -250,6 +251,11 @@ namespace tremotesf
             proxyModel->setSearchString(text);
         });
         layout->addWidget(searchLineEdit);
+
+        auto* const searchShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_F), this);
+        QObject::connect(searchShortcut, &QShortcut::activated, this, [searchLineEdit] {
+            searchLineEdit->setFocus();
+        });
 
         QFont checkBoxFont(QApplication::font());
         checkBoxFont.setBold(true);
