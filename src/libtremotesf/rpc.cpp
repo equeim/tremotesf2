@@ -980,18 +980,20 @@ namespace libtremotesf
                                 const auto& torrent = mTorrents[static_cast<size_t>(i)];
                                 const int id = torrent->id();
                                 const auto found(std::find_if(newTorrents.begin(), newTorrents.end(), [id](const auto& t) {
-                                    return std::get<1>(t) == id;
+                                    const auto& [json, new_id, existing] = t;
+                                    return new_id == id;
                                 }));
                                 if (found == newTorrentsEnd) {
                                     remover.remove(i);
                                 } else {
-                                    std::get<2>(*found) = true;
+                                    auto& [json, id, existing] = *found;
+                                    existing = true;
 
                                     const bool wasFinished = torrent->isFinished();
                                     const bool wasPaused = (torrent->status() == Torrent::Status::Paused);
                                     const auto oldSizeWhenDone = torrent->sizeWhenDone();
                                     const bool metadataWasComplete = torrent->isMetadataComplete();
-                                    if (torrent->update(std::get<0>(*found))) {
+                                    if (torrent->update(json)) {
                                         changed.push_back(i);
                                         if (!wasFinished
                                                 && torrent->isFinished()
@@ -1022,9 +1024,7 @@ namespace libtremotesf
                         if (newTorrents.size() > mTorrents.size()) {
                             mTorrents.reserve(newTorrents.size());
                             for (const auto& t : newTorrents) {
-                                const QJsonObject& torrentJson = std::get<0>(t);
-                                const int id = std::get<1>(t);
-                                const bool existing = std::get<2>(t);
+                                const auto& [torrentJson, id, existing] = t;
                                 if (!existing) {
                                     mTorrents.emplace_back(std::make_shared<Torrent>(id, torrentJson, this));
                                     ++added;

@@ -782,13 +782,15 @@ namespace libtremotesf
             for (int i = static_cast<int>(mPeers.size()) - 1; i >= 0; --i) {
                 Peer& peer = mPeers[static_cast<size_t>(i)];
                 const auto found(std::find_if(newPeersBegin, newPeersEnd, [&peer](const auto& p) {
-                    return std::get<1>(p) == peer.address;
+                    const auto& [json, address, existing] = p;
+                    return address == peer.address;
                 }));
                 if (found == newPeersEnd) {
                     remover.remove(i);
                 } else {
-                    std::get<2>(*found) = true;
-                    if (peer.update(std::get<0>(*found))) {
+                    auto& [json, address, existing] = *found;
+                    existing = true;
+                    if (peer.update(json)) {
                         changed.push_back(i);
                     }
                 }
@@ -802,9 +804,7 @@ namespace libtremotesf
             added = static_cast<int>(newPeers.size() - mPeers.size());
             mPeers.reserve(newPeers.size());
             for (auto& p : newPeers) {
-                const QJsonObject& peerJson = std::get<0>(p);
-                QString& address = std::get<1>(p);
-                const bool existing = std::get<2>(p);
+                auto& [peerJson, address, existing] = p;
                 if (!existing) {
                     mPeers.emplace_back(std::move(address), peerJson);
                 }
