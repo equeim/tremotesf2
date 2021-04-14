@@ -40,7 +40,7 @@ add_executable(tremotesf
 
 set_target_properties(tremotesf PROPERTIES
     OUTPUT_NAME "${TREMOTESF_NAME}"
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
 )
