@@ -67,7 +67,7 @@ namespace tremotesf
                     ids.append(static_cast<TorrentFilesModelFile*>(entry)->id());
                 }
             }
-            std::sort(ids.begin(), ids.end());
+            std::sort(ids.begin(), ids.end(), [](const QVariant& a, const QVariant& b) { return a.toInt() < b.toInt(); });
             ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
             return ids;
         }
