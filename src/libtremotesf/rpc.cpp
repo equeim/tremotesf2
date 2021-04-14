@@ -99,6 +99,41 @@ namespace libtremotesf
 
             return ipAddress.isLoopback() || QNetworkInterface::allAddresses().contains(ipAddress);
         }
+
+        QString readFileAsBase64String(QFile& file)
+        {
+            if (!file.isOpen() && !file.open(QIODevice::ReadOnly)) {
+                qWarning("Failed to open file");
+                return QString();
+            }
+
+            static constexpr qint64 bufferSize = 1024 * 1024 - 1; // 1 MiB minus 1 byte (dividable by 3)
+            QString string;
+            string.reserve(static_cast<int>(((4 * file.size() / 3) + 3) & ~3));
+
+            QByteArray buffer;
+            buffer.resize(std::min(bufferSize, file.size()));
+
+            qint64 offset = 0;
+
+            while (true) {
+                const qint64 n = file.read(buffer.data() + offset, buffer.size() - offset);
+                if (n <= 0) {
+                    if (offset > 0) {
+                        buffer.resize(offset);
+                        string.append(QLatin1String(buffer.toBase64()));
+                    }
+                    break;
+                }
+                offset += n;
+                if (offset == buffer.size()) {
+                    string.append(QLatin1String(buffer.toBase64()));
+                    offset = 0;
+                }
+            }
+
+            return string;
+        }
     }
 
     Rpc::Rpc(QObject* parent)
@@ -280,14 +315,17 @@ namespace libtremotesf
         mExpectedSslErrors.clear();
 
         if (server.selfSignedCertificateEnabled) {
-            const QSslCertificate certificate(server.selfSignedCertificate);
-            mExpectedSslErrors.reserve(2);
-            mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, certificate));
-            mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, certificate));
+            const auto certificates(QSslCertificate::fromData(server.selfSignedCertificate, QSsl::Pem));
+            mExpectedSslErrors.reserve(certificates.size() * 3);
+            for (const auto& certificate : certificates) {
+                mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, certificate));
+                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, certificate));
+                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificateInChain, certificate));
+            }
         }
 
         if (server.clientCertificateEnabled) {
-            mSslConfiguration.setLocalCertificate(QSslCertificate(server.clientCertificate));
+            mSslConfiguration.setLocalCertificate(QSslCertificate(server.clientCertificate, QSsl::Pem));
             mSslConfiguration.setPrivateKey(QSslKey(server.clientCertificate, QSsl::Rsa));
         }
 
@@ -339,48 +377,33 @@ namespace libtremotesf
                              int bandwidthPriority,
                              bool start)
     {
-        if (isConnected()) {
-            const auto future = QtConcurrent::run([=] {
-                return makeRequestData(QLatin1String("torrent-add"),
-                                       {{QLatin1String("metainfo"), QString::fromLatin1(fileData.toBase64())},
-                                        {QLatin1String("download-dir"), downloadDirectory},
-                                        {QLatin1String("files-unwanted"), unwantedFiles},
-                                        {QLatin1String("priority-high"), highPriorityFiles},
-                                        {QLatin1String("priority-low"), lowPriorityFiles},
-                                        {QLatin1String("bandwidthPriority"), bandwidthPriority},
-                                        {QLatin1String("paused"), !start}});
-            });
-            auto watcher = new QFutureWatcher<QByteArray>(this);
-            QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=] {
-                if (isConnected()) {
-                    postRequest(QLatin1String("torrent-add"), watcher->result(), [=](const QJsonObject& parseResult, bool success) {
-                        if (success) {
-                            const auto arguments(getReplyArguments(parseResult));
-                            if (arguments.contains(torrentDuplicateKey)) {
-                                emit torrentAddDuplicate();
-                            } else {
-                                if (!renamedFiles.isEmpty()) {
-                                    const QJsonObject torrentJson(arguments.value(QLatin1String("torrent-added")).toObject());
-                                    if (!torrentJson.isEmpty()) {
-                                        const int id = torrentJson.value(Torrent::idKey).toInt();
-                                        for (auto i = renamedFiles.begin(), end = renamedFiles.end();
-                                             i != end;
-                                             ++i) {
-                                            renameTorrentFile(id, i.key(), i.value().toString());
-                                        }
-                                    }
-                                }
-                                updateData();
-                            }
-                        } else {
-                            emit torrentAddError();
-                        }
-                    });
-                    watcher->deleteLater();
-                }
-            });
-            watcher->setFuture(future);
-        }
+        addTorrentFile([fileData] { return QLatin1String(fileData.toBase64()); },
+                       downloadDirectory,
+                       unwantedFiles,
+                       highPriorityFiles,
+                       lowPriorityFiles,
+                       renamedFiles,
+                       bandwidthPriority,
+                       start);
+    }
+
+    void Rpc::addTorrentFile(std::shared_ptr<QFile> file,
+                             const QString& downloadDirectory,
+                             const QVariantList& unwantedFiles,
+                             const QVariantList& highPriorityFiles,
+                             const QVariantList& lowPriorityFiles,
+                             const QVariantMap& renamedFiles,
+                             int bandwidthPriority,
+                             bool start)
+    {
+        addTorrentFile([file = std::move(file)] { return readFileAsBase64String(*file); },
+                       downloadDirectory,
+                       unwantedFiles,
+                       highPriorityFiles,
+                       lowPriorityFiles,
+                       renamedFiles,
+                       bandwidthPriority,
+                       start);
     }
 
     void Rpc::addTorrentLink(const QString& link,
@@ -780,6 +803,61 @@ namespace libtremotesf
         }
     }
 
+    template<typename FileDataBase64StringProvider>
+    void Rpc::addTorrentFile(FileDataBase64StringProvider&& fileDataProvider,
+                             const QString& downloadDirectory,
+                             const QVariantList& unwantedFiles,
+                             const QVariantList& highPriorityFiles,
+                             const QVariantList& lowPriorityFiles,
+                             const QVariantMap& renamedFiles,
+                             int bandwidthPriority,
+                             bool start)
+    {
+        if (isConnected()) {
+            const auto future = QtConcurrent::run([=, fileDataProvider = std::forward<FileDataBase64StringProvider>(fileDataProvider)] {
+                return makeRequestData(QLatin1String("torrent-add"),
+                                       {{QLatin1String("metainfo"), fileDataProvider()},
+                                        {QLatin1String("download-dir"), downloadDirectory},
+                                        {QLatin1String("files-unwanted"), unwantedFiles},
+                                        {QLatin1String("priority-high"), highPriorityFiles},
+                                        {QLatin1String("priority-low"), lowPriorityFiles},
+                                        {QLatin1String("bandwidthPriority"), bandwidthPriority},
+                                        {QLatin1String("paused"), !start}});
+            });
+            auto watcher = new QFutureWatcher<QByteArray>(this);
+            QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=] {
+                if (isConnected()) {
+                    postRequest(QLatin1String("torrent-add"), watcher->result(), [=](const QJsonObject& parseResult, bool success) {
+                        if (success) {
+                            const auto arguments(getReplyArguments(parseResult));
+                            if (arguments.contains(torrentDuplicateKey)) {
+                                emit torrentAddDuplicate();
+                            } else {
+                                if (!renamedFiles.isEmpty()) {
+                                    const QJsonObject torrentJson(arguments.value(QLatin1String("torrent-added")).toObject());
+                                    if (!torrentJson.isEmpty()) {
+                                        const int id = torrentJson.value(Torrent::idKey).toInt();
+                                        for (auto i = renamedFiles.begin(), end = renamedFiles.end();
+                                             i != end;
+                                             ++i) {
+                                            renameTorrentFile(id, i.key(), i.value().toString());
+                                        }
+                                    }
+                                }
+                                updateData();
+                            }
+                        } else {
+                            emit torrentAddError();
+                        }
+                    });
+                    watcher->deleteLater();
+                }
+            });
+            watcher->setFuture(future);
+        }
+
+    }
+
     void Rpc::getServerSettings()
     {
         postRequest(QLatin1String("session-get"), QByteArrayLiteral("{\"method\":\"session-get\"}"),
@@ -912,10 +990,18 @@ namespace libtremotesf
                                     std::get<2>(*found) = true;
 
                                     const bool wasFinished = torrent->isFinished();
+                                    const bool wasPaused = (torrent->status() == Torrent::Status::Paused);
+                                    const auto oldSizeWhenDone = torrent->sizeWhenDone();
                                     const bool metadataWasComplete = torrent->isMetadataComplete();
                                     if (torrent->update(std::get<0>(*found))) {
                                         changed.push_back(i);
-                                        if (!wasFinished && torrent->isFinished()) {
+                                        if (!wasFinished
+                                                && torrent->isFinished()
+                                                && !wasPaused
+                                                // Don't emit torrentFinished() if torrent's size became smaller
+                                                // since there is high chance that it happened because user unselected some files
+                                                // and torrent immediately became finished. We don't want notification in that case
+                                                && torrent->sizeWhenDone() >= oldSizeWhenDone) {
                                             emit torrentFinished(torrent.get());
                                         }
                                         if (!metadataWasComplete && torrent->isMetadataComplete()) {
@@ -960,10 +1046,10 @@ namespace libtremotesf
                             }
                         }
 
-                        emit torrentsUpdated(removed, changed, added);
-
                         checkIfTorrentsUpdated();
                         startUpdateTimer();
+
+                        emit torrentsUpdated(removed, changed, added);
 
                         if (!checkSingleFileIds.isEmpty()) {
                             checkTorrentsSingleFile(checkSingleFileIds);
@@ -1180,7 +1266,7 @@ namespace libtremotesf
         return true;
     }
 
-    void Rpc::postRequest(QLatin1String method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
+    void Rpc::postRequest(const QLatin1String& method, const QByteArray& data, const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse)
     {
         Request request{method, QNetworkRequest(mServerUrl), data, callOnSuccessParse};
         request.setSessionId(mSessionId);
@@ -1189,7 +1275,7 @@ namespace libtremotesf
         postRequest(std::move(request));
     }
 
-    void Rpc::postRequest(QLatin1String method, const QVariantMap& arguments, const std::function<void (const QJsonObject&, bool)>& callOnSuccessParse)
+    void Rpc::postRequest(const QLatin1String& method, const QVariantMap& arguments, const std::function<void (const QJsonObject&, bool)>& callOnSuccessParse)
     {
         postRequest(method, makeRequestData(method, arguments), callOnSuccessParse);
     }

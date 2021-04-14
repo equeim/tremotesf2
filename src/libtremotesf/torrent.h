@@ -257,7 +257,7 @@ namespace libtremotesf
         bool honorSessionLimits() const;
         Q_INVOKABLE void setHonorSessionLimits(bool honor);
         Priority bandwidthPriority() const;
-        Q_INVOKABLE void setBandwidthPriority(libtremotesf::Torrent::Priority priority);
+        Q_INVOKABLE void setBandwidthPriority(Priority priority);
         IdleSeedingLimitMode idleSeedingLimitMode() const;
         Q_INVOKABLE void setIdleSeedingLimitMode(libtremotesf::Torrent::IdleSeedingLimitMode mode);
         int idleSeedingLimit() const;

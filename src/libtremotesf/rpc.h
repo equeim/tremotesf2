@@ -26,6 +26,7 @@
 #include <unordered_set>
 
 #include <QByteArray>
+#include <QFile>
 #include <QNetworkRequest>
 #include <QObject>
 #include <QSslConfiguration>
@@ -152,6 +153,15 @@ namespace libtremotesf
                                         int bandwidthPriority,
                                         bool start);
 
+        Q_INVOKABLE void addTorrentFile(std::shared_ptr<QFile> file,
+                                        const QString& downloadDirectory,
+                                        const QVariantList& unwantedFiles,
+                                        const QVariantList& highPriorityFiles,
+                                        const QVariantList& lowPriorityFiles,
+                                        const QVariantMap& renamedFiles,
+                                        int bandwidthPriority,
+                                        bool start);
+
         Q_INVOKABLE void addTorrentLink(const QString& link,
                                         const QString& downloadDirectory,
                                         int bandwidthPriority,
@@ -199,6 +209,16 @@ namespace libtremotesf
         void setStatus(Status status);
         void setError(Error error, const QString& errorMessage = QString());
 
+        template<typename FileDataBase64StringProvider>
+        void addTorrentFile(FileDataBase64StringProvider&& fileDataProvider,
+                            const QString& downloadDirectory,
+                            const QVariantList& unwantedFiles,
+                            const QVariantList& highPriorityFiles,
+                            const QVariantList& lowPriorityFiles,
+                            const QVariantMap& renamedFiles,
+                            int bandwidthPriority,
+                            bool start);
+
         void getServerSettings();
         void getTorrents();
         void checkTorrentsSingleFile(const QVariantList& torrentIds);
@@ -214,11 +234,11 @@ namespace libtremotesf
         bool retryRequest(Request&& request,
                           QNetworkReply* previousAttempt);
 
-        void postRequest(QLatin1String method,
+        void postRequest(const QLatin1String& method,
                          const QByteArray& data,
                          const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse = {});
 
-        void postRequest(QLatin1String method,
+        void postRequest(const QLatin1String& method,
                          const QVariantMap& arguments,
                          const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse = {});
 
