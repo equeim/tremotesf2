@@ -112,7 +112,7 @@ namespace libtremotesf
             string.reserve(static_cast<int>(((4 * file.size() / 3) + 3) & ~3));
 
             QByteArray buffer;
-            buffer.resize(std::min(bufferSize, file.size()));
+            buffer.resize(static_cast<int>(std::min(bufferSize, file.size())));
 
             qint64 offset = 0;
 
