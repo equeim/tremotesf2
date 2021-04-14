@@ -710,6 +710,11 @@ namespace tremotesf
 
     void MainWindow::removeSelectedTorrents(bool deleteFiles)
     {
+        const QVariantList ids(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
+        if (ids.isEmpty()) {
+            return;
+        }
+
         QMessageBox dialog(this);
         dialog.setIcon(QMessageBox::Warning);
 
@@ -731,7 +736,6 @@ namespace tremotesf
         setRemoveText();
         QObject::connect(&deleteFilesCheckBox, &QCheckBox::toggled, this, setRemoveText);
 
-        const QVariantList ids(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         if (ids.size() == 1) {
             dialog.setWindowTitle(qApp->translate("tremotesf", "Delete Torrent"));
             dialog.setText(qApp->translate("tremotesf", "Are you sure you want to delete this torrent?"));
