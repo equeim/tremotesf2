@@ -120,7 +120,7 @@ namespace libtremotesf
                 const qint64 n = file.read(buffer.data() + offset, buffer.size() - offset);
                 if (n <= 0) {
                     if (offset > 0) {
-                        buffer.resize(offset);
+                        buffer.resize(static_cast<int>(offset));
                         string.append(QLatin1String(buffer.toBase64()));
                     }
                     break;
