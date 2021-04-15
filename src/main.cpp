@@ -62,17 +62,14 @@ int main(int argc, char** argv)
     }
 
     // Send command to another instance
-    {
-        const auto client(tremotesf::IpcClient::createInstance());
-        if (client->isConnected()) {
-            qInfo("Only one instance of Tremotesf can be run at the same time");
-            if (args.files.isEmpty() && args.urls.isEmpty()) {
-                client->activateWindow();
-            } else {
-                client->addTorrents(args.files, args.urls);
-            }
-            return 0;
+    if (const auto client = tremotesf::IpcClient::createInstance(); client->isConnected()) {
+        qInfo("Only one instance of Tremotesf can be run at the same time");
+        if (args.files.isEmpty() && args.urls.isEmpty()) {
+            client->activateWindow();
+        } else {
+            client->addTorrents(args.files, args.urls);
         }
+        return 0;
     }
 
     //

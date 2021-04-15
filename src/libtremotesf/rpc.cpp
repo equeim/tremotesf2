@@ -1241,14 +1241,11 @@ namespace libtremotesf
     bool Rpc::retryRequest(Request&& request, QNetworkReply* previousAttempt)
     {
         int retryAttempts;
-        {
-            const auto found(mRetryingNetworkRequests.find(previousAttempt));
-            if (found != mRetryingNetworkRequests.end()) {
-                retryAttempts = found->second;
-                mRetryingNetworkRequests.erase(found);
-            } else {
-                retryAttempts = 0;
-            }
+        if (const auto found = mRetryingNetworkRequests.find(previousAttempt); found != mRetryingNetworkRequests.end()) {
+            retryAttempts = found->second;
+            mRetryingNetworkRequests.erase(found);
+        } else {
+            retryAttempts = 0;
         }
         ++retryAttempts;
         if (retryAttempts > maxRetryAttempts) {
