@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.9.0] - 2021-05-04
 ### Added
 - It is now possible to specify whole certificate chain for self-signed certificate
 
