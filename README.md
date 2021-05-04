@@ -25,7 +25,7 @@ Table of Contents
 ## Installation
 ### Desktop
 #### Dependencies
-- C++14 compiler
+- C++17 compiler
 - CMake 3.10 or newer
 - Qt 5.6 or newer (Core, Network, Concurrent, Gui, Widgets)
 - KWidgetsAddons
@@ -93,7 +93,7 @@ Windows builds are available at [releases](https://github.com/equeim/tremotesf2/
 ### Sailfish OS
 Tremotesf is available in Jolla Store and [OpenRepos.net](https://openrepos.net/content/equeim/tremotesf).
 #### Dependencies
-Sailfish OS 3.0.3 or newer
+Sailfish OS 3.3.0 or newer
 #### Building
 SSH/chroot into SDK, then:
 ```sh

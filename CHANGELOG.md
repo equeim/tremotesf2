@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- It is now possible to specify whole certificate chain for self-signed certificate
+
+### Changed
+- Ctrl+F now focuses search field in main window
+- C++17 compiler is now required
+
+### Fixed
+- Fixed torrent list artifacts when using GTK2 style plugin for Qt
+
 ## [1.8.0] - 2020-09-06
 ### Added
 - Tremotesf now implements org.freedesktop.Application D-Bus interface on relevant platforms
