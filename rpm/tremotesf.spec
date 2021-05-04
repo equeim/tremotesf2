@@ -44,16 +44,27 @@ BuildRequires: cmake(Qt5LinguistTools)
 BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: gettext
-BuildRequires: libappstream-glib
-# OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
+
 %if %{defined suse_version}
+BuildRequires: appstream-glib
+# OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
+%else
+%if %{defined mageia}
+BuildRequires: appstream-util
+%else
+BuildRequires: libappstream-glib
+%endif
 %endif
 %endif
 
 %if %{defined sailfishos}
-%global build_directory %{_builddir}/build-%{_target}-%(version | awk '{print $3}')
-%global debug 0
+    %global build_directory %{_builddir}/build-%{_target}-%(version | awk '{print $3}')
+    %global debug 0
+%else
+    %if %{defined suse_version}
+    %global _metainfodir %{_datadir}/metainfo
+    %endif
 %endif
 
 
