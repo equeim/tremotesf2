@@ -150,10 +150,24 @@ namespace tremotesf
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         auto freeSpaceLabel = new QLabel(this);
+        auto getFreeSpace = [=](const QString& directory) {
+            const auto trimmed = directory.trimmed();
+            if (trimmed.isEmpty()) {
+                freeSpaceLabel->hide();
+                freeSpaceLabel->clear();
+            } else if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
+                mRpc->getFreeSpaceForPath(trimmed);
+            } else if (trimmed == mRpc->serverSettings()->downloadDirectory()) {
+                mRpc->getDownloadDirFreeSpace();
+            } else {
+                freeSpaceLabel->hide();
+                freeSpaceLabel->clear();
+            }
+        };
+        QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
+            getFreeSpace(text);
+        });
         if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
-            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
-                mRpc->getFreeSpaceForPath(text.trimmed());
-            });
             QObject::connect(mRpc, &Rpc::gotFreeSpaceForPath, this, [=](const QString& path, bool success, long long bytes) {
                 if (path == mDownloadDirectoryWidget->text().trimmed()) {
                     if (success) {
@@ -161,28 +175,18 @@ namespace tremotesf
                     } else {
                         freeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
                     }
+                    freeSpaceLabel->show();
                 }
             });
-            firstFormLayout->addRow(nullptr, freeSpaceLabel);
-            mRpc->getFreeSpaceForPath(mDownloadDirectoryWidget->text().trimmed());
         } else {
-            QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
-                if (text.trimmed() == mRpc->serverSettings()->downloadDirectory()) {
-                    mRpc->getDownloadDirFreeSpace();
-                } else {
-                    freeSpaceLabel->hide();
-                    freeSpaceLabel->clear();
-                }
-            });
-
             QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](auto bytes) {
                 if (mDownloadDirectoryWidget->text().trimmed() == mRpc->serverSettings()->downloadDirectory()) {
                     freeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes)));
                     freeSpaceLabel->show();
                 }
             });
-            mRpc->getDownloadDirFreeSpace();
         }
+        getFreeSpace(mDownloadDirectoryWidget->text());
         firstFormLayout->addRow(nullptr, freeSpaceLabel);
 
         TorrentFilesView* torrentFilesView = nullptr;
