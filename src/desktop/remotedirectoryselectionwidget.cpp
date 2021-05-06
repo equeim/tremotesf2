@@ -80,15 +80,23 @@ namespace tremotesf
             return;
         }
 
-        QStringList currentServerAddTorrentDialogDirectories(Servers::instance()->currentServerAddTorrentDialogDirectories());
+        QStringList currentServerAddTorrentDialogDirectories;
+        {
+            const auto saved = Servers::instance()->currentServerAddTorrentDialogDirectories();
+            currentServerAddTorrentDialogDirectories.reserve(saved.size() + static_cast<int>(mRpc->torrents().size()) + 1);
+            for (const auto& directory : saved) {
+                currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(directory));
+            }
+        }
         const bool wasEmpty = currentServerAddTorrentDialogDirectories.empty();
 
-        currentServerAddTorrentDialogDirectories.reserve(static_cast<int>(mRpc->torrents().size() + 1));
-        currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(mRpc->serverSettings()->downloadDirectory()));
         for (const auto& torrent : mRpc->torrents()) {
             currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(torrent->downloadDirectory()));
         }
+        currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(mRpc->serverSettings()->downloadDirectory()));
+
         currentServerAddTorrentDialogDirectories.removeDuplicates();
+
         QCollator collator;
         collator.setCaseSensitivity(Qt::CaseInsensitive);
         collator.setNumericMode(true);
