@@ -24,12 +24,13 @@
 #include <QDebug>
 #include <QFile>
 #include <QFutureWatcher>
-#include <QMimeDatabase>
 #include <QtConcurrentRun>
 
 namespace tremotesf
 {
     namespace {
+        constexpr qint64 maxTorrentFileSize = 50 * 1024 * 1024; // 50 MiB
+
         class Worker
         {
         public:
@@ -37,22 +38,20 @@ namespace tremotesf
             {
                 QFile file(filePath);
                 if (file.open(QFile::ReadOnly)) {
-                    const QMimeType mimeType(QMimeDatabase().mimeTypeForFile(filePath,
-                                                                             QMimeDatabase::MatchContent));
-                    if (mimeType.name() == QLatin1String("application/x-bittorrent")) {
+                    if (file.size() <= maxTorrentFileSize) {
                         fileData = file.readAll();
                         parseResult = parseMap();
                         if (error != TorrentFileParser::NoError) {
                             fileData.clear();
                             parseResult.clear();
-                            qWarning() << "error parsing file";
+                            qWarning("Error parsing file");
                         }
                     } else {
-                        qWarning() << "wrong mime type" << mimeType.name();
-                        error = TorrentFileParser::WrongMimeType;
+                        qWarning("File is bigger than %lld MiB", static_cast<long long>(maxTorrentFileSize) / 1048576);
+                        error = TorrentFileParser::FileIsTooBig;
                     }
                 } else {
-                    qWarning() << "error reading file";
+                    qWarning("Failed to open file");
                     error = TorrentFileParser::ReadingError;
                 }
             }
@@ -184,8 +183,8 @@ namespace tremotesf
         switch (mError) {
         case ReadingError:
             return qApp->translate("tremotesf", "Error reading torrent file");
-        case WrongMimeType:
-            return qApp->translate("tremotesf", "Wrong MIME type");
+        case FileIsTooBig:
+            return qApp->translate("tremotesf", "Torrent file is bigger than %L1 MiB").arg(maxTorrentFileSize / 1048576);
         case ParsingError:
             return qApp->translate("tremotesf", "Error parsing torrent file");
         default:

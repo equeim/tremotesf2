@@ -36,7 +36,7 @@ namespace tremotesf
         enum Error
         {
             NoError,
-            WrongMimeType,
+            FileIsTooBig,
             ReadingError,
             ParsingError
         };
