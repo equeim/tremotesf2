@@ -375,7 +375,7 @@ namespace libtremotesf
                              int bandwidthPriority,
                              bool start)
     {
-        addTorrentFile([fileData] { return QLatin1String(fileData.toBase64()); },
+        addTorrentFile([fileData] { return QString::fromLatin1(fileData.toBase64()); },
                        downloadDirectory,
                        unwantedFiles,
                        highPriorityFiles,
