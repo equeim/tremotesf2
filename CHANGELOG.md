@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1] - 2021-05-10
+### Changed
+- Disabled MIME type checking for torrent files (it doesn't work for some files)
+- Tremotesf now won't open torrent files that are bigger than 50 MiB
+
+### Fixed
+- Segfault or error when adding torrent files
+
 ## [1.9.0] - 2021-05-04
 ### Added
 - It is now possible to specify whole certificate chain for self-signed certificate
