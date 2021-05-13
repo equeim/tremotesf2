@@ -15,6 +15,7 @@ add_executable(tremotesf
     alltrackersmodel.cpp
     baseproxymodel.cpp
     basetorrentfilesmodel.cpp
+    bencodeparser.cpp
     commandlineparser.cpp
     downloaddirectoriesmodel.cpp
     ipcserver.h
