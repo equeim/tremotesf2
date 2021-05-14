@@ -86,6 +86,7 @@ namespace tremotesf::bencode
 
     namespace
     {
+        template<bool IsSequential>
         class Parser
         {
         public:
@@ -224,7 +225,7 @@ namespace tremotesf::bencode
                     return {};
                 }
                 const auto toSkip = result.ptr - mIntegerBuffer.begin() + 1;
-                if (mDevice.skip(toSkip) != toSkip) {
+                if (!skip(toSkip, mIntegerBuffer.data())) {
                     setErrorFromIODevice("readIntegerUntilTerminator: failed to skip read integer");
                     return {};
                 }
@@ -242,10 +243,30 @@ namespace tremotesf::bencode
 
             bool skipByte()
             {
-                if (mDevice.skip(1) != 1) {
-                    setErrorFromIODevice("skipByte: skip() failure");
+                char ch;
+                return skip(1, &ch);
+            }
+
+            bool skip(qint64 size, char* buffer)
+            {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+                Q_UNUSED(buffer);
+                if (mDevice.skip(size) != size) {
+                    setErrorFromIODevice("skip: skip() failure");
                     return false;
                 }
+#else
+                if constexpr (!IsSequential) {
+                    Q_UNUSED(buffer);
+                    if (!mDevice.seek(mDevice.pos() + size)) {
+                        setErrorFromIODevice("skip: seek() failure");
+                        return false;
+                    }
+                } else if (mDevice.read(buffer, size) != size) {
+                    setErrorFromIODevice("skip: read() failure");
+                    return false;
+                }
+#endif
                 return true;
             }
 
@@ -287,7 +308,7 @@ namespace tremotesf::bencode
     {
         QFile file(filePath);
         if (file.open(QIODevice::ReadOnly)) {
-            return Parser(file).parse();
+            return parse(file);
         }
         qWarning().nospace() << "Failed to open file, error = " << file.error() << ", error string = " << file.errorString();
         return Result{{}, ReadingError};
@@ -295,6 +316,9 @@ namespace tremotesf::bencode
 
     Result parse(QIODevice& device)
     {
-        return Parser(device).parse();
+        if (device.isSequential()) {
+            return Parser<true>(device).parse();
+        }
+        return Parser<false>(device).parse();
     }
 }
