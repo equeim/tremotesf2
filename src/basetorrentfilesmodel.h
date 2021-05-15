@@ -69,7 +69,7 @@ namespace tremotesf
 
         QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
         QModelIndex parent(const QModelIndex& child) const override;
-        int rowCount(const QModelIndex& parent) const override;
+        int rowCount(const QModelIndex& parent = {}) const override;
 
         Q_INVOKABLE virtual void setFileWanted(const QModelIndex& index, bool wanted);
         Q_INVOKABLE virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted);

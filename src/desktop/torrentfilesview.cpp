@@ -50,7 +50,6 @@ namespace tremotesf
     {
         init();
         setItemDelegate(new CommonDelegate(this));
-        expand(mProxyModel->index(0, 0));
         if (!header()->restoreState(Settings::instance()->localTorrentFilesViewHeaderState())) {
             sortByColumn(LocalTorrentFilesModel::NameColumn, Qt::AscendingOrder);
         }
@@ -97,15 +96,22 @@ namespace tremotesf
         setModel(mProxyModel);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-        QObject::connect(mModel, &BaseTorrentFilesModel::modelReset, this, [=] {
+        QObject::connect(mModel, &BaseTorrentFilesModel::modelReset, this, &TorrentFilesView::onModelReset);
+        QObject::connect(this, &TorrentFilesView::customContextMenuRequested, this, &TorrentFilesView::showContextMenu);
+
+        onModelReset();
+    }
+
+    void TorrentFilesView::onModelReset()
+    {
+        if (mModel->rowCount() > 0) {
             if (mModel->rowCount(mModel->index(0, 0)) == 0) {
                 setRootIsDecorated(false);
             } else {
+                setRootIsDecorated(true);
                 expand(mProxyModel->index(0, 0));
             }
-        });
-
-        QObject::connect(this, &TorrentFilesView::customContextMenuRequested, this, &TorrentFilesView::showContextMenu);
+        }
     }
 
     void TorrentFilesView::showContextMenu(QPoint pos)

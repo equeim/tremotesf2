@@ -40,6 +40,7 @@ namespace tremotesf
 
     private:
         void init();
+        void onModelReset();
         void showContextMenu(QPoint pos);
 
     private:
