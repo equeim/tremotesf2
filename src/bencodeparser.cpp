@@ -36,40 +36,7 @@ namespace tremotesf::bencode
         constexpr char byteArraySeparator = ':';
 
         // digits10 + 1 is maximum number of character needed to hold integer, +1 for minus sign, +1 for terminator character
-        constexpr int integerBufferSize = std::numeric_limits<Value::Integer>::digits10 + 3;
-    }
-
-    std::optional<Value::Integer> Value::takeInteger()
-    {
-        return takeValue<Integer>();
-    }
-
-    std::optional<Value::ByteArray> Value::takeByteArray()
-    {
-        return takeValue<ByteArray>();
-    }
-
-    std::optional<QString> Value::takeString()
-    {
-        return std::visit([](auto&& value) -> std::optional<QString> {
-            using T = std::decay_t<decltype(value)>;
-            if constexpr (std::is_same_v<T, ByteArray>) {
-                auto string = QString::fromStdString(value);
-                value.clear();
-                return string;
-            }
-            return std::nullopt;
-        }, mValue);
-    }
-
-    std::optional<Value::List> Value::takeList()
-    {
-        return takeValue<List>();
-    }
-
-    std::optional<Value::Dictionary> Value::takeDictionary()
-    {
-        return takeValue<Dictionary>();
+        constexpr int integerBufferSize = std::numeric_limits<Integer>::digits10 + 3;
     }
 
     template<typename Expected>
@@ -79,6 +46,25 @@ namespace tremotesf::bencode
             using T = std::decay_t<decltype(value)>;
             if constexpr (std::is_same_v<T, Expected>) {
                 return std::move(value);
+            }
+            return std::nullopt;
+        }, mValue);
+    }
+
+    template std::optional<Integer> Value::takeValue();
+    template std::optional<ByteArray> Value::takeValue();
+    template std::optional<List> Value::takeValue();
+    template std::optional<Dictionary> Value::takeValue();
+
+    template<>
+    std::optional<QString> Value::takeValue()
+    {
+        return std::visit([](auto&& value) -> std::optional<QString> {
+            using T = std::decay_t<decltype(value)>;
+            if constexpr (std::is_same_v<T, ByteArray>) {
+                auto string = QString::fromStdString(value);
+                value.clear();
+                return string;
             }
             return std::nullopt;
         }, mValue);
@@ -117,10 +103,10 @@ namespace tremotesf::bencode
                 return parseByteArray();
             }
 
-            Value::Dictionary parseDictionary()
+            Dictionary parseDictionary()
             {
-                return parseContainer<Value::Dictionary>([&](auto& dict) {
-                    Value::ByteArray key(parseByteArray());
+                return parseContainer<Dictionary>([&](auto& dict) {
+                    ByteArray key(parseByteArray());
                     if (mError != NoError) {
                         qWarning("parseDictionary: failed to read dictionary key");
                         return;
@@ -134,9 +120,9 @@ namespace tremotesf::bencode
                 }, "parseDictionary", "dictionary");
             }
 
-            Value::List parseList()
+            List parseList()
             {
-                return parseContainer<Value::List>([&](auto& list) {
+                return parseContainer<List>([&](auto& list) {
                     Value value = parseValue();
                     if (mError == NoError) {
                         list.push_back(std::move(value));
@@ -172,7 +158,7 @@ namespace tremotesf::bencode
                 return {};
             }
 
-            Value::ByteArray parseByteArray()
+            ByteArray parseByteArray()
             {
                 const auto size = readIntegerUntilTerminator(byteArraySeparator);
                 if (mError != NoError) {
@@ -184,7 +170,7 @@ namespace tremotesf::bencode
                     mError = ParsingError;
                     return {};
                 }
-                Value::ByteArray byteArray(static_cast<size_t>(size), 0);
+                ByteArray byteArray(static_cast<size_t>(size), 0);
                 auto read = mDevice.read(byteArray.data(), size);
                 if (read != size) {
                     setErrorFromIODevice(QString::fromLatin1("parseByteArray: failed to read byte array with size %1").arg(size));
@@ -193,7 +179,7 @@ namespace tremotesf::bencode
                 return byteArray;
             }
 
-            Value::Integer parseInteger()
+            Integer parseInteger()
             {
                 if (!skipByte()) {
                     qWarning("parseInteger: failed to skip prefix");
@@ -206,13 +192,13 @@ namespace tremotesf::bencode
                 return integer;
             }
 
-            Value::Integer readIntegerUntilTerminator(char terminator) {
+            Integer readIntegerUntilTerminator(char terminator) {
                 const auto peeked = mDevice.peek(mIntegerBuffer.data(), integerBufferSize);
                 if (peeked <= 0) {
                     setErrorFromIODevice("readIntegerUntilTerminator: failed to peek integer buffer");
                     return {};
                 }
-                Value::Integer integer{};
+                Integer integer{};
                 const auto result = std::from_chars(mIntegerBuffer.begin(), mIntegerBuffer.end(), integer);
                 if (result.ec != std::errc{}) {
                     qWarning("readIntegerUntilTerminator: error parsing integer, std::from_chars() error %s", std::make_error_condition(result.ec).message().data());

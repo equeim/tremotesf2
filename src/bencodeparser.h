@@ -27,44 +27,63 @@
 #include <string_view>
 #include <variant>
 
-class QIODevice;
-class QString;
+#include <QString>
 
-namespace tremotesf::bencode
+class QIODevice;
+
+namespace tremotesf
 {
+namespace bencode
+{
+    class Value;
+
+    using Integer = int64_t;
+    using ByteArray = std::string;
+    using List = std::list<Value>;
+    struct DictionaryComparator
+    {
+        using is_transparent = void;
+        inline bool operator()(const ByteArray& key1, const ByteArray& key2) const { return key1 < key2; }
+        inline bool operator()(std::string_view key1, const ByteArray& key2) const { return key1 < key2; }
+        inline bool operator()(const ByteArray& key1, std::string_view key2) const { return key1 < key2; }
+    };
+    using Dictionary = std::map<ByteArray, Value, DictionaryComparator>;
+
     class Value {
     public:
-        using Integer = int64_t;
-        using ByteArray = std::string;
-        using List = std::list<Value>;
-
-        struct DictionaryComparator
-        {
-            using is_transparent = void;
-            inline bool operator()(const ByteArray& key1, const ByteArray& key2) const { return key1 < key2; }
-            inline bool operator()(std::string_view key1, const ByteArray& key2) const { return key1 < key2; }
-            inline bool operator()(const ByteArray& key1, std::string_view key2) const { return key1 < key2; }
-        };
-        using Dictionary = std::map<ByteArray, Value, DictionaryComparator>;
-
         Value() = default;
-        inline Value(Integer value) : mValue{value} {};
-        inline Value(ByteArray&& value) : mValue{std::move(value)} {};
-        inline Value(List&& value) : mValue{std::move(value)} {};
-        inline Value(Dictionary&& value) : mValue{std::move(value)} {};
+        inline Value(Integer value) : mValue{value} {}
+        inline Value(ByteArray&& value) : mValue{std::move(value)} {}
+        inline Value(List&& value) : mValue{std::move(value)} {}
+        inline Value(Dictionary&& value) : mValue{std::move(value)} {}
 
-        std::optional<Integer> takeInteger();
-        std::optional<ByteArray> takeByteArray();
-        std::optional<QString> takeString();
-        std::optional<List> takeList();
-        std::optional<Dictionary> takeDictionary();
-    private:
-        using Variant = std::variant<Integer, ByteArray, List, Dictionary>;
-        Variant mValue{};
+        inline std::optional<Integer> takeInteger();
+        inline std::optional<ByteArray> takeByteArray();
+        inline std::optional<QString> takeString();
+        inline std::optional<List> takeList();
+        inline std::optional<Dictionary> takeDictionary();
 
         template<typename Expected>
         std::optional<Expected> takeValue();
+    private:
+        using Variant = std::variant<Integer, ByteArray, List, Dictionary>;
+        Variant mValue{};
     };
+
+    extern template std::optional<Integer> Value::takeValue();
+    extern template std::optional<ByteArray> Value::takeValue();
+    extern template std::optional<List> Value::takeValue();
+    extern template std::optional<Dictionary> Value::takeValue();
+
+    template<>
+    std::optional<QString> Value::takeValue();
+    extern template std::optional<QString> Value::takeValue();
+
+    inline std::optional<Integer> Value::takeInteger() { return takeValue<Integer>(); }
+    inline std::optional<ByteArray> Value::takeByteArray() { return takeValue<ByteArray>(); }
+    inline std::optional<QString> Value::takeString() { return takeValue<QString>(); }
+    inline std::optional<List> Value::takeList() { return takeValue<List>(); }
+    inline std::optional<Dictionary> Value::takeDictionary() { return takeValue<Dictionary>(); }
 
     enum Error
     {
@@ -81,6 +100,7 @@ namespace tremotesf::bencode
 
     Result parse(const QString& filePath);
     Result parse(QIODevice& device);
+}
 }
 
 #endif // TREMOTESF_BENCODEPARSER_H
