@@ -366,7 +366,7 @@ namespace libtremotesf
         setStatus(Disconnected);
     }
 
-    void Rpc::addTorrentFile(const QByteArray& fileData,
+    void Rpc::addTorrentFile(const QString& filePath,
                              const QString& downloadDirectory,
                              const QVariantList& unwantedFiles,
                              const QVariantList& highPriorityFiles,
@@ -375,14 +375,22 @@ namespace libtremotesf
                              int bandwidthPriority,
                              bool start)
     {
-        addTorrentFile([fileData] { return QString::fromLatin1(fileData.toBase64()); },
-                       downloadDirectory,
-                       unwantedFiles,
-                       highPriorityFiles,
-                       lowPriorityFiles,
-                       renamedFiles,
-                       bandwidthPriority,
-                       start);
+        if (!isConnected()) {
+            return;
+        }
+        if (auto file = std::make_shared<QFile>(filePath); file->open(QIODevice::ReadOnly)) {
+            addTorrentFile(std::move(file),
+                           downloadDirectory,
+                           unwantedFiles,
+                           highPriorityFiles,
+                           lowPriorityFiles,
+                           renamedFiles,
+                           bandwidthPriority,
+                           start);
+        } else {
+            qWarning().nospace() << "addTorrentFile: failed to open file, error = " << file->error() << ", error string = " << file->errorString();
+            emit torrentAddError();
+        }
     }
 
     void Rpc::addTorrentFile(std::shared_ptr<QFile> file,
@@ -394,14 +402,49 @@ namespace libtremotesf
                              int bandwidthPriority,
                              bool start)
     {
-        addTorrentFile([file = std::move(file)] { return readFileAsBase64String(*file); },
-                       downloadDirectory,
-                       unwantedFiles,
-                       highPriorityFiles,
-                       lowPriorityFiles,
-                       renamedFiles,
-                       bandwidthPriority,
-                       start);
+        if (!isConnected()) {
+            return;
+        }
+        const auto future = QtConcurrent::run([=, file = std::move(file)]() {
+            return makeRequestData(QLatin1String("torrent-add"),
+                                   {{QLatin1String("metainfo"), readFileAsBase64String(*file)},
+                                    {QLatin1String("download-dir"), downloadDirectory},
+                                    {QLatin1String("files-unwanted"), unwantedFiles},
+                                    {QLatin1String("priority-high"), highPriorityFiles},
+                                    {QLatin1String("priority-low"), lowPriorityFiles},
+                                    {QLatin1String("bandwidthPriority"), bandwidthPriority},
+                                    {QLatin1String("paused"), !start}});
+        });
+        auto watcher = new QFutureWatcher<QByteArray>(this);
+        QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=] {
+            if (isConnected()) {
+                postRequest(QLatin1String("torrent-add"), watcher->result(), [=](const auto& parseResult, bool success) {
+                    if (success) {
+                        const auto arguments(getReplyArguments(parseResult));
+                        if (arguments.contains(torrentDuplicateKey)) {
+                            emit torrentAddDuplicate();
+                        } else {
+                            if (!renamedFiles.isEmpty()) {
+                                const QJsonObject torrentJson(arguments.value(QLatin1String("torrent-added")).toObject());
+                                if (!torrentJson.isEmpty()) {
+                                    const int id = torrentJson.value(Torrent::idKey).toInt();
+                                    for (auto i = renamedFiles.begin(), end = renamedFiles.end();
+                                         i != end;
+                                         ++i) {
+                                        renameTorrentFile(id, i.key(), i.value().toString());
+                                    }
+                                }
+                            }
+                            updateData();
+                        }
+                    } else {
+                        emit torrentAddError();
+                    }
+                });
+                watcher->deleteLater();
+            }
+        });
+        watcher->setFuture(future);
     }
 
     void Rpc::addTorrentLink(const QString& link,
@@ -799,61 +842,6 @@ namespace libtremotesf
             mErrorMessage = errorMessage;
             emit errorChanged();
         }
-    }
-
-    template<typename FileDataBase64StringProvider>
-    void Rpc::addTorrentFile(FileDataBase64StringProvider&& fileDataProvider,
-                             const QString& downloadDirectory,
-                             const QVariantList& unwantedFiles,
-                             const QVariantList& highPriorityFiles,
-                             const QVariantList& lowPriorityFiles,
-                             const QVariantMap& renamedFiles,
-                             int bandwidthPriority,
-                             bool start)
-    {
-        if (isConnected()) {
-            const auto future = QtConcurrent::run([=, fileDataProvider = std::forward<FileDataBase64StringProvider>(fileDataProvider)] {
-                return makeRequestData(QLatin1String("torrent-add"),
-                                       {{QLatin1String("metainfo"), fileDataProvider()},
-                                        {QLatin1String("download-dir"), downloadDirectory},
-                                        {QLatin1String("files-unwanted"), unwantedFiles},
-                                        {QLatin1String("priority-high"), highPriorityFiles},
-                                        {QLatin1String("priority-low"), lowPriorityFiles},
-                                        {QLatin1String("bandwidthPriority"), bandwidthPriority},
-                                        {QLatin1String("paused"), !start}});
-            });
-            auto watcher = new QFutureWatcher<QByteArray>(this);
-            QObject::connect(watcher, &QFutureWatcher<QByteArray>::finished, this, [=] {
-                if (isConnected()) {
-                    postRequest(QLatin1String("torrent-add"), watcher->result(), [=](const auto& parseResult, bool success) {
-                        if (success) {
-                            const auto arguments(getReplyArguments(parseResult));
-                            if (arguments.contains(torrentDuplicateKey)) {
-                                emit torrentAddDuplicate();
-                            } else {
-                                if (!renamedFiles.isEmpty()) {
-                                    const QJsonObject torrentJson(arguments.value(QLatin1String("torrent-added")).toObject());
-                                    if (!torrentJson.isEmpty()) {
-                                        const int id = torrentJson.value(Torrent::idKey).toInt();
-                                        for (auto i = renamedFiles.begin(), end = renamedFiles.end();
-                                             i != end;
-                                             ++i) {
-                                            renameTorrentFile(id, i.key(), i.value().toString());
-                                        }
-                                    }
-                                }
-                                updateData();
-                            }
-                        } else {
-                            emit torrentAddError();
-                        }
-                    });
-                    watcher->deleteLater();
-                }
-            });
-            watcher->setFuture(future);
-        }
-
     }
 
     void Rpc::getServerSettings()

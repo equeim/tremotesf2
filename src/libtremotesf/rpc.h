@@ -144,7 +144,7 @@ namespace libtremotesf
         Q_INVOKABLE void connect();
         Q_INVOKABLE void disconnect();
 
-        Q_INVOKABLE void addTorrentFile(const QByteArray& fileData,
+        Q_INVOKABLE void addTorrentFile(const QString& filePath,
                                         const QString& downloadDirectory,
                                         const QVariantList& unwantedFiles,
                                         const QVariantList& highPriorityFiles,
@@ -208,16 +208,6 @@ namespace libtremotesf
 
         void setStatus(Status status);
         void setError(Error error, const QString& errorMessage = QString());
-
-        template<typename FileDataBase64StringProvider>
-        void addTorrentFile(FileDataBase64StringProvider&& fileDataProvider,
-                            const QString& downloadDirectory,
-                            const QVariantList& unwantedFiles,
-                            const QVariantList& highPriorityFiles,
-                            const QVariantList& lowPriorityFiles,
-                            const QVariantMap& renamedFiles,
-                            int bandwidthPriority,
-                            bool start);
 
         void getServerSettings();
         void getTorrents();
