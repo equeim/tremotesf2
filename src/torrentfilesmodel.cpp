@@ -228,7 +228,7 @@ namespace tremotesf
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName)
     {
-        if (!mLoaded) {
+        if (!mLoaded || !mRootDirectory) {
             return;
         }
         TorrentFilesModelEntry* entry = mRootDirectory.get();
@@ -305,7 +305,7 @@ namespace tremotesf
         if (mLoaded) {
             beginResetModel();
             endResetModel();
-            mRootDirectory->clearChildren();
+            mRootDirectory.reset();
             endResetModel();
             mFiles.clear();
             setLoaded(false);

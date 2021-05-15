@@ -30,14 +30,12 @@ namespace tremotesf
 {
 #ifdef TREMOTESF_SAILFISHOS
     BaseTorrentFilesModel::BaseTorrentFilesModel(QObject* parent)
-        : QAbstractItemModel(parent),
-          mRootDirectory(std::make_shared<TorrentFilesModelDirectory>())
+        : QAbstractItemModel(parent)
     {
     }
 #else
     BaseTorrentFilesModel::BaseTorrentFilesModel(std::vector<Column>&& columns, QObject* parent)
         : QAbstractItemModel(parent),
-          mRootDirectory(std::make_shared<TorrentFilesModelDirectory>()),
           mColumns(std::move(columns))
     {
     }
@@ -176,14 +174,15 @@ namespace tremotesf
         const TorrentFilesModelDirectory* parentDirectory;
         if (parent.isValid()) {
             parentDirectory = static_cast<TorrentFilesModelDirectory*>(parent.internalPointer());
-        } else {
+        } else if (mRootDirectory) {
             parentDirectory = mRootDirectory.get();
+        } else {
+            return {};
         }
-
         if (row >= 0 && static_cast<size_t>(row) < parentDirectory->children().size()) {
             return createIndex(row, column, parentDirectory->children()[static_cast<size_t>(row)]);
         }
-        return QModelIndex();
+        return {};
     }
 
     QModelIndex BaseTorrentFilesModel::parent(const QModelIndex& child) const
@@ -209,7 +208,10 @@ namespace tremotesf
             }
             return 0;
         }
-        return static_cast<int>(mRootDirectory->children().size());
+        if (mRootDirectory) {
+            return static_cast<int>(mRootDirectory->children().size());
+        }
+        return 0;
     }
 
     void BaseTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
@@ -252,8 +254,10 @@ namespace tremotesf
         const TorrentFilesModelDirectory* directory;
         if (parent.isValid()) {
             directory = static_cast<const TorrentFilesModelDirectory*>(parent.internalPointer());
-        } else {
+        } else if (mRootDirectory) {
             directory = mRootDirectory.get();
+        } else {
+            return;
         }
         ModelBatchChanger changer(this, parent);
         for (TorrentFilesModelEntry* child : directory->children()) {
