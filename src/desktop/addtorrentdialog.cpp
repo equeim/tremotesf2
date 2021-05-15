@@ -28,6 +28,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include <KColumnResizer>
@@ -36,7 +37,6 @@
 #include "../libtremotesf/serversettings.h"
 #include "../localtorrentfilesmodel.h"
 #include "../servers.h"
-#include "../torrentfileparser.h"
 #include "../trpc.h"
 #include "../utils.h"
 #include "remotedirectoryselectionwidget.h"
@@ -54,34 +54,25 @@ namespace tremotesf
     }
 
     AddTorrentDialog::AddTorrentDialog(Rpc* rpc,
-                                       const QString& filePath,
-                                       TorrentFileParser* parser,
-                                       LocalTorrentFilesModel* filesModel,
+                                       const QString& url,
+                                       Mode mode,
                                        QWidget* parent)
         : QDialog(parent),
           mRpc(rpc),
-          mUrl(filePath),
-          mLocalFile(true),
-          mParser(parser),
-          mFilesModel(filesModel)
-    {
-        mParser->setParent(this);
-        mFilesModel->setParent(this);
-        setupUi();
-    }
-
-    AddTorrentDialog::AddTorrentDialog(Rpc* rpc, const QString& url, QWidget* parent)
-        : QDialog(parent),
-          mRpc(rpc),
           mUrl(url),
-          mLocalFile(false)
+          mMode(mode),
+          mFilesModel(mode == Mode::File ? new LocalTorrentFilesModel(this) : nullptr)
     {
         setupUi();
+
+        if (mFilesModel) {
+            mFilesModel->load(url);
+        }
     }
 
     QSize AddTorrentDialog::sizeHint() const
     {
-        if (mLocalFile) {
+        if (mMode == Mode::File) {
             return minimumSizeHint().expandedTo(QSize(448, 512));
         }
         return minimumSizeHint().expandedTo(QSize(448, 0));
@@ -89,15 +80,15 @@ namespace tremotesf
 
     void AddTorrentDialog::accept()
     {
-        if (mLocalFile) {
-            mRpc->addTorrentFile(mParser->fileData(),
-                                 mDownloadDirectoryWidget->text(),
-                                 mFilesModel->unwantedFiles(),
-                                 mFilesModel->highPriorityFiles(),
-                                 mFilesModel->lowPriorityFiles(),
-                                 mFilesModel->renamedFiles(),
-                                 priorityComboBoxItems[mPriorityComboBox->currentIndex()],
-                                 mStartTorrentCheckBox->isChecked());
+        if (mMode == Mode::File) {
+           mRpc->addTorrentFile(mUrl,
+                                mDownloadDirectoryWidget->text(),
+                                mFilesModel->unwantedFiles(),
+                                mFilesModel->highPriorityFiles(),
+                                mFilesModel->lowPriorityFiles(),
+                                mFilesModel->renamedFiles(),
+                                priorityComboBoxItems[mPriorityComboBox->currentIndex()],
+                                mStartTorrentCheckBox->isChecked());
         } else {
             mRpc->addTorrentLink(mTorrentLinkLineEdit->text(),
                                  mDownloadDirectoryWidget->text(),
@@ -112,7 +103,7 @@ namespace tremotesf
 
     void AddTorrentDialog::setupUi()
     {
-        if (mLocalFile) {
+        if (mMode == Mode::File) {
             setWindowTitle(qApp->translate("tremotesf", "Add Torrent File"));
         } else {
             setWindowTitle(qApp->translate("tremotesf", "Add Torrent Link"));
@@ -123,8 +114,6 @@ namespace tremotesf
 
         auto messageWidget = new KMessageWidget(this);
         messageWidget->setCloseButtonVisible(false);
-        messageWidget->setMessageType(KMessageWidget::Warning);
-        messageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
         messageWidget->hide();
         layout->addWidget(messageWidget);
 
@@ -135,7 +124,7 @@ namespace tremotesf
         layout->addWidget(firstFormWidget);
 
         mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
-        if (mLocalFile) {
+        if (mMode == Mode::File) {
             mTorrentLinkLineEdit->setReadOnly(true);
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
         } else {
@@ -190,7 +179,7 @@ namespace tremotesf
         firstFormLayout->addRow(nullptr, freeSpaceLabel);
 
         TorrentFilesView* torrentFilesView = nullptr;
-        if (mLocalFile) {
+        if (mMode == Mode::File) {
             torrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
             layout->addWidget(torrentFilesView, 1);
         }
@@ -216,7 +205,7 @@ namespace tremotesf
         mPriorityComboBox->setCurrentIndex(index_of_i(priorityComboBoxItems, libtremotesf::Torrent::Priority::NormalPriority));
 
         QFormLayout* secondFormLayout = nullptr;
-        if (mLocalFile) {
+        if (mMode == Mode::File) {
             secondFormLayout = new QFormLayout();
             secondFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
             layout->addLayout(secondFormLayout);
@@ -240,11 +229,9 @@ namespace tremotesf
         setMinimumSize(minimumSizeHint());
 
         const auto updateUi = [=] {
-            bool enabled = true;
-            if (mRpc->isConnected()) {
+            const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
+            if (enabled) {
                 mDownloadDirectoryWidget->updateComboBox(mRpc->serverSettings()->downloadDirectory());
-            } else {
-                enabled = false;
             }
 
             for (int i = 0, max = firstFormLayout->count(); i < max; ++i) {
@@ -264,8 +251,19 @@ namespace tremotesf
             mStartTorrentCheckBox->setEnabled(enabled);
 
             if (enabled) {
+                if (messageWidget->isShowAnimationRunning()) {
+                    messageWidget->hide();
+                } else {
+                    messageWidget->animatedHide();
+                }
                 messageWidget->animatedHide();
+            } else if (mFilesModel && !mFilesModel->isLoaded()) {
+                messageWidget->setMessageType(KMessageWidget::Information);
+                messageWidget->setText(qApp->translate("tremotesf", "Loading"));
+                messageWidget->animatedShow();
             } else {
+                messageWidget->setMessageType(KMessageWidget::Warning);
+                messageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
                 messageWidget->animatedShow();
             }
 
@@ -275,13 +273,33 @@ namespace tremotesf
         QObject::connect(mRpc, &Rpc::connectedChanged, this, updateUi);
         QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
 
-        updateUi();
+        if (mFilesModel) {
+            QObject::connect(mFilesModel, &LocalTorrentFilesModel::loadedChanged, this, [=] {
+                if (mFilesModel->isSuccessfull()) {
+                    updateUi();
+                } else {
+                    auto messageBox = new QMessageBox(QMessageBox::Critical,
+                                                      qApp->translate("tremotesf", "Error"),
+                                                      mFilesModel->errorString(),
+                                                      QMessageBox::Close,
+                                                      parentWidget());
+                    messageBox->setAttribute(Qt::WA_DeleteOnClose);
+                    messageBox->show();
+                    close();
+                }
+            });
+        }
+
+        // If call updateUi() right now and need to show messageWidget, it will be
+        // shown without animation, because we are not visible yet
+        // Call it at the next available event loop iteration
+        QTimer::singleShot(0, this, updateUi);
     }
 
     void AddTorrentDialog::canAcceptUpdate()
     {
-        bool can = mRpc->isConnected();
-        if (!mLocalFile && mTorrentLinkLineEdit->text().isEmpty()) {
+        bool can = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
+        if (mMode == Mode::Url && mTorrentLinkLineEdit->text().isEmpty()) {
             can = false;
         }
         if (mDownloadDirectoryWidget->text().isEmpty()) {

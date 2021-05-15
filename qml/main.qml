@@ -46,27 +46,16 @@ ApplicationWindow {
         }
     }
 
-    function addTorrentFile(filePath, operationType) {
-        var parser = parserComponent.createObject(null, {"filePath": filePath})
-        if (parser.error) {
-            pageStack.push("components/TorrentFileParserErrorDialog.qml", {"filePath": filePath}, operationType)
-        } else {
-            pageStack.push("components/AddTorrentFileDialog.qml",
-                           {"filePath": filePath,
-                            "parseResult": parser.result},
-                           operationType)
-        }
-    }
-
     cover: Qt.resolvedUrl("components/Cover.qml")
     initialPage: mainPage
 
     Component.onCompleted: {
         var addTorrent = function() {
             if (files.length) {
-                addTorrentFile(files[0])
+                pageStack.push("components/AddTorrentFileDialog.qml",
+                               {filePath: files[0]})
             } else if (urls.length) {
-                pageStack.push("components/AddTorrentLinkDialog.qml", {"url": urls[0]})
+                pageStack.push("components/AddTorrentLinkDialog.qml", {url: urls[0]})
             }
             rpc.connectedChanged.disconnect(addTorrent)
         }
@@ -108,15 +97,12 @@ ApplicationWindow {
             activate()
             pageStack.pop(mainPage, PageStackAction.Immediate)
             if (files.length > 0) {
-                addTorrentFile(files[0], PageStackAction.Immediate)
+                pageStack.push("components/AddTorrentFileDialog.qml",
+                               {filePath: files[0]},
+                               PageStackAction.Immediate)
             } else if (urls.length > 0) {
                 pageStack.push("components/AddTorrentLinkDialog.qml", {"url": urls[0]}, PageStackAction.Immediate)
             }
         }
-    }
-
-    Component {
-        id: parserComponent
-        TorrentFileParser { }
     }
 }

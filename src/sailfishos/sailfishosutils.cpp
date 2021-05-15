@@ -34,7 +34,6 @@
 #include "../statusfilterstats.h"
 #include "../torrentfilesmodel.h"
 #include "../torrentfilesmodelentry.h"
-#include "../torrentfileparser.h"
 #include "../torrentfilesproxymodel.h"
 #include "../torrentsmodel.h"
 #include "../torrentsproxymodel.h"
@@ -109,7 +108,6 @@ namespace tremotesf
 
         qmlRegisterType<DirectoryContentModel>(url, versionMajor, versionMinor, "DirectoryContentModel");
 
-        qmlRegisterType<TorrentFileParser>(url, versionMajor, versionMinor, "TorrentFileParser");
         qmlRegisterType<LocalTorrentFilesModel>(url, versionMajor, versionMinor, "LocalTorrentFilesModel");
 
         qmlRegisterSingletonType<SailfishOSUtils>(url,

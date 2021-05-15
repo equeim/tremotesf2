@@ -27,7 +27,6 @@ add_executable(tremotesf
     settings.cpp
     signalhandler.cpp
     statusfilterstats.cpp
-    torrentfileparser.cpp
     torrentfilesmodel.cpp
     torrentfilesmodelentry.cpp
     torrentfilesproxymodel.cpp

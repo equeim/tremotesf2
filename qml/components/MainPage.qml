@@ -100,8 +100,7 @@ Page {
                 onClicked: {
                     var dialog = pageStack.push("FileSelectionDialog.qml", {"acceptDestination": Qt.createComponent("AddTorrentFileDialog.qml"),
                                                                             "acceptDestinationAction": PageStackAction.Replace,
-                                                                            "nameFilters": ["*.torrent"],
-                                                                            "automaticAccept": false})
+                                                                            "nameFilters": ["*.torrent"]})
                     dialog.accepted.connect(function() {
                         dialog.acceptDestinationInstance.filePath = dialog.filePath
                     })

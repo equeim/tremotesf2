@@ -285,16 +285,17 @@ namespace tremotesf
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=] {
-            auto result = watcher->result();
-            mRootDirectory = std::move(result.first);
-            mFiles = std::move(result.second);
+            auto [rootDirectory, files] = watcher->result();
 
+            mRootDirectory = std::move(rootDirectory);
             endResetModel();
+
+            mFiles = std::move(files);
 
             setLoaded(true);
             setLoading(false);
-
             mCreatingTree = false;
+
             watcher->deleteLater();
         });
         watcher->setFuture(future);
@@ -304,7 +305,6 @@ namespace tremotesf
     {
         if (mLoaded) {
             beginResetModel();
-            endResetModel();
             mRootDirectory.reset();
             endResetModel();
             mFiles.clear();

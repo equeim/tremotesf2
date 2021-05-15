@@ -32,17 +32,20 @@ namespace tremotesf
     class LocalTorrentFilesModel;
     class RemoteDirectorySelectionWidget;
     class Rpc;
-    class TorrentFileParser;
 
     class AddTorrentDialog : public QDialog
     {
     public:
+        enum class Mode
+        {
+            File,
+            Url
+        };
+
         explicit AddTorrentDialog(Rpc* rpc,
-                                  const QString& filePath,
-                                  TorrentFileParser* parser,
-                                  LocalTorrentFilesModel* filesModel,
+                                  const QString& url,
+                                  Mode mode,
                                   QWidget* parent = nullptr);
-        explicit AddTorrentDialog(Rpc* rpc, const QString& url, QWidget* parent = nullptr);
 
         QSize sizeHint() const override;
         void accept() override;
@@ -53,9 +56,8 @@ namespace tremotesf
 
         Rpc* mRpc;
         QString mUrl;
-        bool mLocalFile;
+        Mode mMode;
 
-        TorrentFileParser* mParser = nullptr;
         LocalTorrentFilesModel* mFilesModel = nullptr;
 
         QLineEdit* mTorrentLinkLineEdit = nullptr;

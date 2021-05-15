@@ -27,9 +27,9 @@ Dialog {
     property string filePath
 
     allowedOrientations: defaultAllowedOrientations
-    canAccept: filesModel.loaded && downloadDirectoryItem.text
+    canAccept: filesModel.loaded && filesModel.isSuccessfull && downloadDirectoryItem.text
 
-    onAccepted: rpc.addTorrentFile(parser.fileData,
+    onAccepted: rpc.addTorrentFile(filePath,
                                    downloadDirectoryItem.text,
                                    filesModel.unwantedFiles,
                                    filesModel.highPriorityFiles,
@@ -38,13 +38,9 @@ Dialog {
                                    priorityComboBox.currentPriority,
                                    startSwitch.checked)
 
-    TorrentFileParser {
-        id: parser
-        filePath: addTorrentFileDialog.filePath
-        onDone: {
-            if (error === TorrentFileParser.NoError) {
-                filesModel.load(parser)
-            }
+    onFilePathChanged: {
+        if (filePath) {
+            filesModel.load(filePath)
         }
     }
 
@@ -55,17 +51,7 @@ Dialog {
     BusyIndicator {
         anchors.centerIn: parent
         size: BusyIndicatorSize.Large
-        running: {
-            if (!filePath) {
-                return false
-            }
-
-            if (parser.error === TorrentFileParser.NoError) {
-                return !parser.loaded || !filesModel.loaded
-            }
-
-            return false
-        }
+        running: filePath && !filesModel.loaded
     }
 
     SilicaFlickable {
@@ -73,15 +59,15 @@ Dialog {
         contentHeight: column.height
 
         ViewPlaceholder {
-            enabled: parser.error !== TorrentFileParser.NoError
-            text: parser.errorString
+            enabled: !filesModel.isSuccessfull
+            text: filesModel.errorString
         }
 
         Column {
             id: column
 
             width: parent.width
-            visible: filesModel.loaded
+            visible: filesModel.loaded && filesModel.isSuccessfull
 
             DialogHeader {
                 title: qsTranslate("tremotesf", "Add Torrent File")

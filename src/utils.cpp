@@ -26,8 +26,6 @@
 #include <QFile>
 #include <QLocale>
 
-#include "torrentfileparser.h"
-
 #ifdef TREMOTESF_SAILFISHOS
 #include "sailfishos/sailfishosutils.h"
 #endif
@@ -187,7 +185,6 @@ namespace tremotesf
 
     void Utils::registerTypes()
     {
-        qRegisterMetaType<TorrentFileParser::Error>();
 #ifdef TREMOTESF_SAILFISHOS
         SailfishOSUtils::registerTypes();
 #endif

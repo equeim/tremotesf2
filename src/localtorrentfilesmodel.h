@@ -24,6 +24,7 @@
 #include <QVariantMap>
 
 #include "basetorrentfilesmodel.h"
+#include "bencodeparser.h"
 
 namespace tremotesf
 {
@@ -33,17 +34,20 @@ namespace tremotesf
     {
         Q_OBJECT
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
+        Q_PROPERTY(bool isSuccessfull READ isSuccessfull NOTIFY loadedChanged)
+        Q_PROPERTY(QString errorString READ errorString NOTIFY loadedChanged)
         Q_PROPERTY(QVariantList unwantedFiles READ unwantedFiles)
         Q_PROPERTY(QVariantList highPriorityFiles READ highPriorityFiles)
         Q_PROPERTY(QVariantList lowPriorityFiles READ lowPriorityFiles)
         Q_PROPERTY(QVariantMap renamedFiles READ renamedFiles)
     public:
-        explicit LocalTorrentFilesModel(const QVariantMap& parseResult = QVariantMap(),
-                                        QObject* parent = nullptr);
+        explicit LocalTorrentFilesModel(QObject* parent = nullptr);
 
-        Q_INVOKABLE void load(tremotesf::TorrentFileParser* parser);
+        Q_INVOKABLE void load(const QString& filePath);
 
         bool isLoaded() const;
+        bool isSuccessfull() const;
+        QString errorString() const;
 
         QVariantList unwantedFiles() const;
         QVariantList highPriorityFiles() const;
@@ -58,10 +62,9 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
-        void load(const QVariantMap& parseResult);
-
         std::vector<TorrentFilesModelFile*> mFiles;
         bool mLoaded;
+        bencode::Error mError;
 
         QVariantMap mRenamedFiles;
     signals:

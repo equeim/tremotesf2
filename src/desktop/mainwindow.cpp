@@ -63,10 +63,8 @@
 #include "../libtremotesf/torrent.h"
 #include "../ipcclient.h"
 #include "../ipcserver.h"
-#include "../localtorrentfilesmodel.h"
 #include "../servers.h"
 #include "../settings.h"
-#include "../torrentfileparser.h"
 #include "../torrentsmodel.h"
 #include "../torrentsproxymodel.h"
 #include "../trpc.h"
@@ -368,7 +366,7 @@ namespace tremotesf
         QObject::connect(mAddTorrentLinkAction, &QAction::triggered, this, [=] {
             setWindowState(windowState() & ~Qt::WindowMinimized);
             auto showDialog = [=] {
-                auto dialog = new AddTorrentDialog(mRpc, QString(), this);
+                auto dialog = new AddTorrentDialog(mRpc, QString(), AddTorrentDialog::Mode::Url, this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 dialog->show();
             };
@@ -588,39 +586,18 @@ namespace tremotesf
 
     void MainWindow::showAddTorrentFileDialogs(const QStringList& files)
     {
-        if (files.isEmpty()) {
-            return;
-        }
-
         for (const QString& filePath : files) {
-            auto parser = new TorrentFileParser(filePath, this);
-            QObject::connect(parser, &TorrentFileParser::done, this, [=] {
-                if (parser->error() == TorrentFileParser::NoError) {
-                    auto filesModel = new LocalTorrentFilesModel(parser->parseResult(), this);
-                    QObject::connect(filesModel, &LocalTorrentFilesModel::loadedChanged, this, [=] {
-                        auto dialog = new AddTorrentDialog(mRpc, filePath, parser, filesModel, this);
-                        dialog->setAttribute(Qt::WA_DeleteOnClose);
-                        dialog->show();
-                        dialog->activateWindow();
-                        QObject::disconnect(filesModel, &LocalTorrentFilesModel::loadedChanged, this, nullptr);
-                    });
-                } else {
-                    auto messageBox = new QMessageBox(QMessageBox::Critical,
-                                                      qApp->translate("tremotesf", "Error"),
-                                                      parser->errorString(),
-                                                      QMessageBox::Close,
-                                                      this);
-                    messageBox->setAttribute(Qt::WA_DeleteOnClose);
-                    messageBox->show();
-                }
-            });
+            auto dialog = new AddTorrentDialog(mRpc, filePath, AddTorrentDialog::Mode::File, this);
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->show();
+            dialog->activateWindow();
         }
     }
 
     void MainWindow::showAddTorrentLinkDialogs(const QStringList& urls)
     {
         for (const QString& url : urls) {
-            auto dialog = new AddTorrentDialog(mRpc, url, this);
+            auto dialog = new AddTorrentDialog(mRpc, url, AddTorrentDialog::Mode::Url, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
             dialog->activateWindow();
