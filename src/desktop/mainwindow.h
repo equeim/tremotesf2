@@ -104,10 +104,6 @@ namespace tremotesf
         QAction* mAddTorrentFileAction = nullptr;
         QAction* mAddTorrentLinkAction = nullptr;
 
-        QAction* mServerSettingsAction = nullptr;
-        QAction* mServerStatsAction = nullptr;
-        QAction* mShutdownServerAction = nullptr;
-
         QMenu* mTorrentMenu = nullptr;
         QAction* mStartTorrentAction = nullptr;
         QAction* mStartTorrentNowAction = nullptr;
@@ -116,6 +112,8 @@ namespace tremotesf
 
         QAction* mOpenTorrentFilesAction = nullptr;
         QAction* mShowInFileManagerAction = nullptr;
+
+        std::vector<QAction*> mConnectionDependentActions;
 
         QMenu* mFileMenu = nullptr;
 

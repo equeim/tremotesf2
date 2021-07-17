@@ -207,6 +207,14 @@ namespace tremotesf
         setupActions();
         setupToolBar();
 
+        updateRpcActions();
+        QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindow::updateRpcActions);
+        QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindow::updateRpcActions);
+
+        updateTorrentActions();
+        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &MainWindow::updateTorrentActions);
+        QObject::connect(mTorrentsView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::updateTorrentActions);
+
         setStatusBar(new MainWindowStatusBar(mRpc));
         if (!Settings::instance()->isStatusBarVisible()) {
             statusBar()->hide();
@@ -361,6 +369,7 @@ namespace tremotesf
         mAddTorrentFileAction = new QAction(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "&Add Torrent File..."), this);
         mAddTorrentFileAction->setShortcuts(QKeySequence::Open);
         QObject::connect(mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::addTorrentsFiles);
+        mConnectionDependentActions.push_back(mAddTorrentFileAction);
 
         mAddTorrentLinkAction = new QAction(QIcon::fromTheme(QLatin1String("insert-link")), qApp->translate("tremotesf", "Add Torrent &Link..."), this);
         QObject::connect(mAddTorrentLinkAction, &QAction::triggered, this, [=] {
@@ -377,6 +386,7 @@ namespace tremotesf
                 showDialog();
             }
         });
+        mConnectionDependentActions.push_back(mAddTorrentLinkAction);
 
         //
         // Torrent menu
@@ -483,91 +493,22 @@ namespace tremotesf
         QObject::connect(moveTorrentToBottomAction, &QAction::triggered, this, [=] {
             mRpc->moveTorrentsToBottom(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
-
-        mServerSettingsAction = new QAction(QIcon::fromTheme(QLatin1String("configure"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Server Options"), this);
-        QObject::connect(mServerSettingsAction, &QAction::triggered, this, [=] {
-            static ServerSettingsDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new ServerSettingsDialog(mRpc, this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
-        });
-
-        mServerStatsAction = new QAction(qApp->translate("tremotesf", "Server S&tats"), this);
-        QObject::connect(mServerStatsAction, &QAction::triggered, this, [=] {
-            static ServerStatsDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new ServerStatsDialog(mRpc, this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
-        });
-
-        mShutdownServerAction = new QAction(QIcon::fromTheme("system-shutdown"), qApp->translate("tremotesf", "S&hutdown Server"), this);
-        QObject::connect(mShutdownServerAction, &QAction::triggered, this, [=] {
-            auto dialog = new QMessageBox(QMessageBox::Warning,
-                                          qApp->translate("tremotesf", "Shutdown Server"),
-                                          qApp->translate("tremotesf", "Are you sure you want to shutdown remote Transmission instance?"),
-                                          QMessageBox::Cancel | QMessageBox::Ok,
-                                          this);
-            auto okButton = dialog->button(QMessageBox::Ok);
-            okButton->setIcon(QIcon::fromTheme("system-shutdown"));
-            okButton->setText(qApp->translate("tremotesf", "Shutdown"));
-            dialog->setAttribute(Qt::WA_DeleteOnClose);
-            dialog->setModal(true);
-            QObject::connect(dialog, &QDialog::accepted, this, [=] { mRpc->shutdownServer(); } );
-            dialog->show();
-        });
-
-        updateRpcActions();
-        QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindow::updateRpcActions);
-        QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindow::updateRpcActions);
-
-        updateTorrentActions();
-        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &MainWindow::updateTorrentActions);
-        QObject::connect(mTorrentsView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::updateTorrentActions);
     }
 
     void MainWindow::updateRpcActions()
     {
-        if (mRpc->connectionState() == Rpc::ConnectionState::Disconnected) {
-            if (Servers::instance()->hasServers()) {
-                mConnectAction->setEnabled(true);
-                mDisconnectAction->setEnabled(false);
-            } else {
-                mConnectAction->setEnabled(false);
-                mDisconnectAction->setEnabled(false);
-            }
+        if (Servers::instance()->hasServers()) {
+            const bool disconnected = mRpc->connectionState() == Rpc::ConnectionState::Disconnected;
+            mConnectAction->setEnabled(disconnected);
+            mDisconnectAction->setEnabled(!disconnected);
         } else {
             mConnectAction->setEnabled(false);
-            mDisconnectAction->setEnabled(true);
+            mDisconnectAction->setEnabled(false);
         }
 
-        if (mRpc->connectionState() == Rpc::ConnectionState::Connected) {
-            mAddTorrentFileAction->setEnabled(true);
-            mAddTorrentLinkAction->setEnabled(true);
-            mServerSettingsAction->setEnabled(true);
-            mServerStatsAction->setEnabled(true);
-            mShutdownServerAction->setEnabled(true);
-        } else {
-            mAddTorrentFileAction->setEnabled(false);
-            mAddTorrentLinkAction->setEnabled(false);
-            mServerSettingsAction->setEnabled(false);
-            mServerStatsAction->setEnabled(false);
-            mShutdownServerAction->setEnabled(false);
+        const bool connected = mRpc->isConnected();
+        for (auto action : mConnectionDependentActions) {
+            action->setEnabled(connected);
         }
     }
 
@@ -845,9 +786,60 @@ namespace tremotesf
         });
 
         toolsMenu->addSeparator();
-        toolsMenu->addAction(mServerSettingsAction);
-        toolsMenu->addAction(mServerStatsAction);
-        toolsMenu->addAction(mShutdownServerAction);
+
+        auto serverSettingsAction = new QAction(QIcon::fromTheme(QLatin1String("configure"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Server Options"), this);
+        QObject::connect(serverSettingsAction, &QAction::triggered, this, [=] {
+            static ServerSettingsDialog* dialog = nullptr;
+            if (dialog) {
+                dialog->raise();
+                dialog->activateWindow();
+            } else {
+                dialog = new ServerSettingsDialog(mRpc, this);
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, [] {
+                    dialog = nullptr;
+                });
+                dialog->show();
+            }
+        });
+        mConnectionDependentActions.push_back(serverSettingsAction);
+        toolsMenu->addAction(serverSettingsAction);
+
+        auto serverStatsAction = new QAction(qApp->translate("tremotesf", "Server S&tats"), this);
+        QObject::connect(serverStatsAction, &QAction::triggered, this, [=] {
+            static ServerStatsDialog* dialog = nullptr;
+            if (dialog) {
+                dialog->raise();
+                dialog->activateWindow();
+            } else {
+                dialog = new ServerStatsDialog(mRpc, this);
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, [] {
+                    dialog = nullptr;
+                });
+                dialog->show();
+            }
+        });
+        mConnectionDependentActions.push_back(serverStatsAction);
+        toolsMenu->addAction(serverStatsAction);
+
+        auto shutdownServerAction = new QAction(QIcon::fromTheme("system-shutdown"), qApp->translate("tremotesf", "S&hutdown Server"), this);
+        QObject::connect(shutdownServerAction, &QAction::triggered, this, [=] {
+            auto dialog = new QMessageBox(QMessageBox::Warning,
+                                          qApp->translate("tremotesf", "Shutdown Server"),
+                                          qApp->translate("tremotesf", "Are you sure you want to shutdown remote Transmission instance?"),
+                                          QMessageBox::Cancel | QMessageBox::Ok,
+                                          this);
+            auto okButton = dialog->button(QMessageBox::Ok);
+            okButton->setIcon(QIcon::fromTheme("system-shutdown"));
+            okButton->setText(qApp->translate("tremotesf", "Shutdown"));
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->setModal(true);
+            QObject::connect(dialog, &QDialog::accepted, this, [=] { mRpc->shutdownServer(); } );
+            dialog->show();
+        });
+        mConnectionDependentActions.push_back(shutdownServerAction);
+        toolsMenu->addAction(shutdownServerAction);
 
         QMenu* helpMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Help"));
 
