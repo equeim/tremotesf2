@@ -196,6 +196,8 @@ namespace libtremotesf
 
         Q_INVOKABLE void updateData();
 
+        Q_INVOKABLE void shutdownServer();
+
     private:
         struct Request
         {

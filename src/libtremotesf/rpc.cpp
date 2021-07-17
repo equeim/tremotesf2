@@ -765,6 +765,18 @@ namespace libtremotesf
         }
     }
 
+    void Rpc::shutdownServer()
+    {
+        if (isConnected()) {
+            postRequest(QLatin1String("session-close"), QVariantMap{}, [=](const QJsonObject&, bool success) {
+                if (success) {
+                    qInfo("Successfully sent shutdown request, disconnecting");
+                    disconnect();
+                }
+            });
+        }
+    }
+
     void Rpc::setConnectionState(ConnectionState state)
     {
         if (state == mConnectionState) {
