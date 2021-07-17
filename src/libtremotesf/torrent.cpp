@@ -69,6 +69,7 @@ namespace libtremotesf
         const auto ratioLimitKey(QJsonKeyStringInit("seedRatioLimit"));
 
         const auto seedersKey(QJsonKeyStringInit("peersSendingToUs"));
+        const auto webSeedersKey(QJsonKeyStringInit("webseedsSendingToUs"));
         const auto leechersKey(QJsonKeyStringInit("peersGettingFromUs"));
 
         const auto errorKey(QJsonKeyStringInit("error"));
@@ -146,9 +147,11 @@ namespace libtremotesf
         setChanged(ratioLimit, torrentMap.value(ratioLimitKey).toDouble(), changed);
 
         setChanged(seeders, torrentMap.value(seedersKey).toInt(), changed);
+        setChanged(webSeeders, torrentMap.value(webSeedersKey).toInt(), changed);
         setChanged(leechers, torrentMap.value(leechersKey).toInt(), changed);
 
-        const bool stalled = (seeders == 0 && leechers == 0);
+        const bool hasActivePeers = (seeders != 0 || webSeeders != 0 || leechers != 0);
+
         if (torrentMap.value(errorKey).toInt() == 0) {
             switch (torrentMap.value(statusKey).toInt()) {
             case 0:
@@ -164,20 +167,20 @@ namespace libtremotesf
                 setChanged(status, QueuedForDownloading, changed);
                 break;
             case 4:
-                if (stalled) {
-                    setChanged(status, StalledDownloading, changed);
-                } else {
+                if (hasActivePeers) {
                     setChanged(status, Downloading, changed);
+                } else {
+                    setChanged(status, StalledDownloading, changed);
                 }
                 break;
             case 5:
                 setChanged(status, QueuedForSeeding, changed);
                 break;
             case 6:
-                if (stalled) {
-                    setChanged(status, StalledSeeding, changed);
-                } else {
+                if (hasActivePeers) {
                     setChanged(status, Seeding, changed);
+                } else {
+                    setChanged(status, StalledSeeding, changed);
                 }
             }
         } else {
@@ -476,6 +479,11 @@ namespace libtremotesf
     int Torrent::seeders() const
     {
         return mData.seeders;
+    }
+
+    int Torrent::webSeeders() const
+    {
+        return mData.webSeeders;
     }
 
     int Torrent::leechers() const

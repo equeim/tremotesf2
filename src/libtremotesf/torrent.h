@@ -115,6 +115,7 @@ namespace libtremotesf
         RatioLimitMode ratioLimitMode = GlobalRatioLimit;
 
         int seeders = 0;
+        int webSeeders = 0;
         int leechers = 0;
         int peersLimit = 0;
 
@@ -178,6 +179,7 @@ namespace libtremotesf
         Q_PROPERTY(double ratioLimit READ ratioLimit WRITE setRatioLimit NOTIFY changed)
 
         Q_PROPERTY(int seeders READ seeders NOTIFY changed)
+        Q_PROPERTY(int webSeeders READ webSeeders NOTIFY changed)
         Q_PROPERTY(int leechers READ leechers NOTIFY changed)
         Q_PROPERTY(int peersLimit READ peersLimit WRITE setPeersLimit NOTIFY changed)
 
@@ -246,6 +248,7 @@ namespace libtremotesf
         Q_INVOKABLE void setRatioLimit(double limit);
 
         int seeders() const;
+        int webSeeders() const;
         int leechers() const;
         int peersLimit() const;
         Q_INVOKABLE void setPeersLimit(int limit);
