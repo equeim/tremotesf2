@@ -516,6 +516,22 @@ namespace tremotesf
             }
         });
 
+        mShutdownServerAction = new QAction(QIcon::fromTheme("system-shutdown"), qApp->translate("tremotesf", "S&hutdown Server"), this);
+        QObject::connect(mShutdownServerAction, &QAction::triggered, this, [=] {
+            auto dialog = new QMessageBox(QMessageBox::Warning,
+                                          qApp->translate("tremotesf", "Shutdown Server"),
+                                          qApp->translate("tremotesf", "Are you sure you want to shutdown remote Transmission instance?"),
+                                          QMessageBox::Cancel | QMessageBox::Ok,
+                                          this);
+            auto okButton = dialog->button(QMessageBox::Ok);
+            okButton->setIcon(QIcon::fromTheme("system-shutdown"));
+            okButton->setText(qApp->translate("tremotesf", "Shutdown"));
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->setModal(true);
+            QObject::connect(dialog, &QDialog::accepted, this, [=] { mRpc->shutdownServer(); } );
+            dialog->show();
+        });
+
         updateRpcActions();
         QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindow::updateRpcActions);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindow::updateRpcActions);
@@ -545,11 +561,13 @@ namespace tremotesf
             mAddTorrentLinkAction->setEnabled(true);
             mServerSettingsAction->setEnabled(true);
             mServerStatsAction->setEnabled(true);
+            mShutdownServerAction->setEnabled(true);
         } else {
             mAddTorrentFileAction->setEnabled(false);
             mAddTorrentLinkAction->setEnabled(false);
             mServerSettingsAction->setEnabled(false);
             mServerStatsAction->setEnabled(false);
+            mShutdownServerAction->setEnabled(false);
         }
     }
 
@@ -829,6 +847,7 @@ namespace tremotesf
         toolsMenu->addSeparator();
         toolsMenu->addAction(mServerSettingsAction);
         toolsMenu->addAction(mServerStatsAction);
+        toolsMenu->addAction(mShutdownServerAction);
 
         QMenu* helpMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Help"));
 
