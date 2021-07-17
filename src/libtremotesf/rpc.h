@@ -33,6 +33,10 @@
 #include <QUrl>
 #include <QVariantList>
 
+#include "serversettings.h"
+#include "serverstats.h"
+#include "qtsupport.h"
+
 class QAuthenticator;
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -40,8 +44,6 @@ class QTimer;
 
 namespace libtremotesf
 {
-    class ServerSettings;
-    class ServerStats;
     class Torrent;
 
     struct Server
@@ -82,38 +84,37 @@ namespace libtremotesf
         int timeout;
     };
 
+    DEFINE_Q_ENUM_NS(RpcConnectionState,
+
+                     Disconnected,
+                     Connecting,
+                     Connected)
+
+    DEFINE_Q_ENUM_NS(RpcError,
+
+                     NoError,
+                     TimedOut,
+                     ConnectionError,
+                     AuthenticationError,
+                     ParseError,
+                     ServerIsTooNew,
+                     ServerIsTooOld)
+
     class Rpc : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(libtremotesf::ServerSettings* serverSettings READ serverSettings CONSTANT)
         Q_PROPERTY(libtremotesf::ServerStats* serverStats READ serverStats CONSTANT)
         Q_PROPERTY(bool connected READ isConnected NOTIFY connectedChanged)
-        Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-        Q_PROPERTY(Error error READ error NOTIFY errorChanged)
+        Q_PROPERTY(libtremotesf::RpcConnectionState connectionState READ connectionState NOTIFY connectionStateChanged)
+        Q_PROPERTY(libtremotesf::RpcError error READ error NOTIFY errorChanged)
         Q_PROPERTY(bool local READ isLocal NOTIFY connectedChanged)
         Q_PROPERTY(int torrentsCount READ torrentsCount NOTIFY torrentsUpdated)
         Q_PROPERTY(bool backgroundUpdate READ backgroundUpdate WRITE setBackgroundUpdate NOTIFY backgroundUpdateChanged)
         Q_PROPERTY(bool updateDisabled READ isUpdateDisabled WRITE setUpdateDisabled NOTIFY updateDisabledChanged)
     public:
-        enum Status
-        {
-            Disconnected,
-            Connecting,
-            Connected
-        };
-        Q_ENUM(Status)
-
-        enum Error
-        {
-            NoError,
-            TimedOut,
-            ConnectionError,
-            AuthenticationError,
-            ParseError,
-            ServerIsTooNew,
-            ServerIsTooOld
-        };
-        Q_ENUM(Error)
+        using ConnectionState = RpcConnectionState;
+        using Error = RpcError;
 
         explicit Rpc(QObject* parent = nullptr);
 
@@ -125,7 +126,7 @@ namespace libtremotesf
         Torrent* torrentById(int id) const;
 
         bool isConnected() const;
-        Status status() const;
+        ConnectionState connectionState() const;
         Error error() const;
         const QString& errorMessage() const;
         bool isLocal() const;
@@ -206,7 +207,7 @@ namespace libtremotesf
             void setSessionId(const QByteArray& sessionId);
         };
 
-        void setStatus(Status status);
+        void setConnectionState(ConnectionState state);
         void setError(Error error, const QString& errorMessage = QString());
 
         void getServerSettings();
@@ -266,14 +267,14 @@ namespace libtremotesf
         std::vector<std::shared_ptr<Torrent>> mTorrents;
         ServerStats* mServerStats;
 
-        Status mStatus;
+        ConnectionState mConnectionState;
         Error mError;
         QString mErrorMessage;
 
     signals:
         void aboutToDisconnect();
         void connectedChanged();
-        void statusChanged();
+        void connectionStateChanged();
         void errorChanged();
 
         void torrentsUpdated(const std::vector<int>& removed, const std::vector<int>& changed, int added);

@@ -80,7 +80,7 @@ namespace tremotesf
         layout->addWidget(mUploadSpeedLabel);
 
         updateLayout();
-        QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateLayout);
+        QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindowStatusBar::updateLayout);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
 
         updateServerLabel();
@@ -103,7 +103,7 @@ namespace tremotesf
             mServerLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
             mFirstSeparator->show();
             mStatusLabel->show();
-            if (mRpc->status() == Rpc::Connected) {
+            if (mRpc->connectionState() == Rpc::ConnectionState::Connected) {
                 mSecondSeparator->show();
                 mDownloadSpeedImage->show();
                 mDownloadSpeedLabel->show();

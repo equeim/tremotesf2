@@ -500,7 +500,7 @@ namespace tremotesf
 
                 mUpdateLimitsTab();
             } else {
-                if (mRpc->status() == Rpc::Disconnected) {
+                if (mRpc->connectionState() == Rpc::ConnectionState::Disconnected) {
                     mMessageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
                 } else {
                     mMessageWidget->setText(qApp->translate("tremotesf", "Torrent Removed"));

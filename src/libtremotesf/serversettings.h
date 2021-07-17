@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Tremotesf
  * Copyright (C) 2015-2018 Alexey Rochev <equeim@gmail.com>
  *
@@ -34,16 +34,16 @@ namespace libtremotesf
     public:
         enum AlternativeSpeedLimitsDays
         {
-            Sunday = (1 << 0),
-            Monday = (1 << 1),
-            Tuesday = (1 << 2),
-            Wednesday = (1 << 3),
-            Thursday = (1 << 4),
-            Friday = (1 << 5),
-            Saturday = (1 << 6),
-            Weekdays = (Monday | Tuesday | Wednesday | Thursday | Friday),
-            Weekends = (Sunday | Saturday),
-            All = (Weekdays | Weekends)
+            Sunday = 1, // (1 << 0)
+            Monday = 2, // (1 << 1)
+            Tuesday = 4, // (1 << 2)
+            Wednesday = 8, // (1 << 3)
+            Thursday = 16, // (1 << 4)
+            Friday = 32, // (1 << 5)
+            Saturday = 64, // (1 << 6)
+            Weekdays = 62, // (Monday | Tuesday | Wednesday | Thursday | Friday)
+            Weekends = 65, // (Sunday | Saturday)
+            All = 127 // (Weekdays | Weekends)
         };
         Q_ENUM(AlternativeSpeedLimitsDays)
 

@@ -266,7 +266,7 @@ namespace tremotesf
                     first = false;
                 }
             } else {
-                if ((mRpc->error() != Rpc::NoError) && Settings::instance()->notificationOnDisconnecting()) {
+                if ((mRpc->error() != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
                     showNotification(qApp->translate("tremotesf", "Disconnected"), mRpc->statusString());
                 }
             }
@@ -517,7 +517,7 @@ namespace tremotesf
         });
 
         updateRpcActions();
-        QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindow::updateRpcActions);
+        QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindow::updateRpcActions);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindow::updateRpcActions);
 
         updateTorrentActions();
@@ -527,7 +527,7 @@ namespace tremotesf
 
     void MainWindow::updateRpcActions()
     {
-        if (mRpc->status() == Rpc::Disconnected) {
+        if (mRpc->connectionState() == Rpc::ConnectionState::Disconnected) {
             if (Servers::instance()->hasServers()) {
                 mConnectAction->setEnabled(true);
                 mDisconnectAction->setEnabled(false);
@@ -540,7 +540,7 @@ namespace tremotesf
             mDisconnectAction->setEnabled(true);
         }
 
-        if (mRpc->status() == Rpc::Connected) {
+        if (mRpc->connectionState() == Rpc::ConnectionState::Connected) {
             mAddTorrentFileAction->setEnabled(true);
             mAddTorrentLinkAction->setEnabled(true);
             mServerSettingsAction->setEnabled(true);

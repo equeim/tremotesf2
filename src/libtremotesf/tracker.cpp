@@ -59,10 +59,12 @@ namespace libtremotesf
         return mAnnounce;
     }
 
+#if QT_VERSION_MAJOR < 6
     const QString& Tracker::site() const
     {
         return mSite;
     }
+#endif
 
     Tracker::Status Tracker::status() const
     {
@@ -97,12 +99,14 @@ namespace libtremotesf
         if (announce != mAnnounce) {
             changed = true;
             mAnnounce = std::move(announce);
+#if QT_VERSION_MAJOR < 6
             const QUrl url(mAnnounce);
             mSite = url.host();
             const int topLevelDomainSize = url.topLevelDomain().size();
             if (topLevelDomainSize > 0) {
                 mSite.remove(0, mSite.lastIndexOf(QLatin1Char('.'), -1 - topLevelDomainSize) + 1);
             }
+#endif
         }
 
         const bool scrapeError = (!trackerMap.value(QJsonKeyStringInit("lastScrapeSucceeded")).toBool() &&

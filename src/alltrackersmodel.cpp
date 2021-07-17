@@ -27,7 +27,7 @@
 
 #include "torrentsproxymodel.h"
 
-#include "libtremotesf/stdutils.h"
+#include "libtremotesf/qtsupport.h"
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/tracker.h"
 #include "modelutils.h"

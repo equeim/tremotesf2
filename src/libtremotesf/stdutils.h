@@ -25,41 +25,6 @@
 #include <vector>
 
 #include <QtGlobal>
-#include <QHashFunctions>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-/*
-** Copyright (C) 2015 Klarälvdalens Datakonsult AB, a KDAB Group company, info@kdab.com, author Marc Mutz <marc.mutz@kdab.com>
-*/
-#define QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH(Class, Arguments)      \
-    QT_BEGIN_INCLUDE_NAMESPACE                                      \
-    namespace std {                                                 \
-        template <>                                                 \
-        struct hash< QT_PREPEND_NAMESPACE(Class) > {                \
-            using argument_type = QT_PREPEND_NAMESPACE(Class);      \
-            using result_type = size_t;                             \
-            size_t operator()(Arguments s) const                    \
-                noexcept(noexcept(QT_PREPEND_NAMESPACE(qHash)(s)))  \
-            {                                                       \
-                /* this seeds qHash with the result of */           \
-                /* std::hash applied to an int, to reap */          \
-                /* any protection against predictable hash */       \
-                /* values the std implementation may provide */     \
-                return QT_PREPEND_NAMESPACE(qHash)(s,               \
-                           QT_PREPEND_NAMESPACE(qHash)(             \
-                                      std::hash<int>{}(0)));        \
-            }                                                       \
-        };                                                          \
-    }                                                               \
-    QT_END_INCLUDE_NAMESPACE                                        \
-    /*end*/
-
-#define QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH_BY_CREF(Class) \
-    QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH(Class, const argument_type &)
-
-QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH_BY_CREF(QString)
-QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH_BY_CREF(QByteArray)
-#endif
 
 namespace libtremotesf
 {

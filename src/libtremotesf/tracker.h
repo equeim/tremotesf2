@@ -41,7 +41,9 @@ namespace libtremotesf
 
         int id() const;
         const QString& announce() const;
+#if QT_VERSION_MAJOR < 6
         const QString& site() const;
+#endif
 
         Status status() const;
         QString errorMessage() const;
@@ -59,7 +61,9 @@ namespace libtremotesf
 
     private:
         QString mAnnounce;
+#if QT_VERSION_MAJOR < 6
         QString mSite;
+#endif
 
         QString mErrorMessage;
         Status mStatus = Inactive;
