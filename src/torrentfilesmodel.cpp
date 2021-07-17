@@ -232,7 +232,13 @@ namespace tremotesf
             return;
         }
         TorrentFilesModelEntry* entry = mRootDirectory.get();
-        for (const QString& part : path.split('/', QString::SkipEmptyParts)) {
+        const auto parts = path.split('/',
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+                                      Qt::SkipEmptyParts);
+#else
+                                      QString::SkipEmptyParts);
+#endif
+        for (const QString& part : parts) {
             entry = static_cast<const TorrentFilesModelDirectory*>(entry)->childrenHash().at(part);
         }
         BaseTorrentFilesModel::fileRenamed(entry, newName);
