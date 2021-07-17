@@ -80,6 +80,7 @@
 #include "serversettingsdialog.h"
 #include "serverstatsdialog.h"
 #include "settingsdialog.h"
+#include "torrentfilesview.h"
 #include "torrentpropertiesdialog.h"
 #include "torrentsview.h"
 
@@ -450,6 +451,19 @@ namespace tremotesf
             }
         });
 
+        mRenameTorrentAction = mTorrentMenu->addAction(qApp->translate("tremotesf", "&Rename"));
+        QObject::connect(mRenameTorrentAction, &QAction::triggered, this, [=] {
+            const auto indexes = mTorrentsView->selectionModel()->selectedRows();
+            if (indexes.size() == 1) {
+                const auto torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(indexes.first()));
+                const auto id = torrent->id();
+                const auto name = torrent->name();
+                TorrentFilesView::showFileRenameDialog(name, this, [=](const auto& newName) {
+                    mRpc->renameTorrentFile(id, name, newName);
+                });
+            }
+        });
+
         mTorrentMenu->addSeparator();
 
         mOpenTorrentFilesAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("document-open")), qApp->translate("tremotesf", "&Open"));
@@ -581,6 +595,8 @@ namespace tremotesf
                     mStartTorrentAction->setEnabled(false);
                     mStartTorrentNowAction->setEnabled(false);
                 }
+            } else {
+                mRenameTorrentAction->setEnabled(false);
             }
 
             if (mRpc->isLocal() || Servers::instance()->currentServerHasMountedDirectories()) {

@@ -110,6 +110,8 @@ namespace tremotesf
         QAction* mPauseTorrentAction = nullptr;
         QAction* mRemoveTorrentAction = nullptr;
 
+        QAction* mRenameTorrentAction = nullptr;
+
         QAction* mOpenTorrentFilesAction = nullptr;
         QAction* mShowInFileManagerAction = nullptr;
 

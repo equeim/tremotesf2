@@ -90,6 +90,19 @@ namespace tremotesf
         }
     }
 
+    void TorrentFilesView::showFileRenameDialog(const QString& fileName, QWidget* parent, const std::function<void(const QString&)>& onAccepted)
+    {
+        auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Rename"),
+                                          qApp->translate("tremotesf", "File name:"),
+                                          fileName,
+                                          qApp->translate("tremotesf", "Rename"),
+                                          false,
+                                          parent);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        QObject::connect(dialog, &QDialog::accepted, parent, [=] { onAccepted(dialog->text()); });
+        dialog->show();
+    }
+
     void TorrentFilesView::init()
     {
         setContextMenuPolicy(Qt::CustomContextMenu);
@@ -255,16 +268,9 @@ namespace tremotesf
             QObject::connect(renameAction, &QAction::triggered, this, [=] {
                 const QModelIndex& index = sourceIndexes.first();
                 auto entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
-                auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Rename"),
-                                                  qApp->translate("tremotesf", "File name:"),
-                                                  entry->name(),
-                                                  qApp->translate("tremotesf", "Rename"),
-                                                  false,
-                                                  this);
-                QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
-                    mModel->renameFile(index, dialog->text());
+                showFileRenameDialog(entry->name(), this, [=](const auto& newName) {
+                    mModel->renameFile(index, newName);
                 });
-                dialog->show();
             });
         }
 
