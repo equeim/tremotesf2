@@ -25,7 +25,7 @@
 #include <QStyle>
 #endif
 
-#include "libtremotesf/stdutils.h"
+#include "libtremotesf/qtsupport.h"
 #include "libtremotesf/torrent.h"
 
 #include "modelutils.h"

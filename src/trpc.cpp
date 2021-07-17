@@ -33,7 +33,7 @@ namespace tremotesf
         : libtremotesf::Rpc(parent),
           mIncompleteDirectoryMounted(false)
     {
-        QObject::connect(this, &Rpc::statusChanged, this, &Rpc::statusStringChanged);
+        QObject::connect(this, &Rpc::connectionStateChanged, this, &Rpc::statusStringChanged);
         QObject::connect(this, &Rpc::errorChanged, this, &Rpc::statusStringChanged);
 
         QObject::connect(this, &Rpc::connectedChanged, this, [=] {
@@ -104,28 +104,28 @@ namespace tremotesf
 
     QString Rpc::statusString() const
     {
-        switch (status()) {
-        case Disconnected:
+        switch (connectionState()) {
+        case ConnectionState::Disconnected:
             switch (error()) {
-            case NoError:
+            case Error::NoError:
                 return qApp->translate("tremotesf", "Disconnected");
-            case TimedOut:
+            case Error::TimedOut:
                 return qApp->translate("tremotesf", "Timed out");
-            case ConnectionError:
+            case Error::ConnectionError:
                 return qApp->translate("tremotesf", "Connection error");
-            case AuthenticationError:
+            case Error::AuthenticationError:
                 return qApp->translate("tremotesf", "Authentication error");
-            case ParseError:
+            case Error::ParseError:
                 return qApp->translate("tremotesf", "Parse error");
-            case ServerIsTooNew:
+            case Error::ServerIsTooNew:
                 return qApp->translate("tremotesf", "Server is too new");
-            case ServerIsTooOld:
+            case Error::ServerIsTooOld:
                 return qApp->translate("tremotesf", "Server is too old");
             }
             break;
-        case Connecting:
+        case ConnectionState::Connecting:
             return qApp->translate("tremotesf", "Connecting...");
-        case Connected:
+        case ConnectionState::Connected:
             return qApp->translate("tremotesf", "Connected");
         }
 

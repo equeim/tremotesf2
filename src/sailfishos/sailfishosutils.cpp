@@ -76,6 +76,9 @@ namespace tremotesf
                                           });
 
         qmlRegisterType<Rpc>(url, versionMajor, versionMinor, "Rpc");
+        qmlRegisterUncreatableType<libtremotesf::RpcStatusStruct>(url, versionMajor, versionMinor, "RpcStatus", {});
+        qmlRegisterUncreatableType<libtremotesf::RpcErrorStruct>(url, versionMajor, versionMinor, "RpcError", {});
+
         qRegisterMetaType<libtremotesf::Server>();
         qmlRegisterUncreatableType<libtremotesf::ServerSettings>(url, versionMajor, versionMinor, "ServerSettings", QString());
         qmlRegisterType<libtremotesf::ServerStats>();
