@@ -25,6 +25,7 @@ namespace tremotesf
 {
     StatusFilterStats::StatusFilterStats(Rpc* rpc, QObject* parent)
         : QObject(parent),
+          mRpc(nullptr),
           mActiveTorrents(0),
           mDownloadingTorrents(0),
           mSeedingTorrents(0),
