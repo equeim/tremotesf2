@@ -28,7 +28,7 @@ namespace tremotesf
     class BaseProxyModel : public QSortFilterProxyModel
     {
         Q_OBJECT
-        Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder)
+        Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder NOTIFY sortOrderChanged)
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
         Q_PROPERTY(int sortRole READ sortRole WRITE setSortRole NOTIFY sortRoleChanged)
 #endif
@@ -50,8 +50,10 @@ namespace tremotesf
 
     private:
         QCollator mCollator;
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
+
     signals:
+        void sortOrderChanged();
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
         void sortRoleChanged();
 #endif
     };

@@ -60,6 +60,7 @@ namespace tremotesf
     void BaseProxyModel::sort(int column, Qt::SortOrder order)
     {
         QSortFilterProxyModel::sort(column, order);
+        emit sortOrderChanged();
     }
 
     bool BaseProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
