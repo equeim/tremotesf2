@@ -23,98 +23,57 @@
 
 class QSettings;
 
+#define SETTINGS_PROPERTY_IMPL(type, getter, setterType, setter) \
+public: \
+    Q_PROPERTY(type getter READ getter WRITE setter NOTIFY getter##Changed) \
+    type getter() const; \
+    void setter(setterType value); \
+Q_SIGNALS: \
+    void getter##Changed();
+
+#define SETTINGS_PROPERTY_TRIVIAL(type, getter, setter) SETTINGS_PROPERTY_IMPL(type, getter, type, setter)
+#define SETTINGS_PROPERTY_NON_TRIVIAL(type, getter, setter) SETTINGS_PROPERTY_IMPL(type, getter, const type&, setter)
+
 namespace tremotesf
 {
     class Settings : public QObject
     {
         Q_OBJECT
-        Q_PROPERTY(bool connectOnStartup READ connectOnStartup WRITE setConnectOnStartup)
-        Q_PROPERTY(bool notificationOnDisconnecting READ notificationOnDisconnecting WRITE setNotificationOnDisconnecting)
-        Q_PROPERTY(bool notificationOnAddingTorrent READ notificationOnAddingTorrent WRITE setNotificationOnAddingTorrent)
-        Q_PROPERTY(bool notificationOfFinishedTorrents READ notificationOfFinishedTorrents WRITE setNotificationOfFinishedTorrents)
-        Q_PROPERTY(bool notificationsOnAddedTorrentsSinceLastConnection READ notificationsOnAddedTorrentsSinceLastConnection WRITE setNotificationsOnAddedTorrentsSinceLastConnection)
-        Q_PROPERTY(bool notificationsOnFinishedTorrentsSinceLastConnection READ notificationsOnFinishedTorrentsSinceLastConnection WRITE setNotificationsOnFinishedTorrentsSinceLastConnection)
+
+        SETTINGS_PROPERTY_TRIVIAL(bool, connectOnStartup, setConnectOnStartup)
+        SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting)
+        SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent)
+        SETTINGS_PROPERTY_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents)
+        SETTINGS_PROPERTY_TRIVIAL(bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection)
+        SETTINGS_PROPERTY_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection)
+
+#ifdef TREMOTESF_SAILFISHOS
+        SETTINGS_PROPERTY_TRIVIAL(int, torrentsSortOrder, setTorrentsSortOrder)
+        SETTINGS_PROPERTY_TRIVIAL(int, torrentsSortRole, setTorrentsSortRole)
+#else
+        SETTINGS_PROPERTY_TRIVIAL(bool, showTrayIcon, setShowTrayIcon)
+        SETTINGS_PROPERTY_TRIVIAL(Qt::ToolButtonStyle, toolButtonStyle, setToolButtonStyle)
+        SETTINGS_PROPERTY_TRIVIAL(bool, isToolBarLocked, setToolBarLocked)
+        SETTINGS_PROPERTY_TRIVIAL(bool, isSideBarVisible, setSideBarVisible)
+        SETTINGS_PROPERTY_TRIVIAL(bool, isStatusBarVisible, setStatusBarVisible)
+
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, mainWindowGeometry, setMainWindowGeometry)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, mainWindowState, setMainWindowState)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, splitterState, setSplitterState)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentsViewHeaderState, setTorrentsViewHeaderState)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentPropertiesDialogGeometry, setTorrentPropertiesDialogGeometry)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentFilesViewHeaderState, setTorrentFilesViewHeaderState)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, trackersViewHeaderState, setTrackersViewHeaderState)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, peersViewHeaderState, setPeersViewHeaderState)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState)
+#endif
     public:
         static Settings* instance();
 
-        bool connectOnStartup() const;
-        void setConnectOnStartup(bool connect);
-
-        bool notificationOnDisconnecting() const;
-        void setNotificationOnDisconnecting(bool enabled);
-
-        bool notificationOnAddingTorrent() const;
-        void setNotificationOnAddingTorrent(bool enabled);
-
-        bool notificationOfFinishedTorrents() const;
-        void setNotificationOfFinishedTorrents(bool enabled);
-
-        bool notificationsOnAddedTorrentsSinceLastConnection() const;
-        void setNotificationsOnAddedTorrentsSinceLastConnection(bool enabled);
-
-        bool notificationsOnFinishedTorrentsSinceLastConnection() const;
-        void setNotificationsOnFinishedTorrentsSinceLastConnection(bool enabled);
-
-#ifdef TREMOTESF_SAILFISHOS
-        Q_PROPERTY(int torrentsSortOrder READ torrentsSortOrder WRITE setTorrentsSortOrder)
-        int torrentsSortOrder() const;
-        void setTorrentsSortOrder(int order);
-
-        Q_PROPERTY(int torrentsSortRole READ torrentsSortRole WRITE setTorrentsSortRole)
-        int torrentsSortRole() const;
-        void setTorrentsSortRole(int role);
-#else
-        bool showTrayIcon() const;
-        void setShowTrayIcon(bool show);
-
-        QByteArray mainWindowGeometry() const;
-        void setMainWindowGeometry(const QByteArray& geometry);
-
-        QByteArray mainWindowState() const;
-        void setMainWindowState(const QByteArray& state);
-
-        Qt::ToolButtonStyle toolButtonStyle() const;
-        void setToolButtonStyle(Qt::ToolButtonStyle style);
-
-        bool isToolBarLocked() const;
-        void setToolBarLocked(bool locked);
-
-        bool isSideBarVisible() const;
-        void setSideBarVisible(bool visible);
-
-        QByteArray splitterState() const;
-        void setSplitterState(const QByteArray& state);
-
-        bool isStatusBarVisible() const;
-        void setStatusBarVisible(bool visible);
-
-        QByteArray torrentsViewHeaderState() const;
-        void setTorrentsViewHeaderState(const QByteArray& state);
-
-        QByteArray torrentPropertiesDialogGeometry() const;
-        void setTorrentPropertiesDialogGeometry(const QByteArray& geometry);
-
-        QByteArray torrentFilesViewHeaderState() const;
-        void setTorrentFilesViewHeaderState(const QByteArray& state);
-
-        QByteArray trackersViewHeaderState() const;
-        void setTrackersViewHeaderState(const QByteArray& state);
-
-        QByteArray peersViewHeaderState() const;
-        void setPeersViewHeaderState(const QByteArray& state);
-
-        QByteArray localTorrentFilesViewHeaderState() const;
-        void setLocalTorrentFilesViewHeaderState(const QByteArray& state);
-#endif
     private:
         explicit Settings(QObject* parent = nullptr);
 
         QSettings* mSettings;
-
-#ifndef TREMOTESF_SAILFISHOS
-    signals:
-        void showTrayIconChanged();
-#endif
     };
 }
 

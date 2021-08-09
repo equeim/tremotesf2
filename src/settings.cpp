@@ -23,267 +23,47 @@
 
 #include "torrentsmodel.h"
 
+#define SETTINGS_PROPERTY_DEF_IMPL(type, getter, setterType, setter, key, defaultValue, convert) \
+    type Settings::getter() const { return mSettings->value(QLatin1String(key), defaultValue).convert(); } \
+    void Settings::setter(setterType value) { mSettings->setValue(QLatin1String(key), value); emit getter##Changed(); }
+
+#define SETTINGS_PROPERTY_DEF_TRIVIAL(type, getter, setter, key, defaultValue, convert) SETTINGS_PROPERTY_DEF_IMPL(type, getter, type, setter, key, defaultValue, convert)
+#define SETTINGS_PROPERTY_DEF_NON_TRIVIAL(type, getter, setter, key, defaultValue, convert) SETTINGS_PROPERTY_DEF_IMPL(type, getter, const type&, setter, key, defaultValue, convert)
+
 namespace tremotesf
 {
-    namespace
-    {
-        const QLatin1String connectOnStartupKey("connectOnStartup");
-        const QLatin1String notificationOnDisconnectingKey("notificationOnDisconnecting");
-        const QLatin1String notificationOnAddingTorrentKey("notificationOnAddingTorrent");
-        const QLatin1String notificationOfFinishedTorrentsKey("notificationOfFinishedTorrents");
-        const QLatin1String notificationsOnAddedTorrentsSinceLastConnectionKey("notificationsOnAddedTorrentsSinceLastConnection");
-        const QLatin1String notificationsOnFinishedTorrentsSinceLastConnectionKey("notificationsOnFinishedTorrentsSinceLastConnection");
-#ifdef TREMOTESF_SAILFISHOS
-        const QLatin1String torrentsSortOrderKey("torrentsSortOrder");
-        const QLatin1String torrentsSortRoleKey("torrentsSortRole");
-#else
-        const QLatin1String showTrayIconKey("showTrayIcon");
-        const QLatin1String mainWindowGeometryKey("mainWindowGeometry");
-        const QLatin1String mainWindowStateKey("mainWindowState");
-        const QLatin1String toolButtonStyleKey("toolButtonStyle");
-        const QLatin1String toolBarLockedKey("toolBarLocked");
-        const QLatin1String sideBarVisibleKey("sideBarVisible");
-        const QLatin1String splitterStateKey("splitterState");
-        const QLatin1String statusBarVisibleKey("statusBarVisible");
-        const QLatin1String torrentsViewHeaderStateKey("torrentsViewHeaderState");
-        const QLatin1String torrentPropertiesDialogGeometryKey("torrentPropertiesDialogGeometry");
-        const QLatin1String torrentFilesViewHeaderStateKey("torrentFilesViewHeaderState");
-        const QLatin1String trackersViewHeaderStateKey("trackersViewHeaderState");
-        const QLatin1String peersViewHeaderStateKey("peersViewHeaderState");
-        const QLatin1String localTorrentFilesViewHeaderStateKey("localTorrentFilesViewHeaderState");
-#endif
-    }
-
     Settings* Settings::instance()
     {
         static auto* const instance = new Settings(qApp);
         return instance;
     }
 
-    bool Settings::connectOnStartup() const
-    {
-        return mSettings->value(connectOnStartupKey, true).toBool();
-    }
-
-    void Settings::setConnectOnStartup(bool connect)
-    {
-        mSettings->setValue(connectOnStartupKey, connect);
-    }
-
-    bool Settings::notificationOnDisconnecting() const
-    {
-        return mSettings->value(notificationOnDisconnectingKey, true).toBool();
-    }
-
-    void Settings::setNotificationOnDisconnecting(bool enabled)
-    {
-        mSettings->setValue(notificationOnDisconnectingKey, enabled);
-    }
-
-    bool Settings::notificationOnAddingTorrent() const
-    {
-        return mSettings->value(notificationOnAddingTorrentKey, true).toBool();
-    }
-
-    void Settings::setNotificationOnAddingTorrent(bool enabled)
-    {
-        mSettings->setValue(notificationOnAddingTorrentKey, enabled);
-    }
-
-    bool Settings::notificationOfFinishedTorrents() const
-    {
-        return mSettings->value(notificationOfFinishedTorrentsKey, true).toBool();
-    }
-
-    void Settings::setNotificationOfFinishedTorrents(bool enabled)
-    {
-        mSettings->setValue(notificationOfFinishedTorrentsKey, enabled);
-    }
-
-    bool Settings::notificationsOnAddedTorrentsSinceLastConnection() const
-    {
-        return mSettings->value(notificationsOnAddedTorrentsSinceLastConnectionKey, false).toBool();
-    }
-
-    void Settings::setNotificationsOnAddedTorrentsSinceLastConnection(bool enabled)
-    {
-        mSettings->setValue(notificationsOnAddedTorrentsSinceLastConnectionKey, enabled);
-    }
-
-    bool Settings::notificationsOnFinishedTorrentsSinceLastConnection() const
-    {
-        return mSettings->value(notificationsOnFinishedTorrentsSinceLastConnectionKey, false).toBool();
-    }
-
-    void Settings::setNotificationsOnFinishedTorrentsSinceLastConnection(bool enabled)
-    {
-        mSettings->setValue(notificationsOnFinishedTorrentsSinceLastConnectionKey, enabled);
-    }
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, connectOnStartup, setConnectOnStartup, "connectOnStartup", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting, "notificationOnDisconnecting", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent, "notificationOnAddingTorrent", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents, "notificationOfFinishedTorrents", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection, "notificationsOnAddedTorrentsSinceLastConnection", false, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection, "notificationsOnFinishedTorrentsSinceLastConnection", false, toBool)
 
 #ifdef TREMOTESF_SAILFISHOS
-    int Settings::torrentsSortOrder() const
-    {
-        return mSettings->value(torrentsSortOrderKey, Qt::AscendingOrder).toInt();
-    }
-
-    void Settings::setTorrentsSortOrder(int order)
-    {
-        mSettings->setValue(torrentsSortOrderKey, order);
-    }
-
-    int Settings::torrentsSortRole() const
-    {
-        return mSettings->value(torrentsSortRoleKey, TorrentsModel::NameRole).toInt();
-    }
-
-    void Settings::setTorrentsSortRole(int role)
-    {
-        mSettings->setValue(torrentsSortRoleKey, role);
-    }
+    SETTINGS_PROPERTY_DEF_TRIVIAL(int, torrentsSortOrder, setTorrentsSortOrder, "torrentsSortOrder", Qt::AscendingOrder, toInt)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(int, torrentsSortRole, setTorrentsSortRole, "torrentsSortRole", TorrentsModel::NameRole, toInt)
 #else
-    bool Settings::showTrayIcon() const
-    {
-        return mSettings->value(showTrayIconKey, true).toBool();
-    }
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, showTrayIcon, setShowTrayIcon, "showTrayIcon", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(Qt::ToolButtonStyle, toolButtonStyle, setToolButtonStyle, "toolButtonStyle", Qt::ToolButtonFollowStyle, value<Qt::ToolButtonStyle>)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isToolBarLocked, setToolBarLocked, "toolBarLocked", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isSideBarVisible, setSideBarVisible, "sideBarVisible", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isStatusBarVisible, setStatusBarVisible, "statusBarVisible", true, toBool)
 
-    void Settings::setShowTrayIcon(bool show)
-    {
-        if (show != showTrayIcon()) {
-            mSettings->setValue(showTrayIconKey, show);
-            emit showTrayIconChanged();
-        }
-    }
-
-    QByteArray Settings::mainWindowGeometry() const
-    {
-        return mSettings->value(mainWindowGeometryKey).toByteArray();
-    }
-
-    void Settings::setMainWindowGeometry(const QByteArray& geometry)
-    {
-        mSettings->setValue(mainWindowGeometryKey, geometry);
-    }
-
-    QByteArray Settings::mainWindowState() const
-    {
-        return mSettings->value(mainWindowStateKey).toByteArray();
-    }
-
-    void Settings::setMainWindowState(const QByteArray& state)
-    {
-        mSettings->setValue(mainWindowStateKey, state);
-    }
-
-    Qt::ToolButtonStyle Settings::toolButtonStyle() const
-    {
-        return mSettings->value(toolButtonStyleKey, Qt::ToolButtonFollowStyle).value<Qt::ToolButtonStyle>();
-    }
-
-    void Settings::setToolButtonStyle(Qt::ToolButtonStyle style)
-    {
-        mSettings->setValue(toolButtonStyleKey, style);
-    }
-
-    bool Settings::isToolBarLocked() const
-    {
-        return mSettings->value(toolBarLockedKey, true).toBool();
-    }
-
-    void Settings::setToolBarLocked(bool locked)
-    {
-        mSettings->setValue(toolBarLockedKey, locked);
-    }
-
-    bool Settings::isSideBarVisible() const
-    {
-        return mSettings->value(sideBarVisibleKey, true).toBool();
-    }
-
-    void Settings::setSideBarVisible(bool visible)
-    {
-        mSettings->setValue(sideBarVisibleKey, visible);
-    }
-
-    QByteArray Settings::splitterState() const
-    {
-        return mSettings->value(splitterStateKey).toByteArray();
-    }
-
-    void Settings::setSplitterState(const QByteArray& state)
-    {
-        mSettings->setValue(splitterStateKey, state);
-    }
-
-    bool Settings::isStatusBarVisible() const
-    {
-        return mSettings->value(statusBarVisibleKey, true).toBool();
-    }
-
-    void Settings::setStatusBarVisible(bool visible)
-    {
-        mSettings->setValue(statusBarVisibleKey, visible);
-    }
-
-    QByteArray Settings::torrentsViewHeaderState() const
-    {
-        return mSettings->value(torrentsViewHeaderStateKey).toByteArray();
-    }
-
-    void Settings::setTorrentsViewHeaderState(const QByteArray& state)
-    {
-        mSettings->setValue(torrentsViewHeaderStateKey, state);
-    }
-
-    QByteArray Settings::torrentPropertiesDialogGeometry() const
-    {
-        return mSettings->value(torrentPropertiesDialogGeometryKey).toByteArray();
-    }
-
-    void Settings::setTorrentPropertiesDialogGeometry(const QByteArray& geometry)
-    {
-        mSettings->setValue(torrentPropertiesDialogGeometryKey, geometry);
-    }
-
-    QByteArray Settings::torrentFilesViewHeaderState() const
-    {
-        return mSettings->value(torrentFilesViewHeaderStateKey).toByteArray();
-    }
-
-    void Settings::setTorrentFilesViewHeaderState(const QByteArray& state)
-    {
-        mSettings->setValue(torrentFilesViewHeaderStateKey, state);
-    }
-
-    QByteArray Settings::trackersViewHeaderState() const
-    {
-        return mSettings->value(trackersViewHeaderStateKey).toByteArray();
-    }
-
-    void Settings::setTrackersViewHeaderState(const QByteArray& state)
-    {
-        mSettings->setValue(trackersViewHeaderStateKey, state);
-    }
-
-    QByteArray Settings::peersViewHeaderState() const
-    {
-        return mSettings->value(peersViewHeaderStateKey).toByteArray();
-    }
-
-    void Settings::setPeersViewHeaderState(const QByteArray& state)
-    {
-        mSettings->setValue(peersViewHeaderStateKey, state);
-    }
-
-    QByteArray Settings::localTorrentFilesViewHeaderState() const
-    {
-        return mSettings->value(localTorrentFilesViewHeaderStateKey).toByteArray();
-    }
-
-    void Settings::setLocalTorrentFilesViewHeaderState(const QByteArray& state)
-    {
-        mSettings->setValue(localTorrentFilesViewHeaderStateKey, state);
-    }
-
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, mainWindowGeometry, setMainWindowGeometry, "mainWindowGeometry", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, mainWindowState, setMainWindowState, "mainWindowState", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, splitterState, setSplitterState, "splitterState", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, torrentsViewHeaderState, setTorrentsViewHeaderState, "torrentsViewHeaderState", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, torrentPropertiesDialogGeometry, setTorrentPropertiesDialogGeometry, "torrentPropertiesDialogGeometry", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, torrentFilesViewHeaderState, setTorrentFilesViewHeaderState, "torrentFilesViewHeaderState", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, trackersViewHeaderState, setTrackersViewHeaderState, "trackersViewHeaderState", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, peersViewHeaderState, setPeersViewHeaderState, "peersViewHeaderState", {}, toByteArray)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState, "localTorrentFilesViewHeaderState", {}, toByteArray)
 #endif
 
     Settings::Settings(QObject* parent)
