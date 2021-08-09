@@ -156,8 +156,9 @@ namespace tremotesf
 
     void DownloadDirectoriesModel::setTorrentsProxyModel(TorrentsProxyModel* model)
     {
-        if (model && !mTorrentsProxyModel) {
+        if (model != mTorrentsProxyModel) {
             mTorrentsProxyModel = model;
+            emit torrentsProxyModelChanged();
         }
     }
 

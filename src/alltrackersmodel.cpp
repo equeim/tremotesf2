@@ -157,8 +157,9 @@ namespace tremotesf
 
     void AllTrackersModel::setTorrentsProxyModel(TorrentsProxyModel* model)
     {
-        if (model && !mTorrentsProxyModel) {
+        if (model != mTorrentsProxyModel) {
             mTorrentsProxyModel = model;
+            emit torrentsProxyModelChanged();
         }
     }
 

@@ -44,7 +44,7 @@ namespace tremotesf
         Q_INTERFACES(QQmlParserStatus)
 #endif
         Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
-        Q_PROPERTY(tremotesf::TorrentsProxyModel* torrentsProxyModel READ torrentsProxyModel WRITE setTorrentsProxyModel)
+        Q_PROPERTY(tremotesf::TorrentsProxyModel* torrentsProxyModel READ torrentsProxyModel WRITE setTorrentsProxyModel NOTIFY torrentsProxyModelChanged)
     public:
 #ifndef TREMOTESF_SAILFISHOS
         static const int TrackerRole = Qt::UserRole;
@@ -87,6 +87,7 @@ namespace tremotesf
 
     signals:
         void rpcChanged();
+        void torrentsProxyModelChanged();
     };
 }
 
