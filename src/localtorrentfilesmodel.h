@@ -36,10 +36,10 @@ namespace tremotesf
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
         Q_PROPERTY(bool isSuccessfull READ isSuccessfull NOTIFY loadedChanged)
         Q_PROPERTY(QString errorString READ errorString NOTIFY loadedChanged)
-        Q_PROPERTY(QVariantList unwantedFiles READ unwantedFiles)
-        Q_PROPERTY(QVariantList highPriorityFiles READ highPriorityFiles)
-        Q_PROPERTY(QVariantList lowPriorityFiles READ lowPriorityFiles)
-        Q_PROPERTY(QVariantMap renamedFiles READ renamedFiles)
+        Q_PROPERTY(QVariantList unwantedFiles READ unwantedFiles NOTIFY wantedFilesChanged)
+        Q_PROPERTY(QVariantList highPriorityFiles READ highPriorityFiles NOTIFY filesPriorityChanged)
+        Q_PROPERTY(QVariantList lowPriorityFiles READ lowPriorityFiles NOTIFY filesPriorityChanged)
+        Q_PROPERTY(QVariantMap renamedFiles READ renamedFiles NOTIFY renamedFilesChanged)
     public:
         explicit LocalTorrentFilesModel(QObject* parent = nullptr);
 
@@ -55,6 +55,11 @@ namespace tremotesf
 
         const QVariantMap& renamedFiles() const;
 
+        void setFileWanted(const QModelIndex& index, bool wanted) override;
+        void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
+        void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) override;
+        void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) override;
+
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -67,8 +72,12 @@ namespace tremotesf
         bencode::Error mError;
 
         QVariantMap mRenamedFiles;
+
     signals:
         void loadedChanged();
+        void wantedFilesChanged();
+        void filesPriorityChanged();
+        void renamedFilesChanged();
     };
 }
 

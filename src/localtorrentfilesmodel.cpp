@@ -293,11 +293,36 @@ namespace tremotesf
         return mRenamedFiles;
     }
 
+    void LocalTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
+    {
+        BaseTorrentFilesModel::setFileWanted(index, wanted);
+        emit wantedFilesChanged();
+    }
+
+    void LocalTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted)
+    {
+        BaseTorrentFilesModel::setFilesWanted(indexes, wanted);
+        emit wantedFilesChanged();
+    }
+
+    void LocalTorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority)
+    {
+        BaseTorrentFilesModel::setFilePriority(index, priority);
+        emit filesPriorityChanged();
+    }
+
+    void LocalTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority)
+    {
+        BaseTorrentFilesModel::setFilesPriority(indexes, priority);
+        emit filesPriorityChanged();
+    }
+
     void LocalTorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName)
     {
         auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
         fileRenamed(entry, newName);
         mRenamedFiles.insert(entry->path(), newName);
+        emit renamedFilesChanged();
     }
 
 #ifdef TREMOTESF_SAILFISHOS
