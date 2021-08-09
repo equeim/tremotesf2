@@ -273,7 +273,7 @@ namespace tremotesf::bencode
 
             void setErrorFromIODevice(QDebug& debug)
             {
-                if (auto fileDevice = dynamic_cast<QFileDevice*>(&mDevice); fileDevice) {
+                if (auto fileDevice = qobject_cast<QFileDevice*>(&mDevice); fileDevice) {
                     debug << ", error = " << fileDevice->error();
                 }
                 debug << ", error string = " << mDevice.errorString() << ", at end = " << mDevice.atEnd();
