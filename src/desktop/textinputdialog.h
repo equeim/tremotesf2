@@ -28,6 +28,8 @@ namespace tremotesf
 {
     class TextInputDialog : public QDialog
     {
+        Q_OBJECT
+
     public:
         explicit TextInputDialog(const QString& title,
                                  const QString& labelText,

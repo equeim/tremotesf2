@@ -27,8 +27,9 @@ namespace tremotesf
 
     class TorrentsView : public BaseTreeView
     {
+        Q_OBJECT
     public:
-        explicit TorrentsView(TorrentsProxyModel* model, QWidget* parent);
+        TorrentsView(TorrentsProxyModel* model, QWidget* parent = nullptr);
         ~TorrentsView() override;
     };
 }

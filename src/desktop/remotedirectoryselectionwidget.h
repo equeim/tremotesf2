@@ -27,6 +27,8 @@ namespace tremotesf
 
     class RemoteDirectorySelectionWidget : public FileSelectionWidget
     {
+        Q_OBJECT
+
     public:
         RemoteDirectorySelectionWidget(const QString& directory,
                                        const Rpc* rpc,

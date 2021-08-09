@@ -35,6 +35,8 @@ namespace tremotesf
 
     class AddTorrentDialog : public QDialog
     {
+        Q_OBJECT
+
     public:
         enum class Mode
         {

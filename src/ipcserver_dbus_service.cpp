@@ -30,8 +30,8 @@ namespace tremotesf
     const QLatin1String IpcDbusService::desktopStartupIdField("desktop-startup-id");
     const QLatin1String IpcDbusService::torrentHashField("torrent-hash");
 
-    IpcDbusService::IpcDbusService(IpcServerDbus* ipcServer)
-        : QObject(ipcServer),
+    IpcDbusService::IpcDbusService(IpcServerDbus* ipcServer, QObject *parent)
+        : QObject(parent),
           mIpcServer(ipcServer)
     {
         new IpcDbusServiceAdaptor(this);

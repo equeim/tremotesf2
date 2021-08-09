@@ -90,6 +90,8 @@ namespace tremotesf
     {
         class SetLocationDialog : public QDialog
         {
+            Q_OBJECT
+
         public:
             explicit SetLocationDialog(const QString& downloadDirectory,
                                        Rpc* rpc,
@@ -157,8 +159,9 @@ namespace tremotesf
         };
     }
 
-    MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls)
-        : mRpc(new Rpc(this)),
+    MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls, QWidget* parent)
+        : QMainWindow(parent),
+          mRpc(new Rpc(this)),
           mTorrentsModel(new TorrentsModel(mRpc, this)),
           mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, TorrentsModel::SortRole, this)),
           mSplitter(new QSplitter(this)),
@@ -1101,3 +1104,5 @@ namespace tremotesf
         desktoputils::selectFilesInFileManager(files, this);
     }
 }
+
+#include "mainwindow.moc"

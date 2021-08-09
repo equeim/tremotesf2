@@ -65,6 +65,8 @@ namespace tremotesf
 
     class MountedDirectoriesWidget : public QTableWidget
     {
+        Q_OBJECT
+
     public:
         MountedDirectoriesWidget(int rows, int columns, QWidget* parent = nullptr)
             : QTableWidget(rows, columns, parent)
@@ -476,3 +478,5 @@ namespace tremotesf
         }
     }
 }
+
+#include "servereditdialog.moc"

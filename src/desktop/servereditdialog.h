@@ -37,6 +37,8 @@ namespace tremotesf
 
     class ServerEditDialog : public QDialog
     {
+        Q_OBJECT
+
     public:
         explicit ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent = nullptr);
         QSize sizeHint() const override;

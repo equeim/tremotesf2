@@ -30,6 +30,8 @@ namespace tremotesf
 
     class MainWindowStatusBar : public QStatusBar
     {
+        Q_OBJECT
+
     public:
         explicit MainWindowStatusBar(const Rpc* rpc, QWidget* parent = nullptr);
 

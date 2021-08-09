@@ -40,6 +40,8 @@ namespace tremotesf
 
     class TorrentPropertiesDialog : public QDialog
     {
+        Q_OBJECT
+
     public:
         explicit TorrentPropertiesDialog(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TorrentPropertiesDialog() override;

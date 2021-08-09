@@ -35,6 +35,8 @@ namespace tremotesf
 
     class TrackersViewWidget : public QWidget
     {
+        Q_OBJECT
+
     public:
         TrackersViewWidget(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TrackersViewWidget() override;

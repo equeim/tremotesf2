@@ -29,6 +29,8 @@ namespace tremotesf
 {
     class CommonDelegate : public QStyledItemDelegate
     {
+        Q_OBJECT
+
     public:
         explicit CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent = nullptr);
         inline explicit CommonDelegate(QObject* parent = nullptr) : CommonDelegate(-1, -1, -1, parent) {}

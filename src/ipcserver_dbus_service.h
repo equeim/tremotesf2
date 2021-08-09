@@ -35,7 +35,7 @@ namespace tremotesf
         static const QLatin1String desktopStartupIdField;
         static const QLatin1String torrentHashField;
 
-        explicit IpcDbusService(IpcServerDbus* ipcServer);
+        IpcDbusService(IpcServerDbus* ipcServer, QObject* parent = nullptr);
 
     private:
         /*

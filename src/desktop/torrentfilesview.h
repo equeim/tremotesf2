@@ -33,6 +33,8 @@ namespace tremotesf
 
     class TorrentFilesView : public BaseTreeView
     {
+        Q_OBJECT
+
     public:
         explicit TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent = nullptr);
         explicit TorrentFilesView(TorrentFilesModel* model,

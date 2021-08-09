@@ -28,6 +28,7 @@ namespace tremotesf
 
     class MainWindowSideBar : public QScrollArea
     {
+        Q_OBJECT
     public:
         explicit MainWindowSideBar(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent = nullptr);
     };

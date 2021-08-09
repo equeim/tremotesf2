@@ -34,6 +34,8 @@ namespace tremotesf
     {
         class ComboBoxViewEventFilter : public QObject
         {
+            Q_OBJECT
+
         public:
             explicit ComboBoxViewEventFilter(QComboBox* comboBox)
                 : mComboBox(comboBox)
@@ -188,3 +190,5 @@ namespace tremotesf
         mFileDialogDirectory = directory;
     }
 }
+
+#include "fileselectionwidget.moc"

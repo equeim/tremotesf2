@@ -44,8 +44,9 @@ namespace tremotesf
     {
         class StatusListWidget : public QListWidget
         {
+            Q_OBJECT
         public:
-            explicit StatusListWidget(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
+            StatusListWidget(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent = nullptr)
                 : QListWidget(parent),
                   mProxyModel(proxyModel),
                   mRpc(rpc),
@@ -135,8 +136,10 @@ namespace tremotesf
 
         class BaseListView : public QListView
         {
+            Q_OBJECT
+
         public:
-            explicit BaseListView(TorrentsProxyModel* proxyModel, QWidget* parent)
+            explicit BaseListView(TorrentsProxyModel* proxyModel, QWidget* parent = nullptr)
                 : QListView(parent),
                   mTorrentsProxyModel(proxyModel)
             {
@@ -170,8 +173,10 @@ namespace tremotesf
 
         class TrackersListView : public BaseListView
         {
+            Q_OBJECT
+
         public:
-            explicit TrackersListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
+            TrackersListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent = nullptr)
                 : BaseListView(proxyModel, parent)
             {
                 setItemDelegate(new CommonDelegate(this));
@@ -202,8 +207,10 @@ namespace tremotesf
 
         class DirectoriesListView : public BaseListView
         {
+            Q_OBJECT
+
         public:
-            explicit DirectoriesListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent)
+            DirectoriesListView(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent = nullptr)
                 : BaseListView(proxyModel, parent)
             {
                 setItemDelegate(new CommonDelegate(this));
@@ -293,3 +300,5 @@ namespace tremotesf
         setWidget(contentWidget);
     }
 }
+
+#include "mainwindowsidebar.moc"

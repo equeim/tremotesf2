@@ -41,7 +41,7 @@ namespace tremotesf
         inline explicit IpcServerDbus(QObject* parent = nullptr) : IpcServer(parent) {};
 
     private:
-        IpcDbusService mDbusService{this};
+        IpcDbusService mDbusService{this, this};
 
 #ifdef TREMOTESF_SAILFISHOS
     signals:

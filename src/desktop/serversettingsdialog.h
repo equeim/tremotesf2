@@ -37,6 +37,8 @@ namespace tremotesf
 
     class ServerSettingsDialog : public QDialog
     {
+        Q_OBJECT
+
     public:
         explicit ServerSettingsDialog(const Rpc* rpc, QWidget* parent = nullptr);
         QSize sizeHint() const override;

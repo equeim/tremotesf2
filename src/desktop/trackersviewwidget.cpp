@@ -47,6 +47,7 @@ namespace tremotesf
     {
         class EnterEatingTreeView : public BaseTreeView
         {
+            Q_OBJECT
         public:
             explicit EnterEatingTreeView(QWidget* parent = nullptr)
                 : BaseTreeView(parent)
@@ -204,3 +205,5 @@ namespace tremotesf
         }
     }
 }
+
+#include "trackersviewwidget.moc"
