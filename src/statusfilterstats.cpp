@@ -42,40 +42,46 @@ namespace tremotesf
 
     void StatusFilterStats::setRpc(Rpc* rpc)
     {
-        if (rpc) {
+        if (rpc != mRpc) {
+            if (mRpc) {
+                QObject::disconnect(mRpc, nullptr, this, nullptr);
+            }
             mRpc = rpc;
-            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] {
-                mActiveTorrents = 0;
-                mDownloadingTorrents = 0;
-                mSeedingTorrents = 0;
-                mPausedTorrents = 0;
-                mCheckingTorrents = 0;
-                mErroredTorrents = 0;
+            emit rpcChanged();
+            if (rpc) {
+                QObject::connect(rpc, &Rpc::torrentsUpdated, this, [=] {
+                    mActiveTorrents = 0;
+                    mDownloadingTorrents = 0;
+                    mSeedingTorrents = 0;
+                    mPausedTorrents = 0;
+                    mCheckingTorrents = 0;
+                    mErroredTorrents = 0;
 
-                for (const std::shared_ptr<libtremotesf::Torrent>& torrent : mRpc->torrents()) {
-                    const libtremotesf::Torrent* torrentPointer = torrent.get();
-                    if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Active)) {
-                        ++mActiveTorrents;
+                    for (const std::shared_ptr<libtremotesf::Torrent>& torrent : mRpc->torrents()) {
+                        const libtremotesf::Torrent* torrentPointer = torrent.get();
+                        if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Active)) {
+                            ++mActiveTorrents;
+                        }
+                        if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Downloading)) {
+                            ++mDownloadingTorrents;
+                        }
+                        if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Seeding)) {
+                            ++mSeedingTorrents;
+                        }
+                        if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Paused)) {
+                            ++mPausedTorrents;
+                        }
+                        if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Checking)) {
+                            ++mCheckingTorrents;
+                        }
+                        if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Errored)) {
+                            ++mErroredTorrents;
+                        }
                     }
-                    if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Downloading)) {
-                        ++mDownloadingTorrents;
-                    }
-                    if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Seeding)) {
-                        ++mSeedingTorrents;
-                    }
-                    if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Paused)) {
-                        ++mPausedTorrents;
-                    }
-                    if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Checking)) {
-                        ++mCheckingTorrents;
-                    }
-                    if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrentPointer, TorrentsProxyModel::Errored)) {
-                        ++mErroredTorrents;
-                    }
-                }
 
-                emit updated();
-            });
+                    emit updated();
+                });
+            }
         }
     }
 

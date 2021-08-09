@@ -43,7 +43,7 @@ namespace tremotesf
 #ifdef TREMOTESF_SAILFISHOS
         Q_INTERFACES(QQmlParserStatus)
 #endif
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc)
+        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
         Q_PROPERTY(tremotesf::TorrentsProxyModel* torrentsProxyModel READ torrentsProxyModel WRITE setTorrentsProxyModel)
     public:
 #ifndef TREMOTESF_SAILFISHOS
@@ -84,6 +84,9 @@ namespace tremotesf
         Rpc* mRpc;
         TorrentsProxyModel* mTorrentsProxyModel;
         std::vector<TrackerItem> mTrackers;
+
+    signals:
+        void rpcChanged();
     };
 }
 

@@ -337,10 +337,16 @@ namespace tremotesf
 
     void TorrentsModel::setRpc(Rpc* rpc)
     {
-        if (rpc && !mRpc) {
+        if (rpc != mRpc) {
+            if (mRpc) {
+                QObject::disconnect(mRpc, nullptr, this, nullptr);
+            }
             mRpc = rpc;
-            update({}, {}, static_cast<int>(mRpc->torrents().size()));
-            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &TorrentsModel::update);
+            emit rpcChanged();
+            if (rpc) {
+                update({}, {}, static_cast<int>(rpc->torrents().size()));
+                QObject::connect(rpc, &Rpc::torrentsUpdated, this, &TorrentsModel::update);
+            }
         }
     }
 

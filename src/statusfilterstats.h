@@ -33,7 +33,7 @@ namespace tremotesf
     class StatusFilterStats : public QObject
     {
         Q_OBJECT
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc)
+        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
         Q_PROPERTY(int activeTorrents READ activeTorrents NOTIFY updated)
         Q_PROPERTY(int downloadingTorrents READ downloadingTorrents NOTIFY updated)
         Q_PROPERTY(int seedingTorrents READ seedingTorrents NOTIFY updated)
@@ -62,6 +62,7 @@ namespace tremotesf
         int mCheckingTorrents;
         int mErroredTorrents;
     signals:
+        void rpcChanged();
         void updated();
     };
 }

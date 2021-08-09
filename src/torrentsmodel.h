@@ -36,7 +36,7 @@ namespace tremotesf
     class TorrentsModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc)
+        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
     public:
 #ifdef TREMOTESF_SAILFISHOS
         enum Role
@@ -117,6 +117,9 @@ namespace tremotesf
 
         std::vector<std::shared_ptr<libtremotesf::Torrent>> mTorrents;
         Rpc* mRpc;
+
+    signals:
+        void rpcChanged();
     };
 }
 

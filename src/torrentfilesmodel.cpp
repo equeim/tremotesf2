@@ -184,7 +184,10 @@ namespace tremotesf
 
     void TorrentFilesModel::setRpc(Rpc* rpc)
     {
-        mRpc = rpc;
+        if (rpc != mRpc) {
+            mRpc = rpc;
+            emit rpcChanged();
+        }
     }
 
     bool TorrentFilesModel::isLoaded() const

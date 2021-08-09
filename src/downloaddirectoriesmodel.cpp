@@ -137,9 +137,15 @@ namespace tremotesf
 
     void DownloadDirectoriesModel::setRpc(Rpc* rpc)
     {
-        if (rpc && !mRpc) {
+        if (rpc != mRpc) {
+            if (mRpc) {
+                QObject::disconnect(mRpc, nullptr, this, nullptr);
+            }
             mRpc = rpc;
-            QObject::connect(mRpc, &Rpc::torrentsUpdated, this, &DownloadDirectoriesModel::update);
+            emit rpcChanged();
+            if (rpc) {
+                QObject::connect(rpc, &Rpc::torrentsUpdated, this, &DownloadDirectoriesModel::update);
+            }
         }
     }
 
