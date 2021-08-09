@@ -31,7 +31,7 @@ namespace tremotesf
     class TorrentFilesModel : public BaseTorrentFilesModel
     {
         Q_OBJECT
-        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)
+        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
         Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
         Q_PROPERTY(bool loading READ isLoading NOTIFY loadingChanged)
@@ -82,6 +82,7 @@ namespace tremotesf
         std::vector<TorrentFilesModelFile*> mFiles;
         bool mCreatingTree;
     signals:
+        void torrentChanged();
         void rpcChanged();
         void loadedChanged();
         void loadingChanged();

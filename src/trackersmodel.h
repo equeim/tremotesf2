@@ -34,7 +34,7 @@ namespace tremotesf
     class TrackersModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent)
+        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
     public:
 #ifdef TREMOTESF_SAILFISHOS
         enum Role
@@ -84,6 +84,9 @@ namespace tremotesf
 
         libtremotesf::Torrent* mTorrent;
         std::vector<libtremotesf::Tracker> mTrackers;
+
+    signals:
+        void torrentChanged();
     };
 }
 

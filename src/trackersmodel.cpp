@@ -149,7 +149,13 @@ namespace tremotesf
     void TrackersModel::setTorrent(libtremotesf::Torrent* torrent)
     {
         if (torrent != mTorrent) {
+            if (mTorrent) {
+                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            }
+
             mTorrent = torrent;
+            emit torrentChanged();
+
             if (mTorrent) {
                 update();
                 QObject::connect(mTorrent, &libtremotesf::Torrent::updated, this, &TrackersModel::update);
