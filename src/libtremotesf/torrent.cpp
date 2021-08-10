@@ -260,7 +260,7 @@ namespace libtremotesf
 
         setChanged(comment, torrentMap.value(commentKey).toString(), changed);
 
-        trackersAddedOrRemoved = false;
+        trackersAnnounceUrlsChanged = false;
         std::vector<Tracker> newTrackers;
         const QJsonArray trackerJsons(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
         newTrackers.reserve(static_cast<size_t>(trackerJsons.size()));
@@ -274,18 +274,22 @@ namespace libtremotesf
 
             if (found == trackers.end()) {
                 newTrackers.emplace_back(trackerId, trackerMap);
-                trackersAddedOrRemoved = true;
+                trackersAnnounceUrlsChanged = true;
             } else {
-                if (found->update(trackerMap)) {
+                const auto result = found->update(trackerMap);
+                if (result.changed) {
                     changed = true;
+                }
+                if (result.announceUrlChanged) {
+                    trackersAnnounceUrlsChanged = true;
                 }
                 newTrackers.push_back(std::move(*found));
             }
         }
         if (newTrackers.size() != trackers.size()) {
-            trackersAddedOrRemoved = true;
+            trackersAnnounceUrlsChanged = true;
         }
-        if (trackersAddedOrRemoved) {
+        if (trackersAnnounceUrlsChanged) {
             changed = true;
         }
         trackers = std::move(newTrackers);
@@ -293,8 +297,8 @@ namespace libtremotesf
         return changed;
     }
 
-    Torrent::Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc)
-        : mRpc(rpc)
+    Torrent::Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc, QObject* parent)
+        : QObject(parent), mRpc(rpc)
     {
         mData.id = id;
         mData.hashString = torrentMap.value(hashStringKey).toString();
@@ -596,9 +600,9 @@ namespace libtremotesf
         return mData.trackers;
     }
 
-    bool Torrent::isTrackersAddedOrRemoved() const
+    bool Torrent::isTrackersAnnounceUrlsChanged() const
     {
-        return mData.trackersAddedOrRemoved;
+        return mData.trackersAnnounceUrlsChanged;
     }
 
     void Torrent::addTrackers(const QStringList& announceUrls)

@@ -57,7 +57,7 @@ namespace libtremotesf
         Q_PROPERTY(libtremotesf::SessionStats currentSession READ currentSession NOTIFY updated)
         Q_PROPERTY(libtremotesf::SessionStats total READ total NOTIFY updated)
     public:
-        explicit ServerStats(QObject* parent);
+        explicit ServerStats(QObject* parent = nullptr);
 
         long long downloadSpeed() const;
         long long uploadSpeed() const;

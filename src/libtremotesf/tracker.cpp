@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QJsonObject>
+#include <QHostAddress>
 #include <QUrl>
 
 #include "stdutils.h"
@@ -66,6 +67,13 @@ namespace libtremotesf
     }
 #endif
 
+    Tracker::AnnounceHostInfo Tracker::announceHostInfo() const
+    {
+        auto host = QUrl(mAnnounce).host();
+        bool isIpAddress = !QHostAddress(host).isNull();
+        return {std::move(host), isIpAddress};
+    }
+
     Tracker::Status Tracker::status() const
     {
         return mStatus;
@@ -91,13 +99,15 @@ namespace libtremotesf
         return mNextUpdateEta;
     }
 
-    bool Tracker::update(const QJsonObject& trackerMap)
+    Tracker::UpdateResult Tracker::update(const QJsonObject& trackerMap)
     {
         bool changed = false;
+        bool announceUrlChanged = false;
 
         QString announce(trackerMap.value(QJsonKeyStringInit("announce")).toString());
         if (announce != mAnnounce) {
             changed = true;
+            announceUrlChanged = true;
             mAnnounce = std::move(announce);
 #if QT_VERSION_MAJOR < 6
             const QUrl url(mAnnounce);
@@ -155,6 +165,6 @@ namespace libtremotesf
             mNextUpdateEta = static_cast<int>(nextUpdateEta);
         }
 
-        return changed;
+        return {changed, announceUrlChanged};
     }
 }

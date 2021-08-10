@@ -138,7 +138,7 @@ namespace libtremotesf
 
         bool singleFile = true;
 
-        bool trackersAddedOrRemoved = false;
+        bool trackersAnnounceUrlsChanged = false;
 
         std::vector<Tracker> trackers;
     };
@@ -167,10 +167,10 @@ namespace libtremotesf
         Q_PROPERTY(long long downloadSpeed READ downloadSpeed NOTIFY changed)
         Q_PROPERTY(long long uploadSpeed READ uploadSpeed NOTIFY changed)
 
-        Q_PROPERTY(bool downloadSpeedLimited READ isDownloadSpeedLimited WRITE setDownloadSpeedLimited)
-        Q_PROPERTY(int downloadSpeedLimit READ downloadSpeedLimit WRITE setDownloadSpeedLimit)
-        Q_PROPERTY(bool uploadSpeedLimited READ isUploadSpeedLimited WRITE setUploadSpeedLimited)
-        Q_PROPERTY(int uploadSpeedLimit READ uploadSpeedLimit WRITE setUploadSpeedLimit)
+        Q_PROPERTY(bool downloadSpeedLimited READ isDownloadSpeedLimited WRITE setDownloadSpeedLimited NOTIFY changed)
+        Q_PROPERTY(int downloadSpeedLimit READ downloadSpeedLimit WRITE setDownloadSpeedLimit NOTIFY changed)
+        Q_PROPERTY(bool uploadSpeedLimited READ isUploadSpeedLimited WRITE setUploadSpeedLimited NOTIFY changed)
+        Q_PROPERTY(int uploadSpeedLimit READ uploadSpeedLimit WRITE setUploadSpeedLimit NOTIFY changed)
 
         Q_PROPERTY(long long totalDownloaded READ totalDownloaded NOTIFY changed)
         Q_PROPERTY(long long totalUploaded READ totalUploaded NOTIFY changed)
@@ -187,10 +187,10 @@ namespace libtremotesf
         Q_PROPERTY(QDateTime activityDate READ activityDate NOTIFY changed)
         Q_PROPERTY(QDateTime doneDate READ doneDate NOTIFY changed)
 
-        Q_PROPERTY(bool honorSessionLimits READ honorSessionLimits WRITE setHonorSessionLimits)
-        Q_PROPERTY(libtremotesf::TorrentData::Priority bandwidthPriority READ bandwidthPriority WRITE setBandwidthPriority)
-        Q_PROPERTY(libtremotesf::TorrentData::IdleSeedingLimitMode idleSeedingLimitMode READ idleSeedingLimitMode WRITE setIdleSeedingLimitMode)
-        Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit)
+        Q_PROPERTY(bool honorSessionLimits READ honorSessionLimits WRITE setHonorSessionLimits NOTIFY changed)
+        Q_PROPERTY(libtremotesf::TorrentData::Priority bandwidthPriority READ bandwidthPriority WRITE setBandwidthPriority NOTIFY changed)
+        Q_PROPERTY(libtremotesf::TorrentData::IdleSeedingLimitMode idleSeedingLimitMode READ idleSeedingLimitMode WRITE setIdleSeedingLimitMode NOTIFY changed)
+        Q_PROPERTY(int idleSeedingLimit READ idleSeedingLimit WRITE setIdleSeedingLimit NOTIFY changed)
         Q_PROPERTY(QString downloadDirectory READ downloadDirectory NOTIFY changed)
         Q_PROPERTY(bool singleFile READ isSingleFile NOTIFY changed)
         Q_PROPERTY(QString creator READ creator NOTIFY changed)
@@ -205,7 +205,7 @@ namespace libtremotesf
 
         static const QJsonKeyString idKey;
 
-        explicit Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc);
+        explicit Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc, QObject* parent = nullptr);
 
         int id() const;
         const QString& hashString() const;
@@ -272,7 +272,7 @@ namespace libtremotesf
         const QString& comment() const;
 
         const std::vector<Tracker>& trackers() const;
-        bool isTrackersAddedOrRemoved() const;
+        bool isTrackersAnnounceUrlsChanged() const;
         Q_INVOKABLE void addTrackers(const QStringList& announceUrls);
         Q_INVOKABLE void setTracker(int trackerId, const QString& announce);
         Q_INVOKABLE void removeTrackers(const QVariantList& ids);

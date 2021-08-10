@@ -227,11 +227,11 @@ namespace libtremotesf
         bool retryRequest(Request&& request,
                           QNetworkReply* previousAttempt);
 
-        void postRequest(const QLatin1String& method,
+        void postRequest(QLatin1String method,
                          const QByteArray& data,
                          const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse = {});
 
-        void postRequest(const QLatin1String& method,
+        void postRequest(QLatin1String method,
                          const QVariantMap& arguments,
                          const std::function<void(const QJsonObject&, bool)>& callOnSuccessParse = {});
 
