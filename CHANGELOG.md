@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Ability to shut down remote Transmission instance
+- Renaming of torrent via its context menu
+
+### Changed
+- Reduced memory usage when opening torrent files
+
 ## [1.9.1] - 2021-05-10
 ### Changed
 - Disabled MIME type checking for torrent files (it doesn't work for some files)
