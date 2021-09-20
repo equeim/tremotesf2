@@ -264,8 +264,8 @@ namespace libtremotesf
         std::vector<Tracker> newTrackers;
         const QJsonArray trackerJsons(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
         newTrackers.reserve(static_cast<size_t>(trackerJsons.size()));
-        for (const QJsonValue& trackerJson : trackerJsons) {
-            const QJsonObject trackerMap(trackerJson.toObject());
+        for (const auto& i : trackerJsons) {
+            const QJsonObject trackerMap(i.toObject());
             const int trackerId = trackerMap.value(QJsonKeyStringInit("id")).toInt();
 
             const auto found(std::find_if(trackers.begin(), trackers.end(), [&](const auto& tracker) {
@@ -775,8 +775,8 @@ namespace libtremotesf
         {
             const QJsonArray peerJsons(torrentMap.value(QJsonKeyStringInit("peers")).toArray());
             newPeers.reserve(static_cast<size_t>(peerJsons.size()));
-            for (const QJsonValue& peerValue : peerJsons) {
-                QJsonObject peerJson(peerValue.toObject());
+            for (const auto& i : peerJsons) {
+                QJsonObject peerJson(i.toObject());
                 QString address(peerJson.value(Peer::addressKey).toString());
                 newPeers.emplace_back(std::move(peerJson), std::move(address), false);
             }

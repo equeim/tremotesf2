@@ -646,8 +646,8 @@ namespace libtremotesf
                     [=](const auto& parseResult, bool success) {
                         if (success) {
                             const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
-                            for (const QJsonValue& torrentValue : torrents) {
-                                const QJsonObject torrentMap(torrentValue.toObject());
+                            for (const auto& i : torrents) {
+                                const QJsonObject torrentMap(i.toObject());
                                 const int torrentId = torrentMap.value(Torrent::idKey).toInt();
                                 Torrent* torrent = torrentById(torrentId);
                                 if (torrent && torrent->isFilesEnabled()) {
@@ -672,8 +672,8 @@ namespace libtremotesf
                     [=](const auto& parseResult, bool success) {
                         if (success) {
                             const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
-                            for (const QJsonValue& torrentValue : torrents) {
-                                const QJsonObject torrentMap(torrentValue.toObject());
+                            for (const auto& i : torrents) {
+                                const QJsonObject torrentMap(i.toObject());
                                 const int torrentId = torrentMap.value(Torrent::idKey).toInt();
                                 Torrent* torrent = torrentById(torrentId);
                                 if (torrent && torrent->isPeersEnabled()) {
@@ -953,8 +953,8 @@ namespace libtremotesf
                                                             .value(QJsonKeyStringInit("torrents"))
                                                             .toArray());
                             newTorrents.reserve(static_cast<size_t>(torrentsJsons.size()));
-                            for (const QJsonValue& torrentValue : torrentsJsons) {
-                                QJsonObject torrentJson(torrentValue.toObject());
+                            for (const auto& i : torrentsJsons) {
+                                QJsonObject torrentJson(i.toObject());
                                 const int id = torrentJson.value(Torrent::idKey).toInt();
                                 newTorrents.emplace_back(std::move(torrentJson), id, false);
                             }
@@ -1070,8 +1070,8 @@ namespace libtremotesf
                     [=](const auto& parseResult, bool success) {
                         if (success) {
                             const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
-                            for (const QJsonValue& torrentValue : torrents) {
-                                const QJsonObject torrentMap(torrentValue.toObject());
+                            for (const auto& i : torrents) {
+                                const QJsonObject torrentMap(i.toObject());
                                 const int torrentId = torrentMap.value(Torrent::idKey).toInt();
                                 Torrent* torrent = torrentById(torrentId);
                                 if (torrent) {
