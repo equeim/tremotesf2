@@ -49,6 +49,9 @@ BuildRequires: gettext
 BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
+%if 0%{?suse_version} == 1500
+BuildRequires:  gcc10-c++
+%endif
 %else
 %if %{defined mageia}
 BuildRequires: appstream-util
@@ -90,7 +93,11 @@ Remote GUI for Transmission BitTorrent client.
     %cmake -DSAILFISHOS=ON ..
     %make_build
 %else
-    %cmake
+    %cmake \
+%if %{defined suse_version} && 0%{?suse_version} == 1500
+    -DCMAKE_CXX_COMPILER=g++-10
+%endif
+
     %if %{defined cmake_build}
         %cmake_build
     %else
