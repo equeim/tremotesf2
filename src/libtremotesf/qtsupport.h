@@ -70,7 +70,7 @@ QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH_BY_CREF(QByteArray)
 #define DEFINE_Q_ENUM_NS(Name, ...) \
     Q_NAMESPACE \
     enum class Name { __VA_ARGS__ }; \
-    Q_ENUM_NS(Name);
+    Q_ENUM_NS(Name)
 #else
 #define DEFINE_Q_ENUM_NS(Name, ...) \
     struct Name ## Struct { \
