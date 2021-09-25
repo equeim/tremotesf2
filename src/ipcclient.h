@@ -30,7 +30,11 @@ namespace tremotesf
         static std::unique_ptr<IpcClient> createInstance();
 
         IpcClient() = default;
-        Q_DISABLE_COPY_MOVE(IpcClient)
+
+        Q_DISABLE_COPY(IpcClient)
+
+        IpcClient(IpcClient&&) = delete;
+        IpcClient& operator=(IpcClient&&) = delete;
 
         virtual ~IpcClient() = default;
         virtual bool isConnected() const = 0;
