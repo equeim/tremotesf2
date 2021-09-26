@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.20)
 
-project(tremotesf VERSION 1.9.1 LANGUAGES CXX)
+project(tremotesf VERSION 1.10.0 LANGUAGES CXX)
 
 option(TEST_BUILD "Test build" OFF)
 option(SAILFISHOS "Build for Sailfish OS" OFF)

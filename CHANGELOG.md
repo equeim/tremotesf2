@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.10.0] - 2021-09-27
 ### Added
 - Ability to shut down remote Transmission instance
 - Renaming of torrent via its context menu
