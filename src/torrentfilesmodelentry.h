@@ -58,7 +58,7 @@ namespace tremotesf
 
         TorrentFilesModelEntry() = default;
         TorrentFilesModelEntry(const TorrentFilesModelEntry& other) = delete;
-        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path);
+        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
         virtual ~TorrentFilesModelEntry() = default;
 
         TorrentFilesModelEntry& operator=(const TorrentFilesModelEntry& other) = delete;
@@ -70,7 +70,6 @@ namespace tremotesf
         void setName(const QString& name);
 
         QString path() const;
-        void setPath(const QString& path);
 
         virtual bool isDirectory() const = 0;
 
@@ -91,14 +90,13 @@ namespace tremotesf
         int mRow = 0;
         TorrentFilesModelDirectory* mParentDirectory = nullptr;
         QString mName;
-        QString mPath;
     };
 
     class TorrentFilesModelDirectory final : public TorrentFilesModelEntry
     {
     public:
         TorrentFilesModelDirectory() = default;
-        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path);
+        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
         ~TorrentFilesModelDirectory() override;
 
         bool isDirectory() const override;
@@ -130,7 +128,6 @@ namespace tremotesf
                                        TorrentFilesModelDirectory* parentDirectory,
                                        int id,
                                        const QString& name,
-                                       const QString& path,
                                        long long size);
 
         bool isDirectory() const override;

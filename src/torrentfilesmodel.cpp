@@ -87,21 +87,15 @@ namespace tremotesf
                 TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
                 const std::vector<QString> parts(file.path);
-                QString path;
 
                 for (size_t partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
                     const QString& part = parts[partIndex];
-                    if (partIndex > 0) {
-                        path += '/';
-                    }
-                    path += part;
 
                     if (partIndex == lastPartIndex) {
                         auto childFile = new TorrentFilesModelFile(static_cast<int>(currentDirectory->children().size()),
                                                                    currentDirectory,
                                                                    static_cast<int>(fileIndex),
                                                                    part,
-                                                                   path,
                                                                    file.size);
 
                         updateFile(childFile, file);
@@ -116,8 +110,7 @@ namespace tremotesf
                         } else {
                             auto childDirectory = new TorrentFilesModelDirectory(static_cast<int>(currentDirectory->children().size()),
                                                                                  currentDirectory,
-                                                                                 part,
-                                                                                 path);
+                                                                                 part);
                             currentDirectory->addChild(childDirectory);
                             currentDirectory = childDirectory;
                         }

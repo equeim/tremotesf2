@@ -89,7 +89,6 @@ namespace tremotesf
 
                 auto torrentDirectory = new TorrentFilesModelDirectory(0,
                                                                        rootDirectory.get(),
-                                                                       *torrentDirectoryName,
                                                                        *torrentDirectoryName);
                 rootDirectory->addChild(torrentDirectory);
 
@@ -112,7 +111,6 @@ namespace tremotesf
                         return {};
                     }
 
-                    auto path = *torrentDirectoryName;
                     int partIndex = -1;
                     const int lastPartIndex = static_cast<int>(pathParts->size()) - 1;
 
@@ -125,8 +123,6 @@ namespace tremotesf
                             return {};
                         }
 
-                        path += QLatin1Char('/');
-                        path += *part;
                         if (partIndex == lastPartIndex) {
                             auto length = findValue<bencode::Integer>(*fileMap, lengthKey, filesKey, "integer");
                             if (!length) {
@@ -137,7 +133,6 @@ namespace tremotesf
                                                                        currentDirectory,
                                                                        fileIndex,
                                                                        *part,
-                                                                       path,
                                                                        *length);
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
@@ -152,8 +147,7 @@ namespace tremotesf
                             } else {
                                 auto childDirectory = new TorrentFilesModelDirectory(static_cast<int>(currentDirectory->children().size()),
                                                                                      currentDirectory,
-                                                                                     *part,
-                                                                                     path);
+                                                                                     *part);
                                 currentDirectory->addChild(childDirectory);
                                 currentDirectory = childDirectory;
                             }
@@ -173,7 +167,6 @@ namespace tremotesf
                 auto file = new TorrentFilesModelFile(0,
                                                       rootDirectory.get(),
                                                       0,
-                                                      *name,
                                                       *name,
                                                       *length);
                 file->setWanted(true);

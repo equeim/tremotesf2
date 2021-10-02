@@ -52,11 +52,10 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesModelEntry::TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path)
+    TorrentFilesModelEntry::TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name)
         : mRow(row),
           mParentDirectory(parentDirectory),
-          mName(name),
-          mPath(path)
+          mName(name)
     {
     }
 
@@ -82,12 +81,14 @@ namespace tremotesf
 
     QString TorrentFilesModelEntry::path() const
     {
-        return mPath;
-    }
-
-    void TorrentFilesModelEntry::setPath(const QString& path)
-    {
-        mPath = path;
+        QString path(mName);
+        TorrentFilesModelDirectory* parent = mParentDirectory;
+        while (parent && !parent->name().isEmpty()) {
+            path.prepend(QLatin1Char('/'));
+            path.prepend(parent->name());
+            parent = parent->parentDirectory();
+        }
+        return path;
     }
 
     QString TorrentFilesModelEntry::priorityString() const
@@ -109,8 +110,8 @@ namespace tremotesf
         return QString();
     }
 
-    TorrentFilesModelDirectory::TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name, const QString& path)
-        : TorrentFilesModelEntry(row, parentDirectory, name, path)
+    TorrentFilesModelDirectory::TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name)
+        : TorrentFilesModelEntry(row, parentDirectory, name)
     {
     }
 
@@ -238,9 +239,8 @@ namespace tremotesf
                                                  TorrentFilesModelDirectory* parentDirectory,
                                                  int id,
                                                  const QString& name,
-                                                 const QString& path,
                                                  long long size)
-        : TorrentFilesModelEntry(row, parentDirectory, name, path),
+        : TorrentFilesModelEntry(row, parentDirectory, name),
           mSize(size),
           mCompletedSize(0),
           mWantedState(Unwanted),
