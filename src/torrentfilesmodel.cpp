@@ -92,15 +92,11 @@ namespace tremotesf
                     const QString& part = parts[partIndex];
 
                     if (partIndex == lastPartIndex) {
-                        auto childFile = new TorrentFilesModelFile(static_cast<int>(currentDirectory->children().size()),
-                                                                   currentDirectory,
-                                                                   static_cast<int>(fileIndex),
-                                                                   part,
-                                                                   file.size);
-
+                        auto* childFile = currentDirectory->addFile(static_cast<int>(fileIndex),
+                                                                    part,
+                                                                    file.size);
                         updateFile(childFile, file);
                         childFile->setChanged(false);
-                        currentDirectory->addChild(childFile);
                         treeFiles.push_back(childFile);
                     } else {
                         const auto& childrenHash = currentDirectory->childrenHash();
@@ -108,11 +104,7 @@ namespace tremotesf
                         if (found != childrenHash.end()) {
                             currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                         } else {
-                            auto childDirectory = new TorrentFilesModelDirectory(static_cast<int>(currentDirectory->children().size()),
-                                                                                 currentDirectory,
-                                                                                 part);
-                            currentDirectory->addChild(childDirectory);
-                            currentDirectory = childDirectory;
+                            currentDirectory = currentDirectory->addDirectory(part);
                         }
                     }
                 }

@@ -19,6 +19,7 @@
 #ifndef TREMOTESF_TORRENTFILESMODELENTRY_H
 #define TREMOTESF_TORRENTFILESMODELENTRY_H
 
+#include <memory>
 #include <vector>
 #include <unordered_map>
 
@@ -92,12 +93,13 @@ namespace tremotesf
         QString mName;
     };
 
+    class TorrentFilesModelFile;
+
     class TorrentFilesModelDirectory final : public TorrentFilesModelEntry
     {
     public:
         TorrentFilesModelDirectory() = default;
         explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
-        ~TorrentFilesModelDirectory() override;
 
         bool isDirectory() const override;
         long long size() const override;
@@ -108,16 +110,21 @@ namespace tremotesf
         Priority priority() const override;
         void setPriority(Priority priority) override;
 
-        const std::vector<TorrentFilesModelEntry*>& children() const;
+        const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const;
         const std::unordered_map<QString, TorrentFilesModelEntry*>& childrenHash() const;
-        void addChild(TorrentFilesModelEntry* child);
+
+        TorrentFilesModelFile* addFile(int id, const QString& name, long long size);
+        TorrentFilesModelDirectory* addDirectory(const QString& name);
+
         void clearChildren();
         QVariantList childrenIds() const;
 
         bool isChanged() const override;
 
     private:
-        std::vector<TorrentFilesModelEntry*> mChildren;
+        void addChild(std::unique_ptr<TorrentFilesModelEntry>&& child);
+
+        std::vector<std::unique_ptr<TorrentFilesModelEntry>> mChildren;
         std::unordered_map<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 

@@ -87,10 +87,7 @@ namespace tremotesf
                     return {};
                 }
 
-                auto torrentDirectory = new TorrentFilesModelDirectory(0,
-                                                                       rootDirectory.get(),
-                                                                       *torrentDirectoryName);
-                rootDirectory->addChild(torrentDirectory);
+                auto* torrentDirectory = rootDirectory->addDirectory(*torrentDirectoryName);
 
                 const auto filesCount = filesList->size();
                 files.reserve(filesCount);
@@ -129,15 +126,10 @@ namespace tremotesf
                                 return {};
                             }
 
-                            auto childFile = new TorrentFilesModelFile(static_cast<int>(currentDirectory->children().size()),
-                                                                       currentDirectory,
-                                                                       fileIndex,
-                                                                       *part,
-                                                                       *length);
+                            auto* childFile = currentDirectory->addFile(fileIndex, *part, *length);
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
                             childFile->setChanged(false);
-                            currentDirectory->addChild(childFile);
                             files.push_back(childFile);
                         } else {
                             const auto& childrenHash = currentDirectory->childrenHash();
@@ -145,11 +137,7 @@ namespace tremotesf
                             if (found != childrenHash.end()) {
                                 currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                             } else {
-                                auto childDirectory = new TorrentFilesModelDirectory(static_cast<int>(currentDirectory->children().size()),
-                                                                                     currentDirectory,
-                                                                                     *part);
-                                currentDirectory->addChild(childDirectory);
-                                currentDirectory = childDirectory;
+                                currentDirectory = currentDirectory->addDirectory(*part);
                             }
                         }
                     }
@@ -164,15 +152,10 @@ namespace tremotesf
                     return {};
                 }
 
-                auto file = new TorrentFilesModelFile(0,
-                                                      rootDirectory.get(),
-                                                      0,
-                                                      *name,
-                                                      *length);
+                auto* file = rootDirectory->addFile(0, *name, *length);
                 file->setWanted(true);
                 file->setPriority(TorrentFilesModelEntry::NormalPriority);
                 file->setChanged(false);
-                rootDirectory->addChild(file);
                 files.push_back(file);
             }
 

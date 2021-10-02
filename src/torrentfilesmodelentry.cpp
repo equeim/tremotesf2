@@ -115,11 +115,6 @@ namespace tremotesf
     {
     }
 
-    TorrentFilesModelDirectory::~TorrentFilesModelDirectory()
-    {
-        qDeleteAll(mChildren);
-    }
-
     bool TorrentFilesModelDirectory::isDirectory() const
     {
         return true;
@@ -128,7 +123,7 @@ namespace tremotesf
     long long TorrentFilesModelDirectory::size() const
     {
         long long bytes = 0;
-        for (const TorrentFilesModelEntry* child : mChildren) {
+        for (const auto& child : mChildren) {
             bytes += child->size();
         }
         return bytes;
@@ -137,7 +132,7 @@ namespace tremotesf
     long long TorrentFilesModelDirectory::completedSize() const
     {
         long long bytes = 0;
-        for (const TorrentFilesModelEntry* child : mChildren) {
+        for (const auto& child : mChildren) {
             bytes += child->completedSize();
         }
         return bytes;
@@ -165,7 +160,7 @@ namespace tremotesf
 
     void TorrentFilesModelDirectory::setWanted(bool wanted)
     {
-        for (TorrentFilesModelEntry* child : mChildren) {
+        for (auto& child : mChildren) {
             child->setWanted(wanted);
         }
     }
@@ -183,12 +178,12 @@ namespace tremotesf
 
     void TorrentFilesModelDirectory::setPriority(Priority priority)
     {
-        for (TorrentFilesModelEntry* child : mChildren) {
+        for (const auto& child : mChildren) {
             child->setPriority(priority);
         }
     }
 
-    const std::vector<TorrentFilesModelEntry*>& TorrentFilesModelDirectory::children() const
+    const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& TorrentFilesModelDirectory::children() const
     {
         return mChildren;
     }
@@ -198,16 +193,26 @@ namespace tremotesf
         return mChildrenHash;
     }
 
-    void TorrentFilesModelDirectory::addChild(TorrentFilesModelEntry* child)
+    TorrentFilesModelFile* TorrentFilesModelDirectory::addFile(int id, const QString& name, long long size)
     {
+        const int row = static_cast<int>(mChildren.size());
+        auto file = std::make_unique<TorrentFilesModelFile>(row, this, id, name, size);
+        auto* filePtr = file.get();
+        addChild(std::move(file));
+        return filePtr;
+    }
 
-        mChildren.push_back(child);
-        mChildrenHash.insert({child->name(), child});
+    TorrentFilesModelDirectory* TorrentFilesModelDirectory::addDirectory(const QString& name)
+    {
+        const int row = static_cast<int>(mChildren.size());
+        auto directory = std::make_unique<TorrentFilesModelDirectory>(row, this, name);
+        auto* directoryPtr = directory.get();
+        addChild(std::move(directory));
+        return directoryPtr;
     }
 
     void TorrentFilesModelDirectory::clearChildren()
     {
-        qDeleteAll(mChildren);
         mChildren.clear();
         mChildrenHash.clear();
     }
@@ -215,11 +220,11 @@ namespace tremotesf
     QVariantList TorrentFilesModelDirectory::childrenIds() const
     {
         QVariantList ids;
-        for (const TorrentFilesModelEntry* child : mChildren) {
+        for (const auto& child : mChildren) {
             if (child->isDirectory()) {
-                ids.append(static_cast<const TorrentFilesModelDirectory*>(child)->childrenIds());
+                ids.append(static_cast<const TorrentFilesModelDirectory*>(child.get())->childrenIds());
             } else {
-                ids.append(static_cast<const TorrentFilesModelFile*>(child)->id());
+                ids.append(static_cast<const TorrentFilesModelFile*>(child.get())->id());
             }
         }
         return ids;
@@ -227,12 +232,18 @@ namespace tremotesf
 
     bool TorrentFilesModelDirectory::isChanged() const
     {
-        for (TorrentFilesModelEntry* child : mChildren) {
+        for (auto& child : mChildren) {
             if (child->isChanged()) {
                 return true;
             }
         }
         return false;
+    }
+
+    void TorrentFilesModelDirectory::addChild(std::unique_ptr<TorrentFilesModelEntry>&& child)
+    {
+        mChildrenHash.emplace(child->name(), child.get());
+        mChildren.push_back(std::move(child));
     }
 
     TorrentFilesModelFile::TorrentFilesModelFile(int row,

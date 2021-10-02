@@ -180,7 +180,7 @@ namespace tremotesf
             return {};
         }
         if (row >= 0 && static_cast<size_t>(row) < parentDirectory->children().size()) {
-            return createIndex(row, column, parentDirectory->children()[static_cast<size_t>(row)]);
+            return createIndex(row, column, parentDirectory->children()[static_cast<size_t>(row)].get());
         }
         return {};
     }
@@ -260,13 +260,13 @@ namespace tremotesf
             return;
         }
         ModelBatchChanger changer(this, parent);
-        for (TorrentFilesModelEntry* child : directory->children()) {
+        for (auto& child : directory->children()) {
             if (child->isChanged()) {
                 changer.changed(child->row());
                 if (child->isDirectory()) {
                     updateDirectoryChildren(index(child->row(), 0, parent));
                 } else {
-                    static_cast<TorrentFilesModelFile*>(child)->setChanged(false);
+                    static_cast<TorrentFilesModelFile*>(child.get())->setChanged(false);
                 }
             }
         }
