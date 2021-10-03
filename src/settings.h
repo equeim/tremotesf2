@@ -41,6 +41,7 @@ namespace tremotesf
         Q_OBJECT
 
         SETTINGS_PROPERTY_TRIVIAL(bool, connectOnStartup, setConnectOnStartup)
+        SETTINGS_PROPERTY_TRIVIAL(bool, autoReconnect, setAutoReconnect)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents)
