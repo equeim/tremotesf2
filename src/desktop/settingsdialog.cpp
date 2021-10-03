@@ -40,6 +40,9 @@ namespace tremotesf
         auto connectOnStartupCheckBox = new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this);
         layout->addWidget(connectOnStartupCheckBox);
 
+        auto autoReconnectCheckbox = new QCheckBox(qApp->translate("tremotesf", "Auto reconnect"), this);
+        layout->addWidget(autoReconnectCheckbox);
+
         auto notificationsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Notifications"), this);
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
         notificationsGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -79,6 +82,7 @@ namespace tremotesf
 
         auto settings = Settings::instance();
         connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
+        autoReconnectCheckbox->setChecked(settings->autoReconnect());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
@@ -89,6 +93,7 @@ namespace tremotesf
         QObject::connect(this, &SettingsDialog::accepted, this, [=] {
             auto settings = Settings::instance();
             settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
+            settings->setAutoReconnect(autoReconnectCheckbox->isChecked());
             settings->setNotificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());
             settings->setNotificationOnAddingTorrent(notificationOnAddingTorrentCheckBox->isChecked());
             settings->setNotificationOfFinishedTorrents(notificationOfFinishedTorrentsCheckBox->isChecked());

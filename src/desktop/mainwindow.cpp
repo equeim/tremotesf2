@@ -175,6 +175,12 @@ namespace tremotesf
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
 
+        mRpc->setAutoReconnect(Settings::instance()->autoReconnect());
+
+        QObject::connect(Settings::instance(), &Settings::autoReconnectChanged, this, [=] {
+            mRpc->setAutoReconnect(Settings::instance()->autoReconnect());
+        });
+
         if (Servers::instance()->hasServers()) {
             mRpc->setServer(Servers::instance()->currentServer());
         }
