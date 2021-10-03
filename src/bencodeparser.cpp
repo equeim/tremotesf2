@@ -18,9 +18,11 @@
 
 #include "bencodeparser.h"
 
+#include <array>
 #include <charconv>
 #include <cinttypes>
 #include <limits>
+#include <system_error>
 
 #include <QDebug>
 #include <QFile>
@@ -199,7 +201,7 @@ namespace tremotesf::bencode
                     return {};
                 }
                 Integer integer{};
-                const auto result = std::from_chars(mIntegerBuffer.begin(), mIntegerBuffer.end(), integer);
+                const auto result = std::from_chars(mIntegerBuffer.data(), mIntegerBuffer.data() + integerBufferSize, integer);
                 if (result.ec != std::errc{}) {
                     qWarning("readIntegerUntilTerminator: error parsing integer, std::from_chars() error %s", std::make_error_condition(result.ec).message().data());
                     mError = ParsingError;
@@ -210,7 +212,7 @@ namespace tremotesf::bencode
                     mError = ParsingError;
                     return {};
                 }
-                const auto toSkip = result.ptr - mIntegerBuffer.begin() + 1;
+                const auto toSkip = result.ptr - mIntegerBuffer.data() + 1;
                 if (!skip(toSkip, mIntegerBuffer.data())) {
                     setErrorFromIODevice("readIntegerUntilTerminator: failed to skip read integer");
                     return {};
