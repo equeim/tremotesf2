@@ -125,6 +125,7 @@ namespace libtremotesf
         Q_INVOKABLE libtremotesf::Torrent* torrentByHash(const QString& hash) const;
         Torrent* torrentById(int id) const;
 
+        Q_INVOKABLE void setAutoReconnect(bool enabled);
         bool isConnected() const;
         ConnectionState connectionState() const;
         Error error() const;
@@ -264,6 +265,9 @@ namespace libtremotesf
         bool mTorrentsUpdated;
         bool mServerStatsUpdated;
         QTimer* mUpdateTimer;
+
+        bool mAutoReconnectEnabled;
+        QTimer* mAutoReconnectTimer;
 
         ServerSettings* mServerSettings;
         std::vector<std::shared_ptr<Torrent>> mTorrents;
