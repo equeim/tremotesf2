@@ -945,7 +945,7 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(mRpc, &Rpc::statusStringChanged, this, [=] {
+        QObject::connect(mRpc, &Rpc::statusChanged, this, [=] {
             mTrayIcon->setToolTip(mRpc->statusString());
         });
 

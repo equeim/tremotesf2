@@ -26,7 +26,7 @@ namespace tremotesf
     class Rpc : public libtremotesf::Rpc
     {
         Q_OBJECT
-        Q_PROPERTY(QString statusString READ statusString NOTIFY statusStringChanged)
+        Q_PROPERTY(QString statusString READ statusString NOTIFY statusChanged)
     public:
         explicit Rpc(QObject* parent = nullptr);
         QString statusString() const;
@@ -42,8 +42,6 @@ namespace tremotesf
         QString mMountedIncompleteDirectory;
 
     signals:
-        void statusStringChanged();
-
         void addedNotificationRequested(const QStringList& hashStrings, const QStringList& names);
         void finishedNotificationRequested(const QStringList& hashStrings, const QStringList& names);
     };

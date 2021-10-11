@@ -33,9 +33,6 @@ namespace tremotesf
         : libtremotesf::Rpc(parent),
           mIncompleteDirectoryMounted(false)
     {
-        QObject::connect(this, &Rpc::connectionStateChanged, this, &Rpc::statusStringChanged);
-        QObject::connect(this, &Rpc::errorChanged, this, &Rpc::statusStringChanged);
-
         QObject::connect(this, &Rpc::connectedChanged, this, [=] {
             if (isConnected()) {
                 const bool notifyOnAdded = Settings::instance()->notificationsOnAddedTorrentsSinceLastConnection();
