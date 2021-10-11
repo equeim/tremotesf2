@@ -126,7 +126,21 @@ namespace libtremotesf
         Torrent* torrentById(int id) const;
 
         Q_INVOKABLE void setAutoReconnect(bool enabled);
+
+        struct Status
+        {
+            ConnectionState connectionState{ConnectionState::Disconnected};
+            Error error{Error::NoError};
+            QString errorMessage{};
+
+            inline bool operator==(const Status& other) noexcept
+            {
+                return connectionState == other.connectionState && error == other.error && errorMessage == other.errorMessage;
+            }
+        };
+
         bool isConnected() const;
+        const Status& status() const;
         ConnectionState connectionState() const;
         Error error() const;
         const QString& errorMessage() const;
@@ -210,8 +224,9 @@ namespace libtremotesf
             void setSessionId(const QByteArray& sessionId);
         };
 
-        void setConnectionState(ConnectionState state);
-        void setError(Error error, const QString& errorMessage = QString());
+        void setStatus(Status status);
+        void resetStateOnConnectionStateChanged(std::vector<int>& removedTorrentsIndices);
+        void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>&& removedTorrentsIndices);
 
         void getServerSettings();
         void getTorrents();
@@ -273,12 +288,11 @@ namespace libtremotesf
         std::vector<std::shared_ptr<Torrent>> mTorrents;
         ServerStats* mServerStats;
 
-        ConnectionState mConnectionState;
-        Error mError;
-        QString mErrorMessage;
+        Status mStatus;
 
     signals:
         void aboutToDisconnect();
+        void statusChanged();
         void connectedChanged();
         void connectionStateChanged();
         void errorChanged();
