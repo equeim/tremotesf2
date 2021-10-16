@@ -75,11 +75,10 @@ namespace tremotesf
 
         auto authorsPage = new QWidget(this);
         auto authorsPageLayout = new QVBoxLayout(authorsPage);
-        auto authorLabel = new QLabel(qApp->translate("tremotesf", "Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;\n"
-                                                                   "<br/>\n"
-                                                                   "<i>Maintainer</i>"));
-        QObject::connect(authorLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
-        authorsPageLayout->addWidget(authorLabel);
+        auto authorsWidget = new QTextBrowser(this);
+        authorsWidget->setText(Utils::readTextResource(":/authors.html"));
+        authorsWidget->setOpenExternalLinks(true);
+        authorsPageLayout->addWidget(authorsWidget);
         authorsPageLayout->addStretch();
         tabWidget->addTab(authorsPage, qApp->translate("tremotesf", "Authors"));
 

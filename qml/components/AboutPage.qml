@@ -24,6 +24,10 @@ import harbour.tremotesf 1.0
 Page {
     allowedOrientations: defaultAllowedOrientations
 
+    function addLinkColor(htmlText) {
+        return "<style type=\"text/css\">A { color: %1; }</style>\n".arg(Theme.highlightColor) + htmlText
+    }
+
     SilicaFlickable {
         anchors.fill: parent
         contentHeight: column.height
@@ -165,17 +169,12 @@ Page {
                                         right: parent.right
                                         rightMargin: Theme.horizontalPageMargin
                                     }
-                                    text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) +
-                                          "Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;"
-                                    textFormat: Text.RichText
-                                    onLinkActivated: Qt.openUrlExternally(link)
-                                }
-
-                                Label {
-                                    x: Theme.horizontalPageMargin
                                     font.pixelSize: Theme.fontSizeSmall
-                                    color: Theme.secondaryColor
-                                    text: qsTranslate("tremotesf", "Maintainer")
+                                    text: addLinkColor(Utils.readTextResource(":/authors.html"))
+                                    wrapMode: Text.WordWrap
+                                    textFormat: Text.RichText
+
+                                    onLinkActivated: Qt.openUrlExternally(link)
                                 }
                             }
                         }
@@ -215,7 +214,7 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.readTextResource(":/translators.html")
+                                        text: addLinkColor(Utils.readTextResource(":/translators.html"))
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
 
@@ -262,7 +261,7 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.readTextResource(":/license.html")
+                                        text: addLinkColor(Utils.readTextResource(":/license.html"))
                                         textFormat: Text.RichText
                                         wrapMode: Text.WordWrap
 
