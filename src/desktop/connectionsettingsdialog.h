@@ -29,12 +29,12 @@ namespace tremotesf
     class ServersModel;
     class BaseProxyModel;
 
-    class ServersDialog : public QDialog
+    class ConnectionSettingsDialog : public QDialog
     {
         Q_OBJECT
 
     public:
-        explicit ServersDialog(QWidget* parent = nullptr);
+        explicit ConnectionSettingsDialog(QWidget* parent = nullptr);
         QSize sizeHint() const override;
         void accept() override;
 

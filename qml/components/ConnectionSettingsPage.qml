@@ -22,7 +22,7 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 Page {
-    id: serverPage
+    id: connectionSettingsPage
 
     allowedOrientations: defaultAllowedOrientations
 
@@ -38,7 +38,7 @@ Page {
         clip: true
 
         header: PageHeader {
-            title: qsTranslate("tremotesf", "Servers")
+            title: qsTranslate("tremotesf", "Connection Settings")
         }
 
         model: BaseProxyModel {
@@ -146,7 +146,7 @@ Page {
             }
 
             MenuItem {
-                text: qsTranslate("tremotesf", "Add...")
+                text: qsTranslate("tremotesf", "Add Server...")
                 onClicked: pageStack.push("ServerEditDialog.qml", {"serversModel": serversModel})
             }
         }

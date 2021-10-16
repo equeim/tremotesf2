@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "serversdialog.h"
+#include "connectionsettingsdialog.h"
 
 #include <QAction>
 #include <QCoreApplication>
@@ -45,14 +45,14 @@ namespace tremotesf
         const QLatin1String removeIconName("list-remove");
     }
 
-    ServersDialog::ServersDialog(QWidget* parent)
+    ConnectionSettingsDialog::ConnectionSettingsDialog(QWidget* parent)
         : QDialog(parent),
           mNoServersWidget(new KMessageWidget(qApp->translate("tremotesf", "No servers"), this)),
           mModel(new ServersModel(this)),
           mProxyModel(new BaseProxyModel(mModel, Qt::DisplayRole, this)),
           mServersView(new QListView(this))
     {
-        setWindowTitle(qApp->translate("tremotesf", "Servers"));
+        setWindowTitle(qApp->translate("tremotesf", "Connection Settings"));
 
         mProxyModel->sort();
 
@@ -68,18 +68,18 @@ namespace tremotesf
         mServersView->setContextMenuPolicy(Qt::CustomContextMenu);
         mServersView->setSelectionMode(QListView::ExtendedSelection);
         mServersView->setModel(mProxyModel);
-        QObject::connect(mServersView, &QListView::activated, this, &ServersDialog::showEditDialogs);
+        QObject::connect(mServersView, &QListView::activated, this, &ConnectionSettingsDialog::showEditDialogs);
 
         auto removeAction = new QAction(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "&Remove"), this);
         removeAction->setShortcut(QKeySequence::Delete);
         mServersView->addAction(removeAction);
-        QObject::connect(removeAction, &QAction::triggered, this, &ServersDialog::removeServers);
+        QObject::connect(removeAction, &QAction::triggered, this, &ConnectionSettingsDialog::removeServers);
 
         QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=](auto pos) {
             if (mServersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(QIcon::fromTheme(editIconName), qApp->translate("tremotesf", "&Edit..."));
-                QObject::connect(editAction, &QAction::triggered, this, &ServersDialog::showEditDialogs);
+                QObject::connect(editAction, &QAction::triggered, this, &ConnectionSettingsDialog::showEditDialogs);
                 contextMenu.addAction(removeAction);
                 contextMenu.exec(QCursor::pos());
             }
@@ -89,7 +89,7 @@ namespace tremotesf
 
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout, 0, 1, 2, 1);
-        auto addServerButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add..."), this);
+        auto addServerButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add Server..."), this);
         QObject::connect(addServerButton, &QPushButton::clicked, this, [=] {
             auto dialog = new ServerEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -103,11 +103,11 @@ namespace tremotesf
         buttonsLayout->addWidget(addServerButton);
         auto editButton = new QPushButton(QIcon::fromTheme(editIconName), qApp->translate("tremotesf", "Edit..."), this);
         editButton->setEnabled(false);
-        QObject::connect(editButton, &QPushButton::clicked, this, &ServersDialog::showEditDialogs);
+        QObject::connect(editButton, &QPushButton::clicked, this, &ConnectionSettingsDialog::showEditDialogs);
         buttonsLayout->addWidget(editButton);
         auto removeButton = new QPushButton(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "Remove"), this);
         removeButton->setEnabled(false);
-        QObject::connect(removeButton, &QPushButton::clicked, this, &ServersDialog::removeServers);
+        QObject::connect(removeButton, &QPushButton::clicked, this, &ConnectionSettingsDialog::removeServers);
         buttonsLayout->addWidget(removeButton);
         buttonsLayout->addStretch();
 
@@ -118,25 +118,25 @@ namespace tremotesf
         });
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-        QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ServersDialog::accept);
-        QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ServersDialog::reject);
+        QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ConnectionSettingsDialog::accept);
+        QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ConnectionSettingsDialog::reject);
         layout->addWidget(dialogButtonBox, 2, 0, 1, 2);
 
         setMinimumSize(minimumSizeHint());
     }
 
-    QSize ServersDialog::sizeHint() const
+    QSize ConnectionSettingsDialog::sizeHint() const
     {
         return minimumSizeHint().expandedTo(QSize(384, 320));
     }
 
-    void ServersDialog::accept()
+    void ConnectionSettingsDialog::accept()
     {
         Servers::instance()->saveServers(mModel->servers(), mModel->currentServerName());
         QDialog::accept();
     }
 
-    void ServersDialog::showEditDialogs()
+    void ConnectionSettingsDialog::showEditDialogs()
     {
         const QModelIndexList indexes(mServersView->selectionModel()->selectedIndexes());
         for (const QModelIndex& index : indexes) {
@@ -148,7 +148,7 @@ namespace tremotesf
         }
     }
 
-    void ServersDialog::removeServers()
+    void ConnectionSettingsDialog::removeServers()
     {
         while (mServersView->selectionModel()->hasSelection()) {
             mModel->removeServerAtIndex(mProxyModel->sourceIndex(mServersView->selectionModel()->selectedIndexes().first()));

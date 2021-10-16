@@ -109,6 +109,7 @@ else()
         desktop/addtorrentdialog.cpp
         desktop/basetreeview.cpp
         desktop/commondelegate.cpp
+        desktop/connectionsettingsdialog.cpp
         desktop/fileselectionwidget.cpp
         desktop/desktoputils.cpp
         desktop/mainwindow.cpp
@@ -116,7 +117,6 @@ else()
         desktop/mainwindowstatusbar.cpp
         desktop/remotedirectoryselectionwidget.cpp
         desktop/servereditdialog.cpp
-        desktop/serversdialog.cpp
         desktop/serversettingsdialog.cpp
         desktop/serverstatsdialog.cpp
         desktop/settingsdialog.cpp

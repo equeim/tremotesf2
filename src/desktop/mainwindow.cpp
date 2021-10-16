@@ -76,7 +76,7 @@
 #include "mainwindowstatusbar.h"
 #include "remotedirectoryselectionwidget.h"
 #include "servereditdialog.h"
-#include "serversdialog.h"
+#include "connectionsettingsdialog.h"
 #include "serversettingsdialog.h"
 #include "serverstatsdialog.h"
 #include "settingsdialog.h"
@@ -794,16 +794,16 @@ namespace tremotesf
             }
         });
 
-        QAction* serversAction = toolsMenu->addAction(qApp->translate("tremotesf", "&Servers"));
+        QAction* serversAction = toolsMenu->addAction(qApp->translate("tremotesf", "&Connection Settings"));
         QObject::connect(serversAction, &QAction::triggered, this, [=] {
-            static ServersDialog* dialog = nullptr;
+            static ConnectionSettingsDialog* dialog = nullptr;
             if (dialog) {
                 dialog->raise();
                 dialog->activateWindow();
             } else {
-                dialog = new ServersDialog(this);
+                dialog = new ConnectionSettingsDialog(this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &ServersDialog::destroyed, this, [] {
+                QObject::connect(dialog, &ConnectionSettingsDialog::destroyed, this, [] {
                     dialog = nullptr;
                 });
                 dialog->show();
