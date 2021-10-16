@@ -97,6 +97,10 @@ namespace tremotesf
             mMountedIncompleteDirectory = Servers::instance()->fromRemoteToLocalDirectory(serverSettings()->incompleteDirectory());
             mIncompleteDirectoryMounted = !mMountedIncompleteDirectory.isEmpty();
         });
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
+        QObject::connect(this, &libtremotesf::Rpc::statusChanged, this, &tremotesf::Rpc::statusChanged);
+#endif
     }
 
     QString Rpc::statusString() const
