@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Automatic reconnection to server (thanks to LuK1337)
+
+### Changed
+- Further reduced memory usage when opening torrent files
+
+### Fixed
+- Sailfish OS support (this will be the last release that supports Saifish OS)
+
 ## [1.10.0] - 2021-09-27
 ### Added
 - Ability to shut down remote Transmission instance
