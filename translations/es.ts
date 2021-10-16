@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="es" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" sourcelanguage="en" version="2.1">
 <context>
     <name>tremotesf</name>
     <message>
@@ -34,10 +32,6 @@
         <location filename="../src/desktop/aboutdialog.cpp" line="83"/>
         <source>Authors</source>
         <translation>Autores</translation>
-    </message>
-    <message>
-        <source>Maintainer</source>
-        <translation type="vanished">Mantenedor</translation>
     </message>
     <message>
         <location filename="../qml/components/AboutPage.qml" line="187"/>
@@ -373,15 +367,12 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentFilesSelectionPanel.qml" line="29"/>
         <source>%Ln files selected</source>
-        <translation>
-            <numerusform>%Ln archivos seleccionados</numerusform>
-            <numerusform>%Ln archivos seleccionados</numerusform>
-        </translation>
+        <translation><numerusform>%Ln archivos seleccionados</numerusform><numerusform>%Ln archivos seleccionados</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="52"/>
         <source>%1 (%2)</source>
-        <extracomment>%s is server&apos;s name, %2 is server&apos;s address</extracomment>
+        <extracomment>%s is server's name, %2 is server's address</extracomment>
         <translation>%1 (%2)</translation>
     </message>
     <message>
@@ -418,10 +409,7 @@
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="153"/>
         <source>%Ln torrents selected</source>
-        <translation>
-            <numerusform>%Ln torrentes seleccionados</numerusform>
-            <numerusform>%Ln torrentes seleccionados</numerusform>
-        </translation>
+        <translation><numerusform>%Ln torrentes seleccionados</numerusform><numerusform>%Ln torrentes seleccionados</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="158"/>
@@ -484,19 +472,13 @@
         <location filename="../qml/components/MainPage.qml" line="223"/>
         <location filename="../src/desktop/mainwindow.cpp" line="1028"/>
         <source>%Ln torrents added</source>
-        <translation>
-            <numerusform>%Ln torrentes agregados</numerusform>
-            <numerusform>%Ln torrentes agregados</numerusform>
-        </translation>
+        <translation><numerusform>%Ln torrentes agregados</numerusform><numerusform>%Ln torrentes agregados</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/MainPage.qml" line="235"/>
         <location filename="../src/desktop/mainwindow.cpp" line="1021"/>
         <source>%Ln torrents finished</source>
-        <translation>
-            <numerusform>%Ln torrentes finalizado</numerusform>
-            <numerusform>%Ln torrentes finalizado</numerusform>
-        </translation>
+        <translation><numerusform>%Ln torrentes finalizado</numerusform><numerusform>%Ln torrentes finalizado</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="239"/>
@@ -665,17 +647,6 @@
         <source>min</source>
         <extracomment>Minutes</extracomment>
         <translation>Minutos</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to remove this torrent?</source>
-        <translation type="vanished">Estas seguro que quitar este torrente?</translation>
-    </message>
-    <message numerus="yes">
-        <source>Are you sure you want to remove %Ln selected torrents?</source>
-        <translation type="vanished">
-            <numerusform>Estas seguro que quieres quitar %Ln torrentes seleccionados?</numerusform>
-            <numerusform>Seguro que quieres eliminar %Ln torrentes seleccionados?</numerusform>
-        </translation>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="43"/>
@@ -880,15 +851,11 @@
         <translation>Velocidad</translation>
     </message>
     <message>
-        <source>Servers</source>
-        <translation type="vanished">Servidores</translation>
-    </message>
-    <message>
         <location filename="../qml/components/ConnectionSettingsPage.qml" line="41"/>
         <location filename="../qml/components/ToolsPage.qml" line="50"/>
         <location filename="../src/desktop/connectionsettingsdialog.cpp" line="55"/>
         <source>Connection Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/ConnectionSettingsPage.qml" line="70"/>
@@ -908,7 +875,7 @@
         <location filename="../qml/components/ConnectionSettingsPage.qml" line="149"/>
         <location filename="../src/desktop/connectionsettingsdialog.cpp" line="92"/>
         <source>Add Server...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="192"/>
@@ -919,18 +886,12 @@
     <message numerus="yes">
         <location filename="../qml/components/ConnectionSettingsPage.qml" line="167"/>
         <source>%Ln servers selected</source>
-        <translation>
-            <numerusform>%Ln servidor seleccionado</numerusform>
-            <numerusform>%Ln servidor seleccionado</numerusform>
-        </translation>
+        <translation><numerusform>%Ln servidor seleccionado</numerusform><numerusform>%Ln servidor seleccionado</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/ConnectionSettingsPage.qml" line="173"/>
         <source>Removing %Ln servers</source>
-        <translation>
-            <numerusform>Removiendo %Ln servidores</numerusform>
-            <numerusform>Removiendo %Ln servidores</numerusform>
-        </translation>
+        <translation><numerusform>Removiendo %Ln servidores</numerusform><numerusform>Removiendo %Ln servidores</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="36"/>
@@ -948,7 +909,7 @@
         <location filename="../qml/components/SettingsPage.qml" line="46"/>
         <location filename="../src/desktop/settingsdialog.cpp" line="43"/>
         <source>Auto reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/SettingsPage.qml" line="52"/>
@@ -1066,15 +1027,12 @@
         <location filename="../qml/components/ServerStatsPage.qml" line="108"/>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="123"/>
         <source>%Ln times</source>
-        <translation>
-            <numerusform>%Ln horas</numerusform>
-            <numerusform>%Ln horas</numerusform>
-        </translation>
+        <translation><numerusform>%Ln horas</numerusform><numerusform>%Ln horas</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/ServerStatsPage.qml" line="113"/>
         <source>Free space in download directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/SortTorrentsPage.qml" line="93"/>
@@ -1105,10 +1063,6 @@
         <translation>Sustantivo</translation>
     </message>
     <message>
-        <source>KiB/s</source>
-        <translation type="vanished">KiB/s</translation>
-    </message>
-    <message>
         <location filename="../qml/components/SpeedPage.qml" line="133"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="131"/>
         <source>Upload</source>
@@ -1128,33 +1082,25 @@
         <translation>Habilitar</translation>
     </message>
     <message>
-        <source>Download, KiB/s</source>
-        <translation type="vanished">Bajar, KiB/s</translation>
-    </message>
-    <message>
-        <source>Upload, KiB/s</source>
-        <translation type="vanished">Subir, KiB/s</translation>
-    </message>
-    <message>
         <location filename="../qml/components/SpeedPage.qml" line="117"/>
         <location filename="../qml/components/SpeedPage.qml" line="146"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="111"/>
         <location filename="../qml/components/TorrentLimitsPage.qml" line="149"/>
         <source>kB/s</source>
-        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"></translation>
+        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="178"/>
         <source>Download, kB/s</source>
-        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"></translation>
+        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="200"/>
         <source>Upload, kB/s</source>
-        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"></translation>
+        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/SpeedPage.qml" line="215"/>
@@ -1290,7 +1236,7 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="208"/>
         <location filename="../src/torrentsmodel.cpp" line="309"/>
         <source>Completed</source>
-        <extracomment>Torrent&apos;s completed size</extracomment>
+        <extracomment>Torrent's completed size</extracomment>
         <translation>Completado</translation>
     </message>
     <message>
@@ -1299,7 +1245,7 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="214"/>
         <location filename="../src/torrentsmodel.cpp" line="298"/>
         <source>Downloaded</source>
-        <extracomment>Torrent&apos;s downloaded size</extracomment>
+        <extracomment>Torrent's downloaded size</extracomment>
         <translation>Bajado</translation>
     </message>
     <message>
@@ -1308,7 +1254,7 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="220"/>
         <location filename="../src/torrentsmodel.cpp" line="301"/>
         <source>Uploaded</source>
-        <extracomment>Torrent&apos;s uploaded size</extracomment>
+        <extracomment>Torrent's uploaded size</extracomment>
         <translation>Subido</translation>
     </message>
     <message>
@@ -1381,10 +1327,6 @@
         <translation>Torrente removido</translation>
     </message>
     <message>
-        <source>Add Tracker</source>
-        <translation type="vanished">Agregar rastreador</translation>
-    </message>
-    <message>
         <location filename="../qml/components/TrackerEditDialog.qml" line="41"/>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="168"/>
         <source>Edit Tracker</source>
@@ -1398,10 +1340,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="157"/>
         <source>%Ln peers</source>
-        <translation>
-            <numerusform>%Ln pares</numerusform>
-            <numerusform>%Ln pares</numerusform>
-        </translation>
+        <translation><numerusform>%Ln pares</numerusform><numerusform>%Ln pares</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/TrackersPage.qml" line="166"/>
@@ -1416,18 +1355,12 @@
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="208"/>
         <source>%Ln trackers selected</source>
-        <translation>
-            <numerusform>%Ln rastreadores seleccionados</numerusform>
-            <numerusform>%Ln rastreadores seleccionados</numerusform>
-        </translation>
+        <translation><numerusform>%Ln rastreadores seleccionados</numerusform><numerusform>%Ln rastreadores seleccionados</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/TrackersPage.qml" line="213"/>
         <source>Removing %Ln trackers</source>
-        <translation>
-            <numerusform>Quitando %Ln rastreadores</numerusform>
-            <numerusform>Removiendo %Ln rastreadores</numerusform>
-        </translation>
+        <translation><numerusform>Quitando %Ln rastreadores</numerusform><numerusform>Removiendo %Ln rastreadores</numerusform></translation>
     </message>
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="129"/>
@@ -1456,7 +1389,7 @@
     <message>
         <location filename="../src/desktop/addtorrentdialog.cpp" line="262"/>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="366"/>
@@ -1484,19 +1417,14 @@
         <translation>P&amp;ausa</translation>
     </message>
     <message>
-        <location filename="../src/desktop/mainwindow.cpp" line="428"/>
-        <source>Copy &amp;Magnet Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/desktop/mainwindow.cpp" line="441"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="694"/>
         <source>Delete with files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/MainPage.qml" line="173"/>
@@ -1505,32 +1433,29 @@
         <location filename="../qml/components/TorrentPropertiesPage.qml" line="117"/>
         <location filename="../src/desktop/mainwindow.cpp" line="695"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="701"/>
         <source>Delete Torrent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="35"/>
         <location filename="../src/desktop/mainwindow.cpp" line="702"/>
         <source>Are you sure you want to delete this torrent?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="704"/>
         <source>Delete Torrents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message numerus="yes">
         <location filename="../qml/components/RemoveTorrentsDialog.qml" line="37"/>
         <location filename="../src/desktop/mainwindow.cpp" line="705"/>
         <source>Are you sure you want to delete %Ln selected torrents?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="723"/>
@@ -1556,6 +1481,11 @@
         <location filename="../src/desktop/mainwindow.cpp" line="416"/>
         <source>Start &amp;Now</source>
         <translation>Iniciar &amp;ahora</translation>
+    </message>
+    <message>
+        <location filename="../src/desktop/mainwindow.cpp" line="428"/>
+        <source>Copy &amp;Magnet Link</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/connectionsettingsdialog.cpp" line="73"/>
@@ -1620,7 +1550,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="797"/>
         <source>&amp;Connection Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="815"/>
@@ -1650,14 +1580,6 @@
         <location filename="../src/trackersmodel.cpp" line="51"/>
         <source>Error</source>
         <translation>Error</translation>
-    </message>
-    <message>
-        <source>Remove Torrent</source>
-        <translation type="vanished">Quitar torrente</translation>
-    </message>
-    <message>
-        <source>Remove Torrents</source>
-        <translation type="vanished">Quitar torrentes</translation>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="715"/>
@@ -1702,7 +1624,7 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="770"/>
         <source>&amp;Lock Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="778"/>
@@ -1715,31 +1637,27 @@
         <translation>&amp;Opciones</translation>
     </message>
     <message>
-        <source>&amp;Servers</source>
-        <translation type="vanished">&amp;Servidores</translation>
-    </message>
-    <message>
         <location filename="../src/desktop/mainwindow.cpp" line="851"/>
         <source>S&amp;hutdown Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/ToolsPage.qml" line="73"/>
         <location filename="../src/desktop/mainwindow.cpp" line="854"/>
         <source>Shutdown Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/ShutdownServerDialog.qml" line="28"/>
         <location filename="../src/desktop/mainwindow.cpp" line="855"/>
         <source>Are you sure you want to shutdown remote Transmission instance?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/ShutdownServerDialog.qml" line="27"/>
         <location filename="../src/desktop/mainwindow.cpp" line="860"/>
         <source>Shutdown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="869"/>
@@ -1779,13 +1697,13 @@
     <message>
         <location filename="../src/desktop/mainwindow.cpp" line="1054"/>
         <source>Show Tremotesf</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="99"/>
         <source>All (%L1)</source>
         <comment>All torrents, %L1 - torrents count</comment>
-        <translation type="unfinished">Todos (%L1)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/mainwindowsidebar.cpp" line="102"/>
@@ -1857,17 +1775,17 @@
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="270"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="281"/>
         <source>HTTP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="289"/>
         <source>Proxy type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/servereditdialog.cpp" line="300"/>
@@ -1948,8 +1866,8 @@
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="272"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="288"/>
         <source> kB/s</source>
-        <extracomment>In this context, &apos;k&apos; prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
-        <translation type="unfinished"></translation>
+        <extracomment>In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/serversettingsdialog.cpp" line="288"/>
@@ -2055,7 +1973,7 @@
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="144"/>
         <source>Completed:</source>
-        <extracomment>Torrent&apos;s completed size</extracomment>
+        <extracomment>Torrent's completed size</extracomment>
         <translation>Completado:</translation>
     </message>
     <message>
@@ -2063,7 +1981,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="69"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="147"/>
         <source>Downloaded:</source>
-        <extracomment>Torrent&apos;s downloaded size</extracomment>
+        <extracomment>Torrent's downloaded size</extracomment>
         <translation>Bajado:</translation>
     </message>
     <message>
@@ -2071,7 +1989,7 @@
         <location filename="../src/desktop/serverstatsdialog.cpp" line="71"/>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="150"/>
         <source>Uploaded:</source>
-        <extracomment>Torrent&apos;s uploaded size</extracomment>
+        <extracomment>Torrent's uploaded size</extracomment>
         <translation>Subido:</translation>
     </message>
     <message>
@@ -2095,7 +2013,7 @@
     <message>
         <location filename="../src/desktop/serverstatsdialog.cpp" line="79"/>
         <source>Free space in download directory:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="154"/>
@@ -2158,10 +2076,6 @@
         <translation>Comentar:</translation>
     </message>
     <message>
-        <source> KiB/s</source>
-        <translation type="vanished">KiB/s</translation>
-    </message>
-    <message>
         <location filename="../src/desktop/torrentpropertiesdialog.cpp" line="324"/>
         <source>Ratio limit mode:</source>
         <translation>Modo límite de proporción:</translation>
@@ -2185,7 +2099,7 @@
     <message>
         <location filename="../qml/components/TrackersAddDialog.qml" line="51"/>
         <source>Trackers announce URLs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/desktop/trackersviewwidget.cpp" line="145"/>
@@ -2215,10 +2129,7 @@
     <message numerus="yes">
         <location filename="../src/desktop/trackersviewwidget.cpp" line="200"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
-        <translation>
-            <numerusform>Estas seguro que quieres quitar %Ln rastreadores seleccionados?</numerusform>
-            <numerusform>Seguro que quieres eliminar %Ln rastreadores seleccionados?</numerusform>
-        </translation>
+        <translation><numerusform>Estas seguro que quieres quitar %Ln rastreadores seleccionados?</numerusform><numerusform>Seguro que quieres eliminar %Ln rastreadores seleccionados?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/peersmodel.cpp" line="127"/>
@@ -2306,10 +2217,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="333"/>
         <source>Downloading from %Ln peers</source>
-        <translation>
-            <numerusform>Bajando de %Ln pares</numerusform>
-            <numerusform>Bajados de %Ln pares</numerusform>
-        </translation>
+        <translation><numerusform>Bajando de %Ln pares</numerusform><numerusform>Bajados de %Ln pares</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/BaseTorrentFilesDelegateModel.qml" line="52"/>
@@ -2322,10 +2230,7 @@
     <message numerus="yes">
         <location filename="../qml/components/TorrentDelegate.qml" line="337"/>
         <source>Seeding to %Ln peers</source>
-        <translation>
-            <numerusform>Semilleros por %Ln pares</numerusform>
-            <numerusform>Semilleros por %Ln pares</numerusform>
-        </translation>
+        <translation><numerusform>Semilleros por %Ln pares</numerusform><numerusform>Semilleros por %Ln pares</numerusform></translation>
     </message>
     <message>
         <location filename="../qml/components/TorrentDelegate.qml" line="339"/>
@@ -2357,10 +2262,6 @@
         <location filename="../src/localtorrentfilesmodel.cpp" line="226"/>
         <source>Error reading torrent file</source>
         <translation>Error al leer el archivo torrent</translation>
-    </message>
-    <message>
-        <source>Wrong MIME type</source>
-        <translation type="vanished">Tipo incorrecto MIME</translation>
     </message>
     <message>
         <location filename="../src/localtorrentfilesmodel.cpp" line="228"/>
@@ -2400,7 +2301,7 @@
     <message>
         <location filename="../src/torrentsmodel.cpp" line="304"/>
         <source>Remaining</source>
-        <extracomment>Torrents&apos;s remaining size</extracomment>
+        <extracomment>Torrents's remaining size</extracomment>
         <translation>Restante</translation>
     </message>
     <message>
@@ -2550,7 +2451,7 @@
         <location filename="../src/utils.cpp" line="116"/>
         <location filename="../src/utils.cpp" line="118"/>
         <source>%L1%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/utils.cpp" line="158"/>
@@ -2579,29 +2480,11 @@
         <translation>Error al abrir %1</translation>
     </message>
     <message>
-        <source>&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
-&lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="vanished">&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
-&lt;p&gt;Código fuente: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Traducción: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</translation>
-    </message>
-    <message>
         <location filename="../src/desktop/aboutdialog.cpp" line="52"/>
         <source>&lt;p&gt;&amp;#169; 2015-2020 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;&amp;#169; 2015-2018 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
-&lt;p&gt;Código fuente: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Traducción: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt; {169; 2015-2020 ?} {2&quot;?} {2&lt;?}</translation>
-    </message>
-    <message>
-        <source>Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;
-&lt;br/&gt;
-&lt;i&gt;Maintainer&lt;/i&gt;</source>
-        <translation type="vanished">Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;
-&lt;br/&gt;
-&lt;i&gt;Maintainer&lt;/i&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../qml/components/RemoteDirectorySelectionItem.qml" line="33"/>
