@@ -91,6 +91,7 @@ if (SAILFISHOS)
         sailfishos/directorycontentmodel.cpp
         sailfishos/sailfishosutils.cpp
         sailfishos/selectionmodel.cpp
+        ../qml/qml.qrc
     )
     target_link_libraries(tremotesf Qt5::Quick PkgConfig::SailfishApp)
     if (CMAKE_VERSION VERSION_LESS "3.15.0")

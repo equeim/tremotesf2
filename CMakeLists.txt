@@ -25,7 +25,3 @@ find_package(Qt5 5.6 REQUIRED COMPONENTS Core)
 add_subdirectory("data")
 add_subdirectory("translations")
 add_subdirectory("src")
-
-if (SAILFISHOS)
-    install(DIRECTORY "qml" DESTINATION "${DATA_PATH}")
-endif()

@@ -134,7 +134,7 @@ int main(int argc, char** argv)
     view->rootContext()->setContextProperty(QLatin1String("files"), args.files);
     view->rootContext()->setContextProperty(QLatin1String("urls"), args.urls);
 
-    view->setSource(SailfishApp::pathTo(QLatin1String("qml/main.qml")));
+    view->setSource(QUrl(QLatin1String("qrc:///main.qml")));
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;
     }

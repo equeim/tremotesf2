@@ -25,7 +25,7 @@ CoverBackground {
     Image {
         anchors.fill: parent
         opacity: 0.15
-        source: "../../cover.svg"
+        source: "../cover.svg"
         fillMode: Image.PreserveAspectCrop
     }
 
