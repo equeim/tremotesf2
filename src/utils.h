@@ -26,8 +26,6 @@ namespace tremotesf
     class Utils : public QObject
     {
         Q_OBJECT
-        Q_PROPERTY(QString license READ license CONSTANT)
-        Q_PROPERTY(QString translators READ translators CONSTANT)
     public:
         Q_INVOKABLE static QString formatByteSize(long long size);
         Q_INVOKABLE static QString formatByteSpeed(long long speed);
@@ -39,8 +37,7 @@ namespace tremotesf
 
         Q_INVOKABLE static QString formatEta(int seconds);
 
-        static QString license();
-        static QString translators();
+        Q_INVOKABLE static QString readTextResource(const QString& path);
 
         static void registerTypes();
     };

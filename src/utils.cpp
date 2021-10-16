@@ -169,18 +169,14 @@ namespace tremotesf
         return qApp->translate("tremotesf", "%L1 s").arg(seconds);
     }
 
-    QString Utils::license()
+    QString Utils::readTextResource(const QString& path)
     {
-        QFile licenseFile(QLatin1String(":/license.html"));
-        licenseFile.open(QFile::ReadOnly);
-        return licenseFile.readAll();
-    }
-
-    QString Utils::translators()
-    {
-        QFile translatorsFile(QLatin1String(":/translators.html"));
-        translatorsFile.open(QFile::ReadOnly);
-        return translatorsFile.readAll();
+        QFile file(path);
+        if (file.open(QIODevice::ReadOnly)) {
+            return file.readAll();
+        }
+        qFatal("Failed to read resource with path \"%s\"", path.toUtf8().data());
+        return {};
     }
 
     void Utils::registerTypes()

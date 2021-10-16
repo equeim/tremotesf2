@@ -215,7 +215,7 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.translators
+                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.readTextResource(":/translators.html")
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
 
@@ -262,7 +262,7 @@ Page {
                                             rightMargin: Theme.horizontalPageMargin
                                         }
                                         font.pixelSize: Theme.fontSizeSmall
-                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.license
+                                        text: "<style type=\"text/css\">A { color: %1; }</style>".arg(Theme.highlightColor) + Utils.readTextResource(":/license.html")
                                         textFormat: Text.RichText
                                         wrapMode: Text.WordWrap
 
