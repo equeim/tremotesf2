@@ -109,10 +109,10 @@ Page {
 
             MenuItem {
                 enabled: Servers.hasServers
-                text: rpc.status !== Rpc.Disconnected ? qsTranslate("tremotesf", "Disconnect")
-                                                      : qsTranslate("tremotesf", "Connect")
+                text: rpc.connectionState !== RpcConnectionState.Disconnected ? qsTranslate("tremotesf", "Disconnect")
+                                                                              : qsTranslate("tremotesf", "Connect")
                 onClicked: {
-                    if (rpc.status !== Rpc.Disconnected) {
+                    if (rpc.connectionState !== RpcConnectionState.Disconnected) {
                         var disconnect = function() {
                             rpc.disconnect()
                             pullDownMenu.activeChanged.disconnect(disconnect)
@@ -207,7 +207,7 @@ Page {
         target: rpc
 
         onConnectedChanged: {
-            if (!rpc.connected && (rpc.error !== Rpc.NoError) && Settings.notificationOnDisconnecting) {
+            if (!rpc.connected && (rpc.error !== RpcError.NoError) && Settings.notificationOnDisconnecting) {
                 notification.publishGeneric(qsTranslate("tremotesf", "Disconnected"), rpc.statusString)
             }
         }

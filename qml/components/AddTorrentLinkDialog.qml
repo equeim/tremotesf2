@@ -32,10 +32,6 @@ Dialog {
                                    priorityComboBox.currentPriority,
                                    startSwitch.checked)
 
-    TorrentFileParser {
-        id: parser
-    }
-
     SilicaFlickable {
         anchors.fill: parent
         contentHeight: column.height
