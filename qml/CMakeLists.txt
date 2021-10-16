@@ -1,0 +1,4 @@
+if (SAILFISHOS)
+    list(APPEND QRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/qml.qrc")
+    set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)
+endif()

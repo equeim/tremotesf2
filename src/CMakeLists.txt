@@ -4,6 +4,8 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 
+list(APPEND QRC_FILES resources.qrc)
+
 add_executable(tremotesf
     libtremotesf/peer.cpp
     libtremotesf/rpc.cpp
@@ -35,8 +37,7 @@ add_executable(tremotesf
     trackersmodel.cpp
     trpc.cpp
     utils.cpp
-    resources.qrc
-    ../data/authors/authors.qrc
+    ${QRC_FILES}
 )
 
 set_target_properties(tremotesf PROPERTIES
@@ -91,7 +92,6 @@ if (SAILFISHOS)
         sailfishos/directorycontentmodel.cpp
         sailfishos/sailfishosutils.cpp
         sailfishos/selectionmodel.cpp
-        ../qml/qml.qrc
     )
     target_link_libraries(tremotesf Qt5::Quick PkgConfig::SailfishApp)
     if (CMAKE_VERSION VERSION_LESS "3.15.0")
@@ -130,7 +130,6 @@ else()
     )
 
     target_compile_definitions(tremotesf PRIVATE
-        ICONS_PATH="${ICONS_PATH}"
         TREMOTESF_APP_ID="org.equeim.Tremotesf"
         TREMOTESF_APP_NAME="Tremotesf"
     )

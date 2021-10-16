@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>active.png</file>
+        <file>checking.png</file>
+        <file>downloading.png</file>
+        <file>errored.png</file>
+        <file>paused.png</file>
+        <file>queued.png</file>
+        <file>seeding.png</file>
+        <file>stalled-downloading.png</file>
+        <file>stalled-seeding.png</file>
+    </qresource>
+</RCC>

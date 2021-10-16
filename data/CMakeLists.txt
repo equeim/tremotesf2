@@ -1,16 +1,15 @@
+list(APPEND QRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/authors/authors.qrc")
+
 if (SAILFISHOS)
     set(app_icons "sailfishos/hicolor")
     set(desktop_file_path "sailfishos/harbour-tremotesf.desktop")
 else()
+    list(APPEND QRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/desktop/status/status.qrc")
+
     set(app_icons "desktop/hicolor")
 
-    if (TEST_BUILD)
-        set(icons_path "${CMAKE_CURRENT_SOURCE_DIR}/desktop/status")
-    else()
-        set(icons_path "${DATA_PATH}/icons")
+    if (NOT TEST_BUILD)
         if (NOT WIN32 AND NOT APPLE)
-            install(DIRECTORY "desktop/status/" DESTINATION "${icons_path}")
-
             find_package(Gettext 0.19.7 REQUIRED)
 
             set(po_dir "${CMAKE_CURRENT_SOURCE_DIR}/desktop/po")
@@ -39,11 +38,11 @@ else()
             install(FILES "${appdata_path}" DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo")
         endif()
     endif()
-
-    set(ICONS_PATH "${icons_path}" PARENT_SCOPE)
 endif()
 
 if (NOT TEST_BUILD AND NOT WIN32 AND NOT APPLE)
     install(DIRECTORY "${app_icons}" DESTINATION "${CMAKE_INSTALL_DATADIR}/icons")
     install(FILES "${desktop_file_path}" DESTINATION "${CMAKE_INSTALL_DATADIR}/applications")
 endif()
+
+set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)

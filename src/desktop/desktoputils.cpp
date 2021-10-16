@@ -50,40 +50,25 @@ namespace tremotesf
     {
         QString statusIconPath(StatusIcon icon)
         {
-#if defined(Q_OS_WIN) && !defined(TEST_BUILD)
-            static const QString iconsPath(QString::fromLatin1("%1/icons").arg(QCoreApplication::applicationDirPath()));
-#else
-            static const QString iconsPath(QLatin1String(ICONS_PATH));
-#endif // Q_OS_WIN
-            static const QString active(QString::fromLatin1("%1/active.png").arg(iconsPath));
-            static const QString checking(QString::fromLatin1("%1/checking.png").arg(iconsPath));
-            static const QString downloading(QString::fromLatin1("%1/downloading.png").arg(iconsPath));
-            static const QString errored(QString::fromLatin1("%1/errored.png").arg(iconsPath));
-            static const QString paused(QString::fromLatin1("%1/paused.png").arg(iconsPath));
-            static const QString queued(QString::fromLatin1("%1/queued.png").arg(iconsPath));
-            static const QString seeding(QString::fromLatin1("%1/seeding.png").arg(iconsPath));
-            static const QString stalledDownloading(QString::fromLatin1("%1/stalled-downloading.png").arg(iconsPath));
-            static const QString stalledSeeding(QString::fromLatin1("%1/stalled-seeding.png").arg(iconsPath));
-
             switch (icon) {
             case ActiveIcon:
-                return active;
+                return QLatin1String(":/active.png");
             case CheckingIcon:
-                return checking;
+                return QLatin1String(":/checking.png");
             case DownloadingIcon:
-                return downloading;
+                return QLatin1String(":/downloading.png");
             case ErroredIcon:
-                return errored;
+                return QLatin1String(":/errored.png");
             case PausedIcon:
-                return paused;
+                return QLatin1String(":/paused.png");
             case QueuedIcon:
-                return queued;
+                return QLatin1String(":/queued.png");
             case SeedingIcon:
-                return seeding;
+                return QLatin1String(":/seeding.png");
             case StalledDownloadingIcon:
-                return stalledDownloading;
+                return QLatin1String(":/stalled-downloading.png");
             case StalledSeedingIcon:
-                return stalledSeeding;
+                return QLatin1String(":/stalled-seeding.png");
             }
 
             return QString();

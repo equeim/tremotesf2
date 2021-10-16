@@ -22,6 +22,8 @@ set(DATA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/${TREMOTESF_NAME}")
 
 find_package(Qt5 5.6 REQUIRED COMPONENTS Core)
 
+set(QRC_FILES "")
 add_subdirectory("data")
 add_subdirectory("translations")
+add_subdirectory("qml")
 add_subdirectory("src")
