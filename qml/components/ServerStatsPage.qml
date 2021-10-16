@@ -27,6 +27,18 @@ Page {
 
     allowedOrientations: defaultAllowedOrientations
 
+    Component.onCompleted: rpc.getDownloadDirFreeSpace()
+
+    Connections {
+        target: rpc.serverStats
+        onUpdated: rpc.getDownloadDirFreeSpace()
+    }
+
+    Connections {
+        target: rpc
+        onGotDownloadDirFreeSpace: freeSpaceItem.value = Utils.formatByteSize(bytes)
+    }
+
     SilicaFlickable {
         anchors.fill: parent
 
@@ -94,6 +106,11 @@ Page {
             DetailItem {
                 label: qsTranslate("tremotesf", "Started")
                 value: qsTranslate("tremotesf", "%Ln times", String(), total.sessionCount)
+            }
+
+            DetailItem {
+                id: freeSpaceItem
+                label: qsTranslate("tremotesf", "Free space in download directory")
             }
         }
 

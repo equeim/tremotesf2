@@ -75,6 +75,11 @@ namespace tremotesf
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Duration:"), totalDurationLabel);
         auto sessionCountLabel = new QLabel(this);
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Started:"), sessionCountLabel);
+        auto freeSpaceField = new QLabel(this);
+        totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Free space in download directory:"), freeSpaceField);
+        auto* freeSpaceLabel = qobject_cast<QLabel*>(totalGroupBoxLayout->labelForField(freeSpaceField));
+        freeSpaceLabel->setWordWrap(true);
+        freeSpaceLabel->setAlignment(Qt::AlignTrailing | Qt::AlignVCenter);
 
         layout->addWidget(totalGroupBox);
 
@@ -116,8 +121,13 @@ namespace tremotesf
             totalDurationLabel->setText(Utils::formatEta(totalStats.duration()));
 
             sessionCountLabel->setText(qApp->translate("tremotesf", "%Ln times", nullptr, totalStats.sessionCount()));
+
+            rpc->getDownloadDirFreeSpace();
         };
         QObject::connect(rpc->serverStats(), &libtremotesf::ServerStats::updated, this, update);
+        QObject::connect(rpc, &Rpc::gotDownloadDirFreeSpace, this, [freeSpaceField](long long bytes) {
+            freeSpaceField->setText(Utils::formatByteSize(bytes));
+        });
         update();
     }
 
