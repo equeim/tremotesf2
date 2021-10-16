@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>authors.html</file>
+    </qresource>
+    <qresource lang="ru" prefix="/">
+    <file alias="authors.html">authors_ru.html</file>
+</qresource>
+</RCC>

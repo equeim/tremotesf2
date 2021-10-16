@@ -14,3 +14,9 @@ source_file = data/desktop/po/messages.po
 source_lang = en
 trans.en_US = data/desktop/po/en.po
 type = PO
+
+[tremotesf.authors]
+file_filter = data/authors/authors_<lang>.html
+source_file = data/authors/authors.html
+source_lang = en
+type = HTML

@@ -2,6 +2,5 @@
     <qresource prefix="/">
         <file>license.html</file>
         <file>translators.html</file>
-        <file>authors.html</file>
     </qresource>
 </RCC>

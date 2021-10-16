@@ -36,6 +36,7 @@ add_executable(tremotesf
     trpc.cpp
     utils.cpp
     resources.qrc
+    ../data/authors/authors.qrc
 )
 
 set_target_properties(tremotesf PROPERTIES
