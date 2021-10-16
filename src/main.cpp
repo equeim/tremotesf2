@@ -113,11 +113,7 @@ int main(int argc, char** argv)
     qApp->installTranslator(&qtTranslator);
 
     QTranslator appTranslator;
-#if defined(Q_OS_WIN) && !defined(TEST_BUILD)
-    appTranslator.load(QLocale().name(), QString::fromLatin1("%1/translations").arg(qApp->applicationDirPath()));
-#else
-    appTranslator.load(QLocale().name(), QLatin1String(TRANSLATIONS_PATH));
-#endif
+    appTranslator.load(QLocale().name(), QLatin1String(":/translations"));
     qApp->installTranslator(&appTranslator);
 
     tremotesf::Utils::registerTypes();

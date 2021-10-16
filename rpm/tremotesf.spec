@@ -131,7 +131,6 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %if ! %{defined sailfishos}
 %{_metainfodir}/%{app_id}.appdata.xml
 %endif
-%{_datadir}/%{name}
 
 %changelog
 * Mon Sep 27 2021 Alexey Rochev <equeim@gmail.com> - 1.10.0-1

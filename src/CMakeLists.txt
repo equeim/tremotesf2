@@ -55,12 +55,7 @@ target_compile_definitions(tremotesf PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=0x050600
     QT_MESSAGELOGCONTEXT
     TREMOTESF_VERSION="${PROJECT_VERSION}"
-    TRANSLATIONS_PATH="${TRANSLATIONS_PATH}"
 )
-
-if (TEST_BUILD)
-    target_compile_definitions(tremotesf PRIVATE TEST_BUILD)
-endif()
 
 if (MSVC)
     target_compile_options(tremotesf PRIVATE /W4)
