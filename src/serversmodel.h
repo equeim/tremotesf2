@@ -55,6 +55,8 @@ namespace tremotesf
             PasswordRole,
             UpdateIntervalRole,
             TimeoutRole,
+            AutoReconnectEnabledRole,
+            AutoReconnectIntervalRole,
             MountedDirectoriesRole
         };
         Q_ENUMS(Role)
@@ -95,6 +97,9 @@ namespace tremotesf
 
                                    int updateInterval,
                                    int timeout,
+
+                                   bool autoReconnectEnabled,
+                                   int autoReconnectInterval,
 
                                    const QVariantMap& mountedDirectories);
         Q_INVOKABLE void removeServerAtIndex(const QModelIndex& index);

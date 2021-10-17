@@ -58,6 +58,9 @@ namespace tremotesf
                int updateInterval,
                int timeout,
 
+               bool autoReconnectEnabled,
+               int autoReconnectInterval,
+
                const QVariantMap& mountedDirectories,
                const QVariant& lastTorrents,
                const QVariant& addTorrentDialogDirectories);
@@ -137,6 +140,10 @@ namespace tremotesf
 
                                    int updateInterval,
                                    int timeout,
+
+                                   bool autoReconnectEnabled,
+                                   int autoReconnectInterval,
+
                                    const QVariantMap& mountedDirectories);
 
         Q_INVOKABLE void removeServer(const QString& name);

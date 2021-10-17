@@ -74,6 +74,10 @@ namespace tremotesf
             return server.updateInterval;
         case TimeoutRole:
             return server.timeout;
+        case AutoReconnectEnabledRole:
+            return server.autoReconnectEnabled;
+        case AutoReconnectIntervalRole:
+            return server.autoReconnectInterval;
         case MountedDirectoriesRole:
             return server.mountedDirectories;
         }
@@ -158,6 +162,9 @@ namespace tremotesf
                                  int updateInterval,
                                  int timeout,
 
+                                 bool autoReconnectEnabled,
+                                 int autoReconnectInterval,
+
                                  const QVariantMap& mountedDirectories)
     {
         const int oldRow = serverRow(oldName);
@@ -199,6 +206,10 @@ namespace tremotesf
 
             server->updateInterval = updateInterval;
             server->timeout = timeout;
+
+            server->autoReconnectEnabled = autoReconnectEnabled;
+            server->autoReconnectInterval = autoReconnectInterval;
+
             server->mountedDirectories = mountedDirectories;
 
             const QModelIndex modelIndex(index(oldRow));
@@ -240,6 +251,9 @@ namespace tremotesf
 
                                   updateInterval,
                                   timeout,
+
+                                  autoReconnectEnabled,
+                                  autoReconnectInterval,
 
                                   mountedDirectories,
                                   QVariant(),
@@ -294,6 +308,8 @@ namespace tremotesf
                 {PasswordRole, "password"},
                 {UpdateIntervalRole, "updateInterval"},
                 {TimeoutRole, "timeout"},
+                {AutoReconnectEnabledRole, "autoReconnectEnabled"},
+                {AutoReconnectIntervalRole, "autoReconnectInterval"},
                 {MountedDirectoriesRole, "mountedDirectories"}};
     }
 #endif

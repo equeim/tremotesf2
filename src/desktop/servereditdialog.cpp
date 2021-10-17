@@ -166,6 +166,8 @@ namespace tremotesf
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
             mTimeoutSpinBox->setValue(30);
+            mAutoReconnectGroupBox->setChecked(false);
+            mAutoReconnectSpinBox->setValue(30);
         } else {
             const Server& server = mServersModel->servers()[static_cast<size_t>(row)];
 
@@ -195,6 +197,9 @@ namespace tremotesf
 
             mUpdateIntervalSpinBox->setValue(server.updateInterval);
             mTimeoutSpinBox->setValue(server.timeout);
+
+            mAutoReconnectGroupBox->setChecked(server.autoReconnectEnabled);
+            mAutoReconnectSpinBox->setValue(server.autoReconnectInterval);
 
             for (auto i = server.mountedDirectories.cbegin(), end = server.mountedDirectories.cend();
                  i != end;
@@ -370,6 +375,18 @@ namespace tremotesf
         mTimeoutSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Timeout:"), mTimeoutSpinBox);
 
+        mAutoReconnectGroupBox = new QGroupBox(qApp->translate("tremotesf", "Auto reconnect on error"), this);
+        mAutoReconnectGroupBox->setCheckable(true);
+        formLayout->addRow(mAutoReconnectGroupBox);
+        auto* autoReconnectFormLayout = new QFormLayout(mAutoReconnectGroupBox);
+        autoReconnectFormLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+        mAutoReconnectSpinBox = new QSpinBox(this);
+        mAutoReconnectSpinBox->setMinimum(1);
+        mAutoReconnectSpinBox->setMaximum(3600);
+        //: Seconds
+        mAutoReconnectSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
+        autoReconnectFormLayout->addRow(qApp->translate("tremotesf", "Auto reconnect interval:"), mAutoReconnectSpinBox);
+
         auto mountedDirectoriesGroupBox = new QGroupBox(qApp->translate("tremotesf", "Mounted directories"), this);
         auto mountedDirectoriesLayout = new QGridLayout(mountedDirectoriesGroupBox);
         mMountedDirectoriesWidget = new MountedDirectoriesWidget(0, 2);
@@ -456,6 +473,10 @@ namespace tremotesf
 
                                      mUpdateIntervalSpinBox->value(),
                                      mTimeoutSpinBox->value(),
+
+                                     mAutoReconnectGroupBox->isChecked(),
+                                     mAutoReconnectSpinBox->value(),
+
                                      mountedDirectories);
         } else {
             Servers::instance()->setServer(mServerName,
@@ -482,6 +503,10 @@ namespace tremotesf
 
                                            mUpdateIntervalSpinBox->value(),
                                            mTimeoutSpinBox->value(),
+
+                                           mAutoReconnectGroupBox->isChecked(),
+                                           mAutoReconnectSpinBox->value(),
+
                                            mountedDirectories);
         }
     }

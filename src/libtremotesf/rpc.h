@@ -81,6 +81,9 @@ namespace libtremotesf
 
         int updateInterval;
         int timeout;
+
+        bool autoReconnectEnabled;
+        int autoReconnectInterval;
     };
 
     DEFINE_Q_ENUM_NS(RpcConnectionState,
@@ -122,8 +125,6 @@ namespace libtremotesf
         const std::vector<std::shared_ptr<Torrent>>& torrents() const;
         Q_INVOKABLE libtremotesf::Torrent* torrentByHash(const QString& hash) const;
         Torrent* torrentById(int id) const;
-
-        Q_INVOKABLE void setAutoReconnect(bool enabled);
 
         struct Status
         {
@@ -264,8 +265,8 @@ namespace libtremotesf
         QList<QSslError> mExpectedSslErrors;
         QString mUsername;
         QString mPassword;
-        int mUpdateInterval;
         int mTimeout;
+        bool mAutoReconnectEnabled;
         bool mLocal;
 
         bool mRpcVersionChecked;
@@ -273,8 +274,6 @@ namespace libtremotesf
         bool mTorrentsUpdated;
         bool mServerStatsUpdated;
         QTimer* mUpdateTimer;
-
-        bool mAutoReconnectEnabled;
         QTimer* mAutoReconnectTimer;
 
         ServerSettings* mServerSettings;

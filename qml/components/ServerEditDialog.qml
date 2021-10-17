@@ -57,6 +57,10 @@ Dialog {
                           passwordField.text,
                           updateIntervalField.text,
                           timeoutField.text,
+
+                          autoReconnectSwitch.checked,
+                          autoReconnectField.text,
+
                           mountedDirectories)
         if (serversModel) {
             serversModel.setServer(modelData ? modelData.name : String(),
@@ -81,6 +85,10 @@ Dialog {
                                    passwordField.text,
                                    updateIntervalField.text,
                                    timeoutField.text,
+
+                                   autoReconnectSwitch.checked,
+                                   autoReconnectField.text,
+
                                    mountedDirectories)
         }
     }
@@ -436,6 +444,29 @@ Dialog {
                 validator: IntValidator {
                     bottom: 5
                     top: 60
+                }
+            }
+
+            TextSwitch {
+                id: autoReconnectSwitch
+                text: qsTranslate("tremotesf", "Auto reconnect on error")
+                checked: modelData ? modelData.autoReconnectEnabled : false
+            }
+
+            FormTextField {
+                id: autoReconnectField
+
+                width: parent.width
+                visible: autoReconnectSwitch.checked
+
+                label: qsTranslate("tremotesf", "Auto reconnect interval, s")
+                placeholderText: label
+
+                text: modelData ? modelData.autoReconnectInterval : "30"
+                inputMethodHints: Qt.ImhDigitsOnly
+                validator: IntValidator {
+                    bottom: 1
+                    top: 3600
                 }
             }
 

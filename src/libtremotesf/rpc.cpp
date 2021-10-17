@@ -143,22 +143,20 @@ namespace libtremotesf
           mUpdateDisabled(false),
           mUpdating(false),
           mAuthentication(false),
-          mUpdateInterval(0),
           mTimeout(0),
+          mAutoReconnectEnabled(false),
           mLocal(false),
           mRpcVersionChecked(false),
           mServerSettingsUpdated(false),
           mTorrentsUpdated(false),
           mServerStatsUpdated(false),
           mUpdateTimer(new QTimer(this)),
-          mAutoReconnectEnabled(false),
           mAutoReconnectTimer(new QTimer(this)),
           mServerSettings(new ServerSettings(this, this)),
           mServerStats(new ServerStats(this))
     {
         QObject::connect(mNetwork, &QNetworkAccessManager::authenticationRequired, this, &Rpc::onAuthenticationRequired);
 
-        mAutoReconnectTimer->setInterval(30000);
         mAutoReconnectTimer->setSingleShot(true);
         QObject::connect(mAutoReconnectTimer, &QTimer::timeout, this, &Rpc::connect);
 
@@ -204,13 +202,6 @@ namespace libtremotesf
         const auto end(mTorrents.end());
         const auto found(std::find_if(mTorrents.begin(), mTorrents.end(), [id](const auto& torrent) { return torrent->id() == id; }));
         return (found == end) ? nullptr : found->get();
-    }
-
-    void Rpc::setAutoReconnect(bool enabled)
-    {
-        if (!(mAutoReconnectEnabled = enabled)) {
-            mAutoReconnectTimer->stop();
-        }
     }
 
     bool Rpc::isConnected() const
@@ -327,8 +318,11 @@ namespace libtremotesf
         mUsername = server.username;
         mPassword = server.password;
         mTimeout = server.timeout * 1000; // msecs
-        mUpdateInterval = server.updateInterval * 1000; // msecs
-        mUpdateTimer->setInterval(mUpdateInterval);
+        mUpdateTimer->setInterval(server.updateInterval * 1000); // msecs
+
+        mAutoReconnectEnabled = server.autoReconnectEnabled;
+        mAutoReconnectTimer->setInterval(server.autoReconnectInterval * 1000); // msecs
+        mAutoReconnectTimer->stop();
     }
 
     void Rpc::resetServer()
@@ -340,9 +334,10 @@ namespace libtremotesf
         mAuthentication = false;
         mUsername.clear();
         mPassword.clear();
-        mUpdateInterval = 0;
         mTimeout = 0;
         mLocal = false;
+        mAutoReconnectEnabled = false;
+        mAutoReconnectTimer->stop();
     }
 
     void Rpc::connect()

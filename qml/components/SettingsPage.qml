@@ -42,12 +42,6 @@ Page {
                 Component.onCompleted: checked = Settings.connectOnStartup
             }
 
-            TextSwitch {
-                text: qsTranslate("tremotesf", "Auto reconnect")
-                onClicked: Settings.autoReconnect = checked
-                Component.onCompleted: checked = Settings.autoReconnect
-            }
-
             SectionHeader {
                 text: qsTranslate("tremotesf", "Notifications")
             }

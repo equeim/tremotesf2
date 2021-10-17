@@ -80,6 +80,9 @@ namespace tremotesf
         QSpinBox* mUpdateIntervalSpinBox = nullptr;
         QSpinBox* mTimeoutSpinBox = nullptr;
 
+        QGroupBox* mAutoReconnectGroupBox = nullptr;
+        QSpinBox* mAutoReconnectSpinBox = nullptr;
+
         MountedDirectoriesWidget* mMountedDirectoriesWidget = nullptr;
 
         QDialogButtonBox* mDialogButtonBox = nullptr;

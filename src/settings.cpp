@@ -39,7 +39,6 @@ namespace tremotesf
     }
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, connectOnStartup, setConnectOnStartup, "connectOnStartup", true, toBool)
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, autoReconnect, setAutoReconnect, "autoReconnect", false, toBool)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting, "notificationOnDisconnecting", true, toBool)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent, "notificationOnAddingTorrent", true, toBool)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents, "notificationOfFinishedTorrents", true, toBool)

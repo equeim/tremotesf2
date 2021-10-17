@@ -63,6 +63,9 @@ namespace tremotesf
         const QLatin1String updateIntervalKey("updateInterval");
         const QLatin1String timeoutKey("timeout");
 
+        const QLatin1String autoReconnectEnabledKey("autoReconnectEnabled");
+        const QLatin1String autoReconnectIntervalKey("autoReconnectInterval");
+
         const QLatin1String mountedDirectoriesKey("mountedDirectories");
         const QLatin1String addTorrentDialogDirectoriesKey("addTorrentDialogDirectories");
         const QLatin1String lastTorrentsKey("lastTorrents");
@@ -187,6 +190,9 @@ namespace tremotesf
                    int updateInterval,
                    int timeout,
 
+                   bool autoReconnectEnabled,
+                   int autoReconnectInterval,
+
                    const QVariantMap& mountedDirectories,
                    const QVariant& lastTorrents,
                    const QVariant& addTorrentDialogDirectories)
@@ -212,7 +218,10 @@ namespace tremotesf
                                password,
 
                                updateInterval,
-                               timeout},
+                               timeout,
+
+                               autoReconnectEnabled,
+                               autoReconnectInterval},
           mountedDirectories(mountedDirectories),
           lastTorrents(lastTorrents),
           addTorrentDialogDirectories(addTorrentDialogDirectories)
@@ -399,6 +408,10 @@ namespace tremotesf
 
                             int updateInterval,
                             int timeout,
+
+                            bool autoReconnectEnabled,
+                            int autoReconnectInterval,
+
                             const QVariantMap& mountedDirectories)
     {
         bool currentChanged = false;
@@ -442,6 +455,10 @@ namespace tremotesf
 
         mSettings->setValue(updateIntervalKey, updateInterval);
         mSettings->setValue(timeoutKey, timeout);
+
+        mSettings->setValue(autoReconnectEnabledKey, autoReconnectEnabled);
+        mSettings->setValue(autoReconnectEnabledKey, autoReconnectInterval);
+
         mSettings->setValue(mountedDirectoriesKey, mountedDirectories);
         mSettings->setValue(addTorrentDialogDirectoriesKey, addTorrentDialogDirectories);
 
@@ -499,6 +516,10 @@ namespace tremotesf
 
             mSettings->setValue(updateIntervalKey, server.updateInterval);
             mSettings->setValue(timeoutKey, server.timeout);
+
+            mSettings->setValue(autoReconnectEnabledKey, server.autoReconnectEnabled);
+            mSettings->setValue(autoReconnectIntervalKey, server.autoReconnectInterval);
+
             mSettings->setValue(mountedDirectoriesKey, server.mountedDirectories);
             mSettings->setValue(lastTorrentsKey, server.lastTorrents);
             mSettings->setValue(addTorrentDialogDirectoriesKey, server.addTorrentDialogDirectories);
@@ -582,6 +603,9 @@ namespace tremotesf
 
                       mSettings->value(updateIntervalKey, 5).toInt(),
                       mSettings->value(timeoutKey, 30).toInt(),
+
+                      mSettings->value(autoReconnectEnabledKey, false).toBool(),
+                      mSettings->value(autoReconnectIntervalKey, 30).toInt(),
 
                       mSettings->value(mountedDirectoriesKey).toMap(),
                       mSettings->value(lastTorrentsKey),

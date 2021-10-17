@@ -46,13 +46,6 @@ ApplicationWindow {
         }
     }
 
-    Connections {
-        target: Settings
-        onAutoReconnectChanged: {
-            rpc.setAutoReconnect(Settings.autoReconnect)
-        }
-    }
-
     cover: Qt.resolvedUrl("components/Cover.qml")
     initialPage: mainPage
 
@@ -67,8 +60,6 @@ ApplicationWindow {
             rpc.connectedChanged.disconnect(addTorrent)
         }
         rpc.connectedChanged.connect(addTorrent)
-
-        rpc.setAutoReconnect(Settings.autoReconnect)
 
         if (Servers.hasServers) {
             if (Settings.connectOnStartup) {
