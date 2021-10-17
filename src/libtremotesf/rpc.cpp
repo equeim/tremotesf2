@@ -264,6 +264,9 @@ namespace libtremotesf
                     updateData();
                 }
             }
+            if (disabled) {
+                mAutoReconnectTimer->stop();
+            }
             emit updateDisabledChanged();
         }
     }
@@ -1199,7 +1202,7 @@ namespace libtremotesf
                     qWarning("Timed out");
                     if (!retryRequest(std::move(request), reply)) {
                         setStatus(Status{ConnectionState::Disconnected, Error::TimedOut});
-                        if (mAutoReconnectEnabled) {
+                        if (mAutoReconnectEnabled && !mUpdateDisabled) {
                             mAutoReconnectTimer->start();
                         }
                     }
@@ -1226,7 +1229,7 @@ namespace libtremotesf
 
                     if (!retryRequest(std::move(request), reply)) {
                         setStatus(Status{ConnectionState::Disconnected, Error::ConnectionError});
-                        if (mAutoReconnectEnabled) {
+                        if (mAutoReconnectEnabled && !mUpdateDisabled) {
                             mAutoReconnectTimer->start();
                         }
                     }
