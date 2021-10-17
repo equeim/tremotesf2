@@ -322,6 +322,19 @@ Dialog {
                     text: modelData ? modelData.selfSignedCertificate : String()
                 }
 
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    preferredWidth: Theme.buttonWidthLarge
+                    visible: selfSignedCertificateSwitch.checked
+                    text: qsTranslate("tremotesf", "Load from file...")
+                    onClicked: {
+                        var dialog = pageStack.push("FileSelectionDialog.qml", {nameFilters: ["*.pem"]})
+                        dialog.accepted.connect(function() {
+                            selfSignedCertificateTextArea.text = Utils.readTextFile(dialog.filePath)
+                        })
+                    }
+                }
+
                 TextSwitch {
                     id: clientCertificateSwitch
                     text: qsTranslate("tremotesf", "Use client certificate authentication")
@@ -340,6 +353,19 @@ Dialog {
                     placeholderText: label
 
                     text: modelData ? modelData.clientCertificate : String()
+                }
+
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    preferredWidth: Theme.buttonWidthLarge
+                    visible: clientCertificateSwitch.checked
+                    text: qsTranslate("tremotesf", "Load from file...")
+                    onClicked: {
+                        var dialog = pageStack.push("FileSelectionDialog.qml", {nameFilters: ["*.pem"]})
+                        dialog.accepted.connect(function() {
+                            clientCertificateTextArea.text = Utils.readTextFile(dialog.filePath)
+                        })
+                    }
                 }
             }
 

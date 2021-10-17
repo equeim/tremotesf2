@@ -308,22 +308,41 @@ namespace tremotesf
         auto httpsGroupBoxLayout = new QVBoxLayout(mHttpsGroupBox);
 
         mSelfSignedCertificateCheckBox = new QCheckBox(qApp->translate("tremotesf", "Server uses self-signed certificate"), this);
+        httpsGroupBoxLayout->addWidget(mSelfSignedCertificateCheckBox);
         mSelfSignedCertificateEdit = new QPlainTextEdit(this);
         mSelfSignedCertificateEdit->setMinimumHeight(192);
         mSelfSignedCertificateEdit->setPlaceholderText(qApp->translate("tremotesf", "Server's certificate in PEM format"));
         mSelfSignedCertificateEdit->setVisible(false);
-        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, mSelfSignedCertificateEdit, &QWidget::setVisible);
-        httpsGroupBoxLayout->addWidget(mSelfSignedCertificateCheckBox);
         httpsGroupBoxLayout->addWidget(mSelfSignedCertificateEdit);
+        auto* selfSignedCertificateLoadFromFile = new QPushButton(qApp->translate("tremotesf", "Load from file..."), this);
+        selfSignedCertificateLoadFromFile->setVisible(false);
+        QObject::connect(selfSignedCertificateLoadFromFile, &QPushButton::clicked, this, [this] {
+            loadCertificateFromFile(mSelfSignedCertificateEdit);
+        });
+        httpsGroupBoxLayout->addWidget(selfSignedCertificateLoadFromFile);
+        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, this, [=](bool checked) {
+            mSelfSignedCertificateEdit->setVisible(checked);
+            selfSignedCertificateLoadFromFile->setVisible(checked);
+        });
+
 
         mClientCertificateCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use client certificate authentication"), this);
+        httpsGroupBoxLayout->addWidget(mClientCertificateCheckBox);
         mClientCertificateEdit = new QPlainTextEdit(this);
         mClientCertificateEdit->setMinimumHeight(192);
         mClientCertificateEdit->setPlaceholderText(qApp->translate("tremotesf", "Certificate in PEM format with private key"));
         mClientCertificateEdit->setVisible(false);
-        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, mClientCertificateEdit, &QWidget::setVisible);
-        httpsGroupBoxLayout->addWidget(mClientCertificateCheckBox);
         httpsGroupBoxLayout->addWidget(mClientCertificateEdit);
+        auto* clientCertificateLoadFromFile = new QPushButton(qApp->translate("tremotesf", "Load from file..."), this);
+        clientCertificateLoadFromFile->setVisible(false);
+        QObject::connect(clientCertificateLoadFromFile, &QPushButton::clicked, this, [this] {
+            loadCertificateFromFile(mClientCertificateEdit);
+        });
+        httpsGroupBoxLayout->addWidget(clientCertificateLoadFromFile);
+        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, this, [=](bool checked) {
+            mClientCertificateEdit->setVisible(checked);
+            clientCertificateLoadFromFile->setVisible(checked);
+        });
 
         formLayout->addRow(mHttpsGroupBox);
 
@@ -465,6 +484,27 @@ namespace tremotesf
                                            mTimeoutSpinBox->value(),
                                            mountedDirectories);
         }
+    }
+
+    void ServerEditDialog::loadCertificateFromFile(QPlainTextEdit* target)
+    {
+        auto *fileDialog = new QFileDialog(this,
+                                           qApp->translate("tremotesf", "Select Files"),
+                                           {},
+                                           /*qApp->translate("tremotesf", "Torrent Files (*.torrent)")*/ {});
+        fileDialog->setAttribute(Qt::WA_DeleteOnClose);
+        fileDialog->setFileMode(QFileDialog::ExistingFile);
+        fileDialog->setMimeTypeFilters({QLatin1String("application/x-pem-file")});
+
+        QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
+            target->setPlainText(Utils::readTextFile(fileDialog->selectedFiles().first()));
+        });
+
+#ifdef Q_OS_WIN
+        fileDialog->open();
+#else
+        fileDialog->show();
+#endif
     }
 }
 

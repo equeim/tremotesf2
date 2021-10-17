@@ -93,6 +93,16 @@ namespace tremotesf
             }
             return byteUnits[unit].strings[stringType]().arg(bytes_d, 0, 'f', 1);
         }
+
+        template<typename Functor>
+        QString readTextFileImpl(const QString& filePath, Functor&& onError) {
+            QFile file(filePath);
+            if (file.open(QIODevice::ReadOnly)) {
+                return file.readAll();
+            }
+            onError();
+            return {};
+        }
     }
 
     QString Utils::formatByteSize(long long size)
@@ -169,14 +179,18 @@ namespace tremotesf
         return qApp->translate("tremotesf", "%L1 s").arg(seconds);
     }
 
-    QString Utils::readTextResource(const QString& path)
+    QString Utils::readTextResource(const QString& resourcePath)
     {
-        QFile file(path);
-        if (file.open(QIODevice::ReadOnly)) {
-            return file.readAll();
-        }
-        qFatal("Failed to read resource with path \"%s\"", path.toUtf8().data());
-        return {};
+        return readTextFileImpl(resourcePath, [&] {
+            qFatal("Failed to read resource with path \"%s\"", resourcePath.toUtf8().data());
+        });
+    }
+
+    QString Utils::readTextFile(const QString& filePath)
+    {
+        return readTextFileImpl(filePath, [&] {
+            qWarning("Failed to read file with path \"%s\"", filePath.toUtf8().data());
+        });
     }
 
     void Utils::registerTypes()

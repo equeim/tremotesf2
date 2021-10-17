@@ -37,7 +37,8 @@ namespace tremotesf
 
         Q_INVOKABLE static QString formatEta(int seconds);
 
-        Q_INVOKABLE static QString readTextResource(const QString& path);
+        Q_INVOKABLE static QString readTextResource(const QString& resourcePath);
+        Q_INVOKABLE static QString readTextFile(const QString& filePath);
 
         static void registerTypes();
     };

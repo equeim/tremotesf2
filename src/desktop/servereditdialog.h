@@ -49,6 +49,7 @@ namespace tremotesf
         void setProxyFieldsVisible();
         void canAcceptUpdate();
         void setServer();
+        void loadCertificateFromFile(QPlainTextEdit* target);
 
     private:
         ServersModel* mServersModel;
