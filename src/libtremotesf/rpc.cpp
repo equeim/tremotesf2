@@ -158,7 +158,10 @@ namespace libtremotesf
         QObject::connect(mNetwork, &QNetworkAccessManager::authenticationRequired, this, &Rpc::onAuthenticationRequired);
 
         mAutoReconnectTimer->setSingleShot(true);
-        QObject::connect(mAutoReconnectTimer, &QTimer::timeout, this, &Rpc::connect);
+        QObject::connect(mAutoReconnectTimer, &QTimer::timeout, this, [=] {
+            qInfo("Auto reconnection");
+            connect();
+        });
 
         mUpdateTimer->setSingleShot(true);
         QObject::connect(mUpdateTimer, &QTimer::timeout, this, &Rpc::updateData);
@@ -1198,6 +1201,7 @@ namespace libtremotesf
                     if (!retryRequest(std::move(request), reply)) {
                         setStatus(Status{ConnectionState::Disconnected, Error::TimedOut});
                         if (mAutoReconnectEnabled && !mUpdateDisabled) {
+                            qInfo("Auto reconnecting in %d seconds", mAutoReconnectTimer->interval() / 1000);
                             mAutoReconnectTimer->start();
                         }
                     }
@@ -1225,6 +1229,7 @@ namespace libtremotesf
                     if (!retryRequest(std::move(request), reply)) {
                         setStatus(Status{ConnectionState::Disconnected, Error::ConnectionError});
                         if (mAutoReconnectEnabled && !mUpdateDisabled) {
+                            qInfo("Auto reconnecting in %d seconds", mAutoReconnectTimer->interval() / 1000);
                             mAutoReconnectTimer->start();
                         }
                     }
