@@ -53,9 +53,12 @@ target_include_directories(tremotesf PRIVATE ${Qt5Concurrent_INCLUDE_DIRS})
 target_compile_definitions(tremotesf PRIVATE
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x050600
-    QT_MESSAGELOGCONTEXT
     TREMOTESF_VERSION="${PROJECT_VERSION}"
 )
+
+if (NOT SAILFISHOS)
+    target_compile_definitions(tremotesf PRIVATE QT_MESSAGELOGCONTEXT)
+endif()
 
 if (MSVC)
     target_compile_options(tremotesf PRIVATE /W4)
