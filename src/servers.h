@@ -56,7 +56,6 @@ namespace tremotesf
                const QString& password,
 
                int updateInterval,
-               int backgroundUpdateInterval,
                int timeout,
 
                const QVariantMap& mountedDirectories,
@@ -137,7 +136,6 @@ namespace tremotesf
                                    const QString& password,
 
                                    int updateInterval,
-                                   int backgroundUpdateInterval,
                                    int timeout,
                                    const QVariantMap& mountedDirectories);
 

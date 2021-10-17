@@ -140,12 +140,10 @@ namespace libtremotesf
         : QObject(parent),
           mNetwork(new QNetworkAccessManager(this)),
           mAuthenticationRequested(false),
-          mBackgroundUpdate(false),
           mUpdateDisabled(false),
           mUpdating(false),
           mAuthentication(false),
           mUpdateInterval(0),
-          mBackgroundUpdateInterval(0),
           mTimeout(0),
           mLocal(false),
           mRpcVersionChecked(false),
@@ -250,27 +248,6 @@ namespace libtremotesf
         return static_cast<int>(mTorrents.size());
     }
 
-    bool Rpc::backgroundUpdate() const
-    {
-        return mBackgroundUpdate;
-    }
-
-    void Rpc::setBackgroundUpdate(bool background)
-    {
-        if (background != mBackgroundUpdate) {
-            mBackgroundUpdate = background;
-            const int interval = background ? mBackgroundUpdateInterval : mUpdateInterval;
-            if (mUpdateTimer->isActive()) {
-                mUpdateTimer->stop();
-                mUpdateTimer->setInterval(interval);
-                startUpdateTimer();
-            } else if (!mServerUrl.isEmpty()) {
-                mUpdateTimer->setInterval(interval);
-            }
-            emit backgroundUpdateChanged();
-        }
-    }
-
     bool Rpc::isUpdateDisabled() const
     {
         return mUpdateDisabled;
@@ -348,7 +325,6 @@ namespace libtremotesf
         mPassword = server.password;
         mTimeout = server.timeout * 1000; // msecs
         mUpdateInterval = server.updateInterval * 1000; // msecs
-        mBackgroundUpdateInterval = server.backgroundUpdateInterval * 1000; // msecs
         mUpdateTimer->setInterval(mUpdateInterval);
     }
 
@@ -362,7 +338,6 @@ namespace libtremotesf
         mUsername.clear();
         mPassword.clear();
         mUpdateInterval = 0;
-        mBackgroundUpdateInterval = 0;
         mTimeout = 0;
         mLocal = false;
     }

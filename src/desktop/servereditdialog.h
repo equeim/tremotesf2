@@ -77,7 +77,6 @@ namespace tremotesf
         QLineEdit* mPasswordLineEdit = nullptr;
 
         QSpinBox* mUpdateIntervalSpinBox = nullptr;
-        QSpinBox* mBackgroundUpdateIntervalSpinBox = nullptr;
         QSpinBox* mTimeoutSpinBox = nullptr;
 
         MountedDirectoriesWidget* mMountedDirectoriesWidget = nullptr;

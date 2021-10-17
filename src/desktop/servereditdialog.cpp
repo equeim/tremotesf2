@@ -165,7 +165,6 @@ namespace tremotesf
             mHttpsGroupBox->setChecked(false);
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
-            mBackgroundUpdateIntervalSpinBox->setValue(30);
             mTimeoutSpinBox->setValue(30);
         } else {
             const Server& server = mServersModel->servers()[static_cast<size_t>(row)];
@@ -195,7 +194,6 @@ namespace tremotesf
             mPasswordLineEdit->setText(server.password);
 
             mUpdateIntervalSpinBox->setValue(server.updateInterval);
-            mBackgroundUpdateIntervalSpinBox->setValue(server.backgroundUpdateInterval);
             mTimeoutSpinBox->setValue(server.timeout);
 
             for (auto i = server.mountedDirectories.cbegin(), end = server.mountedDirectories.cend();
@@ -346,13 +344,6 @@ namespace tremotesf
         mUpdateIntervalSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Update interval:"), mUpdateIntervalSpinBox);
 
-        mBackgroundUpdateIntervalSpinBox = new QSpinBox(this);
-        mBackgroundUpdateIntervalSpinBox->setMinimum(1);
-        mBackgroundUpdateIntervalSpinBox->setMaximum(3600);
-        //: Seconds
-        mBackgroundUpdateIntervalSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
-        formLayout->addRow(qApp->translate("tremotesf", "Background update interval:"), mBackgroundUpdateIntervalSpinBox);
-
         mTimeoutSpinBox = new QSpinBox(this);
         mTimeoutSpinBox->setMinimum(5);
         mTimeoutSpinBox->setMaximum(60);
@@ -445,7 +436,6 @@ namespace tremotesf
                                      mPasswordLineEdit->text(),
 
                                      mUpdateIntervalSpinBox->value(),
-                                     mBackgroundUpdateIntervalSpinBox->value(),
                                      mTimeoutSpinBox->value(),
                                      mountedDirectories);
         } else {
@@ -472,7 +462,6 @@ namespace tremotesf
                                            mPasswordLineEdit->text(),
 
                                            mUpdateIntervalSpinBox->value(),
-                                           mBackgroundUpdateIntervalSpinBox->value(),
                                            mTimeoutSpinBox->value(),
                                            mountedDirectories);
         }

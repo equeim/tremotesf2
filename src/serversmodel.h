@@ -54,7 +54,6 @@ namespace tremotesf
             UsernameRole,
             PasswordRole,
             UpdateIntervalRole,
-            BackgroundUpdateIntervalRole,
             TimeoutRole,
             MountedDirectoriesRole
         };
@@ -95,7 +94,6 @@ namespace tremotesf
                                    const QString& password,
 
                                    int updateInterval,
-                                   int backgroundUpdateInterval,
                                    int timeout,
 
                                    const QVariantMap& mountedDirectories);

@@ -80,7 +80,6 @@ namespace libtremotesf
         QString password;
 
         int updateInterval;
-        int backgroundUpdateInterval;
         int timeout;
     };
 
@@ -110,7 +109,6 @@ namespace libtremotesf
         Q_PROPERTY(Q_ENUM_NS_TYPE(libtremotesf::RpcError) error READ error NOTIFY errorChanged)
         Q_PROPERTY(bool local READ isLocal NOTIFY connectedChanged)
         Q_PROPERTY(int torrentsCount READ torrentsCount NOTIFY torrentsUpdated)
-        Q_PROPERTY(bool backgroundUpdate READ backgroundUpdate WRITE setBackgroundUpdate NOTIFY backgroundUpdateChanged)
         Q_PROPERTY(bool updateDisabled READ isUpdateDisabled WRITE setUpdateDisabled NOTIFY updateDisabledChanged)
     public:
         using ConnectionState = RpcConnectionState;
@@ -147,9 +145,6 @@ namespace libtremotesf
         bool isLocal() const;
 
         int torrentsCount() const;
-
-        bool backgroundUpdate() const;
-        Q_INVOKABLE void setBackgroundUpdate(bool background);
 
         bool isUpdateDisabled() const;
         Q_INVOKABLE void setUpdateDisabled(bool disabled);
@@ -260,7 +255,6 @@ namespace libtremotesf
         bool mAuthenticationRequested;
         QByteArray mSessionId;
 
-        bool mBackgroundUpdate;
         bool mUpdateDisabled;
         bool mUpdating;
 
@@ -271,7 +265,6 @@ namespace libtremotesf
         QString mUsername;
         QString mPassword;
         int mUpdateInterval;
-        int mBackgroundUpdateInterval;
         int mTimeout;
         bool mLocal;
 
@@ -316,7 +309,6 @@ namespace libtremotesf
         void gotDownloadDirFreeSpace(long long bytes);
         void gotFreeSpaceForPath(const QString& path, bool success, long long bytes);
 
-        void backgroundUpdateChanged();
         void updateDisabledChanged();
     };
 }

@@ -61,7 +61,6 @@ namespace tremotesf
         const QLatin1String passwordKey("password");
 
         const QLatin1String updateIntervalKey("updateInterval");
-        const QLatin1String backgroundUpdateIntervalKey("backgroundUpdateInterval");
         const QLatin1String timeoutKey("timeout");
 
         const QLatin1String mountedDirectoriesKey("mountedDirectories");
@@ -186,7 +185,6 @@ namespace tremotesf
                    const QString& password,
 
                    int updateInterval,
-                   int backgroundUpdateInterval,
                    int timeout,
 
                    const QVariantMap& mountedDirectories,
@@ -214,7 +212,6 @@ namespace tremotesf
                                password,
 
                                updateInterval,
-                               backgroundUpdateInterval,
                                timeout},
           mountedDirectories(mountedDirectories),
           lastTorrents(lastTorrents),
@@ -401,7 +398,6 @@ namespace tremotesf
                             const QString& password,
 
                             int updateInterval,
-                            int backgroundUpdateInterval,
                             int timeout,
                             const QVariantMap& mountedDirectories)
     {
@@ -445,7 +441,6 @@ namespace tremotesf
         mSettings->setValue(passwordKey, password);
 
         mSettings->setValue(updateIntervalKey, updateInterval);
-        mSettings->setValue(backgroundUpdateIntervalKey, backgroundUpdateInterval);
         mSettings->setValue(timeoutKey, timeout);
         mSettings->setValue(mountedDirectoriesKey, mountedDirectories);
         mSettings->setValue(addTorrentDialogDirectoriesKey, addTorrentDialogDirectories);
@@ -503,7 +498,6 @@ namespace tremotesf
             mSettings->setValue(passwordKey, server.password);
 
             mSettings->setValue(updateIntervalKey, server.updateInterval);
-            mSettings->setValue(backgroundUpdateIntervalKey, server.backgroundUpdateInterval);
             mSettings->setValue(timeoutKey, server.timeout);
             mSettings->setValue(mountedDirectoriesKey, server.mountedDirectories);
             mSettings->setValue(lastTorrentsKey, server.lastTorrents);
@@ -587,7 +581,6 @@ namespace tremotesf
                       mSettings->value(passwordKey).toString(),
 
                       mSettings->value(updateIntervalKey, 5).toInt(),
-                      mSettings->value(backgroundUpdateIntervalKey, 30).toInt(),
                       mSettings->value(timeoutKey, 30).toInt(),
 
                       mSettings->value(mountedDirectoriesKey).toMap(),

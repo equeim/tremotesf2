@@ -56,7 +56,6 @@ Dialog {
                           usernameField.text,
                           passwordField.text,
                           updateIntervalField.text,
-                          backgroundUpdateIntervalField.text,
                           timeoutField.text,
                           mountedDirectories)
         if (serversModel) {
@@ -81,7 +80,6 @@ Dialog {
                                    usernameField.text,
                                    passwordField.text,
                                    updateIntervalField.text,
-                                   backgroundUpdateIntervalField.text,
                                    timeoutField.text,
                                    mountedDirectories)
         }
@@ -94,7 +92,6 @@ Dialog {
     canAccept: nameField.acceptableInput &&
                addressField.acceptableInput &&
                updateIntervalField.acceptableInput &&
-               backgroundUpdateIntervalField.acceptableInput &&
                timeoutField.acceptableInput
 
     onAccepted: {
@@ -393,22 +390,6 @@ Dialog {
                 placeholderText: label
 
                 text: modelData ? modelData.updateInterval : "5"
-                inputMethodHints: Qt.ImhDigitsOnly
-                validator: IntValidator {
-                    bottom: 1
-                    top: 3600
-                }
-            }
-            
-            FormTextField {
-                id: backgroundUpdateIntervalField
-
-                width: parent.width
-
-                label: qsTranslate("tremotesf", "Background update interval, s")
-                placeholderText: label
-
-                text: modelData ? modelData.backgroundUpdateInterval : "30"
                 inputMethodHints: Qt.ImhDigitsOnly
                 validator: IntValidator {
                     bottom: 1

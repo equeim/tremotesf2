@@ -72,8 +72,6 @@ namespace tremotesf
             return server.password;
         case UpdateIntervalRole:
             return server.updateInterval;
-        case BackgroundUpdateIntervalRole:
-            return server.backgroundUpdateInterval;
         case TimeoutRole:
             return server.timeout;
         case MountedDirectoriesRole:
@@ -158,7 +156,6 @@ namespace tremotesf
                                  const QString& password,
 
                                  int updateInterval,
-                                 int backgroundUpdateInterval,
                                  int timeout,
 
                                  const QVariantMap& mountedDirectories)
@@ -201,7 +198,6 @@ namespace tremotesf
             server->password = password;
 
             server->updateInterval = updateInterval;
-            server->backgroundUpdateInterval = backgroundUpdateInterval;
             server->timeout = timeout;
             server->mountedDirectories = mountedDirectories;
 
@@ -243,7 +239,6 @@ namespace tremotesf
                                   password,
 
                                   updateInterval,
-                                  backgroundUpdateInterval,
                                   timeout,
 
                                   mountedDirectories,
@@ -298,7 +293,6 @@ namespace tremotesf
                 {UsernameRole, "username"},
                 {PasswordRole, "password"},
                 {UpdateIntervalRole, "updateInterval"},
-                {BackgroundUpdateIntervalRole, "backgroundUpdateInterval"},
                 {TimeoutRole, "timeout"},
                 {MountedDirectoriesRole, "mountedDirectories"}};
     }
