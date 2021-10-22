@@ -18,11 +18,17 @@
 
 #include "desktoputils.h"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDir>
 #include <QMessageBox>
+#include <QRegularExpression>
+#include <QStringBuilder>
+#include <QTextCursor>
+#include <QTextCharFormat>
+#include <QTextDocument>
+#include <QTextDocumentFragment>
 #include <QUrl>
 
 #ifdef QT_DBUS_LIB
@@ -419,6 +425,40 @@ namespace tremotesf
             QObject::connect(launcher, &FileManagerLauncher::done, launcher, &QObject::deleteLater);
             launcher->showInFileManager();
         }
+
+        namespace {
+            QRegularExpression urlRegex()
+            {
+                const auto protocol = QLatin1String("(?:(?:[a-z]+:)?//)");
+                const auto host = QLatin1String("(?:(?:[a-z\\x{00a1}-\\x{ffff0}-9][-_]*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)");
+                const auto domain = QLatin1String("(?:\\.(?:[a-z\\x{00a1}-\\x{ffff0}-9]-*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)*");
+                const auto tld = QLatin1String("(?:\\.(?:[a-z\\x{00a1}-\\x{ffff}]{2,}))\\.?");
+                const auto port = QLatin1String("(?::\\d{2,5})?");
+                const auto path = QLatin1String("(?:[/?#][^\\s\"\\)\']*)?");
+                const auto regex = QString(QLatin1String("(?:") % protocol % QLatin1String("|www\\.)(?:") % host % domain % tld % QLatin1String(")") % port % path);
+                return QRegularExpression(regex, QRegularExpression::CaseInsensitiveOption);
+            }
+        }
+
+        void findLinksAndAddAnchors(QTextDocument *document)
+        {
+            auto baseFormat = QTextCharFormat();
+            baseFormat.setAnchor(true);
+            baseFormat.setFontUnderline(true);
+            baseFormat.setForeground(qApp->palette().link());
+            const auto regex = desktoputils::urlRegex();
+            auto cursor = QTextCursor();
+            while (true) {
+                cursor = document->find(regex, cursor);
+                if (cursor.isNull()) {
+                    break;
+                }
+                auto format = baseFormat;
+                format.setAnchorHref(cursor.selection().toPlainText());
+                cursor.setCharFormat(format);
+            }
+        }
+
     }
 }
 

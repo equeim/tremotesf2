@@ -31,10 +31,10 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QLocale>
-#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
+#include <QTextBrowser>
 #include <QVBoxLayout>
 
 #include <KColumnResizer>
@@ -49,6 +49,7 @@
 #include "../trpc.h"
 #include "../utils.h"
 #include "commondelegate.h"
+#include "desktoputils.h"
 #include "torrentfilesview.h"
 #include "trackersviewwidget.h"
 
@@ -178,8 +179,8 @@ namespace tremotesf
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Created by:"), creatorLabel);
         auto creationDateLabel = new QLabel(this);
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Created on:"), creationDateLabel);
-        auto commentTextEdit = new QPlainTextEdit(this);
-        commentTextEdit->setReadOnly(true);
+        auto commentTextEdit = new QTextBrowser(this);
+        commentTextEdit->setOpenExternalLinks(true);
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Comment:"), commentTextEdit);
         detailsTabLayout->addWidget(infoGroupBox);
 
@@ -213,7 +214,8 @@ namespace tremotesf
             creatorLabel->setText(mTorrent->creator());
             creationDateLabel->setText(mTorrent->creationDate().toString());
             if (mTorrent->comment() != commentTextEdit->toPlainText()) {
-                commentTextEdit->setPlainText(mTorrent->comment());
+                commentTextEdit->document()->setPlainText(mTorrent->comment());
+                desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
             }
         };
 
