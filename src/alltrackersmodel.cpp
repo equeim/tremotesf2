@@ -46,32 +46,6 @@ namespace tremotesf
     }
 #endif
 
-    AllTrackersModel::AllTrackersModel(Rpc* rpc, TorrentsProxyModel* torrentsProxyModel, QObject* parent)
-        : QAbstractListModel(parent),
-          mRpc(nullptr),
-          mTorrentsProxyModel(nullptr)
-    {
-        setRpc(rpc);
-        setTorrentsProxyModel(torrentsProxyModel);
-
-        if (mRpc && mTorrentsProxyModel) {
-            update();
-        }
-    }
-
-#ifdef TREMOTESF_SAILFISHOS
-    void AllTrackersModel::classBegin()
-    {
-    }
-
-    void AllTrackersModel::componentComplete()
-    {
-        if (mRpc && mTorrentsProxyModel) {
-            update();
-        }
-    }
-#endif
-
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const
     {
 #ifdef TREMOTESF_SAILFISHOS
@@ -80,7 +54,7 @@ namespace tremotesf
             case TrackerRole:
                 return QString();
             case TorrentsRole:
-                return mRpc->torrentsCount();
+                return rpc()->torrentsCount();
             }
         } else {
             const TrackerItem& item = mTrackers[static_cast<size_t>(index.row() - 1)];
@@ -98,7 +72,7 @@ namespace tremotesf
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
             case Qt::ToolTipRole:
-                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(mRpc->torrentsCount());
+                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(rpc()->torrentsCount());
             }
         } else {
             const TrackerItem& item = mTrackers[static_cast<size_t>(index.row() - 1)];
@@ -122,45 +96,18 @@ namespace tremotesf
         return static_cast<int>(mTrackers.size() + 1);
     }
 
-    bool AllTrackersModel::removeRows(int row, int count, const QModelIndex& parent)
+    QModelIndex AllTrackersModel::indexForTracker(const QString& tracker) const
     {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first(mTrackers.begin() + row - 1);
-        mTrackers.erase(first, first + count);
-        endRemoveRows();
-        return true;
-    }
-
-    Rpc* AllTrackersModel::rpc() const
-    {
-        return mRpc;
-    }
-
-    void AllTrackersModel::setRpc(Rpc* rpc)
-    {
-        if (rpc != mRpc) {
-            if (mRpc) {
-                QObject::disconnect(mRpc, nullptr, this, nullptr);
-            }
-            mRpc = rpc;
-            emit rpcChanged();
-            if (rpc) {
-                QObject::connect(rpc, &Rpc::torrentsUpdated, this, &AllTrackersModel::update);
+        if (tracker.isEmpty()) {
+            return index(0);
+        }
+        for (size_t i = 0, max = mTrackers.size(); i < max; ++i) {
+            const auto& item = mTrackers[i];
+            if (item.tracker == tracker) {
+                return index(static_cast<int>(i) + 1);
             }
         }
-    }
-
-    TorrentsProxyModel* AllTrackersModel::torrentsProxyModel() const
-    {
-        return mTorrentsProxyModel;
-    }
-
-    void AllTrackersModel::setTorrentsProxyModel(TorrentsProxyModel* model)
-    {
-        if (model != mTorrentsProxyModel) {
-            mTorrentsProxyModel = model;
-            emit torrentsProxyModelChanged();
-        }
+        return {};
     }
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -173,7 +120,7 @@ namespace tremotesf
 
     void AllTrackersModel::update()
     {
-        if (mRpc->torrents().empty()) {
+        if (rpc()->torrents().empty()) {
             if (!mTrackers.empty()) {
                 const QModelIndex firstIndex(index(0));
                 emit dataChanged(firstIndex, firstIndex);
@@ -181,14 +128,12 @@ namespace tremotesf
                 beginRemoveRows(QModelIndex(), 1, static_cast<int>(mTrackers.size()));
                 mTrackers.clear();
                 endRemoveRows();
-
-                mTorrentsProxyModel->setTracker(QString());
             }
             return;
         }
 
         std::unordered_map<QString, int> trackers;
-        for (const auto& torrent : mRpc->torrents()) {
+        for (const auto& torrent : rpc()->torrents()) {
             for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
                 const QString& site = tracker.site();
                 auto found = trackers.find(site);

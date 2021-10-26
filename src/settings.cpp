@@ -45,6 +45,15 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection, "notificationsOnAddedTorrentsSinceLastConnection", false, toBool)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection, "notificationsOnFinishedTorrentsSinceLastConnection", false, toBool)
 
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled, "torrentsStatusFilterEnabled", true, toBool)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter, "torrentsStatusFilter", TorrentsProxyModel::StatusFilter::All, value<TorrentsProxyModel::StatusFilter>);
+
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsTrackerFilterEnabled, setTorrentsTrackerFilterEnabled, "torrentsTrackerFilterEnabled", true, toBool)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QString, torrentsTrackerFilter, setTorrentsTrackerFilter, "torrentsTrackerFilter", {}, toString)
+
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled, "torrentsDownloadDirectoryFilterEnabled", true, toBool)
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter, "torrentsDownloadDirectoryFilter", {}, toString)
+
 #ifdef TREMOTESF_SAILFISHOS
     SETTINGS_PROPERTY_DEF_TRIVIAL(int, torrentsSortOrder, setTorrentsSortOrder, "torrentsSortOrder", Qt::AscendingOrder, toInt)
     SETTINGS_PROPERTY_DEF_TRIVIAL(int, torrentsSortRole, setTorrentsSortRole, "torrentsSortRole", TorrentsModel::NameRole, toInt)
@@ -58,6 +67,7 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, mainWindowGeometry, setMainWindowGeometry, "mainWindowGeometry", {}, toByteArray)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, mainWindowState, setMainWindowState, "mainWindowState", {}, toByteArray)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, splitterState, setSplitterState, "splitterState", {}, toByteArray)
+
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, torrentsViewHeaderState, setTorrentsViewHeaderState, "torrentsViewHeaderState", {}, toByteArray)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, torrentPropertiesDialogGeometry, setTorrentPropertiesDialogGeometry, "torrentPropertiesDialogGeometry", {}, toByteArray)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, torrentFilesViewHeaderState, setTorrentFilesViewHeaderState, "torrentFilesViewHeaderState", {}, toByteArray)

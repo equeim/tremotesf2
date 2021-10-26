@@ -38,21 +38,9 @@ Page {
 
             TextSwitch {
                 id: statusSwitch
-
-                property var statusFilter
-
-                checked: true
                 text: qsTranslate("tremotesf", "Status")
-
-                onCheckedChanged: {
-                    if (checked) {
-                        torrentsProxyModel.statusFilter = statusFilter
-                    } else {
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.All
-                    }
-                }
-
-                Component.onCompleted: statusFilter = torrentsProxyModel.statusFilter
+                checked: torrentsProxyModel.statusFilterEnabled
+                onClicked: torrentsProxyModel.statusFilterEnabled = !torrentsProxyModel.statusFilterEnabled
             }
 
             Column {
@@ -70,10 +58,7 @@ Page {
                     text: qsTranslate("tremotesf", "All")
                     torrents: rpc.torrentsCount
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.All
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.All
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.All
                 }
 
                 FilterTorrentsListItem {
@@ -81,10 +66,7 @@ Page {
                     text: qsTranslate("tremotesf", "Active", "Active torrents")
                     torrents: statusFilterStats.activeTorrents
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.Active
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.Active
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.Active
                 }
 
                 FilterTorrentsListItem {
@@ -92,10 +74,7 @@ Page {
                     text: qsTranslate("tremotesf", "Downloading", "Downloading torrents")
                     torrents: statusFilterStats.downloadingTorrents
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.Downloading
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.Downloading
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.Downloading
                 }
 
                 FilterTorrentsListItem {
@@ -103,10 +82,7 @@ Page {
                     text: qsTranslate("tremotesf", "Seeding", "Seeding torrents")
                     torrents: statusFilterStats.seedingTorrents
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.Seeding
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.Seeding
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.Seeding
                 }
 
                 FilterTorrentsListItem {
@@ -114,10 +90,7 @@ Page {
                     text: qsTranslate("tremotesf", "Paused", "Paused torrents")
                     torrents: statusFilterStats.pausedTorrents
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.Paused
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.Paused
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.Paused
                 }
 
                 FilterTorrentsListItem {
@@ -125,10 +98,7 @@ Page {
                     text: qsTranslate("tremotesf", "Checking", "Checking torrents")
                     torrents: statusFilterStats.checkingTorrents
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.Checking
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.Checking
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.Checking
                 }
 
                 FilterTorrentsListItem {
@@ -136,28 +106,15 @@ Page {
                     text: qsTranslate("tremotesf", "Errored")
                     torrents: statusFilterStats.erroredTorrents
 
-                    onClicked: {
-                        statusSwitch.statusFilter = TorrentsProxyModel.Errored
-                        torrentsProxyModel.statusFilter = TorrentsProxyModel.Errored
-                    }
+                    onClicked: torrentsProxyModel.statusFilter = TorrentsProxyModel.Errored
                 }
             }
 
             TextSwitch {
                 id: directoriesSwitch
-
-                property string directory
-
-                checked: true
                 text: qsTranslate("tremotesf", "Directories")
-
-                onCheckedChanged: {
-                    if (checked) {
-                        torrentsProxyModel.downloadDirectory = directory
-                    } else {
-                        torrentsProxyModel.downloadDirectory = String()
-                    }
-                }
+                checked: torrentsProxyModel.downloadDirectoryFilterEnabled
+                onClicked: torrentsProxyModel.downloadDirectoryFilterEnabled = !torrentsProxyModel.downloadDirectoryFilterEnabled
             }
 
             Column {
@@ -167,39 +124,33 @@ Page {
                 Repeater {
                     model: DownloadDirectoriesModel {
                         rpc: rootWindow.rpc
-                        torrentsProxyModel: torrentsView.model
+                        onPopulatedChanged: {
+                            if (populated) {
+                                var index = indexForDirectory(torrentsProxyModel.downloadDirectoryFilter)
+                                if (!index.valid) {
+                                    torrentsProxyModel.downloadDirectoryFilter = ""
+                                }
+                            }
+                        }
                     }
                     delegate: FilterTorrentsListItem {
                         property var modelData: model
 
-                        current: modelData.directory === torrentsProxyModel.downloadDirectory
+                        current: modelData.directory === torrentsProxyModel.downloadDirectoryFilter
                         text: (modelData.index > 0) ? modelData.directory : qsTranslate("tremotesf", "All")
                         elide: Text.ElideMiddle
                         torrents: modelData.torrents
 
-                        onClicked: {
-                            directoriesSwitch.directory = modelData.directory
-                            torrentsProxyModel.downloadDirectory = modelData.directory
-                        }
+                        onClicked: torrentsProxyModel.downloadDirectoryFilter = modelData.directory
                     }
                 }
             }
 
             TextSwitch {
                 id: trackersSwitch
-
-                property string tracker
-
-                checked: true
                 text: qsTranslate("tremotesf", "Trackers")
-
-                onCheckedChanged: {
-                    if (checked) {
-                        torrentsProxyModel.tracker = tracker
-                    } else {
-                        torrentsProxyModel.tracker = String()
-                    }
-                }
+                checked: torrentsProxyModel.trackerFilterEnabled
+                onClicked: torrentsProxyModel.trackerFilterEnabled = !torrentsProxyModel.trackerFilterEnabled
             }
 
             Column {
@@ -209,19 +160,23 @@ Page {
                 Repeater {
                     model: AllTrackersModel {
                         rpc: rootWindow.rpc
-                        torrentsProxyModel: torrentsView.model
+                        onPopulatedChanged: {
+                            if (populated) {
+                                var index = indexForTracker(torrentsProxyModel.trackerFilter)
+                                if (!index.valid) {
+                                    torrentsProxyModel.trackerFilter = ""
+                                }
+                            }
+                        }
                     }
                     delegate: FilterTorrentsListItem {
                         property var modelData: model
 
-                        current: modelData.tracker === torrentsProxyModel.tracker
+                        current: modelData.tracker === torrentsProxyModel.trackerFilter
                         text: (modelData.index > 0) ? modelData.tracker : qsTranslate("tremotesf", "All")
                         torrents: modelData.torrents
 
-                        onClicked: {
-                            trackersSwitch.tracker = modelData.tracker
-                            torrentsProxyModel.tracker = modelData.tracker
-                        }
+                        onClicked: torrentsProxyModel.trackerFilter = modelData.tracker
                     }
                 }
             }

@@ -21,73 +21,38 @@
 
 #include <vector>
 
-#include <QAbstractListModel>
-#include <QStringList>
-
-#ifdef TREMOTESF_SAILFISHOS
-#include <QQmlParserStatus>
-#endif
+#include "basetorrentsfilterssettingsmodel.h"
 
 namespace tremotesf
 {
-    class Rpc;
-    class TorrentsProxyModel;
-
-#ifdef TREMOTESF_SAILFISHOS
-    class AllTrackersModel : public QAbstractListModel, public QQmlParserStatus
-#else
-    class AllTrackersModel : public QAbstractListModel
-#endif
+    class AllTrackersModel : public BaseTorrentsFiltersSettingsModel
     {
         Q_OBJECT
-#ifdef TREMOTESF_SAILFISHOS
-        Q_INTERFACES(QQmlParserStatus)
-#endif
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
-        Q_PROPERTY(tremotesf::TorrentsProxyModel* torrentsProxyModel READ torrentsProxyModel WRITE setTorrentsProxyModel NOTIFY torrentsProxyModelChanged)
     public:
 #ifndef TREMOTESF_SAILFISHOS
         static const int TrackerRole = Qt::UserRole;
 #endif
-        explicit AllTrackersModel(Rpc* rpc = nullptr,
-                                  TorrentsProxyModel* torrentsProxyModel = nullptr,
-                                  QObject* parent = nullptr);
-
-#ifdef TREMOTESF_SAILFISHOS
-        void classBegin() override;
-        void componentComplete() override;
-#endif
+        inline explicit AllTrackersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 
         QVariant data(const QModelIndex& index, int role) const override;
         int rowCount(const QModelIndex&) const override;
-        bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-        Rpc* rpc() const;
-        void setRpc(Rpc* rpc);
-
-        TorrentsProxyModel* torrentsProxyModel() const;
-        void setTorrentsProxyModel(TorrentsProxyModel* model);
+        Q_INVOKABLE QModelIndex indexForTracker(const QString& tracker) const;
 
 #ifdef TREMOTESF_SAILFISHOS
     protected:
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
+        void update() override;
+
         struct TrackerItem
         {
             QString tracker;
             int torrents;
         };
 
-        void update();
-
-        Rpc* mRpc;
-        TorrentsProxyModel* mTorrentsProxyModel;
         std::vector<TrackerItem> mTrackers;
-
-    signals:
-        void rpcChanged();
-        void torrentsProxyModelChanged();
     };
 }
 

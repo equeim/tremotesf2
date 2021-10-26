@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include "torrentsproxymodel.h"
+
 class QSettings;
 
 #define SETTINGS_PROPERTY_IMPL(type, getter, setterType, setter) \
@@ -47,6 +49,15 @@ namespace tremotesf
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection)
 
+        SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled)
+        SETTINGS_PROPERTY_TRIVIAL(tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter)
+
+        SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsTrackerFilterEnabled, setTorrentsTrackerFilterEnabled)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsTrackerFilter, setTorrentsTrackerFilter)
+
+        SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled)
+        SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter)
+
 #ifdef TREMOTESF_SAILFISHOS
         SETTINGS_PROPERTY_TRIVIAL(int, torrentsSortOrder, setTorrentsSortOrder)
         SETTINGS_PROPERTY_TRIVIAL(int, torrentsSortRole, setTorrentsSortRole)
@@ -60,6 +71,7 @@ namespace tremotesf
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, mainWindowGeometry, setMainWindowGeometry)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, mainWindowState, setMainWindowState)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, splitterState, setSplitterState)
+
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentsViewHeaderState, setTorrentsViewHeaderState)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentPropertiesDialogGeometry, setTorrentPropertiesDialogGeometry)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentFilesViewHeaderState, setTorrentFilesViewHeaderState)

@@ -18,6 +18,7 @@
 
 #include "torrentsproxymodel.h"
 
+#include "settings.h"
 #include "torrentsmodel.h"
 
 #include "libtremotesf/torrent.h"
@@ -27,8 +28,24 @@ namespace tremotesf
 {
     TorrentsProxyModel::TorrentsProxyModel(TorrentsModel* sourceModel, int sortRole, QObject* parent)
         : BaseProxyModel(sourceModel, sortRole, parent),
-          mStatusFilter(All)
+          mStatusFilterEnabled(Settings::instance()->isTorrentsStatusFilterEnabled()),
+          mStatusFilter(Settings::instance()->torrentsStatusFilter()),
+          mTrackerFilterEnabled(Settings::instance()->isTorrentsTrackerFilterEnabled()),
+          mTrackerFilter(Settings::instance()->torrentsTrackerFilter()),
+          mDownloadDirectoryFilterEnabled(Settings::instance()->isTorrentsDownloadDirectoryFilterEnabled()),
+          mDownloadDirectoryFilter(Settings::instance()->torrentsDownloadDirectoryFilter())
     {
+    }
+
+    TorrentsProxyModel::~TorrentsProxyModel()
+    {
+        auto settings = Settings::instance();
+        settings->setTorrentsStatusFilterEnabled(mStatusFilterEnabled);
+        settings->setTorrentsStatusFilter(mStatusFilter);
+        settings->setTorrentsTrackerFilterEnabled(mTrackerFilterEnabled);
+        settings->setTorrentsTrackerFilter(mTrackerFilter);
+        settings->setTorrentsDownloadDirectoryFilterEnabled(mDownloadDirectoryFilterEnabled);
+        settings->setTorrentsDownloadDirectoryFilter(mDownloadDirectoryFilter);
     }
 
     QString TorrentsProxyModel::searchString() const
@@ -42,6 +59,20 @@ namespace tremotesf
             mSearchString = string;
             invalidateFilter();
             emit searchStringChanged();
+        }
+    }
+
+    bool TorrentsProxyModel::isStatusFilterEnabled() const
+    {
+        return mStatusFilterEnabled;
+    }
+
+    void TorrentsProxyModel::setStatusFilterEnabled(bool enabled)
+    {
+        if (enabled != mStatusFilterEnabled) {
+            mStatusFilterEnabled = enabled;
+            invalidateFilter();
+            emit statusFilterEnabledChanged();
         }
     }
 
@@ -59,31 +90,59 @@ namespace tremotesf
         }
     }
 
-    QString TorrentsProxyModel::tracker() const
+    bool TorrentsProxyModel::isTrackerFilterEnabled() const
     {
-        return mTracker;
+        return mTrackerFilterEnabled;
     }
 
-    void TorrentsProxyModel::setTracker(const QString& tracker)
+    void TorrentsProxyModel::setTrackerFilterEnabled(bool enabled)
     {
-        if (tracker != mTracker) {
-            mTracker = tracker;
+        if (enabled != mTrackerFilterEnabled) {
+            mTrackerFilterEnabled = enabled;
             invalidateFilter();
-            emit trackerChanged();
+            emit trackerFilterEnabledChanged();
         }
     }
 
-    QString TorrentsProxyModel::downloadDirectory() const
+    QString TorrentsProxyModel::trackerFilter() const
     {
-        return mDownloadDirectory;
+        return mTrackerFilter;
     }
 
-    void TorrentsProxyModel::setDownloadDirectory(const QString& downloadDirectory)
+    void TorrentsProxyModel::setTrackerFilter(const QString& filter)
     {
-        if (downloadDirectory != mDownloadDirectory) {
-            mDownloadDirectory = downloadDirectory;
+        if (filter != mTrackerFilter) {
+            mTrackerFilter = filter;
             invalidateFilter();
-            emit downloadDirectoryChanged();
+            emit trackerFilterChanged();
+        }
+    }
+
+    bool TorrentsProxyModel::isDownloadDirectoryFilterEnabled() const
+    {
+        return mDownloadDirectoryFilterEnabled;
+    }
+
+    void TorrentsProxyModel::setDownloadDirectoryFilterEnabled(bool enabled)
+    {
+        if (enabled != mDownloadDirectoryFilterEnabled) {
+            mDownloadDirectoryFilterEnabled = enabled;
+            invalidateFilter();
+            emit downloadDirectoryFilterEnabledChanged();
+        }
+    }
+
+    QString TorrentsProxyModel::downloadDirectoryFilter() const
+    {
+        return mDownloadDirectoryFilter;
+    }
+
+    void TorrentsProxyModel::setDownloadDirectoryFilter(const QString& filter)
+    {
+        if (filter != mDownloadDirectoryFilter) {
+            mDownloadDirectoryFilter = filter;
+            invalidateFilter();
+            emit downloadDirectoryFilterChanged();
         }
     }
 
@@ -125,14 +184,14 @@ namespace tremotesf
             accepts = false;
         }
 
-        if (!statusFilterAcceptsTorrent(torrent, mStatusFilter)) {
+        if (mStatusFilterEnabled && !statusFilterAcceptsTorrent(torrent, mStatusFilter)) {
             accepts = false;
         }
 
-        if (!mTracker.isEmpty()) {
+        if (mTrackerFilterEnabled && !mTrackerFilter.isEmpty()) {
             bool found = false;
             for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
-                if (tracker.site() == mTracker) {
+                if (tracker.site() == mTrackerFilter) {
                     found = true;
                     break;
                 }
@@ -142,8 +201,8 @@ namespace tremotesf
             }
         }
 
-        if (!mDownloadDirectory.isEmpty()) {
-            if (torrent->downloadDirectory() != mDownloadDirectory) {
+        if (mDownloadDirectoryFilterEnabled && !mDownloadDirectoryFilter.isEmpty()) {
+            if (torrent->downloadDirectory() != mDownloadDirectoryFilter) {
                 accepts = false;
             }
         }

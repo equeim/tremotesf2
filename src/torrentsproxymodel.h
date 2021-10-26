@@ -34,9 +34,12 @@ namespace tremotesf
     {
         Q_OBJECT
         Q_PROPERTY(QString searchString READ searchString WRITE setSearchString NOTIFY searchStringChanged)
+        Q_PROPERTY(bool statusFilterEnabled READ isStatusFilterEnabled WRITE setStatusFilterEnabled NOTIFY statusFilterEnabledChanged)
         Q_PROPERTY(StatusFilter statusFilter READ statusFilter WRITE setStatusFilter NOTIFY statusFilterChanged)
-        Q_PROPERTY(QString tracker READ tracker WRITE setTracker NOTIFY trackerChanged)
-        Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory NOTIFY downloadDirectoryChanged)
+        Q_PROPERTY(bool trackerFilterEnabled READ isTrackerFilterEnabled WRITE setTrackerFilterEnabled NOTIFY trackerFilterEnabledChanged)
+        Q_PROPERTY(QString trackerFilter READ trackerFilter WRITE setTrackerFilter NOTIFY trackerFilterChanged)
+        Q_PROPERTY(bool downloadDirectoryFilterEnabled READ isDownloadDirectoryFilterEnabled WRITE setDownloadDirectoryFilterEnabled NOTIFY downloadDirectoryFilterEnabledChanged)
+        Q_PROPERTY(QString downloadDirectoryFilter READ downloadDirectoryFilter WRITE setDownloadDirectoryFilter NOTIFY downloadDirectoryFilterChanged)
     public:
         enum StatusFilter
         {
@@ -52,18 +55,28 @@ namespace tremotesf
         Q_ENUM(StatusFilter)
 
         explicit TorrentsProxyModel(TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
+        ~TorrentsProxyModel();
 
         QString searchString() const;
         void setSearchString(const QString& string);
 
+        bool isStatusFilterEnabled() const;
+        void setStatusFilterEnabled(bool enabled);
+
         StatusFilter statusFilter() const;
         void setStatusFilter(StatusFilter filter);
 
-        QString tracker() const;
-        void setTracker(const QString& tracker);
+        bool isTrackerFilterEnabled() const;
+        void setTrackerFilterEnabled(bool enabled);
 
-        QString downloadDirectory() const;
-        void setDownloadDirectory(const QString& downloadDirectory);
+        QString trackerFilter() const;
+        void setTrackerFilter(const QString& filter);
+
+        bool isDownloadDirectoryFilterEnabled() const;
+        void setDownloadDirectoryFilterEnabled(bool enabled);
+
+        QString downloadDirectoryFilter() const;
+        void setDownloadDirectoryFilter(const QString& filter);
 
         static bool statusFilterAcceptsTorrent(const libtremotesf::Torrent* torrent, StatusFilter filter);
 
@@ -72,14 +85,26 @@ namespace tremotesf
 
     private:
         QString mSearchString;
+
+        bool mStatusFilterEnabled;
         StatusFilter mStatusFilter;
-        QString mTracker;
-        QString mDownloadDirectory;
+
+        bool mTrackerFilterEnabled;
+        QString mTrackerFilter;
+
+        bool mDownloadDirectoryFilterEnabled;
+        QString mDownloadDirectoryFilter;
     signals:
         void searchStringChanged();
+
+        void statusFilterEnabledChanged();
         void statusFilterChanged();
-        void trackerChanged();
-        void downloadDirectoryChanged();
+
+        void trackerFilterEnabledChanged();
+        void trackerFilterChanged();
+
+        void downloadDirectoryFilterEnabledChanged();
+        void downloadDirectoryFilterChanged();
     };
 }
 

@@ -45,32 +45,6 @@ namespace tremotesf
     }
 #endif
 
-    DownloadDirectoriesModel::DownloadDirectoriesModel(Rpc* rpc, TorrentsProxyModel* torrentsProxyModel, QObject* parent)
-        : QAbstractListModel(parent),
-          mRpc(nullptr),
-          mTorrentsProxyModel(nullptr)
-    {
-        setRpc(rpc);
-        setTorrentsProxyModel(torrentsProxyModel);
-
-        if (mRpc && mTorrentsProxyModel) {
-            update();
-        }
-    }
-
-#ifdef TREMOTESF_SAILFISHOS
-    void DownloadDirectoriesModel::classBegin()
-    {
-    }
-
-    void DownloadDirectoriesModel::componentComplete()
-    {
-        if (mRpc && mTorrentsProxyModel) {
-            update();
-        }
-    }
-#endif
-
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const
     {
 #ifdef TREMOTESF_SAILFISHOS
@@ -79,7 +53,7 @@ namespace tremotesf
             case DirectoryRole:
                 return QString();
             case TorrentsRole:
-                return mRpc->torrentsCount();
+                return rpc()->torrentsCount();
             }
         } else {
             const DirectoryItem& item = mDirectories[static_cast<size_t>(index.row() - 1)];
@@ -97,7 +71,7 @@ namespace tremotesf
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             case Qt::DisplayRole:
             case Qt::ToolTipRole:
-                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(mRpc->torrentsCount());
+                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(rpc()->torrentsCount());
             }
         } else {
             const DirectoryItem& item = mDirectories[static_cast<size_t>(index.row() - 1)];
@@ -121,45 +95,18 @@ namespace tremotesf
         return static_cast<int>(mDirectories.size() + 1);
     }
 
-    bool DownloadDirectoriesModel::removeRows(int row, int count, const QModelIndex& parent)
+    QModelIndex DownloadDirectoriesModel::indexForDirectory(const QString& downloadDirectory) const
     {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first(mDirectories.begin() + row - 1);
-        mDirectories.erase(first, first + count);
-        endRemoveRows();
-        return true;
-    }
-
-    Rpc* DownloadDirectoriesModel::rpc() const
-    {
-        return mRpc;
-    }
-
-    void DownloadDirectoriesModel::setRpc(Rpc* rpc)
-    {
-        if (rpc != mRpc) {
-            if (mRpc) {
-                QObject::disconnect(mRpc, nullptr, this, nullptr);
-            }
-            mRpc = rpc;
-            emit rpcChanged();
-            if (rpc) {
-                QObject::connect(rpc, &Rpc::torrentsUpdated, this, &DownloadDirectoriesModel::update);
+        if (downloadDirectory.isEmpty()) {
+            return index(0);
+        }
+        for (size_t i = 0, max = mDirectories.size(); i < max; ++i) {
+            const auto& item = mDirectories[i];
+            if (item.directory == downloadDirectory) {
+                return index(static_cast<int>(i) + 1);
             }
         }
-    }
-
-    TorrentsProxyModel* DownloadDirectoriesModel::torrentsProxyModel() const
-    {
-        return mTorrentsProxyModel;
-    }
-
-    void DownloadDirectoriesModel::setTorrentsProxyModel(TorrentsProxyModel* model)
-    {
-        if (model != mTorrentsProxyModel) {
-            mTorrentsProxyModel = model;
-            emit torrentsProxyModelChanged();
-        }
+        return {};
     }
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -172,7 +119,7 @@ namespace tremotesf
 
     void DownloadDirectoriesModel::update()
     {
-        if (mRpc->torrents().empty()) {
+        if (rpc()->torrents().empty()) {
             if (!mDirectories.empty()) {
                 const QModelIndex firstIndex(index(0));
                 emit dataChanged(firstIndex, firstIndex);
@@ -180,14 +127,12 @@ namespace tremotesf
                 beginRemoveRows(QModelIndex(), 1, static_cast<int>(mDirectories.size()));
                 mDirectories.clear();
                 endRemoveRows();
-
-                mTorrentsProxyModel->setTracker(QString());
             }
             return;
         }
 
         std::unordered_map<QString, int> directories;
-        for (const auto& torrent : mRpc->torrents()) {
+        for (const auto& torrent : rpc()->torrents()) {
             QString directory(torrent->downloadDirectory());
             if (directory.endsWith(QLatin1Char('/'))) {
                 directory.chop(1);
