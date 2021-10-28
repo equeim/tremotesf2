@@ -34,29 +34,18 @@
 
 namespace tremotesf
 {
-#ifdef TREMOTESF_SAILFISHOS
-    namespace
-    {
-        enum Role
-        {
-            DirectoryRole = Qt::UserRole,
-            TorrentsRole
-        };
-    }
-#endif
-
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const
     {
         const DirectoryItem& item = mDirectories[static_cast<size_t>(index.row())];
-#ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case DirectoryRole:
             return item.directory;
+#ifdef TREMOTESF_SAILFISHOS
+        switch (role) {
         case TorrentsRole:
             return item.torrents;
         }
 #else
-        switch (role) {
         case Qt::DecorationRole:
             return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
         case Qt::DisplayRole:
@@ -66,8 +55,6 @@ namespace tremotesf
             }
             //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
             return qApp->translate("tremotesf", "%1 (%L2)").arg(item.directory).arg(item.torrents);
-        case DirectoryRole:
-            return item.directory;
         }
 #endif
         return {};

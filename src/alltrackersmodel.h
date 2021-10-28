@@ -29,9 +29,14 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-#ifndef TREMOTESF_SAILFISHOS
-        static const int TrackerRole = Qt::UserRole;
+        enum Role
+        {
+            TrackerRole = Qt::UserRole,
+#ifdef TREMOTESF_SAILFISHOS
+            TorrentsRole
 #endif
+        };
+
         inline explicit AllTrackersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 
         QVariant data(const QModelIndex& index, int role) const override;

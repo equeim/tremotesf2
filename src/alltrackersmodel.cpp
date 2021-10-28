@@ -49,15 +49,14 @@ namespace tremotesf
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const
     {
         const TrackerItem& item = mTrackers[static_cast<size_t>(index.row())];
-#ifdef TREMOTESF_SAILFISHOS
         switch (role) {
         case TrackerRole:
             return item.tracker;
+#ifdef TREMOTESF_SAILFISHOS
         case TorrentsRole:
             return item.torrents;
         }
 #else
-        switch (role) {
         case Qt::DecorationRole:
             if (item.tracker.isEmpty()) {
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
@@ -70,8 +69,6 @@ namespace tremotesf
             }
             //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
             return qApp->translate("tremotesf", "%1 (%L2)").arg(item.tracker).arg(item.torrents);
-        case TrackerRole:
-            return item.tracker;
         }
 #endif
         return {};
