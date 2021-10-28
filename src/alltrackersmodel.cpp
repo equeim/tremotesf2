@@ -18,7 +18,7 @@
 
 #include "alltrackersmodel.h"
 
-#include <unordered_map>
+#include <map>
 
 #ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
@@ -48,58 +48,44 @@ namespace tremotesf
 
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const
     {
+        const TrackerItem& item = mTrackers[static_cast<size_t>(index.row())];
 #ifdef TREMOTESF_SAILFISHOS
-        if (index.row() == 0) {
-            switch (role) {
-            case TrackerRole:
-                return QString();
-            case TorrentsRole:
-                return rpc()->torrentsCount();
-            }
-        } else {
-            const TrackerItem& item = mTrackers[static_cast<size_t>(index.row() - 1)];
-            switch (role) {
-            case TrackerRole:
-                return item.tracker;
-            case TorrentsRole:
-                return item.torrents;
-            }
+        switch (role) {
+        case TrackerRole:
+            return item.tracker;
+        case TorrentsRole:
+            return item.torrents;
         }
 #else
-        if (index.row() == 0) {
-            switch (role) {
-            case Qt::DecorationRole:
+        switch (role) {
+        case Qt::DecorationRole:
+            if (item.tracker.isEmpty()) {
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
-            case Qt::DisplayRole:
-            case Qt::ToolTipRole:
-                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(rpc()->torrentsCount());
             }
-        } else {
-            const TrackerItem& item = mTrackers[static_cast<size_t>(index.row() - 1)];
-            switch (role) {
-            case Qt::DecorationRole:
-                return QIcon::fromTheme(QLatin1String("network-server"));
-            case Qt::DisplayRole:
-            case Qt::ToolTipRole:
-                //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
-                return qApp->translate("tremotesf", "%1 (%L2)").arg(item.tracker).arg(item.torrents);
-            case TrackerRole:
-                return item.tracker;
+            return QIcon::fromTheme(QLatin1String("network-server"));
+        case Qt::DisplayRole:
+        case Qt::ToolTipRole:
+            if (item.tracker.isEmpty()) {
+                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count").arg(item.torrents);
             }
+            //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
+            return qApp->translate("tremotesf", "%1 (%L2)").arg(item.tracker).arg(item.torrents);
+        case TrackerRole:
+            return item.tracker;
         }
 #endif
-        return QVariant();
+        return {};
     }
 
     int AllTrackersModel::rowCount(const QModelIndex&) const
     {
-        return static_cast<int>(mTrackers.size() + 1);
+        return static_cast<int>(mTrackers.size());
     }
 
     bool AllTrackersModel::removeRows(int row, int count, const QModelIndex& parent)
     {
         beginRemoveRows(parent, row, row + count - 1);
-        const auto first = mTrackers.begin() + (row - 1);
+        const auto first = mTrackers.begin() + row;
         mTrackers.erase(first, first + count);
         endRemoveRows();
         return true;
@@ -107,13 +93,10 @@ namespace tremotesf
 
     QModelIndex AllTrackersModel::indexForTracker(const QString& tracker) const
     {
-        if (tracker.isEmpty()) {
-            return index(0);
-        }
         for (size_t i = 0, max = mTrackers.size(); i < max; ++i) {
             const auto& item = mTrackers[i];
             if (item.tracker == tracker) {
-                return index(static_cast<int>(i) + 1);
+                return index(static_cast<int>(i));
             }
         }
         return {};
@@ -131,17 +114,19 @@ namespace tremotesf
     {
         if (rpc()->torrents().empty()) {
             if (!mTrackers.empty()) {
-                const QModelIndex firstIndex(index(0));
+                mTrackers[0].torrents = 0;
+                const auto firstIndex = index(0);
                 emit dataChanged(firstIndex, firstIndex);
 
-                beginRemoveRows(QModelIndex(), 1, static_cast<int>(mTrackers.size()));
-                mTrackers.clear();
+                beginRemoveRows({}, 1, static_cast<int>(mTrackers.size() - 1));
+                mTrackers.erase(mTrackers.begin() + 1, mTrackers.end());
                 endRemoveRows();
             }
             return;
         }
 
-        std::unordered_map<QString, int> trackers;
+        std::map<QString, int> trackers;
+        trackers.emplace(QString(), rpc()->torrentsCount());
         for (const auto& torrent : rpc()->torrents()) {
             for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
                 const QString& site = tracker.site();
@@ -153,36 +138,40 @@ namespace tremotesf
                 }
             }
         }
-        const auto trackersEnd(trackers.end());
+        const auto trackersEnd = trackers.end();
 
-        {
+        if (!mTrackers.empty()) {
             ModelBatchRemover modelRemover(this);
-            for (int i = static_cast<int>(mTrackers.size()) - 1; i >= 0; --i) {
-                const auto found(trackers.find(mTrackers[static_cast<size_t>(i)].tracker));
+            size_t i = (mTrackers.size() - 1);
+            while (i != 0) {
+                const auto found = trackers.find(mTrackers[i].tracker);
                 if (found == trackersEnd) {
-                    modelRemover.remove(i + 1);
+                    modelRemover.remove(static_cast<int>(i));
                 }
+                --i;
             }
             modelRemover.remove();
         }
 
-        mTrackers.reserve(trackers.size());
-
         ModelBatchChanger changer(this);
-        for (int i = 0, max = static_cast<int>(mTrackers.size()); i < max; ++i) {
-            TrackerItem& item = mTrackers[static_cast<size_t>(i)];
-            const auto found(trackers.find(item.tracker));
+        for (size_t i = 0, max = mTrackers.size(); i < max; ++i) {
+            TrackerItem& item = mTrackers[i];
+            const auto found = trackers.find(item.tracker);
             if (found != trackersEnd) {
-                item.torrents = found->second;
-                changer.changed(i + 1);
+                const int torrents = found->second;
+                if (torrents != item.torrents) {
+                    item.torrents = torrents;
+                    changer.changed(static_cast<int>(i));
+                }
                 trackers.erase(found);
             }
         }
         changer.changed();
 
         if (!trackers.empty()) {
-            const int firstRow = static_cast<int>(mTrackers.size() + 1);
-            beginInsertRows(QModelIndex(), firstRow, firstRow + static_cast<int>(trackers.size()) - 1);
+            const int firstRow = static_cast<int>(mTrackers.size());
+            beginInsertRows({}, firstRow, firstRow + static_cast<int>(trackers.size()) - 1);
+            mTrackers.reserve(mTrackers.size() + trackers.size());
             for (const auto& i : trackers) {
                 const QString& tracker = i.first;
                 const int torrents = i.second;
