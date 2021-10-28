@@ -95,6 +95,15 @@ namespace tremotesf
         return static_cast<int>(mDirectories.size() + 1);
     }
 
+    bool DownloadDirectoriesModel::removeRows(int row, int count, const QModelIndex& parent)
+    {
+        beginRemoveRows(parent, row, row + count - 1);
+        const auto first = mDirectories.begin() + (row - 1);
+        mDirectories.erase(first, first + count);
+        endRemoveRows();
+        return true;
+    }
+
     QModelIndex DownloadDirectoriesModel::indexForDirectory(const QString& downloadDirectory) const
     {
         if (downloadDirectory.isEmpty()) {

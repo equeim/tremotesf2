@@ -88,7 +88,15 @@ namespace tremotesf
         inline void remove()
         {
             if (firstRow != -1) {
-                model->removeRows(firstRow, lastRow - firstRow + 1);
+                if (!model->removeRows(firstRow, lastRow - firstRow + 1)) {
+#ifdef NDEBUG
+                    qCritical(
+#else
+                    qFatal(
+#endif
+                        "%s::removeRows() failed", model->metaObject()->className()
+                    );
+                }
             }
         }
 

@@ -96,6 +96,15 @@ namespace tremotesf
         return static_cast<int>(mTrackers.size() + 1);
     }
 
+    bool AllTrackersModel::removeRows(int row, int count, const QModelIndex& parent)
+    {
+        beginRemoveRows(parent, row, row + count - 1);
+        const auto first = mTrackers.begin() + (row - 1);
+        mTrackers.erase(first, first + count);
+        endRemoveRows();
+        return true;
+    }
+
     QModelIndex AllTrackersModel::indexForTracker(const QString& tracker) const
     {
         if (tracker.isEmpty()) {

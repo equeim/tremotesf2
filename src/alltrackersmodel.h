@@ -36,6 +36,7 @@ namespace tremotesf
 
         QVariant data(const QModelIndex& index, int role) const override;
         int rowCount(const QModelIndex&) const override;
+        bool removeRows(int row, int count, const QModelIndex& parent) override;
 
         Q_INVOKABLE QModelIndex indexForTracker(const QString& tracker) const;
 
