@@ -40,8 +40,8 @@ namespace tremotesf
         inline explicit DownloadDirectoriesModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 
         QVariant data(const QModelIndex& index, int role) const override;
-        int rowCount(const QModelIndex&) const override;
-        bool removeRows(int row, int count, const QModelIndex& parent) override;
+        int rowCount(const QModelIndex& = {}) const override;
+        bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
         Q_INVOKABLE QModelIndex indexForDirectory(const QString& downloadDirectory) const;
 
@@ -59,6 +59,9 @@ namespace tremotesf
         };
 
         std::vector<DirectoryItem> mDirectories;
+
+        template<typename, typename, typename, typename> friend class ModelListUpdater;
+        friend class DownloadDirectoriesModelUpdater;
     };
 }
 

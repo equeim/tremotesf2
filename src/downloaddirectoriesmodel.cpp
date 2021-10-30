@@ -93,21 +93,31 @@ namespace tremotesf
     }
 #endif
 
-    void DownloadDirectoriesModel::update()
-    {
-        if (rpc()->torrents().empty()) {
-            if (!mDirectories.empty()) {
-                mDirectories[0].torrents = 0;
-                const auto firstIndex = index(0);
-                emit dataChanged(firstIndex, firstIndex);
+    class DownloadDirectoriesModelUpdater : public ModelListUpdater<DownloadDirectoriesModel, DownloadDirectoriesModel::DirectoryItem, std::pair<const QString, int>, std::map<QString, int>> {
+    public:
+        inline explicit DownloadDirectoriesModelUpdater(DownloadDirectoriesModel& model) : ModelListUpdater(model) {}
 
-                beginRemoveRows({}, 1, static_cast<int>(mDirectories.size() - 1));
-                mDirectories.erase(mDirectories.begin() + 1, mDirectories.end());
-                endRemoveRows();
-            }
-            return;
+    protected:
+        std::map<QString, int>::iterator findNewItemForItem(std::map<QString, int>& newItems, const DownloadDirectoriesModel::DirectoryItem& item) override {
+            return newItems.find(item.directory);
         }
 
+        bool updateItem(DownloadDirectoriesModel::DirectoryItem& item, std::pair<const QString, int>&& newItem) override {
+            const auto& [directory, torrents] = newItem;
+            if (item.torrents != torrents) {
+                item.torrents = torrents;
+                return true;
+            }
+            return false;
+        }
+
+        DownloadDirectoriesModel::DirectoryItem createItemFromNewItem(std::pair<const QString, int>&& newItem) override {
+            return DownloadDirectoriesModel::DirectoryItem{newItem.first, newItem.second};
+        }
+    };
+
+    void DownloadDirectoriesModel::update()
+    {
         std::map<QString, int> directories;
         directories.emplace(QString(), rpc()->torrentsCount());
         for (const auto& torrent : rpc()->torrents()) {
@@ -122,46 +132,8 @@ namespace tremotesf
                 ++(found->second);
             }
         }
-        const auto directoriesEnd(directories.end());
 
-        if (!mDirectories.empty()) {
-            ModelBatchRemover modelRemover(this);
-            size_t i = (mDirectories.size() - 1);
-            while (i != 0) {
-                const auto found = directories.find(mDirectories[i].directory);
-                if (found == directoriesEnd) {
-                    modelRemover.remove(static_cast<int>(i));
-                }
-                --i;
-            }
-            modelRemover.remove();
-        }
-
-        ModelBatchChanger changer(this);
-        for (size_t i = 0, max = mDirectories.size(); i < max; ++i) {
-            DirectoryItem& item = mDirectories[i];
-            const auto found = directories.find(item.directory);
-            if (found != directoriesEnd) {
-                const int torrents = found->second;
-                if (torrents != item.torrents) {
-                    item.torrents = found->second;
-                    changer.changed(static_cast<int>(i));
-                }
-                directories.erase(found);
-            }
-        }
-        changer.changed();
-
-        if (!directories.empty()) {
-            const int firstRow = static_cast<int>(mDirectories.size());
-            beginInsertRows({}, firstRow, firstRow + static_cast<int>(directories.size()) - 1);
-            mDirectories.reserve(mDirectories.size() + directories.size());
-            for (const auto& i : directories) {
-                const QString& tracker = i.first;
-                const int torrents = i.second;
-                mDirectories.push_back(DirectoryItem{tracker, torrents});
-            }
-            endInsertRows();
-        }
+        DownloadDirectoriesModelUpdater updater(*this);
+        updater.update(mDirectories, std::move(directories));
     }
 }

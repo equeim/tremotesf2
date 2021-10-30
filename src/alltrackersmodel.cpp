@@ -107,21 +107,31 @@ namespace tremotesf
     }
 #endif
 
-    void AllTrackersModel::update()
-    {
-        if (rpc()->torrents().empty()) {
-            if (!mTrackers.empty()) {
-                mTrackers[0].torrents = 0;
-                const auto firstIndex = index(0);
-                emit dataChanged(firstIndex, firstIndex);
+    class AllTrackersModelUpdater : public ModelListUpdater<AllTrackersModel, AllTrackersModel::TrackerItem, std::pair<const QString, int>, std::map<QString, int>> {
+    public:
+        inline explicit AllTrackersModelUpdater(AllTrackersModel& model) : ModelListUpdater(model) {}
 
-                beginRemoveRows({}, 1, static_cast<int>(mTrackers.size() - 1));
-                mTrackers.erase(mTrackers.begin() + 1, mTrackers.end());
-                endRemoveRows();
-            }
-            return;
+    protected:
+        std::map<QString, int>::iterator findNewItemForItem(std::map<QString, int>& newTrackers, const AllTrackersModel::TrackerItem& tracker) override {
+            return newTrackers.find(tracker.tracker);
         }
 
+        bool updateItem(AllTrackersModel::TrackerItem& tracker, std::pair<const QString, int>&& newTracker) override {
+            const auto& [site, torrents] = newTracker;
+            if (tracker.torrents != torrents) {
+                tracker.torrents = torrents;
+                return true;
+            }
+            return false;
+        }
+
+        AllTrackersModel::TrackerItem createItemFromNewItem(std::pair<const QString, int>&& newTracker) override {
+            return AllTrackersModel::TrackerItem{newTracker.first, newTracker.second};
+        }
+    };
+
+    void AllTrackersModel::update()
+    {
         std::map<QString, int> trackers;
         trackers.emplace(QString(), rpc()->torrentsCount());
         for (const auto& torrent : rpc()->torrents()) {
@@ -135,46 +145,8 @@ namespace tremotesf
                 }
             }
         }
-        const auto trackersEnd = trackers.end();
 
-        if (!mTrackers.empty()) {
-            ModelBatchRemover modelRemover(this);
-            size_t i = (mTrackers.size() - 1);
-            while (i != 0) {
-                const auto found = trackers.find(mTrackers[i].tracker);
-                if (found == trackersEnd) {
-                    modelRemover.remove(static_cast<int>(i));
-                }
-                --i;
-            }
-            modelRemover.remove();
-        }
-
-        ModelBatchChanger changer(this);
-        for (size_t i = 0, max = mTrackers.size(); i < max; ++i) {
-            TrackerItem& item = mTrackers[i];
-            const auto found = trackers.find(item.tracker);
-            if (found != trackersEnd) {
-                const int torrents = found->second;
-                if (torrents != item.torrents) {
-                    item.torrents = torrents;
-                    changer.changed(static_cast<int>(i));
-                }
-                trackers.erase(found);
-            }
-        }
-        changer.changed();
-
-        if (!trackers.empty()) {
-            const int firstRow = static_cast<int>(mTrackers.size());
-            beginInsertRows({}, firstRow, firstRow + static_cast<int>(trackers.size()) - 1);
-            mTrackers.reserve(mTrackers.size() + trackers.size());
-            for (const auto& i : trackers) {
-                const QString& tracker = i.first;
-                const int torrents = i.second;
-                mTrackers.push_back(TrackerItem{tracker, torrents});
-            }
-            endInsertRows();
-        }
+        AllTrackersModelUpdater updater(*this);
+        updater.update(mTrackers, std::move(trackers));
     }
 }
