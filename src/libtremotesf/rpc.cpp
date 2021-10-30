@@ -41,6 +41,7 @@
 #include <QQmlEngine>
 #endif
 
+#include "itemlistupdater.h"
 #include "serversettings.h"
 #include "serverstats.h"
 #include "stdutils.h"
@@ -901,6 +902,119 @@ namespace libtremotesf
                     });
     }
 
+    using NewTorrent = std::pair<QJsonObject, int>;
+
+    class TorrentsListUpdater : public ItemListUpdater<std::shared_ptr<Torrent>, NewTorrent, std::vector<NewTorrent>> {
+    public:
+        inline explicit TorrentsListUpdater(Rpc& rpc) : mRpc(rpc) {}
+
+        void update(std::vector<std::shared_ptr<Torrent>>& torrents, std::vector<NewTorrent>&& newTorrents) override {
+            if (newTorrents.size() < torrents.size()) {
+                removed.reserve(torrents.size() - newTorrents.size());
+            } else if (newTorrents.size() > torrents.size()) {
+                checkSingleFileIds.reserve(static_cast<int>(newTorrents.size() - torrents.size()));
+            }
+            ItemListUpdater::update(torrents, std::move(newTorrents));
+        }
+
+        std::vector<int> removed;
+        std::vector<int> changed;
+        int added = 0;
+        QVariantList checkSingleFileIds;
+        QVariantList getFilesIds;
+        QVariantList getPeersIds;
+
+    protected:
+        std::vector<NewTorrent>::iterator findNewItemForItem(std::vector<NewTorrent>& newTorrents, const std::shared_ptr<Torrent>& torrent) override {
+            const int id = torrent->id();
+            return std::find_if(newTorrents.begin(), newTorrents.end(), [id](const auto& t) {
+                const auto& [json, newTorrentId] = t;
+                return newTorrentId == id;
+            });
+        }
+
+        void onAboutToRemoveItems(size_t first, size_t last) override {
+            emit mRpc.onAboutToRemoveTorrents(first, last);
+        };
+
+        void onRemovedItems(size_t first, size_t last) override {
+            removed.reserve(removed.size() + (last - first));
+            for (size_t i = first; i < last; ++i) {
+                removed.push_back(static_cast<int>(i));
+            }
+            emit mRpc.onRemovedTorrents(first, last);
+        }
+
+        bool updateItem(std::shared_ptr<Torrent>& torrent, NewTorrent&& newTorrent) override {
+            const auto& [json, id] = newTorrent;
+
+            const bool wasFinished = torrent->isFinished();
+            const bool wasPaused = (torrent->status() == Torrent::Status::Paused);
+            const auto oldSizeWhenDone = torrent->sizeWhenDone();
+            const bool metadataWasComplete = torrent->isMetadataComplete();
+
+            const bool changed = torrent->update(json);
+            if (changed) {
+                if (!wasFinished
+                        && torrent->isFinished()
+                        && !wasPaused
+                        // Don't emit torrentFinished() if torrent's size became smaller
+                        // since there is high chance that it happened because user unselected some files
+                        // and torrent immediately became finished. We don't want notification in that case
+                        && torrent->sizeWhenDone() >= oldSizeWhenDone) {
+                    emit mRpc.torrentFinished(torrent.get());
+                }
+                if (!metadataWasComplete && torrent->isMetadataComplete()) {
+                    checkSingleFileIds.push_back(id);
+                }
+            }
+            if (torrent->isFilesEnabled()) {
+                getFilesIds.push_back(id);
+            }
+            if (torrent->isPeersEnabled()) {
+                getPeersIds.push_back(id);
+            }
+
+            return changed;
+        }
+
+        void onChangedItems(size_t first, size_t last) override {
+            changed.reserve(changed.size() + (last - first));
+            for (size_t i = first; i < last; ++i) {
+                changed.push_back(static_cast<int>(i));
+            }
+            emit mRpc.onChangedTorrents(first, last);
+        }
+
+        std::shared_ptr<Torrent> createItemFromNewItem(NewTorrent&& newTorrent) override {
+            const auto& [torrentJson, id] = newTorrent;
+            auto torrent = std::make_shared<Torrent>(id, torrentJson, &mRpc);
+#ifdef TREMOTESF_SAILFISHOS
+            // prevent automatic destroying on QML side
+            QQmlEngine::setObjectOwnership(torrent.get(), QQmlEngine::CppOwnership);
+#endif
+            if (mRpc.isConnected()) {
+                emit mRpc.torrentAdded(torrent.get());
+            }
+            if (torrent->isMetadataComplete()) {
+                checkSingleFileIds.push_back(id);
+            }
+            return torrent;
+        }
+
+        void onAboutToAddItems(size_t count) override {
+            emit mRpc.onAboutToAddTorrents(count);
+        }
+
+        void onAddedItems(size_t count) override {
+            added = static_cast<int>(count);
+            emit mRpc.onAddedTorrents(count);
+        };
+
+    private:
+        Rpc& mRpc;
+    };
+
     void Rpc::getTorrents()
     {
         postRequest(QLatin1String("torrent-get"),
@@ -960,7 +1074,7 @@ namespace libtremotesf
                             return;
                         }
 
-                        std::vector<std::tuple<QJsonObject, int, bool>> newTorrents;
+                        std::vector<NewTorrent> newTorrents;
                         {
                             const QJsonArray torrentsJsons(getReplyArguments(parseResult)
                                                             .value(QJsonKeyStringInit("torrents"))
@@ -969,108 +1083,26 @@ namespace libtremotesf
                             for (const auto& i : torrentsJsons) {
                                 QJsonObject torrentJson(i.toObject());
                                 const int id = torrentJson.value(Torrent::idKey).toInt();
-                                newTorrents.emplace_back(std::move(torrentJson), id, false);
+                                newTorrents.emplace_back(std::move(torrentJson), id);
                             }
                         }
 
-                        std::vector<int> removed;
-                        if (newTorrents.size() < mTorrents.size()) {
-                            removed.reserve(mTorrents.size() - newTorrents.size());
-                        }
-                        std::vector<int> changed;
-
-                        QVariantList checkSingleFileIds;
-                        if (newTorrents.size() > mTorrents.size()) {
-                            checkSingleFileIds.reserve(static_cast<int>(newTorrents.size() - mTorrents.size()));
-                        }
-
-                        QVariantList getFilesIds;
-                        QVariantList getPeersIds;
-
-                        {
-                            const auto newTorrentsEnd(newTorrents.end());
-                            VectorBatchRemover<std::shared_ptr<Torrent>> remover(mTorrents, &removed, &changed);
-                            for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
-                                const auto& torrent = mTorrents[static_cast<size_t>(i)];
-                                const int id = torrent->id();
-                                const auto found(std::find_if(newTorrents.begin(), newTorrents.end(), [id](const auto& t) {
-                                    const auto& [json, new_id, existing] = t;
-                                    return new_id == id;
-                                }));
-                                if (found == newTorrentsEnd) {
-                                    remover.remove(i);
-                                } else {
-                                    auto& [json, id, existing] = *found;
-                                    existing = true;
-
-                                    const bool wasFinished = torrent->isFinished();
-                                    const bool wasPaused = (torrent->status() == Torrent::Status::Paused);
-                                    const auto oldSizeWhenDone = torrent->sizeWhenDone();
-                                    const bool metadataWasComplete = torrent->isMetadataComplete();
-                                    if (torrent->update(json)) {
-                                        changed.push_back(i);
-                                        if (!wasFinished
-                                                && torrent->isFinished()
-                                                && !wasPaused
-                                                // Don't emit torrentFinished() if torrent's size became smaller
-                                                // since there is high chance that it happened because user unselected some files
-                                                // and torrent immediately became finished. We don't want notification in that case
-                                                && torrent->sizeWhenDone() >= oldSizeWhenDone) {
-                                            emit torrentFinished(torrent.get());
-                                        }
-                                        if (!metadataWasComplete && torrent->isMetadataComplete()) {
-                                            checkSingleFileIds.push_back(id);
-                                        }
-                                    }
-                                    if (torrent->isFilesEnabled()) {
-                                        getFilesIds.push_back(id);
-                                    }
-                                    if (torrent->isPeersEnabled()) {
-                                        getPeersIds.push_back(id);
-                                    }
-                                }
-                            }
-                            remover.doRemove();
-                        }
-                        std::reverse(changed.begin(), changed.end());
-
-                        int added = 0;
-                        if (newTorrents.size() > mTorrents.size()) {
-                            mTorrents.reserve(newTorrents.size());
-                            for (const auto& t : newTorrents) {
-                                const auto& [torrentJson, id, existing] = t;
-                                if (!existing) {
-                                    mTorrents.emplace_back(std::make_shared<Torrent>(id, torrentJson, this));
-                                    ++added;
-                                    Torrent* torrent = mTorrents.back().get();
-#ifdef TREMOTESF_SAILFISHOS
-                                    // prevent automatic destroying on QML side
-                                    QQmlEngine::setObjectOwnership(torrent, QQmlEngine::CppOwnership);
-#endif
-                                    if (isConnected()) {
-                                        emit torrentAdded(torrent);
-                                    }
-
-                                    if (torrent->isMetadataComplete()) {
-                                        checkSingleFileIds.push_back(id);
-                                    }
-                                }
-                            }
-                        }
+                        TorrentsListUpdater updater(*this);
+                        updater.update(mTorrents, std::move(newTorrents));
 
                         checkIfTorrentsUpdated();
                         startUpdateTimer();
 
-                        emit torrentsUpdated(removed, changed, added);
+                        emit torrentsUpdated(updater.removed, updater.changed, updater.added);
 
-                        if (!checkSingleFileIds.isEmpty()) {
-                            checkTorrentsSingleFile(checkSingleFileIds);
+                        if (!updater.checkSingleFileIds.isEmpty()) {
+                            checkTorrentsSingleFile(updater.checkSingleFileIds);
                         }
-                        if (!getFilesIds.isEmpty()) {
-                            getTorrentsFiles(getFilesIds, true);
+                        if (!updater.getFilesIds.isEmpty()) {
+                            getTorrentsFiles(updater.getFilesIds, true);
                         }
-                        if (!getPeersIds.isEmpty()) {
-                            getTorrentsPeers(getPeersIds, true);
+                        if (!updater.getPeersIds.isEmpty()) {
+                            getTorrentsPeers(updater.getPeersIds, true);
                         }
         });
     }

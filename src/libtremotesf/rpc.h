@@ -289,6 +289,12 @@ namespace libtremotesf
         void connectionStateChanged();
         void errorChanged();
 
+        void onAboutToRemoveTorrents(size_t first, size_t last);
+        void onRemovedTorrents(size_t first, size_t last);
+        void onChangedTorrents(size_t first, size_t last);
+        void onAboutToAddTorrents(size_t count);
+        void onAddedTorrents(size_t count);
+
         void torrentsUpdated(const std::vector<int>& removed, const std::vector<int>& changed, int added);
 
         void torrentFilesUpdated(const libtremotesf::Torrent* torrent, const std::vector<int>& changed);
