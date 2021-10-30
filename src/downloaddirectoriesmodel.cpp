@@ -41,7 +41,6 @@ namespace tremotesf
         case DirectoryRole:
             return item.directory;
 #ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
         case TorrentsRole:
             return item.torrents;
         }
