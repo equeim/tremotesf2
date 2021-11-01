@@ -84,6 +84,14 @@ namespace tremotesf
         return {};
     }
 
+    QModelIndex DownloadDirectoriesModel::indexForTorrentsProxyModelFilter() const
+    {
+        if (!torrentsProxyModel()) {
+            return {};
+        }
+        return indexForDirectory(torrentsProxyModel()->downloadDirectoryFilter());
+    }
+
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> DownloadDirectoriesModel::roleNames() const
     {
@@ -91,6 +99,13 @@ namespace tremotesf
                 {TorrentsRole, "torrents"}};
     }
 #endif
+
+    void DownloadDirectoriesModel::resetTorrentsProxyModelFilter() const
+    {
+        if (torrentsProxyModel()) {
+            torrentsProxyModel()->setDownloadDirectoryFilter({});
+        }
+    }
 
     class DownloadDirectoriesModelUpdater : public ModelListUpdater<DownloadDirectoriesModel, DownloadDirectoriesModel::DirectoryItem, std::pair<const QString, int>, std::map<QString, int>> {
     public:

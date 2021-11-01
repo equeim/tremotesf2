@@ -99,6 +99,14 @@ namespace tremotesf
         return {};
     }
 
+    QModelIndex AllTrackersModel::indexForTorrentsProxyModelFilter() const
+    {
+        if (!torrentsProxyModel()) {
+            return {};
+        }
+        return indexForTracker(torrentsProxyModel()->trackerFilter());
+    }
+
 #ifdef TREMOTESF_SAILFISHOS
     QHash<int, QByteArray> AllTrackersModel::roleNames() const
     {
@@ -106,6 +114,13 @@ namespace tremotesf
                 {TorrentsRole, "torrents"}};
     }
 #endif
+
+    void AllTrackersModel::resetTorrentsProxyModelFilter() const
+    {
+        if (torrentsProxyModel()) {
+            torrentsProxyModel()->setTrackerFilter({});
+        }
+    }
 
     class AllTrackersModelUpdater : public ModelListUpdater<AllTrackersModel, AllTrackersModel::TrackerItem, std::pair<const QString, int>, std::map<QString, int>> {
     public:

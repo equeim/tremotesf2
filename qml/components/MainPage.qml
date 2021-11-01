@@ -145,6 +145,7 @@ Page {
 
     BottomPanel {
         id: bottomPanel
+        torrentsProxyModel: torrentsView.model
     }
 
     SelectionPanel {

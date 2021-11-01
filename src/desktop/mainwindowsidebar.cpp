@@ -193,20 +193,14 @@ namespace tremotesf
             }
 
         protected:
-            void init(BaseTorrentsFiltersSettingsModel* model, Rpc* rpc)
+            void init(BaseTorrentsFiltersSettingsModel* model, TorrentsProxyModel* torrentsProxyModel, Rpc* rpc)
             {
                 setModel(model);
-                setCurrentIndex(model->index(0));
 
                 QObject::connect(model, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [=] {
-                    if (!model->isPopulated()) {
-                        return;
+                    if (model->isPopulated()) {
+                        updateCurrentIndex();
                     }
-                    auto index = indexForTorrentsModelFilter();
-                    if (!index.isValid()) {
-                        index = model->index(0);
-                    }
-                    setCurrentIndex(index);
                 });
 
                 QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this, [=](const QModelIndex& current) {
@@ -218,10 +212,19 @@ namespace tremotesf
                 QObject::connect(model, &BaseTorrentsFiltersSettingsModel::rowsInserted, this, &BaseListView::updateGeometry);
                 QObject::connect(model, &BaseTorrentsFiltersSettingsModel::rowsRemoved, this, &BaseListView::updateGeometry);
 
+                model->setTorrentsProxyModel(torrentsProxyModel);
                 model->setRpc(rpc);
+
+                if (model->isPopulated()) {
+                    updateCurrentIndex();
+                }
             }
 
-            virtual QModelIndex indexForTorrentsModelFilter() = 0;
+            void updateCurrentIndex()
+            {
+                setCurrentIndex(static_cast<BaseTorrentsFiltersSettingsModel*>(model())->indexForTorrentsProxyModelFilter());
+            }
+
             virtual void setTorrentsModelFilterFromIndex(const QModelIndex& index) = 0;
             virtual void setTorrentsModelFilterEnabled(bool enabled) = 0;
 
@@ -236,15 +239,13 @@ namespace tremotesf
             TrackersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
                 : BaseListView(torrentsModel, parent)
             {
-                init(new AllTrackersModel(this), rpc);
+                init(new AllTrackersModel(this), torrentsModel, rpc);
+                QObject::connect(torrentsModel, &TorrentsProxyModel::trackerFilterChanged, this, [=] {
+                    updateCurrentIndex();
+                });
             }
 
         protected:
-            QModelIndex indexForTorrentsModelFilter() override
-            {
-                return static_cast<AllTrackersModel*>(model())->indexForTracker(mTorrentsProxyModel->trackerFilter());
-            }
-
             void setTorrentsModelFilterFromIndex(const QModelIndex& index) override
             {
                 mTorrentsProxyModel->setTrackerFilter(index.data(AllTrackersModel::TrackerRole).toString());
@@ -264,15 +265,13 @@ namespace tremotesf
             DirectoriesListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
                 : BaseListView(torrentsModel, parent)
             {
-                init(new DownloadDirectoriesModel(this), rpc);
+                init(new DownloadDirectoriesModel(this), torrentsModel, rpc);
+                QObject::connect(torrentsModel, &TorrentsProxyModel::downloadDirectoryFilterChanged, this, [=] {
+                    updateCurrentIndex();
+                });
             }
 
         protected:
-            QModelIndex indexForTorrentsModelFilter() override
-            {
-                return static_cast<DownloadDirectoriesModel*>(model())->indexForDirectory(mTorrentsProxyModel->downloadDirectoryFilter());
-            }
-
             void setTorrentsModelFilterFromIndex(const QModelIndex& index) override
             {
                 mTorrentsProxyModel->setDownloadDirectoryFilter(index.data(DownloadDirectoriesModel::DirectoryRole).toString());

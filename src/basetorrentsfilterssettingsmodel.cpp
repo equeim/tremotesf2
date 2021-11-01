@@ -18,6 +18,8 @@
 
 #include "basetorrentsfilterssettingsmodel.h"
 
+#include <QTimer>
+
 #include "trpc.h"
 
 namespace tremotesf
@@ -37,8 +39,21 @@ namespace tremotesf
             emit rpcChanged();
             if (rpc) {
                 QObject::connect(rpc, &Rpc::torrentsUpdated, this, &BaseTorrentsFiltersSettingsModel::updateImpl);
-                updateImpl();
+                QTimer::singleShot(0, this, &BaseTorrentsFiltersSettingsModel::updateImpl);
             }
+        }
+    }
+
+    TorrentsProxyModel* BaseTorrentsFiltersSettingsModel::torrentsProxyModel() const
+    {
+        return mTorrentsProxyModel;
+    }
+
+    void BaseTorrentsFiltersSettingsModel::setTorrentsProxyModel(TorrentsProxyModel* model)
+    {
+        if (model != mTorrentsProxyModel) {
+            mTorrentsProxyModel = model;
+            emit torrentsProxyModelChanged();
         }
     }
 
@@ -55,6 +70,9 @@ namespace tremotesf
             populatedChanged = true;
         }
         update();
+        if (!indexForTorrentsProxyModelFilter().isValid()) {
+            resetTorrentsProxyModelFilter();
+        }
         if (populatedChanged) {
             emit this->populatedChanged();
         }

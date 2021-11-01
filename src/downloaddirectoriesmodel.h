@@ -45,10 +45,14 @@ namespace tremotesf
 
         Q_INVOKABLE QModelIndex indexForDirectory(const QString& downloadDirectory) const;
 
-#ifdef TREMOTESF_SAILFISHOS
+        QModelIndex indexForTorrentsProxyModelFilter() const override;
+
     protected:
+#ifdef TREMOTESF_SAILFISHOS
         QHash<int, QByteArray> roleNames() const override;
 #endif
+        void resetTorrentsProxyModelFilter() const override;
+
     private:
         void update() override;
 

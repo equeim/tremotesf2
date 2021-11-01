@@ -22,7 +22,11 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 Page {
+    id: filterTorrentsPage
+
     allowedOrientations: defaultAllowedOrientations
+
+    property TorrentsProxyModel torrentsProxyModel
 
     SilicaFlickable {
         anchors.fill: parent
@@ -124,20 +128,13 @@ Page {
                 Repeater {
                     model: DownloadDirectoriesModel {
                         rpc: rootWindow.rpc
-                        onPopulatedChanged: {
-                            if (populated) {
-                                var index = indexForDirectory(torrentsProxyModel.downloadDirectoryFilter)
-                                if (!index.valid) {
-                                    torrentsProxyModel.downloadDirectoryFilter = ""
-                                }
-                            }
-                        }
+                        torrentsProxyModel: filterTorrentsPage.torrentsProxyModel
                     }
                     delegate: FilterTorrentsListItem {
                         property var modelData: model
 
                         current: modelData.directory === torrentsProxyModel.downloadDirectoryFilter
-                        text: (modelData.index > 0) ? modelData.directory : qsTranslate("tremotesf", "All")
+                        text: modelData.directory ? modelData.directory : qsTranslate("tremotesf", "All")
                         elide: Text.ElideMiddle
                         torrents: modelData.torrents
 
@@ -160,20 +157,13 @@ Page {
                 Repeater {
                     model: AllTrackersModel {
                         rpc: rootWindow.rpc
-                        onPopulatedChanged: {
-                            if (populated) {
-                                var index = indexForTracker(torrentsProxyModel.trackerFilter)
-                                if (!index.valid) {
-                                    torrentsProxyModel.trackerFilter = ""
-                                }
-                            }
-                        }
+                        torrentsProxyModel: filterTorrentsPage.torrentsProxyModel
                     }
                     delegate: FilterTorrentsListItem {
                         property var modelData: model
 
                         current: modelData.tracker === torrentsProxyModel.trackerFilter
-                        text: (modelData.index > 0) ? modelData.tracker : qsTranslate("tremotesf", "All")
+                        text: modelData.tracker ? modelData.tracker : qsTranslate("tremotesf", "All")
                         torrents: modelData.torrents
 
                         onClicked: torrentsProxyModel.trackerFilter = modelData.tracker

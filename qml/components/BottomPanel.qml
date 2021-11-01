@@ -22,6 +22,10 @@ import Sailfish.Silica 1.0
 import harbour.tremotesf 1.0
 
 DockedPanel {
+    id: bottomPanel
+
+    property TorrentsProxyModel torrentsProxyModel
+
     width: parent.width
     height: Theme.itemSizeMedium
     contentHeight: height
@@ -51,6 +55,7 @@ DockedPanel {
 
             FilterTorrentsPage {
                 id: filterTorrentsPage
+                torrentsProxyModel: bottomPanel.torrentsProxyModel
             }
         }
 
