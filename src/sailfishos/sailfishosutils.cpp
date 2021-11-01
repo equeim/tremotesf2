@@ -31,7 +31,7 @@
 #include "../servers.h"
 #include "../serversmodel.h"
 #include "../settings.h"
-#include "../statusfilterstats.h"
+#include "../statusfiltersmodel.h"
 #include "../torrentfilesmodel.h"
 #include "../torrentfilesmodelentry.h"
 #include "../torrentfilesproxymodel.h"
@@ -93,11 +93,13 @@ namespace tremotesf
         qmlRegisterUncreatableType<Server>(url, versionMajor, versionMinor, "Server", QString());
         qRegisterMetaType<Server::ProxyType>();
 
-        qmlRegisterType<StatusFilterStats>(url, versionMajor, versionMinor, "StatusFilterStats");
+        qmlRegisterType<StatusFiltersModel>(url, versionMajor, versionMinor, "StatusFiltersModel");
+        qmlRegisterType<DownloadDirectoriesModel>(url, versionMajor, versionMinor, "DownloadDirectoriesModel");
         qmlRegisterType<AllTrackersModel>(url, versionMajor, versionMinor, "AllTrackersModel");
 
         qmlRegisterType<TorrentsModel>(url, versionMajor, versionMinor, "TorrentsModel");
         qmlRegisterType<TorrentsProxyModel>(url, versionMajor, versionMinor, "TorrentsProxyModel");
+        qRegisterMetaType<TorrentsProxyModel::StatusFilter>();
 
         qmlRegisterType<TorrentFilesModel>(url, versionMajor, versionMinor, "TorrentFilesModel");
         qmlRegisterUncreatableType<TorrentFilesModelEntry>(url, versionMajor, versionMinor, "TorrentFilesModelEntry", QString());
@@ -105,7 +107,6 @@ namespace tremotesf
         qmlRegisterType<TorrentFilesProxyModel>(url, versionMajor, versionMinor, "TorrentFilesProxyModel");
 
         qmlRegisterType<TrackersModel>(url, versionMajor, versionMinor, "TrackersModel");
-        qmlRegisterType<DownloadDirectoriesModel>(url, versionMajor, versionMinor, "DownloadDirectoriesModel");
 
         qmlRegisterType<PeersModel>(url, versionMajor, versionMinor, "PeersModel");
 

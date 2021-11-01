@@ -32,7 +32,7 @@
 
 #include "../alltrackersmodel.h"
 #include "../downloaddirectoriesmodel.h"
-#include "../statusfilterstats.h"
+#include "../statusfiltersmodel.h"
 #include "../torrentsproxymodel.h"
 #include "../trpc.h"
 #include "../utils.h"
@@ -44,113 +44,6 @@ namespace tremotesf
 {
     namespace
     {
-        class StatusListWidget final : public QListWidget
-        {
-            Q_OBJECT
-        public:
-            StatusListWidget(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent = nullptr)
-                : QListWidget(parent),
-                  mTorrentsProxyModel(proxyModel),
-                  mRpc(rpc),
-                  mStats(new StatusFilterStats(mRpc, this))
-            {
-                setFrameShape(QFrame::NoFrame);
-                setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-                setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-                setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-                setIconSize(QSize(16, 16));
-
-                using namespace desktoputils;
-                addItem(new QListWidgetItem(QApplication::style()->standardIcon(QStyle::SP_DirIcon), {}, this, statusFilterToItemType(TorrentsProxyModel::All)));
-                addItem(new QListWidgetItem(QIcon(statusIconPath(ActiveIcon)), {}, this, statusFilterToItemType(TorrentsProxyModel::Active)));
-                addItem(new QListWidgetItem(QIcon(statusIconPath(DownloadingIcon)), {}, this, statusFilterToItemType(TorrentsProxyModel::Downloading)));
-                addItem(new QListWidgetItem(QIcon(statusIconPath(SeedingIcon)), {}, this, statusFilterToItemType(TorrentsProxyModel::Seeding)));
-                addItem(new QListWidgetItem(QIcon(statusIconPath(PausedIcon)), {}, this, statusFilterToItemType(TorrentsProxyModel::Paused)));
-                addItem(new QListWidgetItem(QIcon(statusIconPath(CheckingIcon)), {}, this, statusFilterToItemType(TorrentsProxyModel::Checking)));
-                addItem(new QListWidgetItem(QIcon(statusIconPath(ErroredIcon)), {}, this, statusFilterToItemType(TorrentsProxyModel::Errored)));
-                setCurrentItem(itemForStatusFilter(mTorrentsProxyModel->statusFilter()));
-
-                updateItems();
-                QObject::connect(mStats, &StatusFilterStats::updated, this, &StatusListWidget::updateItems);
-
-                QObject::connect(this, &StatusListWidget::currentItemChanged, this, [this](QListWidgetItem* current, auto) {
-                    mTorrentsProxyModel->setStatusFilter(itemTypeToStatusFilter(current->type()));
-                });
-            }
-
-            QSize minimumSizeHint() const override
-            {
-                return QSize(8, 0);
-            }
-
-            QSize sizeHint() const override
-            {
-                int height = 0;
-                for (int i = 0, max = count(); i < max; ++i) {
-                    height += sizeHintForRow(i);
-                    height += spacing();
-                }
-                height += spacing();
-
-                return QSize(sizeHintForColumn(0), height);
-            }
-
-            void updateItems()
-            {
-                itemForStatusFilter(TorrentsProxyModel::All)->setText(qApp->translate("tremotesf", "All (%L1)", "All torrents, %L1 - torrents count").arg(mRpc->torrentsCount()));
-
-                //: Active torrents, %L1 - torrents count
-                itemForStatusFilter(TorrentsProxyModel::Active)->setText(qApp->translate("tremotesf", "Active (%L1)").arg(mStats->activeTorrents()));
-
-                //: Downloading torrents, %L1 - torrents count
-                itemForStatusFilter(TorrentsProxyModel::Downloading)->setText(qApp->translate("tremotesf", "Downloading (%L1)").arg(mStats->downloadingTorrents()));
-
-                //: Seeding torrents, %L1 - torrents count
-                itemForStatusFilter(TorrentsProxyModel::Seeding)->setText(qApp->translate("tremotesf", "Seeding (%L1)").arg(mStats->seedingTorrents()));
-
-                //: Paused torrents, %L1 - torrents count
-                itemForStatusFilter(TorrentsProxyModel::Paused)->setText(qApp->translate("tremotesf", "Paused (%L1)").arg(mStats->pausedTorrents()));
-
-                //: Checking torrents, %L1 - torrents count
-                itemForStatusFilter(TorrentsProxyModel::Checking)->setText(qApp->translate("tremotesf", "Checking (%L1)").arg(mStats->checkingTorrents()));
-
-                //: Errored torrents, %L1 - torrents count
-                itemForStatusFilter(TorrentsProxyModel::Errored)->setText(qApp->translate("tremotesf", "Errored (%L1)").arg(mStats->erroredTorrents()));
-            }
-
-            void setVisibleExplicitly(bool visible)
-            {
-                setVisible(visible);
-                mTorrentsProxyModel->setStatusFilterEnabled(visible);
-            }
-
-        private:
-            static int statusFilterToItemType(TorrentsProxyModel::StatusFilter filter) {
-                return static_cast<int>(QListWidgetItem::UserType) + static_cast<int>(filter);
-            }
-
-            static TorrentsProxyModel::StatusFilter itemTypeToStatusFilter(int type) {
-                return static_cast<TorrentsProxyModel::StatusFilter>(type - static_cast<int>(QListWidgetItem::UserType));
-            }
-
-            QListWidgetItem* itemForStatusFilter(TorrentsProxyModel::StatusFilter filter) {
-                const int type = statusFilterToItemType(filter);
-                for (int i = 0, max = count(); i < max; ++i) {
-                    auto item = this->item(i);
-                    if (item->type() == type) {
-                        return item;
-                    }
-                }
-                qFatal("No item in list for status filter %s", QMetaEnum::fromType<TorrentsProxyModel::StatusFilter>().valueToKey(filter));
-                return nullptr;
-            }
-
-            TorrentsProxyModel* mTorrentsProxyModel;
-            Rpc* mRpc;
-            StatusFilterStats* mStats;
-        };
-
         class BaseListView : public QListView
         {
             Q_OBJECT
@@ -229,6 +122,32 @@ namespace tremotesf
             virtual void setTorrentsModelFilterEnabled(bool enabled) = 0;
 
             TorrentsProxyModel* mTorrentsProxyModel;
+        };
+
+        class StatusFiltersListView final : public BaseListView
+        {
+            Q_OBJECT
+
+        public:
+            StatusFiltersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
+                : BaseListView(torrentsModel, parent)
+            {
+                init(new StatusFiltersModel(this), torrentsModel, rpc);
+                QObject::connect(torrentsModel, &TorrentsProxyModel::statusFilterChanged, this, [=] {
+                    updateCurrentIndex();
+                });
+            }
+
+        protected:
+            void setTorrentsModelFilterFromIndex(const QModelIndex& index) override
+            {
+                mTorrentsProxyModel->setStatusFilter(index.data(StatusFiltersModel::FilterRole).value<TorrentsProxyModel::StatusFilter>());
+            }
+
+            void setTorrentsModelFilterEnabled(bool enabled) override
+            {
+                mTorrentsProxyModel->setStatusFilterEnabled(enabled);
+            }
         };
 
         class TrackersListView final : public BaseListView
@@ -317,9 +236,9 @@ namespace tremotesf
         statusCheckBox->setFont(checkBoxFont);
         layout->addWidget(statusCheckBox);
 
-        auto statusListWidget = new StatusListWidget(rpc, proxyModel, this);
-        QObject::connect(statusCheckBox, &QCheckBox::toggled, statusListWidget, &StatusListWidget::setVisibleExplicitly);
-        layout->addWidget(statusListWidget);
+        auto statusFiltersListView = new StatusFiltersListView(rpc, proxyModel, this);
+        QObject::connect(statusCheckBox, &QCheckBox::toggled, statusFiltersListView, &StatusFiltersListView::setFilterEnabled);
+        layout->addWidget(statusFiltersListView);
         statusCheckBox->setChecked(proxyModel->isStatusFilterEnabled());
 
         auto directoriesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Directories"), this);
