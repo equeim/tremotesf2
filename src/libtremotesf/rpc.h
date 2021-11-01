@@ -122,7 +122,7 @@ namespace libtremotesf
         ServerSettings* serverSettings() const;
         ServerStats* serverStats() const;
 
-        const std::vector<std::shared_ptr<Torrent>>& torrents() const;
+        const std::vector<std::unique_ptr<Torrent>>& torrents() const;
         Q_INVOKABLE libtremotesf::Torrent* torrentByHash(const QString& hash) const;
         Torrent* torrentById(int id) const;
 
@@ -277,7 +277,7 @@ namespace libtremotesf
         QTimer* mAutoReconnectTimer;
 
         ServerSettings* mServerSettings;
-        std::vector<std::shared_ptr<Torrent>> mTorrents;
+        std::vector<std::unique_ptr<Torrent>> mTorrents;
         ServerStats* mServerStats;
 
         Status mStatus;

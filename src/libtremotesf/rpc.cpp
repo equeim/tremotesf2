@@ -186,14 +186,14 @@ namespace libtremotesf
         return mServerStats;
     }
 
-    const std::vector<std::shared_ptr<Torrent>>& Rpc::torrents() const
+    const std::vector<std::unique_ptr<Torrent>>& Rpc::torrents() const
     {
         return mTorrents;
     }
 
     Torrent* Rpc::torrentByHash(const QString& hash) const
     {
-        for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
+        for (const std::unique_ptr<Torrent>& torrent : mTorrents) {
             if (torrent->hashString() == hash) {
                 return torrent.get();
             }
@@ -830,7 +830,9 @@ namespace libtremotesf
                 for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
                     removedTorrentsIndices.push_back(i);
                 }
+                emit onAboutToRemoveTorrents(0, removedTorrentsIndices.size());
                 mTorrents.clear();
+                emit onRemovedTorrents(0, removedTorrentsIndices.size());
             }
 
             break;
@@ -904,11 +906,11 @@ namespace libtremotesf
 
     using NewTorrent = std::pair<QJsonObject, int>;
 
-    class TorrentsListUpdater : public ItemListUpdater<std::shared_ptr<Torrent>, NewTorrent, std::vector<NewTorrent>> {
+    class TorrentsListUpdater : public ItemListUpdater<std::unique_ptr<Torrent>, NewTorrent, std::vector<NewTorrent>> {
     public:
         inline explicit TorrentsListUpdater(Rpc& rpc) : mRpc(rpc) {}
 
-        void update(std::vector<std::shared_ptr<Torrent>>& torrents, std::vector<NewTorrent>&& newTorrents) override {
+        void update(std::vector<std::unique_ptr<Torrent>>& torrents, std::vector<NewTorrent>&& newTorrents) override {
             if (newTorrents.size() < torrents.size()) {
                 removed.reserve(torrents.size() - newTorrents.size());
             } else if (newTorrents.size() > torrents.size()) {
@@ -925,7 +927,7 @@ namespace libtremotesf
         QVariantList getPeersIds;
 
     protected:
-        std::vector<NewTorrent>::iterator findNewItemForItem(std::vector<NewTorrent>& newTorrents, const std::shared_ptr<Torrent>& torrent) override {
+        std::vector<NewTorrent>::iterator findNewItemForItem(std::vector<NewTorrent>& newTorrents, const std::unique_ptr<Torrent>& torrent) override {
             const int id = torrent->id();
             return std::find_if(newTorrents.begin(), newTorrents.end(), [id](const auto& t) {
                 const auto& [json, newTorrentId] = t;
@@ -945,7 +947,7 @@ namespace libtremotesf
             emit mRpc.onRemovedTorrents(first, last);
         }
 
-        bool updateItem(std::shared_ptr<Torrent>& torrent, NewTorrent&& newTorrent) override {
+        bool updateItem(std::unique_ptr<Torrent>& torrent, NewTorrent&& newTorrent) override {
             const auto& [json, id] = newTorrent;
 
             const bool wasFinished = torrent->isFinished();
@@ -986,9 +988,9 @@ namespace libtremotesf
             emit mRpc.onChangedTorrents(first, last);
         }
 
-        std::shared_ptr<Torrent> createItemFromNewItem(NewTorrent&& newTorrent) override {
+        std::unique_ptr<Torrent> createItemFromNewItem(NewTorrent&& newTorrent) override {
             const auto& [torrentJson, id] = newTorrent;
-            auto torrent = std::make_shared<Torrent>(id, torrentJson, &mRpc);
+            auto torrent = std::make_unique<Torrent>(id, torrentJson, &mRpc);
 #ifdef TREMOTESF_SAILFISHOS
             // prevent automatic destroying on QML side
             QQmlEngine::setObjectOwnership(torrent.get(), QQmlEngine::CppOwnership);
@@ -1142,7 +1144,7 @@ namespace libtremotesf
     void Rpc::checkIfTorrentsUpdated()
     {
         if (mUpdating && !mTorrentsUpdated) {
-            for (const std::shared_ptr<Torrent>& torrent : mTorrents) {
+            for (const std::unique_ptr<Torrent>& torrent : mTorrents) {
                 if (!torrent->isUpdated()) {
                     return;
                 }
