@@ -786,7 +786,7 @@ namespace libtremotesf
 
         std::vector<int> removedTorrentsIndices;
         if (connectionStateChanged) {
-            resetStateOnConnectionStateChanged(removedTorrentsIndices);
+            resetStateOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsIndices);
         }
 
         emit statusChanged();
@@ -800,7 +800,7 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::resetStateOnConnectionStateChanged(std::vector<int>& removedTorrentsIndices)
+    void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>& removedTorrentsIndices)
     {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected:
@@ -825,7 +825,7 @@ namespace libtremotesf
             mServerStatsUpdated = false;
             mUpdateTimer->stop();
 
-            if (!mTorrents.empty()) {
+            if (!mTorrents.empty() && oldConnectionState == ConnectionState::Connected) {
                 removedTorrentsIndices.reserve(mTorrents.size());
                 for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
                     removedTorrentsIndices.push_back(i);
@@ -858,8 +858,6 @@ namespace libtremotesf
         {
             if (oldConnectionState == ConnectionState::Connected) {
                 emit connectedChanged();
-            }
-            if (!removedTorrentsIndices.empty()) {
                 emit torrentsUpdated(removedTorrentsIndices, {}, 0);
             }
             break;
@@ -869,6 +867,7 @@ namespace libtremotesf
         case ConnectionState::Connected:
         {
             emit connectedChanged();
+            emit torrentsUpdated({}, {}, torrentsCount());
             break;
         }
         }
@@ -1093,9 +1092,11 @@ namespace libtremotesf
                         updater.update(mTorrents, std::move(newTorrents));
 
                         checkIfTorrentsUpdated();
+                        const bool wasConnected = isConnected();
                         startUpdateTimer();
-
-                        emit torrentsUpdated(updater.removed, updater.changed, updater.added);
+                        if (wasConnected == isConnected()) {
+                            emit torrentsUpdated(updater.removed, updater.changed, updater.added);
+                        }
 
                         if (!updater.checkSingleFileIds.isEmpty()) {
                             checkTorrentsSingleFile(updater.checkSingleFileIds);

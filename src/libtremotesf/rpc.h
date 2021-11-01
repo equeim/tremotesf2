@@ -221,7 +221,7 @@ namespace libtremotesf
         };
 
         void setStatus(Status status);
-        void resetStateOnConnectionStateChanged(std::vector<int>& removedTorrentsIndices);
+        void resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>& removedTorrentsIndices);
         void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>&& removedTorrentsIndices);
 
         void getServerSettings();
