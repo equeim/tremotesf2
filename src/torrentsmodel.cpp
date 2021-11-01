@@ -55,7 +55,7 @@ namespace tremotesf
 
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
-        Torrent* torrent = mTorrents[static_cast<size_t>(index.row())].get();
+        Torrent* torrent = mRpc->torrents()[static_cast<size_t>(index.row())].get();
 
 #ifdef TREMOTESF_SAILFISHOS
         switch (role) {
@@ -318,16 +318,7 @@ namespace tremotesf
 
     int TorrentsModel::rowCount(const QModelIndex&) const
     {
-        return static_cast<int>(mTorrents.size());
-    }
-
-    bool TorrentsModel::removeRows(int row, int count, const QModelIndex& parent)
-    {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first(mTorrents.begin() + row);
-        mTorrents.erase(first, first + count);
-        endRemoveRows();
-        return true;
+        return static_cast<int>(mRpc->torrentsCount());
     }
 
     Rpc* TorrentsModel::rpc() const
@@ -344,8 +335,28 @@ namespace tremotesf
             mRpc = rpc;
             emit rpcChanged();
             if (rpc) {
-                update({}, {}, static_cast<int>(rpc->torrents().size()));
-                QObject::connect(rpc, &Rpc::torrentsUpdated, this, &TorrentsModel::update);
+                QObject::connect(rpc, &Rpc::onAboutToAddTorrents, this, [=](size_t count) {
+                    const auto first = mRpc->torrentsCount();
+                    beginInsertRows({}, first, first + static_cast<int>(count) - 1);
+                });
+
+                QObject::connect(rpc, &Rpc::onAddedTorrents, this, [=] {
+                    endInsertRows();
+                });
+
+                QObject::connect(rpc, &Rpc::onAboutToRemoveTorrents, this, [=](size_t first, size_t last) {
+                    beginRemoveRows({}, static_cast<int>(first), static_cast<int>(last - 1));
+                });
+
+                QObject::connect(rpc, &Rpc::onRemovedTorrents, this, [=] {
+                    endRemoveRows();
+                });
+
+                const auto count = rpc->torrentsCount();
+                if (count != 0) {
+                    beginInsertRows({}, 0, count - 1);
+                    endInsertRows();
+                }
             }
         }
     }
@@ -357,7 +368,7 @@ namespace tremotesf
 
     Torrent* TorrentsModel::torrentAtRow(int row) const
     {
-        return mTorrents[static_cast<size_t>(row)].get();
+        return mRpc->torrents()[static_cast<size_t>(row)].get();
     }
 
     QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const
@@ -365,7 +376,7 @@ namespace tremotesf
         QVariantList ids;
         ids.reserve(indexes.size());
         for (const QModelIndex& index : indexes) {
-            ids.append(mTorrents[static_cast<size_t>(index.row())]->id());
+            ids.append(torrentAtIndex(index)->id());
         }
         return ids;
     }
@@ -384,47 +395,4 @@ namespace tremotesf
                 {TorrentRole, "torrent"}};
     }
 #endif
-
-    void TorrentsModel::update(const std::vector<int>& removed, const std::vector<int>& changed, int added)
-    {
-        if (!removed.empty()) {
-            ModelBatchRemover remover{this};
-            for (int index : removed) {
-                remover.remove(index);
-            }
-            remover.remove();
-        }
-
-        if (!changed.empty()) {
-            ModelBatchChanger changer{this};
-            for (int index : changed) {
-                changer.changed(index);
-            }
-            changer.changed();
-        }
-
-        if (added > 0) {
-            const int first = static_cast<int>(mTorrents.size());
-            const int last = first + added - 1;
-            beginInsertRows(QModelIndex(), first, last);
-            mTorrents.reserve(static_cast<size_t>(last) + 1);
-
-            for (auto end = mRpc->torrents().end(), i = end - added; i != end; ++i) {
-                const auto& torrent = *i;
-                mTorrents.push_back(torrent);
-
-                const Torrent* torrentPointer = torrent.get();
-                QObject::connect(torrentPointer, &Torrent::limitsEdited, this, [=] {
-                    for (int i = 0, max = static_cast<int>(mTorrents.size()); i < max; ++i) {
-                        if (mTorrents[static_cast<size_t>(i)].get() == torrentPointer) {
-                            emit dataChanged(index(i, 0), index(i, columnCount() - 1));
-                            break;
-                        }
-                    }
-                });
-            }
-
-            endInsertRows();
-        }
-    }
 }
