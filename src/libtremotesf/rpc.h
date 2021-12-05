@@ -221,8 +221,8 @@ namespace libtremotesf
         };
 
         void setStatus(Status status);
-        void resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>& removedTorrentsIndices);
-        void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>&& removedTorrentsIndices);
+        void resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount);
+        void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState, size_t removedTorrentsCount);
 
         void getServerSettings();
         void getTorrents();
@@ -295,13 +295,13 @@ namespace libtremotesf
         void onAboutToAddTorrents(size_t count);
         void onAddedTorrents(size_t count);
 
-        void torrentsUpdated(const std::vector<int>& removed, const std::vector<int>& changed, int added);
+        void torrentsUpdated(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount);
 
-        void torrentFilesUpdated(const libtremotesf::Torrent* torrent, const std::vector<int>& changed);
+        void torrentFilesUpdated(const libtremotesf::Torrent* torrent, const std::vector<int>& changedIndexes);
         void torrentPeersUpdated(const libtremotesf::Torrent* torrent,
-                                 const std::vector<int>& removed,
-                                 const std::vector<int>& changed,
-                                 int added);
+                                 const std::vector<std::pair<int, int>>& removedIndexRanges,
+                                 const std::vector<std::pair<int, int>>& changedIndexRanges,
+                                 int addedCount);
 
         void torrentFileRenamed(int torrentId, const QString& filePath, const QString& newName);
 

@@ -64,8 +64,10 @@ namespace libtremotesf
         constexpr auto sessionIdFileLocation = QStandardPaths::GenericDataLocation;
         const QLatin1String sessionIdFilePrefix("Transmission/tr_session_id_");
 #else
+#ifndef Q_OS_ANDROID
         constexpr auto sessionIdFileLocation = QStandardPaths::TempLocation;
         const QLatin1String sessionIdFilePrefix("tr_session_id_");
+#endif
 #endif
 
         inline QByteArray makeRequestData(const QString& method, const QVariantMap& arguments)
@@ -170,7 +172,7 @@ namespace libtremotesf
         QObject::connect(mNetwork, &QNetworkAccessManager::sslErrors, this, [=](auto, const auto& errors) {
             for (const auto& error : errors) {
                 if (!mExpectedSslErrors.contains(error)) {
-                    qWarning() << error;
+                    qWarning() << error << "on" << error.certificate().toText().toUtf8().data();
                 }
             }
         });
@@ -784,15 +786,15 @@ namespace libtremotesf
 
         mStatus = status;
 
-        std::vector<int> removedTorrentsIndices;
+        size_t removedTorrentsCount;
         if (connectionStateChanged) {
-            resetStateOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsIndices);
+            resetStateOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsCount);
         }
 
         emit statusChanged();
 
         if (connectionStateChanged) {
-            emitSignalsOnConnectionStateChanged(oldStatus.connectionState, std::move(removedTorrentsIndices));
+            emitSignalsOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsCount);
         }
 
         if (status.error != oldStatus.error || status.errorMessage != oldStatus.errorMessage) {
@@ -800,7 +802,7 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, std::vector<int>& removedTorrentsIndices)
+    void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount)
     {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected:
@@ -826,13 +828,10 @@ namespace libtremotesf
             mUpdateTimer->stop();
 
             if (!mTorrents.empty() && oldConnectionState == ConnectionState::Connected) {
-                removedTorrentsIndices.reserve(mTorrents.size());
-                for (int i = static_cast<int>(mTorrents.size()) - 1; i >= 0; --i) {
-                    removedTorrentsIndices.push_back(i);
-                }
-                emit onAboutToRemoveTorrents(0, removedTorrentsIndices.size());
+                removedTorrentsCount = mTorrents.size();
+                emit onAboutToRemoveTorrents(0, removedTorrentsCount);
                 mTorrents.clear();
-                emit onRemovedTorrents(0, removedTorrentsIndices.size());
+                emit onRemovedTorrents(0, removedTorrentsCount);
             }
 
             break;
@@ -849,7 +848,7 @@ namespace libtremotesf
         }
     }
 
-    void Rpc::emitSignalsOnConnectionStateChanged(Rpc::ConnectionState oldConnectionState, std::vector<int>&& removedTorrentsIndices)
+    void Rpc::emitSignalsOnConnectionStateChanged(Rpc::ConnectionState oldConnectionState, size_t removedTorrentsCount)
     {
         emit connectionStateChanged();
 
@@ -858,7 +857,7 @@ namespace libtremotesf
         {
             if (oldConnectionState == ConnectionState::Connected) {
                 emit connectedChanged();
-                emit torrentsUpdated(removedTorrentsIndices, {}, 0);
+                emit torrentsUpdated({{0, static_cast<int>(removedTorrentsCount)}}, {}, 0);
             }
             break;
         }
@@ -910,17 +909,15 @@ namespace libtremotesf
         inline explicit TorrentsListUpdater(Rpc& rpc) : mRpc(rpc) {}
 
         void update(std::vector<std::unique_ptr<Torrent>>& torrents, std::vector<NewTorrent>&& newTorrents) override {
-            if (newTorrents.size() < torrents.size()) {
-                removed.reserve(torrents.size() - newTorrents.size());
-            } else if (newTorrents.size() > torrents.size()) {
+            if (newTorrents.size() > torrents.size()) {
                 checkSingleFileIds.reserve(static_cast<int>(newTorrents.size() - torrents.size()));
             }
             ItemListUpdater::update(torrents, std::move(newTorrents));
         }
 
-        std::vector<int> removed;
-        std::vector<int> changed;
-        int added = 0;
+        std::vector<std::pair<int, int>> removedIndexRanges;
+        std::vector<std::pair<int, int>> changedIndexRanges;
+        int addedCount = 0;
         QVariantList checkSingleFileIds;
         QVariantList getFilesIds;
         QVariantList getPeersIds;
@@ -939,10 +936,7 @@ namespace libtremotesf
         };
 
         void onRemovedItems(size_t first, size_t last) override {
-            removed.reserve(removed.size() + (last - first));
-            for (size_t i = first; i < last; ++i) {
-                removed.push_back(static_cast<int>(i));
-            }
+            removedIndexRanges.emplace_back(static_cast<int>(first), static_cast<int>(last));
             emit mRpc.onRemovedTorrents(first, last);
         }
 
@@ -980,10 +974,7 @@ namespace libtremotesf
         }
 
         void onChangedItems(size_t first, size_t last) override {
-            changed.reserve(changed.size() + (last - first));
-            for (size_t i = first; i < last; ++i) {
-                changed.push_back(static_cast<int>(i));
-            }
+            changedIndexRanges.emplace_back(static_cast<int>(first), static_cast<int>(last));
             emit mRpc.onChangedTorrents(first, last);
         }
 
@@ -1008,7 +999,7 @@ namespace libtremotesf
         }
 
         void onAddedItems(size_t count) override {
-            added = static_cast<int>(count);
+            addedCount = static_cast<int>(count);
             emit mRpc.onAddedTorrents(count);
         };
 
@@ -1094,8 +1085,8 @@ namespace libtremotesf
                         checkIfTorrentsUpdated();
                         const bool wasConnected = isConnected();
                         startUpdateTimer();
-                        if (wasConnected == isConnected()) {
-                            emit torrentsUpdated(updater.removed, updater.changed, updater.added);
+                        if (isConnected() && wasConnected) {
+                            emit torrentsUpdated(updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
                         }
 
                         if (!updater.checkSingleFileIds.isEmpty()) {

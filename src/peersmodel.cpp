@@ -20,7 +20,6 @@
 
 #include <QCoreApplication>
 
-#include "modelutils.h"
 #include "utils.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
@@ -201,36 +200,25 @@ namespace tremotesf
     }
 #endif
 
-    void PeersModel::update(const std::vector<int>& removed, const std::vector<int>& changed, int added)
+    void PeersModel::update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount)
     {
-        if (!removed.empty()) {
-            ModelBatchRemover remover{this};
-            for (int index : removed) {
-                remover.remove(index);
-            }
-            remover.remove();
+        for (const auto& [first, last] : removedIndexRanges) {
+            beginRemoveRows({}, first, last - 1);
+            mPeers.erase(mPeers.begin() + first, mPeers.begin() + last);
+            endRemoveRows();
         }
 
         const auto& newPeers = mTorrent->peers();
 
-        if (!changed.empty()) {
-            ModelBatchChanger changer{this};
-            for (int index : changed) {
-                const auto i = static_cast<size_t>(index);
-                mPeers[i] = newPeers[i];
-                changer.changed(index);
-            }
-            changer.changed();
+        for (const auto& [first, last] : changedIndexRanges) {
+            std::copy(newPeers.begin() + first, newPeers.begin() + last, mPeers.begin() + first);
+            emit dataChanged(index(0, columnCount() - 1), index(last - 1, columnCount() - 1));
         }
 
-        if (added > 0) {
-            const int first = static_cast<int>(mPeers.size());
-            const int last = first + added - 1;
-            beginInsertRows(QModelIndex(), first, last);
-            mPeers.reserve(static_cast<size_t>(last) + 1);
-            for (auto end = newPeers.end(), i = end - added; i != end; ++i) {
-                mPeers.push_back(*i);
-            }
+        if (addedCount > 0) {
+            beginInsertRows(QModelIndex(), static_cast<int>(mPeers.size()), static_cast<int>(newPeers.size()) - 1);
+            mPeers.reserve(newPeers.size());
+            std::copy(newPeers.begin() + static_cast<ssize_t>(mPeers.size()), newPeers.end(), std::back_insert_iterator(mPeers));
             endInsertRows();
         }
 

@@ -65,8 +65,17 @@ namespace libtremotesf
 
         inline bool operator==(const Tracker& other) const
         {
-            return id() == other.id();
+            return mId == other.mId &&
+                    mAnnounce == other.mAnnounce &&
+                    mSite == other.mSite &&
+                    mErrorMessage == other.mErrorMessage &&
+                    mStatus == other.mStatus &&
+                    mNextUpdateEta == other.mNextUpdateEta &&
+                    mNextUpdateTime == other.mNextUpdateTime &&
+                    mPeers == other.mPeers;
         }
+
+        inline bool operator!=(const Tracker& other) const { return !(*this == other); }
 
     private:
         QString mAnnounce;

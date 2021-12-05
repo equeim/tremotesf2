@@ -85,7 +85,7 @@ namespace tremotesf
         QHash<int, QByteArray> roleNames() const override;
 #endif
     private:
-        void update(const std::vector<int>& removed, const std::vector<int>& changed, int added);
+        void update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount);
 
         std::vector<libtremotesf::Peer> mPeers;
         libtremotesf::Torrent* mTorrent;
