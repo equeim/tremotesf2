@@ -7,37 +7,73 @@ find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 list(APPEND QRC_FILES resources.qrc)
 
 add_executable(tremotesf
+    3rdparty/cxxopts.hpp
+    libtremotesf/itemlistupdater.h
     libtremotesf/peer.cpp
+    libtremotesf/peer.h
+    libtremotesf/qtsupport.h
     libtremotesf/rpc.cpp
+    libtremotesf/rpc.h
     libtremotesf/serversettings.cpp
+    libtremotesf/serversettings.h
     libtremotesf/serverstats.cpp
+    libtremotesf/serverstats.h
+    libtremotesf/stdutils.h
     libtremotesf/torrent.cpp
+    libtremotesf/torrent.h
+    libtremotesf/torrent_qdebug.h
     libtremotesf/torrentfile.cpp
+    libtremotesf/torrentfile.h
     libtremotesf/tracker.cpp
+    libtremotesf/tracker.h
     alltrackersmodel.cpp
+    alltrackersmodel.h
     baseproxymodel.cpp
+    baseproxymodel.h
     basetorrentfilesmodel.cpp
+    basetorrentfilesmodel.h
     basetorrentsfilterssettingsmodel.cpp
+    basetorrentsfilterssettingsmodel.h
     bencodeparser.cpp
+    bencodeparser.h
     commandlineparser.cpp
+    commandlineparser.h
     downloaddirectoriesmodel.cpp
+    downloaddirectoriesmodel.h
+    ipcclient.h
     ipcserver.h
     localtorrentfilesmodel.cpp
+    localtorrentfilesmodel.h
     main.cpp
+    modelutils.h
     peersmodel.cpp
+    peersmodel.h
     servers.cpp
+    servers.h
     serversmodel.cpp
+    serversmodel.h
     settings.cpp
+    settings.h
     signalhandler.cpp
+    signalhandler.h
     statusfiltersmodel.cpp
+    statusfiltersmodel.h
     torrentfilesmodel.cpp
+    torrentfilesmodel.h
     torrentfilesmodelentry.cpp
+    torrentfilesmodelentry.h
     torrentfilesproxymodel.cpp
+    torrentfilesproxymodel.h
     torrentsmodel.cpp
+    torrentsmodel.h
     torrentsproxymodel.cpp
+    torrentsproxymodel.h
     trackersmodel.cpp
+    trackersmodel.h
     trpc.cpp
+    trpc.h
     utils.cpp
+    utils.h
     ${QRC_FILES}
 )
 
@@ -89,8 +125,11 @@ if (SAILFISHOS)
 
     target_sources(tremotesf PRIVATE
         sailfishos/directorycontentmodel.cpp
+        sailfishos/directorycontentmodel.h
         sailfishos/sailfishosutils.cpp
+        sailfishos/sailfishosutils.h
         sailfishos/selectionmodel.cpp
+        sailfishos/selectionmodel.h
     )
     target_link_libraries(tremotesf Qt5::Quick PkgConfig::SailfishApp)
     if (CMAKE_VERSION VERSION_LESS "3.15.0")
@@ -107,25 +146,45 @@ else()
 
     target_sources(tremotesf PRIVATE
         desktop/aboutdialog.cpp
+        desktop/aboutdialog.h
         desktop/addtorrentdialog.cpp
+        desktop/addtorrentdialog.h
         desktop/basetreeview.cpp
+        desktop/basetreeview.h
         desktop/commondelegate.cpp
+        desktop/commondelegate.h
         desktop/connectionsettingsdialog.cpp
+        desktop/connectionsettingsdialog.h
         desktop/fileselectionwidget.cpp
+        desktop/fileselectionwidget.h
         desktop/desktoputils.cpp
+        desktop/desktoputils.h
         desktop/mainwindow.cpp
+        desktop/mainwindow.h
         desktop/mainwindowsidebar.cpp
+        desktop/mainwindowsidebar.h
         desktop/mainwindowstatusbar.cpp
+        desktop/mainwindowstatusbar.h
         desktop/remotedirectoryselectionwidget.cpp
+        desktop/remotedirectoryselectionwidget.h
         desktop/servereditdialog.cpp
+        desktop/servereditdialog.h
         desktop/serversettingsdialog.cpp
+        desktop/serversettingsdialog.h
         desktop/serverstatsdialog.cpp
+        desktop/serverstatsdialog.h
         desktop/settingsdialog.cpp
+        desktop/settingsdialog.h
         desktop/textinputdialog.cpp
+        desktop/textinputdialog.h
         desktop/torrentfilesview.cpp
+        desktop/torrentfilesview.h
         desktop/torrentpropertiesdialog.cpp
+        desktop/torrentpropertiesdialog.h
         desktop/torrentsview.cpp
+        desktop/torrentsview.h
         desktop/trackersviewwidget.cpp
+        desktop/trackersviewwidget.h
     )
 
     target_compile_definitions(tremotesf PRIVATE
