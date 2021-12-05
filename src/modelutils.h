@@ -25,48 +25,6 @@
 
 namespace tremotesf
 {
-    class ModelBatchChanger
-    {
-    public:
-        inline explicit ModelBatchChanger(QAbstractItemModel* model, const QModelIndex& parent = QModelIndex())
-            : model(model), parent(parent) {}
-
-        inline void changed(int row)
-        {
-            if (firstRow == -1) {
-                reset(row);
-            } else {
-                if (row == (lastRow + 1)) {
-                    lastRow = row;
-                } else {
-                    changed();
-                    reset(row);
-                }
-            }
-        }
-
-        inline void changed()
-        {
-            if (firstRow != -1) {
-                emit model->dataChanged(model->index(firstRow, 0, parent), model->index(lastRow, lastColumn, parent));
-            }
-        }
-
-    private:
-        inline void reset(int row)
-        {
-            firstRow = row;
-            lastRow = row;
-        }
-
-        QAbstractItemModel *const model;
-        const QModelIndex parent;
-        const int lastColumn = model->columnCount() - 1;
-
-        int firstRow = -1;
-        int lastRow = -1;
-    };
-
     template<typename Model, typename Item, typename NewItem = Item, typename NewItemContainer = std::vector<NewItem>>
     class ModelListUpdater : public ItemListUpdater<Item, NewItem, NewItemContainer> {
         static_assert(std::is_base_of_v<QAbstractItemModel, Model>);

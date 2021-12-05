@@ -23,7 +23,7 @@
 #include <QStyle>
 #endif
 
-#include "modelutils.h"
+#include "libtremotesf/itemlistupdater.h"
 #include "utils.h"
 
 namespace tremotesf
@@ -259,10 +259,14 @@ namespace tremotesf
         } else {
             return;
         }
-        ModelBatchChanger changer(this, parent);
+
+        auto changedBatchProcessor = ItemBatchProcessor([&](size_t first, size_t last) {
+            emit dataChanged(index(static_cast<int>(first), 0, parent), index(static_cast<int>(last) - 1, columnCount() - 1, parent));
+        });
+
         for (auto& child : directory->children()) {
             if (child->isChanged()) {
-                changer.changed(child->row());
+                changedBatchProcessor.nextIndex(static_cast<size_t>(child->row()));
                 if (child->isDirectory()) {
                     updateDirectoryChildren(index(child->row(), 0, parent));
                 } else {
@@ -270,6 +274,6 @@ namespace tremotesf
                 }
             }
         }
-        changer.changed();
+        changedBatchProcessor.commitIfNeeded();
     }
 }
