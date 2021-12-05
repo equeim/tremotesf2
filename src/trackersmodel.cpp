@@ -20,6 +20,7 @@
 
 #include <QCoreApplication>
 
+#include "modelutils.h"
 #include "utils.h"
 
 #include "libtremotesf/stdutils.h"
@@ -194,33 +195,27 @@ namespace tremotesf
     }
 #endif
 
+    class TrackersModelUpdater : public ModelListUpdater<TrackersModel, Tracker> {
+    public:
+        inline explicit TrackersModelUpdater(TrackersModel& model) : ModelListUpdater(model) {}
+
+    protected:
+        std::vector<Tracker>::iterator findNewItemForItem(std::vector<Tracker>& newItems, const Tracker& item) override {
+            return std::find_if(newItems.begin(), newItems.end(), [item](const Tracker& tracker) { return tracker.id() == item.id(); });
+        }
+
+        bool updateItem(Tracker& item, Tracker&& newItem) override {
+            return item != newItem;
+        }
+
+        Tracker createItemFromNewItem(Tracker&& newItem) override {
+            return newItem;
+        }
+    };
+
     void TrackersModel::update()
     {
-        const std::vector<Tracker>& trackers = mTorrent->trackers();
-
-        for (int i = 0, max = static_cast<int>(mTrackers.size()); i < max; ++i) {
-            if (!contains(trackers, mTrackers[static_cast<size_t>(i)])) {
-                beginRemoveRows(QModelIndex(), i, i);
-                mTrackers.erase(mTrackers.begin() + i);
-                endRemoveRows();
-                i--;
-                max--;
-            }
-        }
-
-        mTrackers.reserve(trackers.size());
-
-        for (const Tracker& tracker : trackers) {
-            const auto row = index_of(mTrackers, tracker);
-            if (row == mTrackers.size()) {
-                beginInsertRows(QModelIndex(), static_cast<int>(row), static_cast<int>(row));
-                mTrackers.push_back(tracker);
-                endInsertRows();
-            } else {
-                mTrackers[row] = tracker;
-            }
-        }
-
-        emit dataChanged(index(0, 0), index(static_cast<int>(mTrackers.size()) - 1, columnCount() - 1));
+        TrackersModelUpdater updater(*this);
+        updater.update(mTrackers, std::vector(mTorrent->trackers()));
     }
 }

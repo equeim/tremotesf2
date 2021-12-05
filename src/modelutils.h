@@ -67,54 +67,6 @@ namespace tremotesf
         int lastRow = -1;
     };
 
-    class ModelBatchRemover
-    {
-    public:
-        inline explicit ModelBatchRemover(QAbstractItemModel* model)
-            : model(model) {}
-
-        inline void remove(int row)
-        {
-            if (firstRow == -1) {
-                reset(row);
-            } else {
-                if (row == (firstRow - 1)) {
-                    firstRow = row;
-                } else {
-                    remove();
-                    reset(row);
-                }
-            }
-        }
-
-        inline void remove()
-        {
-            if (firstRow != -1) {
-                if (!model->removeRows(firstRow, lastRow - firstRow + 1)) {
-#ifdef NDEBUG
-                    qCritical(
-#else
-                    qFatal(
-#endif
-                        "%s::removeRows() failed", model->metaObject()->className()
-                    );
-                }
-            }
-        }
-
-    private:
-        inline void reset(int row)
-        {
-            firstRow = row;
-            lastRow = row;
-        }
-
-        QAbstractItemModel *const model;
-
-        int firstRow = -1;
-        int lastRow = -1;
-    };
-
     template<typename Model, typename Item, typename NewItem = Item, typename NewItemContainer = std::vector<NewItem>>
     class ModelListUpdater : public ItemListUpdater<Item, NewItem, NewItemContainer> {
         static_assert(std::is_base_of_v<QAbstractItemModel, Model>);

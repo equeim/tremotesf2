@@ -61,12 +61,12 @@ namespace tremotesf
 
         explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
 
-        int columnCount(const QModelIndex& = QModelIndex()) const override;
+        int columnCount(const QModelIndex& = {}) const override;
         QVariant data(const QModelIndex& index, int role) const override;
 #ifndef TREMOTESF_SAILFISHOS
         QVariant headerData(int section, Qt::Orientation, int role) const override;
 #endif
-        int rowCount(const QModelIndex&) const override;
+        int rowCount(const QModelIndex& = {}) const override;
 
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);
@@ -84,6 +84,9 @@ namespace tremotesf
 
         libtremotesf::Torrent* mTorrent;
         std::vector<libtremotesf::Tracker> mTrackers;
+
+        template<typename, typename, typename, typename> friend class ModelListUpdater;
+        friend class TrackersModelUpdater;
 
     signals:
         void torrentChanged();
