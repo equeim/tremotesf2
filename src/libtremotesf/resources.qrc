@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>isrg_root_x1.pem</file>
-    </qresource>
-</RCC>

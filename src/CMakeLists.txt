@@ -4,6 +4,10 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 
+set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6")
+include(libtremotesf/cmake/CommonOptions.cmake)
+add_subdirectory(libtremotesf)
+
 list(APPEND QRC_FILES resources.qrc)
 
 add_executable(tremotesf
@@ -77,48 +81,12 @@ add_executable(tremotesf
     ${QRC_FILES}
 )
 
-set_target_properties(tremotesf PROPERTIES
-    OUTPUT_NAME "${TREMOTESF_NAME}"
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
-)
-
+set_target_properties(tremotesf PROPERTIES OUTPUT_NAME "${TREMOTESF_NAME}")
 target_link_libraries(tremotesf Qt5::Network)
 target_include_directories(tremotesf PRIVATE ${Qt5Concurrent_INCLUDE_DIRS})
+target_compile_definitions(tremotesf PRIVATE TREMOTESF_VERSION="${PROJECT_VERSION}")
 
-target_compile_definitions(tremotesf PRIVATE
-    QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=0x050600
-    TREMOTESF_VERSION="${PROJECT_VERSION}"
-)
-
-if (NOT SAILFISHOS)
-    target_compile_definitions(tremotesf PRIVATE QT_MESSAGELOGCONTEXT)
-endif()
-
-if (MSVC)
-    target_compile_options(tremotesf PRIVATE /W4)
-else()
-    target_compile_options(tremotesf PRIVATE
-        -Wall
-        -Wextra
-        -Wpedantic
-        -Wnon-virtual-dtor
-        -Wcast-align
-        -Woverloaded-virtual
-        -Wconversion
-        -Wsign-conversion
-        -Wdouble-promotion
-        -Wformat=2
-        -Werror=format
-    )
-    if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        target_compile_options(tremotesf PRIVATE -Wlogical-op)
-    endif()
-endif()
-
-if (SAILFISHOS)
+if (TREMOTESF_SAILFISHOS)
     find_package(Qt5 REQUIRED COMPONENTS Quick)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SailfishApp REQUIRED IMPORTED_TARGET sailfishapp)
@@ -206,7 +174,7 @@ if (UNIX AND NOT APPLE)
     find_package(Qt5 REQUIRED COMPONENTS DBus)
     target_link_libraries(tremotesf Qt5::DBus)
 
-    if (NOT SAILFISHOS)
+    if (NOT TREMOTESF_SAILFISHOS)
         find_package(Qt5 REQUIRED COMPONENTS X11Extras)
         find_package(KF5WindowSystem REQUIRED)
         target_link_libraries(tremotesf Qt5::X11Extras KF5::WindowSystem)
@@ -242,3 +210,5 @@ endif()
 if (NOT TEST_BUILD AND NOT WIN32 AND NOT APPLE)
     install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()
+
+set_common_options_on_targets()
