@@ -4,6 +4,10 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 
+if (WIN32)
+    set(TREMOTESF_COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+endif()
+
 set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6")
 include(libtremotesf/cmake/CommonOptions.cmake)
 add_subdirectory(libtremotesf)
@@ -162,7 +166,6 @@ else()
 
     if (WIN32)
         target_sources(tremotesf PRIVATE desktop/tremotesf.rc)
-        set_target_properties(tremotesf PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
         string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
         if (NOT build_type STREQUAL "debug")
             set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE ON)
