@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-fedora:
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+
+    runs-on: ubuntu-latest
+    container: fedora:latest
+
+    steps:
+    - name: Install packages
+      run: dnf -y --setopt=install_weak_deps=False install git cmake ninja-build qt5-qtbase-devel qt5-qtx11extras-devel qt5-linguist kf5-kwidgetsaddons-devel kf5-kwindowsystem-devel gettext ${{ matrix.compiler == 'gcc' && 'gcc-c++' || 'clang' }}
+
+    - uses: actions/checkout@v2
+
+    - name: Configure
+      run: cmake -B ${{github.workspace}}/build -G 'Ninja Multi-Config' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+
+    - name: Build Debug
+      run: cmake --build ${{github.workspace}}/build --config Debug
+
+    - name: Build Release
+      run: cmake --build ${{github.workspace}}/build --config Release
+
+    - name: Test Debug
+      run: ctest --test-dir ${{github.workspace}}/build --build-config Debug
+
+    - name: Test Release
+      run: ctest --test-dir ${{github.workspace}}/build --build-config Release
+
+  build-ubuntu:
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install packages
+      run: sudo apt-get update && sudo apt-get --no-install-recommends --assume-yes install cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libkf5widgetsaddons-dev libkf5windowsystem-dev gettext ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }}
+
+    - uses: actions/checkout@v2
+
+    - name: Configure
+      run: cmake -B ${{github.workspace}}/build -G 'Ninja Multi-Config' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+
+    - name: Build Debug
+      run: cmake --build ${{github.workspace}}/build --config Debug
+
+    - name: Build Release
+      run: cmake --build ${{github.workspace}}/build --config Release
+
+    - name: Test Debug
+      run: ctest --test-dir ${{github.workspace}}/build --build-config Debug
+
+    - name: Test Release
+      run: ctest --test-dir ${{github.workspace}}/build --build-config Release
