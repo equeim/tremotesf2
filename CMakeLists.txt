@@ -3,13 +3,8 @@ cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.20)
 
 project(tremotesf VERSION 1.10.0 LANGUAGES CXX)
 
-option(TEST_BUILD "Test build" OFF)
 option(TREMOTESF_SAILFISHOS "Build for Sailfish OS" OFF)
 option(TREMOTESF_BUILD_TESTS "Build tests" OFF)
-
-if (TEST_BUILD AND TREMOTESF_SAILFISHOS)
-    message(FATAL_ERROR "TEST_BUILD and TREMOTESF_SAILFISHOS can't be used together")
-endif()
 
 include(GNUInstallDirs)
 

@@ -207,8 +207,4 @@ else()
     target_sources(tremotesf PRIVATE ipcserver_socket.cpp ipcclient_socket.cpp)
 endif()
 
-if (NOT TEST_BUILD AND NOT WIN32 AND NOT APPLE)
-    install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
-endif()
-
 set_common_options_on_targets()
