@@ -67,7 +67,9 @@ namespace libtremotesf
         {
             return mId == other.mId &&
                     mAnnounce == other.mAnnounce &&
+#if QT_VERSION_MAJOR < 6
                     mSite == other.mSite &&
+#endif
                     mErrorMessage == other.mErrorMessage &&
                     mStatus == other.mStatus &&
                     mNextUpdateEta == other.mNextUpdateEta &&

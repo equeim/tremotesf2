@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Configure
-      run: cmake -B ${{github.workspace}}/build -G 'Ninja Multi-Config' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+      run: cmake -B ${{github.workspace}}/build -G 'Ninja Multi-Config' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }} -DTREMOTESF_BUILD_TESTS=ON
 
     - name: Build Debug
       run: cmake --build ${{github.workspace}}/build --config Debug
@@ -50,7 +50,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Configure
-      run: cmake -B ${{github.workspace}}/build -G 'Ninja Multi-Config' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+      run: cmake -B ${{github.workspace}}/build -G 'Ninja Multi-Config' -DCMAKE_CONFIGURATION_TYPES='Debug;Release' -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }} -DTREMOTESF_BUILD_TESTS=ON
 
     - name: Build Debug
       run: cmake --build ${{github.workspace}}/build --config Debug

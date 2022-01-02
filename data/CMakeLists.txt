@@ -1,6 +1,6 @@
 list(APPEND QRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/authors/authors.qrc")
 
-if (SAILFISHOS)
+if (TREMOTESF_SAILFISHOS)
     set(app_icons "sailfishos/hicolor")
     set(desktop_file_path "sailfishos/harbour-tremotesf.desktop")
 else()
