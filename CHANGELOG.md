@@ -3,9 +3,13 @@
 ## [Unreleased]
 ### Added
 - Automatic reconnection to server (thanks to LuK1337)
+- Loading PEM certificate from file
+- Links in torrents' comments are now clickable
+- Torrent list filters (except search) are now persistable
 
 ### Changed
 - Further reduced memory usage when opening torrent files
+- All app resources are now bundled inside executable
 
 ### Fixed
 - Sailfish OS support (this will be the last release that supports Saifish OS)
