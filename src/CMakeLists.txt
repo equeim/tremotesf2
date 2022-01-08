@@ -16,24 +16,6 @@ list(APPEND QRC_FILES resources.qrc)
 
 add_executable(tremotesf
     3rdparty/cxxopts.hpp
-    libtremotesf/itemlistupdater.h
-    libtremotesf/peer.cpp
-    libtremotesf/peer.h
-    libtremotesf/qtsupport.h
-    libtremotesf/rpc.cpp
-    libtremotesf/rpc.h
-    libtremotesf/serversettings.cpp
-    libtremotesf/serversettings.h
-    libtremotesf/serverstats.cpp
-    libtremotesf/serverstats.h
-    libtremotesf/stdutils.h
-    libtremotesf/torrent.cpp
-    libtremotesf/torrent.h
-    libtremotesf/torrent_qdebug.h
-    libtremotesf/torrentfile.cpp
-    libtremotesf/torrentfile.h
-    libtremotesf/tracker.cpp
-    libtremotesf/tracker.h
     alltrackersmodel.cpp
     alltrackersmodel.h
     baseproxymodel.cpp
@@ -86,7 +68,7 @@ add_executable(tremotesf
 )
 
 set_target_properties(tremotesf PROPERTIES OUTPUT_NAME "${TREMOTESF_NAME}")
-target_link_libraries(tremotesf Qt5::Network)
+target_link_libraries(tremotesf Qt5::Network libtremotesf)
 target_include_directories(tremotesf PRIVATE ${Qt5Concurrent_INCLUDE_DIRS})
 target_compile_definitions(tremotesf PRIVATE TREMOTESF_VERSION="${PROJECT_VERSION}")
 

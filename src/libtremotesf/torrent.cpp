@@ -70,7 +70,6 @@ namespace libtremotesf
         const auto ratioLimitKey(QJsonKeyStringInit("seedRatioLimit"));
 
         const auto seedersKey(QJsonKeyStringInit("peersSendingToUs"));
-        const auto webSeedersKey(QJsonKeyStringInit("webseedsSendingToUs"));
         const auto leechersKey(QJsonKeyStringInit("peersGettingFromUs"));
 
         const auto errorKey(QJsonKeyStringInit("error"));
@@ -89,6 +88,9 @@ namespace libtremotesf
         const auto creatorKey(QJsonKeyStringInit("creator"));
         const auto creationDateKey(QJsonKeyStringInit("dateCreated"));
         const auto commentKey(QJsonKeyStringInit("comment"));
+
+        const auto webSeedersKey(QJsonKeyStringInit("webseeds"));
+        const auto activeWebSeedersKey(QJsonKeyStringInit("webseedsSendingToUs"));
 
         const QLatin1String wantedFilesKey("files-wanted");
         const QLatin1String unwantedFilesKey("files-unwanted");
@@ -148,10 +150,9 @@ namespace libtremotesf
         setChanged(ratioLimit, torrentMap.value(ratioLimitKey).toDouble(), changed);
 
         setChanged(seeders, torrentMap.value(seedersKey).toInt(), changed);
-        setChanged(webSeeders, torrentMap.value(webSeedersKey).toInt(), changed);
         setChanged(leechers, torrentMap.value(leechersKey).toInt(), changed);
 
-        const bool hasActivePeers = (seeders != 0 || webSeeders != 0 || leechers != 0);
+        const bool hasActivePeers = (seeders != 0 || activeWebSeeders != 0 || leechers != 0);
 
         if (torrentMap.value(errorKey).toInt() == 0) {
             switch (torrentMap.value(statusKey).toInt()) {
@@ -294,6 +295,15 @@ namespace libtremotesf
             changed = true;
         }
         trackers = std::move(newTrackers);
+
+        setChanged(activeWebSeeders, torrentMap.value(activeWebSeedersKey).toInt(), changed);
+        {
+            std::vector<QString> newWebSeeders;
+            const auto webSeedersStrings = torrentMap.value(webSeedersKey).toArray();
+            newWebSeeders.reserve(static_cast<size_t>(webSeedersStrings.size()));
+            std::transform(webSeedersStrings.begin(), webSeedersStrings.end(), std::back_insert_iterator(newWebSeeders), [](const QJsonValue& i) { return i.toString(); });
+            setChanged(webSeeders, std::move(newWebSeeders), changed);
+        }
 
         return changed;
     }
@@ -486,11 +496,6 @@ namespace libtremotesf
         return mData.seeders;
     }
 
-    int Torrent::webSeeders() const
-    {
-        return mData.webSeeders;
-    }
-
     int Torrent::leechers() const
     {
         return mData.leechers;
@@ -619,6 +624,16 @@ namespace libtremotesf
     void Torrent::removeTrackers(const QVariantList& ids)
     {
         mRpc->setTorrentProperty(id(), removeTrackerKey, ids, true);
+    }
+
+    const std::vector<QString>& Torrent::webSeeders() const
+    {
+        return mData.webSeeders;
+    }
+
+    int Torrent::activeWebSeeders() const
+    {
+        return mData.activeWebSeeders;
     }
 
     const TorrentData& Torrent::data() const
