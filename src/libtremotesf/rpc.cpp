@@ -1056,6 +1056,7 @@ namespace libtremotesf
                                                   "\"uploadLimit\","
                                                   "\"uploadLimited\","
                                                   "\"uploadRatio\","
+                                                  "\"webseeds\","
                                                   "\"webseedsSendingToUs\""
                                               "]"
                                           "},"
