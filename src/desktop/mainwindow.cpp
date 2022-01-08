@@ -39,6 +39,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPointer>
 #include <QPushButton>
 #include <QShortcut>
 #include <QScreen>
@@ -157,6 +158,12 @@ namespace tremotesf
             RemoteDirectorySelectionWidget *const mDirectoryWidget;
             QCheckBox *const mMoveFilesCheckBox;
         };
+
+        constexpr auto kdePlatformFileDialogClassName = "KDEPlatformFileDialog";
+
+        std::vector<QPointer<QWidget>> toQPointers(QWidgetList&& widgets) {
+            return {widgets.begin(), widgets.end()};
+        }
     }
 
     MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls, QWidget* parent)
@@ -976,27 +983,45 @@ namespace tremotesf
 #else
         Q_UNUSED(newStartupNotificationId)
 #endif
-
-        setWindowState(windowState() & ~Qt::WindowMinimized);
-        show();
-        raise();
-        for (QWindow* window : qApp->topLevelWindows()) {
-            if (window->type() == Qt::Dialog) {
-                window->show();
+        const auto show = [](QWidget& widget) {
+            if (widget.isHidden()) {
+                widget.show();
+            }
+            if (widget.isMinimized()) {
+                widget.setWindowState(widget.windowState() & ~Qt::WindowMinimized);
+            }
+            widget.raise();
+        };
+        show(*this);
+        QWidget* lastDialog = nullptr;
+        // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
+        // so that we don't operate on deleted QWidgets
+        for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
+            if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
+                show(*widget);
+                lastDialog = widget;
             }
         }
-        activateWindow();
+        QWidget* widgetToActivate = qApp->activeModalWidget();
+        if (!widgetToActivate) {
+            widgetToActivate = lastDialog;
+        }
+        if (!widgetToActivate) {
+            widgetToActivate = this;
+        }
+        widgetToActivate->activateWindow();
     }
 
     void MainWindow::hideWindow()
     {
-        // Hide main window and dialogs
-        hide();
-        for (QWindow* window : qApp->topLevelWindows()) {
-            if (window->isVisible() && window->type() == Qt::Dialog) {
-                window->hide();
+        // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
+        // so that we don't operate on deleted QWidgets
+        for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
+            if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
+                widget->hide();
             }
         }
+        hide();
     }
 
     void MainWindow::runAfterDelay(const std::function<void()>& function)
