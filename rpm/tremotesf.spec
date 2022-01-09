@@ -90,7 +90,7 @@ Remote GUI for Transmission BitTorrent client.
 
     mkdir -p %{build_directory}
     cd %{build_directory}
-    %cmake -DSAILFISHOS=ON ..
+    %cmake -DTREMOTESF_SAILFISHOS=ON ..
     %make_build
 %else
     %cmake \
