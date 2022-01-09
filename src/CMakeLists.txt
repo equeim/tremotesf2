@@ -193,3 +193,5 @@ else()
 endif()
 
 set_common_options_on_targets()
+
+install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
