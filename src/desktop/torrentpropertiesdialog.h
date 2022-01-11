@@ -35,6 +35,7 @@ namespace tremotesf
     class BaseTreeView;
     class PeersModel;
     class Rpc;
+    class StringListModel;
     class TorrentFilesModel;
     class TrackersViewWidget;
 
@@ -50,10 +51,12 @@ namespace tremotesf
     private:
         void setupDetailsTab();
         void setupPeersTab();
+        void setupWebSeedersTab();
         void setupLimitsTab();
 
     private:
         void setTorrent(libtremotesf::Torrent* torrent);
+        void onTorrentChanged();
 
         libtremotesf::Torrent* mTorrent;
         Rpc* const mRpc;
@@ -66,6 +69,7 @@ namespace tremotesf
         TrackersViewWidget* mTrackersViewWidget;
         BaseTreeView* mPeersView;
         PeersModel* mPeersModel;
+        StringListModel* mWebSeedersModel;
 
         std::function<void()> mUpdateLimitsTab;
     };

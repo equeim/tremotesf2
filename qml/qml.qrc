@@ -56,5 +56,6 @@
         <file>components/TrackersAddDialog.qml</file>
         <file>components/TrackersPage.qml</file>
         <file>cover.svg</file>
+        <file>components/WebSeedersPage.qml</file>
     </qresource>
 </RCC>

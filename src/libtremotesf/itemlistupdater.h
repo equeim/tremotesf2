@@ -31,7 +31,7 @@ namespace libtremotesf {
     inline constexpr bool is_equality_comparable_v = false;
 
     template<typename T, typename U>
-    inline constexpr bool is_equality_comparable_v<T, U, decltype(std::declval<T>() == std::declval<U>())> = std::is_same_v<decltype(std::declval<T>() == std::declval<U>()), bool>;
+    inline constexpr bool is_equality_comparable_v<T, U, std::enable_if_t<std::is_same_v<decltype(std::declval<T>() == std::declval<U>()), bool>>> = true;
 
     class ItemBatchProcessor {
     public:

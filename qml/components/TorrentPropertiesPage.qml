@@ -56,6 +56,7 @@ Page {
         uploadSpeedLabel.value = Utils.formatByteSpeed(torrent.uploadSpeed)
         etaLabel.value = Utils.formatEta(torrent.eta)
         seedersLabel.value = torrent.seeders.toLocaleString()
+        activeWebSeedersLabel.value = torrent.activeWebSeeders.toLocaleString()
         leechersLabel.value = torrent.leechers.toLocaleString()
         activityLabel.value = torrent.activityDate.toLocaleString(Qt.locale(), Locale.ShortFormat)
         totalSizeLabel.value = Utils.formatByteSize(torrent.totalSize)
@@ -193,6 +194,12 @@ Page {
 
                 GridButton {
                     enabled: torrent
+                    text: qsTranslate("tremotesf", "Web Seeders")
+                    onClicked: pageStack.push(Qt.createComponent("WebSeedersPage.qml"))
+                }
+
+                GridButton {
+                    enabled: torrent
                     text: qsTranslate("tremotesf", "Limits")
                     onClicked: pageStack.push(Qt.createComponent("TorrentLimitsPage.qml"))
                 }
@@ -243,6 +250,11 @@ Page {
             DetailItem {
                 id: seedersLabel
                 label: qsTranslate("tremotesf", "Seeders")
+            }
+
+            DetailItem {
+                id: activeWebSeedersLabel
+                label: qsTranslate("tremotesf", "Active web seeders")
             }
 
             DetailItem {

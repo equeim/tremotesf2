@@ -32,6 +32,7 @@
 #include "../serversmodel.h"
 #include "../settings.h"
 #include "../statusfiltersmodel.h"
+#include "../stringlistmodel.h"
 #include "../torrentfilesmodel.h"
 #include "../torrentfilesmodelentry.h"
 #include "../torrentfilesproxymodel.h"
@@ -86,6 +87,7 @@ namespace tremotesf
         qmlRegisterType<libtremotesf::ServerStats>();
         qRegisterMetaType<libtremotesf::SessionStats>();
         qmlRegisterUncreatableType<libtremotesf::Torrent>(url, versionMajor, versionMinor, "Torrent", QString());
+        qRegisterMetaType<std::vector<QString>>();
 
         qmlRegisterType<BaseProxyModel>(url, versionMajor, versionMinor, "BaseProxyModel");
 
@@ -109,6 +111,8 @@ namespace tremotesf
         qmlRegisterType<TrackersModel>(url, versionMajor, versionMinor, "TrackersModel");
 
         qmlRegisterType<PeersModel>(url, versionMajor, versionMinor, "PeersModel");
+
+        qmlRegisterType<StringListModel>(url, versionMajor, versionMinor, "StringListModel");
 
         qmlRegisterType<SelectionModel>(url, versionMajor, versionMinor, "SelectionModel");
 

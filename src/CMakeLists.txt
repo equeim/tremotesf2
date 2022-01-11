@@ -48,6 +48,8 @@ add_executable(tremotesf
     signalhandler.h
     statusfiltersmodel.cpp
     statusfiltersmodel.h
+    stringlistmodel.cpp
+    stringlistmodel.h
     torrentfilesmodel.cpp
     torrentfilesmodel.h
     torrentfilesmodelentry.cpp
