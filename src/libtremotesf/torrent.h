@@ -198,6 +198,7 @@ namespace libtremotesf
         Q_PROPERTY(QDateTime creationDate READ creationDate NOTIFY changed)
         Q_PROPERTY(QString comment READ comment NOTIFY changed)
 
+        Q_PROPERTY(std::vector<QString> webSeeders READ webSeeders NOTIFY changed)
         Q_PROPERTY(int activeWebSeeders READ activeWebSeeders NOTIFY changed)
 
     public:

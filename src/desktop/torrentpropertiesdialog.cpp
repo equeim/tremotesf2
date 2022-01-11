@@ -50,6 +50,7 @@
 #include "../utils.h"
 #include "commondelegate.h"
 #include "desktoputils.h"
+#include "stringlistmodel.h"
 #include "torrentfilesview.h"
 #include "trackersviewwidget.h"
 
@@ -88,7 +89,8 @@ namespace tremotesf
           mFilesModel(new TorrentFilesModel(mTorrent, mRpc, this)),
           mTrackersViewWidget(new TrackersViewWidget(mTorrent, mRpc, this)),
           mPeersView(nullptr),
-          mPeersModel(nullptr)
+          mPeersModel(nullptr),
+          mWebSeedersModel(nullptr)
     {
         auto layout = new QVBoxLayout(this);
 
@@ -101,6 +103,7 @@ namespace tremotesf
         mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc), qApp->translate("tremotesf", "Files"));
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));
         setupPeersTab();
+        setupWebSeedersTab();
         setupLimitsTab();
 
         layout->addWidget(mTabWidget);
@@ -115,6 +118,8 @@ namespace tremotesf
         QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] {
             setTorrent(mRpc->torrentByHash(torrentHash));
         });
+
+        onTorrentChanged();
 
         setMinimumSize(minimumSizeHint());
         restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
@@ -159,6 +164,8 @@ namespace tremotesf
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "ETA:"), etaLabel);
         auto seedersLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Seeders:"), seedersLabel);
+        auto activeWebSeedersLabel = new QLabel(this);
+        activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Active web seeders:"), activeWebSeedersLabel);
         auto leechersLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Leechers:"), leechersLabel);
         auto lastActivityLabel = new QLabel(this);
@@ -205,6 +212,7 @@ namespace tremotesf
 
             const QLocale locale;
             seedersLabel->setText(locale.toString(mTorrent->seeders()));
+            activeWebSeedersLabel->setText(locale.toString(mTorrent->activeWebSeeders()));
             leechersLabel->setText(locale.toString(mTorrent->leechers()));
 
             lastActivityLabel->setText(mTorrent->activityDate().toString());
@@ -218,9 +226,6 @@ namespace tremotesf
                 desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
             }
         };
-
-        mUpdateDetailsTab();
-        QObject::connect(mTorrent, &Torrent::changed, this, mUpdateDetailsTab);
     }
 
     void TorrentPropertiesDialog::setupPeersTab()
@@ -240,6 +245,24 @@ namespace tremotesf
         peersTabLayout->addWidget(mPeersView);
 
         mTabWidget->addTab(peersTab, qApp->translate("tremotesf", "Peers"));
+    }
+
+    void TorrentPropertiesDialog::setupWebSeedersTab()
+    {
+        mWebSeedersModel = new StringListModel(qApp->translate("tremotesf", "Web seeder"), this);
+        auto webSeedersProxyModel = new BaseProxyModel(mWebSeedersModel, Qt::DisplayRole, this);
+
+        auto webSeedersTab = new QWidget(this);
+        auto webSeedersTabLayout = new QVBoxLayout(webSeedersTab);
+
+        auto webSeedersView = new BaseTreeView(this);
+        webSeedersView->header()->setContextMenuPolicy(Qt::DefaultContextMenu);
+        webSeedersView->setModel(webSeedersProxyModel);
+        webSeedersView->setRootIsDecorated(false);
+
+        webSeedersTabLayout->addWidget(webSeedersView);
+
+        mTabWidget->addTab(webSeedersTab, qApp->translate("tremotesf", "Web seeders"));
     }
 
     void TorrentPropertiesDialog::setupLimitsTab()
@@ -481,42 +504,52 @@ namespace tremotesf
                              mTorrent,
                              &Torrent::setPeersLimit);
         };
-
-        mUpdateLimitsTab();
     }
 
     void TorrentPropertiesDialog::setTorrent(Torrent* torrent)
     {
         if (torrent != mTorrent) {
-            mTorrent = torrent;
-
             if (mTorrent) {
-                mMessageWidget->animatedHide();
+                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            }
+            mTorrent = torrent;
+            onTorrentChanged();
+        }
+    }
 
-                for (int i = 0, count = mTabWidget->count(); i < count; i++) {
-                    mTabWidget->widget(i)->setEnabled(true);
-                }
+    void TorrentPropertiesDialog::onTorrentChanged()
+    {
+        if (mTorrent) {
+            mMessageWidget->animatedHide();
 
-                QObject::connect(mTorrent, &Torrent::changed, this, mUpdateDetailsTab);
-                mUpdateDetailsTab();
-
-                mUpdateLimitsTab();
-            } else {
-                if (mRpc->connectionState() == Rpc::ConnectionState::Disconnected) {
-                    mMessageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
-                } else {
-                    mMessageWidget->setText(qApp->translate("tremotesf", "Torrent Removed"));
-                }
-                mMessageWidget->animatedShow();
-
-                for (int i = 0, count = mTabWidget->count(); i < count; i++) {
-                    mTabWidget->widget(i)->setEnabled(false);
-                }
+            for (int i = 0, count = mTabWidget->count(); i < count; i++) {
+                mTabWidget->widget(i)->setEnabled(true);
             }
 
-            mFilesModel->setTorrent(mTorrent);
-            mTrackersViewWidget->setTorrent(mTorrent);
-            mPeersModel->setTorrent(mTorrent);
+            mUpdateDetailsTab();
+            mWebSeedersModel->setStringList(mTorrent->webSeeders());
+            mUpdateLimitsTab();
+
+            QObject::connect(mTorrent, &Torrent::changed, this, [this] {
+                mUpdateDetailsTab();
+                mWebSeedersModel->setStringList(mTorrent->webSeeders());
+                mUpdateLimitsTab();
+            });
+        } else {
+            if (mRpc->connectionState() == Rpc::ConnectionState::Disconnected) {
+                mMessageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
+            } else {
+                mMessageWidget->setText(qApp->translate("tremotesf", "Torrent Removed"));
+            }
+            mMessageWidget->animatedShow();
+            for (int i = 0, count = mTabWidget->count(); i < count; i++) {
+                mTabWidget->widget(i)->setEnabled(false);
+            }
+            mWebSeedersModel->setStringList({});
         }
+
+        mFilesModel->setTorrent(mTorrent);
+        mTrackersViewWidget->setTorrent(mTorrent);
+        mPeersModel->setTorrent(mTorrent);
     }
 }
