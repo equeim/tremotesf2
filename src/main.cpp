@@ -50,6 +50,10 @@
 
 int main(int argc, char** argv)
 {
+#ifdef Q_OS_WIN
+    SetConsoleOutputCP(GetACP());
+#endif
+
     // Setup handler for UNIX signals or Windows console handler
     tremotesf::SignalHandler::setupHandlers();
 
