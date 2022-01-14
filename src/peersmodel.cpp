@@ -218,7 +218,7 @@ namespace tremotesf
         if (addedCount > 0) {
             beginInsertRows(QModelIndex(), static_cast<int>(mPeers.size()), static_cast<int>(newPeers.size()) - 1);
             mPeers.reserve(newPeers.size());
-            std::copy(newPeers.begin() + static_cast<ssize_t>(mPeers.size()), newPeers.end(), std::back_insert_iterator(mPeers));
+            std::copy(newPeers.begin() + static_cast<ptrdiff_t>(mPeers.size()), newPeers.end(), std::back_insert_iterator(mPeers));
             endInsertRows();
         }
 
