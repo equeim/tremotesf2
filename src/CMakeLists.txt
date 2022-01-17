@@ -149,7 +149,12 @@ else()
     )
 
     if (WIN32)
-        target_sources(tremotesf PRIVATE desktop/tremotesf.rc)
+        target_sources(
+            tremotesf
+            PRIVATE
+            desktop/tremotesf.rc
+            desktop/tremotesf.manifest
+        )
         string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
         if (NOT build_type STREQUAL "debug")
             set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE ON)
