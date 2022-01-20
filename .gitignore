@@ -1,7 +1,7 @@
-build
-build-*
+/build
+/build-*
 *.list
 *.user
 *.user.*
-RPMS
-installroot
+/RPMS
+/installroot
