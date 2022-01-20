@@ -1,5 +1,9 @@
-cmake_minimum_required(VERSION 3.10)
-cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.20)
+if (WIN32)
+    cmake_minimum_required(VERSION 3.22)
+else()
+    cmake_minimum_required(VERSION 3.10)
+endif()
+cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.22)
 
 project(tremotesf VERSION 1.10.0 LANGUAGES CXX)
 

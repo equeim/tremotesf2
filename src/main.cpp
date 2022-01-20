@@ -21,6 +21,7 @@
 
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QStringBuilder>
 #include <QTranslator>
 
 #ifdef TREMOTESF_SAILFISHOS
@@ -105,16 +106,26 @@ int main(int argc, char** argv)
     qApp->setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    QIcon::setThemeSearchPaths({QLatin1String("icons")});
-    QIcon::setThemeName(QLatin1String("breeze"));
+    QIcon::setThemeSearchPaths({QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
+    QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
 #endif
 #endif
 
     auto ipcServer = tremotesf::IpcServer::createInstance(qApp);
 
     QTranslator qtTranslator;
-    qtTranslator.load(QLocale(), QLatin1String("qt"), QLatin1String("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    qApp->installTranslator(&qtTranslator);
+    {
+#ifdef Q_OS_WIN
+        const QString qtTranslationsPath = QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR);
+#else
+        const auto qtTranslationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#endif
+        if (qtTranslator.load(QLocale(), QLatin1String(TREMOTESF_QT_TRANSLATIONS_FILENAME), QLatin1String("_"), qtTranslationsPath)) {
+            qApp->installTranslator(&qtTranslator);
+        } else {
+            qWarning() << "Failed to load Qt translation for" << QLocale() << "from" << qtTranslationsPath;
+        }
+    }
 
     QTranslator appTranslator;
     appTranslator.load(QLocale().name(), QLatin1String(":/translations"));

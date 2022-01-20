@@ -4,10 +4,6 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
 
-if (WIN32)
-    set(TREMOTESF_COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
-endif()
-
 set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6" FORCE)
 include(libtremotesf/cmake/CommonOptions.cmake)
 add_subdirectory(libtremotesf)
@@ -146,6 +142,7 @@ else()
     target_compile_definitions(tremotesf PRIVATE
         TREMOTESF_APP_ID="org.equeim.Tremotesf"
         TREMOTESF_APP_NAME="Tremotesf"
+        TREMOTESF_QT_TRANSLATIONS_FILENAME="${TREMOTESF_QT_TRANSLATIONS_FILENAME}"
     )
 
     if (WIN32)
@@ -155,10 +152,20 @@ else()
             desktop/tremotesf.rc
             desktop/tremotesf.manifest
         )
-        string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
-        if (NOT build_type STREQUAL "debug")
-            set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE ON)
-        endif()
+        target_compile_definitions(tremotesf PRIVATE
+            TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
+            TREMOTESF_BUNDLED_ICON_THEME="${TREMOTESF_BUNDLED_ICON_THEME}"
+            TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
+        )
+        set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
+    endif()
+
+    if (Qt5_VERSION VERSION_GREATER_EQUAL 5.14.0)
+        qt5_import_plugins(tremotesf
+                EXCLUDE_BY_TYPE imageformats
+                EXCLUDE_BY_TYPE iconengines
+                INCLUDE Qt::QSvgIconPlugin
+        )
     endif()
 endif()
 
@@ -201,4 +208,8 @@ endif()
 
 set_common_options_on_targets()
 
-install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
+if (WIN32)
+    install(TARGETS tremotesf DESTINATION ".")
+else()
+    install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()

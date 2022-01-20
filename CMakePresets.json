@@ -1,0 +1,54 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default preset",
+      "generator": "Ninja",
+      "binaryDir": "build",
+      "installDir": "install",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "warnings": {
+        "dev": true,
+        "deprecated": true
+      }
+    },
+    {
+      "name": "default-multi",
+      "inherits": "default",
+      "displayName": "Default multi-config preset",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
+      }
+    },
+    {
+      "name": "windows",
+      "inherits": "default",
+      "displayName": "Windows preset",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "VCPKG_HOST_TRIPLET": "x64-windows-static",
+        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-after-build"
+      }
+    },
+    {
+      "name": "windows-multi",
+      "inherits": [
+        "default-multi",
+        "windows"
+      ],
+      "displayName": "Windows multi-config preset"
+    }
+  ]
+}
