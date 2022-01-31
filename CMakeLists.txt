@@ -3,8 +3,8 @@ cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.20)
 
 project(tremotesf VERSION 1.10.0 LANGUAGES CXX)
 
+option(TREMOTESF_BUILD_TESTS "Build tests" ON)
 option(TREMOTESF_SAILFISHOS "Build for Sailfish OS" OFF)
-option(TREMOTESF_BUILD_TESTS "Build tests" OFF)
 
 include(GNUInstallDirs)
 

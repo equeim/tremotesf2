@@ -8,7 +8,7 @@ if (WIN32)
     set(TREMOTESF_COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
 endif()
 
-set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6")
+set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6" FORCE)
 include(libtremotesf/cmake/CommonOptions.cmake)
 add_subdirectory(libtremotesf)
 
