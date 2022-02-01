@@ -10,10 +10,11 @@ jobs:
   build-fedora:
     strategy:
       matrix:
+        fedora-version: [latest, rawhide]
         compiler: [gcc, clang]
 
     runs-on: ubuntu-latest
-    container: fedora:latest
+    container: fedora:${{matrix.fedora-version}}
 
     steps:
     - name: Install packages
@@ -31,13 +32,15 @@ jobs:
   build-ubuntu:
     strategy:
       matrix:
+        ubuntu-version: [latest, rolling]
         compiler: [gcc, clang]
 
     runs-on: ubuntu-latest
+    container: ubuntu:${{matrix.ubuntu-version}}
 
     steps:
     - name: Install packages
-      run: sudo apt-get update && sudo apt-get --no-install-recommends --assume-yes install cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libkf5widgetsaddons-dev libkf5windowsystem-dev gettext ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }}
+      run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libkf5widgetsaddons-dev libkf5windowsystem-dev gettext ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }}
 
     - name: Checkout
       uses: actions/checkout@v2
