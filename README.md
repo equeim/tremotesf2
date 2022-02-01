@@ -37,10 +37,9 @@ On GNU/Linux and BSD:
 
 #### Building
 ```sh
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/your/install/prefix
-make
-make install
+cmake -S /path/to/sources -B /path/to/build/directory --preset default -D CMAKE_BUILD_TYPE=Debug
+cmake --build /path/to/build/directory
+cmake --install /path/to/build/directory --prefix /path/to/install/directory
 ```
 
 #### GNU/Linux
@@ -51,31 +50,31 @@ make install
 - Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ```sh
-wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_10/Release.key -O - | sudo apt-key add -
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_10/ /"
+wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/Release.key -O - | sudo apt-key add -
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
 
 - Fedora - [Copr](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
 ```sh
-dnf copr enable equeim/tremotesf
-dnf install tremotesf
+sudo dnf copr enable equeim/tremotesf
+sudo dnf install tremotesf
 ```
 
 - Gentoo - [equeim-overlay](https://github.com/equeim/equeim-overlay)
 
 - Mageia - [Copr](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
 ```sh
-dnf copr enable equeim/tremotesf
-dnf install tremotesf
+sudo dnf copr enable equeim/tremotesf
+sudo dnf install tremotesf
 ```
 
 - openSUSE - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 ```sh
-#zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.2/home:equeim:tremotesf.repo
-zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
-zypper in tremotesf
+#sudo zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.3/home:equeim:tremotesf.repo
+sudo zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
+sudo zypper in tremotesf
 ```
 
 - Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
@@ -89,6 +88,18 @@ sudo apt install tremotesf
 
 #### Windows
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
+
+Build instructions for MSVC toolchain with vcpkg:
+1. Install Visual Studio with 'Desktop development with C++' workload
+2. Install and setup [vcpkg](https://github.com/microsoft/vcpkg#quick-start-windows), and make sure that you have 15 GB of free space on disk where vcpkg is located
+3. Install latest version of CMake
+4. Launch x64 Command Propmt for Visual Studio, execute:
+```pwsh
+cmake -S path\to\sources -B path\to\build\directory --preset windows --toolchain path\to\vcpkg\scripts\buildsystems\vcpkg.cmake -D CMAKE_BUILD_TYPE=Debug
+# Initial compilation of dependencies will take a while
+cmake --build path\to\build\directory
+cmake --install path\to\build\directory --prefix path\to\install\directory
+```
 
 ### Sailfish OS
 Tremotesf is available in Jolla Store and [OpenRepos.net](https://openrepos.net/content/equeim/tremotesf).
