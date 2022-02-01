@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     qApp->setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    QIcon::setThemeSearchPaths({QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
+    QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
     QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
 #endif
 #endif

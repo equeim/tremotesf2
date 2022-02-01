@@ -162,9 +162,9 @@ else()
 
     if (Qt5_VERSION VERSION_GREATER_EQUAL 5.14.0)
         qt5_import_plugins(tremotesf
-                EXCLUDE_BY_TYPE imageformats
-                EXCLUDE_BY_TYPE iconengines
-                INCLUDE Qt::QSvgIconPlugin
+            EXCLUDE_BY_TYPE imageformats
+            EXCLUDE_BY_TYPE iconengines
+            INCLUDE Qt::QSvgIconPlugin
         )
     endif()
 endif()

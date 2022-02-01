@@ -7,11 +7,9 @@
         "name": "qt5-base",
         "default-features": false
     },
-    {
-        "name": "qt5-tools",
-        "default-features": false
-    },
+    "qt5-tools",
     "qt5-translations",
+    "qt5-svg",
     "openssl",
     "kf5widgetsaddons",
     "kf5breezeicons"
@@ -31,6 +29,11 @@
       "name": "qt5-translations",
       "version": "5.15.2",
       "port-version": 1
+    },
+    {
+      "name": "qt5-svg",
+      "version": "5.15.2",
+      "port-version": 2
     },
     {
       "name": "openssl",
