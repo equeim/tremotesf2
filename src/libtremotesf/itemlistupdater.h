@@ -140,8 +140,9 @@ namespace libtremotesf {
                 return std::find_if(container.begin(), container.end(), [&item](const NewItem& newItem) {
                     return newItem == item;
                 });
+            } else {
+                throw std::logic_error("findNewItemForItem() must be implemented");
             }
-            throw std::logic_error("findNewItemForItem() must be implemented");
         };
 
         virtual void onAboutToRemoveItems(size_t first, size_t last) = 0;
@@ -167,8 +168,9 @@ namespace libtremotesf {
         inline virtual Item createItemFromNewItem(NewItem&& newItem) {
             if constexpr (std::is_convertible_v<NewItem, Item>) {
                 return std::move(newItem);
+            } else {
+                throw std::logic_error("createItemFromNewItem() must be implemented");
             }
-            throw std::logic_error("createItemFromNewItem() must be implemented");
         };
         virtual void onAboutToAddItems(size_t count) = 0;
         virtual void onAddedItems(size_t count) = 0;

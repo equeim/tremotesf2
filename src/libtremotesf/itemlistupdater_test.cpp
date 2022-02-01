@@ -264,7 +264,7 @@ private:
             qInfo() << " - to" << newList;
             try {
                 checkUpdateInner(oldList, newList);
-            } catch (const AbortTest& abort) {
+            } catch (const AbortTest&) {
                 break;
             }
         } while (std::next_permutation(newList.begin(), newList.end()));

@@ -49,6 +49,11 @@ function(set_common_options_on_targets)
         QT_DISABLE_DEPRECATED_BEFORE=0x050e00
     )
 
+    if (WIN32)
+        # Windows 8.1
+        list(APPEND common_compile_definitions WINVER=0x0603 _WIN32_WINNT=0x0603)
+    endif()
+
     if (NOT DEFINED TREMOTESF_SAILFISHOS)
         message(FATAL_ERROR "TREMOTESF_SAILFISHOS is not defined")
     endif()

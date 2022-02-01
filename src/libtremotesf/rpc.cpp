@@ -34,6 +34,7 @@
 #include <QTimer>
 #include <QSslCertificate>
 #include <QSslKey>
+#include <QStringBuilder>
 #include <QStandardPaths>
 #include <QtConcurrentRun>
 
@@ -273,13 +274,16 @@ namespace libtremotesf
         mNetwork->clearAccessCache();
         disconnect();
 
-        mServerUrl.setHost(server.address);
-        mServerUrl.setPort(server.port);
-        mServerUrl.setPath(server.apiPath);
+        QLatin1String scheme;
         if (server.https) {
-            mServerUrl.setScheme(QLatin1String("https"));
+            scheme = QLatin1String("https://");
         } else {
-            mServerUrl.setScheme(QLatin1String("http"));
+            scheme = QLatin1String("http://");
+        }
+        const QString urlString = scheme % server.address % QLatin1Char(':') % QString::number(server.port) % QLatin1Char('/') % server.apiPath;
+        mServerUrl = QUrl(urlString, QUrl::TolerantMode).adjusted(QUrl::StripTrailingSlash | QUrl::NormalizePathSegments);
+        if (!mServerUrl.isValid()) {
+            qWarning() << "Failed to parse URL from" << urlString;
         }
 
         switch (server.proxyType) {
@@ -640,20 +644,20 @@ namespace libtremotesf
                     [=](const auto& parseResult, bool success) {
                         if (success) {
                             const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
-                            for (const auto& i : torrents) {
-                                const QJsonObject torrentMap(i.toObject());
+                            for (const auto& torrentJson : torrents) {
+                                const QJsonObject torrentMap(torrentJson.toObject());
                                 const int torrentId = torrentMap.value(Torrent::idKey).toInt();
                                 Torrent* torrent = torrentById(torrentId);
                                 if (torrent && torrent->isFilesEnabled()) {
                                     torrent->updateFiles(torrentMap);
                                 }
-                                if (scheduled) {
-                                    for (const auto& torrent : mTorrents) {
-                                        torrent->checkThatFilesUpdated();
-                                    }
-                                    checkIfTorrentsUpdated();
-                                    startUpdateTimer();
+                            }
+                            if (scheduled) {
+                                for (const auto& torrent : mTorrents) {
+                                    torrent->checkThatFilesUpdated();
                                 }
+                                checkIfTorrentsUpdated();
+                                startUpdateTimer();
                             }
                         }
                     });
@@ -666,20 +670,20 @@ namespace libtremotesf
                     [=](const auto& parseResult, bool success) {
                         if (success) {
                             const QJsonArray torrents(getReplyArguments(parseResult).value(torrentsKey).toArray());
-                            for (const auto& i : torrents) {
-                                const QJsonObject torrentMap(i.toObject());
+                            for (const auto& torrentJson : torrents) {
+                                const QJsonObject torrentMap(torrentJson.toObject());
                                 const int torrentId = torrentMap.value(Torrent::idKey).toInt();
                                 Torrent* torrent = torrentById(torrentId);
                                 if (torrent && torrent->isPeersEnabled()) {
                                     torrent->updatePeers(torrentMap);
                                 }
-                                if (scheduled) {
-                                    for (const auto& torrent : mTorrents) {
-                                        torrent->checkThatPeersUpdated();
-                                    }
-                                    checkIfTorrentsUpdated();
-                                    startUpdateTimer();
+                            }
+                            if (scheduled) {
+                                for (const auto& torrent : mTorrents) {
+                                    torrent->checkThatPeersUpdated();
                                 }
+                                checkIfTorrentsUpdated();
+                                startUpdateTimer();
                             }
                         }
                     });
@@ -786,7 +790,7 @@ namespace libtremotesf
 
         mStatus = status;
 
-        size_t removedTorrentsCount;
+        size_t removedTorrentsCount = 0;
         if (connectionStateChanged) {
             resetStateOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsCount);
         }
