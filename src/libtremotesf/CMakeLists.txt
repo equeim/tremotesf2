@@ -21,6 +21,9 @@ set(CMAKE_AUTOMOC ON)
 include(cmake/CommonOptions.cmake)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Concurrent Network)
+if (TREMOTESF_SAILFISHOS)
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Qml)
+endif()
 
 if (ANDROID)
     set(library_type STATIC)
@@ -52,7 +55,10 @@ add_library(
 )
 
 target_link_libraries(libtremotesf Qt${TREMOTESF_QT_VERSION_MAJOR}::Core Qt${TREMOTESF_QT_VERSION_MAJOR}::Network)
-target_include_directories(libtremotesf PUBLIC ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
+if (TREMOTESF_SAILFISHOS)
+    target_link_libraries(libtremotesf Qt${TREMOTESF_QT_VERSION_MAJOR}::Qml)
+endif()
+target_include_directories(libtremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 
 if (TREMOTESF_BUILD_TESTS AND NOT ANDROID)
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
