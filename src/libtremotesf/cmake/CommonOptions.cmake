@@ -58,7 +58,9 @@ function(set_common_options_on_targets)
         message(FATAL_ERROR "TREMOTESF_SAILFISHOS is not defined")
     endif()
 
-    if (NOT TREMOTESF_SAILFISHOS)
+    if (TREMOTESF_SAILFISHOS)
+        list(APPEND common_compile_definitions TREMOTESF_SAILFISHOS)
+    else()
         list(APPEND common_compile_definitions QT_MESSAGELOGCONTEXT)
     endif()
 
