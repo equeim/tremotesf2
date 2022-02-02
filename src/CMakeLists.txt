@@ -68,7 +68,11 @@ add_executable(tremotesf
 set_target_properties(tremotesf PROPERTIES OUTPUT_NAME "${TREMOTESF_NAME}")
 target_link_libraries(tremotesf Qt5::Network libtremotesf)
 target_include_directories(tremotesf PRIVATE ${Qt5Concurrent_INCLUDE_DIRS})
-target_compile_definitions(tremotesf PRIVATE TREMOTESF_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(
+    tremotesf PRIVATE
+    TREMOTESF_VERSION="${PROJECT_VERSION}"
+    TREMOTESF_QT_TRANSLATIONS_FILENAME="${TREMOTESF_QT_TRANSLATIONS_FILENAME}"
+)
 
 if (TREMOTESF_SAILFISHOS)
     find_package(Qt5 REQUIRED COMPONENTS Quick)
@@ -142,7 +146,6 @@ else()
     target_compile_definitions(tremotesf PRIVATE
         TREMOTESF_APP_ID="org.equeim.Tremotesf"
         TREMOTESF_APP_NAME="Tremotesf"
-        TREMOTESF_QT_TRANSLATIONS_FILENAME="${TREMOTESF_QT_TRANSLATIONS_FILENAME}"
     )
 
     if (WIN32)

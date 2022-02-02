@@ -26,21 +26,26 @@ BuildRequires: desktop-file-utils
 %if %{defined sailfishos}
 Requires:      sailfishsilica-qt5
 Requires:      nemo-qml-plugin-notifications-qt5
+BuildRequires: ninja
 BuildRequires: pkgconfig(Qt5Concurrent)
-BuildRequires: pkgconfig(Qt5Network)
+BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5DBus)
+BuildRequires: pkgconfig(Qt5Network)
 BuildRequires: pkgconfig(Qt5Quick)
 BuildRequires: qt5-qttools-linguist
 BuildRequires: pkgconfig(sailfishapp)
 %global __provides_exclude mimehandler
 %else
 Requires:      hicolor-icon-theme
+BuildRequires: cmake(Qt5)
 BuildRequires: cmake(Qt5Concurrent)
-BuildRequires: cmake(Qt5Network)
+BuildRequires: cmake(Qt5Core)
 BuildRequires: cmake(Qt5DBus)
+BuildRequires: cmake(Qt5LinguistTools)
+BuildRequires: cmake(Qt5Network)
+BuildRequires: cmake(Qt5Test)
 BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5X11Extras)
-BuildRequires: cmake(Qt5LinguistTools)
 BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: gettext
@@ -88,10 +93,8 @@ Remote GUI for Transmission BitTorrent client.
         export CXXFLAGS="${CXXFLAGS:-%optflags} -O0 -Wp,-U_FORTIFY_SOURCE"
     %endif
 
-    mkdir -p %{build_directory}
-    cd %{build_directory}
-    %cmake -DTREMOTESF_SAILFISHOS=ON ..
-    %make_build
+    %cmake -S . -B %{build_directory} -G Ninja -D TREMOTESF_SAILFISHOS=ON -D TREMOTESF_BUILD_TESTS=OFF
+    cmake --build %{build_directory} --parallel %{?_smp_mflags}
 %else
     %cmake \
 %if %{defined suse_version} && 0%{?suse_version} == 1500
@@ -105,17 +108,20 @@ Remote GUI for Transmission BitTorrent client.
     %endif
 %endif
 
+%check
+%if ! %{defined sailfishos}
+    %if %{defined ctest}
+        %ctest
+    %endif
+%endif
+
 %install
 %if %{defined sailfishos}
-    cd %{build_directory}
-    %make_install
+    DESTDIR=%{buildroot} cmake --install %{build_directory}
 %else
     %if %{defined cmake_install}
         %cmake_install
     %else
-        %if %{defined mga7}
-            cd %{_cmake_builddir}
-        %endif
         %make_install
     %endif
 
