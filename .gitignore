@@ -1,7 +1,8 @@
-/build
-/build-*
+/.vs
+/installroot
+/out
+/RPMS
+/vcpkg_installed
 *.list
 *.user
 *.user.*
-/RPMS
-/installroot
