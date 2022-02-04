@@ -66,7 +66,7 @@ jobs:
       uses: equeim/action-cmake-build@v5.2
       with:
         # We set VCPKG_INSTALLED_DIR variable to share vcpkg prefix between Debug and Release configs
-        cmake-arguments: --preset windows --toolchain '${{env.VCPKG_ROOT}}\scripts\buildsystems\vcpkg.cmake' -D VCPKG_INSTALLED_DIR='${{github.workspace}}\vcpkg_installed'
+        cmake-arguments: --preset windows
         install: true
 
     - name: Archive debug artifacts
@@ -90,4 +90,4 @@ jobs:
         name: vcpkg-logs
         path: |
           ${{env.VCPKG_ROOT}}\buildtrees\*\*.log
-          .\build\vcpkg-manifest-install.log
+          .\build-*\vcpkg-manifest-install.log
