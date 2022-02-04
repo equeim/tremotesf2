@@ -188,12 +188,12 @@ namespace tremotesf
 
         contextMenu.addSeparator();
 
-        QAction* downloadAction = contextMenu.addAction(qApp->translate("tremotesf", "&Download", "File menu item, verb"));
+        QAction* downloadAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("download")), qApp->translate("tremotesf", "&Download", "File menu item, verb"));
         QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, true);
         });
 
-        QAction* notDownloadAction = contextMenu.addAction(qApp->translate("tremotesf", "&Not Download"));
+        QAction* notDownloadAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("dialog-cancel")), qApp->translate("tremotesf", "&Not Download"));
         QObject::connect(notDownloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, false);
         });
@@ -263,7 +263,7 @@ namespace tremotesf
 
         if (mRpc->serverSettings()->canRenameFiles()) {
             contextMenu.addSeparator();
-            QAction* renameAction = contextMenu.addAction(qApp->translate("tremotesf", "&Rename"));
+            QAction* renameAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("edit-rename")), qApp->translate("tremotesf", "&Rename"));
             renameAction->setEnabled(sourceIndexes.size() == 1);
             QObject::connect(renameAction, &QAction::triggered, this, [=] {
                 const QModelIndex& index = sourceIndexes.first();

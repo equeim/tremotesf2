@@ -98,14 +98,18 @@ if (WIN32)
             application-exit.svg
             applications-utilities.svg
             configure.svg
+            dialog-cancel.svg
             dialog-error.svg
             document-open.svg
             document-preview.svg
             document-properties.svg
+            download.svg
             edit-copy.svg
             edit-delete.svg
             edit-delete.svg
+            edit-rename.svg
             edit-select-all.svg
+            edit-select-invert.svg
             folder-download.svg
             go-bottom.svg
             go-down.svg
@@ -116,6 +120,7 @@ if (WIN32)
             insert-link.svg
             list-add.svg
             list-remove.svg
+            mark-location.svg
             media-playback-pause.svg
             media-playback-start.svg
             network-connect.svg
@@ -128,6 +133,7 @@ if (WIN32)
             system-shutdown.svg
             view-refresh.svg
             view-refresh.svg
+            view-statistics.svg
         )
 
         list(JOIN bundled_icon_theme_files "|" bundled_icon_theme_files_regex)
