@@ -53,44 +53,4 @@ jobs:
         install: true
 
   build-windows:
-    runs-on: windows-2022
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Set up vcpkg and MSVC environment
-      uses: equeim/action-setup-vcpkg-msvc@v6
-      with:
-        vcpkg-use-github-packages: true
-        vcpkg-github-packages-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Build Tremotesf
-      uses: equeim/action-cmake-build@v5.2
-      with:
-        # We set VCPKG_INSTALLED_DIR variable to share vcpkg prefix between Debug and Release configs
-        cmake-arguments: --preset windows
-        install: true
-
-    - name: Archive debug artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: tremotesf-win64-debug
-        path: |
-          .\install-Debug\**\*
-
-    - name: Archive release artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: tremotesf-win64-release
-        path: |
-          .\install-Release\**\*
-
-    - name: Archive vcpkg logs
-      uses: actions/upload-artifact@v2
-      if: always()
-      with:
-        name: vcpkg-logs
-        path: |
-          ${{env.VCPKG_ROOT}}\buildtrees\*\*.log
-          .\build-*\vcpkg-manifest-install.log
+    uses: ./.github/workflows/build-windows.yml
