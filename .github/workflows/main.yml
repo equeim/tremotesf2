@@ -52,6 +52,23 @@ jobs:
         cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
         install: true
 
+  build-flatpak:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Flatpak
+      run: |
+        sudo add-apt-repository -y ppa:flatpak/stable
+        sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install flatpak flatpak-builder elfutils
+        flatpak remote-add --user --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Build Tremotesf
+      run: |
+        flatpak-builder --user --install-deps-from=flathub build-dir org.equeim.Tremotesf.json
+
   build-windows:
     runs-on: windows-2022
 
