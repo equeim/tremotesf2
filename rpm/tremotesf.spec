@@ -37,6 +37,7 @@ BuildRequires: pkgconfig(sailfishapp)
 %global __provides_exclude mimehandler
 %else
 Requires:      hicolor-icon-theme
+BuildRequires: make
 BuildRequires: cmake(Qt5)
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5Core)
@@ -50,20 +51,27 @@ BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: gettext
 
-%if %{defined suse_version}
+    %if %{defined suse_version}
 BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
-%if 0%{?suse_version} == 1500
-BuildRequires:  gcc10-c++
-%endif
-%else
-%if %{defined mageia}
+    %else
+        %if %{defined mageia}
 BuildRequires: appstream-util
-%else
+        %else
 BuildRequires: libappstream-glib
-%endif
-%endif
+        %endif
+    %endif
+
+    %if %{defined fedora} && "%{toolchain}" == "clang"
+BuildRequires: clang
+    %else
+        %if %{defined suse_version} && 0%{?suse_version} == 1500
+BuildRequires: gcc10-c++
+        %else
+BuildRequires: gcc-c++
+        %endif
+    %endif
 %endif
 
 %if %{defined sailfishos}
@@ -71,7 +79,7 @@ BuildRequires: libappstream-glib
     %global debug 0
 %else
     %if %{defined suse_version}
-    %global _metainfodir %{_datadir}/metainfo
+        %global _metainfodir %{_datadir}/metainfo
     %endif
 %endif
 
