@@ -67,7 +67,7 @@ BuildRequires: libappstream-glib
 BuildRequires: clang
     %else
         %if %{defined suse_version} && 0%{?suse_version} == 1500
-BuildRequires: gcc10-c++
+BuildRequires: gcc11-c++
         %else
 BuildRequires: gcc-c++
         %endif
@@ -104,35 +104,23 @@ Remote GUI for Transmission BitTorrent client.
     %cmake -S . -B %{build_directory} -G Ninja -D TREMOTESF_SAILFISHOS=ON -D TREMOTESF_BUILD_TESTS=OFF
     cmake --build %{build_directory} --parallel %{?_smp_mflags}
 %else
-    %cmake \
-%if %{defined suse_version} && 0%{?suse_version} == 1500
-    -DCMAKE_CXX_COMPILER=g++-10
-%endif
-
-    %if %{defined cmake_build}
-        %cmake_build
-    %else
-        %make_build
+    %if %{defined suse_version} && 0%{?suse_version} == 1500
+        export CXX=g++-11
     %endif
+    %cmake
+    %cmake_build
 %endif
 
 %check
 %if ! %{defined sailfishos}
-    %if %{defined ctest}
-        %ctest
-    %endif
+    %ctest
 %endif
 
 %install
 %if %{defined sailfishos}
     DESTDIR=%{buildroot} cmake --install %{build_directory}
 %else
-    %if %{defined cmake_install}
-        %cmake_install
-    %else
-        %make_install
-    %endif
-
+    %cmake_install
     appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{app_id}.appdata.xml
 %endif
 
