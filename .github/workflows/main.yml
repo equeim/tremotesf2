@@ -45,14 +45,17 @@ jobs:
     - name: Build Tremotesf
       run: rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb --build-in-place rpm/tremotesf.spec
 
-  build-ubuntu:
+  build-debian-ubuntu:
     strategy:
       matrix:
-        ubuntu-version: [latest, rolling]
+        container-image: ['debian:oldstable', 'debian:stable', 'ubuntu:latest', 'ubuntu:rolling']
         compiler: [gcc, clang]
+        exclude:
+        - container-image: 'debian:oldstable'
+          compiler: clang
 
     runs-on: ubuntu-latest
-    container: ubuntu:${{matrix.ubuntu-version}}
+    container: ${{ matrix.container-image }}
 
     steps:
     - name: Install packages
@@ -62,7 +65,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build Tremotesf
-      uses: equeim/action-cmake-build@v7
+      uses: equeim/action-cmake-build@v8
       with:
         # Can't use presets on older Ubuntu version
         cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
@@ -105,13 +108,13 @@ jobs:
 
     - name: Build Tremotesf with MSVC
       id: build
-      uses: equeim/action-cmake-build@v7
+      uses: equeim/action-cmake-build@v8
       with:
         cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed
         install: true
 
     - name: Build Tremotesf with clang-cl
-      uses: equeim/action-cmake-build@v7
+      uses: equeim/action-cmake-build@v8
       with:
         cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed -D CMAKE_CXX_COMPILER=clang-cl
         output-directories-suffix: -clang-cl
