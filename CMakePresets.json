@@ -91,26 +91,26 @@
   ],
   "buildPresets": [
     {
-      "name": "debug",
+      "name": "default-multi-debug",
       "displayName": "Debug",
       "configurePreset": "default-multi",
       "configuration": "Debug"
     },
     {
-      "name": "release",
+      "name": "default-multi-release",
       "displayName": "Release",
       "configurePreset": "default-multi",
       "configuration": "Release"
     },
     {
-      "name": "windows-debug",
-      "displayName": "Debug",
+      "name": "windows-multi-debug",
+      "displayName": "Windows Debug",
       "configurePreset": "windows-multi",
       "configuration": "Debug"
     },
     {
-      "name": "windows-release",
-      "displayName": "Release",
+      "name": "windows-multi-release",
+      "displayName": "Windows Release",
       "configurePreset": "windows-multi",
       "configuration": "Release"
     }

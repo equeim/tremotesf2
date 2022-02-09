@@ -26,7 +26,7 @@ Table of Contents
 ### Desktop
 #### Dependencies
 - C++17 compiler
-- CMake 3.10 or newer
+- CMake 3.12 or newer (3.21 on Windows)
 - Qt 5.6 or newer (Core, Network, Concurrent, Gui, Widgets)
 - KWidgetsAddons
 
@@ -37,7 +37,7 @@ On GNU/Linux and BSD:
 
 #### Building
 ```sh
-cmake -S /path/to/sources -B /path/to/build/directory --preset default -D CMAKE_BUILD_TYPE=Debug
+cmake -S /path/to/sources -B /path/to/build/directory --preset default-debug
 cmake --build /path/to/build/directory
 cmake --install /path/to/build/directory --prefix /path/to/install/directory
 ```
@@ -91,11 +91,15 @@ Windows builds are available at [releases](https://github.com/equeim/tremotesf2/
 
 Build instructions for MSVC toolchain with vcpkg:
 1. Install Visual Studio with 'Desktop development with C++' workload
-2. Install and setup [vcpkg](https://github.com/microsoft/vcpkg#quick-start-windows), and make sure that you have 15 GB of free space on disk where vcpkg is located
-3. Install latest version of CMake
-4. Launch x64 Command Propmt for Visual Studio, execute:
+2. Install latest version of CMake (from cmake.org or Visual Studio installer)
+3. Install and setup [vcpkg](https://github.com/microsoft/vcpkg#quick-start-windows), and make sure that you have 15 GB of free space on disk where vcpkg is located
+4. Set VCPKG_ROOT environment variable to the location of vcpkg installation
+
+When building from Visual Studio GUI, make sure to select 'Windows Debug' or 'Windows Release' configure preset.
+Otherwise:
+Launch x64 Command Prompt for Visual Studio, execute:
 ```pwsh
-cmake -S path\to\sources -B path\to\build\directory --preset windows --toolchain path\to\vcpkg\scripts\buildsystems\vcpkg.cmake -D CMAKE_BUILD_TYPE=Debug
+cmake -S path\to\sources -B path\to\build\directory --preset <windows-debug or windows-release>
 # Initial compilation of dependencies will take a while
 cmake --build path\to\build\directory
 cmake --install path\to\build\directory --prefix path\to\install\directory
@@ -109,7 +113,7 @@ Sailfish OS 3.3.0 or newer
 SSH/chroot into SDK, then:
 ```sh
 cd /path/to/sources
-mb2 -X -t <target name, e.g. SailfishOS-latest-armv7hl> build -d
+sfdk -c no-fix-version -c target=<target name, e.g. SailfishOS-4.3.0.12-armv7hl> build -p -d -j<number of jobs>
 ```
 
 ## Translations
