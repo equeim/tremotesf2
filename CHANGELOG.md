@@ -3,16 +3,22 @@
 ## [Unreleased]
 ### Added
 - Automatic reconnection to server (thanks to LuK1337)
-- Loading PEM certificate from file
+- PEM certificate can be loaded from file
 - Links in torrents' comments are now clickable
-- Torrent list filters (except search) are now persistable
+- Torrent list filters (except search) are now saved when app is restarted
+- Torrent properties screen now shows list of web seeders
+- Most menu items that didn't have icons now have them (thank to Buck Melanoma)
+- Hovering cursor over status bar when connection to server failed show more detailed error description
+- Vcpkg integration when building for Windows
 
 ### Changed
 - Further reduced memory usage when opening torrent files
 - All app resources are now bundled inside executable
+- Windows builds use MSVC toolchain by default
 
 ### Fixed
 - Sailfish OS support (this will be the last release that supports Saifish OS)
+- Console window output encoding on Windows (it now also uses UTF-8 on Windows 10)
 
 ## [1.10.0] - 2021-09-27
 ### Added
