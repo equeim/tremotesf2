@@ -37,6 +37,7 @@ BuildRequires: pkgconfig(sailfishapp)
 %global __provides_exclude mimehandler
 %else
 Requires:      hicolor-icon-theme
+BuildRequires: make
 BuildRequires: cmake(Qt5)
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5Core)
@@ -50,20 +51,27 @@ BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: gettext
 
-%if %{defined suse_version}
+    %if %{defined suse_version}
 BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
-%if 0%{?suse_version} == 1500
-BuildRequires:  gcc10-c++
-%endif
-%else
-%if %{defined mageia}
+    %else
+        %if %{defined mageia}
 BuildRequires: appstream-util
-%else
+        %else
 BuildRequires: libappstream-glib
-%endif
-%endif
+        %endif
+    %endif
+
+    %if %{defined fedora} && "%{toolchain}" == "clang"
+BuildRequires: clang
+    %else
+        %if %{defined suse_version} && 0%{?suse_version} == 1500
+BuildRequires: gcc11-c++
+        %else
+BuildRequires: gcc-c++
+        %endif
+    %endif
 %endif
 
 %if %{defined sailfishos}
@@ -71,7 +79,7 @@ BuildRequires: libappstream-glib
     %global debug 0
 %else
     %if %{defined suse_version}
-    %global _metainfodir %{_datadir}/metainfo
+        %global _metainfodir %{_datadir}/metainfo
     %endif
 %endif
 
@@ -96,35 +104,23 @@ Remote GUI for Transmission BitTorrent client.
     %cmake -S . -B %{build_directory} -G Ninja -D TREMOTESF_SAILFISHOS=ON -D TREMOTESF_BUILD_TESTS=OFF
     cmake --build %{build_directory} --parallel %{?_smp_mflags}
 %else
-    %cmake \
-%if %{defined suse_version} && 0%{?suse_version} == 1500
-    -DCMAKE_CXX_COMPILER=g++-10
-%endif
-
-    %if %{defined cmake_build}
-        %cmake_build
-    %else
-        %make_build
+    %if %{defined suse_version} && 0%{?suse_version} == 1500
+        export CXX=g++-11
     %endif
+    %cmake
+    %cmake_build
 %endif
 
 %check
 %if ! %{defined sailfishos}
-    %if %{defined ctest}
-        %ctest
-    %endif
+    %ctest
 %endif
 
 %install
 %if %{defined sailfishos}
     DESTDIR=%{buildroot} cmake --install %{build_directory}
 %else
-    %if %{defined cmake_install}
-        %cmake_install
-    %else
-        %make_install
-    %endif
-
+    %cmake_install
     appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{app_id}.appdata.xml
 %endif
 

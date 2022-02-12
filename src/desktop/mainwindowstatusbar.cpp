@@ -145,5 +145,10 @@ namespace tremotesf
     void MainWindowStatusBar::updateStatusLabels()
     {
         mStatusLabel->setText(mRpc->statusString());
+        if (mRpc->error() != libtremotesf::RpcError::NoError) {
+            setToolTip(mRpc->errorMessage());
+        } else {
+            setToolTip({});
+        }
     }
 }

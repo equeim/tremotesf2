@@ -27,6 +27,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMetaEnum>
 #include <QNetworkAccessManager>
 #include <QNetworkInterface>
 #include <QNetworkProxy>
@@ -1181,101 +1182,104 @@ namespace libtremotesf
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=, request = std::move(request)]() mutable {
             if (mActiveNetworkRequests.erase(reply) == 0) {
-                reply->deleteLater();
                 return;
             }
 
-            if (connectionState() != ConnectionState::Disconnected) {
-                switch (reply->error()) {
-                case QNetworkReply::NoError:
-                {
-                    mRetryingNetworkRequests.erase(reply);
+            if (connectionState() == ConnectionState::Disconnected) {
+                return;
+            }
 
-                    const QByteArray replyData(reply->readAll());
-                    const auto future = QtConcurrent::run([replyData] {
-                        QJsonParseError error{};
-                        QJsonObject result(QJsonDocument::fromJson(replyData, &error).object());
-                        const bool parsedOk = (error.error == QJsonParseError::NoError);
-                        return std::pair<QJsonObject, bool>(std::move(result), parsedOk);
-                    });
-                    auto watcher = new QFutureWatcher<std::pair<QJsonObject, bool>>(this);
-                    QObject::connect(watcher, &QFutureWatcher<std::pair<QJsonObject, bool>>::finished, this, [=] {
-                        const auto result = watcher->result();
-                        if (connectionState() != ConnectionState::Disconnected) {
-                            const QJsonObject& parseResult = result.first;
-                            const bool parsedOk = result.second;
-                            if (parsedOk) {
-                                const bool success = isResultSuccessful(parseResult);
-                                if (!success) {
-                                    qWarning() << "method" << request.method << "failed, response:" << parseResult;
-                                }
-                                if (request.callOnSuccessParse) {
-                                    request.callOnSuccessParse(parseResult, success);
-                                }
-                            } else {
-                                qWarning("Parsing error");
-                                setStatus(Status{ConnectionState::Disconnected, Error::ParseError});
+            if (reply->error() == QNetworkReply::NoError) {
+                mRetryingNetworkRequests.erase(reply);
+                const QByteArray replyData(reply->readAll());
+
+                const auto future = QtConcurrent::run([replyData] {
+                    QJsonParseError error{};
+                    QJsonObject result(QJsonDocument::fromJson(replyData, &error).object());
+                    const bool parsedOk = (error.error == QJsonParseError::NoError);
+                    return std::pair<QJsonObject, bool>(std::move(result), parsedOk);
+                });
+                auto watcher = new QFutureWatcher<std::pair<QJsonObject, bool>>(this);
+                QObject::connect(watcher, &QFutureWatcher<std::pair<QJsonObject, bool>>::finished, this, [=] {
+                    const auto result = watcher->result();
+                    if (connectionState() != ConnectionState::Disconnected) {
+                        const QJsonObject& parseResult = result.first;
+                        const bool parsedOk = result.second;
+                        if (parsedOk) {
+                            const bool success = isResultSuccessful(parseResult);
+                            if (!success) {
+                                qWarning() << "method" << request.method << "failed, response:" << parseResult;
                             }
-                        }
-                        watcher->deleteLater();
-                    });
-                    watcher->setFuture(future);
-                    break;
-                }
-                case QNetworkReply::AuthenticationRequiredError:
-                    qWarning("Authentication error");
-                    setStatus(Status{ConnectionState::Disconnected, Error::AuthenticationError});
-                    break;
-                case QNetworkReply::OperationCanceledError:
-                case QNetworkReply::TimeoutError:
-                    qWarning("Timed out");
-                    if (!retryRequest(std::move(request), reply)) {
-                        setStatus(Status{ConnectionState::Disconnected, Error::TimedOut});
-                        if (mAutoReconnectEnabled && !mUpdateDisabled) {
-                            qInfo("Auto reconnecting in %d seconds", mAutoReconnectTimer->interval() / 1000);
-                            mAutoReconnectTimer->start();
+                            if (request.callOnSuccessParse) {
+                                request.callOnSuccessParse(parseResult, success);
+                            }
+                        } else {
+                            qWarning("Parsing error");
+                            setStatus(Status{ConnectionState::Disconnected, Error::ParseError});
                         }
                     }
-                    break;
-                default:
-                {
-                    if (reply->error() == QNetworkReply::ContentConflictError && reply->hasRawHeader(sessionIdHeader)) {
-                        const auto newSessionId(reply->rawHeader(sessionIdHeader));
-                        if (newSessionId != request.request.rawHeader(sessionIdHeader)) {
-                            qInfo() << "Session id changed, retrying" << request.method << "request";
-                            mSessionId = reply->rawHeader(sessionIdHeader);
-                            // Retry without incrementing retryAttempts
-                            request.setSessionId(mSessionId);
-                            postRequest(std::move(request));
-                            return;
-                        }
-                    }
+                    watcher->deleteLater();
+                });
+                watcher->setFuture(future);
 
-                    const auto httpStatusCode(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute));
-                    qWarning() << request.method << "request error" << reply->error() << reply->errorString();
-                    if (httpStatusCode.isValid()) {
-                        qWarning("HTTP status code %d", httpStatusCode.toInt());
-                    }
+                return;
+            }
 
-                    if (!retryRequest(std::move(request), reply)) {
-                        setStatus(Status{ConnectionState::Disconnected, Error::ConnectionError});
-                        if (mAutoReconnectEnabled && !mUpdateDisabled) {
-                            qInfo("Auto reconnecting in %d seconds", mAutoReconnectTimer->interval() / 1000);
-                            mAutoReconnectTimer->start();
-                        }
-                    }
-                }
+            if (reply->error() == QNetworkReply::ContentConflictError && reply->hasRawHeader(sessionIdHeader)) {
+                const auto newSessionId(reply->rawHeader(sessionIdHeader));
+                if (newSessionId != request.request.rawHeader(sessionIdHeader)) {
+                    qInfo() << "Session id changed, retrying" << request.method << "request";
+                    mSessionId = reply->rawHeader(sessionIdHeader);
+                    // Retry without incrementing retryAttempts
+                    request.setSessionId(mSessionId);
+                    postRequest(std::move(request));
+                    return;
                 }
             }
 
-            reply->deleteLater();
-        });
+            qWarning() << request.method << "request error" << reply->error() << reply->errorString();
+            if (auto httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute); httpStatusCode.isValid()) {
+                qWarning("HTTP status code %d", httpStatusCode.toInt());
+            }
 
-        QObject::connect(this, &Rpc::connectedChanged, reply, [=] {
-            if (!isConnected()) {
-                reply->abort();
+            const auto createErrorMessage = [reply] {
+                return QString(
+                            QMetaEnum::fromType<QNetworkReply::NetworkError>().valueToKey(reply->error()) %
+                            QLatin1String(": ") %
+                            reply->errorString()
+                );
+            };
+
+            switch (reply->error()) {
+            case QNetworkReply::AuthenticationRequiredError:
+                qWarning("Authentication error");
+                setStatus(Status{ConnectionState::Disconnected, Error::AuthenticationError, createErrorMessage()});
+                break;
+            case QNetworkReply::OperationCanceledError:
+            case QNetworkReply::TimeoutError:
+                qWarning("Timed out");
+                if (!retryRequest(std::move(request), reply)) {
+                    setStatus(Status{ConnectionState::Disconnected, Error::TimedOut, createErrorMessage()});
+                    if (mAutoReconnectEnabled && !mUpdateDisabled) {
+                        qInfo("Auto reconnecting in %d seconds", mAutoReconnectTimer->interval() / 1000);
+                        mAutoReconnectTimer->start();
+                    }
+                }
+                break;
+            default:
+            {
+                if (!retryRequest(std::move(request), reply)) {
+                    setStatus(Status{ConnectionState::Disconnected, Error::ConnectionError, createErrorMessage()});
+                    if (mAutoReconnectEnabled && !mUpdateDisabled) {
+                        qInfo("Auto reconnecting in %d seconds", mAutoReconnectTimer->interval() / 1000);
+                        mAutoReconnectTimer->start();
+                    }
+                }
+            }
             }
         });
+
+        QObject::connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
 
         auto timer = new QTimer(this);
         timer->setInterval(mTimeout);

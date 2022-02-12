@@ -12,7 +12,14 @@
     "qt5-svg",
     "openssl",
     "kf5widgetsaddons",
-    "kf5breezeicons"
+    {
+      "name": "hicolor-icon-theme",
+      "platform": "windows"
+    },
+    {
+      "name": "kf5breezeicons",
+      "platform": "windows"
+    }
   ],
   "overrides": [
     {
@@ -43,6 +50,11 @@
     {
       "name": "kf5widgetsaddons",
       "version": "5.89.0",
+      "port-version": 0
+    },
+    {
+      "name": "hicolor-icon-theme",
+      "version": "0.17",
       "port-version": 0
     },
     {

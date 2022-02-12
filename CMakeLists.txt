@@ -1,7 +1,7 @@
 if (WIN32)
-    cmake_minimum_required(VERSION 3.22)
+    cmake_minimum_required(VERSION 3.21)
 else()
-    cmake_minimum_required(VERSION 3.10)
+    cmake_minimum_required(VERSION 3.12)
 endif()
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.22)
 
