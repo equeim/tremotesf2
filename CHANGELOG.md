@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.11.0] - 2022-02-13
 ### Added
 - Automatic reconnection to server (thanks to LuK1337)
 - PEM certificate can be loaded from file
