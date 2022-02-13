@@ -7,7 +7,7 @@ Name:       harbour-tremotesf
 Name:       tremotesf
 %endif
 
-Version:    1.10.0
+Version:    1.11.0
 Release:    1%{!?sailfishos:%{!?suse_version:%{?dist}}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
@@ -135,6 +135,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %endif
 
 %changelog
+* Sun Feb 13 2022 Alexey Rochev <equeim@gmail.com> - 1.11.0-1
+- tremotesf-1.10.0
+
 * Mon Sep 27 2021 Alexey Rochev <equeim@gmail.com> - 1.10.0-1
 - tremotesf-1.10.0
 
