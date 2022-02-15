@@ -154,6 +154,7 @@ else()
             desktop/tremotesf.rc
             desktop/tremotesf.manifest
         )
+        set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/desktop/tremotesf.ico" PARENT_SCOPE)
         target_compile_definitions(tremotesf PRIVATE
             TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
             TREMOTESF_BUNDLED_ICON_THEME="${TREMOTESF_BUNDLED_ICON_THEME}"
