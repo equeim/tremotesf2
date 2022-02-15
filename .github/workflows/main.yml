@@ -65,7 +65,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build Tremotesf
-      uses: equeim/action-cmake-build@v8
+      uses: equeim/action-cmake-build@v9
       with:
         # Can't use presets on older Ubuntu version
         cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
@@ -108,30 +108,32 @@ jobs:
 
     - name: Build Tremotesf with MSVC
       id: build
-      uses: equeim/action-cmake-build@v8
+      uses: equeim/action-cmake-build@v9
       with:
         cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed
-        install: true
+        package: true
 
     - name: Build Tremotesf with clang-cl
-      uses: equeim/action-cmake-build@v8
+      uses: equeim/action-cmake-build@v9
       with:
         cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed -D CMAKE_CXX_COMPILER=clang-cl
         output-directories-suffix: -clang-cl
 
-    - name: Archive debug artifacts
+    - name: Archive debug packages
       uses: actions/upload-artifact@v2
       with:
         name: tremotesf-win64-debug
         path: |
-          ${{ steps.build.outputs.install-directory-debug }}\**\*
+          ${{ steps.build.outputs.build-directory-debug }}\packaging\*.zip
+          ${{ steps.build.outputs.build-directory-debug }}\packaging\*.msi
 
-    - name: Archive release artifacts
+    - name: Archive release packages
       uses: actions/upload-artifact@v2
       with:
         name: tremotesf-win64-release
         path: |
-          ${{ steps.build.outputs.install-directory-release }}\**\*
+          ${{ steps.build.outputs.build-directory-release }}\packaging\*.zip
+          ${{ steps.build.outputs.build-directory-release }}\packaging\*.msi
 
     - name: Archive vcpkg logs
       uses: actions/upload-artifact@v2
