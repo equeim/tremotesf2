@@ -54,10 +54,6 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled, "torrentsDownloadDirectoryFilterEnabled", true, toBool)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter, "torrentsDownloadDirectoryFilter", {}, toString)
 
-#ifdef TREMOTESF_SAILFISHOS
-    SETTINGS_PROPERTY_DEF_TRIVIAL(int, torrentsSortOrder, setTorrentsSortOrder, "torrentsSortOrder", Qt::AscendingOrder, toInt)
-    SETTINGS_PROPERTY_DEF_TRIVIAL(int, torrentsSortRole, setTorrentsSortRole, "torrentsSortRole", TorrentsModel::NameRole, toInt)
-#else
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, showTrayIcon, setShowTrayIcon, "showTrayIcon", true, toBool)
     SETTINGS_PROPERTY_DEF_TRIVIAL(Qt::ToolButtonStyle, toolButtonStyle, setToolButtonStyle, "toolButtonStyle", Qt::ToolButtonFollowStyle, value<Qt::ToolButtonStyle>)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isToolBarLocked, setToolBarLocked, "toolBarLocked", true, toBool)
@@ -74,7 +70,6 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, trackersViewHeaderState, setTrackersViewHeaderState, "trackersViewHeaderState", {}, toByteArray)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, peersViewHeaderState, setPeersViewHeaderState, "peersViewHeaderState", {}, toByteArray)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState, "localTorrentFilesViewHeaderState", {}, toByteArray)
-#endif
 
     Settings::Settings(QObject* parent)
         : QObject(parent),

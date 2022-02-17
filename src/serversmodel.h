@@ -30,37 +30,6 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-#ifdef TREMOTESF_SAILFISHOS
-        enum Role
-        {
-            NameRole = Qt::UserRole,
-            IsCurrentRole,
-            AddressRole,
-            PortRole,
-            ApiPathRole,
-
-            ProxyTypeRole,
-            ProxyHostnameRole,
-            ProxyPortRole,
-            ProxyUserRole,
-            ProxyPasswordRole,
-
-            HttpsRole,
-            SelfSignedCertificateEnabledRole,
-            SelfSignedCertificateRole,
-            ClientCertificateEnabledRole,
-            ClientCertificateRole,
-            AuthenticationRole,
-            UsernameRole,
-            PasswordRole,
-            UpdateIntervalRole,
-            TimeoutRole,
-            AutoReconnectEnabledRole,
-            AutoReconnectIntervalRole,
-            MountedDirectoriesRole
-        };
-        Q_ENUMS(Role)
-#endif
         explicit ServersModel(QObject* parent = nullptr);
 
         QVariant data(const QModelIndex& index, int role) const override;
@@ -104,10 +73,6 @@ namespace tremotesf
                                    const QVariantMap& mountedDirectories);
         Q_INVOKABLE void removeServerAtIndex(const QModelIndex& index);
         Q_INVOKABLE void removeServerAtRow(int row);
-#ifdef TREMOTESF_SAILFISHOS
-    protected:
-        QHash<int, QByteArray> roleNames() const override;
-#endif
     private:
         int serverRow(const QString& name) const;
 

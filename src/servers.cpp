@@ -103,50 +103,6 @@ namespace tremotesf
             return proxyTypeDefault;
         }
 
-#ifdef TREMOTESF_SAILFISHOS
-        const QLatin1String versionKey("version");
-
-        void migrateFrom0()
-        {
-            QSettings settings;
-            if (settings.value(versionKey).toInt() != 1) {
-                QSettings serversSettings(qApp->organizationName(), fileName);
-                if (serversSettings.childGroups().isEmpty()) {
-                    for (const QString& group : settings.childGroups()) {
-                        settings.beginGroup(group);
-                        serversSettings.beginGroup(group);
-
-                        serversSettings.setValue(addressKey, settings.value(addressKey));
-                        serversSettings.setValue(portKey, settings.value(portKey));
-                        serversSettings.setValue(apiPathKey, settings.value(apiPathKey));
-                        serversSettings.setValue(httpsKey, settings.value(httpsKey));
-                        if (settings.value(localCertificateKey).toBool()) {
-                            const QString localCertificatePath(QStandardPaths::locate(QStandardPaths::DataLocation,
-                                                                                      QString::fromLatin1("%1.pem").arg(group)));
-                            if (!localCertificatePath.isEmpty()) {
-                                QFile file(localCertificatePath);
-                                if (file.open(QFile::ReadOnly)) {
-                                    serversSettings.setValue(clientCertificateEnabledKey, true);
-                                    serversSettings.setValue(clientCertificateKey, file.readAll());
-                                }
-                            }
-                        }
-                        serversSettings.setValue(authenticationKey, settings.value(authenticationKey));
-                        serversSettings.setValue(usernameKey, settings.value(usernameKey));
-                        serversSettings.setValue(passwordKey, settings.value(passwordKey));
-                        serversSettings.setValue(updateIntervalKey, settings.value(updateIntervalKey));
-                        serversSettings.setValue(timeoutKey, settings.value(timeoutKey));
-
-                        serversSettings.endGroup();
-                        settings.endGroup();
-                    }
-                    serversSettings.setValue(currentServerKey, settings.value(QLatin1String("currentAccount")));
-                }
-                settings.clear();
-                settings.setValue(versionKey, 1);
-            }
-        }
-#endif
         void migrateFromAccounts()
         {
             QSettings accounts(settingsFormat,
@@ -237,9 +193,6 @@ namespace tremotesf
 
     void Servers::migrate()
     {
-#ifdef TREMOTESF_SAILFISHOS
-        migrateFrom0();
-#endif
         migrateFromAccounts();
     }
 

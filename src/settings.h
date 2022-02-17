@@ -58,10 +58,6 @@ namespace tremotesf
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled)
         SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter)
 
-#ifdef TREMOTESF_SAILFISHOS
-        SETTINGS_PROPERTY_TRIVIAL(int, torrentsSortOrder, setTorrentsSortOrder)
-        SETTINGS_PROPERTY_TRIVIAL(int, torrentsSortRole, setTorrentsSortRole)
-#else
         SETTINGS_PROPERTY_TRIVIAL(bool, showTrayIcon, setShowTrayIcon)
         SETTINGS_PROPERTY_TRIVIAL(Qt::ToolButtonStyle, toolButtonStyle, setToolButtonStyle)
         SETTINGS_PROPERTY_TRIVIAL(bool, isToolBarLocked, setToolBarLocked)
@@ -78,7 +74,6 @@ namespace tremotesf
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, trackersViewHeaderState, setTrackersViewHeaderState)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, peersViewHeaderState, setPeersViewHeaderState)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState)
-#endif
     public:
         static Settings* instance();
 

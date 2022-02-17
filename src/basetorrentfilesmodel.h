@@ -31,21 +31,6 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-#ifdef TREMOTESF_SAILFISHOS
-        enum Role
-        {
-            NameRole = Qt::UserRole,
-            IsDirectoryRole,
-            CompletedSizeRole,
-            SizeRole,
-            ProgressRole,
-            WantedStateRole,
-            PriorityRole
-        };
-        Q_ENUM(Role)
-
-        explicit BaseTorrentFilesModel(QObject* parent = nullptr);
-#else
         enum Column
         {
             NameColumn,
@@ -57,15 +42,12 @@ namespace tremotesf
         static const int SortRole = Qt::UserRole;
 
         explicit BaseTorrentFilesModel(std::vector<Column>&& columns, QObject* parent = nullptr);
-#endif
 
         int columnCount(const QModelIndex& = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
-#ifndef TREMOTESF_SAILFISHOS
         Qt::ItemFlags flags(const QModelIndex& index) const override;
         QVariant headerData(int section, Qt::Orientation, int role) const override;
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-#endif
 
         QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
         QModelIndex parent(const QModelIndex& child) const override;
@@ -85,9 +67,7 @@ namespace tremotesf
         std::shared_ptr<TorrentFilesModelDirectory> mRootDirectory;
 
     private:
-#ifndef TREMOTESF_SAILFISHOS
         const std::vector<Column> mColumns;
-#endif
     };
 }
 

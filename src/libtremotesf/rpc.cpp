@@ -39,10 +39,6 @@
 #include <QStandardPaths>
 #include <QtConcurrentRun>
 
-#ifdef TREMOTESF_SAILFISHOS
-#include <QQmlEngine>
-#endif
-
 #include "itemlistupdater.h"
 #include "serversettings.h"
 #include "serverstats.h"
@@ -986,10 +982,6 @@ namespace libtremotesf
         std::unique_ptr<Torrent> createItemFromNewItem(NewTorrent&& newTorrent) override {
             const auto& [torrentJson, id] = newTorrent;
             auto torrent = std::make_unique<Torrent>(id, torrentJson, &mRpc);
-#ifdef TREMOTESF_SAILFISHOS
-            // prevent automatic destroying on QML side
-            QQmlEngine::setObjectOwnership(torrent.get(), QQmlEngine::CppOwnership);
-#endif
             if (mRpc.isConnected()) {
                 emit mRpc.torrentAdded(torrent.get());
             }

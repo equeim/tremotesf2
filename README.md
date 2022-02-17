@@ -1,5 +1,5 @@
 # Tremotesf
-Remote GUI for transmission-daemon. Supports desktop OSes (GNU/Linux and Windows) and Sailfish OS.
+Remote GUI for transmission-daemon. Supports GNU/Linux and Windows.
 
 Table of Contents
 =================
@@ -7,24 +7,16 @@ Table of Contents
    * [Tremotesf](#tremotesf)
    * [Table of Contents](#table-of-contents)
       * [Installation](#installation)
-         * [Desktop](#desktop)
-            * [Dependencies](#dependencies)
-            * [Building](#building)
-            * [GNU/Linux](#gnulinux)
-            * [Windows](#windows)
-         * [Sailfish OS](#sailfish-os)
-            * [Dependencies](#dependencies-1)
-            * [Building](#building-1)
+         * [Dependencies](#dependencies)
+         * [Building](#building)
+         * [GNU/Linux](#gnulinux)
+         * [Windows](#windows)
       * [Translations](#translations)
       * [Donate](#donate)
       * [Screenshots](#screenshots)
-         * [Desktop](#desktop-1)
-         * [Sailfish OS](#sailfish-os-1)
-
 
 ## Installation
-### Desktop
-#### Dependencies
+### Dependencies
 - C++17 compiler
 - CMake 3.12 or newer (3.21 on Windows)
 - Qt 5.6 or newer (Core, Network, Concurrent, Gui, Widgets)
@@ -35,14 +27,14 @@ On GNU/Linux and BSD:
 - Qt D-Bus, Qt X11 Extras
 - KWindowSystem
 
-#### Building
+### Building
 ```sh
 cmake -S /path/to/sources -B /path/to/build/directory --preset default-debug
 cmake --build /path/to/build/directory
 cmake --install /path/to/build/directory --prefix /path/to/install/directory
 ```
 
-#### GNU/Linux
+### GNU/Linux
 - Flatpak - [Flathub](https://flathub.org/apps/details/org.equeim.Tremotesf)
 
 - Arch Linux - [AUR](https://aur.archlinux.org/packages/tremotesf)
@@ -86,7 +78,7 @@ sudo apt update
 sudo apt install tremotesf
 ```
 
-#### Windows
+### Windows
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
 
 Build instructions for MSVC toolchain with vcpkg:
@@ -105,17 +97,6 @@ cmake --build path\to\build\directory
 cmake --install path\to\build\directory --prefix path\to\install\directory
 ```
 
-### Sailfish OS
-Tremotesf is available in Jolla Store and [OpenRepos.net](https://openrepos.net/content/equeim/tremotesf).
-#### Dependencies
-Sailfish OS 3.3.0 or newer
-#### Building
-SSH/chroot into SDK, then:
-```sh
-cd /path/to/sources
-sfdk -c no-fix-version -c target=<target name, e.g. SailfishOS-4.3.0.12-armv7hl> build -p -d -j<number of jobs>
-```
-
 ## Translations
 Translations are managed on [Transifex](https://www.transifex.com/equeim/tremotesf).
 
@@ -123,12 +104,7 @@ Translations are managed on [Transifex](https://www.transifex.com/equeim/tremote
 I you like this app, you can support its development via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DDQTRHTY5YV2G&item_name=Support%20Tremotesf%20development&no_note=1&item_number=3&no_shipping=1&currency_code=EUR) or [Yandex.Money](https://yasobe.ru/na/equeim_tremotesf).
 
 ## Screenshots
-### Desktop
 ![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-1.png)
 ![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-2.png)
 ![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-3.png)
 ![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-4.png)
-### Sailfish OS
-![](http://i.imgur.com/pNVIpCm.png)
-![](http://i.imgur.com/RCqDejT.png)
-![](http://i.imgur.com/K3vs1sq.png)

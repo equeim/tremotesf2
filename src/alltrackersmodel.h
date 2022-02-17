@@ -31,10 +31,7 @@ namespace tremotesf
     public:
         enum Role
         {
-            TrackerRole = Qt::UserRole,
-#ifdef TREMOTESF_SAILFISHOS
-            TorrentsRole
-#endif
+            TrackerRole = Qt::UserRole
         };
 
         inline explicit AllTrackersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
@@ -47,10 +44,7 @@ namespace tremotesf
 
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
-        protected:
-#ifdef TREMOTESF_SAILFISHOS
-        QHash<int, QByteArray> roleNames() const override;
-#endif
+    protected:
         void resetTorrentsProxyModelFilter() const override;
 
     private:

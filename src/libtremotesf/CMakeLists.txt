@@ -9,7 +9,6 @@ project(libtremotesf CXX)
 
 option(TREMOTESF_QT6 "Build with Qt 6" ON)
 option(TREMOTESF_BUILD_TESTS "Build tests" ON)
-option(TREMOTESF_SAILFISHOS "Build for Sailfish OS" OFF)
 
 if (TREMOTESF_BUILD_TESTS)
     enable_testing()
@@ -21,9 +20,6 @@ set(CMAKE_AUTOMOC ON)
 include(cmake/CommonOptions.cmake)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Concurrent Network)
-if (TREMOTESF_SAILFISHOS)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Qml)
-endif()
 
 if (ANDROID)
     set(library_type STATIC)
@@ -55,9 +51,6 @@ add_library(
 )
 
 target_link_libraries(libtremotesf Qt${TREMOTESF_QT_VERSION_MAJOR}::Core Qt${TREMOTESF_QT_VERSION_MAJOR}::Network)
-if (TREMOTESF_SAILFISHOS)
-    target_link_libraries(libtremotesf Qt${TREMOTESF_QT_VERSION_MAJOR}::Qml)
-endif()
 target_include_directories(libtremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 
 if (TREMOTESF_BUILD_TESTS AND NOT ANDROID)

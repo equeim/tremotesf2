@@ -95,15 +95,4 @@ namespace tremotesf
         qInfo() << "Received arguments files =" << files << "urls =" << urls;
         emit mIpcServer->torrentsAddingRequested(files, urls, {});
     }
-
-    void IpcDbusService::OpenTorrentPropertiesPage(const QString& torrentHash)
-    {
-#ifdef TREMOTESF_SAILFISHOS
-        qInfo() << "Torrent properties page requested, torrent hash =" << torrentHash;
-        emit mIpcServer->torrentPropertiesPageRequested(torrentHash);
-#else
-        Q_UNUSED(torrentHash)
-        qWarning("OpenTorrentPropertiesPage() is supported only on Sailfish OS");
-#endif
-    }
 }

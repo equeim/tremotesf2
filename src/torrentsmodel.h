@@ -38,21 +38,6 @@ namespace tremotesf
         Q_OBJECT
         Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
     public:
-#ifdef TREMOTESF_SAILFISHOS
-        enum Role
-        {
-            NameRole = Qt::UserRole,
-            StatusRole,
-            TotalSizeRole,
-            PercentDoneRole,
-            EtaRole,
-            RatioRole,
-            AddedDateRole,
-            IdRole,
-            TorrentRole
-        };
-        Q_ENUMS(Role)
-#else
         enum Column
         {
             NameColumn,
@@ -81,20 +66,18 @@ namespace tremotesf
             ActivityDateColumn,
             ColumnCount
         };
+
         enum Role
         {
             SortRole = Qt::UserRole,
             TextElideModeRole
         };
-#endif
 
         explicit TorrentsModel(Rpc* rpc = nullptr, QObject* parent = nullptr);
 
-        int columnCount(const QModelIndex& = QModelIndex()) const override;
+        inline int columnCount(const QModelIndex& = QModelIndex()) const override { return ColumnCount; };
         QVariant data(const QModelIndex& index, int role) const override;
-#ifndef TREMOTESF_SAILFISHOS
         QVariant headerData(int section, Qt::Orientation, int role = Qt::DisplayRole) const override;
-#endif
         int rowCount(const QModelIndex&) const override;
 
         Rpc* rpc() const;
@@ -104,11 +87,6 @@ namespace tremotesf
         libtremotesf::Torrent* torrentAtRow(int row) const;
 
         Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
-
-#ifdef TREMOTESF_SAILFISHOS
-    protected:
-        QHash<int, QByteArray> roleNames() const override;
-#endif
 
     private:
         Rpc* mRpc;

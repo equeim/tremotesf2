@@ -36,18 +36,6 @@ namespace tremotesf
         Q_OBJECT
         Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
     public:
-#ifdef TREMOTESF_SAILFISHOS
-        enum Role
-        {
-            IdRole,
-            AnnounceRole,
-            StatusStringRole,
-            ErrorRole,
-            PeersRole,
-            NextUpdateRole
-        };
-        Q_ENUMS(Role)
-#else
         enum Column
         {
             AnnounceColumn,
@@ -57,15 +45,12 @@ namespace tremotesf
             ColumnCount
         };
         static const int SortRole = Qt::UserRole;
-#endif
 
         explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
 
-        int columnCount(const QModelIndex& = {}) const override;
+        inline int columnCount(const QModelIndex& = {}) const override { return ColumnCount; }
         QVariant data(const QModelIndex& index, int role) const override;
-#ifndef TREMOTESF_SAILFISHOS
         QVariant headerData(int section, Qt::Orientation, int role) const override;
-#endif
         int rowCount(const QModelIndex& = {}) const override;
 
         libtremotesf::Torrent* torrent() const;
@@ -73,11 +58,6 @@ namespace tremotesf
 
         Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
         const libtremotesf::Tracker& trackerAtIndex(const QModelIndex& index) const;
-
-#ifdef TREMOTESF_SAILFISHOS
-    protected:
-        QHash<int, QByteArray> roleNames() const override;
-#endif
 
     private:
         void update();

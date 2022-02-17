@@ -32,11 +32,7 @@ namespace tremotesf
     public:
         enum Role
         {
-            FilterRole = Qt::UserRole,
-#ifdef TREMOTESF_SAILFISHOS
-            FilterNameRole,
-            TorrentsRole
-#endif
+            FilterRole = Qt::UserRole
         };
 
         inline explicit StatusFiltersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
@@ -49,9 +45,6 @@ namespace tremotesf
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
     protected:
-#ifdef TREMOTESF_SAILFISHOS
-        QHash<int, QByteArray> roleNames() const override;
-#endif
         void resetTorrentsProxyModelFilter() const override;
 
     private:

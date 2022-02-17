@@ -18,14 +18,11 @@
 
 #include "localtorrentfilesmodel.h"
 
+#include <QApplication>
 #include <QCoreApplication>
 #include <QFutureWatcher>
-#include <QtConcurrentRun>
-
-#ifndef TREMOTESF_SAILFISHOS
-#include <QApplication>
 #include <QStyle>
-#endif
+#include <QtConcurrentRun>
 
 #include "bencodeparser.h"
 #include "torrentfilesmodelentry.h"
@@ -164,11 +161,7 @@ namespace tremotesf
     }
 
     LocalTorrentFilesModel::LocalTorrentFilesModel(QObject* parent)
-#ifdef TREMOTESF_SAILFISHOS
-        : BaseTorrentFilesModel(parent),
-#else
         : BaseTorrentFilesModel({NameColumn, SizeColumn, PriorityColumn}, parent),
-#endif
           mLoaded(false), mError(bencode::NoError)
     {
 
@@ -300,15 +293,4 @@ namespace tremotesf
         mRenamedFiles.insert(entry->path(), newName);
         emit renamedFilesChanged();
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> LocalTorrentFilesModel::roleNames() const
-    {
-        return {{NameRole, "name"},
-                {IsDirectoryRole, "isDirectory"},
-                {SizeRole, "size"},
-                {WantedStateRole, "wantedState"},
-                {PriorityRole, "priority"}};
-    }
-#endif
 }

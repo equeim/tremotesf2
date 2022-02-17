@@ -70,16 +70,10 @@ namespace tremotesf
         opts.add_options()
             ("v,version", "display version information", cxxopts::value<bool>())
             ("h,help", "display this help", cxxopts::value<bool>())
-#ifdef TREMOTESF_SAILFISHOS
-            ("torrent", "", cxxopts::value<std::string>(*torrents.emplace(torrents.end())));
-            opts.parse_positional("torrent");
-            opts.positional_help("torrent");
-#else
             ("m,minimized", "start minimized in notification area", cxxopts::value<bool>(args.minimized))
             ("torrents", "", cxxopts::value<decltype(torrents)>(torrents));
             opts.parse_positional("torrents");
             opts.positional_help("torrents");
-#endif
         try {
             const auto result(opts.parse(argc, argv));
             if (result["help"].as<bool>()) {

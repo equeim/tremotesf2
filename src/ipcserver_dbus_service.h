@@ -52,7 +52,6 @@ namespace tremotesf
         friend IpcDbusServiceDeprecatedAdaptor;
         void ActivateWindow();
         void SetArguments(const QStringList& files, const QStringList& urls);
-        void OpenTorrentPropertiesPage(const QString& torrentHash);
 
         IpcServerDbus* mIpcServer;
     };

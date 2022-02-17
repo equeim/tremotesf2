@@ -65,33 +65,18 @@ add_executable(tremotesf
     ${QRC_FILES}
 )
 
-set_target_properties(tremotesf PROPERTIES OUTPUT_NAME "${TREMOTESF_NAME}")
 target_link_libraries(tremotesf Qt5::Network libtremotesf)
 target_include_directories(tremotesf PRIVATE ${Qt5Concurrent_INCLUDE_DIRS})
 target_compile_definitions(
     tremotesf PRIVATE
+    TREMOTESF_APP_ID="org.equeim.Tremotesf"
+    TREMOTESF_APP_NAME="Tremotesf"
     TREMOTESF_VERSION="${PROJECT_VERSION}"
     TREMOTESF_QT_TRANSLATIONS_FILENAME="${TREMOTESF_QT_TRANSLATIONS_FILENAME}"
 )
 
-if (TREMOTESF_SAILFISHOS)
-    find_package(Qt5 REQUIRED COMPONENTS Quick)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SailfishApp REQUIRED IMPORTED_TARGET sailfishapp)
-
-    target_sources(tremotesf PRIVATE
-        sailfishos/directorycontentmodel.cpp
-        sailfishos/directorycontentmodel.h
-        sailfishos/sailfishosutils.cpp
-        sailfishos/sailfishosutils.h
-        sailfishos/selectionmodel.cpp
-        sailfishos/selectionmodel.h
-    )
-    target_link_libraries(tremotesf Qt5::Quick PkgConfig::SailfishApp)
-    if (CMAKE_VERSION VERSION_LESS "3.15.0")
-        target_link_libraries(tremotesf ${SailfishApp_LDFLAGS_OTHER})
-    endif()
-else()
+# Leave the if for now
+if (1)
     find_package(Qt5 REQUIRED COMPONENTS Widgets)
     find_package(KF5WidgetsAddons REQUIRED)
 
@@ -142,11 +127,6 @@ else()
         desktop/trackersviewwidget.h
     )
 
-    target_compile_definitions(tremotesf PRIVATE
-        TREMOTESF_APP_ID="org.equeim.Tremotesf"
-        TREMOTESF_APP_NAME="Tremotesf"
-    )
-
     if (WIN32)
         target_sources(
             tremotesf
@@ -173,14 +153,9 @@ else()
 endif()
 
 if (UNIX AND NOT APPLE)
-    find_package(Qt5 REQUIRED COMPONENTS DBus)
-    target_link_libraries(tremotesf Qt5::DBus)
-
-    if (NOT TREMOTESF_SAILFISHOS)
-        find_package(Qt5 REQUIRED COMPONENTS X11Extras)
-        find_package(KF5WindowSystem REQUIRED)
-        target_link_libraries(tremotesf Qt5::X11Extras KF5::WindowSystem)
-    endif()
+    find_package(Qt5 REQUIRED COMPONENTS DBus X11Extras)
+    find_package(KF5WindowSystem REQUIRED)
+    target_link_libraries(tremotesf Qt5::DBus Qt5::X11Extras KF5::WindowSystem)
 
     set_source_files_properties(org.freedesktop.Application.xml PROPERTIES CLASSNAME IpcDbusInterface NO_NAMESPACE ON)
     qt5_add_dbus_adaptor(dbus_generated org.freedesktop.Application.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)

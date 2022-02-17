@@ -38,18 +38,6 @@ namespace tremotesf
         Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
         Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
     public:
-#ifdef TREMOTESF_SAILFISHOS
-        enum Role
-        {
-            Address = Qt::UserRole,
-            DownloadSpeed,
-            UploadSpeed,
-            Progress,
-            Flags,
-            Client
-        };
-        Q_ENUMS(Role)
-#else
         enum Column
         {
             AddressColumn,
@@ -61,17 +49,14 @@ namespace tremotesf
             ClientColumn,
             ColumnCount
         };
-        static const int SortRole;
-#endif
+        static inline constexpr int SortRole = Qt::UserRole;
 
         explicit PeersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~PeersModel() override;
 
-        int columnCount(const QModelIndex& = QModelIndex()) const override;
+        inline int columnCount(const QModelIndex& = QModelIndex()) const override { return ColumnCount; };
         QVariant data(const QModelIndex& index, int role) const override;
-#ifndef TREMOTESF_SAILFISHOS
         QVariant headerData(int section, Qt::Orientation, int role) const override;
-#endif
         int rowCount(const QModelIndex&) const override;
         bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
@@ -80,10 +65,6 @@ namespace tremotesf
 
         bool isLoaded() const;
 
-#ifdef TREMOTESF_SAILFISHOS
-    protected:
-        QHash<int, QByteArray> roleNames() const override;
-#endif
     private:
         void update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount);
 

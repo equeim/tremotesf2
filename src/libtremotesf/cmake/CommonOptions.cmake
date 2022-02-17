@@ -47,21 +47,12 @@ function(set_common_options_on_targets)
         common_compile_definitions
         QT_DEPRECATED_WARNINGS
         QT_DISABLE_DEPRECATED_BEFORE=0x050e00
+        QT_MESSAGELOGCONTEXT
     )
 
     if (WIN32)
         # Windows 8.1
         list(APPEND common_compile_definitions WINVER=0x0603 _WIN32_WINNT=0x0603)
-    endif()
-
-    if (NOT DEFINED TREMOTESF_SAILFISHOS)
-        message(FATAL_ERROR "TREMOTESF_SAILFISHOS is not defined")
-    endif()
-
-    if (TREMOTESF_SAILFISHOS)
-        list(APPEND common_compile_definitions TREMOTESF_SAILFISHOS)
-    else()
-        list(APPEND common_compile_definitions QT_MESSAGELOGCONTEXT)
     endif()
 
     if (DEFINED TREMOTESF_COMMON_COMPILE_DEFINITIONS)

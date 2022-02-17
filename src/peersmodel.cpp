@@ -27,10 +27,6 @@
 
 namespace tremotesf
 {
-#ifndef TREMOTESF_SAILFISHOS
-    const int PeersModel::SortRole = Qt::UserRole;
-#endif
-
     PeersModel::PeersModel(libtremotesf::Torrent* torrent, QObject* parent)
         : QAbstractTableModel(parent),
           mTorrent(nullptr),
@@ -46,34 +42,9 @@ namespace tremotesf
         }
     }
 
-    int PeersModel::columnCount(const QModelIndex&) const
-    {
-#ifdef TREMOTESF_SAILFISHOS
-        return 1;
-#else
-        return ColumnCount;
-#endif
-    }
-
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
         const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
-#ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
-        case Address:
-            return peer.address;
-        case DownloadSpeed:
-            return peer.downloadSpeed;
-        case UploadSpeed:
-            return peer.uploadSpeed;
-        case Progress:
-            return peer.progress;
-        case Flags:
-            return peer.flags;
-        case Client:
-            return peer.client;
-        }
-#else
         switch (role) {
         case Qt::DisplayRole:
             switch (index.column()) {
@@ -111,11 +82,9 @@ namespace tremotesf
                 return data(index, Qt::DisplayRole);
             }
         }
-#endif
         return QVariant();
     }
 
-#ifndef TREMOTESF_SAILFISHOS
     QVariant PeersModel::headerData(int section, Qt::Orientation, int role) const
     {
         if (role == Qt::DisplayRole) {
@@ -138,7 +107,6 @@ namespace tremotesf
         }
         return QVariant();
     }
-#endif
 
     int PeersModel::rowCount(const QModelIndex&) const
     {
@@ -187,18 +155,6 @@ namespace tremotesf
     {
         return mLoaded;
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> PeersModel::roleNames() const
-    {
-        return {{Address, "address"},
-                {DownloadSpeed, "downloadSpeed"},
-                {UploadSpeed, "uploadSpeed"},
-                {Progress, "progress"},
-                {Flags, "flags"},
-                {Client, "client"}};
-    }
-#endif
 
     void PeersModel::update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount)
     {
