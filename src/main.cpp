@@ -19,24 +19,16 @@
 #include <csignal>
 #include <iostream>
 
+#include <QApplication>
+#include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QStringBuilder>
 #include <QTranslator>
 
-#ifdef TREMOTESF_SAILFISHOS
-#include <memory>
-#include <QGuiApplication>
-#include <QQmlContext>
-#include <QQuickView>
-#include <sailfishapp.h>
-#else
-#include <QApplication>
-#include <QIcon>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif // Q_OS_WIN
-#endif // TREMOTESF_SAILFISHOS
 
 #include "commandlineparser.h"
 #include "ipcclient.h"
@@ -45,9 +37,7 @@
 #include "signalhandler.h"
 #include "utils.h"
 
-#ifndef TREMOTESF_SAILFISHOS
 #include "desktop/mainwindow.h"
-#endif
 
 int main(int argc, char** argv)
 {
@@ -78,20 +68,15 @@ int main(int argc, char** argv)
     }
 
     //
-    // Q(Gui)Application initialization
+    // QApplication initialization
     //
 #ifdef Q_OS_WIN
     AllowSetForegroundWindow(ASFW_ANY);
 #endif
 
-#ifdef TREMOTESF_SAILFISHOS
-    std::unique_ptr<QGuiApplication> app(SailfishApp::application(argc, argv));
-    std::unique_ptr<QQuickView> view(SailfishApp::createView());
-#else
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication app(argc, argv);
-#endif
     QCoreApplication::setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
     //
     // End of QApplication initialization
@@ -100,15 +85,13 @@ int main(int argc, char** argv)
     // Setup socket notifier for UNIX signals
     tremotesf::SignalHandler::setupNotifier();
 
-#ifndef TREMOTESF_SAILFISHOS
-    qApp->setOrganizationName(qApp->applicationName());
-    qApp->setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
-    qApp->setQuitOnLastWindowClosed(false);
+    QCoreApplication::setOrganizationName(qApp->applicationName());
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
+    QGuiApplication::setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
     QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
-#endif
 #endif
 
     auto ipcServer = tremotesf::IpcServer::createInstance(qApp);
@@ -131,32 +114,17 @@ int main(int argc, char** argv)
     appTranslator.load(QLocale().name(), QLatin1String(":/translations"));
     qApp->installTranslator(&appTranslator);
 
-    tremotesf::Utils::registerTypes();
-
     tremotesf::Servers::migrate();
 
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;
     }
 
-#ifdef TREMOTESF_SAILFISHOS
-    view->rootContext()->setContextProperty(QLatin1String("ipcServer"), ipcServer);
-
-    view->rootContext()->setContextProperty(QLatin1String("files"), args.files);
-    view->rootContext()->setContextProperty(QLatin1String("urls"), args.urls);
-
-    view->setSource(QUrl(QLatin1String("qrc:///main.qml")));
-    if (tremotesf::SignalHandler::exitRequested) {
-        return 0;
-    }
-    view->show();
-#else
     tremotesf::MainWindow window(ipcServer, args.files, args.urls);
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;
     }
     window.showMinimized(args.minimized);
-#endif
 
     if (tremotesf::SignalHandler::exitRequested) {
         return 0;

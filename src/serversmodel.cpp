@@ -30,58 +30,6 @@ namespace tremotesf
     QVariant ServersModel::data(const QModelIndex& index, int role) const
     {
         const Server& server = mServers[static_cast<size_t>(index.row())];
-#ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
-        case NameRole:
-            return server.name;
-        case IsCurrentRole:
-            return (server.name == mCurrentServer);
-        case AddressRole:
-            return server.address;
-        case PortRole:
-            return server.port;
-        case ApiPathRole:
-            return server.apiPath;
-
-        case ProxyTypeRole:
-            return static_cast<int>(server.proxyType);
-        case ProxyHostnameRole:
-            return server.proxyHostname;
-        case ProxyPortRole:
-            return server.proxyPort;
-        case ProxyUserRole:
-            return server.proxyUser;
-        case ProxyPasswordRole:
-            return server.proxyPassword;
-
-        case HttpsRole:
-            return server.https;
-        case SelfSignedCertificateEnabledRole:
-            return server.selfSignedCertificateEnabled;
-        case SelfSignedCertificateRole:
-            return server.selfSignedCertificate;
-        case ClientCertificateEnabledRole:
-            return server.clientCertificateEnabled;
-        case ClientCertificateRole:
-            return server.clientCertificate;
-        case AuthenticationRole:
-            return server.authentication;
-        case UsernameRole:
-            return server.username;
-        case PasswordRole:
-            return server.password;
-        case UpdateIntervalRole:
-            return server.updateInterval;
-        case TimeoutRole:
-            return server.timeout;
-        case AutoReconnectEnabledRole:
-            return server.autoReconnectEnabled;
-        case AutoReconnectIntervalRole:
-            return server.autoReconnectInterval;
-        case MountedDirectoriesRole:
-            return server.mountedDirectories;
-        }
-#else
         switch (role) {
         case Qt::CheckStateRole:
             if (server.name == mCurrentServer) {
@@ -91,7 +39,6 @@ namespace tremotesf
         case Qt::DisplayRole:
             return server.name;
         }
-#endif
         return QVariant();
     }
 
@@ -107,11 +54,7 @@ namespace tremotesf
 
     bool ServersModel::setData(const QModelIndex& modelIndex, const QVariant& value, int role)
     {
-#ifdef TREMOTESF_SAILFISHOS
-        if (role == IsCurrentRole && value.toBool()) {
-#else
         if (role == Qt::CheckStateRole && value.toInt() == Qt::Checked) {
-#endif
             const QString current(mServers[static_cast<size_t>(modelIndex.row())].name);
             if (current != mCurrentServer) {
                 mCurrentServer = current;
@@ -282,37 +225,6 @@ namespace tremotesf
             emit dataChanged(modelIndex, modelIndex);
         }
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> ServersModel::roleNames() const
-    {
-        return {{NameRole, "name"},
-                {IsCurrentRole, "current"},
-                {AddressRole, "address"},
-                {PortRole, "port"},
-                {ApiPathRole, "apiPath"},
-
-                {ProxyTypeRole, "proxyType"},
-                {ProxyHostnameRole, "proxyHostname"},
-                {ProxyPortRole, "proxyPort"},
-                {ProxyUserRole, "proxyUser"},
-                {ProxyPasswordRole, "proxyPassword"},
-
-                {HttpsRole, "https"},
-                {SelfSignedCertificateEnabledRole, "selfSignedCertificateEnabled"},
-                {SelfSignedCertificateRole, "selfSignedCertificate"},
-                {ClientCertificateEnabledRole, "clientCertificateEnabled"},
-                {ClientCertificateRole, "clientCertificate"},
-                {AuthenticationRole, "authentication"},
-                {UsernameRole, "username"},
-                {PasswordRole, "password"},
-                {UpdateIntervalRole, "updateInterval"},
-                {TimeoutRole, "timeout"},
-                {AutoReconnectEnabledRole, "autoReconnectEnabled"},
-                {AutoReconnectIntervalRole, "autoReconnectInterval"},
-                {MountedDirectoriesRole, "mountedDirectories"}};
-    }
-#endif
 
     int ServersModel::serverRow(const QString& name) const
     {

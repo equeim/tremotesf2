@@ -1,14 +1,8 @@
-%if "%{?_vendor}" == "meego"
-%global sailfishos 1
-%global app_id harbour-tremotesf
-Name:       harbour-tremotesf
-%else
 %global app_id org.equeim.Tremotesf
-Name:       tremotesf
-%endif
 
+Name:       tremotesf
 Version:    1.11.0
-Release:    1%{!?sailfishos:%{!?suse_version:%{?dist}}}
+Release:    1%{!?suse_version:%{?dist}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
 Group:      Productivity/Networking/Other
@@ -20,23 +14,10 @@ URL:        https://github.com/equeim/tremotesf2
 
 Source0:    https://github.com/equeim/tremotesf2/archive/%{version}.tar.gz
 
+Requires:      hicolor-icon-theme
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
-
-%if %{defined sailfishos}
-Requires:      sailfishsilica-qt5
-Requires:      nemo-qml-plugin-notifications-qt5
-BuildRequires: ninja
-BuildRequires: pkgconfig(Qt5Concurrent)
-BuildRequires: pkgconfig(Qt5Core)
-BuildRequires: pkgconfig(Qt5DBus)
-BuildRequires: pkgconfig(Qt5Network)
-BuildRequires: pkgconfig(Qt5Quick)
-BuildRequires: qt5-qttools-linguist
-BuildRequires: pkgconfig(sailfishapp)
-%global __provides_exclude mimehandler
-%else
-Requires:      hicolor-icon-theme
+BuildRequires: gettext
 BuildRequires: make
 BuildRequires: cmake(Qt5)
 BuildRequires: cmake(Qt5Concurrent)
@@ -49,90 +30,62 @@ BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5X11Extras)
 BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
-BuildRequires: gettext
 
-    %if %{defined suse_version}
+%if %{defined suse_version}
 BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
-    %else
-        %if %{defined mageia}
-BuildRequires: appstream-util
-        %else
-BuildRequires: libappstream-glib
-        %endif
-    %endif
-
-    %if %{defined fedora} && "%{toolchain}" == "clang"
-BuildRequires: clang
-    %else
-        %if %{defined suse_version} && 0%{?suse_version} == 1500
-BuildRequires: gcc11-c++
-        %else
-BuildRequires: gcc-c++
-        %endif
-    %endif
-%endif
-
-%if %{defined sailfishos}
-    %global build_directory %{_builddir}/build-%{_target}-%(version | awk '{print $3}')
-    %global debug 0
 %else
-    %if %{defined suse_version}
-        %global _metainfodir %{_datadir}/metainfo
+    %if %{defined mageia}
+BuildRequires: appstream-util
+    %else
+BuildRequires: libappstream-glib
     %endif
 %endif
 
+%if %{defined fedora} && "%{toolchain}" == "clang"
+BuildRequires: clang
+%else
+    %if %{defined suse_version} && 0%{?suse_version} == 1500
+        %global leap_gcc_version 11
+BuildRequires: gcc%{leap_gcc_version}-c++
+    %else
+BuildRequires: gcc-c++
+    %endif
+%endif
+
+%if %{defined suse_version}
+    %global _metainfodir %{_datadir}/metainfo
+%endif
 
 %description
 Remote GUI for Transmission BitTorrent client.
 
 
 %prep
-%setup -q -n tremotesf2-%{version}
+%autosetup -n tremotesf2-%{version}
 
 
 %build
-%if %{defined sailfishos}
-# Enable -O0 for debug builds
-# This also requires disabling _FORTIFY_SOURCE
-    %if %{debug}
-        export CFLAGS="${CFLAGS:-%optflags} -O0 -Wp,-U_FORTIFY_SOURCE"
-        export CXXFLAGS="${CXXFLAGS:-%optflags} -O0 -Wp,-U_FORTIFY_SOURCE"
-    %endif
-
-    %cmake -S . -B %{build_directory} -G Ninja -D TREMOTESF_SAILFISHOS=ON -D TREMOTESF_BUILD_TESTS=OFF
-    cmake --build %{build_directory} --parallel %{?_smp_mflags}
-%else
-    %if %{defined suse_version} && 0%{?suse_version} == 1500
-        export CXX=g++-11
-    %endif
-    %cmake
-    %cmake_build
+%if %{defined suse_version} && 0%{?suse_version} == 1500
+    export CXX=g++-%{leap_gcc_version}
 %endif
+%cmake
+%cmake_build
 
 %check
-%if ! %{defined sailfishos}
-    %ctest
-%endif
+%ctest
 
 %install
-%if %{defined sailfishos}
-    DESTDIR=%{buildroot} cmake --install %{build_directory}
-%else
-    %cmake_install
-    appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{app_id}.appdata.xml
-%endif
-
+%cmake_install
+appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{app_id}.appdata.xml
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 
 %files
 %{_bindir}/%{name}
 %{_datadir}/icons/hicolor/*/apps/%{app_id}.*
 %{_datadir}/applications/%{app_id}.desktop
-%if ! %{defined sailfishos}
 %{_metainfodir}/%{app_id}.appdata.xml
-%endif
 
 %changelog
 * Sun Feb 13 2022 Alexey Rochev <equeim@gmail.com> - 1.11.0-1

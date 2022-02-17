@@ -27,10 +27,7 @@
 #include "modelutils.h"
 #include "trpc.h"
 #include "utils.h"
-
-#ifndef TREMOTESF_SAILFISHOS
 #include "desktop/desktoputils.h"
-#endif
 
 namespace tremotesf
 {
@@ -44,41 +41,9 @@ namespace tremotesf
         setRpc(rpc);
     }
 
-    int TorrentsModel::columnCount(const QModelIndex&) const
-    {
-#ifdef TREMOTESF_SAILFISHOS
-        return 1;
-#else
-        return ColumnCount;
-#endif
-    }
-
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
         Torrent* torrent = mRpc->torrents()[static_cast<size_t>(index.row())].get();
-
-#ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
-        case NameRole:
-            return torrent->name();
-        case StatusRole:
-            return torrent->status();
-        case TotalSizeRole:
-            return torrent->totalSize();
-        case PercentDoneRole:
-            return torrent->percentDone();
-        case EtaRole:
-            return torrent->eta();
-        case RatioRole:
-            return torrent->ratio();
-        case AddedDateRole:
-            return torrent->addedDate();
-        case IdRole:
-            return torrent->id();
-        case TorrentRole:
-            return QVariant::fromValue(torrent);
-        }
-#else
         switch (role) {
         case Qt::DecorationRole:
             if (index.column() == NameColumn) {
@@ -247,12 +212,9 @@ namespace tremotesf
             }
             return Qt::ElideRight;
         }
-#endif
-
         return QVariant();
     }
 
-#ifndef TREMOTESF_SAILFISHOS
     QVariant TorrentsModel::headerData(int section, Qt::Orientation, int role) const
     {
         if (role == Qt::DisplayRole) {
@@ -314,7 +276,6 @@ namespace tremotesf
 
         return QVariant();
     }
-#endif
 
     int TorrentsModel::rowCount(const QModelIndex&) const
     {
@@ -380,19 +341,4 @@ namespace tremotesf
         }
         return ids;
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> TorrentsModel::roleNames() const
-    {
-        return {{NameRole, "name"},
-                {StatusRole, "status"},
-                {TotalSizeRole, "totalSize"},
-                {PercentDoneRole, "percentDone"},
-                {EtaRole, "eta"},
-                {RatioRole, "ratio"},
-                {AddedDateRole, "addedDate"},
-                {IdRole, "id"},
-                {TorrentRole, "torrent"}};
-    }
-#endif
 }

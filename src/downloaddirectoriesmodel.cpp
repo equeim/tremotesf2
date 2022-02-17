@@ -20,10 +20,8 @@
 
 #include <map>
 
-#ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
 #include <QStyle>
-#endif
 
 #include "libtremotesf/qtsupport.h"
 #include "libtremotesf/torrent.h"
@@ -40,11 +38,6 @@ namespace tremotesf
         switch (role) {
         case DirectoryRole:
             return item.directory;
-#ifdef TREMOTESF_SAILFISHOS
-        case TorrentsRole:
-            return item.torrents;
-        }
-#else
         case Qt::DecorationRole:
             return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
         case Qt::DisplayRole:
@@ -54,9 +47,9 @@ namespace tremotesf
             }
             //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
             return qApp->translate("tremotesf", "%1 (%L2)").arg(item.directory).arg(item.torrents);
+        default:
+            return {};
         }
-#endif
-        return {};
     }
 
     int DownloadDirectoriesModel::rowCount(const QModelIndex&) const
@@ -91,14 +84,6 @@ namespace tremotesf
         }
         return indexForDirectory(torrentsProxyModel()->downloadDirectoryFilter());
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> DownloadDirectoriesModel::roleNames() const
-    {
-        return {{DirectoryRole, "directory"},
-                {TorrentsRole, "torrents"}};
-    }
-#endif
 
     void DownloadDirectoriesModel::resetTorrentsProxyModelFilter() const
     {

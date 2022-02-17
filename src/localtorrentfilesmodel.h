@@ -62,10 +62,6 @@ namespace tremotesf
 
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
-#ifdef TREMOTESF_SAILFISHOS
-    protected:
-        QHash<int, QByteArray> roleNames() const override;
-#endif
     private:
         std::vector<TorrentFilesModelFile*> mFiles;
         bool mLoaded;

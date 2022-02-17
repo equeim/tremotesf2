@@ -18,59 +18,28 @@
 
 #include "basetorrentfilesmodel.h"
 
-#ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
 #include <QStyle>
-#endif
 
 #include "libtremotesf/itemlistupdater.h"
 #include "utils.h"
 
 namespace tremotesf
 {
-#ifdef TREMOTESF_SAILFISHOS
-    BaseTorrentFilesModel::BaseTorrentFilesModel(QObject* parent)
-        : QAbstractItemModel(parent)
-    {
-    }
-#else
     BaseTorrentFilesModel::BaseTorrentFilesModel(std::vector<Column>&& columns, QObject* parent)
         : QAbstractItemModel(parent),
           mColumns(std::move(columns))
     {
     }
-#endif
 
     int BaseTorrentFilesModel::columnCount(const QModelIndex&) const
     {
-#ifdef TREMOTESF_SAILFISHOS
-        return 1;
-#else
         return static_cast<int>(mColumns.size());
-#endif
     }
 
     QVariant BaseTorrentFilesModel::data(const QModelIndex& index, int role) const
     {
         const TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-#ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
-        case NameRole:
-            return entry->name();
-        case IsDirectoryRole:
-            return entry->isDirectory();
-        case CompletedSizeRole:
-            return entry->completedSize();
-        case SizeRole:
-            return entry->size();
-        case ProgressRole:
-            return entry->progress();
-        case WantedStateRole:
-            return entry->wantedState();
-        case PriorityRole:
-            return entry->priority();
-        }
-#else
         const Column column = mColumns[static_cast<size_t>(index.column())];
         switch (role) {
         case Qt::CheckStateRole:
@@ -125,11 +94,9 @@ namespace tremotesf
                 return data(index, Qt::DisplayRole);
             }
         }
-#endif
         return QVariant();
     }
 
-#ifndef TREMOTESF_SAILFISHOS
     Qt::ItemFlags BaseTorrentFilesModel::flags(const QModelIndex& index) const
     {
         if (index.column() == NameColumn) {
@@ -167,7 +134,6 @@ namespace tremotesf
         }
         return false;
     }
-#endif
 
     QModelIndex BaseTorrentFilesModel::index(int row, int column, const QModelIndex& parent) const
     {

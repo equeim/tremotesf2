@@ -20,17 +20,13 @@
 
 #include <map>
 
-#ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
 #include <QStyle>
-#include "desktop/desktoputils.h"
-#else
-#include <QCoreApplication>
-#endif
 
 #include "modelutils.h"
 #include "torrentsproxymodel.h"
 #include "trpc.h"
+#include "desktop/desktoputils.h"
 
 namespace tremotesf
 {
@@ -40,29 +36,6 @@ namespace tremotesf
         switch (role) {
         case FilterRole:
             return item.filter;
-#ifdef TREMOTESF_SAILFISHOS
-        case TorrentsRole:
-            return item.torrents;
-        case FilterNameRole:
-            switch (item.filter) {
-            case TorrentsProxyModel::All:
-                return qApp->translate("tremotesf", "All", "All torrents");
-            case TorrentsProxyModel::Active:
-                return qApp->translate("tremotesf", "Active", "Active torrents");
-            case TorrentsProxyModel::Downloading:
-                return qApp->translate("tremotesf", "Downloading", "Downloading torrents");
-            case TorrentsProxyModel::Seeding:
-                return qApp->translate("tremotesf", "Seeding", "Seeding torrents");
-            case TorrentsProxyModel::Paused:
-                return qApp->translate("tremotesf", "Paused", "Paused torrents");
-            case TorrentsProxyModel::Checking:
-                return qApp->translate("tremotesf", "Checking", "Checking torrents");
-            case TorrentsProxyModel::Errored:
-                return qApp->translate("tremotesf", "Errored", "Errored torrents");
-            default:
-                break;
-            }
-#else
         case Qt::DecorationRole:
             switch (item.filter) {
             case TorrentsProxyModel::All:
@@ -104,7 +77,6 @@ namespace tremotesf
                 break;
             }
             break;
-#endif
         }
         return {};
     }
@@ -141,15 +113,6 @@ namespace tremotesf
         }
         return indexForStatusFilter(torrentsProxyModel()->statusFilter());
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> StatusFiltersModel::roleNames() const
-    {
-        return {{FilterRole, "filter"},
-                {FilterNameRole, "filterName"},
-                {TorrentsRole, "torrents"}};
-    }
-#endif
 
     void StatusFiltersModel::resetTorrentsProxyModelFilter() const
     {

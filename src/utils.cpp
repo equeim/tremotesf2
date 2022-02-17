@@ -26,10 +26,6 @@
 #include <QFile>
 #include <QLocale>
 
-#ifdef TREMOTESF_SAILFISHOS
-#include "sailfishos/sailfishosutils.h"
-#endif
-
 namespace tremotesf
 {
     namespace
@@ -191,12 +187,5 @@ namespace tremotesf
         return readTextFileImpl(filePath, [&] {
             qWarning("Failed to read file with path \"%s\"", filePath.toUtf8().data());
         });
-    }
-
-    void Utils::registerTypes()
-    {
-#ifdef TREMOTESF_SAILFISHOS
-        SailfishOSUtils::registerTypes();
-#endif
     }
 }

@@ -31,10 +31,7 @@ namespace tremotesf
     public:
         enum Role
         {
-            DirectoryRole = Qt::UserRole,
-#ifdef TREMOTESF_SAILFISHOS
-            TorrentsRole
-#endif
+            DirectoryRole = Qt::UserRole
         };
 
         inline explicit DownloadDirectoriesModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
@@ -48,9 +45,6 @@ namespace tremotesf
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
     protected:
-#ifdef TREMOTESF_SAILFISHOS
-        QHash<int, QByteArray> roleNames() const override;
-#endif
         void resetTorrentsProxyModelFilter() const override;
 
     private:

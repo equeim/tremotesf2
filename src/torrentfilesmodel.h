@@ -61,11 +61,6 @@ namespace tremotesf
         Q_INVOKABLE QString localFilePath(const QModelIndex& index) const;
         Q_INVOKABLE bool isWanted(const QModelIndex& index) const;
 
-#ifdef TREMOTESF_SAILFISHOS
-    protected:
-        QHash<int, QByteArray> roleNames() const override;
-#endif
-
     private:
         void update(const std::vector<int>& changed);
         void createTree();

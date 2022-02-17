@@ -18,14 +18,11 @@
 
 #include "torrentfilesmodel.h"
 
+#include <QApplication>
 #include <QFutureWatcher>
 #include <QStringBuilder>
-#include <QtConcurrentRun>
-
-#ifndef TREMOTESF_SAILFISHOS
-#include <QApplication>
 #include <QStyle>
-#endif
+#include <QtConcurrentRun>
 
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/torrent_qdebug.h"
@@ -115,15 +112,11 @@ namespace tremotesf
     }
 
     TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, Rpc* rpc, QObject* parent)
-#ifdef TREMOTESF_SAILFISHOS
-        : BaseTorrentFilesModel(parent),
-#else
         : BaseTorrentFilesModel({NameColumn,
                                  SizeColumn,
                                  ProgressBarColumn,
                                  ProgressColumn,
                                  PriorityColumn}, parent),
-#endif
           mTorrent(nullptr),
           mRpc(rpc),
           mLoaded(false),
@@ -354,17 +347,4 @@ namespace tremotesf
             emit loadingChanged();
         }
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> TorrentFilesModel::roleNames() const
-    {
-        return {{NameRole, "name"},
-                {IsDirectoryRole, "isDirectory"},
-                {CompletedSizeRole, "completedSize"},
-                {SizeRole, "size"},
-                {ProgressRole, "progress"},
-                {WantedStateRole, "wantedState"},
-                {PriorityRole, "priority"}};
-    }
-#endif
 }

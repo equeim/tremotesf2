@@ -20,43 +20,24 @@
 
 #include <map>
 
-#ifndef TREMOTESF_SAILFISHOS
 #include <QApplication>
 #include <QStyle>
-#endif
-
-#include "torrentsproxymodel.h"
 
 #include "libtremotesf/qtsupport.h"
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/tracker.h"
 #include "modelutils.h"
+#include "torrentsproxymodel.h"
 #include "trpc.h"
 
 namespace tremotesf
 {
-#ifdef TREMOTESF_SAILFISHOS
-    namespace
-    {
-        enum Role
-        {
-            TrackerRole = Qt::UserRole,
-            TorrentsRole
-        };
-    }
-#endif
-
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const
     {
         const TrackerItem& item = mTrackers[static_cast<size_t>(index.row())];
         switch (role) {
         case TrackerRole:
             return item.tracker;
-#ifdef TREMOTESF_SAILFISHOS
-        case TorrentsRole:
-            return item.torrents;
-        }
-#else
         case Qt::DecorationRole:
             if (item.tracker.isEmpty()) {
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
@@ -69,9 +50,9 @@ namespace tremotesf
             }
             //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
             return qApp->translate("tremotesf", "%1 (%L2)").arg(item.tracker).arg(item.torrents);
+        default:
+            return {};
         }
-#endif
-        return {};
     }
 
     int AllTrackersModel::rowCount(const QModelIndex&) const
@@ -106,14 +87,6 @@ namespace tremotesf
         }
         return indexForTracker(torrentsProxyModel()->trackerFilter());
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> AllTrackersModel::roleNames() const
-    {
-        return {{TrackerRole, "tracker"},
-                {TorrentsRole, "torrents"}};
-    }
-#endif
 
     void AllTrackersModel::resetTorrentsProxyModelFilter() const
     {

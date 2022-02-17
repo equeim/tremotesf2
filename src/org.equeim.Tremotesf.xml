@@ -7,8 +7,5 @@
       <arg name="files" type="as" direction="in"/>
       <arg name="urls" type="as" direction="in"/>
     </method>
-    <method name="OpenTorrentPropertiesPage">
-      <arg name="torrentHash" type="s" direction="in"/>
-    </method>
   </interface>
 </node>

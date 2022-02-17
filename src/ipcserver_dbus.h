@@ -23,7 +23,6 @@
 
 #include "ipcserver.h"
 #include "ipcserver_dbus_service.h"
-//#include "ipcserver_dbus_service_deprecated.h"
 
 namespace tremotesf
 {
@@ -42,11 +41,6 @@ namespace tremotesf
 
     private:
         IpcDbusService mDbusService{this, this};
-
-#ifdef TREMOTESF_SAILFISHOS
-    signals:
-        void torrentPropertiesPageRequested(const QString& torrentHash);
-#endif
     };
 }
 

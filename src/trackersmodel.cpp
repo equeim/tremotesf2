@@ -66,34 +66,9 @@ namespace tremotesf
         setTorrent(torrent);
     }
 
-    int TrackersModel::columnCount(const QModelIndex&) const
-    {
-#ifdef TREMOTESF_SAILFISHOS
-        return 1;
-#else
-        return ColumnCount;
-#endif
-    }
-
     QVariant TrackersModel::data(const QModelIndex& index, int role) const
     {
         const Tracker& tracker = mTrackers[static_cast<size_t>(index.row())];
-#ifdef TREMOTESF_SAILFISHOS
-        switch (role) {
-        case IdRole:
-            return tracker.id();
-        case AnnounceRole:
-            return tracker.announce();
-        case StatusStringRole:
-            return trackerStatusString(tracker);
-        case ErrorRole:
-            return (tracker.status() == Tracker::Error);
-        case PeersRole:
-            return tracker.peers();
-        case NextUpdateRole:
-            return tracker.nextUpdateEta();
-        }
-#else
         if (role == Qt::DisplayRole) {
             switch (index.column()) {
             case AnnounceColumn:
@@ -114,11 +89,9 @@ namespace tremotesf
             }
             return data(index, Qt::DisplayRole);
         }
-#endif
         return QVariant();
     }
 
-#ifndef TREMOTESF_SAILFISHOS
     QVariant TrackersModel::headerData(int section, Qt::Orientation, int role) const
     {
         if (role == Qt::DisplayRole) {
@@ -135,7 +108,6 @@ namespace tremotesf
         }
         return QVariant();
     }
-#endif
 
     int TrackersModel::rowCount(const QModelIndex&) const
     {
@@ -182,18 +154,6 @@ namespace tremotesf
     {
         return mTrackers[static_cast<size_t>(index.row())];
     }
-
-#ifdef TREMOTESF_SAILFISHOS
-    QHash<int, QByteArray> TrackersModel::roleNames() const
-    {
-        return {{IdRole, "id"},
-                {AnnounceRole, "announce"},
-                {StatusStringRole, "statusString"},
-                {ErrorRole, "error"},
-                {PeersRole, "peers"},
-                {NextUpdateRole, "nextUpdate"}};
-    }
-#endif
 
     class TrackersModelUpdater : public ModelListUpdater<TrackersModel, Tracker> {
     public:
