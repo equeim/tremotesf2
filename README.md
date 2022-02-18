@@ -18,11 +18,11 @@ Table of Contents
 ## Installation
 ### Dependencies
 - C++17 compiler
-- CMake 3.12 or newer (3.21 on Windows)
-- Qt 5.6 or newer (Core, Network, Concurrent, Gui, Widgets)
+- CMake 3.16 or newer (3.21 on Windows)
+- Qt 5.15 (Core, Network, Concurrent, Gui, Widgets)
 - KWidgetsAddons
 
-On GNU/Linux and BSD:
+On GNU/Linux and BSD, also:
 - Gettext 0.19.7 or newer
 - Qt D-Bus, Qt X11 Extras
 - KWindowSystem
@@ -62,9 +62,8 @@ sudo dnf copr enable equeim/tremotesf
 sudo dnf install tremotesf
 ```
 
-- openSUSE - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+- openSUSE Tumbleweed - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 ```sh
-#sudo zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Leap_15.3/home:equeim:tremotesf.repo
 sudo zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
 sudo zypper in tremotesf
 ```
@@ -72,8 +71,8 @@ sudo zypper in tremotesf
 - Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ```sh
-wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_20.04/Release.key -O - | sudo apt-key add -
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_20.04/ /"
+wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_21.10/Release.key -O - | sudo apt-key add -
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_21.10/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
