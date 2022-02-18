@@ -48,8 +48,9 @@ namespace tremotesf::bencode
             using T = std::decay_t<decltype(value)>;
             if constexpr (std::is_same_v<T, Expected>) {
                 return std::move(value);
+            } else {
+                return std::nullopt;
             }
-            return std::nullopt;
         }, mValue);
     }
 
@@ -67,8 +68,9 @@ namespace tremotesf::bencode
                 auto string = QString::fromStdString(value);
                 value.clear();
                 return string;
+            } else {
+                return std::nullopt;
             }
-            return std::nullopt;
         }, mValue);
     }
 
@@ -194,7 +196,7 @@ namespace tremotesf::bencode
                 return integer;
             }
 
-            Integer readIntegerUntilTerminator(char terminator) {
+            Integer readIntegerUntilTerminator(char integerTerminator) {
                 const auto peeked = mDevice.peek(mIntegerBuffer.data(), integerBufferSize);
                 if (peeked <= 0) {
                     setErrorFromIODevice("readIntegerUntilTerminator: failed to peek integer buffer");
@@ -207,8 +209,8 @@ namespace tremotesf::bencode
                     mError = ParsingError;
                     return {};
                 }
-                if (*result.ptr != terminator) {
-                    qWarning("readIntegerUntilTerminator: terminator doesn't match, expected 0x%hhx but got 0x%hhx", terminator, *result.ptr);
+                if (*result.ptr != integerTerminator) {
+                    qWarning("readIntegerUntilTerminator: terminator doesn't match, expected 0x%hhx but got 0x%hhx", integerTerminator, *result.ptr);
                     mError = ParsingError;
                     return {};
                 }
