@@ -26,6 +26,7 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#include "utils.h"
 #endif
 
 namespace tremotesf
@@ -82,10 +83,14 @@ namespace tremotesf
     {
             QString name(QLatin1String("tremotesf"));
 #ifdef Q_OS_WIN
-            DWORD sessionId = 0;
-            ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
-            name += '-';
-            name += QString::number(sessionId);
+            try {
+                DWORD sessionId{};
+                Utils::callWinApiFunctionWithLastError([&] { return ProcessIdToSessionId(GetCurrentProcessId(), &sessionId); });
+                name += '-';
+                name += QString::number(sessionId);
+            } catch (const std::exception& e) {
+                qWarning() << "ProcessIdToSessionId falied: " << e.what();
+            }
 #endif
             return name;
     }

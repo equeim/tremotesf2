@@ -30,8 +30,10 @@
 #endif // Q_OS_UNIX
 
 #ifdef Q_OS_WIN
+#include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "utils.h"
 #endif // Q_OS_WIN
 
 #include <QCoreApplication>
@@ -115,8 +117,10 @@ namespace tremotesf
 
     void SignalHandler::setupHandlers()
     {
-        if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
-            qFatal("SetConsoleCtrlHandler failed");
+        try {
+           Utils::callWinApiFunctionWithLastError([] { return SetConsoleCtrlHandler(consoleHandler, TRUE); });
+        } catch (const std::exception& e) {
+            throw std::runtime_error(std::string("SetConsoleCtrlHandler failed: ") + e.what());
         }
     }
 
