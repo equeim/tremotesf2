@@ -213,7 +213,7 @@ namespace tremotesf::bencode
                     return {};
                 }
                 const auto toSkip = result.ptr - mIntegerBuffer.data() + 1;
-                if (!skip(toSkip, mIntegerBuffer.data())) {
+                if (!skip(toSkip)) {
                     setErrorFromIODevice("readIntegerUntilTerminator: failed to skip read integer");
                     return {};
                 }
@@ -231,30 +231,15 @@ namespace tremotesf::bencode
 
             bool skipByte()
             {
-                char ch;
-                return skip(1, &ch);
+                return skip(1);
             }
 
-            bool skip(qint64 size, char* buffer)
+            bool skip(qint64 size)
             {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-                Q_UNUSED(buffer);
                 if (mDevice.skip(size) != size) {
                     setErrorFromIODevice("skip: skip() failure");
                     return false;
                 }
-#else
-                if constexpr (!IsSequential) {
-                    Q_UNUSED(buffer);
-                    if (!mDevice.seek(mDevice.pos() + size)) {
-                        setErrorFromIODevice("skip: seek() failure");
-                        return false;
-                    }
-                } else if (mDevice.read(buffer, size) != size) {
-                    setErrorFromIODevice("skip: read() failure");
-                    return false;
-                }
-#endif
                 return true;
             }
 

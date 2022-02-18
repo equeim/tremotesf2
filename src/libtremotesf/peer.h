@@ -29,7 +29,7 @@ namespace libtremotesf
 {
     struct Peer
     {
-        static const QJsonKeyString addressKey;
+        static const QLatin1String addressKey;
 
         explicit Peer(QString&& address, const QJsonObject& peerJson);
         bool update(const QJsonObject& peerJson);

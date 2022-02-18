@@ -44,10 +44,6 @@ namespace tremotesf
     signals:
         void addedNotificationRequested(const QStringList& hashStrings, const QStringList& names);
         void finishedNotificationRequested(const QStringList& hashStrings, const QStringList& names);
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-        void statusChanged();
-#endif
     };
 }
 

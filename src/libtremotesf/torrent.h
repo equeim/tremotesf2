@@ -207,7 +207,7 @@ namespace libtremotesf
         using RatioLimitMode = TorrentData::RatioLimitMode;
         using IdleSeedingLimitMode = TorrentData::IdleSeedingLimitMode;
 
-        static const QJsonKeyString idKey;
+        static const QLatin1String idKey;
 
         explicit Torrent(int id, const QJsonObject& torrentMap, Rpc* rpc, QObject* parent = nullptr);
 

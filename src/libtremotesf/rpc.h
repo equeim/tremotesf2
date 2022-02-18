@@ -35,7 +35,6 @@
 
 #include "serversettings.h"
 #include "serverstats.h"
-#include "qtsupport.h"
 
 class QAuthenticator;
 class QNetworkAccessManager;
@@ -44,6 +43,8 @@ class QTimer;
 
 namespace libtremotesf
 {
+    Q_NAMESPACE
+
     class Torrent;
 
     struct Server
@@ -86,21 +87,23 @@ namespace libtremotesf
         int autoReconnectInterval;
     };
 
-    DEFINE_Q_ENUM_NS(RpcConnectionState,
+    enum class RpcConnectionState {
+        Disconnected,
+        Connecting,
+        Connected
+    };
+    Q_ENUM_NS(RpcConnectionState)
 
-                     Disconnected,
-                     Connecting,
-                     Connected)
-
-    DEFINE_Q_ENUM_NS(RpcError,
-
-                     NoError,
-                     TimedOut,
-                     ConnectionError,
-                     AuthenticationError,
-                     ParseError,
-                     ServerIsTooNew,
-                     ServerIsTooOld)
+    enum class RpcError {
+        NoError,
+        TimedOut,
+        ConnectionError,
+        AuthenticationError,
+        ParseError,
+        ServerIsTooNew,
+        ServerIsTooOld
+    };
+    Q_ENUM_NS(RpcError)
 
     class Rpc : public QObject
     {
@@ -108,8 +111,8 @@ namespace libtremotesf
         Q_PROPERTY(libtremotesf::ServerSettings* serverSettings READ serverSettings CONSTANT)
         Q_PROPERTY(libtremotesf::ServerStats* serverStats READ serverStats CONSTANT)
         Q_PROPERTY(bool connected READ isConnected NOTIFY connectedChanged)
-        Q_PROPERTY(Q_ENUM_NS_TYPE(libtremotesf::RpcConnectionState) connectionState READ connectionState NOTIFY connectionStateChanged)
-        Q_PROPERTY(Q_ENUM_NS_TYPE(libtremotesf::RpcError) error READ error NOTIFY errorChanged)
+        Q_PROPERTY(libtremotesf::RpcConnectionState connectionState READ connectionState NOTIFY connectionStateChanged)
+        Q_PROPERTY(libtremotesf::RpcError error READ error NOTIFY errorChanged)
         Q_PROPERTY(bool local READ isLocal NOTIFY connectedChanged)
         Q_PROPERTY(int torrentsCount READ torrentsCount NOTIFY torrentsUpdated)
         Q_PROPERTY(bool updateDisabled READ isUpdateDisabled WRITE setUpdateDisabled NOTIFY updateDisabledChanged)

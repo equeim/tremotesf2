@@ -1,12 +1,10 @@
+add_subdirectory(libtremotesf)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Concurrent Network)
-
-set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6" FORCE)
-include(libtremotesf/cmake/CommonOptions.cmake)
-add_subdirectory(libtremotesf)
+find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Concurrent Network)
 
 list(APPEND QRC_FILES resources.qrc)
 
@@ -65,8 +63,8 @@ add_executable(tremotesf
     ${QRC_FILES}
 )
 
-target_link_libraries(tremotesf Qt5::Network libtremotesf)
-target_include_directories(tremotesf PRIVATE ${Qt5Concurrent_INCLUDE_DIRS})
+target_link_libraries(tremotesf Qt::Network libtremotesf)
+target_include_directories(tremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 target_compile_definitions(
     tremotesf PRIVATE
     TREMOTESF_APP_ID="org.equeim.Tremotesf"
@@ -77,10 +75,10 @@ target_compile_definitions(
 
 # Leave the if for now
 if (1)
-    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Widgets)
     find_package(KF5WidgetsAddons REQUIRED)
 
-    target_link_libraries(tremotesf Qt5::Widgets KF5::WidgetsAddons)
+    target_link_libraries(tremotesf Qt::Widgets KF5::WidgetsAddons)
 
     set_property(SOURCE utils.cpp PROPERTY SKIP_AUTOMOC ON)
 
@@ -143,27 +141,25 @@ if (1)
         set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
     endif()
 
-    if (Qt5_VERSION VERSION_GREATER_EQUAL 5.14.0)
-        qt5_import_plugins(tremotesf
-            EXCLUDE_BY_TYPE imageformats
-            EXCLUDE_BY_TYPE iconengines
-            INCLUDE Qt::QSvgIconPlugin
-        )
-    endif()
+    qt_import_plugins(tremotesf
+        EXCLUDE_BY_TYPE imageformats
+        EXCLUDE_BY_TYPE iconengines
+        INCLUDE Qt::QSvgIconPlugin
+    )
 endif()
 
 if (UNIX AND NOT APPLE)
-    find_package(Qt5 REQUIRED COMPONENTS DBus X11Extras)
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus X11Extras)
     find_package(KF5WindowSystem REQUIRED)
-    target_link_libraries(tremotesf Qt5::DBus Qt5::X11Extras KF5::WindowSystem)
+    target_link_libraries(tremotesf Qt::DBus Qt::X11Extras KF5::WindowSystem)
 
     set_source_files_properties(org.freedesktop.Application.xml PROPERTIES CLASSNAME IpcDbusInterface NO_NAMESPACE ON)
-    qt5_add_dbus_adaptor(dbus_generated org.freedesktop.Application.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)
-    qt5_add_dbus_interface(dbus_generated org.freedesktop.Application.xml ipcclient_dbus_interface)
+    qt_add_dbus_adaptor(dbus_generated org.freedesktop.Application.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)
+    qt_add_dbus_interface(dbus_generated org.freedesktop.Application.xml ipcclient_dbus_interface)
 
     set_source_files_properties(org.equeim.Tremotesf.xml PROPERTIES CLASSNAME IpcDbusInterfaceDeprecated NO_NAMESPACE ON)
-    qt5_add_dbus_adaptor(dbus_generated org.equeim.Tremotesf.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_deprecated_adaptor IpcDbusServiceDeprecatedAdaptor)
-    qt5_add_dbus_interface(dbus_generated org.equeim.Tremotesf.xml ipcclient_dbus_interface_deprecated)
+    qt_add_dbus_adaptor(dbus_generated org.equeim.Tremotesf.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_deprecated_adaptor IpcDbusServiceDeprecatedAdaptor)
+    qt_add_dbus_interface(dbus_generated org.equeim.Tremotesf.xml ipcclient_dbus_interface_deprecated)
 
     set_source_files_properties(
         desktop/org.freedesktop.Notifications.xml
@@ -171,13 +167,9 @@ if (UNIX AND NOT APPLE)
         desktop/org.xfce.FileManager.xml
         PROPERTIES NO_NAMESPACE ON
     )
-    qt5_add_dbus_interface(dbus_generated desktop/org.freedesktop.Notifications.xml org.freedesktop.Notifications)
-    qt5_add_dbus_interface(dbus_generated desktop/org.freedesktop.FileManager1.xml org.freedesktop.FileManager1)
-    qt5_add_dbus_interface(dbus_generated desktop/org.xfce.FileManager.xml org.xfce.FileManager)
-
-    if (Qt5_VERSION VERSION_LESS 5.9.2)
-        set_source_files_properties(${dbus_generated} PROPERTIES SKIP_AUTOMOC ON)
-    endif()
+    qt_add_dbus_interface(dbus_generated desktop/org.freedesktop.Notifications.xml org.freedesktop.Notifications)
+    qt_add_dbus_interface(dbus_generated desktop/org.freedesktop.FileManager1.xml org.freedesktop.FileManager1)
+    qt_add_dbus_interface(dbus_generated desktop/org.xfce.FileManager.xml org.xfce.FileManager)
 
     target_sources(tremotesf PRIVATE ipcserver_dbus.cpp ipcserver_dbus_service.cpp ipcclient_dbus.cpp ${dbus_generated})
 else()

@@ -1,6 +1,6 @@
-find_package(Qt5 REQUIRED COMPONENTS LinguistTools)
+find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS LinguistTools)
 # Make sure to also change translations.qrc
-qt5_add_translation(qm_files
+qt_add_translation(qm_files
     en.ts
     es.ts
     fr.ts
@@ -29,7 +29,7 @@ if (WIN32)
     # We then need to install translations ourselves, and since they are not merged
     # we install only qtbase_*.qm
 
-    get_target_property(library_type Qt5::Core TYPE)
+    get_target_property(library_type Qt${TREMOTESF_QT_VERSION_MAJOR}::Core TYPE)
     if (library_type STREQUAL "STATIC_LIBRARY")
         message(STATUS "Building with static Qt, attempting to deploy Qt translations")
 

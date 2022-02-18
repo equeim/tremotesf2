@@ -49,14 +49,6 @@ namespace tremotesf
         return indexes;
     }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
-    void BaseProxyModel::setSortRole(int role)
-    {
-        QSortFilterProxyModel::setSortRole(role);
-        emit sortRoleChanged();
-    }
-#endif
-
     void BaseProxyModel::sort(int column, Qt::SortOrder order)
     {
         QSortFilterProxyModel::sort(column, order);

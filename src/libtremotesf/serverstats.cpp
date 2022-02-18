@@ -20,8 +20,6 @@
 
 #include <QJsonObject>
 
-#include "stdutils.h"
-
 namespace libtremotesf
 {
     long long SessionStats::downloaded() const
@@ -46,10 +44,10 @@ namespace libtremotesf
 
     void SessionStats::update(const QJsonObject& stats)
     {
-        mDownloaded = static_cast<long long>(stats.value(QJsonKeyStringInit("downloadedBytes")).toDouble());
-        mUploaded = static_cast<long long>(stats.value(QJsonKeyStringInit("uploadedBytes")).toDouble());
-        mDuration = stats.value(QJsonKeyStringInit("secondsActive")).toInt();
-        mSessionCount = stats.value(QJsonKeyStringInit("sessionCount")).toInt();
+        mDownloaded = static_cast<long long>(stats.value(QLatin1String("downloadedBytes")).toDouble());
+        mUploaded = static_cast<long long>(stats.value(QLatin1String("uploadedBytes")).toDouble());
+        mDuration = stats.value(QLatin1String("secondsActive")).toInt();
+        mSessionCount = stats.value(QLatin1String("sessionCount")).toInt();
     }
 
     ServerStats::ServerStats(QObject* parent)
@@ -84,10 +82,10 @@ namespace libtremotesf
 
     void ServerStats::update(const QJsonObject& serverStats)
     {
-        mDownloadSpeed = static_cast<long long>(serverStats.value(QJsonKeyStringInit("downloadSpeed")).toDouble());
-        mUploadSpeed = static_cast<long long>(serverStats.value(QJsonKeyStringInit("uploadSpeed")).toDouble());
-        mCurrentSession.update(serverStats.value(QJsonKeyStringInit("current-stats")).toObject());
-        mTotal.update(serverStats.value(QJsonKeyStringInit("cumulative-stats")).toObject());
+        mDownloadSpeed = static_cast<long long>(serverStats.value(QLatin1String("downloadSpeed")).toDouble());
+        mUploadSpeed = static_cast<long long>(serverStats.value(QLatin1String("uploadSpeed")).toDouble());
+        mCurrentSession.update(serverStats.value(QLatin1String("current-stats")).toObject());
+        mTotal.update(serverStats.value(QLatin1String("cumulative-stats")).toObject());
         emit updated();
     }
 }

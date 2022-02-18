@@ -148,12 +148,7 @@ namespace tremotesf
                                           true,
                                           this);
         QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
-            auto lines = dialog->text().split(QLatin1Char('\n'),
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-                                              Qt::SkipEmptyParts);
-#else
-                                              QString::SkipEmptyParts);
-#endif
+            const auto lines = dialog->text().split(QLatin1Char('\n'), Qt::SkipEmptyParts);
             mTorrent->addTrackers(lines);
         });
         dialog->show();

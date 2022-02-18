@@ -55,7 +55,7 @@ namespace libtremotesf
         const int maxRetryAttempts = 3;
 
         const QByteArray sessionIdHeader(QByteArrayLiteral("X-Transmission-Session-Id"));
-        const auto torrentsKey(QJsonKeyStringInit("torrents"));
+        const QLatin1String torrentsKey("torrents");
         const QLatin1String torrentDuplicateKey("torrent-duplicate");
 
 #ifdef Q_OS_WIN
@@ -77,12 +77,12 @@ namespace libtremotesf
 
         inline QJsonObject getReplyArguments(const QJsonObject& parseResult)
         {
-            return parseResult.value(QJsonKeyStringInit("arguments")).toObject();
+            return parseResult.value(QLatin1String("arguments")).toObject();
         }
 
         inline bool isResultSuccessful(const QJsonObject& parseResult)
         {
-            return (parseResult.value(QJsonKeyStringInit("result")).toString() == QLatin1String("success"));
+            return (parseResult.value(QLatin1String("result")).toString() == QLatin1String("success"));
         }
 
         bool isAddressLocal(const QString& address)
@@ -724,7 +724,7 @@ namespace libtremotesf
                         "}"),
                         [=](const auto& parseResult, bool success) {
                             if (success) {
-                                emit gotDownloadDirFreeSpace(static_cast<long long>(getReplyArguments(parseResult).value(QJsonKeyStringInit("download-dir-free-space")).toDouble()));
+                                emit gotDownloadDirFreeSpace(static_cast<long long>(getReplyArguments(parseResult).value(QLatin1String("download-dir-free-space")).toDouble()));
                             }
                         });
         }
@@ -738,7 +738,7 @@ namespace libtremotesf
                         [=](const auto& parseResult, bool success) {
                             emit gotFreeSpaceForPath(path,
                                                      success,
-                                                     success ? static_cast<long long>(getReplyArguments(parseResult).value(QJsonKeyStringInit("size-bytes")).toDouble()) : 0);
+                                                     success ? static_cast<long long>(getReplyArguments(parseResult).value(QLatin1String("size-bytes")).toDouble()) : 0);
                         });
         }
     }
@@ -1067,7 +1067,7 @@ namespace libtremotesf
                         std::vector<NewTorrent> newTorrents;
                         {
                             const QJsonArray torrentsJsons(getReplyArguments(parseResult)
-                                                            .value(QJsonKeyStringInit("torrents"))
+                                                            .value(QLatin1String("torrents"))
                                                             .toArray());
                             newTorrents.reserve(static_cast<size_t>(torrentsJsons.size()));
                             for (const auto& i : torrentsJsons) {

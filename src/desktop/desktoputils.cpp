@@ -313,12 +313,7 @@ namespace tremotesf
                         } else if (line.startsWith(QLatin1String("Exec"))) {
                             const int delimiterIndex = line.indexOf(QLatin1Char('='));
                             const auto execLine(line.midRef(delimiterIndex + 1).trimmed());
-                            const auto splitted(execLine.split(QLatin1Char(' '),
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-                                                               Qt::SkipEmptyParts));
-#else
-                                                               QString::SkipEmptyParts));
-#endif
+                            const auto splitted(execLine.split(QLatin1Char(' '), Qt::SkipEmptyParts));
                             if (!splitted.isEmpty()) {
                                 exec.first = splitted.first().toString();
                                 exec.second.reserve(splitted.size() - 1);

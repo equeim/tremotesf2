@@ -34,12 +34,7 @@ namespace tremotesf
         bool isTextElided(const QString& text, const QStyleOptionViewItem& option)
         {
             const QFontMetrics metrics(option.font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
             const int textWidth = metrics.horizontalAdvance(text);
-#else
-            const int textWidth = metrics.width(text);
-#endif
-
             const auto style = option.widget ? option.widget->style() : qApp->style();
             QRect textRect(style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget));
             const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, option.widget) + 1;

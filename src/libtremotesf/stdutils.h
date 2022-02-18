@@ -154,12 +154,4 @@ namespace tremotesf
     using libtremotesf::VectorBatchRemover;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 7, 0)
-        using QJsonKeyString = QString;
-#define QJsonKeyStringInit QStringLiteral
-#else
-        using QJsonKeyString = QLatin1String;
-        using QJsonKeyStringInit = QLatin1String;
-#endif
-
 #endif // TREMOTESF_STDUTILS_H
