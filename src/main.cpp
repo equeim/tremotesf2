@@ -42,11 +42,21 @@
 int main(int argc, char** argv)
 {
 #ifdef Q_OS_WIN
-    SetConsoleOutputCP(GetACP());
+    try {
+        tremotesf::Utils::callWinApiFunctionWithLastError([] { return SetConsoleOutputCP(GetACP()); });
+    } catch (const std::exception& e) {
+        qWarning() << "SetConsoleOutputCP failed:" << e.what();
+        return EXIT_FAILURE;
+    }
 #endif
 
     // Setup handler for UNIX signals or Windows console handler
-    tremotesf::SignalHandler::setupHandlers();
+    try {
+        tremotesf::SignalHandler::setupHandlers();
+    } catch (const std::exception& e) {
+        qWarning() << e.what();
+        return EXIT_FAILURE;
+    }
 
     //
     // Command line parsing
@@ -77,7 +87,12 @@ int main(int argc, char** argv)
     // QApplication initialization
     //
 #ifdef Q_OS_WIN
-    AllowSetForegroundWindow(ASFW_ANY);
+    try {
+        tremotesf::Utils::callWinApiFunctionWithLastError([] { return AllowSetForegroundWindow(ASFW_ANY); });
+    } catch (const std::exception& e) {
+        qWarning() << "AllowSetForegroundWindow failed:" << e.what();
+        return EXIT_FAILURE;
+    }
 #endif
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -95,7 +110,11 @@ int main(int argc, char** argv)
     QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
     QGuiApplication::setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
-    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    if (const auto ret = CoInitializeEx(nullptr, COINIT_MULTITHREADED); ret != S_OK && ret != S_FALSE && ret != RPC_E_CHANGED_MODE ) {
+        qWarning() << "CoInitializeEx failed with error code" << ret;
+        return EXIT_FAILURE;
+    }
+
     QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
     QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
 #endif

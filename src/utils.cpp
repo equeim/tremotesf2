@@ -26,6 +26,12 @@
 #include <QFile>
 #include <QLocale>
 
+#ifdef Q_OS_WIN
+#include <stdexcept>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 namespace tremotesf
 {
     namespace
@@ -188,4 +194,39 @@ namespace tremotesf
             qWarning("Failed to read file with path \"%s\"", filePath.toUtf8().data());
         });
     }
+
+#ifdef Q_OS_WIN
+    namespace
+    {
+        std::string getWinApiErrorString(DWORD error) {
+            std::array<TCHAR, (64 * 1024) - 1> buffer{};
+            const auto formattedChars = FormatMessageA(
+                FORMAT_MESSAGE_FROM_SYSTEM,
+                nullptr,
+                error,
+                0,
+                buffer.data(),
+                static_cast<DWORD>(buffer.size()),
+                nullptr
+            );
+            if (formattedChars != 0) {
+                std::string errorString(buffer.data(), formattedChars);
+                // Standard error messages contain newline at the the end for some reason
+                // Trim string from the end
+                errorString.erase(std::find_if(errorString.rbegin(), errorString.rend(), [](auto ch) {
+                    return !std::isspace(ch);
+                }).base(), errorString.end());
+                return errorString + " (error code " + std::to_string(error) + ")";
+            }
+            return "Error code " + std::to_string(error);
+        }
+    }
+
+    void Utils::callWinApiFunctionWithLastError(std::function<bool()>&& function)
+    {
+        if (!function()) {
+            throw std::runtime_error(getWinApiErrorString(GetLastError()));
+        }
+    }
+#endif
 }

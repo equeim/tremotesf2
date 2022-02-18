@@ -19,6 +19,9 @@
 #ifndef TREMOTESF_UTILS_H
 #define TREMOTESF_UTILS_H
 
+#ifdef Q_OS_WIN
+#include <functional>
+#endif
 #include <QObject>
 
 namespace tremotesf
@@ -39,6 +42,10 @@ namespace tremotesf
 
         Q_INVOKABLE static QString readTextResource(const QString& resourcePath);
         Q_INVOKABLE static QString readTextFile(const QString& filePath);
+
+#ifdef Q_OS_WIN
+        static void callWinApiFunctionWithLastError(std::function<bool()>&& function);
+#endif
     };
 }
 
