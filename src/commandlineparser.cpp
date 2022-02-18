@@ -19,6 +19,7 @@
 #include "commandlineparser.h"
 
 #include <iostream>
+#include <stdexcept>
 
 #include <QFileInfo>
 #include <QUrl>
@@ -88,9 +89,7 @@ namespace tremotesf
             }
             parsePositionals(torrents, args);
         } catch (const cxxopts::OptionException& e) {
-            std::cerr << e.what() << std::endl;
-            args.exit = true;
-            args.returnCode = 1;
+            throw std::runtime_error(e.what());
         }
 
         return args;

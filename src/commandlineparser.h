@@ -27,7 +27,6 @@ namespace tremotesf
         bool minimized;
 
         bool exit;
-        int returnCode;
     };
 
     CommandLineArgs parseCommandLine(int& argc, char**& argv);
