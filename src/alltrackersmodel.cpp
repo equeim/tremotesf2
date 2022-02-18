@@ -23,7 +23,6 @@
 #include <QApplication>
 #include <QStyle>
 
-#include "libtremotesf/qtsupport.h"
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/tracker.h"
 #include "modelutils.h"

@@ -1,9 +1,9 @@
 if (WIN32)
     cmake_minimum_required(VERSION 3.21)
 else()
-    cmake_minimum_required(VERSION 3.12)
+    cmake_minimum_required(VERSION 3.16)
 endif()
-cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.22)
+cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.23)
 
 project(libtremotesf CXX)
 
@@ -19,7 +19,7 @@ set(CMAKE_AUTOMOC ON)
 
 include(cmake/CommonOptions.cmake)
 
-find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Concurrent Network)
+find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network)
 
 if (ANDROID)
     set(library_type STATIC)
@@ -33,7 +33,6 @@ add_library(
     itemlistupdater.h
     peer.cpp
     peer.h
-    qtsupport.h
     rpc.cpp
     rpc.h
     serversettings.cpp
@@ -50,14 +49,14 @@ add_library(
     tracker.h
 )
 
-target_link_libraries(libtremotesf Qt${TREMOTESF_QT_VERSION_MAJOR}::Core Qt${TREMOTESF_QT_VERSION_MAJOR}::Network)
+target_link_libraries(libtremotesf Qt::Core Qt::Network)
 target_include_directories(libtremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 
 if (TREMOTESF_BUILD_TESTS AND NOT ANDROID)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Test)
     add_executable(itemlistupdater_test itemlistupdater_test.cpp)
     add_test(NAME itemlistupdater_test COMMAND itemlistupdater_test)
-    target_link_libraries(itemlistupdater_test libtremotesf Qt${TREMOTESF_QT_VERSION_MAJOR}::Test)
+    target_link_libraries(itemlistupdater_test libtremotesf Qt::Test)
 endif()
 
 set_common_options_on_targets()

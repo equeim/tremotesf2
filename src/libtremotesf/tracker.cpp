@@ -104,7 +104,7 @@ namespace libtremotesf
         bool changed = false;
         bool announceUrlChanged = false;
 
-        QString announce(trackerMap.value(QJsonKeyStringInit("announce")).toString());
+        QString announce(trackerMap.value(QLatin1String("announce")).toString());
         if (announce != mAnnounce) {
             changed = true;
             announceUrlChanged = true;
@@ -119,21 +119,21 @@ namespace libtremotesf
 #endif
         }
 
-        const bool scrapeError = (!trackerMap.value(QJsonKeyStringInit("lastScrapeSucceeded")).toBool() &&
-                                  trackerMap.value(QJsonKeyStringInit("lastScrapeTime")).toInt() != 0);
+        const bool scrapeError = (!trackerMap.value(QLatin1String("lastScrapeSucceeded")).toBool() &&
+                                  trackerMap.value(QLatin1String("lastScrapeTime")).toInt() != 0);
 
-        const bool announceError = (!trackerMap.value(QJsonKeyStringInit("lastAnnounceSucceeded")).toBool() &&
-                                    trackerMap.value(QJsonKeyStringInit("lastAnnounceTime")).toInt() != 0);
+        const bool announceError = (!trackerMap.value(QLatin1String("lastAnnounceSucceeded")).toBool() &&
+                                    trackerMap.value(QLatin1String("lastAnnounceTime")).toInt() != 0);
 
         if (scrapeError || announceError) {
             setChanged(mStatus, Error, changed);
             if (scrapeError) {
-                setChanged(mErrorMessage, trackerMap.value(QJsonKeyStringInit("lastScrapeResult")).toString(), changed);
+                setChanged(mErrorMessage, trackerMap.value(QLatin1String("lastScrapeResult")).toString(), changed);
             } else {
-                setChanged(mErrorMessage, trackerMap.value(QJsonKeyStringInit("lastAnnounceResult")).toString(), changed);
+                setChanged(mErrorMessage, trackerMap.value(QLatin1String("lastAnnounceResult")).toString(), changed);
             }
         } else {
-            switch (int status = trackerMap.value(QJsonKeyStringInit("announceState")).toInt()) {
+            switch (int status = trackerMap.value(QLatin1String("announceState")).toInt()) {
             case Inactive:
             case Active:
             case Queued:
@@ -151,9 +151,9 @@ namespace libtremotesf
             mErrorMessage.clear();
         }
 
-        setChanged(mPeers, trackerMap.value(QJsonKeyStringInit("lastAnnouncePeerCount")).toInt(), changed);
+        setChanged(mPeers, trackerMap.value(QLatin1String("lastAnnouncePeerCount")).toInt(), changed);
 
-        const long long nextUpdateTime = static_cast<long long>(trackerMap.value(QJsonKeyStringInit("nextAnnounceTime")).toDouble());
+        const long long nextUpdateTime = static_cast<long long>(trackerMap.value(QLatin1String("nextAnnounceTime")).toDouble());
         if (nextUpdateTime != mNextUpdateTime) {
             mNextUpdateTime = nextUpdateTime;
             changed = true;

@@ -26,7 +26,6 @@
 #include <QObject>
 #include <QVariantList>
 
-#include "libtremotesf/qtsupport.h"
 #include "libtremotesf/torrent.h"
 
 namespace tremotesf

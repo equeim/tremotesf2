@@ -26,17 +26,12 @@
 namespace libtremotesf
 {
     TorrentFile::TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
-        : id(id), size(static_cast<long long>(fileMap.value(QJsonKeyStringInit("length")).toDouble()))
+        : id(id), size(static_cast<long long>(fileMap.value(QLatin1String("length")).toDouble()))
     {
         auto p = fileMap
-                .value(QJsonKeyStringInit("name"))
+                .value(QLatin1String("name"))
                 .toString()
-                .split(QLatin1Char('/'),
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-                       Qt::SkipEmptyParts);
-#else
-                       QString::SkipEmptyParts);
-#endif
+                .split(QLatin1Char('/'), Qt::SkipEmptyParts);
         path.reserve(static_cast<size_t>(p.size()));
         for (QString& part : p) {
             path.push_back(std::move(part));
@@ -48,9 +43,9 @@ namespace libtremotesf
     {
         bool changed = false;
 
-        setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QJsonKeyStringInit("bytesCompleted")).toDouble()), changed);
+        setChanged(completedSize, static_cast<long long>(fileStatsMap.value(QLatin1String("bytesCompleted")).toDouble()), changed);
         setChanged(priority, [&] {
-            switch (int p = fileStatsMap.value(QJsonKeyStringInit("priority")).toInt()) {
+            switch (int p = fileStatsMap.value(QLatin1String("priority")).toInt()) {
             case TorrentFile::LowPriority:
             case TorrentFile::NormalPriority:
             case TorrentFile::HighPriority:
@@ -59,7 +54,7 @@ namespace libtremotesf
                 return TorrentFile::NormalPriority;
             }
         }(), changed);
-        setChanged(wanted, fileStatsMap.value(QJsonKeyStringInit("wanted")).toBool(), changed);
+        setChanged(wanted, fileStatsMap.value(QLatin1String("wanted")).toBool(), changed);
 
         return changed;
     }

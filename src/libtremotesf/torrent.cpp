@@ -35,62 +35,62 @@ namespace libtremotesf
 {
     namespace
     {
-        const auto hashStringKey(QJsonKeyStringInit("hashString"));
-        const auto addedDateKey(QJsonKeyStringInit("addedDate"));
+        const QLatin1String hashStringKey("hashString");
+        const QLatin1String addedDateKey("addedDate");
 
-        const auto nameKey(QJsonKeyStringInit("name"));
+        const QLatin1String nameKey("name");
 
-        const auto magnetLinkKey(QJsonKeyStringInit("magnetLink"));
+        const QLatin1String magnetLinkKey("magnetLink");
 
-        const auto errorStringKey(QJsonKeyStringInit("errorString"));
-        const auto queuePositionKey(QJsonKeyStringInit("queuePosition"));
+        const QLatin1String errorStringKey("errorString");
+        const QLatin1String queuePositionKey("queuePosition");
 
-        const auto totalSizeKey(QJsonKeyStringInit("totalSize"));
-        const auto completedSizeKey(QJsonKeyStringInit("haveValid"));
-        const auto leftUntilDoneKey(QJsonKeyStringInit("leftUntilDone"));
-        const auto sizeWhenDoneKey(QJsonKeyStringInit("sizeWhenDone"));
-        const auto percentDoneKey(QJsonKeyStringInit("percentDone"));
-        const auto recheckProgressKey(QJsonKeyStringInit("recheckProgress"));
-        const auto etaKey(QJsonKeyStringInit("eta"));
+        const QLatin1String totalSizeKey("totalSize");
+        const QLatin1String completedSizeKey("haveValid");
+        const QLatin1String leftUntilDoneKey("leftUntilDone");
+        const QLatin1String sizeWhenDoneKey("sizeWhenDone");
+        const QLatin1String percentDoneKey("percentDone");
+        const QLatin1String recheckProgressKey("recheckProgress");
+        const QLatin1String etaKey("eta");
 
-        const auto metadataCompleteKey(QJsonKeyStringInit("metadataPercentComplete"));
+        const QLatin1String metadataCompleteKey("metadataPercentComplete");
 
-        const auto downloadSpeedKey(QJsonKeyStringInit("rateDownload"));
-        const auto uploadSpeedKey(QJsonKeyStringInit("rateUpload"));
+        const QLatin1String downloadSpeedKey("rateDownload");
+        const QLatin1String uploadSpeedKey("rateUpload");
 
-        const auto downloadSpeedLimitedKey(QJsonKeyStringInit("downloadLimited"));
-        const auto downloadSpeedLimitKey(QJsonKeyStringInit("downloadLimit"));
-        const auto uploadSpeedLimitedKey(QJsonKeyStringInit("uploadLimited"));
-        const auto uploadSpeedLimitKey(QJsonKeyStringInit("uploadLimit"));
+        const QLatin1String downloadSpeedLimitedKey("downloadLimited");
+        const QLatin1String downloadSpeedLimitKey("downloadLimit");
+        const QLatin1String uploadSpeedLimitedKey("uploadLimited");
+        const QLatin1String uploadSpeedLimitKey("uploadLimit");
 
-        const auto totalDownloadedKey(QJsonKeyStringInit("downloadedEver"));
-        const auto totalUploadedKey(QJsonKeyStringInit("uploadedEver"));
-        const auto ratioKey(QJsonKeyStringInit("uploadRatio"));
-        const auto ratioLimitModeKey(QJsonKeyStringInit("seedRatioMode"));
-        const auto ratioLimitKey(QJsonKeyStringInit("seedRatioLimit"));
+        const QLatin1String totalDownloadedKey("downloadedEver");
+        const QLatin1String totalUploadedKey("uploadedEver");
+        const QLatin1String ratioKey("uploadRatio");
+        const QLatin1String ratioLimitModeKey("seedRatioMode");
+        const QLatin1String ratioLimitKey("seedRatioLimit");
 
-        const auto seedersKey(QJsonKeyStringInit("peersSendingToUs"));
-        const auto leechersKey(QJsonKeyStringInit("peersGettingFromUs"));
+        const QLatin1String seedersKey("peersSendingToUs");
+        const QLatin1String leechersKey("peersGettingFromUs");
 
-        const auto errorKey(QJsonKeyStringInit("error"));
-        const auto statusKey(QJsonKeyStringInit("status"));
+        const QLatin1String errorKey("error");
+        const QLatin1String statusKey("status");
 
-        const auto activityDateKey(QJsonKeyStringInit("activityDate"));
-        const auto doneDateKey(QJsonKeyStringInit("doneDate"));
+        const QLatin1String activityDateKey("activityDate");
+        const QLatin1String doneDateKey("doneDate");
 
-        const auto peersLimitKey(QJsonKeyStringInit("peer-limit"));
-        const auto honorSessionLimitsKey(QJsonKeyStringInit("honorsSessionLimits"));
-        const auto bandwidthPriorityKey(QJsonKeyStringInit("bandwidthPriority"));
-        const auto idleSeedingLimitModeKey(QJsonKeyStringInit("seedIdleMode"));
-        const auto idleSeedingLimitKey(QJsonKeyStringInit("seedIdleLimit"));
-        const auto downloadDirectoryKey(QJsonKeyStringInit("downloadDir"));
-        const auto prioritiesKey(QJsonKeyStringInit("priorities"));
-        const auto creatorKey(QJsonKeyStringInit("creator"));
-        const auto creationDateKey(QJsonKeyStringInit("dateCreated"));
-        const auto commentKey(QJsonKeyStringInit("comment"));
+        const QLatin1String peersLimitKey("peer-limit");
+        const QLatin1String honorSessionLimitsKey("honorsSessionLimits");
+        const QLatin1String bandwidthPriorityKey("bandwidthPriority");
+        const QLatin1String idleSeedingLimitModeKey("seedIdleMode");
+        const QLatin1String idleSeedingLimitKey("seedIdleLimit");
+        const QLatin1String downloadDirectoryKey("downloadDir");
+        const QLatin1String prioritiesKey("priorities");
+        const QLatin1String creatorKey("creator");
+        const QLatin1String creationDateKey("dateCreated");
+        const QLatin1String commentKey("comment");
 
-        const auto webSeedersKey(QJsonKeyStringInit("webseeds"));
-        const auto activeWebSeedersKey(QJsonKeyStringInit("webseedsSendingToUs"));
+        const QLatin1String webSeedersKey("webseeds");
+        const QLatin1String activeWebSeedersKey("webseedsSendingToUs");
 
         const QLatin1String wantedFilesKey("files-wanted");
         const QLatin1String unwantedFilesKey("files-unwanted");
@@ -104,7 +104,7 @@ namespace libtremotesf
         const QLatin1String removeTrackerKey("trackerRemove");
     }
 
-    const QJsonKeyString Torrent::idKey(QJsonKeyStringInit("id"));
+    const QLatin1String Torrent::idKey("id");
 
     bool TorrentData::update(const QJsonObject& torrentMap)
     {
@@ -264,11 +264,11 @@ namespace libtremotesf
 
         trackersAnnounceUrlsChanged = false;
         std::vector<Tracker> newTrackers;
-        const QJsonArray trackerJsons(torrentMap.value(QJsonKeyStringInit("trackerStats")).toArray());
+        const QJsonArray trackerJsons(torrentMap.value(QLatin1String("trackerStats")).toArray());
         newTrackers.reserve(static_cast<size_t>(trackerJsons.size()));
         for (const auto& i : trackerJsons) {
             const QJsonObject trackerMap(i.toObject());
-            const int trackerId = trackerMap.value(QJsonKeyStringInit("id")).toInt();
+            const int trackerId = trackerMap.value(QLatin1String("id")).toInt();
 
             const auto found(std::find_if(trackers.begin(), trackers.end(), [&](const auto& tracker) {
                 return tracker.id() == trackerId;
@@ -759,10 +759,10 @@ namespace libtremotesf
     {
         std::vector<int> changed;
 
-        const QJsonArray fileStats(torrentMap.value(QJsonKeyStringInit("fileStats")).toArray());
+        const QJsonArray fileStats(torrentMap.value(QLatin1String("fileStats")).toArray());
         if (!fileStats.isEmpty()) {
             if (mFiles.empty()) {
-                const QJsonArray fileJsons(torrentMap.value(QJsonKeyStringInit("files")).toArray());
+                const QJsonArray fileJsons(torrentMap.value(QLatin1String("files")).toArray());
                 mFiles.reserve(static_cast<size_t>(fileStats.size()));
                 changed.reserve(static_cast<size_t>(fileStats.size()));
                 for (QJsonArray::size_type i = 0, max = fileStats.size(); i < max; ++i) {
@@ -837,7 +837,7 @@ namespace libtremotesf
     {
         std::vector<NewPeer> newPeers;
         {
-            const QJsonArray peers(torrentMap.value(QJsonKeyStringInit("peers")).toArray());
+            const QJsonArray peers(torrentMap.value(QLatin1String("peers")).toArray());
             newPeers.reserve(static_cast<size_t>(peers.size()));
             for (const auto& i : peers) {
                 QJsonObject json = i.toObject();

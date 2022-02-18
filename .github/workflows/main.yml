@@ -2,15 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build-rpm:
     strategy:
       matrix:
-        container-image: ['fedora:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest', 'mageia:latest']
+        container-image: ['fedora:latest', 'opensuse/tumbleweed:latest', 'mageia:latest']
         compiler: [gcc]
         include:
         - container-image: 'fedora:latest'
@@ -48,11 +48,8 @@ jobs:
   build-debian-ubuntu:
     strategy:
       matrix:
-        container-image: ['debian:oldstable', 'debian:stable', 'ubuntu:latest', 'ubuntu:rolling']
+        container-image: ['debian:stable', 'ubuntu:rolling']
         compiler: [gcc, clang]
-        exclude:
-        - container-image: 'debian:oldstable'
-          compiler: clang
 
     runs-on: ubuntu-latest
     container: ${{ matrix.container-image }}
