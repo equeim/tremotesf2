@@ -39,9 +39,25 @@
 
 #include "desktop/mainwindow.h"
 
+#ifdef Q_OS_WIN
+namespace {
+    void on_terminate() {
+        const auto exception_ptr = std::current_exception();
+        if (exception_ptr) {
+            try {
+                std::rethrow_exception(exception_ptr);
+            } catch (const std::exception& e) {
+                qWarning() << "Unhandled exception:" << e.what();
+            }
+        }
+    }
+}
+#endif
+
 int main(int argc, char** argv)
 {
 #ifdef Q_OS_WIN
+    std::set_terminate(on_terminate);
     try {
         tremotesf::Utils::callWinApiFunctionWithLastError([] { return SetConsoleOutputCP(GetACP()); });
     } catch (const std::exception& e) {
