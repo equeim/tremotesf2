@@ -51,9 +51,15 @@ int main(int argc, char** argv)
     //
     // Command line parsing
     //
-    const tremotesf::CommandLineArgs args(tremotesf::parseCommandLine(argc, argv));
-    if (args.exit) {
-        return args.returnCode;
+    tremotesf::CommandLineArgs args{};
+    try {
+        args = tremotesf::parseCommandLine(argc, argv);
+        if (args.exit) {
+            return EXIT_SUCCESS;
+        }
+    } catch (const std::exception& e) {
+        qWarning() << "Failed to parse command line arguments:" << e.what();
+        return EXIT_FAILURE;
     }
 
     // Send command to another instance
@@ -64,7 +70,7 @@ int main(int argc, char** argv)
         } else {
             client->addTorrents(args.files, args.urls);
         }
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     //
@@ -117,17 +123,17 @@ int main(int argc, char** argv)
     tremotesf::Servers::migrate();
 
     if (tremotesf::SignalHandler::exitRequested) {
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     tremotesf::MainWindow window(ipcServer, args.files, args.urls);
     if (tremotesf::SignalHandler::exitRequested) {
-        return 0;
+        return EXIT_SUCCESS;
     }
     window.showMinimized(args.minimized);
 
     if (tremotesf::SignalHandler::exitRequested) {
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     const int exitCode = qApp->exec();
