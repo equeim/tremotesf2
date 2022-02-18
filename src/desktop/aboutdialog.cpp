@@ -41,7 +41,7 @@ namespace tremotesf
         auto layout = new QVBoxLayout(this);
 
         auto titleWidget = new KTitleWidget(this);
-        titleWidget->setPixmap(qApp->windowIcon(), KTitleWidget::ImageLeft);
+        titleWidget->setIcon(qApp->windowIcon(), KTitleWidget::ImageLeft);
         titleWidget->setText(QString::fromLatin1("%1 %2").arg(QLatin1String(TREMOTESF_APP_NAME), qApp->applicationVersion()));
         layout->addWidget(titleWidget);
 
