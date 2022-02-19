@@ -132,6 +132,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: tremotesf-win64-debug
+        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: |
           ${{ steps.build.outputs.build-directory-debug }}\packaging\*.zip
           ${{ steps.build.outputs.build-directory-debug }}\packaging\*.msi
@@ -140,6 +141,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: tremotesf-win64-release
+        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: |
           ${{ steps.build.outputs.build-directory-release }}\packaging\*.zip
           ${{ steps.build.outputs.build-directory-release }}\packaging\*.msi
@@ -149,5 +151,6 @@ jobs:
       if: always()
       with:
         name: vcpkg-logs
+        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: |
           ${{env.VCPKG_ROOT}}\buildtrees\*\*.log
