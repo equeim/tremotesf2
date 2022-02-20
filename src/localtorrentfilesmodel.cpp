@@ -40,20 +40,27 @@ namespace tremotesf
         constexpr auto pathKey = "path"sv;
         constexpr auto lengthKey = "length"sv;
 
-        template<typename T, bool WarnOnNoKey = true>
-        std::optional<T> findValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName, const char* valueType)
+        template<typename ValueType>
+        std::optional<ValueType> maybeTakeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName)
         {
             if (auto found = dict.find(key); found != dict.end()) {
-                auto maybeValue = found->second.maybeTakeValue<T>();
+                auto& [_, value] = *found;
+                auto maybeValue = value.maybeTakeValue<ValueType>();
                 if (!maybeValue) {
-                    qWarning("createTree: %s dictionary value for key %s is not of %s type", dictName.data(), key.data(), valueType);
+                    throw bencode::Error(bencode::Error::Type::Parsing, std::string("Value of dictionary \"") + dictName.data() + "\" with key \"" + key.data() + "\" is not of " + bencode::getValueTypeName<ValueType>() + " type");
                 }
                 return maybeValue;
             }
-            if constexpr (WarnOnNoKey) {
-                qWarning("createTree: %s dictionary doesn't have key %s", dictName.data(), key.data());
+            return {};
+        }
+
+        template<typename ValueType>
+        ValueType takeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName)
+        {
+            if (auto maybeValue = maybeTakeDictValue<ValueType>(dict, key, dictName); maybeValue) {
+                return std::move(*maybeValue);
             }
-            return std::nullopt;
+            throw bencode::Error(bencode::Error::Type::Parsing, std::string("Dictionary \"") + dictName.data() + "\" does not contain value with key \"" + key.data() + "\"");
         }
 
         struct CreateTreeResult
@@ -62,29 +69,22 @@ namespace tremotesf
             std::vector<TorrentFilesModelFile*> files;
         };
 
-        std::optional<CreateTreeResult> createTree(bencode::Value&& parseResult)
+        CreateTreeResult createTree(bencode::Value&& bencodeParseResult)
         {
-            auto rootMap = parseResult.maybeTakeDictionary();
+            auto rootMap = bencodeParseResult.maybeTakeDictionary();
             if (!rootMap) {
-                qWarning("createTree: root element is not a dictionary");
-                return {};
+                throw bencode::Error(bencode::Error::Type::Parsing, "Root element is not a dictionary");
             }
 
-            auto infoMap = findValue<bencode::Dictionary>(*rootMap, infoKey, "root", "dictionary");
-            if (!infoMap) {
-                return {};
-            }
+            auto infoMap = takeDictValue<bencode::Dictionary>(*rootMap, infoKey, "<root dictionary>");
 
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> files;
 
-            if (auto filesList = findValue<bencode::List, false>(*infoMap, filesKey, infoKey, "list"); filesList) {
-                const auto torrentDirectoryName = findValue<QString>(*infoMap, nameKey, infoKey, "string");
-                if (!torrentDirectoryName) {
-                    return {};
-                }
+            if (auto filesList = maybeTakeDictValue<bencode::List>(infoMap, filesKey, infoKey); filesList) {
+                const auto torrentDirectoryName = takeDictValue<QString>(infoMap, nameKey, infoKey);
 
-                auto* torrentDirectory = rootDirectory->addDirectory(*torrentDirectoryName);
+                auto* torrentDirectory = rootDirectory->addDirectory(torrentDirectoryName);
 
                 const auto filesCount = filesList->size();
                 files.reserve(filesCount);
@@ -94,36 +94,28 @@ namespace tremotesf
 
                     auto fileMap = fileValue.maybeTakeDictionary();
                     if (!fileMap) {
-                        qWarning("createTree: files list element at index %d is not a dictionary", fileIndex);
-                        return {};
+                        throw bencode::Error(bencode::Error::Type::Parsing, "Files list element at index " + std::to_string(fileIndex) + " is not a dictionary");
                     }
 
                     TorrentFilesModelDirectory* currentDirectory = torrentDirectory;
 
-                    auto pathParts = findValue<bencode::List>(*fileMap, pathKey, filesKey, "list");
-                    if (!pathParts) {
-                        return {};
-                    }
+                    auto pathParts = takeDictValue<bencode::List>(*fileMap, pathKey, filesKey);
 
                     int partIndex = -1;
-                    const int lastPartIndex = static_cast<int>(pathParts->size()) - 1;
+                    const int lastPartIndex = static_cast<int>(pathParts.size()) - 1;
 
-                    for (auto& partValue : *pathParts) {
+                    for (auto& partValue : pathParts) {
                         ++partIndex;
 
                         auto part = partValue.maybeTakeString();
                         if (!part) {
-                            qWarning("createTree: path element '%d' for file at index '%d' is not a string", partIndex, fileIndex);
-                            return {};
+                            throw bencode::Error(bencode::Error::Type::Parsing, "Path element at index " + std::to_string(partIndex) + " for file at index " + std::to_string(fileIndex) + " is not a string");
                         }
 
                         if (partIndex == lastPartIndex) {
-                            auto length = findValue<bencode::Integer>(*fileMap, lengthKey, filesKey, "integer");
-                            if (!length) {
-                                return {};
-                            }
+                            const auto length = takeDictValue<bencode::Integer>(*fileMap, lengthKey, filesKey);
 
-                            auto* childFile = currentDirectory->addFile(fileIndex, *part, *length);
+                            auto* childFile = currentDirectory->addFile(fileIndex, *part, length);
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
                             childFile->setChanged(false);
@@ -140,23 +132,16 @@ namespace tremotesf
                     }
                 }
             } else {
-                auto name = findValue<QString>(*infoMap, nameKey, infoKey, "string");
-                if (!name) {
-                    return {};
-                }
-                auto length = findValue<bencode::Integer>(*infoMap, lengthKey, infoKey, "integer");
-                if (!length) {
-                    return {};
-                }
-
-                auto* file = rootDirectory->addFile(0, *name, *length);
+                const auto name = takeDictValue<QString>(infoMap, nameKey, infoKey);
+                const auto length = takeDictValue<bencode::Integer>(infoMap, lengthKey, infoKey);
+                auto* file = rootDirectory->addFile(0, name, length);
                 file->setWanted(true);
                 file->setPriority(TorrentFilesModelEntry::NormalPriority);
                 file->setChanged(false);
                 files.push_back(file);
             }
 
-            return CreateTreeResult{std::move(rootDirectory), std::move(files)};
+            return {std::move(rootDirectory), std::move(files)};
         }
     }
 
@@ -176,12 +161,8 @@ namespace tremotesf
 
         const auto future = QtConcurrent::run([=]() -> FutureResult {
             try {
-                auto parseResult = bencode::parse(filePath);
-                if (auto createTreeResult = createTree(std::move(parseResult)); createTreeResult) {
-                    return std::move(*createTreeResult);
-                }
-                qWarning() << "Failed to parse torrent file" << filePath;
-                return bencode::Error::Type::Parsing;
+                auto bencodeParseResult = bencode::parse(filePath);
+                return createTree(std::move(bencodeParseResult));
             } catch (const bencode::Error& e) {
                 qWarning() << "Failed to parse torrent file" << filePath << ":" << e.what();
                 return e.type();
