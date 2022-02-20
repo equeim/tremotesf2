@@ -169,7 +169,7 @@ namespace tremotesf
         }
 
         Tracker createItemFromNewItem(Tracker&& newItem) override {
-            return newItem;
+            return std::move(newItem);
         }
     };
 
