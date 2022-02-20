@@ -44,7 +44,7 @@ namespace tremotesf
         std::optional<T> findValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName, const char* valueType)
         {
             if (auto found = dict.find(key); found != dict.end()) {
-                auto maybeValue = found->second.takeValue<T>();
+                auto maybeValue = found->second.maybeTakeValue<T>();
                 if (!maybeValue) {
                     qWarning("createTree: %s dictionary value for key %s is not of %s type", dictName.data(), key.data(), valueType);
                 }
@@ -62,9 +62,9 @@ namespace tremotesf
             std::vector<TorrentFilesModelFile*> files;
         };
 
-        CreateTreeResult createTree(bencode::Value&& parseResult)
+        std::optional<CreateTreeResult> createTree(bencode::Value&& parseResult)
         {
-            auto rootMap = parseResult.takeDictionary();
+            auto rootMap = parseResult.maybeTakeDictionary();
             if (!rootMap) {
                 qWarning("createTree: root element is not a dictionary");
                 return {};
@@ -92,7 +92,7 @@ namespace tremotesf
                 for (auto& fileValue : *filesList) {
                     ++fileIndex;
 
-                    auto fileMap = fileValue.takeDictionary();
+                    auto fileMap = fileValue.maybeTakeDictionary();
                     if (!fileMap) {
                         qWarning("createTree: files list element at index %d is not a dictionary", fileIndex);
                         return {};
@@ -111,7 +111,7 @@ namespace tremotesf
                     for (auto& partValue : *pathParts) {
                         ++partIndex;
 
-                        auto part = partValue.takeString();
+                        auto part = partValue.maybeTakeString();
                         if (!part) {
                             qWarning("createTree: path element '%d' for file at index '%d' is not a string", partIndex, fileIndex);
                             return {};
@@ -156,13 +156,13 @@ namespace tremotesf
                 files.push_back(file);
             }
 
-            return {std::move(rootDirectory), std::move(files)};
+            return CreateTreeResult{std::move(rootDirectory), std::move(files)};
         }
     }
 
     LocalTorrentFilesModel::LocalTorrentFilesModel(QObject* parent)
         : BaseTorrentFilesModel({NameColumn, SizeColumn, PriorityColumn}, parent),
-          mLoaded(false), mError(bencode::NoError)
+          mLoaded(false)
     {
 
     }
@@ -171,32 +171,35 @@ namespace tremotesf
     {
         beginResetModel();
 
-        using FutureWatcher = QFutureWatcher<std::pair<bencode::Error, CreateTreeResult>>;
+        using FutureResult = std::variant<CreateTreeResult, bencode::Error::Type>;
+        using FutureWatcher = QFutureWatcher<FutureResult>;
 
-        const auto future = QtConcurrent::run([=]() -> std::pair<bencode::Error, CreateTreeResult> {
-            auto parseResult = bencode::parse(filePath);
-            if (parseResult.error == bencode::NoError) {
-                if (auto createTreeResult = createTree(std::move(parseResult.parseResult)); createTreeResult.rootDirectory) {
-                    return {bencode::NoError, std::move(createTreeResult)};
+        const auto future = QtConcurrent::run([=]() -> FutureResult {
+            try {
+                auto parseResult = bencode::parse(filePath);
+                if (auto createTreeResult = createTree(std::move(parseResult)); createTreeResult) {
+                    return std::move(*createTreeResult);
                 }
-                return {bencode::ParsingError, {}};
+                qWarning() << "Failed to parse torrent file" << filePath;
+                return bencode::Error::Type::Parsing;
+            } catch (const bencode::Error& e) {
+                qWarning() << "Failed to parse torrent file" << filePath << ":" << e.what();
+                return e.type();
             }
-            return {parseResult.error, {}};
         });
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=] {
-            auto [error, createTreeResult] = watcher->result();
-
-            mRootDirectory = std::move(createTreeResult.rootDirectory);
+            auto result = watcher->result();
+            if (auto createTreeResult = std::get_if<CreateTreeResult>(&result); createTreeResult) {
+                mRootDirectory = std::move(createTreeResult->rootDirectory);
+                mFiles = std::move(createTreeResult->files);
+            } else {
+                mErrorType = std::get<bencode::Error::Type>(result);
+            }
             endResetModel();
-
-            mFiles = std::move(createTreeResult.files);
-
             mLoaded = true;
-            mError = error;
             emit loadedChanged();
-
             watcher->deleteLater();
         });
         watcher->setFuture(future);
@@ -209,18 +212,21 @@ namespace tremotesf
 
     bool LocalTorrentFilesModel::isSuccessfull() const
     {
-        return mError == bencode::NoError;
+        return !mErrorType.has_value();
     }
 
     QString LocalTorrentFilesModel::errorString() const
     {
-        switch (mError) {
-        case bencode::ReadingError:
+        if (!mErrorType) {
+            return {};
+        }
+        switch (*mErrorType) {
+        case bencode::Error::Type::Reading:
             return qApp->translate("tremotesf", "Error reading torrent file");
-        case bencode::ParsingError:
+        case bencode::Error::Type::Parsing:
             return qApp->translate("tremotesf", "Error parsing torrent file");
         default:
-            return QString();
+            return {};
         }
     }
 
