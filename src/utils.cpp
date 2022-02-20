@@ -20,16 +20,21 @@
 
 #include <array>
 #include <cmath>
+#include <stdexcept>
 
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
 #include <QLocale>
 
+#ifdef Q_OS_UNIX
+#include <cerrno>
+#include <cstring>
+#else
 #ifdef Q_OS_WIN
-#include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#endif
 #endif
 
 namespace tremotesf
@@ -184,7 +189,7 @@ namespace tremotesf
     QString Utils::readTextResource(const QString& resourcePath)
     {
         return readTextFileImpl(resourcePath, [&] {
-            qFatal("Failed to read resource with path \"%s\"", resourcePath.toUtf8().data());
+            throw std::runtime_error("Failed to read resource with path \"" + resourcePath.toLocal8Bit() + "\"");
         });
     }
 
@@ -195,6 +200,14 @@ namespace tremotesf
         });
     }
 
+#ifdef Q_OS_UNIX
+    void Utils::callPosixFunctionWithErrno(std::function<bool()>&& function)
+    {
+        if (!function()) {
+            throw std::system_error(errno, std::system_category());
+        }
+    }
+#else
 #ifdef Q_OS_WIN
     namespace
     {
@@ -225,8 +238,10 @@ namespace tremotesf
     void Utils::callWinApiFunctionWithLastError(std::function<bool()>&& function)
     {
         if (!function()) {
+            // Can't use std::system_error here because MinGW toolchain uses POSIX error codes for std::system_category
             throw std::runtime_error(getWinApiErrorString(GetLastError()));
         }
     }
+#endif
 #endif
 }

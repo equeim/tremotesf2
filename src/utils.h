@@ -43,8 +43,12 @@ namespace tremotesf
         Q_INVOKABLE static QString readTextResource(const QString& resourcePath);
         Q_INVOKABLE static QString readTextFile(const QString& filePath);
 
+    #ifdef Q_OS_UNIX
+        static void callPosixFunctionWithErrno(std::function<bool()>&& function);
+#else
 #ifdef Q_OS_WIN
         static void callWinApiFunctionWithLastError(std::function<bool()>&& function);
+#endif
 #endif
     };
 }
