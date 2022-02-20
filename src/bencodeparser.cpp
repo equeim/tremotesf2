@@ -42,7 +42,7 @@ namespace tremotesf::bencode
     }
 
     template<typename Expected>
-    std::optional<Expected> Value::takeValue()
+    std::optional<Expected> Value::maybeTakeValue()
     {
         return std::visit([](auto&& value) -> std::optional<Expected> {
             using T = std::decay_t<decltype(value)>;
@@ -54,13 +54,13 @@ namespace tremotesf::bencode
         }, mValue);
     }
 
-    template std::optional<Integer> Value::takeValue();
-    template std::optional<ByteArray> Value::takeValue();
-    template std::optional<List> Value::takeValue();
-    template std::optional<Dictionary> Value::takeValue();
+    template std::optional<Integer> Value::maybeTakeValue();
+    template std::optional<ByteArray> Value::maybeTakeValue();
+    template std::optional<List> Value::maybeTakeValue();
+    template std::optional<Dictionary> Value::maybeTakeValue();
 
     template<>
-    std::optional<QString> Value::takeValue()
+    std::optional<QString> Value::maybeTakeValue()
     {
         return std::visit([](auto&& value) -> std::optional<QString> {
             using T = std::decay_t<decltype(value)>;
@@ -74,6 +74,21 @@ namespace tremotesf::bencode
         }, mValue);
     }
 
+    template<typename Expected>
+    Expected Value::takeValue()
+    {
+        if (auto maybeValue = maybeTakeValue<Expected>(); maybeValue) {
+            return std::move(*maybeValue);
+        }
+        throw Error(Error::Type::Parsing, std::string("Value is not of ") + getValueTypeName<Expected>() + " type");
+    }
+
+    template Integer Value::takeValue();
+    template ByteArray Value::takeValue();
+    template List Value::takeValue();
+    template Dictionary Value::takeValue();
+    template QString Value::takeValue();
+
     namespace
     {
         template<bool IsSequential>
@@ -82,13 +97,9 @@ namespace tremotesf::bencode
         public:
             explicit Parser(QIODevice& device) : mDevice{device} {};
 
-            Result parse()
+            Value parse()
             {
-                auto parseResult = parseValue();
-                if (mError == NoError) {
-                    return {std::move(parseResult), NoError};
-                }
-                return {{}, mError};
+                return parseValue();
             }
 
         private:
@@ -111,15 +122,7 @@ namespace tremotesf::bencode
             {
                 return parseContainer<Dictionary>([&](auto& dict) {
                     ByteArray key(parseByteArray());
-                    if (mError != NoError) {
-                        qWarning("parseDictionary: failed to read dictionary key");
-                        return;
-                    }
                     Value value(parseValue());
-                    if (mError != NoError) {
-                        qWarning("parseDictionary: failed to read dictionary value");
-                        return;
-                    }
                     dict.emplace(std::move(key), std::move(value));
                 }, "parseDictionary", "dictionary");
             }
@@ -127,98 +130,70 @@ namespace tremotesf::bencode
             List parseList()
             {
                 return parseContainer<List>([&](auto& list) {
-                    Value value = parseValue();
-                    if (mError == NoError) {
-                        list.push_back(std::move(value));
-                    } else {
-                        qWarning("parseList: failed to read list element");
-                    }
+                    list.push_back(parseValue());
                 }, "parseList", "list");
             }
 
             template<typename Container, typename Append>
             Container parseContainer(Append&& append, const char* funcName, const char* containerName)
             {
-                if (!skipByte()) {
-                    qWarning("parseList: failed to skip prefix");
-                    return {};
-                }
+                skipByte();
                 Container container{};
-                while (mError == NoError) {
+                while (true) {
                     if (peekByte() == terminator) {
-                        if (!skipByte()) {
-                            qWarning("%s: failed to skip terminator", funcName);
-                            return {};
-                        }
+                        skipByte();
                         return container;
-                    }
-                    if (mError != NoError) {
-                        qWarning("%s: failed to peek next byte", funcName);
-                        return {};
                     }
                     append(container);
                 }
-                qWarning("%s: failed to read %s", funcName, containerName);
-                return {};
+                throw Error(Error::Type::Parsing, std::string(funcName) + ": failed to read " + containerName);
             }
 
             ByteArray parseByteArray()
             {
-                const auto size = readIntegerUntilTerminator(byteArraySeparator);
-                if (mError != NoError) {
-                    qWarning("parseByteArray: failed to read byte array size");
-                    return {};
+                const auto byteArrayPos = mDevice.pos();
+                try {
+                    const auto size = readIntegerUntilTerminator(byteArraySeparator);
+                    if (size < 0) {
+                        throw Error(Error::Type::Parsing, "Incorrect byte array size " + std::to_string(size));
+                    }
+                    ByteArray byteArray(static_cast<size_t>(size), 0);
+                    const auto read = mDevice.read(byteArray.data(), size);
+                    if (read != size) {
+                        throwErrorFromIODevice("Failed to read byte array with size " + std::to_string(size) + "(read " + std::to_string(read) + " bytes)");
+                    }
+                    return byteArray;
+                } catch (const Error& e) {
+                    throw Error(e.type(), "Failed to parse byte array at position " + std::to_string(byteArrayPos) + ": " + e.what());
                 }
-                if (size < 0) {
-                    qWarning("parseByteArray: incorrect byte array size %" PRId64, size);
-                    mError = ParsingError;
-                    return {};
-                }
-                ByteArray byteArray(static_cast<size_t>(size), 0);
-                auto read = mDevice.read(byteArray.data(), size);
-                if (read != size) {
-                    setErrorFromIODevice(QString::fromLatin1("parseByteArray: failed to read byte array with size %1").arg(size));
-                    return {};
-                }
-                return byteArray;
             }
 
             Integer parseInteger()
             {
-                if (!skipByte()) {
-                    qWarning("parseInteger: failed to skip prefix");
-                    return {};
+                const auto integerPos = mDevice.pos();
+                try {
+                    skipByte();
+                    return readIntegerUntilTerminator(terminator);
+                } catch (const Error& e) {
+                    throw Error(e.type(), "Failed to parse integer at position " + std::to_string(integerPos) + ": " + e.what());
                 }
-                const auto integer = readIntegerUntilTerminator(terminator);
-                if (mError != NoError) {
-                    qWarning("parseInteger: failed to read integer");
-                }
-                return integer;
             }
 
             Integer readIntegerUntilTerminator(char integerTerminator) {
+
                 const auto peeked = mDevice.peek(mIntegerBuffer.data(), integerBufferSize);
                 if (peeked <= 0) {
-                    setErrorFromIODevice("readIntegerUntilTerminator: failed to peek integer buffer");
-                    return {};
+                    throwErrorFromIODevice("Failed to peek integer buffer");
                 }
                 Integer integer{};
                 const auto result = std::from_chars(mIntegerBuffer.data(), mIntegerBuffer.data() + integerBufferSize, integer);
                 if (result.ec != std::errc{}) {
-                    qWarning("readIntegerUntilTerminator: error parsing integer, std::from_chars() error %s", std::make_error_condition(result.ec).message().data());
-                    mError = ParsingError;
-                    return {};
+                    throw Error(Error::Type::Parsing, "std::from_chars() failed with: " + std::make_error_condition(result.ec).message());
                 }
                 if (*result.ptr != integerTerminator) {
-                    qWarning("readIntegerUntilTerminator: terminator doesn't match, expected 0x%hhx but got 0x%hhx", integerTerminator, *result.ptr);
-                    mError = ParsingError;
-                    return {};
+                    throw Error(Error::Type::Parsing, "Terminator doesn't match: expected " + std::string{integerTerminator} + ", actual " + std::string{*result.ptr});
                 }
-                const auto toSkip = result.ptr - mIntegerBuffer.data() + 1;
-                if (!skip(toSkip)) {
-                    setErrorFromIODevice("readIntegerUntilTerminator: failed to skip read integer");
-                    return {};
-                }
+                skip(result.ptr - mIntegerBuffer.data() + 1);
                 return integer;
             }
 
@@ -226,70 +201,49 @@ namespace tremotesf::bencode
             {
                 char byte{};
                 if (mDevice.peek(&byte, 1) != 1) {
-                    setErrorFromIODevice("peekByte: peek() failure");
+                    throwErrorFromIODevice("Failed to peek 1 byte");
                 }
                 return byte;
             }
 
-            bool skipByte()
+            void skipByte()
             {
                 return skip(1);
             }
 
-            bool skip(qint64 size)
+            void skip(qint64 size)
             {
                 if (mDevice.skip(size) != size) {
-                    setErrorFromIODevice("skip: skip() failure");
-                    return false;
+                    throwErrorFromIODevice("Failed to skip " + std::to_string(size) + " bytes");
                 }
-                return true;
             }
 
-            void setErrorFromIODevice(const QString& message)
+            void throwErrorFromIODevice(const std::string message)
             {
-                auto debug = qWarning().nospace();
-                {
-                    QDebugStateSaver saver(debug);
-                    debug.noquote() << message;
-                }
-                setErrorFromIODevice(debug);
-            }
-
-            void setErrorFromIODevice(const char* message)
-            {
-                setErrorFromIODevice(qWarning().nospace() << message);
-            }
-
-            void setErrorFromIODevice(QDebug& debug)
-            {
-                if (auto fileDevice = qobject_cast<QFileDevice*>(&mDevice); fileDevice) {
-                    debug << ", error = " << fileDevice->error();
-                }
-                debug << ", error string = " << mDevice.errorString() << ", at end = " << mDevice.atEnd();
+                Error::Type type{};
                 if (mDevice.atEnd()) {
-                    mError = ParsingError;
+                    type = Error::Type::Parsing;
                 } else {
-                    mError = ReadingError;
+                    type = Error::Type::Reading;
                 }
+                throw Error(type, message + ": " + mDevice.errorString().toStdString());
             }
 
             QIODevice& mDevice;
-            Error mError{};
             std::array<char, integerBufferSize> mIntegerBuffer{};
         };
     }
 
-    Result parse(const QString& filePath)
+    Value parse(const QString& filePath)
     {
         QFile file(filePath);
-        if (file.open(QIODevice::ReadOnly)) {
-            return parse(file);
+        if (!file.open(QIODevice::ReadOnly)) {
+            throw Error(Error::Type::Reading, "Failed to open file " + filePath.toStdString() + ": " + file.errorString().toStdString());
         }
-        qWarning().nospace() << "Failed to open file, error = " << file.error() << ", error string = " << file.errorString();
-        return Result{{}, ReadingError};
+        return parse(file);
     }
 
-    Result parse(QIODevice& device)
+    Value parse(QIODevice& device)
     {
         if (device.isSequential()) {
             return Parser<true>(device).parse();

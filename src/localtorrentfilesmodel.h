@@ -19,6 +19,7 @@
 #ifndef TREMOTESF_LOCALTORRENTFILESMODEL_H
 #define TREMOTESF_LOCALTORRENTFILESMODEL_H
 
+#include <optional>
 #include <vector>
 #include <QVariant>
 #include <QVariantMap>
@@ -65,7 +66,7 @@ namespace tremotesf
     private:
         std::vector<TorrentFilesModelFile*> mFiles;
         bool mLoaded;
-        bencode::Error mError;
+        std::optional<bencode::Error::Type> mErrorType;
 
         QVariantMap mRenamedFiles;
 
