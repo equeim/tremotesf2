@@ -18,10 +18,10 @@
 
 #include "signalhandler.h"
 
-#include <QtGlobal>
+#include <QCoreApplication>
 
 #ifdef Q_OS_UNIX
-#include <cerrno>
+#include <array>
 #include <csignal>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -33,10 +33,9 @@
 #include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "utils.h"
 #endif // Q_OS_WIN
 
-#include <QCoreApplication>
+#include "utils.h"
 
 namespace tremotesf
 {
@@ -45,59 +44,63 @@ namespace tremotesf
 #ifdef Q_OS_UNIX
     namespace
     {
-        int signalsFd[2]{};
+        std::array<int, 2> signalFds{};
 
         void signalHandler(int)
         {
             SignalHandler::exitRequested = true;
-            char tmp = 0;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-result"
-            write(signalsFd[0], &tmp, sizeof(tmp));
-#pragma GCC diagnostic pop
+            std::array<char, 1> tmp{};
+            [[maybe_unused]] const auto written = write(signalFds[0], tmp.data(), tmp.size());
         }
     }
 
     void SignalHandler::setupHandlers()
     {
-        int ret = socketpair(AF_UNIX, SOCK_STREAM, 0, signalsFd);
-        if (ret != 0) {
-            qFatal("Failed to create socketpair, errno=%d", errno);
+        try {
+            Utils::callPosixFunctionWithErrno([] { return socketpair(AF_UNIX, SOCK_STREAM, 0, signalFds.data()) == 0; });
+        } catch (const std::system_error& e) {
+            throw std::runtime_error(std::string("socketpair failed: ") + e.what());
         }
 
         struct sigaction action{};
         action.sa_handler = signalHandler;
         action.sa_flags |= SA_RESTART;
 
-        ret = sigaction(SIGINT, &action, nullptr);
-        if (ret != 0) {
-            qFatal("Failed to set signal handler on SIGINT, errno=%d", errno);
+        try {
+            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGINT, &action, nullptr) == 0; });
+        } catch (const std::system_error& e) {
+            throw std::runtime_error(std::string("sigaction failed on SIGINT: ") + e.what());
         }
-        ret = sigaction(SIGTERM, &action, nullptr);
-        if (ret != 0) {
-            qFatal("Failed to set signal handler on SIGTERM, errno=%d", errno);
+        try {
+            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGTERM, &action, nullptr) == 0; });
+        } catch (const std::system_error& e) {
+            throw std::runtime_error(std::string("sigaction failed on SIGTERM: ") + e.what());
         }
-        ret = sigaction(SIGHUP, &action, nullptr);
-        if (ret != 0) {
-            qFatal("Failed to set signal handler on SIGHUP, errno=%d", errno);
+        try {
+            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGHUP, &action, nullptr) == 0; });
+        } catch (const std::system_error& e) {
+            throw std::runtime_error(std::string("sigaction failed on SIGHUP: ") + e.what());
         }
-        ret = sigaction(SIGQUIT, &action, nullptr);
-        if (ret != 0) {
-            qFatal("Failed to set signal handler on SIGQUIT, errno=%d", errno);
+        try {
+            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGQUIT, &action, nullptr) == 0; });
+        } catch (const std::system_error& e) {
+            throw std::runtime_error(std::string("sigaction failed on SIGQUIT: ") + e.what());
+        }
+        try {
+            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGINT, &action, nullptr) == 0; });
+        } catch (const std::system_error& e) {
+            throw std::runtime_error(std::string("sigaction failed on SIGINT: ") + e.what());
         }
     }
 
     void SignalHandler::setupNotifier()
     {
-        auto notifier = new QSocketNotifier(signalsFd[1], QSocketNotifier::Read, qApp);
+        auto notifier = new QSocketNotifier(signalFds[1], QSocketNotifier::Read, qApp);
         QObject::connect(notifier, &QSocketNotifier::activated, qApp, [notifier](int socket) {
             // This lambda will be executed only after calling QCoreApplication::exec()
             notifier->setEnabled(false);
-            char tmp;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-result"
-            read(socket, &tmp, sizeof(tmp));
-#pragma GCC diagnostic pop
+            std::array<char, 1> tmp{};
+            [[maybe_unused]] const auto r = read(socket, &tmp, sizeof(tmp));
             QCoreApplication::quit();
             notifier->setEnabled(true);
         });

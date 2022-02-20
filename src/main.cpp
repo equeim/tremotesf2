@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     try {
         tremotesf::SignalHandler::setupHandlers();
     } catch (const std::exception& e) {
-        qWarning() << e.what();
+        qWarning() << "Failed to setup signal handlers:" << e.what();
         return EXIT_FAILURE;
     }
 
