@@ -46,7 +46,7 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection, "notificationsOnFinishedTorrentsSinceLastConnection", false, toBool)
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled, "torrentsStatusFilterEnabled", true, toBool)
-    SETTINGS_PROPERTY_DEF_TRIVIAL(tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter, "torrentsStatusFilter", TorrentsProxyModel::StatusFilter::All, value<TorrentsProxyModel::StatusFilter>);
+    SETTINGS_PROPERTY_DEF_TRIVIAL(tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter, "torrentsStatusFilter", TorrentsProxyModel::StatusFilter::All, value<TorrentsProxyModel::StatusFilter>)
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsTrackerFilterEnabled, setTorrentsTrackerFilterEnabled, "torrentsTrackerFilterEnabled", true, toBool)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QString, torrentsTrackerFilter, setTorrentsTrackerFilter, "torrentsTrackerFilter", {}, toString)
