@@ -189,7 +189,7 @@ namespace tremotesf
     QString Utils::readTextResource(const QString& resourcePath)
     {
         return readTextFileImpl(resourcePath, [&] {
-            throw std::runtime_error("Failed to read resource with path \"" + resourcePath.toLocal8Bit() + "\"");
+            throw std::runtime_error("Failed to read resource with path \"" + resourcePath.toStdString() + "\"");
         });
     }
 
@@ -212,8 +212,8 @@ namespace tremotesf
     namespace
     {
         std::string getWinApiErrorString(DWORD error) {
-            std::array<TCHAR, (64 * 1024) - 1> buffer{};
-            const auto formattedChars = FormatMessageA(
+            std::array<WCHAR, (64 * 1024) - 1> buffer{};
+            const auto formattedChars = FormatMessageW(
                 FORMAT_MESSAGE_FROM_SYSTEM,
                 nullptr,
                 error,
@@ -223,13 +223,10 @@ namespace tremotesf
                 nullptr
             );
             if (formattedChars != 0) {
-                std::string errorString(buffer.data(), formattedChars);
-                // Standard error messages contain newline at the the end for some reason
-                // Trim string from the end
-                errorString.erase(std::find_if(errorString.rbegin(), errorString.rend(), [](auto ch) {
-                    return !std::isspace(ch);
-                }).base(), errorString.end());
-                return errorString + " (error code " + std::to_string(error) + ")";
+                return QString(
+                    QString::fromWCharArray(buffer.data(), formattedChars).trimmed() +
+                    QLatin1String(" (error code ") + QString::number(error) + ")"
+                ).toStdString();
             }
             return "Error code " + std::to_string(error);
         }
