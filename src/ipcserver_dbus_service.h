@@ -22,7 +22,6 @@
 #include <QObject>
 
 class IpcDbusServiceAdaptor;
-class IpcDbusServiceDeprecatedAdaptor;
 
 namespace tremotesf
 {
@@ -45,13 +44,6 @@ namespace tremotesf
         void Activate(const QVariantMap& platform_data);
         void Open(const QStringList& uris, const QVariantMap& platform_data);
         void ActivateAction(const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data);
-
-        /*
-         * org.equeim.Tremotesf methods, deprecated
-         */
-        friend IpcDbusServiceDeprecatedAdaptor;
-        void ActivateWindow();
-        void SetArguments(const QStringList& files, const QStringList& urls);
 
         IpcServerDbus* mIpcServer;
     };
