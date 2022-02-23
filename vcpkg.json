@@ -25,7 +25,7 @@
     {
       "name": "qt5-base",
       "version": "5.15.2",
-      "port-version": 19
+      "port-version": 20
     },
     {
       "name": "qt5-tools",
