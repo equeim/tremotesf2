@@ -23,7 +23,6 @@
 
 #include "ipcserver_dbus.h"
 #include "ipcserver_dbus_service_adaptor.h"
-#include "ipcserver_dbus_service_deprecated_adaptor.h"
 
 namespace tremotesf
 {
@@ -35,7 +34,6 @@ namespace tremotesf
           mIpcServer(ipcServer)
     {
         new IpcDbusServiceAdaptor(this);
-        new IpcDbusServiceDeprecatedAdaptor(this);
 
         auto connection(QDBusConnection::sessionBus());
         if (connection.registerService(IpcServerDbus::serviceName())) {
@@ -79,20 +77,5 @@ namespace tremotesf
     void IpcDbusService::ActivateAction(const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data)
     {
         qInfo().nospace() << "Action activated, action_name=" << action_name << ", parameter=" << parameter << ", platform_data=" << platform_data;
-    }
-
-    /*
-     * org.equeim.Tremotesf methods, deprecated
-     */
-    void IpcDbusService::ActivateWindow()
-    {
-        qInfo("Window activation requested");
-        emit mIpcServer->windowActivationRequested({}, {});
-    }
-
-    void IpcDbusService::SetArguments(const QStringList& files, const QStringList& urls)
-    {
-        qInfo() << "Received arguments files =" << files << "urls =" << urls;
-        emit mIpcServer->torrentsAddingRequested(files, urls, {});
     }
 }

@@ -24,7 +24,6 @@
 
 #include "ipcserver_dbus.h"
 #include "ipcclient_dbus_interface.h"
-#include "ipcclient_dbus_interface_deprecated.h"
 #include "ipcserver_dbus_service.h"
 
 namespace tremotesf
@@ -55,10 +54,7 @@ namespace tremotesf
         {
             qInfo("Requesting window activation");
             if (mInterface.isValid()) {
-                if (!waitForReply(mInterface.Activate(getPlatformData()))) {
-                    qWarning("Trying deprecated interface");
-                    waitForReply(mDeprecatedInterface.ActivateWindow());
-                }
+                waitForReply(mInterface.Activate(getPlatformData()));
             }
         }
 
@@ -72,10 +68,7 @@ namespace tremotesf
                     uris.push_back(QUrl::fromLocalFile(filePath).toString());
                 }
                 uris.append(urls);
-                if (!waitForReply(mInterface.Open(uris, getPlatformData()))) {
-                    qWarning("Trying deprecated interface");
-                    waitForReply(mDeprecatedInterface.SetArguments(files, urls));
-                }
+                waitForReply(mInterface.Open(uris, getPlatformData()));
             }
         }
 
@@ -89,7 +82,6 @@ namespace tremotesf
         }
 
         IpcDbusInterface mInterface{IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus()};
-        IpcDbusInterfaceDeprecated mDeprecatedInterface{IpcServerDbus::serviceName(), IpcServerDbus::objectPath(), QDBusConnection::sessionBus()};
     };
 
     std::unique_ptr<IpcClient> IpcClient::createInstance()

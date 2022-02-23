@@ -157,10 +157,6 @@ if (UNIX AND NOT APPLE)
     qt_add_dbus_adaptor(dbus_generated org.freedesktop.Application.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_adaptor IpcDbusServiceAdaptor)
     qt_add_dbus_interface(dbus_generated org.freedesktop.Application.xml ipcclient_dbus_interface)
 
-    set_source_files_properties(org.equeim.Tremotesf.xml PROPERTIES CLASSNAME IpcDbusInterfaceDeprecated NO_NAMESPACE ON)
-    qt_add_dbus_adaptor(dbus_generated org.equeim.Tremotesf.xml ipcserver_dbus_service.h tremotesf::IpcDbusService ipcserver_dbus_service_deprecated_adaptor IpcDbusServiceDeprecatedAdaptor)
-    qt_add_dbus_interface(dbus_generated org.equeim.Tremotesf.xml ipcclient_dbus_interface_deprecated)
-
     set_source_files_properties(
         desktop/org.freedesktop.Notifications.xml
         desktop/org.freedesktop.FileManager1.xml
