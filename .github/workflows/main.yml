@@ -104,15 +104,11 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up vcpkg and MSVC environment
-      uses: equeim/action-setup-vcpkg-msvc@v7
+      uses: equeim/action-setup-vcpkg-msvc@v8
       with:
-        vcpkg-use-github-packages: true
-        vcpkg-github-packages-token: ${{ secrets.GITHUB_TOKEN }}
+        vcpkg-run-install: true
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
-
-    - name: Run vcpkg install
-      run: ${{env.VCPKG_ROOT}}\vcpkg install --disable-metrics --clean-after-build --triplet=x64-windows-static --host-triplet=x64-windows-static
 
     - name: Build Tremotesf with MSVC
       id: build
