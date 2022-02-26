@@ -276,8 +276,8 @@ namespace tremotesf
     void LocalTorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName)
     {
         auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-        fileRenamed(entry, newName);
         mRenamedFiles.insert(entry->path(), newName);
+        fileRenamed(entry, newName);
         emit renamedFilesChanged();
     }
 }
