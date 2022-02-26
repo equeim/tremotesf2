@@ -184,7 +184,7 @@ namespace tremotesf
     void StatusFiltersModel::update()
     {
         std::map<TorrentsProxyModel::StatusFilter, int> items{
-            {TorrentsProxyModel::All, 0},
+            {TorrentsProxyModel::All, rpc()->torrentsCount()},
             {TorrentsProxyModel::Active, 0},
             {TorrentsProxyModel::Downloading, 0},
             {TorrentsProxyModel::Seeding, 0},
