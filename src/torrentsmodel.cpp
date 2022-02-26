@@ -18,6 +18,8 @@
 
 #include "torrentsmodel.h"
 
+#include <limits>
+
 #include <QCoreApplication>
 #include <QPixmap>
 
@@ -176,7 +178,13 @@ namespace tremotesf
             case UploadSpeedColumn:
                 return torrent->uploadSpeed();
             case EtaColumn:
-                return torrent->eta();
+            {
+                const auto eta = torrent->eta();
+                if (eta < 0) {
+                    return std::numeric_limits<decltype(eta)>::max();
+                }
+                return eta;
+            }
             case RatioColumn:
                 return torrent->ratio();
             case AddedDateColumn:
