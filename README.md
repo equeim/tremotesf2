@@ -16,7 +16,6 @@ Table of Contents
             * [Dependencies](#dependencies-1)
             * [Building](#building-1)
       * [Translations](#translations)
-      * [Donate](#donate)
       * [Screenshots](#screenshots)
          * [Desktop](#desktop-1)
          * [Sailfish OS](#sailfish-os-1)
@@ -118,9 +117,6 @@ sfdk -c no-fix-version -c target=<target name, e.g. SailfishOS-4.3.0.12-armv7hl>
 
 ## Translations
 Translations are managed on [Transifex](https://www.transifex.com/equeim/tremotesf).
-
-## Donate
-I you like this app, you can support its development via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DDQTRHTY5YV2G&item_name=Support%20Tremotesf%20development&no_note=1&item_number=3&no_shipping=1&currency_code=EUR) or [Yandex.Money](https://yasobe.ru/na/equeim_tremotesf).
 
 ## Screenshots
 ### Desktop
