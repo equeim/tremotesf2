@@ -38,7 +38,6 @@
 
   <url type="homepage">https://github.com/equeim/tremotesf2</url>
   <url type="bugtracker">https://github.com/equeim/tremotesf2/issues</url>
-  <url type="donation">https://github.com/equeim/tremotesf2#donate</url>
   <url type="translate">https://www.transifex.com/equeim/tremotesf</url>
 
   <developer_name>Alexey Rochev</developer_name>

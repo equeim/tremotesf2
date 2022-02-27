@@ -12,7 +12,6 @@ Table of Contents
          * [GNU/Linux](#gnulinux)
          * [Windows](#windows)
       * [Translations](#translations)
-      * [Donate](#donate)
       * [Screenshots](#screenshots)
 
 ## Installation
@@ -98,9 +97,6 @@ cmake --install path\to\build\directory --prefix path\to\install\directory
 
 ## Translations
 Translations are managed on [Transifex](https://www.transifex.com/equeim/tremotesf).
-
-## Donate
-I you like this app, you can support its development via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DDQTRHTY5YV2G&item_name=Support%20Tremotesf%20development&no_note=1&item_number=3&no_shipping=1&currency_code=EUR) or [Yandex.Money](https://yasobe.ru/na/equeim_tremotesf).
 
 ## Screenshots
 ![](https://github.com/equeim/tremotesf-screenshots/raw/master/desktop-1.png)
