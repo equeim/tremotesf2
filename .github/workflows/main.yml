@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '1.11' ]
   pull_request:
-    branches: [ master ]
+    branches: [ '1.11' ]
 
 jobs:
   build-rpm:
