@@ -106,44 +106,6 @@ Page {
                 Button {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: Theme.buttonWidthLarge
-                    text: qsTranslate("tremotesf", "Donate")
-                    onClicked: pageStack.push(donatePageComponent)
-
-                    Component {
-                        id: donatePageComponent
-
-                        Page {
-                            allowedOrientations: defaultAllowedOrientations
-
-                            Column {
-                                width: parent.width
-                                spacing: Theme.paddingMedium
-
-                                PageHeader {
-                                    title: qsTranslate("tremotesf", "Donate")
-                                }
-
-                                Button {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    width: Theme.buttonWidthLarge
-                                    text: "PayPal"
-                                    onClicked: Qt.openUrlExternally("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DDQTRHTY5YV2G&item_name=Support%20Tremotesf%20development&no_note=1&item_number=3&no_shipping=1&currency_code=EUR")
-                                }
-
-                                Button {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    width: Theme.buttonWidthLarge
-                                    text: "Yandex.Money"
-                                    onClicked: Qt.openUrlExternally("https://yasobe.ru/na/equeim_tremotesf")
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Button {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: Theme.buttonWidthLarge
                     text: qsTranslate("tremotesf", "Authors")
 
                     onClicked: pageStack.push(authorsPageComponent)
