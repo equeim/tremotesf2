@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.1] - 2022-02-28
+### Added
+- MSI installer for Windows
+
+### Fixed
+- Renaming files when adding torrent
+- Display of torrents count in status filters
+- Sorting of torrents by ETA
+
+### Removed
+- Donation links
+
 ## [1.11.0] - 2022-02-13
 ### Added
 - Automatic reconnection to server (thanks to LuK1337)
