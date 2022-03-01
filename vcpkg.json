@@ -55,7 +55,7 @@
     {
       "name": "hicolor-icon-theme",
       "version": "0.17",
-      "port-version": 0
+      "port-version": 1
     },
     {
       "name": "kf5breezeicons",
