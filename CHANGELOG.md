@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Raised minimum version of Qt to 5.15
+- Raised minimum version of CMake to 3.16
+
+### Removed
+- Sailfish OS support
+- org.equeim.Tremotesf D-Bus interface is removed
+- Removed special handling for various file managers when using "Show in file manager" action
+Now Tremotesf uncoditionally tries to use org.freedesktop.FileManager1 D-Bus interface,
+and if it fails then QDesktopServices::openUrl() is used
+
 ## [1.11.1] - 2022-02-28
 ### Added
 - MSI installer for Windows
