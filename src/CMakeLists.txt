@@ -160,12 +160,10 @@ if (UNIX AND NOT APPLE)
     set_source_files_properties(
         desktop/org.freedesktop.Notifications.xml
         desktop/org.freedesktop.FileManager1.xml
-        desktop/org.xfce.FileManager.xml
         PROPERTIES NO_NAMESPACE ON
     )
     qt_add_dbus_interface(dbus_generated desktop/org.freedesktop.Notifications.xml org.freedesktop.Notifications)
     qt_add_dbus_interface(dbus_generated desktop/org.freedesktop.FileManager1.xml org.freedesktop.FileManager1)
-    qt_add_dbus_interface(dbus_generated desktop/org.xfce.FileManager.xml org.xfce.FileManager)
 
     target_sources(tremotesf PRIVATE ipcserver_dbus.cpp ipcserver_dbus_service.cpp ipcclient_dbus.cpp ${dbus_generated})
 else()
