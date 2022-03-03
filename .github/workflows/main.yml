@@ -104,7 +104,7 @@ jobs:
       uses: equeim/action-setup-msvc-environment@v1
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@v1
+      uses: equeim/action-setup-vcpkg@v2
       with:
         run-install: true
         triplet: x64-windows-static
