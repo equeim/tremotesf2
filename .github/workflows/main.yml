@@ -100,10 +100,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up vcpkg and MSVC environment
-      uses: equeim/action-setup-vcpkg-msvc@v8
+    - name: Set up MSVC environment
+      uses: equeim/action-setup-msvc-environment@v1
+
+    - name: Set up vcpkg
+      uses: equeim/action-setup-vcpkg@v1
       with:
-        vcpkg-run-install: true
+        run-install: true
+        triplet: x64-windows-static
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
