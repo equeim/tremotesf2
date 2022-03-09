@@ -18,7 +18,6 @@
 
 #include "commandlineparser.h"
 
-#include <iostream>
 #include <stdexcept>
 
 #include <QFileInfo>
@@ -26,6 +25,8 @@
 
 #define CXXOPTS_VECTOR_DELIMITER '\0'
 #include "3rdparty/cxxopts.hpp"
+
+#include "libtremotesf/println.h"
 
 namespace tremotesf
 {
@@ -65,7 +66,7 @@ namespace tremotesf
         CommandLineArgs args{};
 
         const std::string appName(parseAppName(argv[0]));
-        const std::string versionString(appName + " " TREMOTESF_VERSION);
+        const auto versionString = fmt::format("{} {}", appName, TREMOTESF_VERSION);
         cxxopts::Options opts(appName, versionString);
         std::vector<std::string> torrents;
         opts.add_options()
@@ -78,12 +79,12 @@ namespace tremotesf
         try {
             const auto result(opts.parse(argc, argv));
             if (result["help"].as<bool>()) {
-                std::cout << opts.help() << std::endl;
+                printlnStdout(opts.help());
                 args.exit = true;
                 return args;
             }
             if (result["version"].as<bool>()) {
-                std::cout << versionString << std::endl;
+                printlnStdout(versionString);
                 args.exit = true;
                 return args;
             }

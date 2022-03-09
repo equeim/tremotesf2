@@ -19,9 +19,9 @@
 #include "ipcclient.h"
 
 #include <QtGlobal>
-#include <QDebug>
 #include <QUrl>
 
+#include "libtremotesf/println.h"
 #include "ipcserver_dbus.h"
 #include "ipcclient_dbus_interface.h"
 #include "ipcserver_dbus_service.h"
@@ -35,7 +35,7 @@ namespace tremotesf
             pending.waitForFinished();
             const auto reply(pending.reply());
             if (reply.type() != QDBusMessage::ReplyMessage) {
-                qWarning() << "D-Bus method call failed, error string:" << reply.errorMessage();
+                printlnWarning("D-Bus method call failed: {}", reply.errorMessage());
                 return false;
             }
             return true;
@@ -52,7 +52,7 @@ namespace tremotesf
 
         void activateWindow() override
         {
-            qInfo("Requesting window activation");
+            printlnInfo("Requesting window activation");
             if (mInterface.isValid()) {
                 waitForReply(mInterface.Activate(getPlatformData()));
             }
@@ -60,7 +60,7 @@ namespace tremotesf
 
         void addTorrents(const QStringList& files, const QStringList& urls) override
         {
-            qInfo("Requesting torrents adding");
+            printlnInfo("Requesting torrents adding");
             if (mInterface.isValid()) {
                 QStringList uris;
                 uris.reserve(files.size() + urls.size());

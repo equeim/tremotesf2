@@ -24,9 +24,10 @@
 #include <limits>
 #include <system_error>
 
-#include <QDebug>
 #include <QFile>
 #include <QString>
+
+#include "libtremotesf/println.h"
 
 namespace tremotesf::bencode
 {
@@ -124,29 +125,34 @@ namespace tremotesf::bencode
                     ByteArray key(parseByteArray());
                     Value value(parseValue());
                     dict.emplace(std::move(key), std::move(value));
-                }, "parseDictionary", "dictionary");
+                });
             }
 
             List parseList()
             {
                 return parseContainer<List>([&](auto& list) {
                     list.push_back(parseValue());
-                }, "parseList", "list");
+                });
             }
 
             template<typename Container, typename Append>
-            Container parseContainer(Append&& append, const char* funcName, const char* containerName)
+            Container parseContainer(Append&& append)
             {
-                skipByte();
-                Container container{};
-                while (true) {
-                    if (peekByte() == terminator) {
-                        skipByte();
-                        return container;
+                const auto containerPos = mDevice.pos();
+                try {
+                    skipByte();
+                    Container container{};
+                    while (true) {
+                        if (peekByte() == terminator) {
+                            skipByte();
+                            return container;
+                        }
+                        append(container);
                     }
-                    append(container);
+                } catch (const Error& e) {
+                    throw Error(e.type(), fmt::format("Failed to parse {} at position {}: {}", getValueTypeName<Container>(), containerPos, e.what()));
                 }
-                throw Error(Error::Type::Parsing, std::string(funcName) + ": failed to read " + containerName);
+                throw Error(Error::Type::Parsing, fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos));
             }
 
             ByteArray parseByteArray()
@@ -155,16 +161,16 @@ namespace tremotesf::bencode
                 try {
                     const auto size = readIntegerUntilTerminator(byteArraySeparator);
                     if (size < 0) {
-                        throw Error(Error::Type::Parsing, "Incorrect byte array size " + std::to_string(size));
+                        throw Error(Error::Type::Parsing, fmt::format("Incorrect byte array size {}", size));
                     }
                     ByteArray byteArray(static_cast<size_t>(size), 0);
                     const auto read = mDevice.read(byteArray.data(), size);
                     if (read != size) {
-                        throwErrorFromIODevice("Failed to read byte array with size " + std::to_string(size) + "(read " + std::to_string(read) + " bytes)");
+                        throwErrorFromIODevice(fmt::format("Failed to read byte array with size {} (read {} bytes)", size, read));
                     }
                     return byteArray;
                 } catch (const Error& e) {
-                    throw Error(e.type(), "Failed to parse byte array at position " + std::to_string(byteArrayPos) + ": " + e.what());
+                    throw Error(e.type(), fmt::format("Failed to parse byte array at position {}: {}", byteArrayPos, e.what()));
                 }
             }
 
@@ -175,7 +181,7 @@ namespace tremotesf::bencode
                     skipByte();
                     return readIntegerUntilTerminator(terminator);
                 } catch (const Error& e) {
-                    throw Error(e.type(), "Failed to parse integer at position " + std::to_string(integerPos) + ": " + e.what());
+                    throw Error(e.type(), fmt::format("Failed to parse integer at position {}: {}", integerPos, e.what()));
                 }
             }
 
@@ -188,10 +194,10 @@ namespace tremotesf::bencode
                 Integer integer{};
                 const auto result = std::from_chars(mIntegerBuffer.data(), mIntegerBuffer.data() + integerBufferSize, integer);
                 if (result.ec != std::errc{}) {
-                    throw Error(Error::Type::Parsing, "std::from_chars() failed with: " + std::make_error_condition(result.ec).message());
+                    throw Error(Error::Type::Parsing, fmt::format("std::from_chars() failed with: {}", std::make_error_condition(result.ec).message()));
                 }
                 if (*result.ptr != integerTerminator) {
-                    throw Error(Error::Type::Parsing, "Terminator doesn't match: expected " + std::string{integerTerminator} + ", actual " + std::string{*result.ptr});
+                    throw Error(Error::Type::Parsing, fmt::format("Terminator doesn't match: expected {}, actual {}", integerTerminator, *result.ptr));
                 }
                 skip(result.ptr - mIntegerBuffer.data() + 1);
                 return integer;
@@ -214,11 +220,11 @@ namespace tremotesf::bencode
             void skip(qint64 size)
             {
                 if (mDevice.skip(size) != size) {
-                    throwErrorFromIODevice("Failed to skip " + std::to_string(size) + " bytes");
+                    throwErrorFromIODevice(fmt::format("Failed to skip {} bytes"));
                 }
             }
 
-            void throwErrorFromIODevice(const std::string message)
+            void throwErrorFromIODevice(std::string&& message)
             {
                 Error::Type type{};
                 if (mDevice.atEnd()) {
@@ -226,7 +232,7 @@ namespace tremotesf::bencode
                 } else {
                     type = Error::Type::Reading;
                 }
-                throw Error(type, message + ": " + mDevice.errorString().toStdString());
+                throw Error(type, fmt::format("{}: {}", std::move(message), mDevice.errorString()));
             }
 
             QIODevice& mDevice;
@@ -238,7 +244,7 @@ namespace tremotesf::bencode
     {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
-            throw Error(Error::Type::Reading, "Failed to open file " + filePath.toStdString() + ": " + file.errorString().toStdString());
+            throw Error(Error::Type::Reading, fmt::format("Failed to open file {}: {}", filePath, file.errorString()));
         }
         return parse(file);
     }

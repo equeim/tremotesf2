@@ -20,8 +20,6 @@
 
 #include <algorithm>
 
-#include <QDebug>
-
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
@@ -49,6 +47,8 @@
 #include <QToolBar>
 #include <QWindow>
 
+#include "../libtremotesf/println.h"
+
 #ifdef QT_DBUS_LIB
 #include <QDBusConnection>
 #include <QDBusPendingCall>
@@ -57,6 +57,7 @@
 #include <QX11Info>
 #include <KStartupInfo>
 #include "org.freedesktop.Notifications.h"
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 #endif
 
 #include "../libtremotesf/serversettings.h"
@@ -1078,7 +1079,7 @@ namespace tremotesf
         QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
             QDBusPendingReply<quint32> reply(*watcher);
             if (reply.isError()) {
-                qWarning() << "Notify error" << reply.error();
+                printlnWarning("Failed to show notification: {}", reply.error());
                 if (mTrayIcon->isVisible()) {
                     mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
                 }
