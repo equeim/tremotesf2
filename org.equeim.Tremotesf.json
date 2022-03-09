@@ -15,7 +15,29 @@
         "--talk-name=org.kde.StatusNotifierWatcher",
         "--talk-name=org.freedesktop.FileManager1"
     ],
+    "cleanup": [
+        "/include",
+        "/lib"
+    ],
     "modules": [
+        {
+            "name" : "fmt",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
+                "-DCMAKE_CXX_STANDARD=17",
+                "-DFMT_DOC=OFF",
+                "-DFMT_TEST=OFF"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://github.com/fmtlib/fmt/archive/refs/tags/8.1.1.tar.gz",
+                    "sha256" : "3d794d3cf67633b34b2771eb9f073bde87e846e0d395d254df7b211ef1ec7346"
+                }
+            ]
+        },
         {
             "name": "tremotesf",
             "buildsystem": "cmake-ninja",

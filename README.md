@@ -19,6 +19,7 @@ Table of Contents
 - C++17 compiler
 - CMake 3.16 or newer (3.21 on Windows)
 - Qt 5.15 (Core, Network, Concurrent, Gui, Widgets)
+- fmt 7.0 or newer
 - KWidgetsAddons
 
 On GNU/Linux and BSD, also:

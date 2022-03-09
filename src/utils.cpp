@@ -23,13 +23,13 @@
 #include <stdexcept>
 
 #include <QCoreApplication>
-#include <QDebug>
 #include <QFile>
 #include <QLocale>
 
+#include "libtremotesf/println.h"
+
 #ifdef Q_OS_UNIX
 #include <cerrno>
-#include <cstring>
 #else
 #ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN
@@ -189,14 +189,14 @@ namespace tremotesf
     QString Utils::readTextResource(const QString& resourcePath)
     {
         return readTextFileImpl(resourcePath, [&] {
-            throw std::runtime_error("Failed to read resource with path \"" + resourcePath.toStdString() + "\"");
+            throw std::runtime_error(fmt::format("Failed to read resource with path '{}'", resourcePath));
         });
     }
 
     QString Utils::readTextFile(const QString& filePath)
     {
         return readTextFileImpl(filePath, [&] {
-            qWarning("Failed to read file with path \"%s\"", filePath.toUtf8().data());
+            printlnWarning("Failed to read file with path '{}'", filePath);
         });
     }
 
@@ -223,12 +223,13 @@ namespace tremotesf
                 nullptr
             );
             if (formattedChars != 0) {
-                return QString(
-                    QString::fromWCharArray(buffer.data(), formattedChars).trimmed() +
-                    QLatin1String(" (error code ") + QString::number(error) + ")"
-                ).toStdString();
+                return fmt::format(
+                    "{} (error code {})",
+                    QString::fromWCharArray(buffer.data(), formattedChars).trimmed(),
+                    error
+                );
             }
-            return "Error code " + std::to_string(error);
+            return fmt::format("Error code {}", error);
         }
     }
 

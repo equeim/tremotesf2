@@ -30,13 +30,13 @@
 #include <windows.h>
 #endif // Q_OS_WIN
 
+#include "libtremotesf/println.h"
 #include "commandlineparser.h"
 #include "ipcclient.h"
 #include "ipcserver.h"
 #include "servers.h"
 #include "signalhandler.h"
 #include "utils.h"
-
 #include "desktop/mainwindow.h"
 
 #ifdef Q_OS_WIN
@@ -47,7 +47,7 @@ namespace {
             try {
                 std::rethrow_exception(exception_ptr);
             } catch (const std::exception& e) {
-                qWarning() << "Unhandled exception:" << e.what();
+                printlnWarning("Unhandled exception: {}", e.what());
             }
         }
     }
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     try {
         tremotesf::Utils::callWinApiFunctionWithLastError([] { return SetConsoleOutputCP(GetACP()); });
     } catch (const std::exception& e) {
-        qWarning() << "SetConsoleOutputCP failed:" << e.what();
+        printlnWarning("SetConsoleOutputCP failed: {}", e.what());
         return EXIT_FAILURE;
     }
 #endif
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     try {
         tremotesf::SignalHandler::setupHandlers();
     } catch (const std::exception& e) {
-        qWarning() << "Failed to setup signal handlers:" << e.what();
+        printlnWarning("Failed to setup signal handlers: {}", e.what());
         return EXIT_FAILURE;
     }
 
@@ -84,13 +84,13 @@ int main(int argc, char** argv)
             return EXIT_SUCCESS;
         }
     } catch (const std::exception& e) {
-        qWarning() << "Failed to parse command line arguments:" << e.what();
+        printlnWarning("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
     }
 
     // Send command to another instance
     if (const auto client = tremotesf::IpcClient::createInstance(); client->isConnected()) {
-        qInfo("Only one instance of Tremotesf can be run at the same time");
+        printlnInfo("Only one instance of Tremotesf can be run at the same time");
         if (args.files.isEmpty() && args.urls.isEmpty()) {
             client->activateWindow();
         } else {
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     try {
         tremotesf::Utils::callWinApiFunctionWithLastError([] { return AllowSetForegroundWindow(ASFW_ANY); });
     } catch (const std::exception& e) {
-        qWarning() << "AllowSetForegroundWindow failed:" << e.what();
+        printlnWarning("AllowSetForegroundWindow failed: {}", e.what());
         return EXIT_FAILURE;
     }
 #endif
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
     QGuiApplication::setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
     if (const auto ret = CoInitializeEx(nullptr, COINIT_MULTITHREADED); ret != S_OK && ret != S_FALSE && ret != RPC_E_CHANGED_MODE ) {
-        qWarning() << "CoInitializeEx failed with error code" << ret;
+        printlnWarning("CoInitializeEx failed with error code {}", ret);
         return EXIT_FAILURE;
     }
 
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
         if (qtTranslator.load(QLocale(), QLatin1String(TREMOTESF_QT_TRANSLATIONS_FILENAME), QLatin1String("_"), qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
-            qWarning() << "Failed to load Qt translation for" << QLocale() << "from" << qtTranslationsPath;
+            printlnWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
         }
     }
 

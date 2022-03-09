@@ -24,8 +24,8 @@
 #include <QStyle>
 #include <QtConcurrentRun>
 
+#include "libtremotesf/println.h"
 #include "libtremotesf/torrent.h"
-#include "libtremotesf/torrent_qdebug.h"
 #include "libtremotesf/serversettings.h"
 #include "trpc.h"
 #include "utils.h"
@@ -152,7 +152,7 @@ namespace tremotesf
                 QObject::connect(mTorrent, &libtremotesf::Torrent::filesUpdated, this, &TorrentFilesModel::update);
                 QObject::connect(mTorrent, &libtremotesf::Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
                 if (mTorrent->isFilesEnabled()) {
-                    qWarning() << mTorrent << "already has enabled files, this shouldn't happen";
+                    printlnWarning("{} already has enabled files, this shouldn't happen", mTorrent);
                 }
                 mTorrent->setFilesEnabled(true);
             } else {

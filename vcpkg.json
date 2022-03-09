@@ -10,6 +10,7 @@
     "qt5-tools",
     "qt5-translations",
     "qt5-svg",
+    "fmt",
     "openssl",
     "kf5widgetsaddons",
     {
@@ -41,6 +42,11 @@
       "name": "qt5-svg",
       "version": "5.15.2",
       "port-version": 2
+    },
+    {
+      "name": "fmt",
+      "version": "8.1.1",
+      "port-version": 1
     },
     {
       "name": "openssl",
