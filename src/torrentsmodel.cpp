@@ -360,6 +360,10 @@ namespace tremotesf
                     endRemoveRows();
                 });
 
+                QObject::connect(rpc, &Rpc::onChangedTorrents, this, [=](size_t first, size_t last) {
+                    emit dataChanged(index(static_cast<int>(first), 0), index(static_cast<int>(last), columnCount() - 1));
+                });
+
                 const auto count = rpc->torrentsCount();
                 if (count != 0) {
                     beginInsertRows({}, 0, count - 1);
