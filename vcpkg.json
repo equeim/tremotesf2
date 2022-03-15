@@ -24,23 +24,23 @@
   "overrides": [
     {
       "name": "qt5-base",
-      "version": "5.15.2",
-      "port-version": 20
+      "version": "5.15.3",
+      "port-version": 0
     },
     {
       "name": "qt5-tools",
-      "version": "5.15.2",
-      "port-version": 3
+      "version": "5.15.3",
+      "port-version": 0
     },
     {
       "name": "qt5-translations",
-      "version": "5.15.2",
-      "port-version": 1
+      "version": "5.15.3",
+      "port-version": 0
     },
     {
       "name": "qt5-svg",
-      "version": "5.15.2",
-      "port-version": 2
+      "version": "5.15.3",
+      "port-version": 0
     },
     {
       "name": "openssl",
@@ -55,7 +55,7 @@
     {
       "name": "hicolor-icon-theme",
       "version": "0.17",
-      "port-version": 0
+      "port-version": 1
     },
     {
       "name": "kf5breezeicons",
