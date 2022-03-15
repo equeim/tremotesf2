@@ -43,6 +43,7 @@
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2022-03-16" version="1.11.2"/>
     <release date="2022-02-28" version="1.11.1"/>
     <release date="2022-02-13" version="1.11.0"/>
     <release date="2021-09-27" version="1.10.0"/>

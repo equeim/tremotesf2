@@ -135,11 +135,14 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %endif
 
 %changelog
+* Wed Mar 16 2022 Alexey Rochev <equeim@gmail.com> - 1.11.2-1
+- tremotesf-1.11.2
+
 * Sun Feb 28 2022 Alexey Rochev <equeim@gmail.com> - 1.11.1-1
-- tremotesf-1.10.1
+- tremotesf-1.11.1
 
 * Sun Feb 13 2022 Alexey Rochev <equeim@gmail.com> - 1.11.0-1
-- tremotesf-1.10.0
+- tremotesf-1.11.0
 
 * Mon Sep 27 2021 Alexey Rochev <equeim@gmail.com> - 1.10.0-1
 - tremotesf-1.10.0

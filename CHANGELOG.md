@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.11.2] - 2022-03-16
+### Fixed
+- Display of torrents list updates
+
 ## [1.11.1] - 2022-02-28
 ### Added
 - MSI installer for Windows
