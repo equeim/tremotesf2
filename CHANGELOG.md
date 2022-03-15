@@ -12,6 +12,14 @@
 Now Tremotesf uncoditionally tries to use org.freedesktop.FileManager1 D-Bus interface,
 and if it fails then QDesktopServices::openUrl() is used
 
+## [1.11.3] - 2022-03-18
+### Fixed
+- RPM spec file
+
+## [1.11.2] - 2022-03-16
+### Fixed
+- Display of torrents list updates
+
 ## [1.11.1] - 2022-02-28
 ### Added
 - MSI installer for Windows
