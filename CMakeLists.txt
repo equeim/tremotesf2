@@ -5,7 +5,7 @@ else()
 endif()
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.22)
 
-project(tremotesf VERSION 1.11.2 LANGUAGES CXX)
+project(tremotesf VERSION 1.11.3 LANGUAGES CXX)
 
 option(TREMOTESF_BUILD_TESTS "Build tests" ON)
 option(TREMOTESF_SAILFISHOS "Build for Sailfish OS" OFF)

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.11.3] - 2022-03-18
+### Fixed
+- RPM spec file
+
 ## [1.11.2] - 2022-03-16
 ### Fixed
 - Display of torrents list updates
