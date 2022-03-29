@@ -32,7 +32,7 @@ jobs:
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set Fedora compiler RPM macro
       id: fedora-compiler
@@ -62,7 +62,7 @@ jobs:
       run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libfmt-dev libkf5widgetsaddons-dev libkf5windowsystem-dev gettext ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }}
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -84,7 +84,7 @@ jobs:
         flatpak remote-add --user --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -98,16 +98,17 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@v2
+      uses: equeim/action-setup-vcpkg@v3
       with:
         run-install: true
         triplet: x64-windows-static
+        save-cache: ${{ github.event_name == 'push' }}
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
@@ -125,7 +126,7 @@ jobs:
         output-directories-suffix: -clang-cl
 
     - name: Archive debug packages
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: tremotesf-win64-debug
         retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
@@ -134,7 +135,7 @@ jobs:
           ${{ steps.build.outputs.build-directory-debug }}\packaging\*.msi
 
     - name: Archive release packages
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: tremotesf-win64-release
         retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
@@ -143,7 +144,7 @@ jobs:
           ${{ steps.build.outputs.build-directory-release }}\packaging\*.msi
 
     - name: Archive vcpkg logs
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: vcpkg-logs
