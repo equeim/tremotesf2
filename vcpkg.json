@@ -26,7 +26,7 @@
     {
       "name": "qt5-base",
       "version": "5.15.3",
-      "port-version": 0
+      "port-version": 2
     },
     {
       "name": "qt5-tools",
@@ -50,8 +50,8 @@
     },
     {
       "name": "openssl",
-      "version-string": "1.1.1m",
-      "port-version": 2
+      "version-string": "1.1.1n",
+      "port-version": 1
     },
     {
       "name": "kf5widgetsaddons",
