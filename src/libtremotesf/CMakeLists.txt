@@ -20,17 +20,13 @@ set(CMAKE_AUTOMOC ON)
 include(cmake/CommonOptions.cmake)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network)
-find_package(fmt 7.0 REQUIRED)
-
-if (ANDROID)
-    set(library_type STATIC)
-else()
-    set(library_type OBJECT)
+if (NOT DEFINED FMT_SOURCE_DIR)
+    find_package(fmt 7.0 REQUIRED)
 endif()
 
 add_library(
     libtremotesf
-    ${library_type}
+    OBJECT
     itemlistupdater.h
     peer.cpp
     peer.h
@@ -50,7 +46,7 @@ add_library(
     tracker.h
 )
 
-target_link_libraries(libtremotesf PRIVATE Qt::Network PUBLIC Qt::Core fmt::fmt)
+target_link_libraries(libtremotesf PUBLIC Qt::Core Qt::Network fmt::fmt)
 target_include_directories(libtremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 target_compile_definitions(libtremotesf PUBLIC FMT_UNICODE=1)
 

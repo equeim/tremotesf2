@@ -332,6 +332,8 @@ namespace libtremotesf
     };
 }
 
+// SWIG can't parse it :(
+#ifndef SWIG
 template<>
 struct fmt::formatter<libtremotesf::Torrent> {
     constexpr auto parse(fmt::format_parse_context& ctx) -> decltype(ctx.begin()) {
@@ -354,5 +356,6 @@ struct fmt::formatter<libtremotesf::Torrent*> : fmt::formatter<libtremotesf::Tor
         return fmt::format_to(ctx.out(), "Torrent(nullptr)");
     }
 };
+#endif // SWIG
 
 #endif // LIBTREMOTESF_TORRENT_H
