@@ -50,6 +50,13 @@ namespace libtremotesf
             "\n";
 #endif
 
+        template<class T>
+        inline constexpr bool is_bounded_array_v = false;
+
+        template<class T, std::size_t N>
+        inline constexpr bool is_bounded_array_v<T[N]> = true;
+
+        [[maybe_unused]]
         inline std::string_view toStdStringView(const QByteArray& str) {
             return std::string_view(str.data(), static_cast<size_t>(str.size()));
         }
@@ -79,8 +86,15 @@ namespace libtremotesf
         template<typename T>
         void operator()(T&& value) const {
             using Type = std::decay_t<T>;
-            if constexpr (std::is_constructible_v<QString, Type>) {
-                println(QString(value));
+            if constexpr (std::is_same_v<Type, QString> || std::is_same_v<Type, QLatin1String>) {
+                println(value);
+            } else if constexpr (std::is_same_v<Type, const char*> || std::is_same_v<Type, char*>) {
+                using MaybeArray = std::remove_reference_t<T>;
+                if constexpr (is_bounded_array_v<MaybeArray>) {
+                    println(QString::fromUtf8(value, std::extent_v<MaybeArray> - 1));
+                } else {
+                    println(QString(value));
+                }
             } else if constexpr (
                 std::is_same_v<Type, QStringView>
 #if QT_VERSION_MAJOR >= 6
@@ -92,7 +106,7 @@ namespace libtremotesf
             } else if constexpr (std::is_same_v<Type, std::string> || std::is_same_v<Type, std::string_view>) {
                 println(std::string_view(value));
             } else {
-                operator()(singleArgumentFormatString, std::forward<T>(value));
+                println(fmt::to_string(value));
             }
         }
 
