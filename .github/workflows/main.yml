@@ -10,10 +10,10 @@ jobs:
   build-rpm:
     strategy:
       matrix:
-        container-image: ['fedora:latest', 'opensuse/tumbleweed:latest', 'mageia:latest']
+        container-image: ['fedora:34', 'fedora:35', 'opensuse/tumbleweed:latest', 'mageia:8']
         compiler: [gcc]
         include:
-        - container-image: 'fedora:latest'
+        - container-image: 'fedora:35'
           compiler: clang
 
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
   build-debian-ubuntu:
     strategy:
       matrix:
-        container-image: ['debian:stable', 'ubuntu:rolling']
+        container-image: ['debian:11', 'ubuntu:21.10', 'ubuntu:22.04']
         compiler: [gcc, clang]
 
     runs-on: ubuntu-latest
@@ -94,7 +94,7 @@ jobs:
         flatpak-builder --user --install-deps-from=flathub build-dir org.equeim.Tremotesf.json
 
   build-windows:
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
