@@ -10,10 +10,12 @@ jobs:
   build-rpm:
     strategy:
       matrix:
-        container-image: ['fedora:34', 'fedora:35', 'opensuse/tumbleweed:latest', 'mageia:8']
+        container-image: ['fedora:35', 'fedora:36', 'opensuse/tumbleweed:latest', 'mageia:8']
         compiler: [gcc]
         include:
         - container-image: 'fedora:35'
+          compiler: clang
+        - container-image: 'fedora:36'
           compiler: clang
 
     runs-on: ubuntu-latest
