@@ -53,7 +53,7 @@ jobs:
   build-debian-ubuntu:
     strategy:
       matrix:
-        container-image: ['debian:11', 'ubuntu:21.10', 'ubuntu:22.04']
+        container-image: ['debian:11', 'ubuntu:22.04']
         compiler: [gcc, clang]
 
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
     - name: Build Tremotesf
       uses: equeim/action-cmake-build@v9
       with:
-        # Can't use presets on older Ubuntu version
+        # Can't use presets on Debian, CMake is too old
         cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
 
   build-flatpak:
