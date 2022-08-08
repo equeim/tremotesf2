@@ -35,6 +35,8 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        submodules: 'true'
 
     - name: Set Fedora compiler RPM macro
       id: fedora-compiler
@@ -65,6 +67,8 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        submodules: 'true'
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -87,6 +91,8 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        submodules: 'true'
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -101,6 +107,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        submodules: 'true'
 
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1

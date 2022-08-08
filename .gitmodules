@@ -1,0 +1,3 @@
+[submodule "src/libtremotesf"]
+	path = src/libtremotesf
+	url = https://github.com/equeim/libtremotesf.git
