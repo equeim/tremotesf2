@@ -231,6 +231,11 @@ namespace tremotesf
             }
             return fmt::format("Error code {}", error);
         }
+
+        std::string getCOMErrorString(HRESULT error) {
+            // Apparently that's what we are supposed to do?
+            return getWinApiErrorString(static_cast<DWORD>(error));
+        }
     }
 
     void Utils::callWinApiFunctionWithLastError(std::function<bool()>&& function)
@@ -238,6 +243,14 @@ namespace tremotesf
         if (!function()) {
             // Can't use std::system_error here because MinGW toolchain uses POSIX error codes for std::system_category
             throw std::runtime_error(getWinApiErrorString(GetLastError()));
+        }
+    }
+
+    void Utils::callCOMFunction(std::function<int32_t()> &&function)
+    {
+        const auto result = static_cast<HRESULT>(function());
+        if (result != S_OK) {
+            throw std::runtime_error(getCOMErrorString(result));
         }
     }
 #endif
