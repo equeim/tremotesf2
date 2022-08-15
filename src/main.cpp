@@ -28,6 +28,7 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#include <winrt/base.h>
 #endif // Q_OS_WIN
 
 #include "libtremotesf/println.h"
@@ -37,7 +38,9 @@
 #include "servers.h"
 #include "signalhandler.h"
 #include "utils.h"
+#include "desktop/darkthemeapplier.h"
 #include "desktop/mainwindow.h"
+#include "desktop/systemcolorsprovider.h"
 
 #ifdef Q_OS_WIN
 namespace {
@@ -126,11 +129,16 @@ int main(int argc, char** argv)
     QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
     QGuiApplication::setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_WIN
-    if (const auto ret = CoInitializeEx(nullptr, COINIT_MULTITHREADED); ret != S_OK && ret != S_FALSE && ret != RPC_E_CHANGED_MODE ) {
-        printlnWarning("CoInitializeEx failed with error code {}", ret);
-        return EXIT_FAILURE;
+    try {
+        winrt::init_apartment();
+    } catch (const winrt::hresult_error& e) {
+        if (e.code() != RPC_E_CHANGED_MODE) {
+            const auto msg = e.message();
+            printlnWarning("CoInitializeEx failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
+            return EXIT_FAILURE;
+        }
     }
-
+    QApplication::setStyle(QLatin1String("fusion"));
     QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
     QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
 #endif
@@ -160,6 +168,11 @@ int main(int argc, char** argv)
     if (tremotesf::SignalHandler::exitRequested) {
         return EXIT_SUCCESS;
     }
+
+#ifdef Q_OS_WIN
+    const auto systemColorsProvider = tremotesf::SystemColorsProvider::createInstance();
+    tremotesf::applyDarkThemeToPalette(systemColorsProvider.get());
+#endif
 
     tremotesf::MainWindow window(ipcServer, args.files, args.urls);
     if (tremotesf::SignalHandler::exitRequested) {

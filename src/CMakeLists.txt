@@ -93,10 +93,11 @@ if (1)
         desktop/commondelegate.h
         desktop/connectionsettingsdialog.cpp
         desktop/connectionsettingsdialog.h
-        desktop/fileselectionwidget.cpp
-        desktop/fileselectionwidget.h
+        desktop/darkthemeapplier.h
         desktop/desktoputils.cpp
         desktop/desktoputils.h
+        desktop/fileselectionwidget.cpp
+        desktop/fileselectionwidget.h
         desktop/mainwindow.cpp
         desktop/mainwindow.h
         desktop/mainwindowsidebar.cpp
@@ -113,6 +114,7 @@ if (1)
         desktop/serverstatsdialog.h
         desktop/settingsdialog.cpp
         desktop/settingsdialog.h
+        desktop/systemcolorsprovider.h
         desktop/textinputdialog.cpp
         desktop/textinputdialog.h
         desktop/torrentfilesview.cpp
@@ -129,6 +131,8 @@ if (1)
         target_sources(
             tremotesf
             PRIVATE
+            desktop/darkthemeapplier_windows.cpp
+            desktop/systemcolorsprovider_windows.cpp
             desktop/tremotesf.rc
             desktop/tremotesf.manifest
         )
@@ -139,6 +143,13 @@ if (1)
             TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
         )
         set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
+    else()
+        target_sources(
+            tremotesf
+            PRIVATE
+            desktop/darkthemeapplier_noop.cpp
+            desktop/systemcolorsprovider_noop.cpp
+        )
     endif()
 
     qt_import_plugins(tremotesf

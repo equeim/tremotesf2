@@ -32,6 +32,7 @@
 #include <QUrl>
 
 #include "libtremotesf/println.h"
+#include "../utils.h"
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
 #include <QDBusConnection>
@@ -131,8 +132,12 @@ namespace tremotesf
                         PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativePath.utf16()));
                         if (directory) {
                             printlnDebug("Executing SHOpenFolderAndSelectItems() for {}", nativePath);
-                            if (SHOpenFolderAndSelectItems(directory, 0, nullptr, 0) != S_OK) {
-                                printlnWarning("SHOpenFolderAndSelectItems failed() for {}", nativePath);
+                            try {
+                                Utils::callCOMFunction([&] {
+                                    return SHOpenFolderAndSelectItems(directory, 0, nullptr, 0);
+                                });
+                            } catch (const std::exception& e) {
+                                printlnWarning("SHOpenFolderAndSelectItems failed for {}: {}", nativePath, e.what());
                                 openParentDirectory(filePath, mParentWidget);
                             }
                             ILFree(directory);
