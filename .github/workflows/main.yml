@@ -4,7 +4,9 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master]
+    branches:
+      - master
+      - 'feature/**'
   schedule:
     - cron: '0 0 * * 0'
 
