@@ -60,6 +60,10 @@ namespace tremotesf
                 setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
                 setTextElideMode(Qt::ElideMiddle);
                 setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+                QPalette palette{};
+                palette.setColor(QPalette::Base, QColor(Qt::transparent));
+                setPalette(palette);
             }
 
             QSize minimumSizeHint() const override
@@ -207,7 +211,6 @@ namespace tremotesf
         : QScrollArea(parent)
     {
         setFrameShape(QFrame::NoFrame);
-        setStyleSheet(QLatin1String("QFrame {background: transparent}"));
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setWidgetResizable(true);
 

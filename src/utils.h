@@ -20,6 +20,7 @@
 #define TREMOTESF_UTILS_H
 
 #ifdef Q_OS_WIN
+#include <cstdint>
 #include <functional>
 #endif
 #include <QObject>
@@ -48,6 +49,7 @@ namespace tremotesf
 #else
 #ifdef Q_OS_WIN
         static void callWinApiFunctionWithLastError(std::function<bool()>&& function);
+        static void callCOMFunction(std::function<std::int32_t()>&& function);
 #endif
 #endif
     };
