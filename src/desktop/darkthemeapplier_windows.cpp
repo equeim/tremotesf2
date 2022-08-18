@@ -9,6 +9,8 @@
 #include <dwmapi.h>
 
 #include "libtremotesf/println.h"
+#include "qapplication.h"
+#include "qstyle.h"
 #include "systemcolorsprovider.h"
 #include "../utils.h"
 
@@ -141,8 +143,8 @@ namespace {
         return (brightnessDifference - 125) + (colorDifference - 500);
     }
 
-    void applyWindowsPalette(bool darkTheme, QColor systemAccentColor) {
-        QPalette palette{};
+    void applyWindowsPalette(bool darkTheme, QColor highlightColor, QColor highlightColorInactive) {
+        QPalette palette{QApplication::style()->standardPalette()};
 
         const auto textColorLight = QColor(0, 0, 0, 228);
         const auto textColorLightDisabled = QColor(0, 0, 0, 92);
@@ -152,7 +154,7 @@ namespace {
             palette.setColor(QPalette::Window, QColor(32, 32, 32, 255));
             palette.setColor(QPalette::WindowText, textColorDark);
             palette.setColor(QPalette::Disabled, QPalette::WindowText, textColorDarkDisabled);
-            palette.setColor(QPalette::Base, QColor(30, 30, 30, 179));
+            palette.setColor(QPalette::Base, QColor(255, 255, 255, 15));
             palette.setColor(QPalette::Disabled, QPalette::Base, QColor(255, 255, 255, 11));
             palette.setColor(QPalette::ToolTipBase, QColor(43, 43, 43, 255));
             palette.setColor(QPalette::ToolTipText, QColor(255, 255, 255, 255));
@@ -163,7 +165,7 @@ namespace {
             palette.setColor(QPalette::Window, QColor(243, 243, 243, 255));
             palette.setColor(QPalette::WindowText, textColorLight);
             palette.setColor(QPalette::Disabled, QPalette::WindowText, textColorLightDisabled);
-            palette.setColor(QPalette::Base, QColor(255, 255, 255, 255));
+            palette.setColor(QPalette::Base, QColor(255, 255, 255, 179));
             palette.setColor(QPalette::Disabled, QPalette::Base, QColor(249, 249, 249, 77));
             palette.setColor(QPalette::ToolTipBase, QColor(242, 242, 242, 255));
             palette.setColor(QPalette::ToolTipText, QColor(0, 0, 0, 228));
@@ -193,12 +195,13 @@ namespace {
         palette.setColor(QPalette::Mid, buttonColor.darker(150));
         palette.setColor(QPalette::Disabled, QPalette::Mid, buttonColorDisabled);
 
-        if (const auto accentColor = systemAccentColor; accentColor.isValid()) {
-            palette.setColor(QPalette::Highlight, accentColor);
+        if (highlightColor.isValid()) {
+            palette.setColor(QPalette::Highlight, highlightColor);
+            palette.setColor(QPalette::Inactive, QPalette::Highlight, highlightColorInactive);
+        } else {
+            highlightColor = palette.color(QPalette::Active, QPalette::Highlight);
         }
-        const auto highlight = palette.color(QPalette::Highlight);
-        palette.setColor(QPalette::Inactive, QPalette::Highlight, highlight.lighter(125));
-        if (getContrastScore(textColorDark, highlight) >= getContrastScore(textColorLight, highlight)) {
+        if (getContrastScore(textColorDark, highlightColor) >= getContrastScore(textColorLight, highlightColor)) {
             palette.setColor(QPalette::HighlightedText, textColorDark);
             palette.setColor(QPalette::Disabled, QPalette::HighlightedText, textColorDarkDisabled);
         } else {
@@ -208,9 +211,9 @@ namespace {
 
         QColor link{};
         if (darkTheme) {
-            link = highlight.lighter();
+            link = highlightColor.lighter(150);
         } else {
-            link = highlight;
+            link = highlightColor.darker(150);
         }
         palette.setColor(QPalette::Link, link);
         palette.setColor(QPalette::LinkVisited, link.darker());
@@ -223,11 +226,12 @@ namespace {
 void applyDarkThemeToPalette(SystemColorsProvider* systemColorsProvider)
 {
     const auto apply = [=] {
-        applyWindowsPalette(systemColorsProvider->isDarkThemeEnabled(), systemColorsProvider->accentColor());
+        const auto colors = systemColorsProvider->accentColors();
+        applyWindowsPalette(systemColorsProvider->isDarkThemeEnabled(), colors.accentColor, colors.accentColorLight1);
     };
     apply();
     QObject::connect(systemColorsProvider, &SystemColorsProvider::darkThemeEnabledChanged, QGuiApplication::instance(), apply);
-    QObject::connect(systemColorsProvider, &SystemColorsProvider::accentColorChanged, QGuiApplication::instance(), apply);
+    QObject::connect(systemColorsProvider, &SystemColorsProvider::accentColorsChanged, QGuiApplication::instance(), apply);
 
     if (IsWindows11OrGreater()) {
         printlnInfo("applyDarkThemeToPalette: running on Windows 11 or newer, set title bar color");

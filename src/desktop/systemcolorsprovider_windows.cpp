@@ -11,9 +11,16 @@
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
 
+using namespace winrt::Windows::UI;
 using namespace winrt::Windows::UI::ViewManagement;
 
 namespace tremotesf {
+
+namespace {
+    QColor qColor(Color color) {
+        return QColor(color.R, color.G, color.B, color.A);
+    }
+}
 
 namespace {
     class SystemColorsProviderWindows final : public SystemColorsProvider {
@@ -21,7 +28,7 @@ namespace {
     public:
         explicit SystemColorsProviderWindows(QObject* parent = nullptr) : SystemColorsProvider(parent) {
             printlnInfo("System dark theme enabled = {}", mDarkThemeEnabled);
-            printlnInfo("System accent color = {}", mAccentColor);
+            printlnInfo("System accent colors = {}", mAccentColors);
             revoker = settings.ColorValuesChanged(winrt::auto_revoke, [=](auto...) {
                 QMetaObject::invokeMethod(this, [=] {
                     if (bool newDarkThemeEnabled = isDarkThemeEnabledImpl(); newDarkThemeEnabled != mDarkThemeEnabled) {
@@ -29,17 +36,17 @@ namespace {
                         mDarkThemeEnabled = newDarkThemeEnabled;
                         emit darkThemeEnabledChanged();
                     }
-                    if (QColor newAccentColor = accentColorImpl(); newAccentColor != mAccentColor) {
-                        printlnInfo("System accent color changed to {}", newAccentColor);
-                        mAccentColor = newAccentColor;
-                        emit accentColorChanged();
+                    if (auto newAccentColors = accentColorsImpl(); newAccentColors != mAccentColors) {
+                        printlnInfo("System accent colors changed to {}", newAccentColors);
+                        mAccentColors = newAccentColors;
+                        emit accentColorsChanged();
                     }
                 });
             });
         }
 
         bool isDarkThemeEnabled() const override { return mDarkThemeEnabled; };
-        QColor accentColor() const override { return mAccentColor; };
+        AccentColors accentColors() const override { return mAccentColors; };
 
     private:
         bool isDarkThemeEnabledImpl() {
@@ -48,16 +55,18 @@ namespace {
             return (((5 * foreground.G) + (2 * foreground.R) + foreground.B) > (8 * 128));
         }
 
-        QColor accentColorImpl() {
-            const auto accent = settings.GetColorValue(UIColorType::Accent);
-            return QColor(accent.R, accent.G, accent.B, accent.A);
+        AccentColors accentColorsImpl() {
+            return {
+                qColor(settings.GetColorValue(UIColorType::Accent)),
+                qColor(settings.GetColorValue(UIColorType::AccentLight1))
+            };
         }
 
         UISettings settings{};
         UISettings::ColorValuesChanged_revoker revoker{};
 
         bool mDarkThemeEnabled{isDarkThemeEnabledImpl()};
-        QColor mAccentColor{accentColorImpl()};
+        AccentColors mAccentColors{accentColorsImpl()};
     };
 }
 
