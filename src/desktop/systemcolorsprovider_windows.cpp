@@ -68,15 +68,28 @@ namespace {
         bool mDarkThemeEnabled{isDarkThemeEnabledImpl()};
         AccentColors mAccentColors{accentColorsImpl()};
     };
+
+    bool canObserveSystemColors() {
+        static const bool supported = IsWindows10OrGreater();
+        return supported;
+    }
 }
 
 std::unique_ptr<SystemColorsProvider> SystemColorsProvider::createInstance() {
-    if (IsWindows10OrGreater()) {
+    if (canObserveSystemColors()) {
         printlnInfo("SystemColorsProvider: running on Windows 10 or newer, observe system colors");
         return std::make_unique<SystemColorsProviderWindows>();
     }
     printlnInfo("SystemColorsProvider: running on Windows older than 10, can't observe system colors");
     return std::make_unique<SystemColorsProvider>();
+}
+
+bool SystemColorsProvider::isDarkThemeFollowSystemSupported() {
+    return canObserveSystemColors();
+}
+
+bool SystemColorsProvider::isAccentColorsSupported() {
+    return canObserveSystemColors();
 }
 
 }

@@ -37,6 +37,9 @@ public:
 
     virtual AccentColors accentColors() const { return {}; };
 
+    static bool isDarkThemeFollowSystemSupported();
+    static bool isAccentColorsSupported();
+
 signals:
     void darkThemeEnabledChanged();
     void accentColorsChanged();

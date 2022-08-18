@@ -19,11 +19,20 @@
 #include "settingsdialog.h"
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
+#include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "libtremotesf/stdutils.h"
+
+#ifdef Q_OS_WIN
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <VersionHelpers.h>
+#endif
 
 #include "../settings.h"
 
@@ -37,8 +46,35 @@ namespace tremotesf
         auto layout = new QVBoxLayout(this);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
+#ifdef Q_OS_WIN
+        auto appearanceGroupBox = new QGroupBox(qApp->translate("tremotesf", "Appearance"), this);
+        auto appearanceGroupBoxLayout = new QFormLayout(appearanceGroupBox);
+
+        auto darkThemeComboBox = new QComboBox(this);
+        std::vector<Settings::DarkThemeMode> darkThemeComboBoxValues{};
+        if (IsWindows10OrGreater()) {
+            darkThemeComboBox->addItem(qApp->translate("tremotesf", "Follow system"));
+            darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::FollowSystem);
+        }
+        darkThemeComboBox->addItem(qApp->translate("tremotesf", "On"));
+        darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::On);
+        darkThemeComboBox->addItem(qApp->translate("tremotesf", "Off"));
+        darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::Off);
+        appearanceGroupBoxLayout->addRow(qApp->translate("tremotesf", "Dark theme"), darkThemeComboBox);
+
+        auto systemAccentColorCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
+        appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
+
+        layout->addWidget(appearanceGroupBox);
+#endif
+
+        auto connectionGroupBox = new QGroupBox(qApp->translate("tremotesf", "Connection"), this);
+        auto connectionGroupBoxBoxLayout = new QVBoxLayout(connectionGroupBox);
+
         auto connectOnStartupCheckBox = new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this);
-        layout->addWidget(connectOnStartupCheckBox);
+        connectionGroupBoxBoxLayout->addWidget(connectOnStartupCheckBox);
+
+        layout->addWidget(connectionGroupBox);
 
         auto notificationsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Notifications"), this);
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
@@ -86,6 +122,12 @@ namespace tremotesf
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
         finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
 
+#ifdef Q_OS_WIN
+        darkThemeComboBox->setCurrentIndex(index_of_i(darkThemeComboBoxValues, settings->darkThemeMode()));
+        systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
+#endif
+
+
         QObject::connect(this, &SettingsDialog::accepted, this, [=] {
             auto settings = Settings::instance();
             settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
@@ -95,6 +137,10 @@ namespace tremotesf
             settings->setShowTrayIcon(trayIconCheckBox->isChecked());
             settings->setNotificationsOnAddedTorrentsSinceLastConnection(addedSinceLastConnectionCheckBox->isChecked());
             settings->setNotificationsOnFinishedTorrentsSinceLastConnection(finishedSinceLastConnectionCheckBox->isChecked());
+#ifdef Q_OS_WIN
+            settings->setDarkThemeMode(darkThemeComboBoxValues[darkThemeComboBox->currentIndex()]);
+            settings->setUseSystemAccentColor(systemAccentColorCheckBox->isChecked());
+#endif
         });
     }
 }
