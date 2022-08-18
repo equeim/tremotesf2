@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QFontMetrics>
 #include <QHelpEvent>
-#include <QProxyStyle>
 #include <QStyle>
 #include <QStyleOptionProgressBar>
 #include <QToolTip>
@@ -46,9 +45,6 @@ namespace tremotesf
 
     CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent)
         : QStyledItemDelegate(parent),
-#ifdef Q_OS_WIN
-          mProxyStyle(QLatin1String("fusion")),
-#endif
           mProgressBarColumn(progressBarColumn),
           mProgressBarRole(progressBarRole),
           mTextElideModeRole(textElideModeRole)
@@ -79,13 +75,7 @@ namespace tremotesf
                 progressBar.progress = 1;
             }
             progressBar.state = opt.state | QStyle::State_Horizontal;
-
-#ifdef Q_OS_WIN
-            // hack to remove progress bar animation
-            const auto style = &mProxyStyle;
-#else
             const auto style = opt.widget ? opt.widget->style() : qApp->style();
-#endif
             style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
         }
     }
