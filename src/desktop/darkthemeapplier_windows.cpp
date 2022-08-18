@@ -8,6 +8,8 @@
 #include <QWindow>
 #include <dwmapi.h>
 
+#include <QToolTip>
+
 #include "libtremotesf/println.h"
 #include "qapplication.h"
 #include "qstyle.h"
@@ -170,10 +172,8 @@ namespace {
             palette.setColor(QPalette::Window, QColor(32, 32, 32, 255));
             palette.setColor(QPalette::WindowText, textColorDark);
             palette.setColor(QPalette::Disabled, QPalette::WindowText, textColorDarkDisabled);
-            palette.setColor(QPalette::Base, QColor(255, 255, 255, 15));
-            palette.setColor(QPalette::Disabled, QPalette::Base, QColor(255, 255, 255, 11));
-            palette.setColor(QPalette::ToolTipBase, QColor(43, 43, 43, 255));
-            palette.setColor(QPalette::ToolTipText, QColor(255, 255, 255, 255));
+            palette.setColor(QPalette::Base, QColor(45, 45, 45, 255));
+            palette.setColor(QPalette::Disabled, QPalette::Base, QColor(41, 41, 41, 255));
             palette.setColor(QPalette::PlaceholderText, QColor(255, 255, 255, 197));
             palette.setColor(QPalette::Button, QColor(45, 45, 45, 255));
             palette.setColor(QPalette::Disabled, QPalette::Button, QColor(41, 41, 41, 255));
@@ -181,10 +181,8 @@ namespace {
             palette.setColor(QPalette::Window, QColor(243, 243, 243, 255));
             palette.setColor(QPalette::WindowText, textColorLight);
             palette.setColor(QPalette::Disabled, QPalette::WindowText, textColorLightDisabled);
-            palette.setColor(QPalette::Base, QColor(255, 255, 255, 179));
-            palette.setColor(QPalette::Disabled, QPalette::Base, QColor(249, 249, 249, 77));
-            palette.setColor(QPalette::ToolTipBase, QColor(242, 242, 242, 255));
-            palette.setColor(QPalette::ToolTipText, QColor(0, 0, 0, 228));
+            palette.setColor(QPalette::Base, QColor(251, 251, 251, 255));
+            palette.setColor(QPalette::Disabled, QPalette::Base, QColor(244, 244, 244, 255));
             palette.setColor(QPalette::PlaceholderText, QColor(0, 0, 0, 158));
             palette.setColor(QPalette::Button, QColor(251, 251, 251, 255));
             palette.setColor(QPalette::Disabled, QPalette::Button, QColor(244, 244, 244, 255));
@@ -236,6 +234,16 @@ namespace {
 
         printlnInfo("applyDarkThemeToPalette: setting application palette");
         QGuiApplication::setPalette(palette);
+
+        QPalette toolTipPalette{QToolTip::palette()};
+        if (darkTheme) {
+            toolTipPalette.setColor(QPalette::ToolTipBase, QColor(43, 43, 43, 255));
+            toolTipPalette.setColor(QPalette::ToolTipText, QColor(255, 255, 255, 255));
+        } else {
+            toolTipPalette.setColor(QPalette::ToolTipBase, QColor(242, 242, 242, 255));
+            toolTipPalette.setColor(QPalette::ToolTipText, QColor(0, 0, 0, 228));
+        }
+        QToolTip::setPalette(toolTipPalette);
     }
 }
 
