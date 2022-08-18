@@ -21,10 +21,6 @@
 
 #include <QStyledItemDelegate>
 
-#ifdef Q_OS_WIN
-#include <QProxyStyle>
-#endif
-
 namespace tremotesf
 {
     class CommonDelegate : public QStyledItemDelegate
@@ -42,9 +38,6 @@ namespace tremotesf
                        const QModelIndex& index) override;
 
     private:
-#ifdef Q_OS_WIN
-        QProxyStyle mProxyStyle;
-#endif
         int mProgressBarColumn;
         int mProgressBarRole;
         int mTextElideModeRole;
