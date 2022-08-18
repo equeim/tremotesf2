@@ -12,6 +12,7 @@
 #include "qapplication.h"
 #include "qstyle.h"
 #include "systemcolorsprovider.h"
+#include "../settings.h"
 #include "../utils.h"
 
 #undef min
@@ -67,6 +68,9 @@ namespace {
                 QObject::connect(mSystemColorsProvider, &SystemColorsProvider::darkThemeEnabledChanged, window, [=] {
                     applyDarkThemeToTitleBar(window);
                 });
+                QObject::connect(Settings::instance(), &Settings::darkThemeModeChanged, window, [=] {
+                    applyDarkThemeToTitleBar(window);
+                });
                 window->setProperty(signalAddedProperty, true);
             }
         }
@@ -75,7 +79,19 @@ namespace {
         {
             try {
                 printlnInfo("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
-                const auto useImmersiveDarkMode = static_cast<BOOL>(mSystemColorsProvider->isDarkThemeEnabled());
+                const bool darkTheme = [&] {
+                    switch (Settings::instance()->darkThemeMode()) {
+                    case Settings::DarkThemeMode::FollowSystem:
+                        return mSystemColorsProvider->isDarkThemeEnabled();
+                    case Settings::DarkThemeMode::On:
+                        return true;
+                    case Settings::DarkThemeMode::Off:
+                        return false;
+                    default:
+                        return false;
+                    }
+                }();
+                const auto useImmersiveDarkMode = static_cast<BOOL>(darkTheme);
                 Utils::callCOMFunction([&] {
                    return DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_USE_IMMERSIVE_DARK_MODE, &useImmersiveDarkMode, sizeof(useImmersiveDarkMode));
                 });
@@ -225,13 +241,35 @@ namespace {
 
 void applyDarkThemeToPalette(SystemColorsProvider* systemColorsProvider)
 {
+    const auto settings = Settings::instance();
     const auto apply = [=] {
-        const auto colors = systemColorsProvider->accentColors();
-        applyWindowsPalette(systemColorsProvider->isDarkThemeEnabled(), colors.accentColor, colors.accentColorLight1);
+        const bool darkTheme = [&] {
+            switch (settings->darkThemeMode()) {
+            case Settings::DarkThemeMode::FollowSystem:
+                return systemColorsProvider->isDarkThemeEnabled();
+            case Settings::DarkThemeMode::On:
+                return true;
+            case Settings::DarkThemeMode::Off:
+                return false;
+            default:
+                return false;
+            }
+        }();
+        const auto [hightlightColor, hightlightColorInactive] = [&] {
+            if (settings->useSystemAccentColor()) {
+                if (auto colors = systemColorsProvider->accentColors(); colors.isValid()) {
+                    return std::pair{colors.accentColor, colors.accentColorLight1};
+                }
+            }
+            return std::pair{QColor{}, QColor{}};
+        }();
+        applyWindowsPalette(darkTheme, hightlightColor, hightlightColorInactive);
     };
     apply();
     QObject::connect(systemColorsProvider, &SystemColorsProvider::darkThemeEnabledChanged, QGuiApplication::instance(), apply);
     QObject::connect(systemColorsProvider, &SystemColorsProvider::accentColorsChanged, QGuiApplication::instance(), apply);
+    QObject::connect(settings, &Settings::darkThemeModeChanged, QGuiApplication::instance(), apply);
+    QObject::connect(settings, &Settings::useSystemAccentColorChanged, QGuiApplication::instance(), apply);
 
     if (IsWindows11OrGreater()) {
         printlnInfo("applyDarkThemeToPalette: running on Windows 11 or newer, set title bar color");

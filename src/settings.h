@@ -74,6 +74,18 @@ namespace tremotesf
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, trackersViewHeaderState, setTrackersViewHeaderState)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, peersViewHeaderState, setPeersViewHeaderState)
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState)
+
+    public:
+        enum class DarkThemeMode {
+            FollowSystem,
+            On,
+            Off
+        };
+        Q_ENUM(DarkThemeMode)
+
+        SETTINGS_PROPERTY_TRIVIAL(tremotesf::Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode)
+        SETTINGS_PROPERTY_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor)
+
     public:
         static Settings* instance();
 
