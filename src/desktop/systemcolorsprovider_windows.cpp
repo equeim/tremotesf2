@@ -75,13 +75,13 @@ namespace {
     }
 }
 
-std::unique_ptr<SystemColorsProvider> SystemColorsProvider::createInstance() {
+SystemColorsProvider* SystemColorsProvider::createInstance(QObject* parent) {
     if (canObserveSystemColors()) {
         printlnInfo("SystemColorsProvider: running on Windows 10 or newer, observe system colors");
-        return std::make_unique<SystemColorsProviderWindows>();
+        return new SystemColorsProviderWindows(parent);
     }
     printlnInfo("SystemColorsProvider: running on Windows older than 10, can't observe system colors");
-    return std::make_unique<SystemColorsProvider>();
+    return new SystemColorsProvider(parent);
 }
 
 bool SystemColorsProvider::isDarkThemeFollowSystemSupported() {
