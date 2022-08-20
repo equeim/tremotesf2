@@ -7,9 +7,9 @@
     {
       "kind": "git",
       "repository": "https://github.com/equeim/vcpkg-registry.git",
-      "baseline": "c82cf6279a6b79574ab006a028e01a70cd907da2",
+      "baseline": "b3dd3de78cad7ce3127821e92da5510eda79b511",
       "packages": [
-        "kf5breezeicons", "hicolor-icon-theme", "qt5-tools"
+        "kf5breezeicons", "kf5i18n", "hicolor-icon-theme", "qt5-tools"
       ]
     }
   ]
