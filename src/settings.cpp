@@ -24,6 +24,7 @@
 #include <QSettings>
 
 #include "libtremotesf/println.h"
+#include "libtremotesf/target_os.h"
 #include "desktop/systemcolorsprovider.h"
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::ToolButtonStyle)
@@ -121,13 +122,13 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", defaultUseSystemAccentColor());
 
     Settings::Settings(QObject* parent)
-        : QObject(parent),
-#ifdef Q_OS_WIN
-          mSettings(new QSettings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName(), this))
-#else
-          mSettings(new QSettings(this))
-#endif
+        : QObject(parent)
     {
+        if constexpr (isTargetOsWindows) {
+            mSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName(), this);
+        } else {
+            mSettings = new QSettings(this);
+        }
         qRegisterMetaTypeStreamOperators<Qt::ToolButtonStyle>();
         qRegisterMetaTypeStreamOperators<TorrentsProxyModel::StatusFilter>();
         qRegisterMetaTypeStreamOperators<Settings::DarkThemeMode>();

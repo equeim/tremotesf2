@@ -44,10 +44,11 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include "../libtremotesf/stdutils.h"
+#include "../libtremotesf/target_os.h"
 #include "commondelegate.h"
 #include "../servers.h"
 #include "../serversmodel.h"
-#include "../libtremotesf/stdutils.h"
 #include "../utils.h"
 
 namespace tremotesf
@@ -525,11 +526,11 @@ namespace tremotesf
             target->setPlainText(Utils::readTextFile(fileDialog->selectedFiles().first()));
         });
 
-#ifdef Q_OS_WIN
-        fileDialog->open();
-#else
-        fileDialog->show();
-#endif
+        if constexpr (isTargetOsWindows) {
+            fileDialog->open();
+        } else {
+            fileDialog->show();
+        }
     }
 }
 

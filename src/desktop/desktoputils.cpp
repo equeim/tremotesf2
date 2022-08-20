@@ -34,7 +34,7 @@
 #include "libtremotesf/println.h"
 #include "../utils.h"
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
 #include <QDBusConnection>
 #include <QDBusPendingCallWatcher>
 #include "org.freedesktop.FileManager1.h"
@@ -103,7 +103,7 @@ namespace tremotesf
                 }
 
                 void showInFileManager() {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
                     printlnDebug("Executing org.freedesktop.FileManager1 D-Bus call");
                     OrgFreedesktopFileManager1Interface interface(QLatin1String("org.freedesktop.FileManager1"),
                                                                   QLatin1String("/org/freedesktop/FileManager1"),

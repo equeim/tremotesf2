@@ -28,6 +28,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "libtremotesf/target_os.h"
+
 namespace tremotesf
 {
     namespace
@@ -132,11 +134,11 @@ namespace tremotesf
                 emit fileDialogAccepted(filePath);
             });
 
-#ifdef Q_OS_WIN
-            dialog->open();
-#else
-            dialog->show();
-#endif
+            if constexpr (isTargetOsWindows) {
+                dialog->open();
+            } else {
+                dialog->show();
+            }
         });
     }
 

@@ -92,7 +92,7 @@ namespace tremotesf
     private:
         explicit Settings(QObject* parent = nullptr);
 
-        QSettings* mSettings;
+        QSettings* mSettings{};
     };
 }
 

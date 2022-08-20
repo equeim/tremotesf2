@@ -25,17 +25,20 @@
 #include <QStandardPaths>
 #include <QStringBuilder>
 
+#include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
 
 namespace tremotesf
 {
     namespace
     {
-#ifdef Q_OS_WIN
-        const QSettings::Format settingsFormat = QSettings::IniFormat;
-#else
-        const QSettings::Format settingsFormat = QSettings::NativeFormat;
-#endif
+        constexpr QSettings::Format settingsFormat = [] {
+            if constexpr (isTargetOsWindows) {
+                return QSettings::IniFormat;
+            } else {
+                return QSettings::NativeFormat;
+            }
+        }();
 
         const QLatin1String fileName("servers");
 

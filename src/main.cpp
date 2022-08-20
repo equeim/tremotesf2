@@ -20,10 +20,10 @@
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
-#include <QStringBuilder>
 #include <QTranslator>
 
 #include "libtremotesf/println.h"
+#include "libtremotesf/target_os.h"
 #include "commandlineparser.h"
 #include "ipcclient.h"
 #include "ipcserver.h"
@@ -34,11 +34,13 @@
 
 using namespace tremotesf;
 
+using namespace tremotesf;
+
 int main(int argc, char** argv)
 {
-#ifdef Q_OS_WIN
-    windowsInitPreApplication();
-#endif
+    if constexpr (isTargetOsWindows) {
+        windowsInitPreApplication();
+    }
 
     // Setup handler for UNIX signals or Windows console handler
     try {
@@ -82,9 +84,9 @@ int main(int argc, char** argv)
     QCoreApplication::setOrganizationName(qApp->applicationName());
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
-#ifdef Q_OS_WIN
-    windowsInitPostApplication();
-#endif
+    if constexpr (isTargetOsWindows) {
+        windowsInitPostApplication();
+    }
 
     QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
     //
@@ -98,11 +100,13 @@ int main(int argc, char** argv)
 
     QTranslator qtTranslator;
     {
-#ifdef Q_OS_WIN
-        const QString qtTranslationsPath = QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR);
-#else
-        const auto qtTranslationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-#endif
+        const QString qtTranslationsPath = [] {
+            if constexpr (isTargetOsWindows) {
+                return QString::fromStdString(fmt::format("{}/{}", QCoreApplication::applicationDirPath(), TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR));
+            } else {
+                return QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+            }
+        }();
         if (qtTranslator.load(QLocale(), QLatin1String(TREMOTESF_QT_TRANSLATIONS_FILENAME), QLatin1String("_"), qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
@@ -131,8 +135,8 @@ int main(int argc, char** argv)
     }
 
     const int exitCode = qApp->exec();
-#ifdef Q_OS_WIN
-    windowsDeinit();
-#endif
+    if constexpr (isTargetOsWindows) {
+        windowsDeinit();
+    }
     return exitCode;
 }
