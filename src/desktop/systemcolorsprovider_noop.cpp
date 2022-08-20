@@ -1,8 +1,8 @@
 #include "systemcolorsprovider.h"
 
 namespace tremotesf {
-    std::unique_ptr<SystemColorsProvider> SystemColorsProvider::createInstance() {
-        return std::make_unique<SystemColorsProvider>();
+    SystemColorsProvider* SystemColorsProvider::createInstance(QObject* parent) {
+        return new SystemColorsProvider(parent);
     }
 
     bool SystemColorsProvider::isDarkThemeFollowSystemSupported() {
