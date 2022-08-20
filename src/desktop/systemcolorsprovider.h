@@ -1,7 +1,6 @@
 #ifndef SYSTEMCOLORSPROVIDER_H
 #define SYSTEMCOLORSPROVIDER_H
 
-#include <memory>
 #include <QColor>
 #include <QObject>
 
@@ -15,8 +14,8 @@ class SystemColorsProvider : public QObject
     Q_PROPERTY(bool darkThemeEnabled READ isDarkThemeEnabled NOTIFY darkThemeEnabledChanged)
     Q_PROPERTY(tremotesf::SystemColorsProvider::AccentColors accentColors READ accentColors NOTIFY accentColorsChanged)
 public:
-    explicit SystemColorsProvider(QObject* parent = nullptr) : QObject{parent} {}
-    static std::unique_ptr<SystemColorsProvider> createInstance();
+    static SystemColorsProvider* createInstance(QObject* parent = nullptr);
+
     virtual bool isDarkThemeEnabled() const { return false; };
 
     struct AccentColors {
@@ -39,6 +38,9 @@ public:
 
     static bool isDarkThemeFollowSystemSupported();
     static bool isAccentColorsSupported();
+
+protected:
+    explicit SystemColorsProvider(QObject* parent = nullptr) : QObject{parent} {}
 
 signals:
     void darkThemeEnabledChanged();

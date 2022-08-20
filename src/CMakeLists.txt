@@ -29,6 +29,7 @@ add_executable(tremotesf
     localtorrentfilesmodel.cpp
     localtorrentfilesmodel.h
     main.cpp
+    main_windows.h
     modelutils.h
     peersmodel.cpp
     peersmodel.h
@@ -131,6 +132,7 @@ if (1)
         target_sources(
             tremotesf
             PRIVATE
+            main_windows.cpp
             desktop/darkthemeapplier_windows.cpp
             desktop/systemcolorsprovider_windows.cpp
             desktop/tremotesf.rc

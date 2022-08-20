@@ -16,9 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <csignal>
-#include <iostream>
-
 #include <QApplication>
 #include <QIcon>
 #include <QLibraryInfo>
@@ -26,47 +23,19 @@
 #include <QStringBuilder>
 #include <QTranslator>
 
-#ifdef Q_OS_WIN
-#include <windows.h>
-#include <winrt/base.h>
-#endif // Q_OS_WIN
-
 #include "libtremotesf/println.h"
 #include "commandlineparser.h"
 #include "ipcclient.h"
 #include "ipcserver.h"
+#include "main_windows.h"
 #include "servers.h"
 #include "signalhandler.h"
-#include "utils.h"
-#include "desktop/darkthemeapplier.h"
 #include "desktop/mainwindow.h"
-#include "desktop/systemcolorsprovider.h"
-
-#ifdef Q_OS_WIN
-namespace {
-    void on_terminate() {
-        const auto exception_ptr = std::current_exception();
-        if (exception_ptr) {
-            try {
-                std::rethrow_exception(exception_ptr);
-            } catch (const std::exception& e) {
-                printlnWarning("Unhandled exception: {}", e.what());
-            }
-        }
-    }
-}
-#endif
 
 int main(int argc, char** argv)
 {
 #ifdef Q_OS_WIN
-    std::set_terminate(on_terminate);
-    try {
-        tremotesf::Utils::callWinApiFunctionWithLastError([] { return SetConsoleOutputCP(GetACP()); });
-    } catch (const std::exception& e) {
-        printlnWarning("SetConsoleOutputCP failed: {}", e.what());
-        return EXIT_FAILURE;
-    }
+    tremotesf::windowsInitPreApplication();
 #endif
 
     // Setup handler for UNIX signals or Windows console handler
@@ -74,7 +43,6 @@ int main(int argc, char** argv)
         tremotesf::SignalHandler::setupHandlers();
     } catch (const std::exception& e) {
         printlnWarning("Failed to setup signal handlers: {}", e.what());
-        return EXIT_FAILURE;
     }
 
     //
@@ -105,43 +73,24 @@ int main(int argc, char** argv)
     //
     // QApplication initialization
     //
-#ifdef Q_OS_WIN
-    try {
-        tremotesf::Utils::callWinApiFunctionWithLastError([] { return AllowSetForegroundWindow(ASFW_ANY); });
-    } catch (const std::exception& e) {
-        printlnWarning("AllowSetForegroundWindow failed: {}", e.what());
-        return EXIT_FAILURE;
-    }
-#endif
-
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication app(argc, argv);
     QCoreApplication::setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
+    QCoreApplication::setOrganizationName(qApp->applicationName());
+    QGuiApplication::setQuitOnLastWindowClosed(false);
+
+#ifdef Q_OS_WIN
+    tremotesf::windowsInitPostApplication();
+#endif
+
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
     //
     // End of QApplication initialization
     //
 
     // Setup socket notifier for UNIX signals
     tremotesf::SignalHandler::setupNotifier();
-
-    QCoreApplication::setOrganizationName(qApp->applicationName());
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
-    QGuiApplication::setQuitOnLastWindowClosed(false);
-#ifdef Q_OS_WIN
-    try {
-        winrt::init_apartment();
-    } catch (const winrt::hresult_error& e) {
-        if (e.code() != RPC_E_CHANGED_MODE) {
-            const auto msg = e.message();
-            printlnWarning("CoInitializeEx failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
-            return EXIT_FAILURE;
-        }
-    }
-    QApplication::setStyle(QLatin1String("fusion"));
-    QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
-    QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
-#endif
 
     auto ipcServer = tremotesf::IpcServer::createInstance(qApp);
 
@@ -169,11 +118,6 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
-#ifdef Q_OS_WIN
-    const auto systemColorsProvider = tremotesf::SystemColorsProvider::createInstance();
-    tremotesf::applyDarkThemeToPalette(systemColorsProvider.get());
-#endif
-
     tremotesf::MainWindow window(ipcServer, args.files, args.urls);
     if (tremotesf::SignalHandler::exitRequested) {
         return EXIT_SUCCESS;
@@ -186,7 +130,7 @@ int main(int argc, char** argv)
 
     const int exitCode = qApp->exec();
 #ifdef Q_OS_WIN
-    CoUninitialize();
+    tremotesf::windowsDeinit();
 #endif
     return exitCode;
 }
