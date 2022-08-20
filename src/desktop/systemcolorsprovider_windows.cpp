@@ -50,6 +50,9 @@ namespace {
 
     private:
         bool isDarkThemeEnabledImpl() {
+            if (!mIsDarkThemeFollowSystemSupported) {
+                return false;
+            }
             // Apparently this is the way to do it according to Microsoft
             const auto foreground = settings.GetColorValue(UIColorType::Foreground);
             return (((5 * foreground.G) + (2 * foreground.R) + foreground.B) > (8 * 128));
@@ -67,11 +70,32 @@ namespace {
 
         bool mDarkThemeEnabled{isDarkThemeEnabledImpl()};
         AccentColors mAccentColors{accentColorsImpl()};
+
+        bool mIsDarkThemeFollowSystemSupported{isDarkThemeFollowSystemSupported()};
     };
 
     bool canObserveSystemColors() {
         static const bool supported = IsWindows10OrGreater();
         return supported;
+    }
+
+    bool IsWindows10AnniversaryUpdateOrGreater()
+    {
+        OSVERSIONINFOEXW info{};
+        info.dwOSVersionInfoSize = sizeof(info);
+        info.dwMajorVersion = 10;
+        info.dwMinorVersion = 0;
+        info.dwBuildNumber = 14393;
+        const auto conditionMask = VerSetConditionMask(
+            VerSetConditionMask(
+                VerSetConditionMask(
+                    0, VER_MAJORVERSION, VER_GREATER_EQUAL
+                ),
+                VER_MINORVERSION, VER_GREATER_EQUAL
+            ),
+            VER_BUILDNUMBER, VER_GREATER_EQUAL
+        );
+        return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) == TRUE;
     }
 }
 
@@ -85,7 +109,7 @@ SystemColorsProvider* SystemColorsProvider::createInstance(QObject* parent) {
 }
 
 bool SystemColorsProvider::isDarkThemeFollowSystemSupported() {
-    return canObserveSystemColors();
+    return IsWindows10AnniversaryUpdateOrGreater();
 }
 
 bool SystemColorsProvider::isAccentColorsSupported() {
