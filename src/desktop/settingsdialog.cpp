@@ -26,15 +26,10 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+
 #include "libtremotesf/stdutils.h"
-
-#ifdef Q_OS_WIN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <VersionHelpers.h>
-#endif
-
 #include "../settings.h"
+#include "systemcolorsprovider.h"
 
 namespace tremotesf
 {
@@ -52,7 +47,7 @@ namespace tremotesf
 
         auto darkThemeComboBox = new QComboBox(this);
         std::vector<Settings::DarkThemeMode> darkThemeComboBoxValues{};
-        if (IsWindows10OrGreater()) {
+        if (SystemColorsProvider::isDarkThemeFollowSystemSupported()) {
             darkThemeComboBox->addItem(qApp->translate("tremotesf", "Follow system"));
             darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::FollowSystem);
         }
