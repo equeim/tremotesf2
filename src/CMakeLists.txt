@@ -129,6 +129,8 @@ if (1)
     )
 
     if (WIN32)
+        find_package(KF5IconThemes REQUIRED)
+        target_link_libraries(tremotesf KF5::IconThemes)
         target_sources(
             tremotesf
             PRIVATE
@@ -143,8 +145,15 @@ if (1)
             TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
             TREMOTESF_BUNDLED_ICON_THEME="${TREMOTESF_BUNDLED_ICON_THEME}"
             TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
+            QT_STATICPLUGIN
         )
         set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
+
+        qt_import_plugins(tremotesf
+            EXCLUDE_BY_TYPE imageformats
+            EXCLUDE_BY_TYPE iconengines
+            INCLUDE Qt::QSvgPlugin
+        )
     else()
         target_sources(
             tremotesf
@@ -153,12 +162,6 @@ if (1)
             desktop/systemcolorsprovider_noop.cpp
         )
     endif()
-
-    qt_import_plugins(tremotesf
-        EXCLUDE_BY_TYPE imageformats
-        EXCLUDE_BY_TYPE iconengines
-        INCLUDE Qt::QSvgIconPlugin
-    )
 endif()
 
 if (UNIX AND NOT APPLE)
