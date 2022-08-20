@@ -155,6 +155,12 @@ if (1)
             INCLUDE Qt::QSvgPlugin
         )
     else()
+        target_compile_definitions(
+            tremotesf PRIVATE
+            TREMOTESF_BUNDLED_ICONS_DIR=""
+            TREMOTESF_BUNDLED_ICON_THEME=""
+            TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR=""
+        )
         target_sources(
             tremotesf
             PRIVATE
@@ -164,7 +170,7 @@ if (1)
     endif()
 endif()
 
-if (UNIX AND NOT APPLE)
+if (TREMOTESF_UNIX_FREEDESKTOP)
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus X11Extras)
     find_package(KF5WindowSystem REQUIRED)
     target_link_libraries(tremotesf Qt::DBus Qt::X11Extras KF5::WindowSystem)

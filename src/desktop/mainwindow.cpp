@@ -49,7 +49,7 @@
 
 #include "../libtremotesf/println.h"
 
-#ifdef QT_DBUS_LIB
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 #include <QDBusPendingCallWatcher>
@@ -62,6 +62,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 
 #include "../libtremotesf/serversettings.h"
 #include "../libtremotesf/serverstats.h"
+#include "../libtremotesf/target_os.h"
 #include "../libtremotesf/torrent.h"
 #include "../ipcclient.h"
 #include "../ipcserver.h"
@@ -553,11 +554,11 @@ namespace tremotesf
                 showAddTorrentFileDialogs(fileDialog->selectedFiles());
             });
 
-#ifdef Q_OS_WIN
-            fileDialog->open();
-#else
-            fileDialog->show();
-#endif
+            if constexpr (isTargetOsWindows) {
+                fileDialog->open();
+            } else {
+                fileDialog->show();
+            }
         };
 
         if (isHidden()) {
@@ -723,11 +724,11 @@ namespace tremotesf
         mFileMenu->addSeparator();
 
         QAction* quitAction = mFileMenu->addAction(QIcon::fromTheme(QLatin1String("application-exit")), qApp->translate("tremotesf", "&Quit"));
-#ifdef Q_OS_WIN
-        quitAction->setShortcut(QKeySequence(QLatin1String("Ctrl+Q")));
-#else
-        quitAction->setShortcuts(QKeySequence::Quit);
-#endif
+        if constexpr (isTargetOsWindows) {
+            quitAction->setShortcut(QKeySequence(QLatin1String("Ctrl+Q")));
+        } else {
+            quitAction->setShortcuts(QKeySequence::Quit);
+        }
         QObject::connect(quitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
 
         QMenu* editMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
@@ -973,7 +974,7 @@ namespace tremotesf
 
     void MainWindow::showWindow(const QByteArray& newStartupNotificationId)
     {
-#ifdef QT_DBUS_LIB
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
         if (!newStartupNotificationId.isEmpty()) {
             if (isHidden() && QX11Info::isPlatformX11()) {
                 QX11Info::setNextStartupId(newStartupNotificationId);
@@ -1064,7 +1065,7 @@ namespace tremotesf
 
     void MainWindow::showNotification(const QString& summary, const QString& body)
     {
-#ifdef QT_DBUS_LIB
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
         setupNotificationsInterface();
         const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String(TREMOTESF_APP_NAME),
                                                                     0,
@@ -1095,7 +1096,7 @@ namespace tremotesf
 
     void MainWindow::setupNotificationsInterface()
     {
-#ifdef QT_DBUS_LIB
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
         if (!mNotificationsInterface) {
             mNotificationsInterface = new OrgFreedesktopNotificationsInterface(QLatin1String("org.freedesktop.Notifications"),
                                                                                QLatin1String("/org/freedesktop/Notifications"),

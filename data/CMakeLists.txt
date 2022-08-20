@@ -4,7 +4,7 @@ list(
     "${CMAKE_CURRENT_SOURCE_DIR}/icons/status/status.qrc"
 )
 
-if (NOT WIN32 AND NOT APPLE)
+if (TREMOTESF_UNIX_FREEDESKTOP)
     find_package(Gettext 0.19.7 REQUIRED)
 
     install(DIRECTORY "icons/hicolor" DESTINATION "${CMAKE_INSTALL_DATADIR}/icons")
