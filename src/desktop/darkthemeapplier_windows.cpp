@@ -2,23 +2,20 @@
 
 #include <algorithm>
 
+#include <QApplication>
 #include <QGuiApplication>
 #include <QPalette>
+#include <QToolTip>
+#include <QStyle>
 #include <QWidget>
 #include <QWindow>
+
 #include <dwmapi.h>
 
-#include <QToolTip>
-
 #include "libtremotesf/println.h"
-#include "qapplication.h"
-#include "qstyle.h"
 #include "systemcolorsprovider.h"
 #include "../settings.h"
 #include "../utils.h"
-
-#undef min
-#undef max
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(QEvent::Type)
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::WindowType)
@@ -144,34 +141,30 @@ namespace {
         return QColor(blend(source.red(), background.red()), blend(source.green(), background.green()), blend(source.blue(), background.blue()));
     }
 
-    int getColorBrightness(QColor color) {
-        return (color.red() * 299 + color.green() * 587 + color.blue() * 114) / 1000;
+    float getRelativeLuminance(QColor color) {
+        const auto trans = [](float comp) {
+            if (comp <= 0.03928f) { return comp / 12.92f; }
+            else { return std::pow(((comp + 0.055f) / 1.055f), 2.4f); }
+        };
+        return 0.2126f * trans(color.redF()) + 0.7152f * trans(color.greenF()) + 0.0722f * trans(color.blueF());
     }
 
-    int getColorDifference(QColor first, QColor second) {
-        return (std::max(first.red(), second.red()) - std::min(first.red(), second.red())) +
-                (std::max(first.green(), second.green()) - std::min(first.green(), second.green())) +
-                (std::max(first.blue(), second.blue()) - std::min(first.blue(), second.blue()));
+    // From Web Content Accessibility Guidelines 2.2
+    float getContrastRatio(QColor lighterColor, QColor darkerColor) {
+        return (getRelativeLuminance(lighterColor) + 0.05f) / (getRelativeLuminance(darkerColor) + 0.05f);
     }
 
-    int getContrastScore(QColor textColor, QColor backgroundColor) {
-        const auto blendedTextColor = blendAtop(textColor, backgroundColor);
-        const auto brightnessDifference = std::abs(getColorBrightness(blendedTextColor) - getColorBrightness(backgroundColor));
-        const auto colorDifference = getColorDifference(blendedTextColor, backgroundColor);
-        return (brightnessDifference - 125) + (colorDifference - 500);
-    }
-
-    void applyWindowsPalette(bool darkTheme, QColor highlightColor, QColor highlightColorInactive) {
+    void applyWindowsPalette(bool darkTheme, SystemColorsProvider::AccentColors accentColors) {
         QPalette palette{QApplication::style()->standardPalette()};
 
-        const auto textColorLight = QColor(0, 0, 0, 228);
-        const auto textColorLightDisabled = QColor(0, 0, 0, 92);
-        const auto textColorDark = QColor(255, 255, 255, 255);
-        const auto textColorDarkDisabled = QColor(255, 255, 255, 93);
+        const auto darkTextColor = QColor(0, 0, 0, 228);
+        const auto darkTextColorDisabled = QColor(0, 0, 0, 92);
+        const auto lightTextColor = QColor(255, 255, 255, 255);
+        const auto lightTextColorDisabled = QColor(255, 255, 255, 93);
         if (darkTheme) {
             palette.setColor(QPalette::Window, QColor(32, 32, 32, 255));
-            palette.setColor(QPalette::WindowText, textColorDark);
-            palette.setColor(QPalette::Disabled, QPalette::WindowText, textColorDarkDisabled);
+            palette.setColor(QPalette::WindowText, lightTextColor);
+            palette.setColor(QPalette::Disabled, QPalette::WindowText, lightTextColorDisabled);
             palette.setColor(QPalette::Base, QColor(45, 45, 45, 255));
             palette.setColor(QPalette::Disabled, QPalette::Base, QColor(41, 41, 41, 255));
             palette.setColor(QPalette::PlaceholderText, QColor(255, 255, 255, 197));
@@ -179,8 +172,8 @@ namespace {
             palette.setColor(QPalette::Disabled, QPalette::Button, QColor(41, 41, 41, 255));
         } else {
             palette.setColor(QPalette::Window, QColor(243, 243, 243, 255));
-            palette.setColor(QPalette::WindowText, textColorLight);
-            palette.setColor(QPalette::Disabled, QPalette::WindowText, textColorLightDisabled);
+            palette.setColor(QPalette::WindowText, darkTextColor);
+            palette.setColor(QPalette::Disabled, QPalette::WindowText, darkTextColorDisabled);
             palette.setColor(QPalette::Base, QColor(251, 251, 251, 255));
             palette.setColor(QPalette::Disabled, QPalette::Base, QColor(244, 244, 244, 255));
             palette.setColor(QPalette::PlaceholderText, QColor(0, 0, 0, 158));
@@ -209,20 +202,19 @@ namespace {
         palette.setColor(QPalette::Mid, buttonColor.darker(150));
         palette.setColor(QPalette::Disabled, QPalette::Mid, buttonColorDisabled);
 
-        if (highlightColor.isValid()) {
-            palette.setColor(QPalette::Highlight, highlightColor);
-            palette.setColor(QPalette::Inactive, QPalette::Highlight, highlightColorInactive);
-        } else {
-            highlightColor = palette.color(QPalette::Active, QPalette::Highlight);
+        if (accentColors.isValid()) {
+            const float ratio = getContrastRatio(blendAtop(lightTextColor, accentColors.accentColor), accentColors.accentColor);
+            if (std::ceil(ratio * 10.0f) >= 45.0f) {
+                palette.setColor(QPalette::Highlight, accentColors.accentColor);
+                palette.setColor(QPalette::Inactive, QPalette::Highlight, accentColors.accentColorLight1);
+            } else {
+                palette.setColor(QPalette::Highlight, accentColors.accentColorDark1);
+                palette.setColor(QPalette::Inactive, QPalette::Highlight, accentColors.accentColor);
+            }
+            palette.setColor(QPalette::HighlightedText, lightTextColor);
+            palette.setColor(QPalette::Disabled, QPalette::HighlightedText, lightTextColorDisabled);
         }
-        if (getContrastScore(textColorDark, highlightColor) >= getContrastScore(textColorLight, highlightColor)) {
-            palette.setColor(QPalette::HighlightedText, textColorDark);
-            palette.setColor(QPalette::Disabled, QPalette::HighlightedText, textColorDarkDisabled);
-        } else {
-            palette.setColor(QPalette::HighlightedText, textColorLight);
-            palette.setColor(QPalette::Disabled, QPalette::HighlightedText, textColorLightDisabled);
-        }
-
+        const auto highlightColor = palette.color(QPalette::Active, QPalette::Highlight);
         QColor link{};
         if (darkTheme) {
             link = highlightColor.lighter(150);
@@ -263,15 +255,7 @@ void applyDarkThemeToPalette(SystemColorsProvider* systemColorsProvider)
                 return false;
             }
         }();
-        const auto [hightlightColor, hightlightColorInactive] = [&] {
-            if (settings->useSystemAccentColor()) {
-                if (auto colors = systemColorsProvider->accentColors(); colors.isValid()) {
-                    return std::pair{colors.accentColor, colors.accentColorLight1};
-                }
-            }
-            return std::pair{QColor{}, QColor{}};
-        }();
-        applyWindowsPalette(darkTheme, hightlightColor, hightlightColorInactive);
+        applyWindowsPalette(darkTheme, settings->useSystemAccentColor() ? systemColorsProvider->accentColors() : SystemColorsProvider::AccentColors{});
     };
     apply();
     QObject::connect(systemColorsProvider, &SystemColorsProvider::darkThemeEnabledChanged, QGuiApplication::instance(), apply);
