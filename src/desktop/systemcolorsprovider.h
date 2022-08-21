@@ -21,12 +21,14 @@ public:
     struct AccentColors {
         QColor accentColor{};
         QColor accentColorLight1{};
+        QColor accentColorDark1{};
 
         bool isValid() const { return accentColor.isValid(); }
 
         bool operator==(const AccentColors& other) const {
             return accentColor == other.accentColor &&
-                    accentColorLight1 == other.accentColorLight1;
+                accentColorLight1 == other.accentColorLight1 &&
+                accentColorDark1 == other.accentColorDark1;
         }
 
         bool operator!=(const AccentColors& other) const {
