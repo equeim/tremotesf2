@@ -126,18 +126,24 @@ jobs:
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
+    - name: Build Tremotesf with clang-cl
+      id: clang-cl-build
+      uses: equeim/action-cmake-build@v9
+      with:
+        cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed -D CMAKE_CXX_COMPILER=clang-cl
+        output-directories-suffix: -clang-cl
+
+    - name: Remove clang-cl build directories
+      run: |
+        Remove-Item ${{ steps.clang-cl-build.outputs.build-directory-debug }} -Recurse
+        Remove-Item ${{ steps.clang-cl-build.outputs.build-directory-release }} -Recurse
+
     - name: Build Tremotesf with MSVC
       id: build
       uses: equeim/action-cmake-build@v9
       with:
         cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed
         package: true
-
-    - name: Build Tremotesf with clang-cl
-      uses: equeim/action-cmake-build@v9
-      with:
-        cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed -D CMAKE_CXX_COMPILER=clang-cl
-        output-directories-suffix: -clang-cl
 
     - name: Archive debug packages
       uses: actions/upload-artifact@v3
