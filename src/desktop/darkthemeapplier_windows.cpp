@@ -23,6 +23,50 @@ SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::WindowType)
 namespace tremotesf {
 
 namespace {
+    bool isWindowsVersionOrGreater(int major, int minor, int build) {
+        OSVERSIONINFOEXW info{};
+        info.dwOSVersionInfoSize = sizeof(info);
+        info.dwMajorVersion = major;
+        info.dwMinorVersion = minor;
+        info.dwBuildNumber = build;
+        const auto conditionMask = VerSetConditionMask(
+            VerSetConditionMask(
+                VerSetConditionMask(
+                    0, VER_MAJORVERSION, VER_GREATER_EQUAL
+                ),
+                VER_MINORVERSION, VER_GREATER_EQUAL
+            ),
+            VER_BUILDNUMBER, VER_GREATER_EQUAL
+        );
+        return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) != FALSE;
+    }
+
+    bool isWindows10_1809OrGreater()
+    {
+        static const bool is = [] {
+            return isWindowsVersionOrGreater(10, 0, 17763);
+        }();
+        return is;
+    }
+
+    bool isWindows10_2004OrGreater()
+    {
+        static const bool is = [] {
+            return isWindowsVersionOrGreater(10, 0, 19041);
+        }();
+        return is;
+    }
+
+    bool isWindows11OrGreater()
+    {
+        static const bool is = [] {
+            return isWindowsVersionOrGreater(10, 0, 22000);
+        }();
+        return is;
+    }
+
+    inline constexpr DWORD DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004 = 19;
+
     class TitleBarBackgroundEventFilter : public QObject {
         Q_OBJECT
     public:
@@ -76,8 +120,27 @@ namespace {
 
         void applyDarkThemeToTitleBar(QWindow* window)
         {
-            try {
+            if (isWindows11OrGreater()) {
+                printlnInfo("Setting DWMWA_CAPTION_COLOR on {}", *window);
+                const auto qcolor = QGuiApplication::palette().color(QPalette::Window);
+                const auto color = RGB(qcolor.red(), qcolor.green(), qcolor.blue());
+                try {
+                    Utils::callCOMFunction([&] {
+                        return DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_CAPTION_COLOR, &color, sizeof(color));
+                    });
+                } catch (const std::exception& e) {
+                    printlnWarning("DwmSetWindowAttribute failed: {}", e.what());
+                }
+            } else {
                 printlnInfo("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
+                const auto attribute = []() -> DWORD {
+                    if (isWindows10_2004OrGreater()) {
+                        return DWMWA_USE_IMMERSIVE_DARK_MODE;
+                    } else {
+                        return DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;
+                    }
+                }();
+                printlnInfo("attribute = {}", attribute);
                 const bool darkTheme = [&] {
                     switch (Settings::instance()->darkThemeMode()) {
                     case Settings::DarkThemeMode::FollowSystem:
@@ -91,46 +154,18 @@ namespace {
                     }
                 }();
                 const auto useImmersiveDarkMode = static_cast<BOOL>(darkTheme);
-                Utils::callCOMFunction([&] {
-                   return DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_USE_IMMERSIVE_DARK_MODE, &useImmersiveDarkMode, sizeof(useImmersiveDarkMode));
-                });
-            } catch (const std::exception& e) {
-                printlnWarning("DwmSetWindowAttribute failed: {}", e.what());
-            }
-
-            try {
-                printlnInfo("Setting DWMWA_CAPTION_COLOR on {}", *window);
-                const auto qcolor = QGuiApplication::palette().color(QPalette::Window);
-                const auto color = RGB(qcolor.red(), qcolor.green(), qcolor.blue());
-                Utils::callCOMFunction([&] {
-                   return DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_CAPTION_COLOR, &color, sizeof(color));
-                });
-            } catch (const std::exception& e) {
-                printlnWarning("DwmSetWindowAttribute failed: {}", e.what());
+                try {
+                    Utils::callCOMFunction([&] {
+                        return DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), attribute, &useImmersiveDarkMode, sizeof(useImmersiveDarkMode));
+                    });
+                } catch (const std::exception& e) {
+                    printlnWarning("DwmSetWindowAttribute failed: {}", e.what());
+                }
             }
         }
 
         SystemColorsProvider* mSystemColorsProvider{};
     };
-
-    bool IsWindows11OrGreater()
-    {
-        OSVERSIONINFOEXW info{};
-        info.dwOSVersionInfoSize = sizeof(info);
-        info.dwMajorVersion = 10;
-        info.dwMinorVersion = 0;
-        info.dwBuildNumber = 22000;
-        const auto conditionMask = VerSetConditionMask(
-            VerSetConditionMask(
-                VerSetConditionMask(
-                    0, VER_MAJORVERSION, VER_GREATER_EQUAL
-                ),
-                VER_MINORVERSION, VER_GREATER_EQUAL
-            ),
-            VER_BUILDNUMBER, VER_GREATER_EQUAL
-        );
-        return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) == TRUE;
-    }
 
     QColor blendAtop(QColor source, QColor background) {
         const int alpha = source.alpha();
@@ -263,11 +298,11 @@ void applyDarkThemeToPalette(SystemColorsProvider* systemColorsProvider)
     QObject::connect(settings, &Settings::darkThemeModeChanged, QGuiApplication::instance(), apply);
     QObject::connect(settings, &Settings::useSystemAccentColorChanged, QGuiApplication::instance(), apply);
 
-    if (IsWindows11OrGreater()) {
-        printlnInfo("applyDarkThemeToPalette: running on Windows 11 or newer, set title bar color");
+    if (isWindows10_1809OrGreater()) {
+        printlnInfo("applyDarkThemeToPalette: running on Windows 10 1809 or newer, set title bar color");
         QGuiApplication::instance()->installEventFilter(new TitleBarBackgroundEventFilter(systemColorsProvider, QGuiApplication::instance()));
     } else {
-        printlnInfo("applyDarkThemeToPalette: running on Windows older than 11, can't set title bar color");
+        printlnInfo("applyDarkThemeToPalette: running on Windows older than Windows 10 1809, can't set title bar color");
     }
 }
 
