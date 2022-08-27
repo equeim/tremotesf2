@@ -315,7 +315,7 @@ namespace tremotesf
     {
         mSettings->beginGroup(currentServerName());
         QVariantList torrents;
-        torrents.reserve(static_cast<int>(rpc->torrents().size()));
+        torrents.reserve(static_cast<QVariantList::size_type>(rpc->torrents().size()));
         for (const auto& torrent : rpc->torrents()) {
             torrents.push_back(QVariantMap{{QLatin1String("hashString"), torrent->hashString()},
                                            {QLatin1String("finished"), torrent->isFinished()}});

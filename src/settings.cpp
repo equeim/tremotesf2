@@ -119,7 +119,7 @@ namespace tremotesf
     }
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(tremotesf::Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode, "darkThemeMode", defaultDarkThemeMode())
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", defaultUseSystemAccentColor());
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", defaultUseSystemAccentColor())
 
     Settings::Settings(QObject* parent)
         : QObject(parent)

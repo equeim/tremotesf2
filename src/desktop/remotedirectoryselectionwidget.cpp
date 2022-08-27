@@ -83,7 +83,7 @@ namespace tremotesf
         QStringList currentServerAddTorrentDialogDirectories;
         {
             const auto saved = Servers::instance()->currentServerAddTorrentDialogDirectories();
-            currentServerAddTorrentDialogDirectories.reserve(saved.size() + static_cast<int>(mRpc->torrents().size()) + 1);
+            currentServerAddTorrentDialogDirectories.reserve(saved.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 1);
             for (const auto& directory : saved) {
                 currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(directory));
             }
