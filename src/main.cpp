@@ -32,15 +32,17 @@
 #include "signalhandler.h"
 #include "desktop/mainwindow.h"
 
+using namespace tremotesf;
+
 int main(int argc, char** argv)
 {
 #ifdef Q_OS_WIN
-    tremotesf::windowsInitPreApplication();
+    windowsInitPreApplication();
 #endif
 
     // Setup handler for UNIX signals or Windows console handler
     try {
-        tremotesf::SignalHandler::setupHandlers();
+        SignalHandler::setupHandlers();
     } catch (const std::exception& e) {
         printlnWarning("Failed to setup signal handlers: {}", e.what());
     }
@@ -48,9 +50,9 @@ int main(int argc, char** argv)
     //
     // Command line parsing
     //
-    tremotesf::CommandLineArgs args{};
+    CommandLineArgs args{};
     try {
-        args = tremotesf::parseCommandLine(argc, argv);
+        args = parseCommandLine(argc, argv);
         if (args.exit) {
             return EXIT_SUCCESS;
         }
@@ -60,7 +62,7 @@ int main(int argc, char** argv)
     }
 
     // Send command to another instance
-    if (const auto client = tremotesf::IpcClient::createInstance(); client->isConnected()) {
+    if (const auto client = IpcClient::createInstance(); client->isConnected()) {
         printlnInfo("Only one instance of Tremotesf can be run at the same time");
         if (args.files.isEmpty() && args.urls.isEmpty()) {
             client->activateWindow();
@@ -81,7 +83,7 @@ int main(int argc, char** argv)
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
 #ifdef Q_OS_WIN
-    tremotesf::windowsInitPostApplication();
+    windowsInitPostApplication();
 #endif
 
     QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
@@ -90,9 +92,9 @@ int main(int argc, char** argv)
     //
 
     // Setup socket notifier for UNIX signals
-    tremotesf::SignalHandler::setupNotifier();
+    SignalHandler::setupNotifier();
 
-    auto ipcServer = tremotesf::IpcServer::createInstance(qApp);
+    auto ipcServer = IpcServer::createInstance(qApp);
 
     QTranslator qtTranslator;
     {
@@ -112,25 +114,25 @@ int main(int argc, char** argv)
     appTranslator.load(QLocale().name(), QLatin1String(":/translations"));
     qApp->installTranslator(&appTranslator);
 
-    tremotesf::Servers::migrate();
+    Servers::migrate();
 
-    if (tremotesf::SignalHandler::exitRequested) {
+    if (SignalHandler::exitRequested) {
         return EXIT_SUCCESS;
     }
 
-    tremotesf::MainWindow window(ipcServer, args.files, args.urls);
-    if (tremotesf::SignalHandler::exitRequested) {
+    MainWindow window(ipcServer, args.files, args.urls);
+    if (SignalHandler::exitRequested) {
         return EXIT_SUCCESS;
     }
     window.showMinimized(args.minimized);
 
-    if (tremotesf::SignalHandler::exitRequested) {
+    if (SignalHandler::exitRequested) {
         return EXIT_SUCCESS;
     }
 
     const int exitCode = qApp->exec();
 #ifdef Q_OS_WIN
-    tremotesf::windowsDeinit();
+    windowsDeinit();
 #endif
     return exitCode;
 }
