@@ -136,7 +136,9 @@ namespace tremotesf
             settings->setNotificationsOnAddedTorrentsSinceLastConnection(addedSinceLastConnectionCheckBox->isChecked());
             settings->setNotificationsOnFinishedTorrentsSinceLastConnection(finishedSinceLastConnectionCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {
-                settings->setDarkThemeMode(darkThemeComboBoxValues[darkThemeComboBox->currentIndex()]);
+                if (int index = darkThemeComboBox->currentIndex(); index != -1) {
+                    settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
+                }
                 settings->setUseSystemAccentColor(systemAccentColorCheckBox->isChecked());
             }
         });
