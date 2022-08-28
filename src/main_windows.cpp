@@ -13,13 +13,12 @@
 #include <QStringBuilder>
 #include <QStyle>
 
-#include <KIconEngine>
-#include <KIconLoader>
-
 #include "libtremotesf/println.h"
 #include "desktop/darkthemeapplier.h"
 #include "desktop/systemcolorsprovider.h"
 #include "utils.h"
+
+#include "recoloringsvgiconengine.h"
 
 namespace tremotesf {
     namespace {
@@ -56,28 +55,29 @@ namespace tremotesf {
 
         thread_local bool WindowsStyle::drawingMenuItem = false;
 
-        class SvgIconEngine : public KIconEngine {
+        class SvgIconEngine : public RecoloringSvgIconEngine {
         public:
-            explicit SvgIconEngine(const QString& iconName) : KIconEngine(iconName, KIconLoader::global()) {}
-
             QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override {
                 // QFusionStyle passes QIcon::Active for selected menu items, but KIconEngine expects QIcon::Selected
                 if (WindowsStyle::drawingMenuItem && mode == QIcon::Active) {
                     mode = QIcon::Selected;
                 }
-                return KIconEngine::pixmap(size, mode, state);
+                return RecoloringSvgIconEngine::pixmap(size, mode, state);
             }
         };
 
         class SvgIconEnginePlugin : public QIconEnginePlugin
         {
             Q_OBJECT
-                Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QIconEngineFactoryInterface" FILE "svgiconengineplugin.json")
+            Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QIconEngineFactoryInterface" FILE "svgiconengineplugin.json")
 
         public:
             QIconEngine* create(const QString& file) override
             {
-                return new SvgIconEngine(file);
+                SvgIconEngine* engine = new SvgIconEngine;
+                if (!file.isNull())
+                    engine->addFile(file, QSize(), QIcon::Normal, QIcon::Off);
+                return engine;
             }
         };
     }

@@ -129,12 +129,14 @@ if (1)
     )
 
     if (WIN32)
-        find_package(KF5IconThemes REQUIRED)
-        target_link_libraries(tremotesf KF5::IconThemes)
+        find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
+        target_link_libraries(tremotesf Qt::Svg)
         target_sources(
             tremotesf
             PRIVATE
             main_windows.cpp
+            recoloringsvgiconengine.cpp
+            recoloringsvgiconengine.h
             desktop/darkthemeapplier_windows.cpp
             desktop/systemcolorsprovider_windows.cpp
             desktop/tremotesf.rc
@@ -152,7 +154,6 @@ if (1)
         qt_import_plugins(tremotesf
             EXCLUDE_BY_TYPE imageformats
             EXCLUDE_BY_TYPE iconengines
-            INCLUDE Qt::QSvgPlugin
         )
     else()
         target_compile_definitions(
