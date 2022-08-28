@@ -20,10 +20,6 @@
     {
       "name": "kf5breezeicons",
       "platform": "windows"
-    },
-    {
-      "name": "kf5iconthemes",
-      "platform": "windows"
     }
   ],
   "overrides": [
@@ -71,11 +67,6 @@
       "name": "kf5breezeicons",
       "version": "5.89.0",
       "port-version": 2
-    },
-    {
-      "name": "kf5iconthemes",
-      "version": "5.89.0",
-      "port-version": 1
     }
   ]
 }
