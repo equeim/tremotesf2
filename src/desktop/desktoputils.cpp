@@ -31,7 +31,7 @@
 #include <QTextDocumentFragment>
 #include <QUrl>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "../utils.h"
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
@@ -42,6 +42,8 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 #elif defined(Q_OS_WIN)
 #include <shlobj.h>
 #endif
+
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf
 {
@@ -77,7 +79,7 @@ namespace tremotesf
         {
             const QString nativePath(QDir::toNativeSeparators(filePath));
             if (const auto url = QUrl::fromLocalFile(nativePath); !QDesktopServices::openUrl(url)) {
-                printlnWarning("QDesktopServices::openUrl() failed for {}", url);
+                logWarning("QDesktopServices::openUrl() failed for {}", url);
                 auto dialog = new QMessageBox(QMessageBox::Warning,
                                               qApp->translate("tremotesf", "Error"),
                                               qApp->translate("tremotesf", "Error opening %1").arg(nativePath),
@@ -104,7 +106,7 @@ namespace tremotesf
 
                 void showInFileManager() {
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-                    printlnDebug("Executing org.freedesktop.FileManager1 D-Bus call");
+                    logDebug("Executing org.freedesktop.FileManager1 D-Bus call");
                     OrgFreedesktopFileManager1Interface interface(QLatin1String("org.freedesktop.FileManager1"),
                                                                   QLatin1String("/org/freedesktop/FileManager1"),
                                                                   QDBusConnection::sessionBus());
@@ -118,9 +120,9 @@ namespace tremotesf
                     auto watcher = new QDBusPendingCallWatcher(pendingReply, this);
                     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
                         if (!watcher->isError()) {
-                            printlnInfo("Executed org.freedesktop.FileManager1 D-Bus call");
+                            logInfo("Executed org.freedesktop.FileManager1 D-Bus call");
                         } else {
-                            printlnWarning("org.freedesktop.FileManager1 D-Bus call failed: {}", watcher->error());
+                            logWarning("org.freedesktop.FileManager1 D-Bus call failed: {}", watcher->error());
                             openParentDirectoriesForFiles();
                         }
                         watcher->deleteLater();
@@ -131,18 +133,18 @@ namespace tremotesf
                         const QString nativePath(QDir::toNativeSeparators(filePath));
                         PIDLIST_ABSOLUTE directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativePath.utf16()));
                         if (directory) {
-                            printlnDebug("Executing SHOpenFolderAndSelectItems() for {}", nativePath);
+                            logDebug("Executing SHOpenFolderAndSelectItems() for {}", nativePath);
                             try {
                                 Utils::callCOMFunction([&] {
                                     return SHOpenFolderAndSelectItems(directory, 0, nullptr, 0);
                                 });
                             } catch (const std::exception& e) {
-                                printlnWarning("SHOpenFolderAndSelectItems failed for {}: {}", nativePath, e.what());
+                                logWarning("SHOpenFolderAndSelectItems failed for {}: {}", nativePath, e.what());
                                 openParentDirectory(filePath, mParentWidget);
                             }
                             ILFree(directory);
                         } else {
-                            printlnWarning("ILCreateFromPathW failed() for {}", nativePath);
+                            logWarning("ILCreateFromPathW failed() for {}", nativePath);
                             openParentDirectory(filePath, mParentWidget);
                         }
                     }
@@ -165,9 +167,9 @@ namespace tremotesf
                 static void openParentDirectory(const QString& filePath, QWidget* parent)
                 {
                     const QString directory(QFileInfo(filePath).path());
-                    printlnDebug("Executing QDesktopServices::openUrl() for {}", directory);
+                    logDebug("Executing QDesktopServices::openUrl() for {}", directory);
                     if (const auto url = QUrl::fromLocalFile(directory); !QDesktopServices::openUrl(url)) {
-                        printlnWarning("QDesktopServices::openUrl() failed for {}", url);
+                        logWarning("QDesktopServices::openUrl() failed for {}", url);
                         auto dialog = new QMessageBox(QMessageBox::Warning,
                                                       qApp->translate("tremotesf", "Error"),
                                                       qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(directory)),

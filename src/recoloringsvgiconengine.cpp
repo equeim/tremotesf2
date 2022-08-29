@@ -62,7 +62,7 @@ SPDX-License-Identifier: LGPL-2.0-only
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 
 namespace tremotesf {
 
@@ -212,7 +212,7 @@ bool RecoloringSvgIconEnginePrivate::tryLoad(QSvgRenderer *renderer, QIcon::Mode
     QString svgFile = svgFiles.value(hashKey(tryMode, tryState));
     if (!svgFile.isEmpty()) {
         if (fileType(QFileInfo(svgFile)) == CompressedSvgFile) {
-            printlnWarning("Can't recolor compressed svg {}", svgFile);
+            logWarning("Can't recolor compressed svg {}", svgFile);
             renderer->load(svgFile);
             return true;
         }

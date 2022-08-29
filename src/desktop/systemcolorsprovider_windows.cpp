@@ -7,7 +7,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
 
@@ -27,17 +27,17 @@ namespace {
         Q_OBJECT
     public:
         explicit SystemColorsProviderWindows(QObject* parent = nullptr) : SystemColorsProvider(parent) {
-            printlnInfo("System dark theme enabled = {}", mDarkThemeEnabled);
-            printlnInfo("System accent colors = {}", mAccentColors);
+            logInfo("System dark theme enabled = {}", mDarkThemeEnabled);
+            logInfo("System accent colors = {}", mAccentColors);
             revoker = settings.ColorValuesChanged(winrt::auto_revoke, [=](auto...) {
                 QMetaObject::invokeMethod(this, [=] {
                     if (bool newDarkThemeEnabled = isDarkThemeEnabledImpl(); newDarkThemeEnabled != mDarkThemeEnabled) {
-                        printlnInfo("System dark theme state changed to {}", newDarkThemeEnabled);
+                        logInfo("System dark theme state changed to {}", newDarkThemeEnabled);
                         mDarkThemeEnabled = newDarkThemeEnabled;
                         emit darkThemeEnabledChanged();
                     }
                     if (auto newAccentColors = accentColorsImpl(); newAccentColors != mAccentColors) {
-                        printlnInfo("System accent colors changed to {}", newAccentColors);
+                        logInfo("System accent colors changed to {}", newAccentColors);
                         mAccentColors = newAccentColors;
                         emit accentColorsChanged();
                     }
@@ -102,10 +102,10 @@ namespace {
 
 SystemColorsProvider* SystemColorsProvider::createInstance(QObject* parent) {
     if (canObserveSystemColors()) {
-        printlnInfo("SystemColorsProvider: running on Windows 10 or newer, observe system colors");
+        logInfo("SystemColorsProvider: running on Windows 10 or newer, observe system colors");
         return new SystemColorsProviderWindows(parent);
     }
-    printlnInfo("SystemColorsProvider: running on Windows older than 10, can't observe system colors");
+    logInfo("SystemColorsProvider: running on Windows older than 10, can't observe system colors");
     return new SystemColorsProvider(parent);
 }
 

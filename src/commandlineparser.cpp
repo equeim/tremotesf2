@@ -26,7 +26,7 @@
 #define CXXOPTS_VECTOR_DELIMITER '\0'
 #include "3rdparty/cxxopts.hpp"
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 
 namespace tremotesf
 {

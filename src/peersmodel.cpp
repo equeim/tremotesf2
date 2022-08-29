@@ -21,7 +21,7 @@
 #include <QCoreApplication>
 
 #include "utils.h"
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 
@@ -140,7 +140,7 @@ namespace tremotesf
             if (mTorrent) {
                 QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, &PeersModel::update);
                 if (mTorrent->isPeersEnabled()) {
-                    printlnWarning("{} already has enabled peers, this shouldn't happen", *mTorrent);
+                    logWarning("{} already has enabled peers, this shouldn't happen", *mTorrent);
                 }
                 mTorrent->setPeersEnabled(true);
             } else {

@@ -27,7 +27,7 @@
 #include <QFile>
 #include <QString>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 
 namespace tremotesf::bencode
 {

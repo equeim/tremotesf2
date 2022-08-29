@@ -26,7 +26,7 @@
 #include <QFile>
 #include <QLocale>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 
 #ifdef Q_OS_UNIX
 #include <cerrno>
@@ -196,7 +196,7 @@ namespace tremotesf
     QString Utils::readTextFile(const QString& filePath)
     {
         return readTextFileImpl(filePath, [&] {
-            printlnWarning("Failed to read file with path '{}'", filePath);
+            logWarning("Failed to read file with path '{}'", filePath);
         });
     }
 

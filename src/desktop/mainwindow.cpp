@@ -47,7 +47,7 @@
 #include <QToolBar>
 #include <QWindow>
 
-#include "../libtremotesf/println.h"
+#include "../libtremotesf/log.h"
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
 #include <QDBusConnection>
@@ -1080,7 +1080,7 @@ namespace tremotesf
         QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
             QDBusPendingReply<quint32> reply(*watcher);
             if (reply.isError()) {
-                printlnWarning("Failed to show notification: {}", reply.error());
+                logWarning("Failed to show notification: {}", reply.error());
                 if (mTrayIcon->isVisible()) {
                     mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
                 }

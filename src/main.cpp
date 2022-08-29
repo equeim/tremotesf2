@@ -22,7 +22,7 @@
 #include <QLocale>
 #include <QTranslator>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "libtremotesf/target_os.h"
 #include "commandlineparser.h"
 #include "ipcclient.h"
@@ -32,7 +32,7 @@
 #include "signalhandler.h"
 #include "desktop/mainwindow.h"
 
-using namespace tremotesf;
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
 using namespace tremotesf;
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     try {
         SignalHandler::setupHandlers();
     } catch (const std::exception& e) {
-        printlnWarning("Failed to setup signal handlers: {}", e.what());
+        logWarning("Failed to setup signal handlers: {}", e.what());
     }
 
     //
@@ -59,13 +59,13 @@ int main(int argc, char** argv)
             return EXIT_SUCCESS;
         }
     } catch (const std::exception& e) {
-        printlnWarning("Failed to parse command line arguments: {}", e.what());
+        logWarning("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
     }
 
     // Send command to another instance
     if (const auto client = IpcClient::createInstance(); client->isConnected()) {
-        printlnInfo("Only one instance of Tremotesf can be run at the same time");
+        logInfo("Only one instance of Tremotesf can be run at the same time");
         if (args.files.isEmpty() && args.urls.isEmpty()) {
             client->activateWindow();
         } else {
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
         if (qtTranslator.load(QLocale(), QLatin1String(TREMOTESF_QT_TRANSLATIONS_FILENAME), QLatin1String("_"), qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
-            printlnWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
+            logWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
         }
     }
 
