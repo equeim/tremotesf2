@@ -1,9 +1,16 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Dark theme support on Windows (dark window title bar on Windows 10
+is supported only on 1809 or newer and it can be buggy because Windows 10 doesn't support this officially)
+- System accent color on Windows is used in app UI (can be disabled in settings)
+
 ### Changed
 - Raised minimum version of Qt to 5.15
 - Raised minimum version of CMake to 3.16
+- Windows build now uses Fusion style since default style
+imitating Win32 controls is non-themeable and looks like crap on Windows 11
 
 ### Removed
 - Sailfish OS support
