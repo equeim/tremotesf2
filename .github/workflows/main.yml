@@ -122,7 +122,7 @@ jobs:
       with:
         run-install: true
         triplet: x64-windows-static
-        save-cache: ${{ github.event_name == 'push' }}
+        save-cache: ${{ github.event_name != 'pull_request' }}
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
