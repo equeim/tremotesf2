@@ -13,7 +13,7 @@
 #include <QStringBuilder>
 #include <QStyle>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "desktop/darkthemeapplier.h"
 #include "desktop/systemcolorsprovider.h"
 #include "utils.h"
@@ -28,7 +28,7 @@ namespace tremotesf {
                 try {
                     std::rethrow_exception(exception_ptr);
                 } catch (const std::exception& e) {
-                    printlnWarning("Unhandled exception: {}", e.what());
+                    logWarning("Unhandled exception: {}", e.what());
                 }
             }
         }
@@ -88,13 +88,13 @@ namespace tremotesf {
         try {
             tremotesf::Utils::callWinApiFunctionWithLastError([] { return SetConsoleOutputCP(GetACP()); });
         } catch (const std::exception& e) {
-            printlnWarning("SetConsoleOutputCP failed: {}", e.what());
+            logWarning("SetConsoleOutputCP failed: {}", e.what());
         }
 
         try {
             tremotesf::Utils::callWinApiFunctionWithLastError([] { return AllowSetForegroundWindow(ASFW_ANY); });
         } catch (const std::exception& e) {
-            printlnWarning("AllowSetForegroundWindow failed: {}", e.what());
+            logWarning("AllowSetForegroundWindow failed: {}", e.what());
         }
 	}
 
@@ -104,7 +104,7 @@ namespace tremotesf {
         } catch (const winrt::hresult_error& e) {
             if (e.code() != RPC_E_CHANGED_MODE) {
                 const auto msg = e.message();
-                printlnWarning("winrt::init_apartment failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
+                logWarning("winrt::init_apartment failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
             }
         }
         QApplication::setStyle(new WindowsStyle(QApplication::instance()));
@@ -120,7 +120,7 @@ namespace tremotesf {
             winrt::uninit_apartment();
         } catch (const winrt::hresult_error& e) {
             const auto msg = e.message();
-            printlnWarning("winrt::uninit_apartment failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
+            logWarning("winrt::uninit_apartment failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
         }
     }
 }

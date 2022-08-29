@@ -23,13 +23,15 @@
 #include <QLocalSocket>
 #include <QTimer>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 
 #ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "utils.h"
 #endif
+
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantMap)
 
 namespace tremotesf
 {
@@ -43,16 +45,16 @@ namespace tremotesf
         if (!server->listen(name)) {
             if (server->serverError() == QAbstractSocket::AddressInUseError) {
                 // We already tried to connect to it, removing
-                printlnWarning("Removing dead socket");
+                logWarning("Removing dead socket");
                 if (server->removeServer(name)) {
                     if (!server->listen(name)) {
-                        printlnWarning("Failed to create socket: {}", server->errorString());
+                        logWarning("Failed to create socket: {}", server->errorString());
                     }
                 } else {
-                    printlnWarning("Failed to remove socket: {}", server->errorString());
+                    logWarning("Failed to remove socket: {}", server->errorString());
                 }
             } else {
-                printlnWarning("Failed to create socket: {}", server->errorString());
+                logWarning("Failed to create socket: {}", server->errorString());
             }
         }
 
@@ -66,13 +68,13 @@ namespace tremotesf
             QTimer::singleShot(30000, socket, &QLocalSocket::disconnectFromServer);
             QObject::connect(socket, &QLocalSocket::readyRead, this, [=]() {
                 const QByteArray message(socket->readAll());
-                printlnInfo("Read {}", message);
+                logInfo("Read {}", message);
                 if (message == "ping") {
-                    printlnInfo("Window activation requested");
+                    logInfo("Window activation requested");
                     emit windowActivationRequested({}, {});
                 } else {
                     const QVariantMap arguments(QJsonDocument::fromJson(message).toVariant().toMap());
-                    printlnInfo("Arguments received: {}", arguments);
+                    logInfo("Arguments received: {}", arguments);
                     const QStringList files(arguments.value(QLatin1String("files")).toStringList());
                     const QStringList urls(arguments.value(QLatin1String("urls")).toStringList());
                     emit torrentsAddingRequested(files, urls, {});
@@ -91,7 +93,7 @@ namespace tremotesf
                 name += '-';
                 name += QString::number(sessionId);
             } catch (const std::exception& e) {
-                printlnWarning("ProcessIdToSessionId falied: {}", e.what());
+                logWarning("ProcessIdToSessionId falied: {}", e.what());
             }
 #endif
             return name;

@@ -24,7 +24,7 @@
 #include <QStyle>
 #include <QtConcurrentRun>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "bencodeparser.h"
 #include "torrentfilesmodelentry.h"
 #include "utils.h"
@@ -165,7 +165,7 @@ namespace tremotesf
                 auto bencodeParseResult = bencode::parse(filePath);
                 return createTree(std::move(bencodeParseResult));
             } catch (const bencode::Error& e) {
-                printlnWarning("Failed to parse torrent file {}: {}", filePath, e.what());
+                logWarning("Failed to parse torrent file {}: {}", filePath, e.what());
                 return e.type();
             }
         });

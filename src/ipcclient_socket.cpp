@@ -23,7 +23,7 @@
 #include <QJsonObject>
 #include <QLocalSocket>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "ipcserver_socket.h"
 
 namespace tremotesf
@@ -44,13 +44,13 @@ namespace tremotesf
 
         void activateWindow() override
         {
-            printlnInfo("Requesting window activation");
+            logInfo("Requesting window activation");
             sendMessage("ping");
         }
 
         void addTorrents(const QStringList& files, const QStringList& urls) override
         {
-            printlnInfo("Requesting torrents adding");
+            logInfo("Requesting torrents adding");
             sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
                                                   {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
         }
@@ -60,10 +60,10 @@ namespace tremotesf
         {
             const qint64 written = mSocket.write(message);
             if (written != message.size()) {
-                printlnWarning("Failed to write to socket ({} bytes written): {}", written, mSocket.errorString());
+                logWarning("Failed to write to socket ({} bytes written): {}", written, mSocket.errorString());
             }
             if (!mSocket.waitForBytesWritten()) {
-                printlnWarning("Timed out when waiting for bytes written");
+                logWarning("Timed out when waiting for bytes written");
             }
         }
 

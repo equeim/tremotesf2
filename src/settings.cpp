@@ -23,7 +23,7 @@
 #include <QMetaEnum>
 #include <QSettings>
 
-#include "libtremotesf/println.h"
+#include "libtremotesf/log.h"
 #include "libtremotesf/target_os.h"
 #include "desktop/systemcolorsprovider.h"
 
@@ -47,13 +47,13 @@ namespace tremotesf
             if constexpr (std::is_enum_v<T>) {
                 const auto meta = QMetaEnum::fromType<T>();
                 if (!meta.valueToKey(static_cast<int>(value))) {
-                    printlnWarning("Settings: key {} has invalid value {}, returning default value", key, value);
+                    logWarning("Settings: key {} has invalid value {}, returning default value", key, value);
                     return defaultValue;
                 }
             }
             if constexpr (std::is_same_v<T, Settings::DarkThemeMode>) {
                 if (value == Settings::DarkThemeMode::FollowSystem && !SystemColorsProvider::isDarkThemeFollowSystemSupported()) {
-                    printlnWarning("Settings: {} is not supported", Settings::DarkThemeMode::FollowSystem);
+                    logWarning("Settings: {} is not supported", Settings::DarkThemeMode::FollowSystem);
                     return defaultValue;
                 }
             }
