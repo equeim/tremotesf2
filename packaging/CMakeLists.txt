@@ -1,5 +1,5 @@
 if (NOT WIN32)
-	return()
+    return()
 endif()
 
 configure_file("${CMAKE_SOURCE_DIR}/LICENSE" "${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt" COPYONLY)
@@ -13,9 +13,9 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt")
 set(CPACK_THREADS 0)
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(CPACK_SYSTEM_NAME "win64")
+    set(CPACK_SYSTEM_NAME "win64")
 else()
-	set(CPACK_SYSTEM_NAME "win32")
+    set(CPACK_SYSTEM_NAME "win32")
 endif()
 
 set(package_suffix "")
