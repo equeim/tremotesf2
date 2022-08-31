@@ -23,6 +23,7 @@
         {
             "name" : "fmt",
             "buildsystem": "cmake-ninja",
+            "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
@@ -41,6 +42,7 @@
         {
             "name": "tremotesf",
             "buildsystem": "cmake-ninja",
+            "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON"
