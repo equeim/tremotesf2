@@ -140,9 +140,9 @@ if (WIN32)
     )
     set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
 
-    qt_import_plugins(tremotesf
-        EXCLUDE_BY_TYPE imageformats
-        EXCLUDE_BY_TYPE iconengines
+    qt_import_plugins(
+        tremotesf
+        EXCLUDE_BY_TYPE bearer iconengines imageformats styles
     )
 else()
     target_compile_definitions(
