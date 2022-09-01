@@ -30,11 +30,6 @@
 
 #ifdef Q_OS_UNIX
 #include <cerrno>
-#else
-#ifdef Q_OS_WIN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 #endif
 
 namespace tremotesf
@@ -207,52 +202,5 @@ namespace tremotesf
             throw std::system_error(errno, std::system_category());
         }
     }
-#else
-#ifdef Q_OS_WIN
-    namespace
-    {
-        std::string getWinApiErrorString(DWORD error) {
-            std::array<WCHAR, (64 * 1024) - 1> buffer{};
-            const auto formattedChars = FormatMessageW(
-                FORMAT_MESSAGE_FROM_SYSTEM,
-                nullptr,
-                error,
-                0,
-                buffer.data(),
-                static_cast<DWORD>(buffer.size()),
-                nullptr
-            );
-            if (formattedChars != 0) {
-                return fmt::format(
-                    "{} (error code {})",
-                    QString::fromWCharArray(buffer.data(), formattedChars).trimmed(),
-                    error
-                );
-            }
-            return fmt::format("Error code {}", error);
-        }
-
-        std::string getCOMErrorString(HRESULT error) {
-            // Apparently that's what we are supposed to do?
-            return getWinApiErrorString(static_cast<DWORD>(error));
-        }
-    }
-
-    void Utils::callWinApiFunctionWithLastError(std::function<bool()>&& function)
-    {
-        if (!function()) {
-            // Can't use std::system_error here because MinGW toolchain uses POSIX error codes for std::system_category
-            throw std::runtime_error(getWinApiErrorString(GetLastError()));
-        }
-    }
-
-    void Utils::callCOMFunction(std::function<int32_t()> &&function)
-    {
-        const auto result = static_cast<HRESULT>(function());
-        if (result != S_OK) {
-            throw std::runtime_error(getCOMErrorString(result));
-        }
-    }
-#endif
 #endif
 }

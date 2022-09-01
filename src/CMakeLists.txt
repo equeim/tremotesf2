@@ -122,14 +122,16 @@ if (WIN32)
     target_link_libraries(tremotesf PRIVATE Qt::Svg)
     target_sources(
         tremotesf PRIVATE
+        tremotesf/windowshelpers.cpp
+        tremotesf/windowshelpers.h
+        tremotesf/tremotesf.rc
+        tremotesf/tremotesf.manifest
         tremotesf/startup/main_windows.cpp
         tremotesf/startup/main_windows.h
         tremotesf/ui/darkthemeapplier_windows.cpp
         tremotesf/ui/recoloringsvgiconengine.cpp
         tremotesf/ui/recoloringsvgiconengine.h
         tremotesf/ui/systemcolorsprovider_windows.cpp
-        tremotesf/tremotesf.rc
-        tremotesf/tremotesf.manifest
     )
     set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf/tremotesf.ico" PARENT_SCOPE)
     target_compile_definitions(tremotesf PRIVATE
