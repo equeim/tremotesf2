@@ -33,9 +33,10 @@
 #include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#endif // Q_OS_WIN
-
+#include "tremotesf/windowshelpers.h"
+#else
 #include "tremotesf/utils.h"
+#endif
 
 namespace tremotesf
 {
@@ -121,9 +122,9 @@ namespace tremotesf
     void SignalHandler::setupHandlers()
     {
         try {
-           Utils::callWinApiFunctionWithLastError([] { return SetConsoleCtrlHandler(consoleHandler, TRUE); });
-        } catch (const std::exception& e) {
-            throw std::runtime_error(std::string("SetConsoleCtrlHandler failed: ") + e.what());
+            winrt::check_bool(SetConsoleCtrlHandler(consoleHandler, TRUE));
+        } catch (const winrt::hresult_error& e) {
+            throw std::runtime_error(fmt::format("SetConsoleCtrlHandler failed: {}", e));
         }
     }
 

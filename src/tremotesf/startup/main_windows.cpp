@@ -17,7 +17,7 @@
 #include "tremotesf/ui/darkthemeapplier.h"
 #include "tremotesf/ui/recoloringsvgiconengine.h"
 #include "tremotesf/ui/systemcolorsprovider.h"
-#include "tremotesf/utils.h"
+#include "tremotesf/windowshelpers.h"
 
 namespace tremotesf {
     namespace {
@@ -85,15 +85,15 @@ namespace tremotesf {
         std::set_terminate(on_terminate);
 
         try {
-            tremotesf::Utils::callWinApiFunctionWithLastError([] { return SetConsoleOutputCP(GetACP()); });
-        } catch (const std::exception& e) {
-            logWarning("SetConsoleOutputCP failed: {}", e.what());
+            winrt::check_bool(SetConsoleOutputCP(GetACP()));
+        } catch (const winrt::hresult_error& e) {
+            logWarning("SetConsoleOutputCP failed: {}", e);
         }
 
         try {
-            tremotesf::Utils::callWinApiFunctionWithLastError([] { return AllowSetForegroundWindow(ASFW_ANY); });
-        } catch (const std::exception& e) {
-            logWarning("AllowSetForegroundWindow failed: {}", e.what());
+            winrt::check_bool(AllowSetForegroundWindow(ASFW_ANY));
+        } catch (const winrt::hresult_error& e) {
+            logWarning("AllowSetForegroundWindow failed: {}", e);
         }
 	}
 

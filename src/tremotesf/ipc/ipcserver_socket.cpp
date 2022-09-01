@@ -28,7 +28,7 @@
 #ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "tremotesf/utils.h"
+#include "tremotesf/windowshelpers.h"
 #endif
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantMap)
@@ -89,11 +89,11 @@ namespace tremotesf
 #ifdef Q_OS_WIN
             try {
                 DWORD sessionId{};
-                Utils::callWinApiFunctionWithLastError([&] { return ProcessIdToSessionId(GetCurrentProcessId(), &sessionId); });
+                winrt::check_bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId));
                 name += '-';
                 name += QString::number(sessionId);
-            } catch (const std::exception& e) {
-                logWarning("ProcessIdToSessionId falied: {}", e.what());
+            } catch (const winrt::hresult_error& e) {
+                logWarning("ProcessIdToSessionId falied: {}", e);
             }
 #endif
             return name;

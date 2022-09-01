@@ -1,13 +1,13 @@
 #include "systemcolorsprovider.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <VersionHelpers.h>
+// Clang needs this header for winrt/base.h
+#include <guiddef.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 
 #include "libtremotesf/log.h"
+#include "tremotesf/windowshelpers.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
 
@@ -76,27 +76,8 @@ namespace {
     };
 
     bool canObserveSystemColors() {
-        static const bool supported = IsWindows10OrGreater();
+        static const bool supported = isRunningOnWindows10OrGreater();
         return supported;
-    }
-
-    bool IsWindows10AnniversaryUpdateOrGreater()
-    {
-        OSVERSIONINFOEXW info{};
-        info.dwOSVersionInfoSize = sizeof(info);
-        info.dwMajorVersion = 10;
-        info.dwMinorVersion = 0;
-        info.dwBuildNumber = 14393;
-        const auto conditionMask = VerSetConditionMask(
-            VerSetConditionMask(
-                VerSetConditionMask(
-                    0, VER_MAJORVERSION, VER_GREATER_EQUAL
-                ),
-                VER_MINORVERSION, VER_GREATER_EQUAL
-            ),
-            VER_BUILDNUMBER, VER_GREATER_EQUAL
-        );
-        return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) == TRUE;
     }
 }
 
@@ -110,7 +91,7 @@ SystemColorsProvider* SystemColorsProvider::createInstance(QObject* parent) {
 }
 
 bool SystemColorsProvider::isDarkThemeFollowSystemSupported() {
-    return IsWindows10AnniversaryUpdateOrGreater();
+    return isRunningOnWindows10_1607OrGreater();
 }
 
 bool SystemColorsProvider::isAccentColorsSupported() {

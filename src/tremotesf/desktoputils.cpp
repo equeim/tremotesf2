@@ -40,7 +40,7 @@
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 #elif defined(Q_OS_WIN)
 #include <shlobj.h>
-#include "utils.h"
+#include "tremotesf/windowshelpers.h"
 #endif
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
@@ -135,11 +135,9 @@ namespace tremotesf
                         if (directory) {
                             logDebug("Executing SHOpenFolderAndSelectItems() for {}", nativePath);
                             try {
-                                Utils::callCOMFunction([&] {
-                                    return SHOpenFolderAndSelectItems(directory, 0, nullptr, 0);
-                                });
-                            } catch (const std::exception& e) {
-                                logWarning("SHOpenFolderAndSelectItems failed for {}: {}", nativePath, e.what());
+                                winrt::check_hresult(SHOpenFolderAndSelectItems(directory, 0, nullptr, 0));
+                            } catch (const winrt::hresult_error& e) {
+                                logWarning("SHOpenFolderAndSelectItems failed for {}: {}", nativePath, e);
                                 openParentDirectory(filePath, mParentWidget);
                             }
                             ILFree(directory);
