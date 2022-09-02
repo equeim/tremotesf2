@@ -38,6 +38,8 @@
 #include "tremotesf/utils.h"
 #endif
 
+#include "libtremotesf/formatters.h"
+
 namespace tremotesf
 {
     std::atomic_bool SignalHandler::exitRequested{false};
@@ -60,7 +62,7 @@ namespace tremotesf
         try {
             Utils::callPosixFunctionWithErrno([] { return socketpair(AF_UNIX, SOCK_STREAM, 0, signalFds.data()) == 0; });
         } catch (const std::system_error& e) {
-            throw std::runtime_error(std::string("socketpair failed: ") + e.what());
+            throw std::runtime_error(fmt::format("socketpair failed: {}", e));
         }
 
         struct sigaction action{};
@@ -70,27 +72,27 @@ namespace tremotesf
         try {
             Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGINT, &action, nullptr) == 0; });
         } catch (const std::system_error& e) {
-            throw std::runtime_error(std::string("sigaction failed on SIGINT: ") + e.what());
+            throw std::runtime_error(fmt::format("sigaction failed on SIGINT: {}", e));
         }
         try {
             Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGTERM, &action, nullptr) == 0; });
         } catch (const std::system_error& e) {
-            throw std::runtime_error(std::string("sigaction failed on SIGTERM: ") + e.what());
+            throw std::runtime_error(fmt::format("sigaction failed on SIGTERM: {}", e));
         }
         try {
             Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGHUP, &action, nullptr) == 0; });
         } catch (const std::system_error& e) {
-            throw std::runtime_error(std::string("sigaction failed on SIGHUP: ") + e.what());
+            throw std::runtime_error(fmt::format("sigaction failed on SIGHUP: {}", e));
         }
         try {
             Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGQUIT, &action, nullptr) == 0; });
         } catch (const std::system_error& e) {
-            throw std::runtime_error(std::string("sigaction failed on SIGQUIT: ") + e.what());
+            throw std::runtime_error(fmt::format("sigaction failed on SIGQUIT: {}", e));
         }
         try {
             Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGINT, &action, nullptr) == 0; });
         } catch (const std::system_error& e) {
-            throw std::runtime_error(std::string("sigaction failed on SIGINT: ") + e.what());
+            throw std::runtime_error(fmt::format("sigaction failed on SIGINT: {}", e));
         }
     }
 

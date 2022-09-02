@@ -9,7 +9,7 @@
 
 #include <QString>
 
-#include "libtremotesf/log.h"
+#include "libtremotesf/formatters.h"
 
 namespace tremotesf {
     bool isRunningOnWindows10OrGreater();
@@ -30,7 +30,8 @@ struct fmt::formatter<winrt::hresult_error> {
         const auto message = error.message();
         return fmt::format_to(
             ctx.out(),
-            "winrt::hresult_error: {} (error code {})",
+            "{}: {} (error code {})",
+            libtremotesf::typeName(error),
             QString::fromWCharArray(message.data(), static_cast<int>(message.size())),
             error.code().value
         );
