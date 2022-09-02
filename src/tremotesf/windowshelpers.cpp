@@ -26,28 +26,6 @@ namespace tremotesf {
             );
             return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) != FALSE;
         }
-
-        std::string getWin32ErrorString(DWORD error) {
-            LPWSTR buffer{};
-            const auto guard = QScopeGuard([&] { LocalFree(buffer); });
-            const auto formattedChars = FormatMessageW(
-                FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-                nullptr,
-                error,
-                0,
-                reinterpret_cast<LPWSTR>(&buffer),
-                0,
-                nullptr
-            );
-            if (formattedChars != 0) {
-                return fmt::format(
-                    "{} (error code {})",
-                    QString::fromWCharArray(buffer, formattedChars).trimmed(),
-                    error
-                );
-            }
-            return fmt::format("Error code {}", error);
-        }
     }
 
     bool isRunningOnWindows10OrGreater() {
@@ -74,16 +52,4 @@ namespace tremotesf {
         static const bool is = isWindowsVersionOrGreater(10, 0, 22000);
         return is;
     }
-
-    /*void callWin32Function(std::function<std::uint32_t()>&& function) {
-        const auto result = static_cast<BOOL>(function());
-        if (result == FALSE) {
-            throw std::runtime_error(getWin32ErrorString(GetLastError()));
-        }
-    }
-
-    void callCOMFunction(std::function<std::int32_t()>&& function) {
-        const auto result = static_cast<HRESULT>(function());
-        winrt::check_hresult(result);
-    }*/
 }
