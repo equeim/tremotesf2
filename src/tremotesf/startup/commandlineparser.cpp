@@ -90,7 +90,7 @@ namespace tremotesf
             }
             parsePositionals(torrents, args);
         } catch (const cxxopts::OptionException& e) {
-            throw std::runtime_error(e.what());
+            throw std::runtime_error(fmt::to_string(e));
         }
 
         return args;

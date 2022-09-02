@@ -27,7 +27,7 @@
 #include <QFile>
 #include <QString>
 
-#include "libtremotesf/log.h"
+#include "libtremotesf/formatters.h"
 
 namespace tremotesf::bencode
 {
@@ -150,7 +150,7 @@ namespace tremotesf::bencode
                         append(container);
                     }
                 } catch (const Error& e) {
-                    throw Error(e.type(), fmt::format("Failed to parse {} at position {}: {}", getValueTypeName<Container>(), containerPos, e.what()));
+                    throw Error(e.type(), fmt::format("Failed to parse {} at position {}: {}", getValueTypeName<Container>(), containerPos, e));
                 }
                 throw Error(Error::Type::Parsing, fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos));
             }
@@ -170,7 +170,7 @@ namespace tremotesf::bencode
                     }
                     return byteArray;
                 } catch (const Error& e) {
-                    throw Error(e.type(), fmt::format("Failed to parse byte array at position {}: {}", byteArrayPos, e.what()));
+                    throw Error(e.type(), fmt::format("Failed to parse byte array at position {}: {}", byteArrayPos, e));
                 }
             }
 
@@ -181,7 +181,7 @@ namespace tremotesf::bencode
                     skipByte();
                     return readIntegerUntilTerminator(terminator);
                 } catch (const Error& e) {
-                    throw Error(e.type(), fmt::format("Failed to parse integer at position {}: {}", integerPos, e.what()));
+                    throw Error(e.type(), fmt::format("Failed to parse integer at position {}: {}", integerPos, e));
                 }
             }
 

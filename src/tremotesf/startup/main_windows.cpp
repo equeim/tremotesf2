@@ -27,7 +27,11 @@ namespace tremotesf {
                 try {
                     std::rethrow_exception(exception_ptr);
                 } catch (const std::exception& e) {
-                    logWarning("Unhandled exception: {}", e.what());
+                    logWarning("Unhandled exception: {}", e);
+                } catch (const winrt::hresult_error& e) {
+                    logWarning("Unhandled exception: {}", e);
+                } catch (...) {
+                    logWarning("Unhandled exception of unkown type");
                 }
             }
         }
@@ -102,8 +106,7 @@ namespace tremotesf {
             winrt::init_apartment();
         } catch (const winrt::hresult_error& e) {
             if (e.code() != RPC_E_CHANGED_MODE) {
-                const auto msg = e.message();
-                logWarning("winrt::init_apartment failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
+                logWarning("winrt::init_apartment failed: {}", e);
             }
         }
         QApplication::setStyle(new WindowsStyle(QApplication::instance()));

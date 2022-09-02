@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     try {
         SignalHandler::setupHandlers();
     } catch (const std::exception& e) {
-        logWarning("Failed to setup signal handlers: {}", e.what());
+        logWarning("Failed to setup signal handlers: {}", e);
     }
 
     //
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
             return EXIT_SUCCESS;
         }
     } catch (const std::exception& e) {
-        logWarning("Failed to parse command line arguments: {}", e.what());
+        logWarning("Failed to parse command line arguments: {}", e);
         return EXIT_FAILURE;
     }
 

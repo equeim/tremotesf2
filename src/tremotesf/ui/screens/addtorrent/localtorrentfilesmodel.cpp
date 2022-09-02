@@ -163,7 +163,7 @@ namespace tremotesf
                 auto bencodeParseResult = bencode::parse(filePath);
                 return createTree(std::move(bencodeParseResult));
             } catch (const bencode::Error& e) {
-                logWarning("Failed to parse torrent file {}: {}", filePath, e.what());
+                logWarning("Failed to parse torrent file {}: {}", filePath, e);
                 return e.type();
             }
         });
