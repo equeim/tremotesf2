@@ -85,44 +85,41 @@ namespace tremotesf {
         };
     }
 
-	void windowsInitPreApplication() {
+	void windowsInitPrelude() {
         std::set_terminate(on_terminate);
-
         try {
             winrt::check_bool(SetConsoleOutputCP(GetACP()));
         } catch (const winrt::hresult_error& e) {
             logWarning("SetConsoleOutputCP failed: {}", e);
         }
+	}
 
+    void windowsInitWinrt() {
+        try {
+            winrt::init_apartment(winrt::apartment_type::single_threaded);
+        } catch (const winrt::hresult_error& e) {
+            logWarning("winrt::init_apartment failed: {}", e);
+        }
+    }
+
+    void windowsInitApplication() {
         try {
             winrt::check_bool(AllowSetForegroundWindow(ASFW_ANY));
         } catch (const winrt::hresult_error& e) {
             logWarning("AllowSetForegroundWindow failed: {}", e);
         }
-	}
-
-    void windowsInitPostApplication() {
-        try {
-            winrt::init_apartment();
-        } catch (const winrt::hresult_error& e) {
-            if (e.code() != RPC_E_CHANGED_MODE) {
-                logWarning("winrt::init_apartment failed: {}", e);
-            }
-        }
         QApplication::setStyle(new WindowsStyle(QApplication::instance()));
-        QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR)});
+        QIcon::setThemeSearchPaths({ QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR) });
         QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
-
         const auto systemColorsProvider = tremotesf::SystemColorsProvider::createInstance(QApplication::instance());
         tremotesf::applyDarkThemeToPalette(systemColorsProvider);
     }
 
-    void windowsDeinit() {
+    void windowsDeinitWinrt() {
         try {
             winrt::uninit_apartment();
         } catch (const winrt::hresult_error& e) {
-            const auto msg = e.message();
-            logWarning("winrt::uninit_apartment failed: {}: {}", QString::fromWCharArray(msg.c_str(), msg.size()));
+            logWarning("winrt::uninit_apartment failed: {}", e);
         }
     }
 }
