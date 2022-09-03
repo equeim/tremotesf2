@@ -20,6 +20,7 @@
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QScopeGuard>
 #include <QTranslator>
 
 #include "libtremotesf/log.h"
@@ -39,7 +40,7 @@ using namespace tremotesf;
 int main(int argc, char** argv)
 {
     if constexpr (isTargetOsWindows) {
-        windowsInitPreApplication();
+        windowsInitPrelude();
     }
 
     // Setup handler for UNIX signals or Windows console handler
@@ -74,6 +75,15 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
+    if constexpr (isTargetOsWindows) {
+        windowsInitWinrt();
+    }
+    const auto winrtScopeGuard = QScopeGuard([] {
+        if constexpr (isTargetOsWindows) {
+            windowsDeinitWinrt();
+        }
+    });
+
     //
     // QApplication initialization
     //
@@ -85,7 +95,7 @@ int main(int argc, char** argv)
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
     if constexpr (isTargetOsWindows) {
-        windowsInitPostApplication();
+        windowsInitApplication();
     }
 
     QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
@@ -134,9 +144,5 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
-    const int exitCode = qApp->exec();
-    if constexpr (isTargetOsWindows) {
-        windowsDeinit();
-    }
-    return exitCode;
+    return QCoreApplication::exec();
 }
