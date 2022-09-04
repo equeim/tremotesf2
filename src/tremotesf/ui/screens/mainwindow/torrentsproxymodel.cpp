@@ -57,7 +57,6 @@ namespace tremotesf
         if (string != mSearchString) {
             mSearchString = string;
             invalidateFilter();
-            emit searchStringChanged();
         }
     }
 
@@ -71,7 +70,6 @@ namespace tremotesf
         if (enabled != mStatusFilterEnabled) {
             mStatusFilterEnabled = enabled;
             invalidateFilter();
-            emit statusFilterEnabledChanged();
         }
     }
 
@@ -99,7 +97,6 @@ namespace tremotesf
         if (enabled != mTrackerFilterEnabled) {
             mTrackerFilterEnabled = enabled;
             invalidateFilter();
-            emit trackerFilterEnabledChanged();
         }
     }
 
@@ -127,7 +124,6 @@ namespace tremotesf
         if (enabled != mDownloadDirectoryFilterEnabled) {
             mDownloadDirectoryFilterEnabled = enabled;
             invalidateFilter();
-            emit downloadDirectoryFilterEnabledChanged();
         }
     }
 

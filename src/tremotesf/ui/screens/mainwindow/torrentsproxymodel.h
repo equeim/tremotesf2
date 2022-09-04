@@ -33,13 +33,6 @@ namespace tremotesf
     class TorrentsProxyModel : public BaseProxyModel
     {
         Q_OBJECT
-        Q_PROPERTY(QString searchString READ searchString WRITE setSearchString NOTIFY searchStringChanged)
-        Q_PROPERTY(bool statusFilterEnabled READ isStatusFilterEnabled WRITE setStatusFilterEnabled NOTIFY statusFilterEnabledChanged)
-        Q_PROPERTY(StatusFilter statusFilter READ statusFilter WRITE setStatusFilter NOTIFY statusFilterChanged)
-        Q_PROPERTY(bool trackerFilterEnabled READ isTrackerFilterEnabled WRITE setTrackerFilterEnabled NOTIFY trackerFilterEnabledChanged)
-        Q_PROPERTY(QString trackerFilter READ trackerFilter WRITE setTrackerFilter NOTIFY trackerFilterChanged)
-        Q_PROPERTY(bool downloadDirectoryFilterEnabled READ isDownloadDirectoryFilterEnabled WRITE setDownloadDirectoryFilterEnabled NOTIFY downloadDirectoryFilterEnabledChanged)
-        Q_PROPERTY(QString downloadDirectoryFilter READ downloadDirectoryFilter WRITE setDownloadDirectoryFilter NOTIFY downloadDirectoryFilterChanged)
     public:
         enum StatusFilter
         {
@@ -95,15 +88,9 @@ namespace tremotesf
         bool mDownloadDirectoryFilterEnabled;
         QString mDownloadDirectoryFilter;
     signals:
-        void searchStringChanged();
-
-        void statusFilterEnabledChanged();
+        //void searchStringChanged();
         void statusFilterChanged();
-
-        void trackerFilterEnabledChanged();
         void trackerFilterChanged();
-
-        void downloadDirectoryFilterEnabledChanged();
         void downloadDirectoryFilterChanged();
     };
 }

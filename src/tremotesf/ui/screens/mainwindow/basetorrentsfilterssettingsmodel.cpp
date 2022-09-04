@@ -36,7 +36,6 @@ namespace tremotesf
                 QObject::disconnect(mRpc, nullptr, this, nullptr);
             }
             mRpc = rpc;
-            emit rpcChanged();
             if (rpc) {
                 QObject::connect(rpc, &Rpc::torrentsUpdated, this, &BaseTorrentsFiltersSettingsModel::updateImpl);
                 QTimer::singleShot(0, this, &BaseTorrentsFiltersSettingsModel::updateImpl);
@@ -51,10 +50,7 @@ namespace tremotesf
 
     void BaseTorrentsFiltersSettingsModel::setTorrentsProxyModel(TorrentsProxyModel* model)
     {
-        if (model != mTorrentsProxyModel) {
-            mTorrentsProxyModel = model;
-            emit torrentsProxyModelChanged();
-        }
+        mTorrentsProxyModel = model;
     }
 
     bool BaseTorrentsFiltersSettingsModel::isPopulated() const

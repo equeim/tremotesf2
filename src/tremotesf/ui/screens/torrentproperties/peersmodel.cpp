@@ -27,9 +27,7 @@
 namespace tremotesf
 {
     PeersModel::PeersModel(libtremotesf::Torrent* torrent, QObject* parent)
-        : QAbstractTableModel(parent),
-          mTorrent(nullptr),
-          mLoaded(false)
+        : QAbstractTableModel(parent)
     {
         setTorrent(torrent);
     }
@@ -134,7 +132,6 @@ namespace tremotesf
             }
 
             mTorrent = torrent;
-            emit torrentChanged();
 
             if (mTorrent) {
                 QObject::connect(mTorrent, &libtremotesf::Torrent::peersUpdated, this, &PeersModel::update);
@@ -148,11 +145,6 @@ namespace tremotesf
                 endResetModel();
             }
         }
-    }
-
-    bool PeersModel::isLoaded() const
-    {
-        return mLoaded;
     }
 
     void PeersModel::update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount)
@@ -175,11 +167,6 @@ namespace tremotesf
             mPeers.reserve(newPeers.size());
             std::copy(newPeers.begin() + static_cast<ptrdiff_t>(mPeers.size()), newPeers.end(), std::back_insert_iterator(mPeers));
             endInsertRows();
-        }
-
-        if (!mLoaded) {
-            mLoaded = true;
-            emit loadedChanged();
         }
     }
 }

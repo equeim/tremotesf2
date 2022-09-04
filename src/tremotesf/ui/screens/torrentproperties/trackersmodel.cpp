@@ -126,7 +126,6 @@ namespace tremotesf
             }
 
             mTorrent = torrent;
-            emit torrentChanged();
 
             if (mTorrent) {
                 update();

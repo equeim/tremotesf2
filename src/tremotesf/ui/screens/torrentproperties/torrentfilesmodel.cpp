@@ -115,13 +115,9 @@ namespace tremotesf
                                  SizeColumn,
                                  ProgressBarColumn,
                                  ProgressColumn,
-                                 PriorityColumn}, parent),
-          mTorrent(nullptr),
-          mRpc(rpc),
-          mLoaded(false),
-          mLoading(true),
-          mCreatingTree(false)
+                                 PriorityColumn}, parent)
     {
+        setRpc(rpc);
         setTorrent(torrent);
     }
 
@@ -145,7 +141,6 @@ namespace tremotesf
             }
 
             mTorrent = torrent;
-            emit torrentChanged();
 
             if (mTorrent) {
                 QObject::connect(mTorrent, &libtremotesf::Torrent::filesUpdated, this, &TorrentFilesModel::update);
@@ -167,20 +162,7 @@ namespace tremotesf
 
     void TorrentFilesModel::setRpc(Rpc* rpc)
     {
-        if (rpc != mRpc) {
-            mRpc = rpc;
-            emit rpcChanged();
-        }
-    }
-
-    bool TorrentFilesModel::isLoaded() const
-    {
-        return mLoaded;
-    }
-
-    bool TorrentFilesModel::isLoading() const
-    {
-        return mLoading;
+        mRpc = rpc;
     }
 
     void TorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
@@ -265,7 +247,6 @@ namespace tremotesf
         }
 
         mCreatingTree = true;
-        setLoading(true);
         beginResetModel();
 
         const auto future = QtConcurrent::run(doCreateTree, mTorrent->files());
@@ -280,7 +261,6 @@ namespace tremotesf
             mFiles = std::move(files);
 
             setLoaded(true);
-            setLoading(false);
             mCreatingTree = false;
 
             watcher->deleteLater();
@@ -328,17 +308,6 @@ namespace tremotesf
 
     void TorrentFilesModel::setLoaded(bool loaded)
     {
-        if (loaded != mLoaded) {
-            mLoaded = loaded;
-            emit loadedChanged();
-        }
-    }
-
-    void TorrentFilesModel::setLoading(bool loading)
-    {
-        if (loading != mLoading) {
-            mLoading = loading;
-            emit loadingChanged();
-        }
+        mLoaded = loaded;
     }
 }

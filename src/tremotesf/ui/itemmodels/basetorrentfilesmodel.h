@@ -53,12 +53,12 @@ namespace tremotesf
         QModelIndex parent(const QModelIndex& child) const override;
         int rowCount(const QModelIndex& parent = {}) const override;
 
-        Q_INVOKABLE virtual void setFileWanted(const QModelIndex& index, bool wanted);
-        Q_INVOKABLE virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted);
-        Q_INVOKABLE virtual void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority);
-        Q_INVOKABLE virtual void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority);
+        virtual void setFileWanted(const QModelIndex& index, bool wanted);
+        virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted);
+        virtual void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority);
+        virtual void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority);
 
-        Q_INVOKABLE virtual void renameFile(const QModelIndex& index, const QString& newName) = 0;
+        virtual void renameFile(const QModelIndex& index, const QString& newName) = 0;
         void fileRenamed(TorrentFilesModelEntry* entry, const QString& newName);
 
     protected:

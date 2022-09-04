@@ -19,26 +19,29 @@
 #ifndef TREMOTESF_UTILS_H
 #define TREMOTESF_UTILS_H
 
-#include <QObject>
+#include <QString>
+
+#ifdef Q_OS_UNIX
+#include <functional>
+#endif
 
 namespace tremotesf
 {
-    class Utils : public QObject
+    class Utils
     {
-        Q_OBJECT
     public:
-        Q_INVOKABLE static QString formatByteSize(long long size);
-        Q_INVOKABLE static QString formatByteSpeed(long long speed);
-        Q_INVOKABLE static QString formatSpeedLimit(int limit);
+        static QString formatByteSize(long long size);
+        static QString formatByteSpeed(long long speed);
+        static QString formatSpeedLimit(int limit);
 
-        Q_INVOKABLE static QString formatProgress(double progress);
-        Q_INVOKABLE static QString formatRatio(double ratio);
-        Q_INVOKABLE static QString formatRatio(long long downloaded, long long uploaded);
+        static QString formatProgress(double progress);
+        static QString formatRatio(double ratio);
+        static QString formatRatio(long long downloaded, long long uploaded);
 
-        Q_INVOKABLE static QString formatEta(int seconds);
+        static QString formatEta(int seconds);
 
-        Q_INVOKABLE static QString readTextResource(const QString& resourcePath);
-        Q_INVOKABLE static QString readTextFile(const QString& filePath);
+        static QString readTextResource(const QString& resourcePath);
+        static QString readTextFile(const QString& filePath);
 
 #ifdef Q_OS_UNIX
         static void callPosixFunctionWithErrno(std::function<bool()>&& function);

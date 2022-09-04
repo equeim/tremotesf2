@@ -85,12 +85,6 @@ namespace tremotesf
     class Servers : public QObject
     {
         Q_OBJECT
-        Q_PROPERTY(bool hasServers READ hasServers NOTIFY hasServersChanged)
-        Q_PROPERTY(libtremotesf::Server currentServer READ currentServer NOTIFY currentServerChanged)
-        Q_PROPERTY(QString currentServerName READ currentServerName NOTIFY currentServerChanged)
-        Q_PROPERTY(QString currentServerAddress READ currentServerAddress NOTIFY currentServerChanged)
-        Q_PROPERTY(bool currentServerHasMountedDirectories READ currentServerHasMountedDirectories NOTIFY currentServerChanged)
-        Q_PROPERTY(QString firstLocalDirectory READ firstLocalDirectory NOTIFY currentServerChanged)
     public:
         static Servers* instance();
 
@@ -102,21 +96,21 @@ namespace tremotesf
         Server currentServer() const;
         QString currentServerName() const;
         QString currentServerAddress();
-        Q_INVOKABLE void setCurrentServer(const QString& name);
+        void setCurrentServer(const QString& name);
 
         bool currentServerHasMountedDirectories() const;
-        Q_INVOKABLE bool isUnderCurrentServerMountedDirectory(const QString& path) const;
+        bool isUnderCurrentServerMountedDirectory(const QString& path) const;
         QString firstLocalDirectory() const;
-        Q_INVOKABLE QString fromLocalToRemoteDirectory(const QString& path);
-        Q_INVOKABLE QString fromRemoteToLocalDirectory(const QString& path);
+        QString fromLocalToRemoteDirectory(const QString& path);
+        QString fromRemoteToLocalDirectory(const QString& path);
 
         LastTorrents currentServerLastTorrents() const;
-        Q_INVOKABLE void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
+        void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
 
         QStringList currentServerAddTorrentDialogDirectories() const;
         void setCurrentServerAddTorrentDialogDirectories(const QStringList& directories);
 
-        Q_INVOKABLE void setServer(const QString& oldName,
+        void setServer(const QString& oldName,
                                    const QString& name,
                                    const QString& address,
                                    int port,
@@ -146,7 +140,7 @@ namespace tremotesf
 
                                    const QVariantMap& mountedDirectories);
 
-        Q_INVOKABLE void removeServer(const QString& name);
+        void removeServer(const QString& name);
 
         void saveServers(const std::vector<Server>& servers, const QString& current);
 

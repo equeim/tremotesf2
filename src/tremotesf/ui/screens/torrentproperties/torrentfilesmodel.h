@@ -31,10 +31,6 @@ namespace tremotesf
     class TorrentFilesModel : public BaseTorrentFilesModel
     {
         Q_OBJECT
-        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
-        Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
-        Q_PROPERTY(bool loading READ isLoading NOTIFY loadingChanged)
     public:
         explicit TorrentFilesModel(libtremotesf::Torrent* torrent = nullptr,
                                    Rpc* rpc = nullptr,
@@ -47,9 +43,6 @@ namespace tremotesf
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
 
-        bool isLoaded() const;
-        bool isLoading() const;
-
         void setFileWanted(const QModelIndex& index, bool wanted) override;
         void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
         void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) override;
@@ -58,8 +51,8 @@ namespace tremotesf
         void renameFile(const QModelIndex& index, const QString& newName) override;
         void fileRenamed(const QString& path, const QString& newName);
 
-        Q_INVOKABLE QString localFilePath(const QModelIndex& index) const;
-        Q_INVOKABLE bool isWanted(const QModelIndex& index) const;
+        QString localFilePath(const QModelIndex& index) const;
+        bool isWanted(const QModelIndex& index) const;
 
     private:
         void update(const std::vector<int>& changed);
@@ -68,19 +61,12 @@ namespace tremotesf
         void updateTree(const std::vector<int>& changed);
 
         void setLoaded(bool loaded);
-        void setLoading(bool loading);
 
-        libtremotesf::Torrent* mTorrent;
-        Rpc* mRpc;
-        bool mLoaded;
-        bool mLoading;
-        std::vector<TorrentFilesModelFile*> mFiles;
-        bool mCreatingTree;
-    signals:
-        void torrentChanged();
-        void rpcChanged();
-        void loadedChanged();
-        void loadingChanged();
+        libtremotesf::Torrent* mTorrent{};
+        Rpc* mRpc{};
+        std::vector<TorrentFilesModelFile*> mFiles{};
+        bool mCreatingTree{};
+        bool mLoaded{};
     };
 }
 

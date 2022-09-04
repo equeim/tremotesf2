@@ -36,7 +36,7 @@ namespace tremotesf
         inline QVariant headerData(int, Qt::Orientation orientation, int role) const override { return orientation == Qt::Horizontal && role == Qt::DisplayRole ? mHeader : QVariant{}; };
         inline int rowCount(const QModelIndex& = {}) const override { return static_cast<int>(mStringList.size()); };
 
-        Q_INVOKABLE void setStringList(const std::vector<QString>& stringList);
+        void setStringList(const std::vector<QString>& stringList);
     private:
         QString mHeader;
         std::vector<QString> mStringList;
