@@ -46,8 +46,6 @@ namespace tremotesf
 
         void openFile(const QString& filePath, QWidget* parent = nullptr);
 
-        void selectFilesInFileManager(const QStringList& files, QWidget* parent = nullptr);
-
         void findLinksAndAddAnchors(QTextDocument* document);
     }
 }

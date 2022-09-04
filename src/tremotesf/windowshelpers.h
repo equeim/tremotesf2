@@ -20,6 +20,17 @@ namespace tremotesf {
 }
 
 template<>
+struct fmt::formatter<winrt::hstring> : fmt::formatter<QString> {
+    template <typename FormatContext>
+    auto format(const winrt::hstring& str, FormatContext& ctx) -> decltype(ctx.out()) {
+        return fmt::formatter<QString>::format(
+            QString::fromWCharArray(str.data(), static_cast<QString::size_type>(str.size())),
+            ctx
+        );
+    }
+};
+
+template<>
 struct fmt::formatter<winrt::hresult_error> {
     constexpr auto parse(fmt::format_parse_context& ctx) -> decltype(ctx.begin()) {
         return ctx.begin();
@@ -27,12 +38,11 @@ struct fmt::formatter<winrt::hresult_error> {
 
     template <typename FormatContext>
     auto format(const winrt::hresult_error& error, FormatContext& ctx) -> decltype(ctx.out()) {
-        const auto message = error.message();
         return fmt::format_to(
             ctx.out(),
             "{}: {} (error code {})",
             libtremotesf::typeName(error),
-            QString::fromWCharArray(message.data(), static_cast<int>(message.size())),
+            error.message(),
             error.code().value
         );
     }
