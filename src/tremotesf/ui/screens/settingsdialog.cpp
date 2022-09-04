@@ -60,8 +60,10 @@ namespace tremotesf
             darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::Off);
             appearanceGroupBoxLayout->addRow(qApp->translate("tremotesf", "Dark theme"), darkThemeComboBox);
 
-            systemAccentColorCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
-            appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
+            if (SystemColorsProvider::isAccentColorsSupported()) {
+                systemAccentColorCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
+                appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
+            }
 
             layout->addWidget(appearanceGroupBox);
         }
@@ -122,7 +124,9 @@ namespace tremotesf
 
         if constexpr (isTargetOsWindows) {
             darkThemeComboBox->setCurrentIndex(index_of_i(darkThemeComboBoxValues, settings->darkThemeMode()));
-            systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
+            if (systemAccentColorCheckBox) {
+                systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
+            }
         }
 
 
@@ -139,7 +143,9 @@ namespace tremotesf
                 if (int index = darkThemeComboBox->currentIndex(); index != -1) {
                     settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
                 }
-                settings->setUseSystemAccentColor(systemAccentColorCheckBox->isChecked());
+                if (systemAccentColorCheckBox) {
+                    settings->setUseSystemAccentColor(systemAccentColorCheckBox->isChecked());
+                }
             }
         });
     }

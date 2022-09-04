@@ -239,7 +239,7 @@ void applyDarkThemeToPalette(SystemColorsProvider* systemColorsProvider)
         const bool darkTheme = [&] {
             switch (settings->darkThemeMode()) {
             case Settings::DarkThemeMode::FollowSystem:
-                return systemColorsProvider->isDarkThemeEnabled();
+                return SystemColorsProvider::isDarkThemeFollowSystemSupported() && systemColorsProvider->isDarkThemeEnabled();
             case Settings::DarkThemeMode::On:
                 return true;
             case Settings::DarkThemeMode::Off:
@@ -248,7 +248,10 @@ void applyDarkThemeToPalette(SystemColorsProvider* systemColorsProvider)
                 return false;
             }
         }();
-        applyWindowsPalette(darkTheme, settings->useSystemAccentColor() ? systemColorsProvider->accentColors() : SystemColorsProvider::AccentColors{});
+        const auto accentColors = (SystemColorsProvider::isAccentColorsSupported() && settings->useSystemAccentColor()) 
+            ? systemColorsProvider->accentColors()
+            : SystemColorsProvider::AccentColors{};
+        applyWindowsPalette(darkTheme, accentColors);
     };
     apply();
     QObject::connect(systemColorsProvider, &SystemColorsProvider::darkThemeEnabledChanged, QGuiApplication::instance(), apply);
