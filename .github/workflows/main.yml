@@ -136,7 +136,7 @@ jobs:
       id: clang-cl-build
       uses: equeim/action-cmake-build@v9
       with:
-        cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed -D CMAKE_CXX_COMPILER=clang-cl
+        cmake-arguments: --preset windows-clang -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed
         output-directories-suffix: -clang-cl
 
     - name: Remove clang-cl build directories
