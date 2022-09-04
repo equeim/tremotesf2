@@ -50,7 +50,7 @@ namespace {
 
     private:
         bool isDarkThemeEnabledImpl() {
-            if (!mIsDarkThemeFollowSystemSupported) {
+            if (!isDarkThemeFollowSystemSupported()) {
                 return false;
             }
             // Apparently this is the way to do it according to Microsoft
@@ -71,13 +71,10 @@ namespace {
 
         bool mDarkThemeEnabled{isDarkThemeEnabledImpl()};
         AccentColors mAccentColors{accentColorsImpl()};
-
-        bool mIsDarkThemeFollowSystemSupported{isDarkThemeFollowSystemSupported()};
     };
 
     bool canObserveSystemColors() {
-        static const bool supported = isRunningOnWindows10OrGreater();
-        return supported;
+        return isRunningOnWindows10OrGreater();
     }
 }
 
