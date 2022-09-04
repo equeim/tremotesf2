@@ -67,6 +67,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 #include "tremotesf/ipc/ipcserver.h"
 #include "tremotesf/rpc/servers.h"
 #include "tremotesf/rpc/trpc.h"
+#include "tremotesf/filemanagerlauncher.h"
 #include "tremotesf/desktoputils.h"
 #include "tremotesf/settings.h"
 #include "tremotesf/utils.h"
@@ -1120,16 +1121,14 @@ namespace tremotesf
 
     void MainWindow::showTorrentsInFileManager()
     {
-        QStringList files;
+        std::vector<QString> files{};
         const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
-        files.reserve(selectedRows.size());
-
+        files.reserve(static_cast<size_t>(selectedRows.size()));
         for (const QModelIndex& index : selectedRows) {
             libtremotesf::Torrent* torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
             files.push_back(mRpc->localTorrentFilesPath(torrent));
         }
-
-        desktoputils::selectFilesInFileManager(files, this);
+        launchFileManagerAndSelectFiles(files, this);
     }
 }
 

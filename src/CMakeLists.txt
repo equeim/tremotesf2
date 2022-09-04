@@ -16,6 +16,8 @@ add_executable(
     tremotesf/bencodeparser.h
     tremotesf/desktoputils.cpp
     tremotesf/desktoputils.h
+    tremotesf/filemanagerlauncher.cpp
+    tremotesf/filemanagerlauncher.h
     tremotesf/settings.cpp
     tremotesf/settings.h
     tremotesf/utils.cpp
@@ -117,15 +119,67 @@ target_compile_definitions(
     TREMOTESF_QT_TRANSLATIONS_FILENAME="${TREMOTESF_QT_TRANSLATIONS_FILENAME}"
 )
 
-if (WIN32)
+if (TREMOTESF_UNIX_FREEDESKTOP)
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus X11Extras)
+    find_package(KF5WindowSystem REQUIRED)
+    target_link_libraries(tremotesf PRIVATE Qt::DBus Qt::X11Extras KF5::WindowSystem)
+
+    target_compile_definitions(
+        tremotesf PRIVATE
+        TREMOTESF_BUNDLED_ICONS_DIR=""
+        TREMOTESF_BUNDLED_ICON_THEME=""
+        TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR=""
+    )
+
+    qt_add_dbus_adaptor(
+        dbus_generated
+        tremotesf/ipc/org.freedesktop.Application.xml
+        tremotesf/ipc/ipcserver_dbus_service.h
+        tremotesf::IpcDbusService
+        tremotesf_dbus_generated/ipc/org.freedesktop.Application.adaptor
+        OrgFreedesktopApplicationAdaptor
+    )
+    qt_add_dbus_interface(
+        dbus_generated
+        tremotesf/ipc/org.freedesktop.Application.xml
+        tremotesf_dbus_generated/ipc/org.freedesktop.Application
+    )
+    qt_add_dbus_interface(
+        dbus_generated
+        tremotesf/org.freedesktop.Notifications.xml
+        tremotesf_dbus_generated/org.freedesktop.Notifications
+    )
+    qt_add_dbus_interface(
+        dbus_generated
+        tremotesf/org.freedesktop.FileManager1.xml
+        tremotesf_dbus_generated/org.freedesktop.FileManager1
+    )
+
+    target_sources(
+        tremotesf PRIVATE
+        tremotesf/filemanagerlauncher_freedesktop.cpp
+        tremotesf/ipc/ipcclient_dbus.cpp
+        tremotesf/ipc/ipcserver_dbus_service.cpp
+        tremotesf/ipc/ipcserver_dbus_service.h
+        tremotesf/ipc/ipcserver_dbus.cpp
+        tremotesf/ipc/ipcserver_dbus.h
+        tremotesf/ui/darkthemeapplier_noop.cpp
+        tremotesf/ui/systemcolorsprovider_noop.cpp
+        ${dbus_generated}
+    )
+elseif (WIN32)
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
     target_link_libraries(tremotesf PRIVATE Qt::Svg)
     target_sources(
         tremotesf PRIVATE
-        tremotesf/windowshelpers.cpp
-        tremotesf/windowshelpers.h
+        tremotesf/filemanagerlauncher_windows.cpp
         tremotesf/tremotesf.rc
         tremotesf/tremotesf.manifest
+        tremotesf/windowshelpers.cpp
+        tremotesf/windowshelpers.h
+        tremotesf/ipc/ipcclient_socket.cpp
+        tremotesf/ipc/ipcserver_socket.cpp
+        tremotesf/ipc/ipcserver_socket.h
         tremotesf/startup/main_windows.cpp
         tremotesf/startup/main_windows.h
         tremotesf/ui/darkthemeapplier_windows.cpp
@@ -155,55 +209,12 @@ else()
     )
     target_sources(
         tremotesf PRIVATE
-        tremotesf/ui/darkthemeapplier_noop.cpp
-        tremotesf/ui/systemcolorsprovider_noop.cpp
-    )
-endif()
-
-if (TREMOTESF_UNIX_FREEDESKTOP)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus X11Extras)
-    find_package(KF5WindowSystem REQUIRED)
-    target_link_libraries(tremotesf PRIVATE Qt::DBus Qt::X11Extras KF5::WindowSystem)
-
-    qt_add_dbus_adaptor(
-        dbus_generated
-        tremotesf/ipc/org.freedesktop.Application.xml
-        tremotesf/ipc/ipcserver_dbus_service.h
-        tremotesf::IpcDbusService
-        tremotesf_dbus_generated/ipc/org.freedesktop.Application.adaptor
-        OrgFreedesktopApplicationAdaptor
-    )
-    qt_add_dbus_interface(
-        dbus_generated
-        tremotesf/ipc/org.freedesktop.Application.xml
-        tremotesf_dbus_generated/ipc/org.freedesktop.Application
-    )
-    qt_add_dbus_interface(
-        dbus_generated
-        tremotesf/org.freedesktop.Notifications.xml
-        tremotesf_dbus_generated/org.freedesktop.Notifications
-    )
-    qt_add_dbus_interface(
-        dbus_generated
-        tremotesf/org.freedesktop.FileManager1.xml
-        tremotesf_dbus_generated/org.freedesktop.FileManager1
-    )
-
-    target_sources(
-        tremotesf PRIVATE
-        tremotesf/ipc/ipcclient_dbus.cpp
-        tremotesf/ipc/ipcserver_dbus_service.cpp
-        tremotesf/ipc/ipcserver_dbus_service.h
-        tremotesf/ipc/ipcserver_dbus.cpp
-        tremotesf/ipc/ipcserver_dbus.h
-        ${dbus_generated}
-    )
-else()
-    target_sources(
-        tremotesf PRIVATE
+        tremotesf/filemanagerlauncher_fallback.cpp
         tremotesf/ipc/ipcclient_socket.cpp
         tremotesf/ipc/ipcserver_socket.cpp
         tremotesf/ipc/ipcserver_socket.h
+        tremotesf/ui/darkthemeapplier_noop.cpp
+        tremotesf/ui/systemcolorsprovider_noop.cpp
     )
 endif()
 

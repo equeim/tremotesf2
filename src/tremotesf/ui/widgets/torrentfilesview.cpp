@@ -30,6 +30,7 @@
 #include "libtremotesf/serversettings.h"
 
 #include "tremotesf/desktoputils.h"
+#include "tremotesf/filemanagerlauncher.h"
 #include "tremotesf/settings.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/ui/itemmodels/torrentfilesmodelentry.h"
@@ -177,12 +178,12 @@ namespace tremotesf
                 QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme(QLatin1String("go-jump")), qApp->translate("tremotesf", "Show In &File Manager"));
                 showInFileManagerAction->setEnabled(!disableBoth);
                 QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes] {
-                    QStringList files;
-                    files.reserve(sourceIndexes.size());
+                    std::vector<QString> files{};
+                    files.reserve(static_cast<size_t>(sourceIndexes.size()));
                     for (const QModelIndex& index : sourceIndexes) {
                         files.push_back(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index));
                     }
-                    desktoputils::selectFilesInFileManager(files, this);
+                    launchFileManagerAndSelectFiles(files, this);
                 });
             }
         }
