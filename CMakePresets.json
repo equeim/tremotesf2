@@ -2,8 +2,8 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "default",
-      "displayName": "Default",
+      "name": "base",
+      "displayName": "Base",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
@@ -13,25 +13,9 @@
       }
     },
     {
-      "name": "default-debug",
-      "displayName": "Default Debug",
-      "inherits": "default",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "default-release",
-      "displayName": "Default Release",
-      "inherits": "default",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "default-multi",
+      "name": "base-multi",
       "displayName": "Multi-config",
-      "inherits": "default",
+      "inherits": "base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
@@ -39,8 +23,8 @@
     },
     {
       "name": "windows",
-      "displayName": "Windows",
-      "inherits": "default",
+      "displayName": "Base Windows",
+      "inherits": "base",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -55,7 +39,7 @@
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg_installed",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static",
         "VCPKG_HOST_TRIPLET": "x64-windows-static",
-        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-buildtrees-after-build;--clean-packages-after-build"
+        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-packages-after-build;--no-binarycaching"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "vendor": {
@@ -65,53 +49,65 @@
       }
     },
     {
-      "name": "windows-debug",
-      "displayName": "Windows Debug",
+      "name": "windows-clang",
+      "displayName": "Base Windows clang-cl",
       "inherits": "windows",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "windows-release",
-      "displayName": "Windows Release",
-      "inherits": "windows",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_CXX_COMPILER": "clang-cl"
       }
     },
     {
       "name": "windows-multi",
       "displayName": "Multi-config Windows",
       "inherits": [
-        "default-multi",
+        "base-multi",
         "windows"
+      ]
+    },
+    {
+      "name": "windows-multi-clang",
+      "displayName": "Multi-config Windows clang-cl",
+      "inherits": [
+        "base-multi",
+        "windows-clang"
       ]
     }
   ],
   "buildPresets": [
     {
-      "name": "default-multi-debug",
+      "name": "base-multi-debug",
       "displayName": "Debug",
-      "configurePreset": "default-multi",
+      "configurePreset": "base-multi",
       "configuration": "Debug"
     },
     {
-      "name": "default-multi-release",
+      "name": "base-multi-release",
       "displayName": "Release",
-      "configurePreset": "default-multi",
+      "configurePreset": "base-multi",
       "configuration": "Release"
     },
     {
       "name": "windows-multi-debug",
-      "displayName": "Windows Debug",
+      "displayName": "Debug",
       "configurePreset": "windows-multi",
       "configuration": "Debug"
     },
     {
       "name": "windows-multi-release",
-      "displayName": "Windows Release",
+      "displayName": "Release",
       "configurePreset": "windows-multi",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-multi-clang-debug",
+      "displayName": "Debug",
+      "configurePreset": "windows-multi-clang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-multi-clang-release",
+      "displayName": "Release",
+      "configurePreset": "windows-multi-clang",
       "configuration": "Release"
     }
   ]
