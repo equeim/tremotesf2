@@ -40,7 +40,7 @@ namespace tremotesf
         int rowCount(const QModelIndex& = {}) const override;
         bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
-        Q_INVOKABLE QModelIndex indexForDirectory(const QString& downloadDirectory) const;
+        QModelIndex indexForDirectory(const QString& downloadDirectory) const;
 
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 

@@ -29,9 +29,6 @@ namespace tremotesf
     class IpcServerDbus final : public IpcServer
     {
         Q_OBJECT
-        Q_PROPERTY(QString serviceName READ serviceName CONSTANT)
-        Q_PROPERTY(QString objectPath READ objectPath CONSTANT)
-        Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT)
     public:
         static inline QLatin1String serviceName() { return QLatin1String("org.equeim.Tremotesf"); };
         static inline QLatin1String objectPath() { return QLatin1String("/org/equeim/Tremotesf"); };

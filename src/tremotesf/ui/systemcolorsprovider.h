@@ -11,8 +11,6 @@ namespace tremotesf {
 class SystemColorsProvider : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool darkThemeEnabled READ isDarkThemeEnabled NOTIFY darkThemeEnabledChanged)
-    Q_PROPERTY(tremotesf::SystemColorsProvider::AccentColors accentColors READ accentColors NOTIFY accentColorsChanged)
 public:
     static SystemColorsProvider* createInstance(QObject* parent = nullptr);
 

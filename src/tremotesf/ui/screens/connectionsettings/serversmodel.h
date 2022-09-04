@@ -40,9 +40,9 @@ namespace tremotesf
         const std::vector<Server>& servers() const;
         const QString& currentServerName() const;
 
-        Q_INVOKABLE bool hasServer(const QString& name) const;
+        bool hasServer(const QString& name) const;
 
-        Q_INVOKABLE void setServer(const QString& oldName,
+        void setServer(const QString& oldName,
                                    const QString& name,
                                    const QString& address,
                                    int port,
@@ -71,8 +71,8 @@ namespace tremotesf
                                    int autoReconnectInterval,
 
                                    const QVariantMap& mountedDirectories);
-        Q_INVOKABLE void removeServerAtIndex(const QModelIndex& index);
-        Q_INVOKABLE void removeServerAtRow(int row);
+        void removeServerAtIndex(const QModelIndex& index);
+        void removeServerAtRow(int row);
     private:
         int serverRow(const QString& name) const;
 

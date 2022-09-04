@@ -28,15 +28,14 @@ namespace tremotesf
     class BaseProxyModel : public QSortFilterProxyModel
     {
         Q_OBJECT
-        Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder NOTIFY sortOrderChanged)
     public:
         explicit BaseProxyModel(QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
 
-        Q_INVOKABLE QModelIndex sourceIndex(const QModelIndex& proxyIndex) const;
-        Q_INVOKABLE QModelIndex sourceIndex(int proxyRow) const;
-        Q_INVOKABLE QModelIndexList sourceIndexes(const QModelIndexList& proxyIndexes) const;
+        QModelIndex sourceIndex(const QModelIndex& proxyIndex) const;
+        QModelIndex sourceIndex(int proxyRow) const;
+        QModelIndexList sourceIndexes(const QModelIndexList& proxyIndexes) const;
 
-        Q_INVOKABLE void sort(int column = 0, Qt::SortOrder order = Qt::AscendingOrder) override;
+        void sort(int column = 0, Qt::SortOrder order = Qt::AscendingOrder) override;
 
     protected:
         bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;

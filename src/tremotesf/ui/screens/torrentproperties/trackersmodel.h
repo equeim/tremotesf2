@@ -34,7 +34,6 @@ namespace tremotesf
     class TrackersModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
     public:
         enum Column
         {
@@ -56,7 +55,7 @@ namespace tremotesf
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);
 
-        Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
+        QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
         const libtremotesf::Tracker& trackerAtIndex(const QModelIndex& index) const;
 
     private:
@@ -67,9 +66,6 @@ namespace tremotesf
 
         template<typename, typename, typename, typename> friend class ModelListUpdater;
         friend class TrackersModelUpdater;
-
-    signals:
-        void torrentChanged();
     };
 }
 

@@ -35,8 +35,6 @@ namespace tremotesf
     class PeersModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(libtremotesf::Torrent* torrent READ torrent WRITE setTorrent NOTIFY torrentChanged)
-        Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
     public:
         enum Column
         {
@@ -63,17 +61,11 @@ namespace tremotesf
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);
 
-        bool isLoaded() const;
-
     private:
         void update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount);
 
-        std::vector<libtremotesf::Peer> mPeers;
-        libtremotesf::Torrent* mTorrent;
-        bool mLoaded;
-    signals:
-        void torrentChanged();
-        void loadedChanged();
+        std::vector<libtremotesf::Peer> mPeers{};
+        libtremotesf::Torrent* mTorrent{};
     };
 }
 

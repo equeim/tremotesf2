@@ -299,7 +299,6 @@ namespace tremotesf
                 QObject::disconnect(mRpc, nullptr, this, nullptr);
             }
             mRpc = rpc;
-            emit rpcChanged();
             if (rpc) {
                 QObject::connect(rpc, &Rpc::onAboutToAddTorrents, this, [=](size_t count) {
                     const auto first = mRpc->torrentsCount();

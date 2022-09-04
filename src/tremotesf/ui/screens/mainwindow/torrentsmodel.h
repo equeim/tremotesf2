@@ -36,7 +36,6 @@ namespace tremotesf
     class TorrentsModel : public QAbstractTableModel
     {
         Q_OBJECT
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
     public:
         enum Column
         {
@@ -83,16 +82,13 @@ namespace tremotesf
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
 
-        Q_INVOKABLE libtremotesf::Torrent* torrentAtIndex(const QModelIndex& index) const;
+        libtremotesf::Torrent* torrentAtIndex(const QModelIndex& index) const;
         libtremotesf::Torrent* torrentAtRow(int row) const;
 
-        Q_INVOKABLE QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
+        QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
 
     private:
         Rpc* mRpc;
-
-    signals:
-        void rpcChanged();
     };
 }
 

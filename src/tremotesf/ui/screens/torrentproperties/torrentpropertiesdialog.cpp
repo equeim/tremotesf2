@@ -40,6 +40,7 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
+#include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/ui/itemmodels/baseproxymodel.h"
 #include "tremotesf/ui/itemmodels/stringlistmodel.h"

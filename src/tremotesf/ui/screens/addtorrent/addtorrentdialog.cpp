@@ -35,6 +35,7 @@
 #include <KMessageWidget>
 
 #include "libtremotesf/serversettings.h"
+#include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/rpc/servers.h"
 #include "tremotesf/rpc/trpc.h"

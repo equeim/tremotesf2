@@ -29,9 +29,6 @@ namespace tremotesf
     class BaseTorrentsFiltersSettingsModel : public QAbstractListModel
     {
         Q_OBJECT
-        Q_PROPERTY(tremotesf::Rpc* rpc READ rpc WRITE setRpc NOTIFY rpcChanged)
-        Q_PROPERTY(tremotesf::TorrentsProxyModel* torrentsProxyModel READ torrentsProxyModel WRITE setTorrentsProxyModel NOTIFY torrentsProxyModelChanged)
-        Q_PROPERTY(bool populated READ isPopulated NOTIFY populatedChanged)
     public:
         inline explicit BaseTorrentsFiltersSettingsModel(QObject* parent = nullptr) : QAbstractListModel(parent) {};
 
@@ -57,8 +54,6 @@ namespace tremotesf
         bool mPopulated = false;
 
     signals:
-        void rpcChanged();
-        void torrentsProxyModelChanged();
         void populatedChanged();
     };
 }

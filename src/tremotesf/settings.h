@@ -27,7 +27,6 @@ class QSettings;
 
 #define SETTINGS_PROPERTY_IMPL(type, getter, setterType, setter) \
 public: \
-    Q_PROPERTY(type getter READ getter WRITE setter NOTIFY getter##Changed) \
     type getter() const; \
     void setter(setterType value); \
 Q_SIGNALS: \

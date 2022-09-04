@@ -26,15 +26,14 @@ namespace tremotesf
     class Rpc : public libtremotesf::Rpc
     {
         Q_OBJECT
-        Q_PROPERTY(QString statusString READ statusString NOTIFY statusChanged)
     public:
         explicit Rpc(QObject* parent = nullptr);
         QString statusString() const;
 
         bool isIncompleteDirectoryMounted() const;
-        Q_INVOKABLE bool isTorrentLocalMounted(libtremotesf::Torrent* torrent) const;
-        Q_INVOKABLE QString localTorrentFilesPath(libtremotesf::Torrent* torrent) const;
-        Q_INVOKABLE QString localTorrentDownloadDirectoryPath(libtremotesf::Torrent* torrent) const;
+        bool isTorrentLocalMounted(libtremotesf::Torrent* torrent) const;
+        QString localTorrentFilesPath(libtremotesf::Torrent* torrent) const;
+        QString localTorrentDownloadDirectoryPath(libtremotesf::Torrent* torrent) const;
     private:
         QString torrentRootFileName(const libtremotesf::Torrent* torrent) const;
 

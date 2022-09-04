@@ -41,7 +41,7 @@ namespace tremotesf
         int rowCount(const QModelIndex& = {}) const override;
         bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
-        Q_INVOKABLE QModelIndex indexForStatusFilter(tremotesf::TorrentsProxyModel::StatusFilter filter) const;
+        QModelIndex indexForStatusFilter(tremotesf::TorrentsProxyModel::StatusFilter filter) const;
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
     protected:
