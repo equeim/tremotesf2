@@ -22,7 +22,7 @@
 
 namespace tremotesf {
     namespace {
-        void on_terminate() {
+        void onTerminate() {
             const auto exception_ptr = std::current_exception();
             if (exception_ptr) {
                 try {
@@ -32,9 +32,10 @@ namespace tremotesf {
                 } catch (const winrt::hresult_error& e) {
                     logWarning("Unhandled exception: {}", e);
                 } catch (...) {
-                    logWarning("Unhandled exception of unkown type");
+                    logWarning("Unhandled exception of unknown type");
                 }
             }
+            std::abort();
         }
 
         class WindowsStyle : public QProxyStyle {
