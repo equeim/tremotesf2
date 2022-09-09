@@ -113,6 +113,7 @@ target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF5
 target_include_directories(tremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 target_compile_definitions(
     tremotesf PRIVATE
+    TREMOTESF_EXECUTABLE_NAME="tremotesf"
     TREMOTESF_APP_ID="org.equeim.Tremotesf"
     TREMOTESF_APP_NAME="Tremotesf"
     TREMOTESF_VERSION="${PROJECT_VERSION}"
@@ -182,6 +183,8 @@ elseif (WIN32)
         tremotesf/ipc/ipcserver_socket.h
         tremotesf/startup/main_windows.cpp
         tremotesf/startup/main_windows.h
+        tremotesf/startup/windowsmessagehandler.cpp
+        tremotesf/startup/windowsmessagehandler.h
         tremotesf/ui/darkthemeapplier_windows.cpp
         tremotesf/ui/recoloringsvgiconengine.cpp
         tremotesf/ui/recoloringsvgiconengine.h

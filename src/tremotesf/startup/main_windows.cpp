@@ -14,6 +14,7 @@
 #include <QStyle>
 
 #include "libtremotesf/log.h"
+#include "tremotesf/startup/windowsmessagehandler.h"
 #include "tremotesf/ui/darkthemeapplier.h"
 #include "tremotesf/ui/recoloringsvgiconengine.h"
 #include "tremotesf/ui/systemcolorsprovider.h"
@@ -85,14 +86,10 @@ namespace tremotesf {
         };
     }
 
-	void windowsInitPrelude() {
-        std::set_terminate(on_terminate);
-        try {
-            winrt::check_bool(SetConsoleOutputCP(GetACP()));
-        } catch (const winrt::hresult_error& e) {
-            logWarning("SetConsoleOutputCP failed: {}", e);
-        }
-	}
+    void windowsInitPrelude() {
+        qInstallMessageHandler(windowsMessageHandler);
+        std::set_terminate(onTerminate);
+    }
 
     void windowsInitWinrt() {
         try {
