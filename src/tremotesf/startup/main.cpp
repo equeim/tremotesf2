@@ -39,6 +39,11 @@ using namespace tremotesf;
 
 int main(int argc, char** argv)
 {
+    // This does not need QApplication instance, and we need it in windowsInitPrelude()
+    QCoreApplication::setOrganizationName(QLatin1String(TREMOTESF_EXECUTABLE_NAME));
+    QCoreApplication::setApplicationName(QCoreApplication::organizationName());
+    QCoreApplication::setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
+
     if constexpr (isTargetOsWindows) {
         windowsInitPrelude();
     }
@@ -90,8 +95,6 @@ int main(int argc, char** argv)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication app(argc, argv);
-    QCoreApplication::setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
-    QCoreApplication::setOrganizationName(qApp->applicationName());
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
     if constexpr (isTargetOsWindows) {
