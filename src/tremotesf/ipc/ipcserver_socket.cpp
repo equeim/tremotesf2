@@ -26,7 +26,6 @@
 #include "libtremotesf/log.h"
 
 #ifdef Q_OS_WIN
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "tremotesf/windowshelpers.h"
 #endif
