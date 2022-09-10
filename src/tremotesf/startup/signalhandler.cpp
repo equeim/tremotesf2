@@ -30,8 +30,6 @@
 #endif // Q_OS_UNIX
 
 #ifdef Q_OS_WIN
-#include <stdexcept>
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "tremotesf/windowshelpers.h"
 #else
