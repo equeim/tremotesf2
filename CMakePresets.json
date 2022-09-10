@@ -18,7 +18,7 @@
       "inherits": "base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo"
       }
     },
     {
@@ -99,6 +99,12 @@
       "configuration": "Release"
     },
     {
+      "name": "windows-multi-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "windows-multi",
+      "configuration": "RelWithDebInfo"
+    },
+    {
       "name": "windows-multi-clang-debug",
       "displayName": "Debug",
       "configurePreset": "windows-multi-clang",
@@ -109,6 +115,12 @@
       "displayName": "Release",
       "configurePreset": "windows-multi-clang",
       "configuration": "Release"
+    },
+    {
+      "name": "windows-multi-clang-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "windows-multi-clang",
+      "configuration": "RelWithDebInfo"
     }
   ]
 }
