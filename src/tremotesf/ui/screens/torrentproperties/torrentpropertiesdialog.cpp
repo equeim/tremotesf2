@@ -283,7 +283,7 @@ namespace tremotesf
         auto globalLimitsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Honor global limits"), this);
         speedGroupBoxLayout->addRow(globalLimitsCheckBox);
 
-        const int maxSpeedLimit = std::numeric_limits<uint>::max() / 1024;
+        const int maxSpeedLimit = static_cast<int>(std::numeric_limits<uint>::max() / 1024);
 
         auto downloadSpeedCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);
         speedGroupBoxLayout->addRow(downloadSpeedCheckBox);

@@ -8,7 +8,7 @@
 
 namespace tremotesf {
     namespace {
-        bool isWindowsVersionOrGreater(int major, int minor, int build) {
+        bool isWindowsVersionOrGreater(DWORD major, DWORD minor, DWORD build) {
             OSVERSIONINFOEXW info{};
             info.dwOSVersionInfoSize = sizeof(info);
             info.dwMajorVersion = major;
