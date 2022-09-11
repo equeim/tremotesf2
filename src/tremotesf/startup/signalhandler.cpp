@@ -33,10 +33,10 @@
 #include <windows.h>
 #include "tremotesf/windowshelpers.h"
 #else
-#include "tremotesf/utils.h"
+#include "tremotesf/unixhelpers.h"
 #endif
 
-#include "libtremotesf/formatters.h"
+#include "libtremotesf/log.h"
 
 namespace tremotesf
 {
@@ -58,39 +58,18 @@ namespace tremotesf
     void SignalHandler::setupHandlers()
     {
         try {
-            Utils::callPosixFunctionWithErrno([] { return socketpair(AF_UNIX, SOCK_STREAM, 0, signalFds.data()) == 0; });
-        } catch (const std::system_error& e) {
-            throw std::runtime_error(fmt::format("socketpair failed: {}", e));
-        }
+            checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, signalFds.data()), "socketpair");
 
-        struct sigaction action{};
-        action.sa_handler = signalHandler;
-        action.sa_flags |= SA_RESTART;
+            struct sigaction action{};
+            action.sa_handler = signalHandler;
+            action.sa_flags |= SA_RESTART;
 
-        try {
-            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGINT, &action, nullptr) == 0; });
+            checkPosixError(sigaction(SIGINT, &action, nullptr), "sigaction");
+            checkPosixError(sigaction(SIGTERM, &action, nullptr), "sigaction");
+            checkPosixError(sigaction(SIGHUP, &action, nullptr), "sigaction");
+            checkPosixError(sigaction(SIGQUIT, &action, nullptr), "sigaction");
         } catch (const std::system_error& e) {
-            throw std::runtime_error(fmt::format("sigaction failed on SIGINT: {}", e));
-        }
-        try {
-            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGTERM, &action, nullptr) == 0; });
-        } catch (const std::system_error& e) {
-            throw std::runtime_error(fmt::format("sigaction failed on SIGTERM: {}", e));
-        }
-        try {
-            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGHUP, &action, nullptr) == 0; });
-        } catch (const std::system_error& e) {
-            throw std::runtime_error(fmt::format("sigaction failed on SIGHUP: {}", e));
-        }
-        try {
-            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGQUIT, &action, nullptr) == 0; });
-        } catch (const std::system_error& e) {
-            throw std::runtime_error(fmt::format("sigaction failed on SIGQUIT: {}", e));
-        }
-        try {
-            Utils::callPosixFunctionWithErrno([&] { return sigaction(SIGINT, &action, nullptr) == 0; });
-        } catch (const std::system_error& e) {
-            throw std::runtime_error(fmt::format("sigaction failed on SIGINT: {}", e));
+            logWarningWithException(e, "Failed to setup signal handlers");
         }
     }
 
@@ -111,8 +90,9 @@ namespace tremotesf
 #ifdef Q_OS_WIN
     namespace
     {
-        BOOL WINAPI consoleHandler(DWORD)
+        BOOL WINAPI consoleHandler(DWORD dwCtrlType)
         {
+            logInfo("Received signal with type = {}", dwCtrlType);
             SignalHandler::exitRequested = true;
             QCoreApplication::quit();
             return TRUE;
@@ -122,9 +102,9 @@ namespace tremotesf
     void SignalHandler::setupHandlers()
     {
         try {
-            winrt::check_bool(SetConsoleCtrlHandler(consoleHandler, TRUE));
-        } catch (const winrt::hresult_error& e) {
-            throw std::runtime_error(fmt::format("SetConsoleCtrlHandler failed: {}", e));
+            checkWin32Bool(SetConsoleCtrlHandler(consoleHandler, TRUE), "SetConsoleCtrlHandler");
+        } catch (const std::system_error& e) {
+            logWarningWithException(e, "Failed to setup signal handler");
         }
     }
 

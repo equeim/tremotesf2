@@ -42,10 +42,6 @@ namespace tremotesf
 
         static QString readTextResource(const QString& resourcePath);
         static QString readTextFile(const QString& filePath);
-
-#ifdef Q_OS_UNIX
-        static void callPosixFunctionWithErrno(std::function<bool()>&& function);
-#endif
     };
 }
 

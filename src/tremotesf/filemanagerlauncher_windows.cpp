@@ -36,13 +36,13 @@ namespace tremotesf {
                     try {
                         winrt::init_apartment(winrt::apartment_type::multi_threaded);
                     } catch (const winrt::hresult_error& e) {
-                        logWarning("WindowsFileManagerLauncher: winrt::init_apartment failed: {}", e);
+                        logWarningWithException(e, "WindowsFileManagerLauncher: winrt::init_apartment failed");
                     }
                     const auto guard = QScopeGuard([&] {
                         try {
                             winrt::uninit_apartment();
                         } catch (const winrt::hresult_error& e) {
-                            logWarning("WindowsFileManagerLauncher: winrt::uninit_apartment failed: {}", e);
+                            logWarningWithException(e, "WindowsFileManagerLauncher: winrt::uninit_apartment failed: {}");
                         }
                         emit done();
                     });
@@ -50,13 +50,17 @@ namespace tremotesf {
                     for (const auto& [dirPath, dirFiles] : directories) {
                         const QString nativePath = QDir::toNativeSeparators(dirPath);
                         logInfo("WindowsFileManagerLauncher: opening folder {} and selecting {} items", nativePath, dirFiles.size());
-                        bool ok{};
-                        if (isRunningOnWindows10OrGreater()) {
-                            ok = openFolderWindows10(nativePath, dirFiles);
-                        } else {
-                            ok = openFolderWindows81(nativePath, dirFiles);
-                        }
-                        if (!ok) {
+                        try {
+                            if (isRunningOnWindows10OrGreater()) {
+                                openFolderWindows10(nativePath, dirFiles);
+                            } else {
+                                openFolderWindows81(nativePath, dirFiles);
+                            }
+                        } catch (const std::runtime_error& e) {
+                            logWarningWithException(e, "WindowsFileManagerLauncher: failed to select files");
+                            fallbackForDirectory(dirPath, parentWidget);
+                        } catch (const winrt::hresult_error& e) {
+                            logWarningWithException(e, "WindowsFileManagerLauncher: failed to select files");
                             fallbackForDirectory(dirPath, parentWidget);
                         }
                     }
@@ -73,39 +77,32 @@ namespace tremotesf {
             }
 
         private:
-            bool openFolderWindows10(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
+            void openFolderWindows10(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
                 const winrt::hstring folderPath(nativeDirPath.toStdWString());
-                try {
-                    auto options = FolderLauncherOptions();
-                    for (const QString& filePath : dirFiles) {
-                        const winrt::hstring winPath(QDir::toNativeSeparators(filePath).toStdWString());
-                        if (QFileInfo(filePath).isDir()) {
-                            try {
-                                options.ItemsToSelect().Append(StorageFolder::GetFolderFromPathAsync(winPath).get());
-                            } catch (const winrt::hresult_error& e) {
-                                logWarning("WindowsFileManagerLauncher: failed to create StorageFolder from {}: {}", winPath, e);
-                            }
-                        } else {
-                            try {
-                                options.ItemsToSelect().Append(StorageFile::GetFileFromPathAsync(winPath).get());
-                            } catch (const winrt::hresult_error& e) {
-                                logWarning("WindowsFileManagerLauncher: failed to create StorageFile from {}: {}", winPath, e);
-                            }
+                auto options = FolderLauncherOptions();
+                for (const QString& filePath : dirFiles) {
+                    const winrt::hstring winPath(QDir::toNativeSeparators(filePath).toStdWString());
+                    if (QFileInfo(filePath).isDir()) {
+                        try {
+                            options.ItemsToSelect().Append(StorageFolder::GetFolderFromPathAsync(winPath).get());
+                        } catch (const winrt::hresult_error& e) {
+                            logWarningWithException(e, "WindowsFileManagerLauncher: failed to create StorageFolder from {}", winPath);
+                        }
+                    } else {
+                        try {
+                            options.ItemsToSelect().Append(StorageFile::GetFileFromPathAsync(winPath).get());
+                        } catch (const winrt::hresult_error& e) {
+                            logWarningWithException(e, "WindowsFileManagerLauncher: failed to create StorageFile from {}", winPath);
                         }
                     }
-                    Launcher::LaunchFolderPathAsync(folderPath, options).get();
-                    return true;
-                } catch (const winrt::hresult_error& e) {
-                    logWarning("WindowsFileManagerLauncher: failed to open folder {}: {}", folderPath, e);
-                    return false;
                 }
+                Launcher::LaunchFolderPathAsync(folderPath, options).get();
             }
 
-            bool openFolderWindows81(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
+            void openFolderWindows81(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
                 const auto directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativeDirPath.utf16()));
                 if (!directory) {
-                    logWarning("WindowsFileManagerLauncher: ILCreateFromPathW failed() for {}", nativeDirPath);
-                    return false;
+                    throw std::runtime_error(fmt::format("ILCreateFromPathW failed() for {}", nativeDirPath));
                 }
                 const auto directoryGuard = QScopeGuard([&] { ILFree(directory); });
 
@@ -124,24 +121,17 @@ namespace tremotesf {
                     }
                 }
                 if (items.empty()) {
-                    logWarning("WindowsFileManagerLauncher: no items to select for {}", nativeDirPath);
-                    return false;
+                    throw std::runtime_error("No items to select");
                 }
-
-                try {
-                    winrt::check_hresult(
-                        SHOpenFolderAndSelectItems(
-                            directory,
-                            static_cast<UINT>(items.size()),
-                            const_cast<PCUITEMID_CHILD_ARRAY>(items.data()),
-                            0
-                        )
-                    );
-                    return true;
-                } catch (const winrt::hresult_error& e) {
-                    logWarning("WindowsFileManagerLauncher: SHOpenFolderAndSelectItems failed for {}: {}", nativeDirPath, e);
-                    return false;
-                }
+                checkHResult(
+                    SHOpenFolderAndSelectItems(
+                        directory,
+                        static_cast<UINT>(items.size()),
+                        const_cast<PCUITEMID_CHILD_ARRAY>(items.data()),
+                        0
+                    ),
+                    "SHOpenFolderAndSelectItems"
+                );
             }
         };
     }

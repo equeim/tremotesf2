@@ -159,6 +159,8 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
     target_sources(
         tremotesf PRIVATE
         tremotesf/filemanagerlauncher_freedesktop.cpp
+        tremotesf/unixhelpers.cpp
+        tremotesf/unixhelpers.h
         tremotesf/ipc/ipcclient_dbus.cpp
         tremotesf/ipc/ipcserver_dbus_service.cpp
         tremotesf/ipc/ipcserver_dbus_service.h
@@ -213,6 +215,8 @@ else()
     target_sources(
         tremotesf PRIVATE
         tremotesf/filemanagerlauncher_fallback.cpp
+        tremotesf/unixhelpers.cpp
+        tremotesf/unixhelpers.h
         tremotesf/ipc/ipcclient_socket.cpp
         tremotesf/ipc/ipcserver_socket.cpp
         tremotesf/ipc/ipcserver_socket.h

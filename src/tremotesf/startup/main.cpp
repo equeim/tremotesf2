@@ -49,11 +49,7 @@ int main(int argc, char** argv)
     }
 
     // Setup handler for UNIX signals or Windows console handler
-    try {
-        SignalHandler::setupHandlers();
-    } catch (const std::exception& e) {
-        logWarning("Failed to setup signal handlers: {}", e);
-    }
+    SignalHandler::setupHandlers();
 
     //
     // Command line parsing
@@ -64,8 +60,8 @@ int main(int argc, char** argv)
         if (args.exit) {
             return EXIT_SUCCESS;
         }
-    } catch (const std::exception& e) {
-        logWarning("Failed to parse command line arguments: {}", e);
+    } catch (const std::runtime_error& e) {
+        logWarning("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
     }
 
