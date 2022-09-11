@@ -83,11 +83,12 @@ namespace {
                 const auto qcolor = QGuiApplication::palette().color(QPalette::Window);
                 const auto color = RGB(qcolor.red(), qcolor.green(), qcolor.blue());
                 try {
-                    winrt::check_hresult(
-                        DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_CAPTION_COLOR, &color, sizeof(color))
+                    checkHResult(
+                        DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_CAPTION_COLOR, &color, sizeof(color)),
+                        "DwmSetWindowAttribute"
                     );
                 } catch (const winrt::hresult_error& e) {
-                    logWarning("DwmSetWindowAttribute failed: {}", e);
+                    logWarningWithException(e, "Failed to set DWMWA_CAPTION_COLOR on {}", *window);
                 }
             } else {
                 logInfo("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
@@ -98,7 +99,6 @@ namespace {
                         return DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;
                     }
                 }();
-                logInfo("attribute = {}", attribute);
                 const bool darkTheme = [&] {
                     switch (Settings::instance()->darkThemeMode()) {
                     case Settings::DarkThemeMode::FollowSystem:
@@ -113,11 +113,12 @@ namespace {
                 }();
                 const auto useImmersiveDarkMode = static_cast<BOOL>(darkTheme);
                 try {
-                    winrt::check_hresult(
-                        DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), attribute, &useImmersiveDarkMode, sizeof(useImmersiveDarkMode))
+                    checkHResult(
+                        DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), attribute, &useImmersiveDarkMode, sizeof(useImmersiveDarkMode)),
+                        "DwmSetWindowAttribute"
                     );
                 } catch (const winrt::hresult_error& e) {
-                    logWarning("DwmSetWindowAttribute failed: {}", e);
+                    logWarningWithException(e, "Failed to set DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
                 }
             }
         }

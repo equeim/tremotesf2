@@ -27,9 +27,9 @@ namespace tremotesf {
                 try {
                     std::rethrow_exception(exception_ptr);
                 } catch (const std::exception& e) {
-                    logWarning("Unhandled exception: {}", e);
+                    logWarningWithException(e, "Unhandled exception");
                 } catch (const winrt::hresult_error& e) {
-                    logWarning("Unhandled exception: {}", e);
+                    logWarningWithException(e, "Unhandled exception");
                 } catch (...) {
                     logWarning("Unhandled exception of unknown type");
                 }
@@ -101,9 +101,9 @@ namespace tremotesf {
 
     void windowsInitApplication() {
         try {
-            winrt::check_bool(AllowSetForegroundWindow(ASFW_ANY));
-        } catch (const winrt::hresult_error& e) {
-            logWarning("AllowSetForegroundWindow failed: {}", e);
+            checkWin32Bool(AllowSetForegroundWindow(ASFW_ANY), "AllowSetForegroundWindow");
+        } catch (const std::system_error& e) {
+            logWarning(e);
         }
         QApplication::setStyle(new WindowsStyle(QApplication::instance()));
         QIcon::setThemeSearchPaths({ QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR) });

@@ -150,7 +150,7 @@ namespace tremotesf::bencode
                         append(container);
                     }
                 } catch (const Error& e) {
-                    throw Error(e.type(), fmt::format("Failed to parse {} at position {}: {}", getValueTypeName<Container>(), containerPos, e));
+                    std::throw_with_nested(Error(e.type(), fmt::format("Failed to parse {} at position {}: {}", getValueTypeName<Container>(), containerPos)));
                 }
                 throw Error(Error::Type::Parsing, fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos));
             }
@@ -170,7 +170,7 @@ namespace tremotesf::bencode
                     }
                     return byteArray;
                 } catch (const Error& e) {
-                    throw Error(e.type(), fmt::format("Failed to parse byte array at position {}: {}", byteArrayPos, e));
+                    std::throw_with_nested(Error(e.type(), fmt::format("Failed to parse byte array at position {}", byteArrayPos)));
                 }
             }
 
@@ -181,7 +181,7 @@ namespace tremotesf::bencode
                     skipByte();
                     return readIntegerUntilTerminator(terminator);
                 } catch (const Error& e) {
-                    throw Error(e.type(), fmt::format("Failed to parse integer at position {}: {}", integerPos, e));
+                    std::throw_with_nested(Error(e.type(), fmt::format("Failed to parse integer at position {}", integerPos)));
                 }
             }
 
@@ -194,7 +194,15 @@ namespace tremotesf::bencode
                 Integer integer{};
                 const auto result = std::from_chars(mIntegerBuffer.data(), mIntegerBuffer.data() + integerBufferSize, integer);
                 if (result.ec != std::errc{}) {
-                    throw Error(Error::Type::Parsing, fmt::format("std::from_chars() failed with: {}", std::make_error_condition(result.ec).message()));
+                    throw Error(
+                        Error::Type::Parsing,
+                        fmt::format(
+                            "std::from_chars() failed with: {} (error code {} ({:#x}))",
+                            std::make_error_condition(result.ec).message(),
+                            static_cast<std::underlying_type_t<std::errc>>(result.ec),
+                            static_cast<std::make_unsigned_t<std::underlying_type_t<std::errc>>>(result.ec)
+                        )
+                    );
                 }
                 if (*result.ptr != integerTerminator) {
                     throw Error(Error::Type::Parsing, fmt::format("Terminator doesn't match: expected {}, actual {}", integerTerminator, *result.ptr));

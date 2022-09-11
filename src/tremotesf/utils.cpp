@@ -28,10 +28,6 @@
 
 #include "libtremotesf/log.h"
 
-#ifdef Q_OS_UNIX
-#include <cerrno>
-#endif
-
 namespace tremotesf
 {
     namespace
@@ -194,13 +190,4 @@ namespace tremotesf
             logWarning("Failed to read file with path '{}'", filePath);
         });
     }
-
-#ifdef Q_OS_UNIX
-    void Utils::callPosixFunctionWithErrno(std::function<bool()>&& function)
-    {
-        if (!function()) {
-            throw std::system_error(errno, std::system_category());
-        }
-    }
-#endif
 }

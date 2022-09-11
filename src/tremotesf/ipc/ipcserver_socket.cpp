@@ -88,11 +88,11 @@ namespace tremotesf
 #ifdef Q_OS_WIN
             try {
                 DWORD sessionId{};
-                winrt::check_bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId));
+                checkWin32Bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId), "ProcessIdToSessionId");
                 name += '-';
                 name += QString::number(sessionId);
-            } catch (const winrt::hresult_error& e) {
-                logWarning("ProcessIdToSessionId falied: {}", e);
+            } catch (const std::system_error& e) {
+                logWarningWithException(e, "IpcServerSocket: failed to append session id to socket name");
             }
 #endif
             return name;
