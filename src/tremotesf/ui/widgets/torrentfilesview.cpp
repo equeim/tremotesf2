@@ -53,7 +53,7 @@ namespace tremotesf
         init();
         setItemDelegate(new CommonDelegate(this));
         if (!header()->restoreState(Settings::instance()->localTorrentFilesViewHeaderState())) {
-            sortByColumn(LocalTorrentFilesModel::NameColumn, Qt::AscendingOrder);
+            sortByColumn(static_cast<int>(LocalTorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }
     }
 
@@ -67,9 +67,9 @@ namespace tremotesf
           mRpc(rpc)
     {
         init();
-        setItemDelegate(new CommonDelegate(TorrentFilesModel::ProgressBarColumn, TorrentFilesModel::SortRole, -1, this));
+        setItemDelegate(new CommonDelegate(static_cast<int>(TorrentFilesModel::Column::ProgressBar), TorrentFilesModel::SortRole, -1, this));
         if (!header()->restoreState(Settings::instance()->torrentFilesViewHeaderState())) {
-            sortByColumn(TorrentFilesModel::NameColumn, Qt::AscendingOrder);
+            sortByColumn(static_cast<int>(TorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }
 
         QObject::connect(this, &TorrentFilesView::activated, this, [=](const auto& index) {

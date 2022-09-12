@@ -19,6 +19,7 @@
 #include "peersmodel.h"
 
 #include <QCoreApplication>
+#include <QMetaEnum>
 
 #include "libtremotesf/log.h"
 #include "libtremotesf/torrent.h"
@@ -39,6 +40,11 @@ namespace tremotesf
         }
     }
 
+    int PeersModel::columnCount(const QModelIndex&) const
+    {
+        return QMetaEnum::fromType<Column>().keyCount();
+    }
+
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
         if (!index.isValid()) {
@@ -47,42 +53,46 @@ namespace tremotesf
         const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::DisplayRole:
-            switch (index.column()) {
-            case AddressColumn:
+            switch (static_cast<Column>(index.column())) {
+            case Column::Address:
                 return peer.address;
-            case DownloadSpeedColumn:
+            case Column::DownloadSpeed:
                 return Utils::formatByteSpeed(peer.downloadSpeed);
-            case UploadSpeedColumn:
+            case Column::UploadSpeed:
                 return Utils::formatByteSpeed(peer.uploadSpeed);
-            case ProgressColumn:
+            case Column::Progress:
                 return Utils::formatProgress(peer.progress);
-            case FlagsColumn:
+            case Column::Flags:
                 return peer.flags;
-            case ClientColumn:
+            case Column::Client:
                 return peer.client;
+            default:
+                break;
             }
             break;
         case Qt::ToolTipRole:
-            switch (index.column()) {
-            case AddressColumn:
-            case ClientColumn:
+            switch (static_cast<Column>(index.column())) {
+            case Column::Address:
+            case Column::Client:
                 return data(index, Qt::DisplayRole);
+            default:
+                break;
             }
             break;
         case SortRole:
-            switch (index.column()) {
-            case DownloadSpeedColumn:
+            switch (static_cast<Column>(index.column())) {
+            case Column::DownloadSpeed:
                 return peer.downloadSpeed;
-            case UploadSpeedColumn:
+            case Column::UploadSpeed:
                 return peer.uploadSpeed;
-            case ProgressBarColumn:
-            case ProgressColumn:
+            case Column::ProgressBar:
+            case Column::Progress:
                 return peer.progress;
             default:
                 return data(index, Qt::DisplayRole);
             }
         }
-        return QVariant();
+        return {};
     }
 
     QVariant PeersModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -90,20 +100,20 @@ namespace tremotesf
         if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
             return {};
         }
-        switch (section) {
-        case AddressColumn:
+        switch (static_cast<Column>(section)) {
+        case Column::Address:
             return qApp->translate("tremotesf", "Address");
-        case DownloadSpeedColumn:
+        case Column::DownloadSpeed:
             return qApp->translate("tremotesf", "Down Speed");
-        case UploadSpeedColumn:
+        case Column::UploadSpeed:
             return qApp->translate("tremotesf", "Up Speed");
-        case ProgressBarColumn:
+        case Column::ProgressBar:
             return qApp->translate("tremotesf", "Progress Bar");
-        case ProgressColumn:
+        case Column::Progress:
             return qApp->translate("tremotesf", "Progress");
-        case FlagsColumn:
+        case Column::Flags:
             return qApp->translate("tremotesf", "Flags");
-        case ClientColumn:
+        case Column::Client:
             return qApp->translate("tremotesf", "Client");
         default:
             return {};

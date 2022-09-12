@@ -29,10 +29,7 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-        enum Role
-        {
-            TrackerRole = Qt::UserRole
-        };
+        static constexpr auto TrackerRole = Qt::UserRole;
 
         inline explicit AllTrackersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 

@@ -29,10 +29,7 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-        enum Role
-        {
-            DirectoryRole = Qt::UserRole
-        };
+        static constexpr auto DirectoryRole = Qt::UserRole;
 
         inline explicit DownloadDirectoriesModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 

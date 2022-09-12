@@ -46,7 +46,7 @@ namespace tremotesf
         const Column column = mColumns[static_cast<size_t>(index.column())];
         switch (role) {
         case Qt::CheckStateRole:
-            if (column == NameColumn) {
+            if (column == Column::Name) {
                 switch (entry->wantedState()) {
                 case TorrentFilesModelEntry::Wanted:
                     return Qt::Checked;
@@ -58,7 +58,7 @@ namespace tremotesf
             }
             break;
         case Qt::DecorationRole:
-            if (column == NameColumn) {
+            if (column == Column::Name) {
                 if (entry->isDirectory()) {
                     return qApp->style()->standardIcon(QStyle::SP_DirIcon);
                 }
@@ -67,31 +67,31 @@ namespace tremotesf
             break;
         case Qt::DisplayRole:
             switch (column) {
-            case NameColumn:
+            case Column::Name:
                 return entry->name();
-            case SizeColumn:
+            case Column::Size:
                 return Utils::formatByteSize(entry->size());
-            case ProgressColumn:
+            case Column::Progress:
                 return Utils::formatProgress(entry->progress());
-            case PriorityColumn:
+            case Column::Priority:
                 return entry->priorityString();
             default:
                 break;
             }
             break;
         case Qt::ToolTipRole:
-            if (index.column() == NameColumn) {
+            if (column == Column::Name) {
                 return entry->name();
             }
             break;
         case SortRole:
             switch (column) {
-            case SizeColumn:
+            case Column::Size:
                 return entry->size();
-            case ProgressBarColumn:
-            case ProgressColumn:
+            case Column::ProgressBar:
+            case Column::Progress:
                 return entry->progress();
-            case PriorityColumn:
+            case Column::Priority:
                 return entry->priority();
             default:
                 return data(index, Qt::DisplayRole);
@@ -105,7 +105,7 @@ namespace tremotesf
         if (!index.isValid()) {
             return {};
         }
-        if (index.column() == NameColumn) {
+        if (static_cast<Column>(index.column()) == Column::Name) {
             return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
         }
         return QAbstractItemModel::flags(index);
@@ -120,15 +120,15 @@ namespace tremotesf
             return {};
         }
         switch (mColumns[static_cast<size_t>(section)]) {
-        case NameColumn:
+        case Column::Name:
             return qApp->translate("tremotesf", "Name");
-        case SizeColumn:
+        case Column::Size:
             return qApp->translate("tremotesf", "Size");
-        case ProgressBarColumn:
+        case Column::ProgressBar:
             return qApp->translate("tremotesf", "Progress Bar");
-        case ProgressColumn:
+        case Column::Progress:
             return qApp->translate("tremotesf", "Progress");
-        case PriorityColumn:
+        case Column::Priority:
             return qApp->translate("tremotesf", "Priority");
         default:
             return {};
@@ -140,7 +140,7 @@ namespace tremotesf
         if (!index.isValid()) {
             return false;
         }
-        if (index.column() == NameColumn && role == Qt::CheckStateRole) {
+        if (static_cast<Column>(index.column()) == Column::Name && role == Qt::CheckStateRole) {
             setFileWanted(index, (value.toInt() == Qt::Checked));
             return true;
         }

@@ -111,11 +111,11 @@ namespace tremotesf
     }
 
     TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, Rpc* rpc, QObject* parent)
-        : BaseTorrentFilesModel({NameColumn,
-                                 SizeColumn,
-                                 ProgressBarColumn,
-                                 ProgressColumn,
-                                 PriorityColumn}, parent)
+        : BaseTorrentFilesModel({Column::Name,
+                                 Column::Size,
+                                 Column::ProgressBar,
+                                 Column::Progress,
+                                 Column::Priority}, parent)
     {
         setRpc(rpc);
         setTorrent(torrent);
