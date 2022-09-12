@@ -91,21 +91,23 @@ namespace tremotesf
         return QVariant();
     }
 
-    QVariant TrackersModel::headerData(int section, Qt::Orientation, int role) const
+    QVariant TrackersModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
-        if (role == Qt::DisplayRole) {
-            switch (section) {
-            case AnnounceColumn:
-                return qApp->translate("tremotesf", "Address");
-            case StatusColumn:
-                return qApp->translate("tremotesf", "Status");
-            case NextUpdateColumn:
-                return qApp->translate("tremotesf", "Next Update");
-            case PeersColumn:
-                return qApp->translate("tremotesf", "Peers");
-            }
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
+            return {};
         }
-        return QVariant();
+        switch (section) {
+        case AnnounceColumn:
+            return qApp->translate("tremotesf", "Address");
+        case StatusColumn:
+            return qApp->translate("tremotesf", "Status");
+        case NextUpdateColumn:
+            return qApp->translate("tremotesf", "Next Update");
+        case PeersColumn:
+            return qApp->translate("tremotesf", "Peers");
+        default:
+            return {};
+        }
     }
 
     int TrackersModel::rowCount(const QModelIndex&) const

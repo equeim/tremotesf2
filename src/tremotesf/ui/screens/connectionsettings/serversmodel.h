@@ -32,10 +32,10 @@ namespace tremotesf
     public:
         explicit ServersModel(QObject* parent = nullptr);
 
-        QVariant data(const QModelIndex& index, int role) const override;
+        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
-        int rowCount(const QModelIndex&) const override;
-        bool setData(const QModelIndex& modelIndex, const QVariant& value, int role) override;
+        int rowCount(const QModelIndex& = {}) const override;
+        bool setData(const QModelIndex& modelIndex, const QVariant& value, int role = Qt::EditRole) override;
 
         const std::vector<Server>& servers() const;
         const QString& currentServerName() const;

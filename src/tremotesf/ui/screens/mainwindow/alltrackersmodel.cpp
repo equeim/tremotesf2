@@ -33,6 +33,9 @@ namespace tremotesf
 {
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         const TrackerItem& item = mTrackers[static_cast<size_t>(index.row())];
         switch (role) {
         case TrackerRole:

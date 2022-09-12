@@ -48,8 +48,8 @@ namespace tremotesf
         explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
 
         inline int columnCount(const QModelIndex& = {}) const override { return ColumnCount; }
-        QVariant data(const QModelIndex& index, int role) const override;
-        QVariant headerData(int section, Qt::Orientation, int role) const override;
+        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;
 
         libtremotesf::Torrent* torrent() const;

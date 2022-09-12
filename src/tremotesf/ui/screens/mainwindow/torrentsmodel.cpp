@@ -42,6 +42,9 @@ namespace tremotesf
 
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         Torrent* torrent = mRpc->torrents()[static_cast<size_t>(index.row())].get();
         switch (role) {
         case Qt::DecorationRole:
@@ -220,66 +223,67 @@ namespace tremotesf
         return QVariant();
     }
 
-    QVariant TorrentsModel::headerData(int section, Qt::Orientation, int role) const
+    QVariant TorrentsModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
-        if (role == Qt::DisplayRole) {
-            switch (section) {
-            case NameColumn:
-                return qApp->translate("tremotesf", "Name");
-            case SizeWhenDoneColumn:
-                return qApp->translate("tremotesf", "Size");
-            case TotalSizeColumn:
-                return qApp->translate("tremotesf", "Total Size");
-            case ProgressBarColumn:
-                return qApp->translate("tremotesf", "Progress Bar");
-            case ProgressColumn:
-                return qApp->translate("tremotesf", "Progress");
-            case PriorityColumn:
-                return qApp->translate("tremotesf", "Priority");
-            case QueuePositionColumn:
-                return qApp->translate("tremotesf", "Queue Position");
-            case StatusColumn:
-                return qApp->translate("tremotesf", "Status");
-            case SeedersColumn:
-                return qApp->translate("tremotesf", "Seeders");
-            case LeechersColumn:
-                return qApp->translate("tremotesf", "Leechers");
-            case DownloadSpeedColumn:
-                return qApp->translate("tremotesf", "Down Speed");
-            case UploadSpeedColumn:
-                return qApp->translate("tremotesf", "Up Speed");
-            case EtaColumn:
-                return qApp->translate("tremotesf", "ETA");
-            case RatioColumn:
-                return qApp->translate("tremotesf", "Ratio");
-            case AddedDateColumn:
-                return qApp->translate("tremotesf", "Added on");
-            case DoneDateColumn:
-                return qApp->translate("tremotesf", "Completed on");
-            case DownloadSpeedLimitColumn:
-                return qApp->translate("tremotesf", "Down Limit");
-            case UploadSpeedLimitColumn:
-                return qApp->translate("tremotesf", "Up Limit");
-            case TotalDownloadedColumn:
-                //: Torrent's downloaded size
-                return qApp->translate("tremotesf", "Downloaded");
-            case TotalUploadedColumn:
-                //: Torrent's uploaded size
-                return qApp->translate("tremotesf", "Uploaded");
-            case LeftUntilDoneColumn:
-                //: Torrents's remaining size
-                return qApp->translate("tremotesf", "Remaining");
-            case DownloadDirectoryColumn:
-                return qApp->translate("tremotesf", "Download Directory");
-            case CompletedSizeColumn:
-                //: Torrent's completed size
-                return qApp->translate("tremotesf", "Completed");
-            case ActivityDateColumn:
-                return qApp->translate("tremotesf", "Last Activity");
-            }
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
+            return {};
         }
-
-        return QVariant();
+        switch (section) {
+        case NameColumn:
+            return qApp->translate("tremotesf", "Name");
+        case SizeWhenDoneColumn:
+            return qApp->translate("tremotesf", "Size");
+        case TotalSizeColumn:
+            return qApp->translate("tremotesf", "Total Size");
+        case ProgressBarColumn:
+            return qApp->translate("tremotesf", "Progress Bar");
+        case ProgressColumn:
+            return qApp->translate("tremotesf", "Progress");
+        case PriorityColumn:
+            return qApp->translate("tremotesf", "Priority");
+        case QueuePositionColumn:
+            return qApp->translate("tremotesf", "Queue Position");
+        case StatusColumn:
+            return qApp->translate("tremotesf", "Status");
+        case SeedersColumn:
+            return qApp->translate("tremotesf", "Seeders");
+        case LeechersColumn:
+            return qApp->translate("tremotesf", "Leechers");
+        case DownloadSpeedColumn:
+            return qApp->translate("tremotesf", "Down Speed");
+        case UploadSpeedColumn:
+            return qApp->translate("tremotesf", "Up Speed");
+        case EtaColumn:
+            return qApp->translate("tremotesf", "ETA");
+        case RatioColumn:
+            return qApp->translate("tremotesf", "Ratio");
+        case AddedDateColumn:
+            return qApp->translate("tremotesf", "Added on");
+        case DoneDateColumn:
+            return qApp->translate("tremotesf", "Completed on");
+        case DownloadSpeedLimitColumn:
+            return qApp->translate("tremotesf", "Down Limit");
+        case UploadSpeedLimitColumn:
+            return qApp->translate("tremotesf", "Up Limit");
+        case TotalDownloadedColumn:
+            //: Torrent's downloaded size
+            return qApp->translate("tremotesf", "Downloaded");
+        case TotalUploadedColumn:
+            //: Torrent's uploaded size
+            return qApp->translate("tremotesf", "Uploaded");
+        case LeftUntilDoneColumn:
+            //: Torrents's remaining size
+            return qApp->translate("tremotesf", "Remaining");
+        case DownloadDirectoryColumn:
+            return qApp->translate("tremotesf", "Download Directory");
+        case CompletedSizeColumn:
+            //: Torrent's completed size
+            return qApp->translate("tremotesf", "Completed");
+        case ActivityDateColumn:
+            return qApp->translate("tremotesf", "Last Activity");
+        default:
+            return {};
+        }
     }
 
     int TorrentsModel::rowCount(const QModelIndex&) const
