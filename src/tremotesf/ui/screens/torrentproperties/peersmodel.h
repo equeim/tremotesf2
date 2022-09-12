@@ -52,11 +52,11 @@ namespace tremotesf
         explicit PeersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~PeersModel() override;
 
-        inline int columnCount(const QModelIndex& = QModelIndex()) const override { return ColumnCount; };
-        QVariant data(const QModelIndex& index, int role) const override;
-        QVariant headerData(int section, Qt::Orientation, int role) const override;
+        inline int columnCount(const QModelIndex& = {}) const override { return ColumnCount; };
+        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex&) const override;
-        bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+        bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);

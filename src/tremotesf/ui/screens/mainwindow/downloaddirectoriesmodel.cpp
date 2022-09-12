@@ -33,6 +33,9 @@ namespace tremotesf
 {
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         const DirectoryItem& item = mDirectories[static_cast<size_t>(index.row())];
         switch (role) {
         case DirectoryRole:

@@ -32,6 +32,9 @@ namespace tremotesf
 {
     QVariant StatusFiltersModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         const Item& item = mItems[static_cast<size_t>(index.row())];
         switch (role) {
         case FilterRole:

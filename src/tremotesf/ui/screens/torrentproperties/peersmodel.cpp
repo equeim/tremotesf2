@@ -41,6 +41,9 @@ namespace tremotesf
 
     QVariant PeersModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::DisplayRole:
@@ -82,27 +85,29 @@ namespace tremotesf
         return QVariant();
     }
 
-    QVariant PeersModel::headerData(int section, Qt::Orientation, int role) const
+    QVariant PeersModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
-        if (role == Qt::DisplayRole) {
-            switch (section) {
-            case AddressColumn:
-                return qApp->translate("tremotesf", "Address");
-            case DownloadSpeedColumn:
-                return qApp->translate("tremotesf", "Down Speed");
-            case UploadSpeedColumn:
-                return qApp->translate("tremotesf", "Up Speed");
-            case ProgressBarColumn:
-                return qApp->translate("tremotesf", "Progress Bar");
-            case ProgressColumn:
-                return qApp->translate("tremotesf", "Progress");
-            case FlagsColumn:
-                return qApp->translate("tremotesf", "Flags");
-            case ClientColumn:
-                return qApp->translate("tremotesf", "Client");
-            }
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
+            return {};
         }
-        return QVariant();
+        switch (section) {
+        case AddressColumn:
+            return qApp->translate("tremotesf", "Address");
+        case DownloadSpeedColumn:
+            return qApp->translate("tremotesf", "Down Speed");
+        case UploadSpeedColumn:
+            return qApp->translate("tremotesf", "Up Speed");
+        case ProgressBarColumn:
+            return qApp->translate("tremotesf", "Progress Bar");
+        case ProgressColumn:
+            return qApp->translate("tremotesf", "Progress");
+        case FlagsColumn:
+            return qApp->translate("tremotesf", "Flags");
+        case ClientColumn:
+            return qApp->translate("tremotesf", "Client");
+        default:
+            return {};
+        }
     }
 
     int PeersModel::rowCount(const QModelIndex&) const

@@ -39,6 +39,9 @@ namespace tremotesf
 
     QVariant BaseTorrentFilesModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         const TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
         const Column column = mColumns[static_cast<size_t>(index.column())];
         switch (role) {
@@ -99,35 +102,44 @@ namespace tremotesf
 
     Qt::ItemFlags BaseTorrentFilesModel::flags(const QModelIndex& index) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         if (index.column() == NameColumn) {
             return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
         }
         return QAbstractItemModel::flags(index);
     }
 
-    QVariant BaseTorrentFilesModel::headerData(int section, Qt::Orientation, int role) const
+    QVariant BaseTorrentFilesModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
-        if (role == Qt::DisplayRole) {
-            switch (mColumns[static_cast<size_t>(section)]) {
-            case NameColumn:
-                return qApp->translate("tremotesf", "Name");
-            case SizeColumn:
-                return qApp->translate("tremotesf", "Size");
-            case ProgressBarColumn:
-                return qApp->translate("tremotesf", "Progress Bar");
-            case ProgressColumn:
-                return qApp->translate("tremotesf", "Progress");
-            case PriorityColumn:
-                return qApp->translate("tremotesf", "Priority");
-            default:
-                break;
-            }
+        if (section < 0 ||
+                static_cast<size_t>(section) >= mColumns.size() ||
+                orientation != Qt::Horizontal ||
+                role != Qt::DisplayRole) {
+            return {};
         }
-        return QVariant();
+        switch (mColumns[static_cast<size_t>(section)]) {
+        case NameColumn:
+            return qApp->translate("tremotesf", "Name");
+        case SizeColumn:
+            return qApp->translate("tremotesf", "Size");
+        case ProgressBarColumn:
+            return qApp->translate("tremotesf", "Progress Bar");
+        case ProgressColumn:
+            return qApp->translate("tremotesf", "Progress");
+        case PriorityColumn:
+            return qApp->translate("tremotesf", "Priority");
+        default:
+            return {};
+        }
     }
 
     bool BaseTorrentFilesModel::setData(const QModelIndex& index, const QVariant& value, int role)
     {
+        if (!index.isValid()) {
+            return false;
+        }
         if (index.column() == NameColumn && role == Qt::CheckStateRole) {
             setFileWanted(index, (value.toInt() == Qt::Checked));
             return true;
@@ -137,7 +149,7 @@ namespace tremotesf
 
     QModelIndex BaseTorrentFilesModel::index(int row, int column, const QModelIndex& parent) const
     {
-        const TorrentFilesModelDirectory* parentDirectory;
+        const TorrentFilesModelDirectory* parentDirectory{};
         if (parent.isValid()) {
             parentDirectory = static_cast<TorrentFilesModelDirectory*>(parent.internalPointer());
         } else if (mRootDirectory) {
@@ -154,14 +166,12 @@ namespace tremotesf
     QModelIndex BaseTorrentFilesModel::parent(const QModelIndex& child) const
     {
         if (!child.isValid()) {
-            return QModelIndex();
+            return {};
         }
-
         TorrentFilesModelDirectory* parentDirectory = static_cast<TorrentFilesModelEntry*>(child.internalPointer())->parentDirectory();
         if (parentDirectory == mRootDirectory.get()) {
-            return QModelIndex();
+            return {};
         }
-
         return createIndex(parentDirectory->row(), 0, parentDirectory);
     }
 
@@ -182,28 +192,36 @@ namespace tremotesf
 
     void BaseTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
     {
-        static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
-        updateDirectoryChildren();
+        if (index.isValid()) {
+            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
+            updateDirectoryChildren();
+        }
     }
 
     void BaseTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted)
     {
         for (const QModelIndex& index : indexes) {
-            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
+            if (index.isValid()) {
+                static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
+            }
         }
         updateDirectoryChildren();
     }
 
     void BaseTorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority)
     {
-        static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
-        updateDirectoryChildren();
+        if (index.isValid()) {
+            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
+            updateDirectoryChildren();
+        }
     }
 
     void BaseTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority)
     {
         for (const QModelIndex& index : indexes) {
-            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
+            if (index.isValid()) {
+                static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
+            }
         }
         updateDirectoryChildren();
     }

@@ -29,6 +29,9 @@ namespace tremotesf
 
     QVariant ServersModel::data(const QModelIndex& index, int role) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         const Server& server = mServers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::CheckStateRole:
@@ -44,6 +47,9 @@ namespace tremotesf
 
     Qt::ItemFlags ServersModel::flags(const QModelIndex& index) const
     {
+        if (!index.isValid()) {
+            return {};
+        }
         return QAbstractListModel::flags(index) | Qt::ItemIsUserCheckable;
     }
 
@@ -54,13 +60,16 @@ namespace tremotesf
 
     bool ServersModel::setData(const QModelIndex& modelIndex, const QVariant& value, int role)
     {
-        if (role == Qt::CheckStateRole && value.toInt() == Qt::Checked) {
-            const QString current(mServers[static_cast<size_t>(modelIndex.row())].name);
-            if (current != mCurrentServer) {
-                mCurrentServer = current;
-                emit dataChanged(index(0), index(static_cast<int>(mServers.size()) - 1));
-                return true;
-            }
+        if (!modelIndex.isValid()
+                || role != Qt::CheckStateRole
+                || value.value<Qt::CheckState>() != Qt::Checked) {
+            return false;
+        }
+        const QString current(mServers[static_cast<size_t>(modelIndex.row())].name);
+        if (current != mCurrentServer) {
+            mCurrentServer = current;
+            emit dataChanged(index(0), index(static_cast<int>(mServers.size()) - 1));
+            return true;
         }
         return false;
     }
