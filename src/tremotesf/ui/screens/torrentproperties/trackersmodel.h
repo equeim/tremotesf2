@@ -35,19 +35,20 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-        enum Column
+        enum class Column
         {
-            AnnounceColumn,
-            StatusColumn,
-            PeersColumn,
-            NextUpdateColumn,
-            ColumnCount
+            Announce,
+            Status,
+            Peers,
+            NextUpdate
         };
-        static const int SortRole = Qt::UserRole;
+        Q_ENUM(Column)
+
+        static constexpr auto SortRole = Qt::UserRole;
 
         explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
 
-        inline int columnCount(const QModelIndex& = {}) const override { return ColumnCount; }
+        int columnCount(const QModelIndex& = {}) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;

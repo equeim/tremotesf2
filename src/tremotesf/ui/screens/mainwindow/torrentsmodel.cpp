@@ -21,6 +21,7 @@
 #include <limits>
 
 #include <QCoreApplication>
+#include <QMetaEnum>
 #include <QPixmap>
 
 #include "libtremotesf/torrent.h"
@@ -40,6 +41,11 @@ namespace tremotesf
         setRpc(rpc);
     }
 
+    int TorrentsModel::columnCount(const QModelIndex&) const
+    {
+        return QMetaEnum::fromType<Column>().keyCount();
+    }
+
     QVariant TorrentsModel::data(const QModelIndex& index, int role) const
     {
         if (!index.isValid()) {
@@ -48,7 +54,7 @@ namespace tremotesf
         Torrent* torrent = mRpc->torrents()[static_cast<size_t>(index.row())].get();
         switch (role) {
         case Qt::DecorationRole:
-            if (index.column() == NameColumn) {
+            if (static_cast<Column>(index.column()) == Column::Name) {
                 using namespace desktoputils;
                 switch (torrent->status()) {
                 case TorrentData::Paused:
@@ -73,19 +79,19 @@ namespace tremotesf
             }
             break;
         case Qt::DisplayRole:
-            switch (index.column()) {
-            case NameColumn:
+            switch (static_cast<Column>(index.column())) {
+            case Column::Name:
                 return torrent->name();
-            case SizeWhenDoneColumn:
+            case Column::SizeWhenDone:
                 return Utils::formatByteSize(torrent->sizeWhenDone());
-            case TotalSizeColumn:
+            case Column::TotalSize:
                 return Utils::formatByteSize(torrent->totalSize());
-            case ProgressColumn:
+            case Column::Progress:
                 if (torrent->status() == TorrentData::Checking) {
                     return Utils::formatProgress(torrent->recheckProgress());
                 }
                 return Utils::formatProgress(torrent->percentDone());
-            case StatusColumn:
+            case Column::Status:
                 switch (torrent->status()) {
                 case TorrentData::Paused:
                     return qApp->translate("tremotesf", "Paused", "Torrent status");
@@ -106,78 +112,82 @@ namespace tremotesf
                     return torrent->errorString();
                 }
                 break;
-            case QueuePositionColumn:
+            case Column::QueuePosition:
                 return torrent->queuePosition();
-            case SeedersColumn:
+            case Column::Seeders:
                 return torrent->seeders();
-            case LeechersColumn:
+            case Column::Leechers:
                 return torrent->leechers();
-            case DownloadSpeedColumn:
+            case Column::DownloadSpeed:
                 return Utils::formatByteSpeed(torrent->downloadSpeed());
-            case UploadSpeedColumn:
+            case Column::UploadSpeed:
                 return Utils::formatByteSpeed(torrent->uploadSpeed());
-            case EtaColumn:
+            case Column::Eta:
                 return Utils::formatEta(torrent->eta());
-            case RatioColumn:
+            case Column::Ratio:
                 return Utils::formatRatio(torrent->ratio());
-            case AddedDateColumn:
+            case Column::AddedDate:
                 return torrent->addedDate();
-            case DoneDateColumn:
+            case Column::DoneDate:
                 return torrent->doneDate();
-            case DownloadSpeedLimitColumn:
+            case Column::DownloadSpeedLimit:
                 if (torrent->isDownloadSpeedLimited()) {
                     return Utils::formatSpeedLimit(torrent->downloadSpeedLimit());
                 }
                 break;
-            case UploadSpeedLimitColumn:
+            case Column::UploadSpeedLimit:
                 if (torrent->isUploadSpeedLimited()) {
                     return Utils::formatSpeedLimit(torrent->uploadSpeedLimit());
                 }
                 break;
-            case TotalDownloadedColumn:
+            case Column::TotalDownloaded:
                 return Utils::formatByteSize(torrent->totalDownloaded());
-            case TotalUploadedColumn:
+            case Column::TotalUploaded:
                 return Utils::formatByteSize(torrent->totalUploaded());
-            case LeftUntilDoneColumn:
+            case Column::LeftUntilDone:
                 return Utils::formatByteSize(torrent->leftUntilDone());
-            case DownloadDirectoryColumn:
+            case Column::DownloadDirectory:
                 return torrent->downloadDirectory();
-            case CompletedSizeColumn:
+            case Column::CompletedSize:
                 return Utils::formatByteSize(torrent->completedSize());
-            case ActivityDateColumn:
+            case Column::ActivityDate:
                 return torrent->activityDate();
+            default:
+                break;
             }
             break;
         case Qt::ToolTipRole:
-            switch (index.column()) {
-            case NameColumn:
-            case StatusColumn:
-            case AddedDateColumn:
-            case DoneDateColumn:
-            case DownloadDirectoryColumn:
-            case ActivityDateColumn:
+            switch (static_cast<Column>(index.column())) {
+            case Column::Name:
+            case Column::Status:
+            case Column::AddedDate:
+            case Column::DoneDate:
+            case Column::DownloadDirectory:
+            case Column::ActivityDate:
                 return data(index, Qt::DisplayRole);
+            default:
+                break;
             }
             break;
-        case SortRole:
-            switch (index.column()) {
-            case SizeWhenDoneColumn:
+        case static_cast<int>(Role::Sort):
+            switch (static_cast<Column>(index.column())) {
+            case Column::SizeWhenDone:
                 return torrent->sizeWhenDone();
-            case TotalSizeColumn:
+            case Column::TotalSize:
                 return torrent->totalSize();
-            case ProgressBarColumn:
-            case ProgressColumn:
+            case Column::ProgressBar:
+            case Column::Progress:
                 if (torrent->status() == TorrentData::Checking) {
                     return torrent->recheckProgress();
                 }
                 return torrent->percentDone();
-            case StatusColumn:
+            case Column::Status:
                 return torrent->status();
-            case DownloadSpeedColumn:
+            case Column::DownloadSpeed:
                 return torrent->downloadSpeed();
-            case UploadSpeedColumn:
+            case Column::UploadSpeed:
                 return torrent->uploadSpeed();
-            case EtaColumn:
+            case Column::Eta:
             {
                 const auto eta = torrent->eta();
                 if (eta < 0) {
@@ -185,42 +195,42 @@ namespace tremotesf
                 }
                 return eta;
             }
-            case RatioColumn:
+            case Column::Ratio:
                 return torrent->ratio();
-            case AddedDateColumn:
+            case Column::AddedDate:
                 return torrent->addedDate();
-            case DoneDateColumn:
+            case Column::DoneDate:
                 return torrent->doneDate();
-            case DownloadSpeedLimitColumn:
+            case Column::DownloadSpeedLimit:
                 if (torrent->isDownloadSpeedLimited()) {
                     return torrent->downloadSpeedLimit();
                 }
                 return -1;
-            case UploadSpeedLimitColumn:
+            case Column::UploadSpeedLimit:
                 if (torrent->isUploadSpeedLimited()) {
                     return torrent->uploadSpeedLimit();
                 }
                 return -1;
-            case TotalDownloadedColumn:
+            case Column::TotalDownloaded:
                 return torrent->totalDownloaded();
-            case TotalUploadedColumn:
+            case Column::TotalUploaded:
                 return torrent->totalUploaded();
-            case LeftUntilDoneColumn:
+            case Column::LeftUntilDone:
                 return torrent->leftUntilDone();
-            case CompletedSizeColumn:
+            case Column::CompletedSize:
                 return torrent->completedSize();
-            case ActivityDateColumn:
+            case Column::ActivityDate:
                 return torrent->activityDate();
             default:
                 return data(index, Qt::DisplayRole);
             }
-        case TextElideModeRole:
-            if (index.column() == DownloadDirectoryColumn) {
+        case static_cast<int>(Role::TextElideMode):
+            if (static_cast<Column>(index.column()) == Column::DownloadDirectory) {
                 return Qt::ElideMiddle;
             }
             return Qt::ElideRight;
         }
-        return QVariant();
+        return {};
     }
 
     QVariant TorrentsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -228,58 +238,58 @@ namespace tremotesf
         if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
             return {};
         }
-        switch (section) {
-        case NameColumn:
+        switch (static_cast<Column>(section)) {
+        case Column::Name:
             return qApp->translate("tremotesf", "Name");
-        case SizeWhenDoneColumn:
+        case Column::SizeWhenDone:
             return qApp->translate("tremotesf", "Size");
-        case TotalSizeColumn:
+        case Column::TotalSize:
             return qApp->translate("tremotesf", "Total Size");
-        case ProgressBarColumn:
+        case Column::ProgressBar:
             return qApp->translate("tremotesf", "Progress Bar");
-        case ProgressColumn:
+        case Column::Progress:
             return qApp->translate("tremotesf", "Progress");
-        case PriorityColumn:
+        case Column::Priority:
             return qApp->translate("tremotesf", "Priority");
-        case QueuePositionColumn:
+        case Column::QueuePosition:
             return qApp->translate("tremotesf", "Queue Position");
-        case StatusColumn:
+        case Column::Status:
             return qApp->translate("tremotesf", "Status");
-        case SeedersColumn:
+        case Column::Seeders:
             return qApp->translate("tremotesf", "Seeders");
-        case LeechersColumn:
+        case Column::Leechers:
             return qApp->translate("tremotesf", "Leechers");
-        case DownloadSpeedColumn:
+        case Column::DownloadSpeed:
             return qApp->translate("tremotesf", "Down Speed");
-        case UploadSpeedColumn:
+        case Column::UploadSpeed:
             return qApp->translate("tremotesf", "Up Speed");
-        case EtaColumn:
+        case Column::Eta:
             return qApp->translate("tremotesf", "ETA");
-        case RatioColumn:
+        case Column::Ratio:
             return qApp->translate("tremotesf", "Ratio");
-        case AddedDateColumn:
+        case Column::AddedDate:
             return qApp->translate("tremotesf", "Added on");
-        case DoneDateColumn:
+        case Column::DoneDate:
             return qApp->translate("tremotesf", "Completed on");
-        case DownloadSpeedLimitColumn:
+        case Column::DownloadSpeedLimit:
             return qApp->translate("tremotesf", "Down Limit");
-        case UploadSpeedLimitColumn:
+        case Column::UploadSpeedLimit:
             return qApp->translate("tremotesf", "Up Limit");
-        case TotalDownloadedColumn:
+        case Column::TotalDownloaded:
             //: Torrent's downloaded size
             return qApp->translate("tremotesf", "Downloaded");
-        case TotalUploadedColumn:
+        case Column::TotalUploaded:
             //: Torrent's uploaded size
             return qApp->translate("tremotesf", "Uploaded");
-        case LeftUntilDoneColumn:
+        case Column::LeftUntilDone:
             //: Torrents's remaining size
             return qApp->translate("tremotesf", "Remaining");
-        case DownloadDirectoryColumn:
+        case Column::DownloadDirectory:
             return qApp->translate("tremotesf", "Download Directory");
-        case CompletedSizeColumn:
+        case Column::CompletedSize:
             //: Torrent's completed size
             return qApp->translate("tremotesf", "Completed");
-        case ActivityDateColumn:
+        case Column::ActivityDate:
             return qApp->translate("tremotesf", "Last Activity");
         default:
             return {};

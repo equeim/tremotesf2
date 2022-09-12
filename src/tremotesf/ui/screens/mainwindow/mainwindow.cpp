@@ -174,7 +174,7 @@ namespace tremotesf
         : QMainWindow(parent),
           mRpc(new Rpc(this)),
           mTorrentsModel(new TorrentsModel(mRpc, this)),
-          mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, TorrentsModel::SortRole, this)),
+          mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, static_cast<int>(TorrentsModel::Role::Sort), this)),
           mSplitter(new QSplitter(this)),
           mSideBar(new MainWindowSideBar(mRpc, mTorrentsProxyModel)),
           mTorrentsView(new TorrentsView(mTorrentsProxyModel, this)),

@@ -37,44 +37,44 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-        enum Column
+        enum class Column
         {
-            NameColumn,
-            SizeWhenDoneColumn,
-            TotalSizeColumn,
-            ProgressBarColumn,
-            ProgressColumn,
-            StatusColumn,
-            PriorityColumn,
-            QueuePositionColumn,
-            SeedersColumn,
-            LeechersColumn,
-            DownloadSpeedColumn,
-            UploadSpeedColumn,
-            EtaColumn,
-            RatioColumn,
-            AddedDateColumn,
-            DoneDateColumn,
-            DownloadSpeedLimitColumn,
-            UploadSpeedLimitColumn,
-            TotalDownloadedColumn,
-            TotalUploadedColumn,
-            LeftUntilDoneColumn,
-            DownloadDirectoryColumn,
-            CompletedSizeColumn,
-            ActivityDateColumn,
-            ColumnCount
+            Name,
+            SizeWhenDone,
+            TotalSize,
+            ProgressBar,
+            Progress,
+            Status,
+            Priority,
+            QueuePosition,
+            Seeders,
+            Leechers,
+            DownloadSpeed,
+            UploadSpeed,
+            Eta,
+            Ratio,
+            AddedDate,
+            DoneDate,
+            DownloadSpeedLimit,
+            UploadSpeedLimit,
+            TotalDownloaded,
+            TotalUploaded,
+            LeftUntilDone,
+            DownloadDirectory,
+            CompletedSize,
+            ActivityDate
         };
+        Q_ENUM(Column)
 
-        enum Role
+        enum class Role
         {
-            SortRole = Qt::UserRole,
-            TextElideModeRole
+            Sort = Qt::UserRole,
+            TextElideMode
         };
 
         explicit TorrentsModel(Rpc* rpc = nullptr, QObject* parent = nullptr);
 
-        inline int columnCount(const QModelIndex& = {}) const override { return ColumnCount; };
+        int columnCount(const QModelIndex& = {}) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;

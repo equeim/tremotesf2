@@ -19,6 +19,7 @@
 #include "trackersmodel.h"
 
 #include <QCoreApplication>
+#include <QMetaEnum>
 
 #include "tremotesf/ui/itemmodels/modelutils.h"
 #include "tremotesf/utils.h"
@@ -65,25 +66,30 @@ namespace tremotesf
         setTorrent(torrent);
     }
 
+    int TrackersModel::columnCount(const QModelIndex&) const
+    {
+        return QMetaEnum::fromType<Column>().keyCount();
+    }
+
     QVariant TrackersModel::data(const QModelIndex& index, int role) const
     {
         const Tracker& tracker = mTrackers[static_cast<size_t>(index.row())];
         if (role == Qt::DisplayRole) {
-            switch (index.column()) {
-            case AnnounceColumn:
+            switch (static_cast<Column>(index.column())) {
+            case Column::Announce:
                 return tracker.announce();
-            case StatusColumn:
+            case Column::Status:
                 return trackerStatusString(tracker);
-            case PeersColumn:
+            case Column::Peers:
                 return tracker.peers();
-            case NextUpdateColumn:
+            case Column::NextUpdate:
                 if (tracker.nextUpdateEta() >= 0) {
                     return Utils::formatEta(tracker.nextUpdateEta());
                 }
                 break;
             }
         } else if (role == SortRole) {
-            if (index.column() == NextUpdateColumn) {
+            if (static_cast<Column>(index.column()) == Column::NextUpdate) {
                 return tracker.nextUpdateTime();
             }
             return data(index, Qt::DisplayRole);
@@ -96,14 +102,14 @@ namespace tremotesf
         if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
             return {};
         }
-        switch (section) {
-        case AnnounceColumn:
+        switch (static_cast<Column>(section)) {
+        case Column::Announce:
             return qApp->translate("tremotesf", "Address");
-        case StatusColumn:
+        case Column::Status:
             return qApp->translate("tremotesf", "Status");
-        case NextUpdateColumn:
+        case Column::NextUpdate:
             return qApp->translate("tremotesf", "Next Update");
-        case PeersColumn:
+        case Column::Peers:
             return qApp->translate("tremotesf", "Peers");
         default:
             return {};

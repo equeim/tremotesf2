@@ -30,10 +30,7 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-        enum Role
-        {
-            FilterRole = Qt::UserRole
-        };
+        static constexpr auto FilterRole = Qt::UserRole;
 
         inline explicit StatusFiltersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 

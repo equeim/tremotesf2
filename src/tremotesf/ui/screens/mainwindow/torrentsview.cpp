@@ -31,26 +31,37 @@ namespace tremotesf
         : BaseTreeView(parent)
     {
         setContextMenuPolicy(Qt::CustomContextMenu);
-        setItemDelegate(new CommonDelegate(TorrentsModel::ProgressBarColumn, TorrentsModel::SortRole, TorrentsModel::TextElideModeRole, this));
+        setItemDelegate(
+            new CommonDelegate(
+                static_cast<int>(TorrentsModel::Column::ProgressBar),
+                static_cast<int>(TorrentsModel::Role::Sort),
+                static_cast<int>(TorrentsModel::Role::TextElideMode),
+                this
+            )
+        );
         setModel(model);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setRootIsDecorated(false);
 
         if (!header()->restoreState(Settings::instance()->torrentsViewHeaderState())) {
-            hideColumn(TorrentsModel::TotalSizeColumn);
-            hideColumn(TorrentsModel::PriorityColumn);
-            hideColumn(TorrentsModel::QueuePositionColumn);
-            hideColumn(TorrentsModel::AddedDateColumn);
-            hideColumn(TorrentsModel::DownloadSpeedLimitColumn);
-            hideColumn(TorrentsModel::UploadSpeedLimitColumn);
-            hideColumn(TorrentsModel::TotalDownloadedColumn);
-            hideColumn(TorrentsModel::TotalUploadedColumn);
-            hideColumn(TorrentsModel::LeftUntilDoneColumn);
-            hideColumn(TorrentsModel::DownloadDirectoryColumn);
-            hideColumn(TorrentsModel::CompletedSizeColumn);
-            hideColumn(TorrentsModel::ActivityDateColumn);
-
-            sortByColumn(TorrentsModel::NameColumn, Qt::AscendingOrder);
+            const auto hiddenColumns = {
+                TorrentsModel::Column::TotalSize,
+                TorrentsModel::Column::Priority,
+                TorrentsModel::Column::QueuePosition,
+                TorrentsModel::Column::AddedDate,
+                TorrentsModel::Column::DownloadSpeedLimit,
+                TorrentsModel::Column::UploadSpeedLimit,
+                TorrentsModel::Column::TotalDownloaded,
+                TorrentsModel::Column::TotalUploaded,
+                TorrentsModel::Column::LeftUntilDone,
+                TorrentsModel::Column::DownloadDirectory,
+                TorrentsModel::Column::CompletedSize,
+                TorrentsModel::Column::ActivityDate
+            };
+            for (auto column : hiddenColumns) {
+                hideColumn(static_cast<int>(column));
+            }
+            sortByColumn(static_cast<int>(TorrentsModel::Column::Name), Qt::AscendingOrder);
         }
     }
 
