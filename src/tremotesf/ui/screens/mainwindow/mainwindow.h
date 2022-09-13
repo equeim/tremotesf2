@@ -30,14 +30,11 @@ class QSplitter;
 class QSystemTrayIcon;
 class QToolBar;
 
-#ifdef QT_DBUS_LIB
-class OrgFreedesktopNotificationsInterface;
-#endif
-
 namespace tremotesf
 {
     class IpcServer;
     class MainWindowSideBar;
+    class NotificationsController;
     class Rpc;
     class TorrentsModel;
     class TorrentPropertiesDialog;
@@ -79,12 +76,6 @@ namespace tremotesf
 
         void runAfterDelay(const std::function<void()>& function);
 
-        void showFinishedNotification(const QStringList& names);
-        void showAddedNotification(const QStringList& names);
-        void showTorrentsNotification(const QString& summary, const QStringList& torrents);
-        void showNotification(const QString& summary, const QString& body);
-        void setupNotificationsInterface();
-
         void openTorrentsFiles();
         void showTorrentsInFileManager();
 
@@ -124,11 +115,8 @@ namespace tremotesf
         QToolBar* mToolBar = nullptr;
         QAction* mToolBarAction = nullptr;
 
-        QSystemTrayIcon* mTrayIcon;
-
-#ifdef QT_DBUS_LIB
-        OrgFreedesktopNotificationsInterface* mNotificationsInterface = nullptr;
-#endif
+        QSystemTrayIcon* mTrayIcon{};
+        NotificationsController* mNotificationsController{};
     };
 }
 
