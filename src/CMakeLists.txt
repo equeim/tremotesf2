@@ -34,6 +34,8 @@ add_executable(
     tremotesf/startup/signalhandler.cpp
     tremotesf/startup/signalhandler.h
     tremotesf/ui/darkthemeapplier.h
+    tremotesf/ui/notificationscontroller.cpp
+    tremotesf/ui/notificationscontroller.h
     tremotesf/ui/systemcolorsprovider.h
     tremotesf/ui/itemmodels/baseproxymodel.cpp
     tremotesf/ui/itemmodels/baseproxymodel.h
@@ -167,6 +169,7 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
         tremotesf/ipc/ipcserver_dbus.cpp
         tremotesf/ipc/ipcserver_dbus.h
         tremotesf/ui/darkthemeapplier_noop.cpp
+        tremotesf/ui/notificationscontroller_freedesktop.cpp
         tremotesf/ui/systemcolorsprovider_noop.cpp
         ${dbus_generated}
     )
@@ -188,6 +191,7 @@ elseif (WIN32)
         tremotesf/startup/windowsmessagehandler.cpp
         tremotesf/startup/windowsmessagehandler.h
         tremotesf/ui/darkthemeapplier_windows.cpp
+        tremotesf/ui/notificationscontroller_fallback.cpp
         tremotesf/ui/recoloringsvgiconengine.cpp
         tremotesf/ui/recoloringsvgiconengine.h
         tremotesf/ui/systemcolorsprovider_windows.cpp
@@ -221,6 +225,7 @@ else()
         tremotesf/ipc/ipcserver_socket.cpp
         tremotesf/ipc/ipcserver_socket.h
         tremotesf/ui/darkthemeapplier_noop.cpp
+        tremotesf/ui/notificationscontroller_fallback.cpp
         tremotesf/ui/systemcolorsprovider_noop.cpp
     )
 endif()

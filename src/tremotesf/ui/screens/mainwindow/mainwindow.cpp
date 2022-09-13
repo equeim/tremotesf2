@@ -47,17 +47,9 @@
 #include <QToolBar>
 #include <QWindow>
 
-#include "libtremotesf/log.h"
-
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-#include <QDBusConnection>
-#include <QDBusPendingCall>
-#include <QDBusPendingCallWatcher>
-#include <QDBusPendingReply>
 #include <QX11Info>
 #include <KStartupInfo>
-#include "tremotesf_dbus_generated/org.freedesktop.Notifications.h"
-SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 #endif
 
 #include "libtremotesf/serverstats.h"
@@ -72,6 +64,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 #include "tremotesf/settings.h"
 #include "tremotesf/utils.h"
 
+#include "tremotesf/ui/notificationscontroller.h"
 #include "tremotesf/ui/screens/aboutdialog.h"
 #include "tremotesf/ui/screens/addtorrent/addtorrentdialog.h"
 #include "tremotesf/ui/screens/connectionsettings/servereditdialog.h"
@@ -178,7 +171,8 @@ namespace tremotesf
           mSplitter(new QSplitter(this)),
           mSideBar(new MainWindowSideBar(mRpc, mTorrentsProxyModel)),
           mTorrentsView(new TorrentsView(mTorrentsProxyModel, this)),
-          mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QLatin1String("tremotesf-tray-icon"), windowIcon()), this))
+          mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QLatin1String("tremotesf-tray-icon"), windowIcon()), this)),
+          mNotificationsController(NotificationsController::createInstance(mTrayIcon, this))
     {
         setWindowTitle(QLatin1String(TREMOTESF_APP_NAME));
         setMinimumSize(minimumSizeHint().expandedTo(QSize(384, 256)));
@@ -290,17 +284,17 @@ namespace tremotesf
                 }
             } else {
                 if ((mRpc->error() != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
-                    showNotification(qApp->translate("tremotesf", "Disconnected"), mRpc->statusString());
+                    mNotificationsController->showNotification(qApp->translate("tremotesf", "Disconnected"), mRpc->statusString());
                 }
             }
         });
 
         QObject::connect(mRpc, &Rpc::addedNotificationRequested, this, [=](const auto&, const auto& names) {
-            showAddedNotification(names);
+            mNotificationsController->showAddedTorrentsNotification(names);
         });
 
         QObject::connect(mRpc, &Rpc::finishedNotificationRequested, this, [=](const auto&, const auto& names) {
-            showFinishedNotification(names);
+            mNotificationsController->showFinishedTorrentsNotification(names);
         });
 
         QObject::connect(mRpc, &Rpc::torrentAddDuplicate, this, [=] {
@@ -315,6 +309,10 @@ namespace tremotesf
                                  qApp->translate("tremotesf", "Error adding torrent"),
                                  qApp->translate("tremotesf", "Error adding torrent"),
                                  QMessageBox::Close);
+        });
+
+        QObject::connect(mNotificationsController, &NotificationsController::notificationClicked, this, [this] {
+            showWindow();
         });
 
         if (Servers::instance()->hasServers()) {
@@ -1036,78 +1034,6 @@ namespace tremotesf
         QObject::connect(timer, &QTimer::timeout, this, function);
         QObject::connect(timer, &QTimer::timeout, timer, &QTimer::deleteLater);
         timer->start();
-    }
-
-    void MainWindow::showFinishedNotification(const QStringList& names)
-    {
-        showTorrentsNotification(names.size() == 1 ? qApp->translate("tremotesf", "Torrent finished")
-                                                   : qApp->translate("tremotesf", "%Ln torrents finished", nullptr, names.size()),
-                                 names);
-    }
-
-    void MainWindow::showAddedNotification(const QStringList& names)
-    {
-        showTorrentsNotification(names.size() == 1 ? qApp->translate("tremotesf", "Torrent added")
-                                                   : qApp->translate("tremotesf", "%Ln torrents added", nullptr, names.size()),
-                                 names);
-    }
-
-    void MainWindow::showTorrentsNotification(const QString& summary, const QStringList& torrents)
-    {
-        if (torrents.size() == 1) {
-            showNotification(summary, torrents.first());
-        } else {
-            QStringList join(torrents);
-            for (QString& torrent : join) {
-                torrent.prepend(u8"\u2022 ");
-            }
-            showNotification(summary, join.join('\n'));
-        }
-    }
-
-    void MainWindow::showNotification(const QString& summary, const QString& body)
-    {
-#ifdef TREMOTESF_UNIX_FREEDESKTOP
-        setupNotificationsInterface();
-        const QDBusPendingCall call(mNotificationsInterface->Notify(QLatin1String(TREMOTESF_APP_NAME),
-                                                                    0,
-                                                                    QLatin1String(TREMOTESF_APP_ID),
-                                                                    summary,
-                                                                    body,
-                                                                    {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
-                                                                    {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)},
-                                                                     {QLatin1String("x-kde-origin-name"), Servers::instance()->currentServerName()}},
-                                                                    -1));
-        auto watcher = new QDBusPendingCallWatcher(call, this);
-        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [=] {
-            QDBusPendingReply<quint32> reply(*watcher);
-            if (reply.isError()) {
-                logWarning("Failed to show notification: {}", reply.error());
-                if (mTrayIcon->isVisible()) {
-                    mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
-                }
-            }
-            watcher->deleteLater();
-        });
-#else
-        if (mTrayIcon->isVisible()) {
-            mTrayIcon->showMessage(summary, body, QSystemTrayIcon::Information, 0);
-        }
-#endif
-    }
-
-    void MainWindow::setupNotificationsInterface()
-    {
-#ifdef TREMOTESF_UNIX_FREEDESKTOP
-        if (!mNotificationsInterface) {
-            mNotificationsInterface = new OrgFreedesktopNotificationsInterface(QLatin1String("org.freedesktop.Notifications"),
-                                                                               QLatin1String("/org/freedesktop/Notifications"),
-                                                                               QDBusConnection::sessionBus(),
-                                                                               this);
-            mNotificationsInterface->setTimeout(desktoputils::defaultDbusTimeout);
-            QObject::connect(mNotificationsInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, [=] { showWindow(); });
-        }
-#endif
     }
 
     void MainWindow::openTorrentsFiles()
