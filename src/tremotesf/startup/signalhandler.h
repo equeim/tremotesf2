@@ -19,22 +19,12 @@
 #ifndef TREMOTESF_SIGNALHANDLER_H
 #define TREMOTESF_SIGNALHANDLER_H
 
-#include <atomic>
-
 namespace tremotesf
 {
-    class SignalHandler
-    {
-    public:
-        static std::atomic_bool exitRequested;
-
-        static void setupHandlers();
-        static void setupNotifier();
-
-        SignalHandler() = delete;
-        SignalHandler(const SignalHandler&) = delete;
-        SignalHandler(SignalHandler&&) = delete;
-    };
+    namespace signalhandler {
+        void setupSignalHandlers();
+        bool isExitRequested();
+    }
 }
 
 #endif // TREMOTESF_SIGNALHANDLER_H
