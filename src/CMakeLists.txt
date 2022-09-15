@@ -5,6 +5,7 @@ set(TREMOTESF_COMMON_TARGET_PROPERTIES AUTOMOC ON AUTORCC ON)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Concurrent Network Widgets)
 find_package(KF5WidgetsAddons REQUIRED)
+find_package(Threads REQUIRED)
 
 list(APPEND QRC_FILES tremotesf/resources.qrc)
 
@@ -31,7 +32,6 @@ add_executable(
     tremotesf/startup/commandlineparser.cpp
     tremotesf/startup/commandlineparser.h
     tremotesf/startup/main.cpp
-    tremotesf/startup/signalhandler.cpp
     tremotesf/startup/signalhandler.h
     tremotesf/ui/darkthemeapplier.h
     tremotesf/ui/notificationscontroller.cpp
@@ -111,7 +111,7 @@ add_executable(
     ${QRC_FILES}
 )
 
-target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF5::WidgetsAddons)
+target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF5::WidgetsAddons Threads::Threads)
 target_include_directories(tremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 target_compile_definitions(
     tremotesf PRIVATE
@@ -168,6 +168,7 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
         tremotesf/ipc/ipcserver_dbus_service.h
         tremotesf/ipc/ipcserver_dbus.cpp
         tremotesf/ipc/ipcserver_dbus.h
+        tremotesf/startup/signalhandler_unix.cpp
         tremotesf/ui/darkthemeapplier_noop.cpp
         tremotesf/ui/notificationscontroller_freedesktop.cpp
         tremotesf/ui/systemcolorsprovider_noop.cpp
@@ -188,6 +189,7 @@ elseif (WIN32)
         tremotesf/ipc/ipcserver_socket.h
         tremotesf/startup/main_windows.cpp
         tremotesf/startup/main_windows.h
+        tremotesf/startup/signalhandler_windows.cpp
         tremotesf/startup/windowsmessagehandler.cpp
         tremotesf/startup/windowsmessagehandler.h
         tremotesf/ui/darkthemeapplier_windows.cpp
@@ -224,6 +226,7 @@ else()
         tremotesf/ipc/ipcclient_socket.cpp
         tremotesf/ipc/ipcserver_socket.cpp
         tremotesf/ipc/ipcserver_socket.h
+        tremotesf/startup/signalhandler_unix.cpp
         tremotesf/ui/darkthemeapplier_noop.cpp
         tremotesf/ui/notificationscontroller_fallback.cpp
         tremotesf/ui/systemcolorsprovider_noop.cpp

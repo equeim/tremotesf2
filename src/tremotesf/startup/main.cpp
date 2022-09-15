@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     }
 
     // Setup handler for UNIX signals or Windows console handler
-    SignalHandler::setupHandlers();
+    signalhandler::setupSignalHandlers();
 
     //
     // Command line parsing
@@ -102,9 +102,6 @@ int main(int argc, char** argv)
     // End of QApplication initialization
     //
 
-    // Setup socket notifier for UNIX signals
-    SignalHandler::setupNotifier();
-
     auto ipcServer = IpcServer::createInstance(qApp);
 
     QTranslator qtTranslator;
@@ -129,17 +126,10 @@ int main(int argc, char** argv)
 
     Servers::migrate();
 
-    if (SignalHandler::exitRequested) {
-        return EXIT_SUCCESS;
-    }
-
     MainWindow window(ipcServer, args.files, args.urls);
-    if (SignalHandler::exitRequested) {
-        return EXIT_SUCCESS;
-    }
     window.showMinimized(args.minimized);
 
-    if (SignalHandler::exitRequested) {
+    if (signalhandler::isExitRequested()) {
         return EXIT_SUCCESS;
     }
 
