@@ -78,6 +78,7 @@ namespace tremotesf
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents, "notificationOfFinishedTorrents", true)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection, "notificationsOnAddedTorrentsSinceLastConnection", false)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection, "notificationsOnFinishedTorrentsSinceLastConnection", false)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberDownloadDir, setRememberDownloadDir, "rememberDownloadDir", true)
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled, "torrentsStatusFilterEnabled", true)
     SETTINGS_PROPERTY_DEF_TRIVIAL(tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter, "torrentsStatusFilter", TorrentsProxyModel::StatusFilter::All)
@@ -87,6 +88,7 @@ namespace tremotesf
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled, "torrentsDownloadDirectoryFilterEnabled", true)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter, "torrentsDownloadDirectoryFilter", {})
+    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(QString, lastDownloadDirectory, setLastDownloadDirectory, "lastDownloadDirectory", {})
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, showTrayIcon, setShowTrayIcon, "showTrayIcon", true)
     SETTINGS_PROPERTY_DEF_TRIVIAL(Qt::ToolButtonStyle, toolButtonStyle, setToolButtonStyle, "toolButtonStyle", Qt::ToolButtonFollowStyle)

@@ -40,6 +40,7 @@
 #include "tremotesf/rpc/servers.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/utils.h"
+#include "tremotesf/settings.h"
 #include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
 #include "tremotesf/ui/widgets/torrentfilesview.h"
 #include "localtorrentfilesmodel.h"
@@ -99,6 +100,8 @@ namespace tremotesf
         }
 
         Servers::instance()->setCurrentServerAddTorrentDialogDirectories(mDownloadDirectoryWidget->textComboBoxItems());
+
+        Settings::instance()->setLastDownloadDirectory(mDownloadDirectoryWidget->text());
 
         QDialog::accept();
     }
@@ -233,7 +236,11 @@ namespace tremotesf
         const auto updateUi = [=] {
             const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
             if (enabled) {
-                mDownloadDirectoryWidget->updateComboBox(mRpc->serverSettings()->downloadDirectory());
+                if (Settings::instance()->rememberDownloadDir() && !Settings::instance()->lastDownloadDirectory().isEmpty()) {
+                    mDownloadDirectoryWidget->updateComboBox(Settings::instance()->lastDownloadDirectory());
+                } else {
+                    mDownloadDirectoryWidget->updateComboBox(mRpc->serverSettings()->downloadDirectory());
+                }
             }
 
             for (int i = 0, max = firstFormLayout->count(); i < max; ++i) {

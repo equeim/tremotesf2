@@ -76,6 +76,14 @@ namespace tremotesf
 
         layout->addWidget(connectionGroupBox);
 
+        auto torrentGroupBox = new QGroupBox(qApp->translate("tremotesf", "Torrents"), this);
+        auto torrentGroupBoxBoxLayout = new QVBoxLayout(torrentGroupBox);
+
+        auto rememberDownloadDirCheckBox = new QCheckBox(qApp->translate("tremotesf", "Remember last download dir"), this);
+        torrentGroupBoxBoxLayout->addWidget(rememberDownloadDirCheckBox );
+
+        layout->addWidget(torrentGroupBox);
+
         auto notificationsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Notifications"), this);
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
         notificationsGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -118,6 +126,7 @@ namespace tremotesf
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
+        rememberDownloadDirCheckBox->setChecked(settings->rememberDownloadDir());
         trayIconCheckBox->setChecked(settings->showTrayIcon());
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
         finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
@@ -139,6 +148,7 @@ namespace tremotesf
             settings->setShowTrayIcon(trayIconCheckBox->isChecked());
             settings->setNotificationsOnAddedTorrentsSinceLastConnection(addedSinceLastConnectionCheckBox->isChecked());
             settings->setNotificationsOnFinishedTorrentsSinceLastConnection(finishedSinceLastConnectionCheckBox->isChecked());
+            settings->setRememberDownloadDir(rememberDownloadDirCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {
                 if (int index = darkThemeComboBox->currentIndex(); index != -1) {
                     settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);

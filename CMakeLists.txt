@@ -17,6 +17,7 @@ endif()
 
 set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6" FORCE)
 include(src/libtremotesf/cmake/CommonOptions.cmake)
+
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core)
 
 set(QRC_FILES "")
