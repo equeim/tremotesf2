@@ -4,7 +4,7 @@
 #include <QColor>
 #include <QObject>
 
-#include <fmt/core.h>
+#include "libtremotesf/formatters.h"
 
 namespace tremotesf {
 
@@ -49,15 +49,12 @@ signals:
 
 }
 
-template<>
-struct fmt::formatter<tremotesf::SystemColorsProvider::AccentColors> {
-    constexpr auto parse(fmt::format_parse_context& ctx) -> decltype(ctx.begin()) {
-        return ctx.begin();
-    }
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
 
-    template<typename FormatContext>
-    auto format(const tremotesf::SystemColorsProvider::AccentColors& colors, FormatContext& ctx) -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "AccentColors(accentColor={}, accentColorLight1={})", colors.accentColor, colors.accentColorLight1);
+template<>
+struct fmt::formatter<tremotesf::SystemColorsProvider::AccentColors> : libtremotesf::SimpleFormatter {
+    auto format(const tremotesf::SystemColorsProvider::AccentColors& colors, format_context& ctx) FORMAT_CONST -> decltype(ctx.out()) {
+        return format_to(ctx.out(), "AccentColors(accentColor={}, accentColorLight1={})", colors.accentColor, colors.accentColorLight1);
     }
 };
 

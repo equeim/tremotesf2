@@ -12,6 +12,9 @@
 
 #include <dwmapi.h>
 
+#include <guiddef.h>
+#include <winrt/base.h>
+
 #include "libtremotesf/log.h"
 #include "tremotesf/settings.h"
 #include "tremotesf/windowshelpers.h"
