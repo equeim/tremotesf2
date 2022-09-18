@@ -126,6 +126,7 @@ jobs:
     - name: Set up vcpkg
       uses: equeim/action-setup-vcpkg@v3
       with:
+        vcpkg-root: C:\vcpkg
         run-install: true
         triplet: x64-windows-static
         save-cache: ${{ github.event_name != 'pull_request' }}
@@ -169,6 +170,14 @@ jobs:
           ${{ steps.build.outputs.build-directory-release }}\packaging\*.zip
           ${{ steps.build.outputs.build-directory-release }}\packaging\*.msi
 
+    - name: Archive vcpkg logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: vcpkg-logs
+        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
+        path: ${{ env.VCPKG_ROOT }}\buildtrees\*\*.log
+
     - name: Archive build logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -176,6 +185,5 @@ jobs:
         name: build-logs
         retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: |
-          ${{ env.VCPKG_ROOT }}\buildtrees\*\*.log
           ${{ github.workspace }}\build-*\*.log
           ${{ github.workspace }}\build-*\**\*.log
