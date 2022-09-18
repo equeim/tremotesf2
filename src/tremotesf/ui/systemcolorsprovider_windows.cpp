@@ -9,8 +9,6 @@
 #include "libtremotesf/log.h"
 #include "tremotesf/windowshelpers.h"
 
-SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
-
 using namespace winrt::Windows::UI;
 using namespace winrt::Windows::UI::ViewManagement;
 

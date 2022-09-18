@@ -5,6 +5,8 @@
 #include <windows.h>
 #include <VersionHelpers.h>
 
+#include <winrt/base.h>
+
 #include "libtremotesf/formatters.h"
 
 namespace tremotesf {
