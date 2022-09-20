@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <string_view>
+#include <type_traits>
+#include <QString>
 
 namespace tremotesf {
     bool isRunningOnWindows10OrGreater();
@@ -26,6 +28,14 @@ namespace tremotesf {
      * @throws winrt::hresult_error
      */
     void checkHResult(int32_t hresult, std::string_view functionName);
+
+    [[nodiscard]]
+    inline const wchar_t* getCWString(const QString& string) {
+        using utf16Type = std::remove_pointer_t<decltype(string.utf16())>;
+        static_assert(sizeof(utf16Type) == sizeof(wchar_t));
+        return reinterpret_cast<const wchar_t*>(string.utf16());
+    }
+    inline const wchar_t* getCWString(QString&&) = delete;
 }
 
 #endif // TREMOTESF_WINDOWSHELPERS_H

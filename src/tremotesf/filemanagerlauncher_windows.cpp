@@ -1,5 +1,8 @@
 #include "filemanagerlauncher.h"
 
+#include <memory>
+#include <type_traits>
+
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDir>
@@ -19,7 +22,6 @@
 #include <fmt/ranges.h>
 
 #include "tremotesf/windowshelpers.h"
-#include "tremotesf/startup/main_windows.h"
 
 #include "libtremotesf/log.h"
 
@@ -28,6 +30,26 @@ using namespace winrt::Windows::System;
 
 namespace tremotesf {
     namespace {
+        std::unique_ptr<std::remove_pointer_t<LPITEMIDLIST>, decltype(&ILFree)> createItemIdList(const QString& nativePath) {
+            LPITEMIDLIST value{};
+            checkHResult(
+                SHParseDisplayName(getCWString(nativePath), nullptr, &value, 0, nullptr),
+                "SHParseDisplayName"
+            );
+            return {value, &ILFree};
+        }
+
+        struct ItemIdListList {
+            explicit ItemIdListList(size_t capacity) { values.reserve(capacity); }
+            ~ItemIdListList() { std::for_each(values.begin(), values.end(), &ILFree); }
+
+            void add(const QString& nativePath) {
+                values.push_back(createItemIdList(nativePath).release());
+            }
+
+            std::vector<LPITEMIDLIST> values{};
+        };
+
         class WindowsFileManagerLauncher : public impl::FileManagerLauncher {
             Q_OBJECT
         protected:
@@ -49,7 +71,7 @@ namespace tremotesf {
 
                     for (const auto& [dirPath, dirFiles] : directories) {
                         const QString nativePath = QDir::toNativeSeparators(dirPath);
-                        logInfo("WindowsFileManagerLauncher: opening folder {} and selecting {} items", nativePath, dirFiles.size());
+                        logInfo("WindowsFileManagerLauncher: attempting to select {} items in folder {}", dirFiles.size(), nativePath);
                         try {
                             if (isRunningOnWindows10OrGreater()) {
                                 openFolderWindows10(nativePath, dirFiles);
@@ -96,38 +118,30 @@ namespace tremotesf {
                         }
                     }
                 }
+                logInfo("WindowsFileManagerLauncher: opening folder {} and selecting {} items", nativeDirPath, options.ItemsToSelect().Size());
                 Launcher::LaunchFolderPathAsync(folderPath, options).get();
             }
 
             void openFolderWindows81(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
-                const auto directory = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativeDirPath.utf16()));
-                if (!directory) {
-                    throw std::runtime_error(fmt::format("ILCreateFromPathW failed() for {}", nativeDirPath));
-                }
-                const auto directoryGuard = QScopeGuard([&] { ILFree(directory); });
-
-                std::vector<PIDLIST_ABSOLUTE> items{};
-                const auto itemsGuard = QScopeGuard([&] {
-                    std::for_each(items.begin(), items.end(), ILFree);
-                });
-                items.reserve(dirFiles.size() + 1);
+                auto directory = createItemIdList(nativeDirPath);
+                ItemIdListList items(dirFiles.size());
                 for (const QString& filePath : dirFiles) {
                     const QString nativeFilePath = QDir::toNativeSeparators(filePath);
-                    const auto file = ILCreateFromPathW(reinterpret_cast<PCWSTR>(nativeFilePath.utf16()));
-                    if (file) {
-                        items.push_back(file);
-                    } else {
-                        logWarning("WindowsFileManagerLauncher: ILCreateFromPathW failed() for {}", nativeFilePath);
+                    try {
+                        items.add(nativeFilePath);
+                    } catch (const winrt::hresult_error& e) {
+                        logWarningWithException(e, "WindowsFileManagerLauncher: failed to create LPITEMIDLIST from {}", nativeFilePath);
                     }
                 }
-                if (items.empty()) {
+                if (items.values.empty()) {
                     throw std::runtime_error("No items to select");
                 }
+                logInfo("WindowsFileManagerLauncher: opening folder {} and selecting {} items", nativeDirPath, items.values.size());
                 checkHResult(
                     SHOpenFolderAndSelectItems(
-                        directory,
-                        static_cast<UINT>(items.size()),
-                        const_cast<PCUITEMID_CHILD_ARRAY>(items.data()),
+                        directory.get(),
+                        static_cast<UINT>(items.values.size()),
+                        const_cast<PCUITEMID_CHILD_ARRAY>(items.values.data()),
                         0
                     ),
                     "SHOpenFolderAndSelectItems"
