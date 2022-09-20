@@ -19,6 +19,8 @@
 
 #include <windows.h>
 
+#include "tremotesf/windowshelpers.h"
+
 namespace fs = std::filesystem;
 
 namespace tremotesf {
@@ -79,7 +81,7 @@ namespace tremotesf {
             void writeMessagesToFile() {
                 const auto dirPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
                 try {
-                    fs::create_directories(fs::path(reinterpret_cast<const wchar_t*>(dirPath.utf16())));
+                    fs::create_directories(fs::path(getCWString(dirPath)));
                 } catch ([[maybe_unused]] const fs::filesystem_error& e) {
                     mQueue.cancel();
                     return;
@@ -122,14 +124,14 @@ namespace tremotesf {
 
         [[maybe_unused]]
         void releaseMessageHandler(QString&& message) {
-            writeToDebugger(reinterpret_cast<const wchar_t*>(message.utf16()));
+            writeToDebugger(getCWString(message));
             static FileLogger logger{};
             logger.logMessage(std::move(message));
         }
 
         [[maybe_unused]]
         void debugMessageHandler(QString&& message) {
-            auto wstr = reinterpret_cast<const wchar_t*>(message.utf16());
+            const auto wstr = getCWString(message);
             writeToDebugger(wstr);
             static const auto stderrHandle = GetStdHandle(STD_ERROR_HANDLE);
             static const bool stderrIsConsole = [] {
