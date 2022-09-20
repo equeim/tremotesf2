@@ -48,7 +48,6 @@
 #include <QWindow>
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-#include <QX11Info>
 #include <KStartupInfo>
 #endif
 
@@ -972,18 +971,12 @@ namespace tremotesf
         });
     }
 
-    void MainWindow::showWindow(const QByteArray& newStartupNotificationId)
+    void MainWindow::showWindow([[maybe_unused]] const QByteArray& newStartupNotificationId)
     {
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
         if (!newStartupNotificationId.isEmpty()) {
-            if (isHidden() && QX11Info::isPlatformX11()) {
-                QX11Info::setNextStartupId(newStartupNotificationId);
-            } else {
-                KStartupInfo::appStarted(newStartupNotificationId);
-            }
+            KStartupInfo::appStarted(newStartupNotificationId);
         }
-#else
-        Q_UNUSED(newStartupNotificationId)
 #endif
         const auto show = [](QWidget& widget) {
             if (widget.isHidden()) {
