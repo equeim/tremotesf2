@@ -47,15 +47,10 @@ BuildRequires: libappstream-glib
 %if %{defined fedora} && "%{toolchain}" == "clang"
 BuildRequires: clang
 %else
-    %if %{defined suse_version} && 0%{?suse_version} == 1500
-        %global leap_gcc_version 11
-BuildRequires: gcc%{leap_gcc_version}-c++
-    %else
 BuildRequires: gcc-c++
-    %endif
 %endif
 
-%if %{defined suse_version}
+%if %{undefined _metainfodir}
     %global _metainfodir %{_datadir}/metainfo
 %endif
 
@@ -68,9 +63,6 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %build
-%if %{defined suse_version} && 0%{?suse_version} == 1500
-    export CXX=g++-%{leap_gcc_version}
-%endif
 %cmake
 %cmake_build
 
