@@ -1,13 +1,12 @@
 #ifndef TREMOTESF_UNIXHELPERS_H
 #define TREMOTESF_UNIXHELPERS_H
 
-#include <cstdint>
 #include <string_view>
 #include <type_traits>
 
 namespace tremotesf {
     namespace impl {
-        int64_t checkPosixError(int64_t result, std::string_view functionName);
+        void throwWithErrno(std::string_view functionName);
     }
 
     /**
@@ -19,7 +18,10 @@ namespace tremotesf {
      */
     template<typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_signed_v<T>>>
     T checkPosixError(T result, std::string_view functionName) {
-        return static_cast<T>(impl::checkPosixError(static_cast<int64_t>(result), functionName));
+        if (result == T{-1}) {
+            impl::throwWithErrno(functionName);
+        }
+        return result;
     }
 }
 
