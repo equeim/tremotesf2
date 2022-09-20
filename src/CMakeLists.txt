@@ -123,9 +123,9 @@ target_compile_definitions(
 )
 
 if (TREMOTESF_UNIX_FREEDESKTOP)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus X11Extras)
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
     find_package(KF5WindowSystem REQUIRED)
-    target_link_libraries(tremotesf PRIVATE Qt::DBus Qt::X11Extras KF5::WindowSystem)
+    target_link_libraries(tremotesf PRIVATE Qt::DBus KF5::WindowSystem)
 
     target_compile_definitions(
         tremotesf PRIVATE

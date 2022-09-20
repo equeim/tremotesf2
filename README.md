@@ -24,7 +24,7 @@ Table of Contents
 
 On GNU/Linux and BSD, also:
 - Gettext 0.19.7 or newer
-- Qt D-Bus, Qt X11 Extras
+- Qt D-Bus
 - KWindowSystem
 
 ### Building
