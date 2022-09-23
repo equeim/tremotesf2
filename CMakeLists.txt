@@ -15,6 +15,8 @@ if (TREMOTESF_BUILD_TESTS)
     enable_testing()
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(TREMOTESF_QT6 OFF CACHE BOOL "Build with Qt 6" FORCE)
 include(src/libtremotesf/cmake/CommonOptions.cmake)
 
