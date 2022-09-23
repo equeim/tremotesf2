@@ -18,7 +18,10 @@
 
 #include "ipcserver_socket.h"
 
-#include <QJsonDocument>
+#include <QCborArray>
+#include <QCborMap>
+#include <QCborParserError>
+#include <QCborValue>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QTimer>
@@ -30,10 +33,29 @@
 #include "tremotesf/windowshelpers.h"
 #endif
 
-SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantMap)
+SPECIALIZE_FORMATTER_FOR_Q_ENUM(QCborError::Code)
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QCborValue)
 
 namespace tremotesf
 {
+    namespace {
+        constexpr QStringView keyFiles = u"files";
+        constexpr QStringView keyUrls = u"urls";
+
+        QStringList toStringList(const QCborValue& value) {
+            QStringList strings{};
+            if (!value.isArray()) return strings;
+            const auto array = value.toArray();
+            strings.reserve(array.size());
+            for (const QCborValue& v : array) {
+                if (v.isString()) {
+                    strings.push_back(v.toString());
+                }
+            }
+            return strings;
+        }
+    }
+
     IpcServerSocket::IpcServerSocket(QObject* parent)
         : IpcServer(parent)
     {
@@ -67,15 +89,20 @@ namespace tremotesf
             QTimer::singleShot(30000, socket, &QLocalSocket::disconnectFromServer);
             QObject::connect(socket, &QLocalSocket::readyRead, this, [=]() {
                 const QByteArray message(socket->readAll());
-                logInfo("Read {}", message);
-                if (message == "ping") {
-                    logInfo("Window activation requested");
+                if (message.size() == 1 && message.front() == activateWindowMessage) {
+                    logInfo("IpcServerSocket: window activation requested");
                     emit windowActivationRequested({}, {});
                 } else {
-                    const QVariantMap arguments(QJsonDocument::fromJson(message).toVariant().toMap());
-                    logInfo("Arguments received: {}", arguments);
-                    const QStringList files(arguments.value(QLatin1String("files")).toStringList());
-                    const QStringList urls(arguments.value(QLatin1String("urls")).toStringList());
+                    QCborParserError error{};
+                    const auto cbor = QCborValue::fromCbor(message, &error);
+                    if (error.error != QCborError::NoError) {
+                        logWarning("IpcServerSocket: failed to parse CBOR message: {} {}", error.error, error.errorString());
+                        return;
+                    }
+                    logInfo("Arguments received: {}", cbor);
+                    const auto map = cbor.toMap();
+                    const auto files = toStringList(map[keyFiles]);
+                    const auto urls = toStringList(map[keyUrls]);
                     emit torrentsAddingRequested(files, urls, {});
                 }
             });
@@ -101,5 +128,12 @@ namespace tremotesf
     IpcServer* IpcServer::createInstance(QObject* parent)
     {
         return new IpcServerSocket(parent);
+    }
+
+    QByteArray IpcServerSocket::createAddTorrentsMessage(const QStringList& files, const QStringList& urls) {
+        return QCborMap{
+            {keyFiles, QCborArray::fromStringList(files)},
+            {keyUrls, QCborArray::fromStringList(urls)}
+        }.toCborValue().toCbor();
     }
 }
