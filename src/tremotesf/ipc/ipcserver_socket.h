@@ -28,6 +28,10 @@ namespace tremotesf
     public:
         static QString socketName();
         explicit IpcServerSocket(QObject* parent = nullptr);
+
+        static constexpr char activateWindowMessage = '\0';
+
+        static QByteArray createAddTorrentsMessage(const QStringList& files, const QStringList& urls);
     };
 }
 

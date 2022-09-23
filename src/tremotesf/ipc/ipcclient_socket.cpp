@@ -45,14 +45,13 @@ namespace tremotesf
         void activateWindow() override
         {
             logInfo("Requesting window activation");
-            sendMessage("ping");
+            sendMessage(IpcServerSocket::activateWindowMessage);
         }
 
         void addTorrents(const QStringList& files, const QStringList& urls) override
         {
             logInfo("Requesting torrents adding");
-            sendMessage(QJsonDocument(QJsonObject{{QLatin1String("files"), QJsonArray::fromStringList(files)},
-                                                  {QLatin1String("urls"), QJsonArray::fromStringList(urls)}}).toJson(QJsonDocument::Compact));
+            sendMessage(IpcServerSocket::createAddTorrentsMessage(files, urls));
         }
 
     private:
@@ -62,6 +61,18 @@ namespace tremotesf
             if (written != message.size()) {
                 logWarning("Failed to write to socket ({} bytes written): {}", written, mSocket.errorString());
             }
+            waitForBytesWritten();
+        }
+
+        void sendMessage(char message) {
+            const bool written = mSocket.putChar(message);
+            if (!written) {
+                logWarning("Failed to write to socket: {}", mSocket.errorString());
+            }
+            waitForBytesWritten();
+        }
+
+        void waitForBytesWritten() {
             if (!mSocket.waitForBytesWritten()) {
                 logWarning("Timed out when waiting for bytes written");
             }
