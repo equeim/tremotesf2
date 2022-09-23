@@ -37,6 +37,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QPointer>
 #include <QPushButton>
 #include <QShortcut>
@@ -51,6 +52,7 @@
 #include <KStartupInfo>
 #endif
 
+#include "libtremotesf/log.h"
 #include "libtremotesf/serverstats.h"
 #include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
@@ -80,6 +82,7 @@
 #include "mainwindowsidebar.h"
 #include "mainwindowstatusbar.h"
 #include "torrentsview.h"
+#include "mainwindowviewmodel.h"
 
 namespace tremotesf
 {
@@ -162,9 +165,15 @@ namespace tremotesf
         }
     }
 
-    MainWindow::MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls, QWidget* parent)
+    MainWindow::MainWindow(
+        QStringList&& commandLineFiles,
+        QStringList&& commandLineUrls,
+        IpcServer* ipcServer,
+        QWidget* parent
+    )
         : QMainWindow(parent),
           mRpc(new Rpc(this)),
+          mViewModel(new MainWindowViewModel(std::move(commandLineFiles), std::move(commandLineUrls), mRpc, ipcServer, this)),
           mTorrentsModel(new TorrentsModel(mRpc, this)),
           mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, static_cast<int>(TorrentsModel::Role::Sort), this)),
           mSplitter(new QSplitter(this)),
@@ -178,6 +187,8 @@ namespace tremotesf
 
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
+
+        setAcceptDrops(true);
 
         if (Servers::instance()->hasServers()) {
             mRpc->setServer(Servers::instance()->currentServer());
@@ -242,46 +253,22 @@ namespace tremotesf
         }
         mToolBarAction->setChecked(!mToolBar->isHidden());
 
-        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const auto&, const auto& startupNoficationId) {
-            showWindow(startupNoficationId);
-        });
-
-        QObject::connect(ipcServer, &IpcServer::torrentsAddingRequested, this, [=](const auto& files, const auto& urls) {
-            if (mRpc->isConnected()) {
-                const bool hidden = isHidden();
+        QObject::connect(mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::showWindow);
+        QObject::connect(mViewModel, &MainWindowViewModel::showAddTorrentDialogs, this, [=](const auto& files, const auto& urls) {
+            if (isHidden()) {
                 showWindow();
-                if (hidden) {
-                    runAfterDelay([=] {
-                        showAddTorrentFileDialogs(files);
-                        showAddTorrentLinkDialogs(urls);
-                    });
-                } else {
+                runAfterDelay([=] {
                     showAddTorrentFileDialogs(files);
                     showAddTorrentLinkDialogs(urls);
-                }
+                });
+            } else {
+                showAddTorrentFileDialogs(files);
+                showAddTorrentLinkDialogs(urls);
             }
         });
 
         QObject::connect(mRpc, &Rpc::connectedChanged, this, [=] {
-            if (mRpc->isConnected()) {
-                static bool first = true;
-                if (first) {
-                    if (!files.isEmpty() || !urls.isEmpty()) {
-                        setWindowState(windowState() & ~Qt::WindowMinimized);
-                        if (isHidden()) {
-                            show();
-                            runAfterDelay([=] {
-                                showAddTorrentFileDialogs(files);
-                                showAddTorrentLinkDialogs(urls);
-                            });
-                        } else {
-                            showAddTorrentFileDialogs(files);
-                            showAddTorrentLinkDialogs(urls);
-                        }
-                    }
-                    first = false;
-                }
-            } else {
+            if (!mRpc->isConnected()) {
                 if ((mRpc->error() != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
                     mNotificationsController->showNotification(qApp->translate("tremotesf", "Disconnected"), mRpc->statusString());
                 }
@@ -361,6 +348,14 @@ namespace tremotesf
         if (!(mTrayIcon->isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) {
             qApp->quit();
         }
+    }
+
+    void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
+        mViewModel->processDragEnterEvent(event);
+    }
+
+    void MainWindow::dropEvent(QDropEvent* event) {
+        mViewModel->processDropEvent(event);
     }
 
     void MainWindow::setupActions()

@@ -25,6 +25,8 @@
 #include <QMainWindow>
 
 class QAction;
+class QDragEnterEvent;
+class QDropEvent;
 class QMenu;
 class QSplitter;
 class QSystemTrayIcon;
@@ -34,6 +36,7 @@ namespace tremotesf
 {
     class IpcServer;
     class MainWindowSideBar;
+    class MainWindowViewModel;
     class NotificationsController;
     class Rpc;
     class TorrentsModel;
@@ -46,7 +49,12 @@ namespace tremotesf
         Q_OBJECT
 
     public:
-        MainWindow(IpcServer* ipcServer, const QStringList& files, const QStringList& urls, QWidget* parent = nullptr);
+        MainWindow(
+            QStringList&& commandLineFiles,
+            QStringList&& commandLineUrls,
+            IpcServer* ipcServer,
+            QWidget* parent = nullptr
+        );
         ~MainWindow() override;
 
         QSize sizeHint() const override;
@@ -54,6 +62,8 @@ namespace tremotesf
 
     protected:
         void closeEvent(QCloseEvent* event) override;
+        void dragEnterEvent(QDragEnterEvent* event) override;
+        void dropEvent(QDropEvent* event) override;
 
     private:
         void setupActions();
@@ -81,6 +91,7 @@ namespace tremotesf
 
     private:
         Rpc* mRpc;
+        MainWindowViewModel* mViewModel{};
 
         TorrentsModel* mTorrentsModel;
         TorrentsProxyModel* mTorrentsProxyModel;

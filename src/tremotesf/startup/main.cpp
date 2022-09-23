@@ -126,7 +126,7 @@ int main(int argc, char** argv)
 
     Servers::migrate();
 
-    MainWindow window(ipcServer, args.files, args.urls);
+    MainWindow window(std::move(args.files), std::move(args.urls), ipcServer);
     window.showMinimized(args.minimized);
 
     if (signalhandler::isExitRequested()) {
