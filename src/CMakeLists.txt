@@ -76,6 +76,8 @@ add_executable(
     tremotesf/ui/screens/mainwindow/mainwindowsidebar.h
     tremotesf/ui/screens/mainwindow/mainwindowstatusbar.cpp
     tremotesf/ui/screens/mainwindow/mainwindowstatusbar.h
+    tremotesf/ui/screens/mainwindow/mainwindowviewmodel.cpp
+    tremotesf/ui/screens/mainwindow/mainwindowviewmodel.h
     tremotesf/ui/screens/mainwindow/statusfiltersmodel.cpp
     tremotesf/ui/screens/mainwindow/statusfiltersmodel.h
     tremotesf/ui/screens/mainwindow/torrentsmodel.cpp
