@@ -92,7 +92,7 @@ namespace tremotesf {
                     QDateTime::currentDateTime().toString(u"yyyy-MM-dd_hh-mm-ss.zzz")
                 ));
                 QFile file(filePath);
-                if (!file.open(QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Unbuffered)) {
+                if (!file.open(QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Text | QIODevice::Unbuffered)) {
                     mQueue.cancel();
                     return;
                 }
@@ -108,7 +108,7 @@ namespace tremotesf {
 
             void writeMessageToFile(const QString& message, QFile& file) {
                 file.write(message.toUtf8());
-                file.write(QByteArrayLiteral("\r\n"));
+                file.putChar('\n');
             }
 
             MessageQueue mQueue{};
@@ -144,8 +144,8 @@ namespace tremotesf {
             } else {
                 // stderr is redirected to pipe or a file, write UTF-8
                 const auto utf8 = message.toUtf8();
-                WriteFile(stderrHandle, utf8.data(), static_cast<DWORD>(utf8.size()), nullptr, nullptr);
-                WriteFile(stderrHandle, "\r\n", 2, nullptr, nullptr);
+                fwrite(utf8.data(), 1, static_cast<size_t>(utf8.size()), stderr);
+                fputc('\n', stderr);
             }
         }
     }
