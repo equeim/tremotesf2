@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
 if (NOT WIN32)
     return()
 endif()
 
-configure_file("${CMAKE_SOURCE_DIR}/LICENSE" "${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt" COPYONLY)
+configure_file("${CMAKE_SOURCE_DIR}/LICENSES/GPL-3.0-or-later.txt" "${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt" COPYONLY)
 
 set(CPACK_GENERATOR "ZIP" "WIX")
 set(CPACK_PACKAGE_NAME "Tremotesf")

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
 add_subdirectory(libtremotesf)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
