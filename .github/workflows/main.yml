@@ -191,3 +191,14 @@ jobs:
         path: |
           ${{ github.workspace }}\build-*\*.log
           ${{ github.workspace }}\build-*\**\*.log
+
+  reuse-lint:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Check out
+      uses: actions/checkout@v3
+
+    - name: Check REUSE compliance
+      run: |
+        sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install pipx
+        pipx run reuse lint
