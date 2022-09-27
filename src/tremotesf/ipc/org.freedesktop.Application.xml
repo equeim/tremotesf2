@@ -1,4 +1,9 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+SPDX-FileCopyrightText: 2013 Allison Ryan Lortie <desrt@desrt.ca>
+
+SPDX-License-Identifier: CC0-1.0
+-->
 <node>
   <interface name="org.freedesktop.Application">
     <method name="Activate">

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2016 The Qt Company Ltd.
+//
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #ifndef TREMOTESF_RECOLORINGSVGICONENGINE_H
 #define TREMOTESF_RECOLORINGSVGICONENGINE_H
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
 list(
     APPEND QRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/authors/authors.qrc"

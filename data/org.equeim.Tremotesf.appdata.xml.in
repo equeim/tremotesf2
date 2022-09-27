@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 <component type="desktop-application">
   <id>org.equeim.Tremotesf</id>
   <metadata_license>CC0-1.0</metadata_license>

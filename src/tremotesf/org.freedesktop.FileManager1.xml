@@ -1,4 +1,9 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+SPDX-FileCopyrightText: 2012 Federico Mena Quintero & contributors
+
+SPDX-License-Identifier: MIT
+-->
 <node>
   <interface name="org.freedesktop.FileManager1">
     <method name="ShowItems">

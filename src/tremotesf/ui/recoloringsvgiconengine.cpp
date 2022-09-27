@@ -1,3 +1,11 @@
+// SPDX-FileCopyrightText: 2016 The Qt Company Ltd.
+// SPDX-License-Identifier: GPL-2.0-or-later
+//
+// SPDX-FileCopyrightText: 2000 Geert Jansen <jansen@kde.org>
+// SPDX-FileCopyrightText: 2000 Antonio Larrosa <larrosa@kde.org>
+// SPDX-FileCopyrightText: 2010 Michael Pyne <mpyne@kde.org>
+// SPDX-License-Identifier: LGPL-2.0-only
+
 #include "recoloringsvgiconengine.h"
 
 #include <QApplication>

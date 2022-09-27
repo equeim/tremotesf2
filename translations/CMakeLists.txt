@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS LinguistTools)
 # Make sure to also change translations.qrc
 qt_add_translation(qm_files

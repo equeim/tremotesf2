@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
 if command -v lupdate-qt5 > /dev/null 2>&1; then
     _lupdate=lupdate-qt5
 else

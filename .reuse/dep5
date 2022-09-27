@@ -1,0 +1,28 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Tremotesf
+Upstream-Contact: Alexey Rochev <equeim@gmail.com>
+Source: https://github.com/equeim/tremotesf2
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: CHANGELOG.md README.md *.json
+Copyright: 2015-2022 Alexey Rochev
+License: CC0-1.0
+
+# These are uploaded to Transifex which may not keep SPDX comments
+Files: translations/*.ts data/authors/*.html data/po/*.po
+Copyright: 2015-2022 Alexey Rochev
+           2018 Carlos Gonzalez
+License: GPL-3.0-or-later
+
+Files: data/icons/status/*.png
+Copyright: 2009 Mateusz Tobola
+License: GPL-2.0-or-later
+
+Files: data/icons/hicolor/*/apps/org.equeim.Tremotesf.png data/icons/hicolor/scalable/apps/org.equeim.Tremotesf.svg src/tremotesf/tremotesf.ico
+Copyright: Transmission authors and contributors
+License: GPL-3.0-or-later

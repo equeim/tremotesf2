@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+// SPDX-FileCopyrightText: 2021 LuK1337
+// SPDX-FileCopyrightText: 2022 Alex <tabell@users.noreply.github.com>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "settingsdialog.h"
 
 #include <QCheckBox>

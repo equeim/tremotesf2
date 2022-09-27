@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef TREMOTESF_TORRENTFILESMODEL_H
 #define TREMOTESF_TORRENTFILESMODEL_H
 
