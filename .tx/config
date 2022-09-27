@@ -9,10 +9,10 @@ trans.en_US = translations/en.ts
 type = QT
 
 [tremotesf.desktop]
-file_filter = data/desktop/po/<lang>.po
-source_file = data/desktop/po/messages.po
+file_filter = data/po/<lang>.po
+source_file = data/po/messages.po
 source_lang = en
-trans.en_US = data/desktop/po/en.po
+trans.en_US = data/po/en.po
 type = PO
 
 [tremotesf.authors]
