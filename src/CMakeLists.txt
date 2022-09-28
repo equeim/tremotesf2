@@ -186,7 +186,6 @@ elseif (WIN32)
     target_sources(
         tremotesf PRIVATE
         tremotesf/filemanagerlauncher_windows.cpp
-        tremotesf/tremotesf.rc
         tremotesf/tremotesf.manifest
         tremotesf/windowshelpers.cpp
         tremotesf/windowshelpers.h
@@ -203,6 +202,18 @@ elseif (WIN32)
         tremotesf/ui/recoloringsvgiconengine.cpp
         tremotesf/ui/recoloringsvgiconengine.h
         tremotesf/ui/systemcolorsprovider_windows.cpp
+
+        tremotesf/tremotesf.rc
+    )
+    set(
+        rc_definitions
+        TREMOTESF_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+        TREMOTESF_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+        TREMOTESF_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+    )
+    set_source_files_properties(
+        tremotesf/tremotesf.rc
+        PROPERTIES COMPILE_DEFINITIONS "${rc_definitions}"
     )
     set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf/tremotesf.ico" PARENT_SCOPE)
     target_compile_definitions(tremotesf PRIVATE

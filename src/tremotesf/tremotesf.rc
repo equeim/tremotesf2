@@ -2,4 +2,42 @@
 //
 // SPDX-License-Identifier: CC0-1.0
 
+#include <winresrc.h>
+
 TremotesfIcon ICON tremotesf.ico
+
+#ifdef _DEBUG
+#define TREMOTESF_FILEFLAGS VS_FF_DEBUG
+#else
+#define TREMOTESF_FILEFLAGS 0
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION    	TREMOTESF_VERSION_MAJOR,TREMOTESF_VERSION_MINOR,TREMOTESF_VERSION_PATCH,0
+PRODUCTVERSION 	TREMOTESF_VERSION_MAJOR,TREMOTESF_VERSION_MINOR,TREMOTESF_VERSION_PATCH,0
+FILEFLAGSMASK  	VS_FFI_FILEFLAGSMASK
+FILEFLAGS      	TREMOTESF_FILEFLAGS
+FILEOS         	VOS__WINDOWS32
+FILETYPE       	VFT_APP
+FILESUBTYPE    	VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "Alexey Rochev"
+            VALUE "FileDescription",  "Remote GUI for transmission-daemon"
+            VALUE "FileVersion",      TREMOTESF_VERSION
+            VALUE "InternalName",     TREMOTESF_EXECUTABLE_NAME
+            VALUE "LegalCopyright",   "Copyright 2015-2022 Alexey Rochev"
+            VALUE "OriginalFilename", TREMOTESF_EXECUTABLE_NAME ".exe"
+            VALUE "ProductName",      TREMOTESF_APP_NAME
+            VALUE "ProductVersion",   TREMOTESF_VERSION
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
