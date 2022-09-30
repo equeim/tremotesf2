@@ -9,12 +9,14 @@
 #include <condition_variable>
 #include <deque>
 #include <filesystem>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <thread>
 
 #include <QDateTime>
 #include <QFile>
+#include <QScopeGuard>
 #include <QStandardPaths>
 #include <QString>
 
@@ -72,35 +74,48 @@ namespace tremotesf {
 
         class [[maybe_unused]] FileLogger final {
         public:
-            ~FileLogger() {
-                mQueue.cancel();
-                mThread.join();
-            }
 
             void logMessage(QString&& message) {
                 mQueue.pushEvicting(std::move(message));
             }
 
+            // We are not doing this in destructor because we need
+            // thread to be able to call logMessage() while we are joining it
+            void finishWriting() {
+                logDebug("FileLogger: cancelling queue");
+                mQueue.cancel();
+                logDebug("FileLogger: joining write thread");
+                mWriteThread.join();
+                logDebug("FileLogger: joined write thread");
+            }
+
         private:
             void writeMessagesToFile() {
+                logDebug("FileLogger: started write thread");
+
+                auto queueCancelGuard = QScopeGuard([this] { mQueue.cancel(); });
+
                 const auto dirPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+                logDebug("FileLogger: creating logs directory {}", dirPath);
                 try {
                     fs::create_directories(fs::path(getCWString(dirPath)));
-                } catch ([[maybe_unused]] const fs::filesystem_error& e) {
-                    mQueue.cancel();
+                } catch (const fs::filesystem_error& e) {
+                    logWarningWithException(e, "FileLogger: failed to create logs directory");
                     return;
                 }
+                logDebug("FileLogger: created logs directory");
                 auto filePath = QString::fromStdString(fmt::format(
                     "{}/{}.log",
                     dirPath,
                     QDateTime::currentDateTime().toString(u"yyyy-MM-dd_hh-mm-ss.zzz")
                 ));
+                logDebug("FileLogger: opening log file {}", filePath);
                 QFile file(filePath);
                 if (!file.open(QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Text | QIODevice::Unbuffered)) {
-                    mQueue.cancel();
+                    logWarning("FileLogger: failed to open log file: {}", file.errorString());
                     return;
                 }
-
+                logDebug("FileLogger: opened log file");
                 while (true) {
                     const auto message = mQueue.popBlocking();
                     if (!message.has_value()) {
@@ -116,7 +131,7 @@ namespace tremotesf {
             }
 
             MessageQueue mQueue{};
-            std::thread mThread{&FileLogger::writeMessagesToFile, this};
+            std::thread mWriteThread{&FileLogger::writeMessagesToFile, this};
         };
 
         void writeToDebugger(const wchar_t* message) {
@@ -126,11 +141,14 @@ namespace tremotesf {
             }
         }
 
+        std::unique_ptr<FileLogger> globalFileLogger{};
+
         [[maybe_unused]]
         void releaseMessageHandler(QString&& message) {
             writeToDebugger(getCWString(message));
-            static FileLogger logger{};
-            logger.logMessage(std::move(message));
+            if (globalFileLogger) {
+                globalFileLogger->logMessage(std::move(message));
+            }
         }
 
         [[maybe_unused]]
@@ -152,19 +170,31 @@ namespace tremotesf {
                 fputc('\n', stderr);
             }
         }
+
+        void windowsMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
+            QString formatted = qFormatLogMessage(type, context, message);
+#ifdef NDEBUG
+            releaseMessageHandler(std::move(formatted));
+#else
+            debugMessageHandler(std::move(formatted));
+#endif
+        }
     }
 
-    void windowsMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
-        [[maybe_unused]]
-        static const bool set = [] {
-            qSetMessagePattern(QLatin1String("[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"));
-            return true;
-        }();
-        QString formatted = qFormatLogMessage(type, context, message);
+    void initWindowsMessageHandler() {
+        qInstallMessageHandler(windowsMessageHandler);
+        qSetMessagePattern(QLatin1String("[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"));
 #ifdef NDEBUG
-        releaseMessageHandler(std::move(formatted));
-#else
-        debugMessageHandler(std::move(formatted));
+        globalFileLogger = std::make_unique<FileLogger>();
+        logDebug("FileLogger: created, starting write thread");
+#endif
+    }
+
+    void deinitWindowsMessageHandler() {
+#ifdef NDEBUG
+        if (globalFileLogger) {
+            globalFileLogger->finishWriting();
+        }
 #endif
     }
 }

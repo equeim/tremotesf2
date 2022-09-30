@@ -7,6 +7,7 @@
 #include <atomic>
 #include <csignal>
 #include <limits>
+#include <memory>
 #include <string_view>
 #include <thread>
 #include <unordered_map>
@@ -16,6 +17,7 @@
 #include <unistd.h>
 
 #include <QCoreApplication>
+#include <QScopeGuard>
 
 #include "libtremotesf/log.h"
 #include "tremotesf/unixhelpers.h"
@@ -53,14 +55,24 @@ namespace tremotesf::signalhandler
         class SignalSocketReader {
         public:
             explicit SignalSocketReader(std::unordered_map<int, std::string_view>&& signalNames)
-                : mSignalNames(std::move(signalNames)) {}
+                : mSignalNames(std::move(signalNames)) {
+                logDebug("signalhandler: starting read socket thread");
+            }
 
             ~SignalSocketReader() {
+                logDebug("signalhandler: closing write socket");
                 close(writeSocket);
+                logDebug("signalhandler: joining read socket thread");
                 mThread.join();
+                logDebug("signalhandler: joined read socket thread");
             }
         private:
             void readFromSocket() {
+                logDebug("signalhandler: started read socket thread");
+                auto finishGuard = QScopeGuard([] {
+                    logDebug("signalhandler: finished read socket thread");
+                });
+
                 while (true) {
                     char byte{};
                     try {
@@ -103,9 +115,11 @@ namespace tremotesf::signalhandler
             std::unordered_map<int, std::string_view> mSignalNames{};
             std::thread mThread{&SignalSocketReader::readFromSocket, this};
         };
+
+        std::unique_ptr<SignalSocketReader> globalSignalSocketReader{};
     }
 
-    void setupSignalHandlers() {
+    void initSignalHandler() {
         std::unordered_map<int, std::string_view> signalNames{
             {SIGINT, "SIGINT"},
             {SIGTERM, "SIGTERM"},
@@ -125,12 +139,18 @@ namespace tremotesf::signalhandler
             for (const auto& [signal, _] : signalNames) {
                 checkPosixError(sigaction(signal, &action, nullptr), "sigaction");
             }
+
+            logDebug("signalhandler: created socket pair and set up signal handlers");
+
+            globalSignalSocketReader = std::make_unique<SignalSocketReader>(std::move(signalNames));
         } catch (const std::system_error& e) {
             logWarningWithException(e, "Failed to setup signal handlers");
             return;
         }
+    }
 
-        static SignalSocketReader reader(std::move(signalNames));
+    void deinitSignalHandler() {
+        globalSignalSocketReader.reset();
     }
 
     bool isExitRequested() {

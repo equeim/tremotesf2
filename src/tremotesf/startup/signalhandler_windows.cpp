@@ -57,12 +57,22 @@ namespace tremotesf::signalhandler
         }
     }
 
-    void setupSignalHandlers()
+    void initSignalHandler()
     {
         try {
             checkWin32Bool(SetConsoleCtrlHandler(&consoleHandler, TRUE), "SetConsoleCtrlHandler");
+            logDebug("signalhandler: added console signal handler");
         } catch (const std::system_error& e) {
-            logWarningWithException(e, "Failed to setup signal handler");
+            logWarningWithException(e, "signalhandler: failed to add console signal handler");
+        }
+    }
+
+    void deinitSignalHandler() {
+        try {
+            checkWin32Bool(SetConsoleCtrlHandler(&consoleHandler, FALSE), "SetConsoleCtrlHandler");
+            logDebug("signalhandler: removed console signal handler");
+        } catch (const std::system_error& e) {
+            logWarningWithException(e, "signalhandler: failed to remove console signal handler");
         }
     }
 

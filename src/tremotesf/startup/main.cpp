@@ -33,9 +33,17 @@ int main(int argc, char** argv)
     if constexpr (isTargetOsWindows) {
         windowsInitPrelude();
     }
+    const auto preludeScopeGuard = QScopeGuard([] {
+        if constexpr (isTargetOsWindows) {
+            windowsDeinitPrelude();
+        }
+    });
 
     // Setup handler for UNIX signals or Windows console handler
-    signalhandler::setupSignalHandlers();
+    signalhandler::initSignalHandler();
+    const auto signalHandlerGuard = QScopeGuard([] {
+        signalhandler::deinitSignalHandler();
+    });
 
     //
     // Command line parsing
