@@ -8,7 +8,8 @@
 namespace tremotesf
 {
     namespace signalhandler {
-        void setupSignalHandlers();
+        void initSignalHandler();
+        void deinitSignalHandler();
         bool isExitRequested();
     }
 }

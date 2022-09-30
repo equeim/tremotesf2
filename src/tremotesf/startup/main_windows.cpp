@@ -91,7 +91,7 @@ namespace tremotesf {
     }
 
     void windowsInitPrelude() {
-        qInstallMessageHandler(windowsMessageHandler);
+        initWindowsMessageHandler();
         std::set_terminate(onTerminate);
     }
 
@@ -122,6 +122,10 @@ namespace tremotesf {
         } catch (const winrt::hresult_error& e) {
             logWarning("winrt::uninit_apartment failed: {}", e);
         }
+    }
+
+    void windowsDeinitPrelude() {
+        deinitWindowsMessageHandler();
     }
 }
 
