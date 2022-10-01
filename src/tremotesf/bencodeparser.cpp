@@ -136,7 +136,7 @@ namespace tremotesf::bencode
                         append(container);
                     }
                 } catch (const Error& e) {
-                    std::throw_with_nested(Error(e.type(), fmt::format("Failed to parse {} at position {}: {}", getValueTypeName<Container>(), containerPos)));
+                    std::throw_with_nested(Error(e.type(), fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos)));
                 }
                 throw Error(Error::Type::Parsing, fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos));
             }
@@ -214,7 +214,7 @@ namespace tremotesf::bencode
             void skip(qint64 size)
             {
                 if (mDevice.skip(size) != size) {
-                    throwErrorFromIODevice(fmt::format("Failed to skip {} bytes"));
+                    throwErrorFromIODevice(fmt::format("Failed to skip {} bytes", size));
                 }
             }
 
