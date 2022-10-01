@@ -41,3 +41,26 @@ jobs:
         gh release upload '${{ github.event.release.tag_name }}' '${{ env.COMPRESSED_ARCHIVE_NAME }}'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      build-with-clang-cl: false
+
+  upload-windows-build:
+    needs: build-windows
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download debug Windows artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: tremotesf-win64-debug
+
+    - name: Download release Windows artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: tremotesf-win64-release
+
+    - name: See
+      run: ls -laR
