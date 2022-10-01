@@ -5,12 +5,14 @@
 - Dark theme support on Windows (dark window title bar on Windows 10
 is supported only on 1809 or newer and it can be buggy because Windows 10 doesn't support this officially)
 - System accent color on Windows is used in app UI (can be disabled in settings)
+- Opening of torrents and magnet links is now supported via drag & drop on main window
+- Last download dir is now remembered when adding torrents (can be disabled in settings) (thanks Alex Bell)
 
 ### Changed
 - Raised minimum version of Qt to 5.15
-- Raised minimum version of CMake to 3.16
-- Windows build now uses Fusion style since default style
-imitating Win32 controls is non-themeable and looks like crap on Windows 11
+- Raised minimum version of CMake to 3.16 (3.21 on Windows)
+- Windows build now uses Fusion style since default style imitating Win32 controls is non-themeable
+- Windows installer now associates Tremotesf with torrent files and magnet links
 
 ### Removed
 - Sailfish OS support

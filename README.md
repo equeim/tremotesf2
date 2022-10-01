@@ -27,12 +27,18 @@ On GNU/Linux and BSD, also:
 - Qt D-Bus
 - KWindowSystem
 
+On Windows:
+- Windows 11 SDK is needed to build
+- Minimum supported OS version is Windows 8.1
+
 ### Building
 ```sh
-cmake -S /path/to/sources -B /path/to/build/directory --preset default-debug
-cmake --build /path/to/build/directory
-cmake --install /path/to/build/directory --prefix /path/to/install/directory
+cmake -S /path/to/sources -B /path/to/build/directory --preset base-multi
+cmake --build /path/to/build/directory --config Debug
+cmake --install /path/to/build/directory --config Debug --prefix /path/to/install/directory
 ```
+This example uses base-multi preset in CMakePresets.json and Ninja Multi-Config generator.
+You can invoke CMake in a different way if you want.
 
 ### GNU/Linux
 - Flatpak - [Flathub](https://flathub.org/apps/details/org.equeim.Tremotesf)
