@@ -9,7 +9,7 @@ on:
     types: [published]
 
 jobs:
-  make-source-archive:
+  upload-source-archive:
     runs-on: ubuntu-latest
 
     env:
@@ -35,9 +35,42 @@ jobs:
         echo "Compressing ${{ env.ARCHIVE_NAME }} to ${{ env.COMPRESSED_ARCHIVE_NAME }}"
         zstd '${{ env.ARCHIVE_NAME }}' -o '${{ env.COMPRESSED_ARCHIVE_NAME }}'
 
-    - name: Publish source archive
+    - name: Upload source archive to release
       run: |
-        echo 'Publishing source archive ${{ env.COMPRESSED_ARCHIVE_NAME }}'
+        echo 'Uploading source archive ${{ env.COMPRESSED_ARCHIVE_NAME }}'
         gh release upload '${{ github.event.release.tag_name }}' '${{ env.COMPRESSED_ARCHIVE_NAME }}'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      build-with-clang-cl: false
+
+  upload-windows-build:
+    needs: build-windows
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Download debug build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: tremotesf-win64-debug
+        path: ${{ runner.temp }}/artifacts
+
+    - name: Download release build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: tremotesf-win64-release
+        path: ${{ runner.temp }}/artifacts
+
+    - name: Upload artifacts to release
+      run: |
+        artifacts="${{ runner.temp }}/artifacts/*"
+        echo "Uploading artifacts $artifacts"
+        gh release upload '${{ github.event.release.tag_name }}' $artifacts
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
