@@ -4,7 +4,15 @@
 
 #include <winresrc.h>
 
-TremotesfIcon ICON tremotesf.ico
+#define TREMOTESF_ICON 0
+TREMOTESF_ICON ICON tremotesf.ico
+
+#define TORRENT_FILE_FRIENDLY_TYPE_NAME 0
+#define MAGNET_LINK_FRIENDLY_TYPE_NAME 1
+STRINGTABLE {
+    TORRENT_FILE_FRIENDLY_TYPE_NAME, "Torrent file"
+    MAGNET_LINK_FRIENDLY_TYPE_NAME, "Magnet link"
+}
 
 #ifdef _DEBUG
 #define TREMOTESF_FILEFLAGS VS_FF_DEBUG
@@ -25,8 +33,8 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName",      "Alexey Rochev"
-            VALUE "FileDescription",  "Remote GUI for transmission-daemon"
+            VALUE "CompanyName",      "Tremotesf"
+            VALUE "FileDescription",  "Tremotesf - Remote GUI for transmission-daemon"
             VALUE "FileVersion",      TREMOTESF_VERSION
             VALUE "InternalName",     TREMOTESF_EXECUTABLE_NAME
             VALUE "LegalCopyright",   "Copyright 2015-2022 Alexey Rochev"
