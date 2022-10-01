@@ -242,8 +242,9 @@ namespace tremotesf
 
         QObject::connect(mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::showWindow);
         QObject::connect(mViewModel, &MainWindowViewModel::showAddTorrentDialogs, this, [=](const auto& files, const auto& urls) {
-            if (isHidden()) {
-                showWindow();
+            const bool wasHidden = isHidden();
+            showWindow();
+            if (wasHidden) {
                 runAfterDelay([=] {
                     showAddTorrentFileDialogs(files);
                     showAddTorrentLinkDialogs(urls);
