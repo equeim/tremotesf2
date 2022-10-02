@@ -29,7 +29,7 @@ namespace tremotesf {
             QObject* parent = nullptr
         );
 
-        void processDragEnterEvent(QDragEnterEvent* event);
+        static void processDragEnterEvent(QDragEnterEvent* event);
         void processDropEvent(QDropEvent* event);
 
     private:

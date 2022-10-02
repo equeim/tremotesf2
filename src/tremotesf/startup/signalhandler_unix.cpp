@@ -27,7 +27,6 @@ namespace tremotesf::signalhandler
     namespace
     {
         int writeSocket{};
-        int readSocket{};
 
         // Not using std::atomic<std::optional<int>> because Clang might require linking to libatomic
         constexpr int notReceivedSignal = std::numeric_limits<int>::min();
@@ -46,16 +45,16 @@ namespace tremotesf::signalhandler
                 const auto bytes = write(writeSocket, &byte, 1);
                 if (bytes == -1 && errno == EINTR) {
                     continue;
-                } else {
-                    break;
                 }
+                break;
             }
         }
 
         class SignalSocketReader {
         public:
-            explicit SignalSocketReader(std::unordered_map<int, std::string_view>&& signalNames)
-                : mSignalNames(std::move(signalNames)) {
+            explicit SignalSocketReader(int readSocket, std::unordered_map<int, std::string_view>&& signalNames)
+                : mReadSocket(readSocket),
+                  mSignalNames(std::move(signalNames)) {
                 logDebug("signalhandler: starting read socket thread");
             }
 
@@ -64,8 +63,11 @@ namespace tremotesf::signalhandler
                 close(writeSocket);
                 logDebug("signalhandler: joining read socket thread");
                 mThread.join();
-                logDebug("signalhandler: joined read socket thread");
+                logDebug("signalhandler: joined read socket thread, closing read socket");
+                close(mReadSocket);
             }
+
+            Q_DISABLE_COPY_MOVE(SignalSocketReader)
         private:
             void readFromSocket() {
                 logDebug("signalhandler: started read socket thread");
@@ -76,7 +78,7 @@ namespace tremotesf::signalhandler
                 while (true) {
                     char byte{};
                     try {
-                        const auto bytes = checkPosixError(read(readSocket, &byte, 1), "read");
+                        const auto bytes = checkPosixError(read(mReadSocket, &byte, 1), "read");
                         if (bytes == 0) {
                             // Write socket was closed
                             return;
@@ -85,10 +87,9 @@ namespace tremotesf::signalhandler
                         if (e.code() == std::errc::interrupted) {
                             logWarning("signalhandler: read interrupted, continue");
                             continue;
-                        } else {
-                            logWarningWithException(e, "signalhandler: failed to read from socket, end thread");
-                            return;
                         }
+                        logWarningWithException(e, "signalhandler: failed to read from socket, end thread");
+                        return;
                     }
                     break;
                 }
@@ -112,6 +113,7 @@ namespace tremotesf::signalhandler
                 }
             }
 
+            int mReadSocket{};
             std::unordered_map<int, std::string_view> mSignalNames{};
             std::thread mThread{&SignalSocketReader::readFromSocket, this};
         };
@@ -129,9 +131,9 @@ namespace tremotesf::signalhandler
 
         try {
             int sockets[2]{};
-            checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, sockets), "socketpair");
+            checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, static_cast<int*>(sockets)), "socketpair");
             writeSocket = sockets[0];
-            readSocket = sockets[1];
+            const int readSocket = sockets[1];
 
             struct sigaction action{};
             action.sa_handler = signalHandler;
@@ -142,7 +144,7 @@ namespace tremotesf::signalhandler
 
             logDebug("signalhandler: created socket pair and set up signal handlers");
 
-            globalSignalSocketReader = std::make_unique<SignalSocketReader>(std::move(signalNames));
+            globalSignalSocketReader = std::make_unique<SignalSocketReader>(readSocket, std::move(signalNames));
         } catch (const std::system_error& e) {
             logWarningWithException(e, "Failed to setup signal handlers");
             return;

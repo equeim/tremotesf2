@@ -4,6 +4,8 @@
 
 #include "servers.h"
 
+#include <algorithm>
+
 #include <QCoreApplication>
 #include <QFile>
 #include <QDir>
@@ -233,21 +235,22 @@ namespace tremotesf
 
     bool Servers::isUnderCurrentServerMountedDirectory(const QString& path) const
     {
-        for (const std::pair<QString, QString>& directory : mCurrentServerMountedDirectories) {
-            const int localSize = directory.first.size();
-            if (path.startsWith(directory.first)) {
-                if (path.size() == localSize || path[localSize] == '/') {
-                    return true;
-                }
+        return std::any_of(
+            mCurrentServerMountedDirectories.begin(),
+            mCurrentServerMountedDirectories.end(),
+            [&path](const auto& pair) {
+                const auto& [localDirectory, remoteDirectory] = pair;
+                const auto localDirectoryPathLength = localDirectory.size();
+                return path.startsWith(localDirectory) &&
+                    (path.size() == localDirectoryPathLength || path[localDirectoryPathLength] == '/');
             }
-        }
-        return false;
+        );
     }
 
     QString Servers::firstLocalDirectory() const
     {
         if (mCurrentServerMountedDirectories.empty()) {
-            return QString();
+            return {};
         }
         return mCurrentServerMountedDirectories.front().first;
     }
@@ -262,7 +265,7 @@ namespace tremotesf
                 }
             }
         }
-        return QString();
+        return {};
     }
 
     QString Servers::fromRemoteToLocalDirectory(const QString& path)
@@ -275,7 +278,7 @@ namespace tremotesf
                 }
             }
         }
-        return QString();
+        return {};
     }
 
     LastTorrents Servers::currentServerLastTorrents() const

@@ -33,7 +33,7 @@ namespace tremotesf
     class IpcClientDbus final : public IpcClient
     {
     public:
-        bool isConnected() const override
+        [[nodiscard]] bool isConnected() const override
         {
             return mInterface.isValid();
         }

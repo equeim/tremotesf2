@@ -40,7 +40,7 @@ namespace tremotesf
                 return qApp->translate("tremotesf", "Error: %1").arg(tracker.errorMessage());
             }
             default:
-                return QString();
+                return {};
             }
         }
     }
@@ -80,7 +80,7 @@ namespace tremotesf
             }
             return data(index, Qt::DisplayRole);
         }
-        return QVariant();
+        return {};
     }
 
     QVariant TrackersModel::headerData(int section, Qt::Orientation orientation, int role) const

@@ -27,8 +27,9 @@ namespace tremotesf
             return Qt::Unchecked;
         case Qt::DisplayRole:
             return server.name;
+        default:
+            return {};
         }
-        return QVariant();
     }
 
     Qt::ItemFlags ServersModel::flags(const QModelIndex& index) const

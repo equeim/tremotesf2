@@ -93,7 +93,7 @@ namespace tremotesf
             //: Priority
             return qApp->translate("tremotesf", "Mixed");
         }
-        return QString();
+        return {};
     }
 
     TorrentFilesModelDirectory::TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name)
@@ -277,7 +277,7 @@ namespace tremotesf
 
     void TorrentFilesModelFile::setWanted(bool wanted)
     {
-        WantedState wantedState;
+        WantedState wantedState{};
         if (wanted) {
             wantedState = Wanted;
         } else {

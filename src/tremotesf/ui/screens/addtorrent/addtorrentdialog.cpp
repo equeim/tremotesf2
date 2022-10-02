@@ -36,11 +36,18 @@ namespace tremotesf
 {
     namespace
     {
-        const libtremotesf::Torrent::Priority priorityComboBoxItems[] {
+        constexpr libtremotesf::Torrent::Priority priorityComboBoxItems[] {
             libtremotesf::Torrent::Priority::HighPriority,
             libtremotesf::Torrent::Priority::NormalPriority,
             libtremotesf::Torrent::Priority::LowPriority
         };
+
+        libtremotesf::Torrent::Priority priorityFromComboBoxIndex(int index) {
+            if (index >= 0) {
+                return priorityComboBoxItems[index];
+            }
+            return libtremotesf::Torrent::Priority::NormalPriority;
+        }
     }
 
     AddTorrentDialog::AddTorrentDialog(Rpc* rpc,
@@ -77,12 +84,12 @@ namespace tremotesf
                                 mFilesModel->highPriorityFiles(),
                                 mFilesModel->lowPriorityFiles(),
                                 mFilesModel->renamedFiles(),
-                                priorityComboBoxItems[mPriorityComboBox->currentIndex()],
+                                priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()),
                                 mStartTorrentCheckBox->isChecked());
         } else {
             mRpc->addTorrentLink(mTorrentLinkLineEdit->text(),
                                  mDownloadDirectoryWidget->text(),
-                                 priorityComboBoxItems[mPriorityComboBox->currentIndex()],
+                                 priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()),
                                  mStartTorrentCheckBox->isChecked());
         }
 
@@ -133,17 +140,18 @@ namespace tremotesf
         auto freeSpaceLabel = new QLabel(this);
         auto getFreeSpace = [=](const QString& directory) {
             const auto trimmed = directory.trimmed();
-            if (trimmed.isEmpty()) {
-                freeSpaceLabel->hide();
-                freeSpaceLabel->clear();
-            } else if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
-                mRpc->getFreeSpaceForPath(trimmed);
-            } else if (trimmed == mRpc->serverSettings()->downloadDirectory()) {
-                mRpc->getDownloadDirFreeSpace();
-            } else {
-                freeSpaceLabel->hide();
-                freeSpaceLabel->clear();
+            if (!trimmed.isEmpty()) {
+                if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
+                    mRpc->getFreeSpaceForPath(trimmed);
+                    return;
+                }
+                if (trimmed == mRpc->serverSettings()->downloadDirectory()) {
+                    mRpc->getDownloadDirFreeSpace();
+                    return;
+                }
             }
+            freeSpaceLabel->hide();
+            freeSpaceLabel->clear();
         };
         QObject::connect(mDownloadDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
             getFreeSpace(text);

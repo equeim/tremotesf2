@@ -115,7 +115,7 @@ namespace tremotesf
     QString Utils::formatRatio(double ratio)
     {
         if (ratio < 0) {
-            return QString();
+            return {};
         }
 
         int precision = 2;

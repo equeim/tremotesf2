@@ -18,10 +18,10 @@ namespace tremotesf
 {
     namespace
     {
-        inline std::string parseAppName(const char* arg)
+        inline const char* parseAppName(const char* arg)
         {
             const char* sep = strrchr(arg, '/');
-            return std::string(sep ? sep + 1 : arg);
+            return sep ? sep + 1 : arg;
         }
 
         void parsePositionals(const std::vector<std::string>& torrents, CommandLineArgs& args)
@@ -51,7 +51,7 @@ namespace tremotesf
     {
         CommandLineArgs args{};
 
-        const std::string appName(parseAppName(argv[0]));
+        const char* appName = parseAppName(argv[0]);
         const auto versionString = fmt::format("{} {}", appName, TREMOTESF_VERSION);
         cxxopts::Options opts(appName, versionString);
         std::vector<std::string> torrents;

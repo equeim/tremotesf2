@@ -57,7 +57,7 @@ namespace tremotesf {
         class WindowsFileManagerLauncher : public impl::FileManagerLauncher {
             Q_OBJECT
         protected:
-            void launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, QPointer<QWidget> parentWidget) override {
+            void launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, const QPointer<QWidget>& parentWidget) override {
                 QtConcurrent::run([=] {
                     try {
                         winrt::init_apartment(winrt::apartment_type::multi_threaded);
@@ -93,7 +93,7 @@ namespace tremotesf {
                 });
             }
 
-            void fallbackForDirectory(const QString& dirPath, QPointer<QWidget> parentWidget) override {
+            void fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget) override {
                 // Execute on main thread, blocking current thread
                 QMetaObject::invokeMethod(
                     qApp,

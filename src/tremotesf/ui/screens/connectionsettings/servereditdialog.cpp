@@ -43,11 +43,18 @@ namespace tremotesf
     {
         const QLatin1String removeIconName("list-remove");
 
-        const Server::ProxyType proxyTypeComboBoxValues[] {
+        constexpr Server::ProxyType proxyTypeComboBoxValues[] {
             Server::ProxyType::Default,
             Server::ProxyType::Http,
             Server::ProxyType::Socks5
         };
+
+        Server::ProxyType proxyTypeFromComboBoxIndex(int index) {
+            if (index >= 0) {
+                return proxyTypeComboBoxValues[index];
+            }
+            return Server::ProxyType::Default;
+        }
     }
 
     class MountedDirectoriesWidget : public QTableWidget
@@ -408,7 +415,7 @@ namespace tremotesf
 
     void ServerEditDialog::setProxyFieldsVisible()
     {
-        const bool visible = (proxyTypeComboBoxValues[mProxyTypeComboBox->currentIndex()] != Server::ProxyType::Default);
+        const bool visible = (proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()) != Server::ProxyType::Default);
         for (int i = 1, max = mProxyLayout->rowCount(); i < max; ++i) {
             mProxyLayout->itemAt(i, QFormLayout::LabelRole)->widget()->setVisible(visible);
             mProxyLayout->itemAt(i, QFormLayout::FieldRole)->widget()->setVisible(visible);
@@ -442,7 +449,7 @@ namespace tremotesf
                                      mPortSpinBox->value(),
                                      mApiPathLineEdit->text(),
 
-                                     proxyTypeComboBoxValues[mProxyTypeComboBox->currentIndex()],
+                                     proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()),
                                      mProxyHostnameLineEdit->text(),
                                      mProxyPortSpinBox->value(),
                                      mProxyUserLineEdit->text(),
@@ -472,7 +479,7 @@ namespace tremotesf
                                            mPortSpinBox->value(),
                                            mApiPathLineEdit->text(),
 
-                                           proxyTypeComboBoxValues[mProxyTypeComboBox->currentIndex()],
+                                           proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()),
                                            mProxyHostnameLineEdit->text(),
                                            mProxyPortSpinBox->value(),
                                            mProxyUserLineEdit->text(),

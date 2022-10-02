@@ -112,7 +112,7 @@ namespace tremotesf
             return qApp->translate("tremotesf", "Connected");
         }
 
-        return QString();
+        return {};
     }
 
     bool Rpc::isIncompleteDirectoryMounted() const
@@ -159,7 +159,7 @@ namespace tremotesf
     {
         const QString downloadDirectoryPath(localTorrentDownloadDirectoryPath(torrent));
         if (downloadDirectoryPath.isEmpty()) {
-            return QString();
+            return {};
         }
         return downloadDirectoryPath % '/' % torrentRootFileName(torrent);
     }
