@@ -19,7 +19,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf {
     namespace impl {
-        void FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<QString>& files, QPointer<QWidget> parentWidget) {
+        void FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<QString>& files, const QPointer<QWidget>& parentWidget) {
             std::vector<std::pair<QString, std::vector<QString>>> directories{};
             for (const QString& filePath : files) {
                 QString dirPath = QFileInfo(filePath).path();
@@ -36,14 +36,14 @@ namespace tremotesf {
             launchFileManagerAndSelectFiles(directories, parentWidget);
         }
 
-        void FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, QPointer<QWidget> parentWidget) {
+        void FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, const QPointer<QWidget>& parentWidget) {
             for (const auto& [dirPath, _] : directories) {
                 fallbackForDirectory(dirPath, parentWidget);
             }
             emit done();
         }
 
-        void FileManagerLauncher::fallbackForDirectory(const QString& dirPath, QPointer<QWidget> parentWidget) {
+        void FileManagerLauncher::fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget) {
             const auto url = QUrl::fromLocalFile(dirPath);
             logInfo("FileManagerLauncher: executing QDesktopServices::openUrl() for {}", url);
             if (!QDesktopServices::openUrl(url)) {

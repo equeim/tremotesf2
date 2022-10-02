@@ -49,12 +49,12 @@ namespace tremotesf
                 setPalette(palette);
             }
 
-            QSize minimumSizeHint() const override
+            [[nodiscard]] QSize minimumSizeHint() const override
             {
-                return QSize(8, 0);
+                return {8, 0};
             }
 
-            QSize sizeHint() const override
+            [[nodiscard]] QSize sizeHint() const override
             {
                 int height = 0;
                 for (int i = 0, max = model()->rowCount(); i < max; ++i) {
@@ -63,7 +63,7 @@ namespace tremotesf
                 }
                 height += spacing();
 
-                return QSize(sizeHintForColumn(0), height);
+                return {sizeHintForColumn(0), height};
             }
 
             void setFilterEnabled(bool enabled)

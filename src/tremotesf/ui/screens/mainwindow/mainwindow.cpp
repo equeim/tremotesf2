@@ -39,7 +39,6 @@
 #include <KStartupInfo>
 #endif
 
-#include "libtremotesf/log.h"
 #include "libtremotesf/serverstats.h"
 #include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
@@ -125,17 +124,17 @@ namespace tremotesf
                 });
             }
 
-            QSize sizeHint() const override
+            [[nodiscard]] QSize sizeHint() const override
             {
                 return QDialog::sizeHint().expandedTo(QSize(320, 0));
             }
 
-            QString downloadDirectory() const
+            [[nodiscard]] QString downloadDirectory() const
             {
                 return mDirectoryWidget->text();
             }
 
-            bool moveFiles() const
+            [[nodiscard]] bool moveFiles() const
             {
                 return mMoveFilesCheckBox->isChecked();
             }
@@ -147,8 +146,33 @@ namespace tremotesf
 
         constexpr auto kdePlatformFileDialogClassName = "KDEPlatformFileDialog";
 
-        std::vector<QPointer<QWidget>> toQPointers(QWidgetList&& widgets) {
+        [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(QWidgetList&& widgets) {
             return {widgets.begin(), widgets.end()};
+        }
+
+        void showAndRaiseWindow(QWidget* window, bool activate = true) {
+            if (window->isHidden()) {
+                window->show();
+            }
+            if (window->isMinimized()) {
+                window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
+            }
+            window->raise();
+            if (activate) {
+                window->activateWindow();
+            }
+        }
+
+        template<typename Dialog, typename CreateDialogFunction>
+        void showSingleInstanceDialog(QWidget* mainWindow, CreateDialogFunction&& createDialog) {
+            auto existingDialog = mainWindow->findChild<Dialog*>({}, Qt::FindDirectChildrenOnly);
+            if (existingDialog) {
+                showAndRaiseWindow(existingDialog);
+            } else {
+                auto dialog = createDialog();
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                dialog->show();
+            }
         }
     }
 
@@ -339,7 +363,7 @@ namespace tremotesf
     }
 
     void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
-        mViewModel->processDragEnterEvent(event);
+        MainWindowViewModel::processDragEnterEvent(event);
     }
 
     void MainWindow::dropEvent(QDropEvent* event) {
@@ -636,8 +660,7 @@ namespace tremotesf
             if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
                 if (i == (max - 1)) {
                     TorrentPropertiesDialog* dialog = mTorrentsDialogs[id];
-                    dialog->raise();
-                    dialog->activateWindow();
+                    showAndRaiseWindow(dialog);
                 }
             } else {
                 auto dialog = new TorrentPropertiesDialog(torrent,
@@ -765,70 +788,26 @@ namespace tremotesf
         QAction* settingsAction = toolsMenu->addAction(QIcon::fromTheme(QLatin1String("configure"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Options"));
         settingsAction->setShortcut(QKeySequence::Preferences);
         QObject::connect(settingsAction, &QAction::triggered, this, [=] {
-            static SettingsDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new SettingsDialog(this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &SettingsDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
+            showSingleInstanceDialog<SettingsDialog>(this, [this] { return new SettingsDialog(this); });
         });
 
         QAction* serversAction = toolsMenu->addAction(QIcon::fromTheme(QLatin1String("network-server")), qApp->translate("tremotesf", "&Connection Settings"));
         QObject::connect(serversAction, &QAction::triggered, this, [=] {
-            static ConnectionSettingsDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new ConnectionSettingsDialog(this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &ConnectionSettingsDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
+            showSingleInstanceDialog<ConnectionSettingsDialog>(this, [this] { return new ConnectionSettingsDialog(this); });
         });
 
         toolsMenu->addSeparator();
 
         auto serverSettingsAction = new QAction(QIcon::fromTheme(QLatin1String("preferences-system-network"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Server Options"), this);
         QObject::connect(serverSettingsAction, &QAction::triggered, this, [=] {
-            static ServerSettingsDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new ServerSettingsDialog(mRpc, this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
+            showSingleInstanceDialog<ServerSettingsDialog>(this, [this] { return new ServerSettingsDialog(mRpc, this); });
         });
         mConnectionDependentActions.push_back(serverSettingsAction);
         toolsMenu->addAction(serverSettingsAction);
 
         auto serverStatsAction = new QAction(QIcon::fromTheme(QLatin1String("view-statistics")), qApp->translate("tremotesf", "Server S&tats"), this);
         QObject::connect(serverStatsAction, &QAction::triggered, this, [=] {
-            static ServerStatsDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new ServerStatsDialog(mRpc, this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &ServerSettingsDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
+            showSingleInstanceDialog<ServerStatsDialog>(this, [this] { return new ServerStatsDialog(mRpc, this); });
         });
         mConnectionDependentActions.push_back(serverStatsAction);
         toolsMenu->addAction(serverStatsAction);
@@ -855,18 +834,7 @@ namespace tremotesf
 
         QAction* aboutAction = helpMenu->addAction(QIcon::fromTheme(QLatin1String("help-about")), qApp->translate("tremotesf", "&About"));
         QObject::connect(aboutAction, &QAction::triggered, this, [=] {
-            static AboutDialog* dialog = nullptr;
-            if (dialog) {
-                dialog->raise();
-                dialog->activateWindow();
-            } else {
-                dialog = new AboutDialog(this);
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                QObject::connect(dialog, &AboutDialog::destroyed, this, [] {
-                    dialog = nullptr;
-                });
-                dialog->show();
-            }
+            showSingleInstanceDialog<AboutDialog>(this, [this] { return new AboutDialog(this); });
         });
     }
 
@@ -961,22 +929,13 @@ namespace tremotesf
             KStartupInfo::appStarted(newStartupNotificationId);
         }
 #endif
-        const auto show = [](QWidget& widget) {
-            if (widget.isHidden()) {
-                widget.show();
-            }
-            if (widget.isMinimized()) {
-                widget.setWindowState(widget.windowState() & ~Qt::WindowMinimized);
-            }
-            widget.raise();
-        };
-        show(*this);
+        showAndRaiseWindow(this, false);
         QWidget* lastDialog = nullptr;
         // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
         // so that we don't operate on deleted QWidgets
         for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
             if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
-                show(*widget);
+                showAndRaiseWindow(widget, false);
                 lastDialog = widget;
             }
         }

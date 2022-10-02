@@ -82,8 +82,10 @@ namespace tremotesf
             default:
                 return data(index, Qt::DisplayRole);
             }
+        default:
+            return {};
         }
-        return QVariant();
+        return {};
     }
 
     Qt::ItemFlags BaseTorrentFilesModel::flags(const QModelIndex& index) const
@@ -221,7 +223,7 @@ namespace tremotesf
 
     void BaseTorrentFilesModel::updateDirectoryChildren(const QModelIndex& parent)
     {
-        const TorrentFilesModelDirectory* directory;
+        const TorrentFilesModelDirectory* directory{};
         if (parent.isValid()) {
             directory = static_cast<const TorrentFilesModelDirectory*>(parent.internalPointer());
         } else if (mRootDirectory) {

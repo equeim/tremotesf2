@@ -27,18 +27,18 @@ namespace tremotesf
         void updateStatusLabels();
 
     private:
-        const Rpc* mRpc;
+        const Rpc* mRpc{};
 
-        QLabel* mNoServersErrorImage;
-        QLabel* mServerLabel;
-        KSeparator* mFirstSeparator;
-        QLabel* mStatusLabel;
-        KSeparator* mSecondSeparator;
-        QLabel* mDownloadSpeedImage;
-        QLabel* mDownloadSpeedLabel;
-        KSeparator* mThirdSeparator;
-        QLabel* mUploadSpeedImage;
-        QLabel* mUploadSpeedLabel;
+        QLabel* mNoServersErrorImage{};
+        QLabel* mServerLabel{};
+        KSeparator* mFirstSeparator{};
+        QLabel* mStatusLabel{};
+        KSeparator* mSecondSeparator{};
+        QLabel* mDownloadSpeedImage{};
+        QLabel* mDownloadSpeedLabel{};
+        KSeparator* mThirdSeparator{};
+        QLabel* mUploadSpeedImage{};
+        QLabel* mUploadSpeedLabel{};
     };
 }
 

@@ -60,7 +60,7 @@ namespace tremotesf {
                 }
             }
 
-            bool isEmpty() const { return files.isEmpty() && urls.isEmpty(); }
+            [[nodiscard]] bool isEmpty() const { return files.isEmpty() && urls.isEmpty(); }
 
             QStringList files{};
             QStringList urls{};
@@ -69,7 +69,7 @@ namespace tremotesf {
             void processUrl(const QUrl& url) {
                 if (url.isLocalFile()) {
                     if (auto path = url.toLocalFile(); path.endsWith(torrentFileSuffix)) {
-                        files.push_back(std::move(path));
+                        files.push_back(path);
                     }
                 } else if (url.scheme() == magnetScheme && url.hasQuery()) {
                     const auto query = url.query();

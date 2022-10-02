@@ -91,7 +91,7 @@ namespace tremotesf
         }
 
         QObject::connect(mSelectionButton, &QPushButton::clicked, this, [=] {
-            QFileDialog* dialog;
+            QFileDialog* dialog{};
             if (directory) {
                 dialog = new QFileDialog(this, qApp->translate("tremotesf", "Select Directory"), mFileDialogDirectory);
                 dialog->setFileMode(QFileDialog::Directory);

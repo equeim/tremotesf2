@@ -34,7 +34,7 @@ namespace tremotesf::bencode
         return std::visit([](auto&& value) -> std::optional<Expected> {
             using T = std::decay_t<decltype(value)>;
             if constexpr (std::is_same_v<T, Expected>) {
-                return std::move(value);
+                return std::forward<Expected>(value);
             } else {
                 return std::nullopt;
             }
