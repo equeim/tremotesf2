@@ -32,7 +32,7 @@ namespace tremotesf
             QStringList strings{};
             if (!value.isArray()) return strings;
             const auto array = value.toArray();
-            strings.reserve(array.size());
+            strings.reserve(static_cast<QStringList::size_type>(array.size()));
             for (const QCborValue& v : array) {
                 if (v.isString()) {
                     strings.push_back(v.toString());

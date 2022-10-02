@@ -142,17 +142,17 @@ namespace {
         return QColor(blend(source.red(), background.red()), blend(source.green(), background.green()), blend(source.blue(), background.blue()));
     }
 
-    float getRelativeLuminance(QColor color) {
-        const auto trans = [](float comp) {
-            if (comp <= 0.03928f) { return comp / 12.92f; }
-            else { return std::pow(((comp + 0.055f) / 1.055f), 2.4f); }
+    double getRelativeLuminance(QColor color) {
+        const auto trans = [](double comp) {
+            if (comp <= 0.03928) { return comp / 12.92; }
+            else { return std::pow(((comp + 0.055) / 1.055), 2.4); }
         };
-        return 0.2126f * trans(color.redF()) + 0.7152f * trans(color.greenF()) + 0.0722f * trans(color.blueF());
+        return 0.2126 * trans(color.redF()) + 0.7152 * trans(color.greenF()) + 0.0722 * trans(color.blueF());
     }
 
     // From Web Content Accessibility Guidelines 2.2
-    float getContrastRatio(QColor lighterColor, QColor darkerColor) {
-        return (getRelativeLuminance(lighterColor) + 0.05f) / (getRelativeLuminance(darkerColor) + 0.05f);
+    double getContrastRatio(QColor lighterColor, QColor darkerColor) {
+        return (getRelativeLuminance(lighterColor) + 0.05) / (getRelativeLuminance(darkerColor) + 0.05);
     }
 
     void applyWindowsPalette(bool darkTheme, SystemColorsProvider::AccentColors accentColors) {
@@ -204,8 +204,8 @@ namespace {
         palette.setColor(QPalette::Disabled, QPalette::Mid, buttonColorDisabled);
 
         if (accentColors.isValid()) {
-            const float ratio = getContrastRatio(blendAtop(lightTextColor, accentColors.accentColor), accentColors.accentColor);
-            if (std::ceil(ratio * 10.0f) >= 45.0f) {
+            const auto ratio = getContrastRatio(blendAtop(lightTextColor, accentColors.accentColor), accentColors.accentColor);
+            if (std::ceil(ratio * 10.0) >= 45.0) {
                 palette.setColor(QPalette::Highlight, accentColors.accentColor);
                 palette.setColor(QPalette::Inactive, QPalette::Highlight, accentColors.accentColorLight1);
             } else {
