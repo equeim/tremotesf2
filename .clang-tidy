@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
+Checks: >
+  -*,
+  android-*,
+  bugprone-*,
+  -bugprone-suspicious-include,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-type-static-cast-downcast,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  misc-*,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
+  modernize-*,
+  -modernize-avoid-c-arrays,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-braces-around-statements,
+  -readability-identifier-length,
+  -readability-implicit-bool-conversion,
+  -readability-magic-numbers,
+  -readability-named-parameter,
+  -readability-qualified-auto
