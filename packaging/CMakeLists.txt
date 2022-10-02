@@ -6,7 +6,7 @@ if (NOT WIN32)
     return()
 endif()
 
-set(CPACK_GENERATOR "WIX")
+set(CPACK_GENERATOR ZIP WIX)
 set(CPACK_PACKAGE_NAME "Tremotesf")
 set(CPACK_PACKAGE_VENDOR "Tremotesf")
 set(CPACK_PACKAGE_EXECUTABLES "tremotesf;Tremotesf")
