@@ -31,11 +31,11 @@ namespace tremotesf
         void setFileDialogDirectory(const QString& directory);
 
     private:
-        QLineEdit* mTextLineEdit = nullptr;
-        QComboBox* mTextComboBox = nullptr;
-        QPushButton* mSelectionButton;
-        bool mConnectTextWithFileDialog;
-        QString mFileDialogDirectory;
+        QLineEdit* mTextLineEdit{};
+        QComboBox* mTextComboBox{};
+        QPushButton* mSelectionButton{};
+        bool mConnectTextWithFileDialog{};
+        QString mFileDialogDirectory{};
 
     signals:
         void textChanged(const QString& text);

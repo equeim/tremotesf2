@@ -26,10 +26,8 @@ namespace tremotesf
 
         public:
             explicit ComboBoxViewEventFilter(QComboBox* comboBox)
-                : mComboBox(comboBox)
-            {
-
-            }
+                : QObject(comboBox), mComboBox(comboBox)
+            {}
 
         protected:
             bool eventFilter(QObject* watched, QEvent* event) override
@@ -46,7 +44,7 @@ namespace tremotesf
             }
 
         private:
-            QComboBox* mComboBox;
+            QComboBox* mComboBox{};
         };
     }
 
