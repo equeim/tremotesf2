@@ -295,13 +295,20 @@ namespace tremotesf
             }
         });
 
-        QObject::connect(mViewModel, &MainWindowViewModel::showDelayedTorrentAddMessage, this, [=](const auto& torrents) {
+        QObject::connect(mViewModel, &MainWindowViewModel::showDelayedTorrentAddMessage, this, [=](const QStringList& torrents) {
             logDebug("MainWindow: showing delayed torrent add message");
             messageWidget->setMessageType(KMessageWidget::Information);
             QString text = qApp->translate("tremotesf", "Torrents will be added after connection to server:");
-            for (const auto& torrent : torrents) {
-                text += '\n';
+            constexpr QStringList::size_type maxCount = 5;
+            const auto count = std::min(torrents.size(), maxCount);
+            const auto subList = torrents.mid(0, count);
+            for (const auto& torrent : subList) {
+                text += "\n \u2022 ";
                 text += torrent;
+            }
+            if (auto remaining = torrents.size() - count; remaining > 0) {
+                text += "\n \u2022 ";
+                text += qApp->translate("tremotesf", "And %n more", nullptr, remaining);
             }
             messageWidget->setText(text);
             messageWidget->animatedShow();
