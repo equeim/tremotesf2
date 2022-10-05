@@ -35,8 +35,9 @@ namespace tremotesf
                     } else {
                         const QUrl url(argument);
                         if (url.isLocalFile()) {
-                            if (QFileInfo(url.path()).isFile()) {
-                                args.files.push_back(url.path());
+                            const auto path = url.toLocalFile();
+                            if (QFileInfo(path).isFile()) {
+                                args.files.push_back(path);
                             }
                         } else {
                             args.urls.push_back(argument);

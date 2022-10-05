@@ -56,7 +56,7 @@ namespace tremotesf
         for (const QUrl& url : QUrl::fromStringList(uris)) {
             if (url.isValid()) {
                 if (url.isLocalFile()) {
-                    files.push_back(url.path());
+                    files.push_back(url.toLocalFile());
                 } else {
                     urls.push_back(url.toString());
                 }
