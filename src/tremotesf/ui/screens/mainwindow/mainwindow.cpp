@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 
 #include <algorithm>
+#include <cmath>
 
 #include <QAction>
 #include <QActionGroup>
@@ -30,6 +31,7 @@
 #include <QShortcut>
 #include <QScreen>
 #include <QSplitter>
+#include <QStackedLayout>
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QToolBar>
@@ -224,24 +226,31 @@ namespace tremotesf
         }
         mSplitter->addWidget(mSideBar);
 
-        auto torrentsViewContainer = new QWidget(this);
-        mSplitter->addWidget(torrentsViewContainer);
-        auto torrentsViewLayout = new QVBoxLayout(torrentsViewContainer);
-        torrentsViewLayout->setContentsMargins(0, 0, 0, 0);
+        auto mainWidgetContainer = new QWidget(this);
+        mSplitter->addWidget(mainWidgetContainer);
+        mSplitter->setStretchFactor(1, 1);
+        auto mainWidgetLayout = new QVBoxLayout(mainWidgetContainer);
+        mainWidgetLayout->setContentsMargins(0, mainWidgetLayout->contentsMargins().top(), 0, mainWidgetLayout->contentsMargins().bottom());
 
         auto messageWidget = new KMessageWidget(this);
         messageWidget->setWordWrap(true);
         messageWidget->hide();
-        torrentsViewLayout->addWidget(messageWidget);
+        mainWidgetLayout->addWidget(messageWidget);
+
+        auto torrentsViewContainer = new QWidget(this);
+        mainWidgetLayout->addWidget(torrentsViewContainer);
+        auto torrentsViewLayout = new QStackedLayout(torrentsViewContainer);
+        torrentsViewLayout->setStackingMode(QStackedLayout::StackAll);
 
         torrentsViewLayout->addWidget(mTorrentsView);
-        mSplitter->setStretchFactor(1, 1);
         QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](auto point) {
             if (mTorrentsView->indexAt(point).isValid()) {
                 mTorrentMenu->popup(QCursor::pos());
             }
         });
         QObject::connect(mTorrentsView, &TorrentsView::activated, this, &MainWindow::showTorrentsPropertiesDialogs);
+
+        setupTorrentsPlaceholder(torrentsViewLayout);
 
         mSplitter->restoreState(Settings::instance()->splitterState());
 
@@ -751,6 +760,81 @@ namespace tremotesf
         if (dialog.exec() == QMessageBox::Ok) {
             mRpc->removeTorrents(ids, deleteFilesCheckBox.checkState() == Qt::Checked);
         }
+    }
+
+    void MainWindow::setupTorrentsPlaceholder(QStackedLayout* parentLayout)
+    {
+        auto container = new QWidget(this);
+        parentLayout->addWidget(container);
+        parentLayout->setCurrentWidget(container);
+        container->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+        auto layout = new QVBoxLayout(container);
+        layout->setAlignment(Qt::AlignHCenter);
+
+        const auto setupPlaceholderLabel = [](QLabel* label) {
+            label->setAlignment(Qt::AlignHCenter);
+            label->setTextInteractionFlags(Qt::NoTextInteraction);
+
+            auto palette = label->palette();
+            palette.setColor(QPalette::WindowText, palette.placeholderText().color());
+            label->setPalette(palette);
+        };
+
+        layout->addStretch();
+
+        auto status = new QLabel(this);
+        layout->addWidget(status);
+        setupPlaceholderLabel(status);
+        {
+            auto font = status->font();
+            font.setPointSize(static_cast<int>(std::round(font.pointSize() * 1.3)));
+            status->setFont(font);
+        }
+
+        auto error = new QLabel(this);
+        layout->addWidget(error);
+        setupPlaceholderLabel(error);
+
+        layout->addStretch();
+
+        const auto updatePlaceholder = [=] {
+            QString statusText{};
+            QString errorText{};
+            if (mRpc->isConnected()) {
+                if (mTorrentsProxyModel->rowCount() == 0) {
+                    if (mTorrentsModel->rowCount() == 0) {
+                        statusText = qApp->translate("tremotesf", "No torrents");
+                    } else {
+                        statusText = qApp->translate("tremotesf", "No torrents matching filters");
+                    }
+                }
+            } else {
+                statusText = mRpc->statusString();
+                if (mRpc->error() != Rpc::Error::NoError) {
+                    errorText = mRpc->errorMessage();
+                }
+            }
+            status->setText(statusText);
+            status->setVisible(!statusText.isEmpty());
+            error->setText(errorText);
+            error->setVisible(!errorText.isEmpty());
+        };
+
+        updatePlaceholder();
+        QObject::connect(mRpc, &Rpc::statusChanged, this, updatePlaceholder);
+        QObject::connect(mTorrentsProxyModel, &TorrentsModel::rowsInserted, this, [=](const QModelIndex&, int first, int last) {
+            if ((last - first) + 1 == mTorrentsProxyModel->rowCount()) {
+                // Model was empty
+                updatePlaceholder();
+            }
+        });
+        QObject::connect(mTorrentsProxyModel, &TorrentsModel::rowsRemoved, this, [=] {
+            if (mTorrentsProxyModel->rowCount() == 0) {
+                // Model is now empty
+                updatePlaceholder();
+            }
+        });
     }
 
     void MainWindow::setupMenuBar()
