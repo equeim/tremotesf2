@@ -15,6 +15,7 @@ class QDragEnterEvent;
 class QDropEvent;
 class QMenu;
 class QSplitter;
+class QStackedLayout;
 class QSystemTrayIcon;
 class QToolBar;
 
@@ -63,6 +64,7 @@ namespace tremotesf
         void showTorrentsPropertiesDialogs();
         void removeSelectedTorrents(bool deleteFiles);
 
+        void setupTorrentsPlaceholder(QStackedLayout* parentLayout);
         void setupMenuBar();
         void setupToolBar();
         void setupTrayIcon();
