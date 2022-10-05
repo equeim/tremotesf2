@@ -35,10 +35,12 @@ struct fmt::formatter<QDropEvent> : libtremotesf::SimpleFormatter {
 
 namespace tremotesf {
     namespace {
+        constexpr QStringView torrentFileSuffix = u".torrent";
         constexpr QStringView magnetScheme = u"magnet";
         constexpr QStringView magnetQueryPrefixV1 = u"xt=urn:btih:";
         constexpr QStringView magnetQueryPrefixV2 = u"xt=urn:btmh:";
-        constexpr QStringView torrentFileSuffix = u".torrent";
+        constexpr QStringView httpScheme = u"http";
+        constexpr QStringView httpsScheme = u"https";
 
         struct DroppedTorrents {
             explicit DroppedTorrents(const QMimeData* mime) {
@@ -71,9 +73,14 @@ namespace tremotesf {
                     if (auto path = url.toLocalFile(); path.endsWith(torrentFileSuffix)) {
                         files.push_back(path);
                     }
-                } else if (url.scheme() == magnetScheme && url.hasQuery()) {
-                    const auto query = url.query();
-                    if (query.startsWith(magnetQueryPrefixV1) || query.startsWith(magnetQueryPrefixV2)) {
+                } else {
+                    const auto scheme = url.scheme();
+                    if (scheme == magnetScheme && url.hasQuery()) {
+                        const auto query = url.query();
+                        if (query.startsWith(magnetQueryPrefixV1) || query.startsWith(magnetQueryPrefixV2)) {
+                            urls.push_back(url.toString());
+                        }
+                    } else if (scheme == httpScheme || scheme == httpsScheme) {
                         urls.push_back(url.toString());
                     }
                 }

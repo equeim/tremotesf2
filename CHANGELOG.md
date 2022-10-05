@@ -5,7 +5,7 @@
 - Dark theme support on Windows (dark window title bar on Windows 10
 is supported only on 1809 or newer and it can be buggy because Windows 10 doesn't support this officially)
 - System accent color on Windows is used in app UI (can be disabled in settings)
-- Opening of torrents and magnet links is now supported via drag & drop on main window
+- Opening of torrents (local files or HTTP(S) links) and magnet links is now supported via drag & drop on main window
 - Last download dir is now remembered when adding torrents (can be disabled in settings) (thanks Alex Bell)
 
 ### Changed
