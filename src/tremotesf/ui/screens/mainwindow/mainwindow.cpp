@@ -35,10 +35,13 @@
 #include <QToolBar>
 #include <QWindow>
 
+#include <KMessageWidget>
+
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
 #include <KStartupInfo>
 #endif
 
+#include "libtremotesf/log.h"
 #include "libtremotesf/serverstats.h"
 #include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
@@ -221,7 +224,16 @@ namespace tremotesf
         }
         mSplitter->addWidget(mSideBar);
 
-        mSplitter->addWidget(mTorrentsView);
+        auto torrentsViewContainer = new QWidget(this);
+        mSplitter->addWidget(torrentsViewContainer);
+        auto torrentsViewLayout = new QVBoxLayout(torrentsViewContainer);
+        torrentsViewLayout->setContentsMargins(0, 0, 0, 0);
+
+        auto messageWidget = new KMessageWidget(this);
+        messageWidget->hide();
+        torrentsViewLayout->addWidget(messageWidget);
+
+        torrentsViewLayout->addWidget(mTorrentsView);
         mSplitter->setStretchFactor(1, 1);
         QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](auto point) {
             if (mTorrentsView->indexAt(point).isValid()) {
@@ -266,6 +278,9 @@ namespace tremotesf
 
         QObject::connect(mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::showWindow);
         QObject::connect(mViewModel, &MainWindowViewModel::showAddTorrentDialogs, this, [=](const auto& files, const auto& urls) {
+            if (messageWidget->isVisible()) {
+                messageWidget->animatedHide();
+            }
             const bool wasHidden = isHidden();
             showWindow();
             if (wasHidden) {
@@ -277,6 +292,18 @@ namespace tremotesf
                 showAddTorrentFileDialogs(files);
                 showAddTorrentLinkDialogs(urls);
             }
+        });
+
+        QObject::connect(mViewModel, &MainWindowViewModel::showDelayedTorrentAddMessage, this, [=](const auto& torrents) {
+            logDebug("MainWindow: showing delayed torrent add message");
+            messageWidget->setMessageType(KMessageWidget::Information);
+            QString text = qApp->translate("tremotesf", "Torrents will be added after connection to server:");
+            for (const auto& torrent : torrents) {
+                text += '\n';
+                text += torrent;
+            }
+            messageWidget->setText(text);
+            messageWidget->animatedShow();
         });
 
         QObject::connect(mRpc, &Rpc::connectedChanged, this, [=] {
