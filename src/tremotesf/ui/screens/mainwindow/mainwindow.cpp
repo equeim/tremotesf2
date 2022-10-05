@@ -230,6 +230,7 @@ namespace tremotesf
         torrentsViewLayout->setContentsMargins(0, 0, 0, 0);
 
         auto messageWidget = new KMessageWidget(this);
+        messageWidget->setWordWrap(true);
         messageWidget->hide();
         torrentsViewLayout->addWidget(messageWidget);
 
