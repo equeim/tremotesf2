@@ -4,9 +4,12 @@
 
 #include "mainwindowviewmodel.h"
 
+#include <chrono>
+
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QTimer>
 #include <QUrl>
 
 #include <fmt/ranges.h>
@@ -86,6 +89,9 @@ namespace tremotesf {
                 }
             }
         };
+
+        using namespace std::chrono_literals;
+        constexpr auto initialDelayerTorrentAddMessageDelay = 500ms;
     }
 
     MainWindowViewModel::MainWindowViewModel(
@@ -99,6 +105,15 @@ namespace tremotesf {
         mPendingFilesToOpen(std::move(commandLineFiles)),
         mPendingUrlsToOpen(std::move(commandLineUrls))
     {
+        if (!mPendingFilesToOpen.isEmpty() || !mPendingUrlsToOpen.isEmpty()) {
+            logInfo("Delaying opening torrents until connected to server");
+            QTimer::singleShot(initialDelayerTorrentAddMessageDelay, this, [this] {
+                if (!mPendingFilesToOpen.isEmpty() || !mPendingUrlsToOpen.isEmpty()) {
+                    emit showDelayedTorrentAddMessage(mPendingFilesToOpen + mPendingUrlsToOpen);
+                }
+            });
+        }
+
         QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const auto&, const auto& startupNoficationId) {
             emit showWindow(startupNoficationId);
         });
@@ -110,6 +125,7 @@ namespace tremotesf {
                 logInfo("Delaying opening torrents until connected to server");
                 mPendingFilesToOpen.append(files);
                 mPendingUrlsToOpen.append(urls);
+                emit showDelayedTorrentAddMessage(files + urls);
             }
         });
 
@@ -155,6 +171,7 @@ namespace tremotesf {
                 logInfo("Delaying opening torrents until connected to server");
                 mPendingFilesToOpen.append(dropped.files);
                 mPendingUrlsToOpen.append(dropped.urls);
+                emit showDelayedTorrentAddMessage(dropped.files + dropped.urls);
             }
             event->acceptProposedAction();
         }
