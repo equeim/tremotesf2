@@ -776,9 +776,13 @@ namespace tremotesf
             label->setAlignment(Qt::AlignHCenter);
             label->setTextInteractionFlags(Qt::NoTextInteraction);
 
-            auto palette = label->palette();
-            palette.setColor(QPalette::WindowText, palette.placeholderText().color());
-            label->setPalette(palette);
+            const auto setPalette = [label] {
+                auto palette = label->palette();
+                palette.setColor(QPalette::WindowText, palette.placeholderText().color());
+                label->setPalette(palette);
+            };
+            setPalette();
+            QObject::connect(qApp, &QGuiApplication::paletteChanged, label, setPalette);
         };
 
         layout->addStretch();
