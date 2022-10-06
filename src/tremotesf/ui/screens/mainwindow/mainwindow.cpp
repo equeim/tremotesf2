@@ -788,13 +788,20 @@ namespace tremotesf
         setupPlaceholderLabel(status);
         {
             auto font = status->font();
-            font.setPointSize(static_cast<int>(std::round(font.pointSize() * 1.3)));
+            constexpr int minFontSize = 12;
+            font.setPointSize(std::max(minFontSize, static_cast<int>(std::round(font.pointSize() * 1.3))));
             status->setFont(font);
         }
 
         auto error = new QLabel(this);
         layout->addWidget(error);
         setupPlaceholderLabel(error);
+        {
+            auto font = status->font();
+            constexpr int minFontSize = 10;
+            font.setPointSize(std::max(minFontSize, font.pointSize()));
+            status->setFont(font);
+        }
 
         layout->addStretch();
 
