@@ -127,6 +127,7 @@ elseif (WIN32)
             view-refresh.svg
             view-refresh.svg
             view-statistics.svg
+            window-close.svg
         )
 
         list(JOIN bundled_icon_theme_files "|" bundled_icon_theme_files_regex)
