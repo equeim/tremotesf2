@@ -7,6 +7,8 @@
 
 #include <QObject>
 
+#include "libtremotesf/literals.h"
+
 class OrgFreedesktopApplicationAdaptor;
 
 namespace tremotesf
@@ -17,8 +19,8 @@ namespace tremotesf
     {
         Q_OBJECT
     public:
-        static const QLatin1String desktopStartupIdField;
-        static const QLatin1String torrentHashField;
+        static constexpr auto desktopStartupIdField = "desktop-startup-id"_l1;
+        static constexpr auto torrentHashField = "torrent-hash"_l1;
 
         IpcDbusService(IpcServerDbus* ipcServer, QObject* parent = nullptr);
 

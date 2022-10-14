@@ -6,6 +6,8 @@
 
 #include <QCoreApplication>
 
+#include "libtremotesf/literals.h"
+
 namespace tremotesf
 {
     TorrentFilesModelEntry::Priority TorrentFilesModelEntry::fromFilePriority(libtremotesf::TorrentFile::Priority priority)
@@ -70,7 +72,7 @@ namespace tremotesf
         QString path(mName);
         TorrentFilesModelDirectory* parent = mParentDirectory;
         while (parent && !parent->name().isEmpty()) {
-            path.prepend(QLatin1Char('/'));
+            path.prepend('/');
             path.prepend(parent->name());
             parent = parent->parentDirectory();
         }

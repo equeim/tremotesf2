@@ -30,7 +30,7 @@ namespace tremotesf
         layout->setContentsMargins(8, 4, 8, 4);
 
         mNoServersErrorImage = new QLabel(this);
-        mNoServersErrorImage->setPixmap(QIcon::fromTheme(QLatin1String("dialog-error")).pixmap(16, 16));
+        mNoServersErrorImage->setPixmap(QIcon::fromTheme("dialog-error"_l1).pixmap(16, 16));
         mNoServersErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mNoServersErrorImage);
 
@@ -47,7 +47,7 @@ namespace tremotesf
         layout->addWidget(mSecondSeparator);
 
         mDownloadSpeedImage = new QLabel(this);
-        mDownloadSpeedImage->setPixmap(QIcon::fromTheme(QLatin1String("go-down")).pixmap(16, 16));
+        mDownloadSpeedImage->setPixmap(QIcon::fromTheme("go-down"_l1).pixmap(16, 16));
         mDownloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mDownloadSpeedImage);
 
@@ -58,7 +58,7 @@ namespace tremotesf
         layout->addWidget(mThirdSeparator);
 
         mUploadSpeedImage = new QLabel(this);
-        mUploadSpeedImage->setPixmap(QIcon::fromTheme(QLatin1String("go-up")).pixmap(16, 16));
+        mUploadSpeedImage->setPixmap(QIcon::fromTheme("go-up"_l1).pixmap(16, 16));
         mUploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         layout->addWidget(mUploadSpeedImage);
 

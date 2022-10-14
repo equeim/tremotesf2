@@ -211,7 +211,7 @@ namespace tremotesf {
 
     void initWindowsMessageHandler() {
         qInstallMessageHandler(windowsMessageHandler);
-        qSetMessagePattern(QLatin1String("[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"));
+        qSetMessagePattern("[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_l1);
 #ifdef NDEBUG
         globalFileLogger = std::make_unique<FileLogger>();
         logDebug("FileLogger: created, starting write thread");

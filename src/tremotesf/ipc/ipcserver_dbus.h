@@ -10,15 +10,17 @@
 #include "ipcserver.h"
 #include "ipcserver_dbus_service.h"
 
+#include "libtremotesf/literals.h"
+
 namespace tremotesf
 {
     class IpcServerDbus final : public IpcServer
     {
         Q_OBJECT
     public:
-        static inline QLatin1String serviceName() { return QLatin1String("org.equeim.Tremotesf"); };
-        static inline QLatin1String objectPath() { return QLatin1String("/org/equeim/Tremotesf"); };
-        static inline QLatin1String interfaceName() { return QLatin1String("org.freedesktop.Application"); };
+        static constexpr auto serviceName = "org.equeim.Tremotesf"_l1;
+        static constexpr auto objectPath = "/org/equeim/Tremotesf"_l1;
+        static constexpr auto interfaceName = "org.freedesktop.Application"_l1;
 
         inline explicit IpcServerDbus(QObject* parent = nullptr) : IpcServer(parent) {};
 

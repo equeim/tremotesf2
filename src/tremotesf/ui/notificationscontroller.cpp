@@ -61,7 +61,7 @@ namespace tremotesf {
             for (auto& name : names) {
                 name.prepend(u"\u2022 ");
             }
-            showNotification(title, names.join(QLatin1Char('\n')));
+            showNotification(title, names.join('\n'));
         }
     }
 }

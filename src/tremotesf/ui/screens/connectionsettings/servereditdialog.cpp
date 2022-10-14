@@ -41,7 +41,7 @@ namespace tremotesf
 {
     namespace
     {
-        const QLatin1String removeIconName("list-remove");
+        const auto removeIconName = "list-remove"_l1;
 
         constexpr Server::ProxyType proxyTypeComboBoxValues[] {
             Server::ProxyType::Default,
@@ -154,7 +154,7 @@ namespace tremotesf
             setWindowTitle(qApp->translate("tremotesf", "Add Server"));
 
             mPortSpinBox->setValue(9091);
-            mApiPathLineEdit->setText(QLatin1String("/transmission/rpc"));
+            mApiPathLineEdit->setText("/transmission/rpc"_l1);
             mProxyTypeComboBox->setCurrentIndex(index_of_i(proxyTypeComboBoxValues, Server::ProxyType::Default));
             mHttpsGroupBox->setChecked(false);
             mAuthenticationGroupBox->setChecked(false);
@@ -246,12 +246,12 @@ namespace tremotesf
         formLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mNameLineEdit = new QLineEdit(this);
-        mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(QLatin1String("^\\S.*")), this));
+        mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^\\S.*"_l1), this));
         QObject::connect(mNameLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Name:"), mNameLineEdit);
 
         mAddressLineEdit = new QLineEdit(this);
-        auto addressValidator = new QRegularExpressionValidator(QRegularExpression(QLatin1String("^\\S+")), this);
+        auto addressValidator = new QRegularExpressionValidator(QRegularExpression("^\\S+"_l1), this);
         mAddressLineEdit->setValidator(addressValidator);
         QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Address:"), mAddressLineEdit);
@@ -385,7 +385,7 @@ namespace tremotesf
         auto mountedDirectoriesLayout = new QGridLayout(mountedDirectoriesGroupBox);
         mMountedDirectoriesWidget = new MountedDirectoriesWidget(0, 2);
         mountedDirectoriesLayout->addWidget(mMountedDirectoriesWidget, 0, 0, 1, 2);
-        auto addDirectoriesButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add"), this);
+        auto addDirectoriesButton = new QPushButton(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "Add"), this);
         QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=] {
             const QString directory(QFileDialog::getExistingDirectory(this));
             if (!directory.isEmpty()) {
@@ -513,7 +513,7 @@ namespace tremotesf
                                            /*qApp->translate("tremotesf", "Torrent Files (*.torrent)")*/ {});
         fileDialog->setAttribute(Qt::WA_DeleteOnClose);
         fileDialog->setFileMode(QFileDialog::ExistingFile);
-        fileDialog->setMimeTypeFilters({QLatin1String("application/x-pem-file")});
+        fileDialog->setMimeTypeFilters({"application/x-pem-file"_l1});
 
         QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
             target->setPlainText(Utils::readTextFile(fileDialog->selectedFiles().first()));

@@ -17,9 +17,6 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantList)
 
 namespace tremotesf
 {
-    const QLatin1String IpcDbusService::desktopStartupIdField("desktop-startup-id");
-    const QLatin1String IpcDbusService::torrentHashField("torrent-hash");
-
     IpcDbusService::IpcDbusService(IpcServerDbus* ipcServer, QObject *parent)
         : QObject(parent),
           mIpcServer(ipcServer)
@@ -27,9 +24,9 @@ namespace tremotesf
         new OrgFreedesktopApplicationAdaptor(this);
 
         auto connection(QDBusConnection::sessionBus());
-        if (connection.registerService(IpcServerDbus::serviceName())) {
+        if (connection.registerService(IpcServerDbus::serviceName)) {
             logInfo("Registered D-Bus service");
-            if (connection.registerObject(IpcServerDbus::objectPath(), this)) {
+            if (connection.registerObject(IpcServerDbus::objectPath, this)) {
                 logInfo("Registered D-Bus object");
             } else {
                 logWarning("Failed to register D-Bus object: {}", connection.lastError());

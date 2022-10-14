@@ -30,7 +30,7 @@ namespace tremotesf
             if (item.tracker.isEmpty()) {
                 return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
             }
-            return QIcon::fromTheme(QLatin1String("network-server"));
+            return QIcon::fromTheme("network-server"_l1);
         case Qt::DisplayRole:
         case Qt::ToolTipRole:
             if (item.tracker.isEmpty()) {
