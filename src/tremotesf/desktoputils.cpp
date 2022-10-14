@@ -26,23 +26,23 @@ namespace tremotesf::desktoputils
     {
         switch (icon) {
         case ActiveIcon:
-            return QLatin1String(":/active.png");
+            return ":/active.png"_l1;
         case CheckingIcon:
-            return QLatin1String(":/checking.png");
+            return ":/checking.png"_l1;
         case DownloadingIcon:
-            return QLatin1String(":/downloading.png");
+            return ":/downloading.png"_l1;
         case ErroredIcon:
-            return QLatin1String(":/errored.png");
+            return ":/errored.png"_l1;
         case PausedIcon:
-            return QLatin1String(":/paused.png");
+            return ":/paused.png"_l1;
         case QueuedIcon:
-            return QLatin1String(":/queued.png");
+            return ":/queued.png"_l1;
         case SeedingIcon:
-            return QLatin1String(":/seeding.png");
+            return ":/seeding.png"_l1;
         case StalledDownloadingIcon:
-            return QLatin1String(":/stalled-downloading.png");
+            return ":/stalled-downloading.png"_l1;
         case StalledSeedingIcon:
-            return QLatin1String(":/stalled-seeding.png");
+            return ":/stalled-seeding.png"_l1;
         }
 
         return {};
@@ -67,13 +67,13 @@ namespace tremotesf::desktoputils
     namespace {
         QRegularExpression urlRegex()
         {
-            const auto protocol = QLatin1String("(?:(?:[a-z]+:)?//)");
-            const auto host = QLatin1String("(?:(?:[a-z\\x{00a1}-\\x{ffff0}-9][-_]*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)");
-            const auto domain = QLatin1String("(?:\\.(?:[a-z\\x{00a1}-\\x{ffff0}-9]-*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)*");
-            const auto tld = QLatin1String("(?:\\.(?:[a-z\\x{00a1}-\\x{ffff}]{2,}))\\.?");
-            const auto port = QLatin1String("(?::\\d{2,5})?");
-            const auto path = QLatin1String("(?:[/?#][^\\s\"\\)\']*)?");
-            const auto regex = QString(QLatin1String("(?:") % protocol % QLatin1String("|www\\.)(?:") % host % domain % tld % QLatin1String(")") % port % path);
+            constexpr auto protocol = "(?:(?:[a-z]+:)?//)"_l1;
+            constexpr auto host = "(?:(?:[a-z\\x{00a1}-\\x{ffff0}-9][-_]*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)"_l1;
+            constexpr auto domain = "(?:\\.(?:[a-z\\x{00a1}-\\x{ffff0}-9]-*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)*"_l1;
+            constexpr auto tld = "(?:\\.(?:[a-z\\x{00a1}-\\x{ffff}]{2,}))\\.?"_l1;
+            constexpr auto port = "(?::\\d{2,5})?"_l1;
+            constexpr auto path = "(?:[/?#][^\\s\"\\)\']*)?"_l1;
+            const auto regex = QString("(?:"_l1 % protocol % "|www\\.)(?:"_l1 % host % domain % tld % ")"_l1 % port % path);
             return QRegularExpression(regex, QRegularExpression::CaseInsensitiveOption);
         }
     }

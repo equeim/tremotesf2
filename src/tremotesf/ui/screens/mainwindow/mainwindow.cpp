@@ -195,10 +195,10 @@ namespace tremotesf
           mSplitter(new QSplitter(this)),
           mSideBar(new MainWindowSideBar(mRpc, mTorrentsProxyModel)),
           mTorrentsView(new TorrentsView(mTorrentsProxyModel, this)),
-          mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme(QLatin1String("tremotesf-tray-icon"), windowIcon()), this)),
+          mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme("tremotesf-tray-icon"_l1, windowIcon()), this)),
           mNotificationsController(NotificationsController::createInstance(mTrayIcon, this))
     {
-        setWindowTitle(QLatin1String(TREMOTESF_APP_NAME));
+        setWindowTitle(TREMOTESF_APP_NAME""_l1);
         setMinimumSize(minimumSizeHint().expandedTo(QSize(384, 256)));
 
         setContextMenuPolicy(Qt::NoContextMenu);
@@ -422,19 +422,19 @@ namespace tremotesf
         mDisconnectAction = new QAction(qApp->translate("tremotesf", "&Disconnect"), this);
         QObject::connect(mDisconnectAction, &QAction::triggered, mRpc, &Rpc::disconnect);
 
-        const QIcon connectIcon(QIcon::fromTheme(QLatin1String("network-connect")));
-        const QIcon disconnectIcon(QIcon::fromTheme(QLatin1String("network-disconnect")));
+        const QIcon connectIcon(QIcon::fromTheme("network-connect"_l1));
+        const QIcon disconnectIcon(QIcon::fromTheme("network-disconnect"_l1));
         if (connectIcon.name() != disconnectIcon.name()) {
             mConnectAction->setIcon(connectIcon);
             mDisconnectAction->setIcon(disconnectIcon);
         }
 
-        mAddTorrentFileAction = new QAction(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "&Add Torrent File..."), this);
+        mAddTorrentFileAction = new QAction(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "&Add Torrent File..."), this);
         mAddTorrentFileAction->setShortcuts(QKeySequence::Open);
         QObject::connect(mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::addTorrentsFiles);
         mConnectionDependentActions.push_back(mAddTorrentFileAction);
 
-        mAddTorrentLinkAction = new QAction(QIcon::fromTheme(QLatin1String("insert-link")), qApp->translate("tremotesf", "Add Torrent &Link..."), this);
+        mAddTorrentLinkAction = new QAction(QIcon::fromTheme("insert-link"_l1), qApp->translate("tremotesf", "Add Torrent &Link..."), this);
         QObject::connect(mAddTorrentLinkAction, &QAction::triggered, this, [=] {
             setWindowState(windowState() & ~Qt::WindowMinimized);
             auto showDialog = [=] {
@@ -456,29 +456,29 @@ namespace tremotesf
         //
         mTorrentMenu = new QMenu(qApp->translate("tremotesf", "&Torrent"), this);
 
-        QAction* torrentPropertiesAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("document-properties")), qApp->translate("tremotesf", "&Properties"));
+        QAction* torrentPropertiesAction = mTorrentMenu->addAction(QIcon::fromTheme("document-properties"_l1), qApp->translate("tremotesf", "&Properties"));
         QObject::connect(torrentPropertiesAction, &QAction::triggered, this, &MainWindow::showTorrentsPropertiesDialogs);
 
         mTorrentMenu->addSeparator();
 
-        mStartTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("media-playback-start")), qApp->translate("tremotesf", "&Start"));
+        mStartTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme("media-playback-start"_l1), qApp->translate("tremotesf", "&Start"));
         QObject::connect(mStartTorrentAction, &QAction::triggered, this, [=] {
             mRpc->startTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        mStartTorrentNowAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("media-playback-start")), qApp->translate("tremotesf", "Start &Now"));
+        mStartTorrentNowAction = mTorrentMenu->addAction(QIcon::fromTheme("media-playback-start"_l1), qApp->translate("tremotesf", "Start &Now"));
         QObject::connect(mStartTorrentNowAction, &QAction::triggered, this, [=] {
             mRpc->startTorrentsNow(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        mPauseTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("media-playback-pause")), qApp->translate("tremotesf", "P&ause"));
+        mPauseTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme("media-playback-pause"_l1), qApp->translate("tremotesf", "P&ause"));
         QObject::connect(mPauseTorrentAction, &QAction::triggered, this, [=] {
             mRpc->pauseTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
         mTorrentMenu->addSeparator();
 
-        QAction* copyMagnetLinkAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("edit-copy")), qApp->translate("tremotesf", "Copy &Magnet Link"));
+        QAction* copyMagnetLinkAction = mTorrentMenu->addAction(QIcon::fromTheme("edit-copy"_l1), qApp->translate("tremotesf", "Copy &Magnet Link"));
         QObject::connect(copyMagnetLinkAction, &QAction::triggered, this, [=] {
             const auto indexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows()));
             QStringList links;
@@ -486,19 +486,19 @@ namespace tremotesf
             for (const auto& index : indexes) {
                 links.push_back(mTorrentsModel->torrentAtIndex(index)->data().magnetLink);
             }
-            qApp->clipboard()->setText(links.join(QLatin1Char('\n')));
+            qApp->clipboard()->setText(links.join('\n'));
         });
 
         mTorrentMenu->addSeparator();
 
-        mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("edit-delete")), qApp->translate("tremotesf", "&Delete"));
+        mRemoveTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme("edit-delete"_l1), qApp->translate("tremotesf", "&Delete"));
         mRemoveTorrentAction->setShortcut(QKeySequence::Delete);
         QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, [=] { removeSelectedTorrents(false); });
 
         const auto removeTorrentWithFilesShortcut = new QShortcut(QKeySequence(static_cast<int>(Qt::SHIFT) | static_cast<int>(Qt::Key_Delete)), this);
         QObject::connect(removeTorrentWithFilesShortcut, &QShortcut::activated, this, [=] { removeSelectedTorrents(true); });
 
-        QAction* setLocationAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("mark-location")), qApp->translate("tremotesf", "Set &Location"));
+        QAction* setLocationAction = mTorrentMenu->addAction(QIcon::fromTheme("mark-location"_l1), qApp->translate("tremotesf", "Set &Location"));
         QObject::connect(setLocationAction, &QAction::triggered, this, [=] {
             if (mTorrentsView->selectionModel()->hasSelection()) {
                 QModelIndexList indexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows()));
@@ -513,7 +513,7 @@ namespace tremotesf
             }
         });
 
-        mRenameTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("edit-rename")), qApp->translate("tremotesf", "&Rename"));
+        mRenameTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme("edit-rename"_l1), qApp->translate("tremotesf", "&Rename"));
         QObject::connect(mRenameTorrentAction, &QAction::triggered, this, [=] {
             const auto indexes = mTorrentsView->selectionModel()->selectedRows();
             if (indexes.size() == 1) {
@@ -528,20 +528,20 @@ namespace tremotesf
 
         mTorrentMenu->addSeparator();
 
-        mOpenTorrentFilesAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("document-open")), qApp->translate("tremotesf", "&Open"));
+        mOpenTorrentFilesAction = mTorrentMenu->addAction(QIcon::fromTheme("document-open"_l1), qApp->translate("tremotesf", "&Open"));
         QObject::connect(mOpenTorrentFilesAction, &QAction::triggered, this, &MainWindow::openTorrentsFiles);
 
-        mShowInFileManagerAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("go-jump")), qApp->translate("tremotesf", "Show In &File Manager"));
+        mShowInFileManagerAction = mTorrentMenu->addAction(QIcon::fromTheme("go-jump"_l1), qApp->translate("tremotesf", "Show In &File Manager"));
         QObject::connect(mShowInFileManagerAction, &QAction::triggered, this, &MainWindow::showTorrentsInFileManager);
 
         mTorrentMenu->addSeparator();
 
-        QAction* checkTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("document-preview")), qApp->translate("tremotesf", "&Check Local Data"));
+        QAction* checkTorrentAction = mTorrentMenu->addAction(QIcon::fromTheme("document-preview"_l1), qApp->translate("tremotesf", "&Check Local Data"));
         QObject::connect(checkTorrentAction, &QAction::triggered, this, [=] {
             mRpc->checkTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        QAction* reannounceAction = mTorrentMenu->addAction(QIcon::fromTheme(QLatin1String("view-refresh")), qApp->translate("tremotesf", "Reanno&unce"));
+        QAction* reannounceAction = mTorrentMenu->addAction(QIcon::fromTheme("view-refresh"_l1), qApp->translate("tremotesf", "Reanno&unce"));
         QObject::connect(reannounceAction, &QAction::triggered, this, [=] {
             mRpc->reannounceTorrents(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
@@ -550,22 +550,22 @@ namespace tremotesf
 
         QMenu* queueMenu = mTorrentMenu->addMenu(qApp->translate("tremotesf", "&Queue"));
 
-        QAction* moveTorrentToTopAction = queueMenu->addAction(QIcon::fromTheme(QLatin1String("go-top")), qApp->translate("tremotesf", "Move To &Top"));
+        QAction* moveTorrentToTopAction = queueMenu->addAction(QIcon::fromTheme("go-top"_l1), qApp->translate("tremotesf", "Move To &Top"));
         QObject::connect(moveTorrentToTopAction, &QAction::triggered, this, [=] {
             mRpc->moveTorrentsToTop(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        QAction* moveTorrentUpAction = queueMenu->addAction(QIcon::fromTheme(QLatin1String("go-up")), qApp->translate("tremotesf", "Move &Up"));
+        QAction* moveTorrentUpAction = queueMenu->addAction(QIcon::fromTheme("go-up"_l1), qApp->translate("tremotesf", "Move &Up"));
         QObject::connect(moveTorrentUpAction, &QAction::triggered, this, [=] {
             mRpc->moveTorrentsUp(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        QAction* moveTorrentDownAction = queueMenu->addAction(QIcon::fromTheme(QLatin1String("go-down")), qApp->translate("tremotesf", "Move &Down"));
+        QAction* moveTorrentDownAction = queueMenu->addAction(QIcon::fromTheme("go-down"_l1), qApp->translate("tremotesf", "Move &Down"));
         QObject::connect(moveTorrentDownAction, &QAction::triggered, this, [=] {
             mRpc->moveTorrentsDown(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
 
-        QAction* moveTorrentToBottomAction = queueMenu->addAction(QIcon::fromTheme(QLatin1String("go-bottom")), qApp->translate("tremotesf", "Move To &Bottom"));
+        QAction* moveTorrentToBottomAction = queueMenu->addAction(QIcon::fromTheme("go-bottom"_l1), qApp->translate("tremotesf", "Move To &Bottom"));
         QObject::connect(moveTorrentToBottomAction, &QAction::triggered, this, [=] {
             mRpc->moveTorrentsToBottom(mTorrentsModel->idsFromIndexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())));
         });
@@ -735,7 +735,7 @@ namespace tremotesf
         dialog.setDefaultButton(QMessageBox::Cancel);
         const auto okButton = dialog.button(QMessageBox::Ok);
         if (dialog.style()->styleHint(QStyle::SH_DialogButtonBox_ButtonsHaveIcons)) {
-            okButton->setIcon(QIcon::fromTheme(QLatin1String("edit-delete")));
+            okButton->setIcon(QIcon::fromTheme("edit-delete"_l1));
         }
 
         QCheckBox deleteFilesCheckBox(qApp->translate("tremotesf", "Also delete the files on the hard disk"));
@@ -851,9 +851,9 @@ namespace tremotesf
         mFileMenu->addAction(mAddTorrentLinkAction);
         mFileMenu->addSeparator();
 
-        QAction* quitAction = mFileMenu->addAction(QIcon::fromTheme(QLatin1String("application-exit")), qApp->translate("tremotesf", "&Quit"));
+        QAction* quitAction = mFileMenu->addAction(QIcon::fromTheme("application-exit"_l1), qApp->translate("tremotesf", "&Quit"));
         if constexpr (isTargetOsWindows) {
-            quitAction->setShortcut(QKeySequence(QLatin1String("Ctrl+Q")));
+            quitAction->setShortcut(QKeySequence("Ctrl+Q"_l1));
         } else {
             quitAction->setShortcuts(QKeySequence::Quit);
         }
@@ -861,11 +861,11 @@ namespace tremotesf
 
         QMenu* editMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
 
-        QAction* selectAllAction = editMenu->addAction(QIcon::fromTheme(QLatin1String("edit-select-all")), qApp->translate("tremotesf", "Select &All"));
+        QAction* selectAllAction = editMenu->addAction(QIcon::fromTheme("edit-select-all"_l1), qApp->translate("tremotesf", "Select &All"));
         selectAllAction->setShortcut(QKeySequence::SelectAll);
         QObject::connect(selectAllAction, &QAction::triggered, mTorrentsView, &TorrentsView::selectAll);
 
-        QAction* invertSelectionAction = editMenu->addAction(QIcon::fromTheme(QLatin1String("edit-select-invert")), qApp->translate("tremotesf", "&Invert Selection"));
+        QAction* invertSelectionAction = editMenu->addAction(QIcon::fromTheme("edit-select-invert"_l1), qApp->translate("tremotesf", "&Invert Selection"));
         QObject::connect(invertSelectionAction, &QAction::triggered, this, [=] {
             mTorrentsView->selectionModel()->select(QItemSelection(mTorrentsProxyModel->index(0, 0),
                                                                    mTorrentsProxyModel->index(mTorrentsProxyModel->rowCount() - 1,
@@ -908,27 +908,27 @@ namespace tremotesf
 
         QMenu* toolsMenu = menuBar()->addMenu(qApp->translate("tremotesf", "T&ools"));
 
-        QAction* settingsAction = toolsMenu->addAction(QIcon::fromTheme(QLatin1String("configure"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Options"));
+        QAction* settingsAction = toolsMenu->addAction(QIcon::fromTheme("configure"_l1, QIcon::fromTheme("preferences-system"_l1)), qApp->translate("tremotesf", "&Options"));
         settingsAction->setShortcut(QKeySequence::Preferences);
         QObject::connect(settingsAction, &QAction::triggered, this, [=] {
             showSingleInstanceDialog<SettingsDialog>(this, [this] { return new SettingsDialog(this); });
         });
 
-        QAction* serversAction = toolsMenu->addAction(QIcon::fromTheme(QLatin1String("network-server")), qApp->translate("tremotesf", "&Connection Settings"));
+        QAction* serversAction = toolsMenu->addAction(QIcon::fromTheme("network-server"_l1), qApp->translate("tremotesf", "&Connection Settings"));
         QObject::connect(serversAction, &QAction::triggered, this, [=] {
             showSingleInstanceDialog<ConnectionSettingsDialog>(this, [this] { return new ConnectionSettingsDialog(this); });
         });
 
         toolsMenu->addSeparator();
 
-        auto serverSettingsAction = new QAction(QIcon::fromTheme(QLatin1String("preferences-system-network"), QIcon::fromTheme(QLatin1String("preferences-system"))), qApp->translate("tremotesf", "&Server Options"), this);
+        auto serverSettingsAction = new QAction(QIcon::fromTheme("preferences-system-network"_l1, QIcon::fromTheme("preferences-system"_l1)), qApp->translate("tremotesf", "&Server Options"), this);
         QObject::connect(serverSettingsAction, &QAction::triggered, this, [=] {
             showSingleInstanceDialog<ServerSettingsDialog>(this, [this] { return new ServerSettingsDialog(mRpc, this); });
         });
         mConnectionDependentActions.push_back(serverSettingsAction);
         toolsMenu->addAction(serverSettingsAction);
 
-        auto serverStatsAction = new QAction(QIcon::fromTheme(QLatin1String("view-statistics")), qApp->translate("tremotesf", "Server S&tats"), this);
+        auto serverStatsAction = new QAction(QIcon::fromTheme("view-statistics"_l1), qApp->translate("tremotesf", "Server S&tats"), this);
         QObject::connect(serverStatsAction, &QAction::triggered, this, [=] {
             showSingleInstanceDialog<ServerStatsDialog>(this, [this] { return new ServerStatsDialog(mRpc, this); });
         });
@@ -955,7 +955,7 @@ namespace tremotesf
 
         QMenu* helpMenu = menuBar()->addMenu(qApp->translate("tremotesf", "&Help"));
 
-        QAction* aboutAction = helpMenu->addAction(QIcon::fromTheme(QLatin1String("help-about")), qApp->translate("tremotesf", "&About"));
+        QAction* aboutAction = helpMenu->addAction(QIcon::fromTheme("help-about"_l1), qApp->translate("tremotesf", "&About"));
         QObject::connect(aboutAction, &QAction::triggered, this, [=] {
             showSingleInstanceDialog<AboutDialog>(this, [this] { return new AboutDialog(this); });
         });
@@ -964,7 +964,7 @@ namespace tremotesf
     void MainWindow::setupToolBar()
     {
         mToolBar = new QToolBar(this);
-        mToolBar->setObjectName(QLatin1String("toolBar"));
+        mToolBar->setObjectName("toolBar"_l1);
         mToolBar->setContextMenuPolicy(Qt::CustomContextMenu);
         mToolBar->setMovable(!Settings::instance()->isToolBarLocked());
         addToolBar(mToolBar);

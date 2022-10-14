@@ -204,7 +204,7 @@ namespace tremotesf
         const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
         QString path(entry->path());
         if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->renameIncompleteFiles()) {
-            path += QLatin1String(".part");
+            path += ".part"_l1;
         }
         return mRpc->localTorrentDownloadDirectoryPath(mTorrent) % '/' % path;
     }

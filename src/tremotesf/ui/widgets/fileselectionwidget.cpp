@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "libtremotesf/literals.h"
 #include "libtremotesf/target_os.h"
 
 namespace tremotesf
@@ -54,7 +55,7 @@ namespace tremotesf
                                              bool comboBox,
                                              QWidget* parent)
         : QWidget(parent),
-          mSelectionButton(new QPushButton(QIcon::fromTheme(QLatin1String("document-open")), QString(), this)),
+          mSelectionButton(new QPushButton(QIcon::fromTheme("document-open"_l1), QString(), this)),
           mConnectTextWithFileDialog(connectTextWithFileDialog)
     {
         auto layout = new QHBoxLayout(this);

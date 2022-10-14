@@ -46,7 +46,7 @@ namespace tremotesf {
         public:
             static thread_local bool drawingMenuItem;
 
-            explicit WindowsStyle(QObject* parent = nullptr) : QProxyStyle(QLatin1String("fusion")) {
+            explicit WindowsStyle(QObject* parent = nullptr) : QProxyStyle("fusion"_l1) {
                 setParent(parent);
             }
 
@@ -110,8 +110,8 @@ namespace tremotesf {
             logWarning(e);
         }
         QApplication::setStyle(new WindowsStyle(QApplication::instance()));
-        QIcon::setThemeSearchPaths({ QCoreApplication::applicationDirPath() % QLatin1Char('/') % QLatin1String(TREMOTESF_BUNDLED_ICONS_DIR) });
-        QIcon::setThemeName(QLatin1String(TREMOTESF_BUNDLED_ICON_THEME));
+        QIcon::setThemeSearchPaths({ QCoreApplication::applicationDirPath() % '/' % TREMOTESF_BUNDLED_ICONS_DIR""_l1 });
+        QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME""_l1);
         const auto systemColorsProvider = tremotesf::SystemColorsProvider::createInstance(QApplication::instance());
         tremotesf::applyDarkThemeToPalette(systemColorsProvider);
     }

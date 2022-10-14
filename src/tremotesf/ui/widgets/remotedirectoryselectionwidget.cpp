@@ -20,7 +20,7 @@ namespace tremotesf
     namespace
     {
         inline QString chopTrailingSeparator(QString directory) {
-            if (directory.endsWith(QLatin1Char('/'))) {
+            if (directory.endsWith('/')) {
                 directory.chop(1);
             }
             return directory;

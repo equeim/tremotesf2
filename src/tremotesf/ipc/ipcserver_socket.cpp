@@ -97,7 +97,7 @@ namespace tremotesf
 
     QString IpcServerSocket::socketName()
     {
-            QString name(QLatin1String("tremotesf"));
+            QString name("tremotesf"_l1);
 #ifdef Q_OS_WIN
             try {
                 DWORD sessionId{};

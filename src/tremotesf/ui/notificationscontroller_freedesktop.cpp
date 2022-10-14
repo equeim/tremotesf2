@@ -32,14 +32,14 @@ namespace tremotesf {
             void showNotification(const QString& title, const QString& message) override {
                 logInfo("FreedesktopNotificationsController: executing org.freedesktop.Notifications.Notify() D-Bus call");
                 const auto call = new QDBusPendingCallWatcher(mInterface.Notify(
-                    QLatin1String(TREMOTESF_APP_NAME),
+                    TREMOTESF_APP_NAME""_l1,
                     0,
-                    QLatin1String(TREMOTESF_APP_ID),
+                    TREMOTESF_APP_ID""_l1,
                     title,
                     message,
-                    {QLatin1String("default"), qApp->translate("tremotesf", "Show Tremotesf")},
-                    {{QLatin1String("desktop-entry"), QLatin1String(TREMOTESF_APP_ID)},
-                     {QLatin1String("x-kde-origin-name"), Servers::instance()->currentServerName()}},
+                    {"default"_l1, qApp->translate("tremotesf", "Show Tremotesf")},
+                    {{"desktop-entry"_l1, TREMOTESF_APP_ID""_l1},
+                     {"x-kde-origin-name"_l1, Servers::instance()->currentServerName()}},
                     -1
                 ), this);
                 const auto onFinished = [=]{
@@ -62,8 +62,8 @@ namespace tremotesf {
 
         private:
             OrgFreedesktopNotificationsInterface mInterface{
-                QLatin1String("org.freedesktop.Notifications"),
-                QLatin1String("/org/freedesktop/Notifications"),
+                "org.freedesktop.Notifications"_l1,
+                "/org/freedesktop/Notifications"_l1,
                 QDBusConnection::sessionBus()
             };
         };

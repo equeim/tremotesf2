@@ -109,7 +109,7 @@ namespace tremotesf
         directories.emplace(QString(), rpc()->torrentsCount());
         for (const auto& torrent : rpc()->torrents()) {
             QString directory(torrent->downloadDirectory());
-            if (directory.endsWith(QLatin1Char('/'))) {
+            if (directory.endsWith('/')) {
                 directory.chop(1);
             }
             auto found = directories.find(directory);

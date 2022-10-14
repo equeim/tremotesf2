@@ -167,7 +167,7 @@ namespace tremotesf
     QString Rpc::torrentRootFileName(const libtremotesf::Torrent* torrent) const
     {
         if (torrent->isSingleFile() && torrent->leftUntilDone() > 0 && serverSettings()->renameIncompleteFiles()) {
-            return torrent->name() % QLatin1String(".part");
+            return torrent->name() % ".part"_l1;
         }
         return torrent->name();
     }

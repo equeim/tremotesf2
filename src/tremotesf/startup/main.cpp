@@ -26,9 +26,9 @@ using namespace tremotesf;
 int main(int argc, char** argv)
 {
     // This does not need QApplication instance, and we need it in windowsInitPrelude()
-    QCoreApplication::setOrganizationName(QLatin1String(TREMOTESF_EXECUTABLE_NAME));
+    QCoreApplication::setOrganizationName(TREMOTESF_EXECUTABLE_NAME""_l1);
     QCoreApplication::setApplicationName(QCoreApplication::organizationName());
-    QCoreApplication::setApplicationVersion(QLatin1String(TREMOTESF_VERSION));
+    QCoreApplication::setApplicationVersion(TREMOTESF_VERSION""_l1);
 
     if constexpr (isTargetOsWindows) {
         windowsInitPrelude();
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
         windowsInitApplication();
     }
 
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(QLatin1String(TREMOTESF_APP_ID)));
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID""_l1));
     //
     // End of QApplication initialization
     //
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
                 return QLibraryInfo::location(QLibraryInfo::TranslationsPath);
             }
         }();
-        if (qtTranslator.load(QLocale(), QLatin1String(TREMOTESF_QT_TRANSLATIONS_FILENAME), QLatin1String("_"), qtTranslationsPath)) {
+        if (qtTranslator.load(QLocale(), TREMOTESF_QT_TRANSLATIONS_FILENAME""_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
             logWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
     }
 
     QTranslator appTranslator;
-    appTranslator.load(QLocale().name(), QLatin1String(":/translations"));
+    appTranslator.load(QLocale().name(), ":/translations"_l1);
     qApp->installTranslator(&appTranslator);
 
     Servers::migrate();

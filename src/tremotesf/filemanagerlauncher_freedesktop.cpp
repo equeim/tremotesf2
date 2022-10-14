@@ -22,8 +22,8 @@ namespace tremotesf {
         protected:
             void launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, const QPointer<QWidget>& parentWidget) override {
                 logInfo("FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call");
-                OrgFreedesktopFileManager1Interface interface(QLatin1String("org.freedesktop.FileManager1"),
-                    QLatin1String("/org/freedesktop/FileManager1"),
+                OrgFreedesktopFileManager1Interface interface("org.freedesktop.FileManager1"_l1,
+                    "/org/freedesktop/FileManager1"_l1,
                     QDBusConnection::sessionBus()
                 );
                 interface.setTimeout(desktoputils::defaultDbusTimeout);

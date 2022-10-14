@@ -26,8 +26,8 @@ namespace tremotesf
 {
     namespace
     {
-        const QLatin1String editIconName("document-properties");
-        const QLatin1String removeIconName("list-remove");
+        const auto editIconName = "document-properties"_l1;
+        const auto removeIconName = "list-remove"_l1;
     }
 
     ConnectionSettingsDialog::ConnectionSettingsDialog(QWidget* parent)
@@ -74,7 +74,7 @@ namespace tremotesf
 
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout, 0, 1, 2, 1);
-        auto addServerButton = new QPushButton(QIcon::fromTheme(QLatin1String("list-add")), qApp->translate("tremotesf", "Add Server..."), this);
+        auto addServerButton = new QPushButton(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "Add Server..."), this);
         QObject::connect(addServerButton, &QPushButton::clicked, this, [=] {
             auto dialog = new ServerEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);

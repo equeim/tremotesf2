@@ -99,7 +99,7 @@ namespace tremotesf
             QSettings accounts(settingsFormat,
                                QSettings::UserScope,
                                qApp->organizationName(),
-                               QLatin1String("accounts"));
+                               "accounts"_l1);
             if (!accounts.childGroups().isEmpty()) {
                 if (QFile::copy(accounts.fileName(),
                                 QSettings(settingsFormat,
@@ -292,8 +292,8 @@ namespace tremotesf
             lastTorrents.torrents.reserve(static_cast<size_t>(torrentVariants.size()));
             for (const QVariant& variant : torrentVariants) {
                 const QVariantMap torrentMap(variant.toMap());
-                lastTorrents.torrents.push_back({torrentMap[QLatin1String("hashString")].toString(),
-                                                 torrentMap[QLatin1String("finished")].toBool()});
+                lastTorrents.torrents.push_back({torrentMap["hashString"_l1].toString(),
+                                                 torrentMap["finished"_l1].toBool()});
             }
         }
         mSettings->endGroup();
@@ -306,8 +306,8 @@ namespace tremotesf
         QVariantList torrents;
         torrents.reserve(static_cast<QVariantList::size_type>(rpc->torrents().size()));
         for (const auto& torrent : rpc->torrents()) {
-            torrents.push_back(QVariantMap{{QLatin1String("hashString"), torrent->hashString()},
-                                           {QLatin1String("finished"), torrent->isFinished()}});
+            torrents.push_back(QVariantMap{{"hashString"_l1, torrent->hashString()},
+                                           {"finished"_l1, torrent->isFinished()}});
         }
         mSettings->setValue(lastTorrentsKey, torrents);
         mSettings->endGroup();
@@ -372,7 +372,7 @@ namespace tremotesf
 
         QStringList addTorrentDialogDirectories;
         if (!oldName.isEmpty() && name != oldName) {
-            addTorrentDialogDirectories = mSettings->value(oldName % QLatin1Char('/') % addTorrentDialogDirectoriesKey).toStringList();
+            addTorrentDialogDirectories = mSettings->value(oldName % '/' % addTorrentDialogDirectoriesKey).toStringList();
             mSettings->remove(oldName);
         }
 
@@ -483,7 +483,7 @@ namespace tremotesf
           mSettings(new QSettings(settingsFormat,
                                   QSettings::UserScope,
                                   qApp->organizationName(),
-                                  QLatin1String("servers"),
+                                  "servers"_l1,
                                   this))
     {
         if (hasServers()) {
