@@ -6,8 +6,10 @@
 
 #include <chrono>
 
+#include <QClipboard>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QGuiApplication>
 #include <QMimeData>
 #include <QTimer>
 #include <QUrl>
@@ -91,7 +93,7 @@ namespace tremotesf {
         };
 
         using namespace std::chrono_literals;
-        constexpr auto initialDelayerTorrentAddMessageDelay = 500ms;
+        constexpr auto initialDelayedTorrentAddMessageDelay = 500ms;
     }
 
     MainWindowViewModel::MainWindowViewModel(
@@ -101,17 +103,12 @@ namespace tremotesf {
         IpcServer* ipcServer,
         QObject* parent
     ) : QObject(parent),
-        mRpc(rpc),
-        mPendingFilesToOpen(std::move(commandLineFiles)),
-        mPendingUrlsToOpen(std::move(commandLineUrls))
+        mRpc(rpc)
     {
-        if (!mPendingFilesToOpen.isEmpty() || !mPendingUrlsToOpen.isEmpty()) {
-            logInfo("Delaying opening torrents until connected to server");
-            QTimer::singleShot(initialDelayerTorrentAddMessageDelay, this, [this] {
-                if (!mPendingFilesToOpen.isEmpty() || !mPendingUrlsToOpen.isEmpty()) {
-                    emit showDelayedTorrentAddMessage(mPendingFilesToOpen + mPendingUrlsToOpen);
-                }
-            });
+        if (!commandLineFiles.isEmpty() || !commandLineUrls.isEmpty()) {
+            QMetaObject::invokeMethod(this, [=] {
+                addTorrents(commandLineFiles, commandLineUrls, true);
+            }, Qt::QueuedConnection);
         }
 
         QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const auto&, const auto& startupNoficationId) {
@@ -119,21 +116,21 @@ namespace tremotesf {
         });
 
         QObject::connect(ipcServer, &IpcServer::torrentsAddingRequested, this, [=](const auto& files, const auto& urls) {
-            if (rpc->isConnected()) {
-                emit showAddTorrentDialogs(files, urls);
-            } else {
-                logInfo("Delaying opening torrents until connected to server");
-                mPendingFilesToOpen.append(files);
-                mPendingUrlsToOpen.append(urls);
-                emit showDelayedTorrentAddMessage(files + urls);
-            }
+            addTorrents(files, urls);
         });
 
         QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
-            if (rpc->isConnected() && (!mPendingFilesToOpen.empty() || !mPendingUrlsToOpen.empty())) {
-                const QStringList files = std::move(mPendingFilesToOpen);
-                const QStringList urls = std::move(mPendingUrlsToOpen);
-                emit showAddTorrentDialogs(files, urls);
+            if (rpc->isConnected()) {
+                if (delayedTorrentAddMessageTimer) {
+                    delayedTorrentAddMessageTimer->stop();
+                    delayedTorrentAddMessageTimer->deleteLater();
+                    delayedTorrentAddMessageTimer = nullptr;
+                }
+                if ((!mPendingFilesToOpen.empty() || !mPendingUrlsToOpen.empty())) {
+                    const QStringList files = std::move(mPendingFilesToOpen);
+                    const QStringList urls = std::move(mPendingUrlsToOpen);
+                    emit showAddTorrentDialogs(files, urls);
+                }
             }
         });
     }
@@ -142,16 +139,16 @@ namespace tremotesf {
         logDebug("MainWindowViewModel: processing QDragEnterEvent");
         logDebug("MainWindowViewModel: event: {}", static_cast<QDropEvent&>(*event));
         const auto dropped = DroppedTorrents(event->mimeData());
-        if (!dropped.isEmpty()) {
-            logInfo("MainWindowViewModel: accepting QDragEnterEvent");
-            if (event->possibleActions().testFlag(Qt::CopyAction)) {
-                event->setDropAction(Qt::CopyAction);
-                event->accept();
-            } else {
-                event->acceptProposedAction();
-            }
-        } else {
+        if (dropped.isEmpty()) {
             logDebug("MainWindowViewModel: not accepting QDragEnterEvent");
+            return;
+        }
+        logInfo("MainWindowViewModel: accepting QDragEnterEvent");
+        if (event->possibleActions().testFlag(Qt::CopyAction)) {
+            event->setDropAction(Qt::CopyAction);
+            event->accept();
+        } else {
+            event->acceptProposedAction();
         }
     }
 
@@ -161,19 +158,53 @@ namespace tremotesf {
         const auto dropped = DroppedTorrents(event->mimeData());
         if (dropped.isEmpty()) {
             logWarning("Dropped torrents are empty");
+            return;
+        }
+        logInfo("MainWindowViewModel: accepting QDropEvent");
+        event->acceptProposedAction();
+        addTorrents(dropped.files, dropped.urls);
+    }
+
+    void MainWindowViewModel::pasteShortcutActivated()
+    {
+        logDebug("MainWindowViewModel: pasteShortcutActivated() called");
+        const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
+        if (dropped.isEmpty()) {
+            logDebug("MainWindowViewModel: ignoring clipboard data");
+            return;
+        }
+        logInfo("MainWindowViewModel: accepting clipboard data");
+        addTorrents(dropped.files, dropped.urls);
+    }
+
+    void MainWindowViewModel::addTorrents(const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay)
+    {
+        logInfo("MainWindowViewModel: addTorrents() called");
+        logInfo("MainWindowViewModel: files = {}", files);
+        logInfo("MainWindowViewModel: urls = {}", urls);
+        if (mRpc->isConnected()) {
+            emit showAddTorrentDialogs(files, urls);
         } else {
-            logInfo("MainWindowViewModel: accepting QDropEvent");
-            logInfo("MainWindowViewModel: files = {}", dropped.files);
-            logInfo("MainWindowViewModel: urls = {}", dropped.urls);
-            if (mRpc->isConnected()) {
-                emit showAddTorrentDialogs(dropped.files, dropped.urls);
+            mPendingFilesToOpen.append(files);
+            mPendingUrlsToOpen.append(urls);
+            logInfo("Delaying opening torrents until connected to server");
+            if (showDelayedMessageWithDelay) {
+                if (delayedTorrentAddMessageTimer) {
+                    delayedTorrentAddMessageTimer->stop();
+                    delayedTorrentAddMessageTimer->deleteLater();
+                }
+                delayedTorrentAddMessageTimer = new QTimer(this);
+                delayedTorrentAddMessageTimer->setInterval(initialDelayedTorrentAddMessageDelay);
+                delayedTorrentAddMessageTimer->setSingleShot(true);
+                QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=] {
+                    delayedTorrentAddMessageTimer = nullptr;
+                    emit showDelayedTorrentAddMessage(files + urls);
+                });
+                QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, delayedTorrentAddMessageTimer, &QTimer::deleteLater);
+                delayedTorrentAddMessageTimer->start();
             } else {
-                logInfo("Delaying opening torrents until connected to server");
-                mPendingFilesToOpen.append(dropped.files);
-                mPendingUrlsToOpen.append(dropped.urls);
-                emit showDelayedTorrentAddMessage(dropped.files + dropped.urls);
+                emit showDelayedTorrentAddMessage(files + urls);
             }
-            event->acceptProposedAction();
         }
     }
 }

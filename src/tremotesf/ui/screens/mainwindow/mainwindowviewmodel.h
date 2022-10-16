@@ -5,14 +5,15 @@
 #ifndef TREMOTESF_MAINWINDOWVIEWMODEL_H
 #define TREMOTESF_MAINWINDOWVIEWMODEL_H
 
-#include <vector>
 
 #include <QObject>
+#include <QStringList>
 
 class QByteArray;
 class QDragEnterEvent;
 class QDropEvent;
 class QString;
+class QTimer;
 
 namespace tremotesf {
     class IpcServer;
@@ -31,11 +32,15 @@ namespace tremotesf {
 
         static void processDragEnterEvent(QDragEnterEvent* event);
         void processDropEvent(QDropEvent* event);
+        void pasteShortcutActivated();
 
     private:
         Rpc* mRpc{};
         QStringList mPendingFilesToOpen{};
         QStringList mPendingUrlsToOpen{};
+        QTimer* delayedTorrentAddMessageTimer{};
+
+        void addTorrents(const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay = false);
 
     signals:
         void showWindow(const QByteArray& newStartupNotificationId);
