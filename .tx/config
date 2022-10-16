@@ -5,22 +5,23 @@
 [main]
 host = https://www.transifex.com
 
-[tremotesf.main]
-file_filter = translations/<lang>.ts
-source_file = translations/source.ts
-source_lang = en
-trans.en_US = translations/en.ts
-type = QT
-
-[tremotesf.desktop]
-file_filter = data/po/<lang>.po
-source_file = data/po/messages.po
-source_lang = en
-trans.en_US = data/po/en.po
-type = PO
-
-[tremotesf.authors]
+[o:equeim:p:tremotesf:r:authors]
 file_filter = data/authors/authors_<lang>.html
 source_file = data/authors/authors.html
 source_lang = en
-type = HTML
+type        = HTML
+
+[o:equeim:p:tremotesf:r:desktop]
+file_filter = data/po/<lang>.po
+source_file = data/po/messages.po
+source_lang = en
+type        = PO
+trans.en_US = data/po/en.po
+
+[o:equeim:p:tremotesf:r:main]
+file_filter = translations/<lang>.ts
+source_file = translations/source.ts
+source_lang = en
+type        = QT
+trans.en_US = translations/en.ts
+
