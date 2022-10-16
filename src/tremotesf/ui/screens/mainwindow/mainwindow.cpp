@@ -331,6 +331,9 @@ namespace tremotesf
             }
         });
 
+        auto pasteShortcut = new QShortcut(QKeySequence::Paste, this);
+        QObject::connect(pasteShortcut, &QShortcut::activated, mViewModel, &MainWindowViewModel::pasteShortcutActivated);
+
         QObject::connect(mRpc, &Rpc::addedNotificationRequested, this, [=](const auto&, const auto& names) {
             mNotificationsController->showAddedTorrentsNotification(names);
         });
