@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+/.kdev4
 /.vs
+/build
 /installroot
 /out
 /RPMS
@@ -10,3 +12,4 @@
 *.list
 *.user
 *.user.*
+*.kdev4
