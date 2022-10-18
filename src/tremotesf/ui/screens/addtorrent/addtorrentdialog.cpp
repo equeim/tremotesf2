@@ -6,11 +6,12 @@
 #include "addtorrentdialog.h"
 
 #include <QCheckBox>
+#include <QClipboard>
 #include <QComboBox>
 #include <QCollator>
-#include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QGuiApplication>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -21,6 +22,7 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
+#include "libtremotesf/log.h"
 #include "libtremotesf/serversettings.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
@@ -30,6 +32,8 @@
 #include "tremotesf/settings.h"
 #include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
 #include "tremotesf/ui/widgets/torrentfilesview.h"
+
+#include "droppedtorrents.h"
 #include "localtorrentfilesmodel.h"
 
 namespace tremotesf
@@ -127,8 +131,18 @@ namespace tremotesf
             mTorrentLinkLineEdit->setReadOnly(true);
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
         } else {
-            QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
+            if (mUrl.isEmpty() && Settings::instance()->fillTorrentLinkFromClipboard()) {
+                const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
+                if (!dropped.urls.isEmpty()) {
+                    logInfo("AddTorrentDialog: filling torrent link from clipboard = {}", dropped.urls.first());
+                    mTorrentLinkLineEdit->setText(dropped.urls.first());
+                }
+            }
+            if (!mTorrentLinkLineEdit->text().isEmpty()) {
+                mTorrentLinkLineEdit->setCursorPosition(0);
+            }
+            QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
         }
 
         mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(mRpc->serverSettings()->downloadDirectory(),

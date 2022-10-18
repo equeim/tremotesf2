@@ -60,6 +60,8 @@ add_executable(
     tremotesf/ui/screens/settingsdialog.h
     tremotesf/ui/screens/addtorrent/addtorrentdialog.cpp
     tremotesf/ui/screens/addtorrent/addtorrentdialog.h
+    tremotesf/ui/screens/addtorrent/droppedtorrents.cpp
+    tremotesf/ui/screens/addtorrent/droppedtorrents.h
     tremotesf/ui/screens/addtorrent/localtorrentfilesmodel.cpp
     tremotesf/ui/screens/addtorrent/localtorrentfilesmodel.h
     tremotesf/ui/screens/connectionsettings/connectionsettingsdialog.cpp
