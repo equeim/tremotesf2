@@ -19,6 +19,7 @@
 #include "libtremotesf/log.h"
 #include "tremotesf/ipc/ipcserver.h"
 #include "tremotesf/rpc/trpc.h"
+#include "tremotesf/ui/screens/addtorrent/droppedtorrents.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
@@ -40,58 +41,6 @@ struct fmt::formatter<QDropEvent> : libtremotesf::SimpleFormatter {
 
 namespace tremotesf {
     namespace {
-        constexpr QStringView torrentFileSuffix = u".torrent";
-        constexpr QStringView magnetScheme = u"magnet";
-        constexpr QStringView magnetQueryPrefixV1 = u"xt=urn:btih:";
-        constexpr QStringView magnetQueryPrefixV2 = u"xt=urn:btmh:";
-        constexpr QStringView httpScheme = u"http";
-        constexpr QStringView httpsScheme = u"https";
-
-        struct DroppedTorrents {
-            explicit DroppedTorrents(const QMimeData* mime) {
-                // We need to validate whether we are actually opening torrent file (based on extension)
-                // or BitTorrent magnet link in order to not accept event and tell OS that we don't want it
-                if (mime->hasUrls()) {
-                    const auto mimeUrls = mime->urls();
-                    for (const auto& url : mimeUrls) {
-                        processUrl(url);
-                    }
-                } else if (mime->hasText()) {
-                    const auto text = mime->text();
-                    const auto lines = QStringView(text).split(u'\n');
-                    for (auto line : lines) {
-                        if (!line.isEmpty()) {
-                            processUrl(QUrl(line.toString()));
-                        }
-                    }
-                }
-            }
-
-            [[nodiscard]] bool isEmpty() const { return files.isEmpty() && urls.isEmpty(); }
-
-            QStringList files{};
-            QStringList urls{};
-
-        private:
-            void processUrl(const QUrl& url) {
-                if (url.isLocalFile()) {
-                    if (auto path = url.toLocalFile(); path.endsWith(torrentFileSuffix)) {
-                        files.push_back(path);
-                    }
-                } else {
-                    const auto scheme = url.scheme();
-                    if (scheme == magnetScheme && url.hasQuery()) {
-                        const auto query = url.query();
-                        if (query.startsWith(magnetQueryPrefixV1) || query.startsWith(magnetQueryPrefixV2)) {
-                            urls.push_back(url.toString());
-                        }
-                    } else if (scheme == httpScheme || scheme == httpsScheme) {
-                        urls.push_back(url.toString());
-                    }
-                }
-            }
-        };
-
         using namespace std::chrono_literals;
         constexpr auto initialDelayedTorrentAddMessageDelay = 500ms;
     }
