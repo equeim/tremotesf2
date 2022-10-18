@@ -5,8 +5,14 @@
 - Dark theme support on Windows (dark window title bar on Windows 10
 is supported only on 1809 or newer and it can be buggy because Windows 10 doesn't support this officially)
 - System accent color on Windows is used in app UI (can be disabled in settings)
-- Opening of torrents (local files or HTTP(S) links) and magnet links is now supported via drag & drop on main window
+- Opening of torrents (local files or HTTP(S) links) and magnet links is now supported via drag & drop or Ctrl+V on main window
+- Option to automatically fill link from clipboard when adding torrent link (disabled by default)
 - Last download dir is now remembered when adding torrents (can be disabled in settings) (thanks Alex Bell)
+- When adding torrents via opening file/link, drag & drop or clipboard while disconnected from server,
+Tremotesf will now show message explaining that they will be added after connection to server
+(instead of doing this sliently, confusing users)
+- When disconnected from server (or while connecting), status (or error) message will be shown
+over empty torrents list
 
 ### Changed
 - Raised minimum version of Qt to 5.15
