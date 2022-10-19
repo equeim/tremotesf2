@@ -26,29 +26,25 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::DropAction)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(Qt::DropActions)
 
-template<>
-struct fmt::formatter<QDropEvent> : libtremotesf::SimpleFormatter {
-    format_context::iterator format(const QDropEvent& event, format_context& ctx) FORMAT_CONST {
-        const auto mime = event.mimeData();
-        return fmt::format_to(
-            ctx.out(),
-            R"(
+namespace tremotesf {
+    namespace {
+        std::string formatDropEvent(const QDropEvent* event) {
+            const auto mime = event->mimeData();
+            return fmt::format(
+                R"(
     proposedAction = {}
     possibleActions = {}
     formats = {}
     urls = {}
     text = {})",
-            event.proposedAction(),
-            event.possibleActions(),
-            mime->formats(),
-            mime->urls(),
-            mime->text()
-        );
-    }
-};
+                event->proposedAction(),
+                event->possibleActions(),
+                mime->formats(),
+                mime->urls(),
+                mime->text()
+            );
+        }
 
-namespace tremotesf {
-    namespace {
         using namespace std::chrono_literals;
         constexpr auto initialDelayedTorrentAddMessageDelay = 500ms;
     }
@@ -97,7 +93,7 @@ namespace tremotesf {
 
     void MainWindowViewModel::processDragEnterEvent(QDragEnterEvent* event) {
         logDebug("MainWindowViewModel: processing QDragEnterEvent");
-        logDebug("MainWindowViewModel: event: {}", static_cast<QDropEvent&>(*event));
+        logDebug("MainWindowViewModel: event: {}", formatDropEvent(event));
         const auto dropped = DroppedTorrents(event->mimeData());
         if (dropped.isEmpty()) {
             logDebug("MainWindowViewModel: not accepting QDragEnterEvent");
@@ -114,7 +110,7 @@ namespace tremotesf {
 
     void MainWindowViewModel::processDropEvent(QDropEvent* event) {
         logDebug("MainWindowViewModel: processing QDropEvent");
-        logDebug("MainWindowViewModel: event: {}", *event);
+        logDebug("MainWindowViewModel: event: {}", formatDropEvent(event));
         const auto dropped = DroppedTorrents(event->mimeData());
         if (dropped.isEmpty()) {
             logWarning("Dropped torrents are empty");
