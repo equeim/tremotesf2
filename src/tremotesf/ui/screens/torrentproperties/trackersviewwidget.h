@@ -7,20 +7,17 @@
 
 #include <QWidget>
 
-namespace libtremotesf
-{
+namespace libtremotesf {
     class Torrent;
 }
 
-namespace tremotesf
-{
+namespace tremotesf {
     class BaseProxyModel;
     class BaseTreeView;
     class Rpc;
     class TrackersModel;
 
-    class TrackersViewWidget : public QWidget
-    {
+    class TrackersViewWidget : public QWidget {
         Q_OBJECT
 
     public:

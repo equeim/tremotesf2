@@ -16,13 +16,11 @@ class QLineEdit;
 class QPlainTextEdit;
 class QSpinBox;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class MountedDirectoriesWidget;
     class ServersModel;
 
-    class ServerEditDialog : public QDialog
-    {
+    class ServerEditDialog : public QDialog {
         Q_OBJECT
 
     public:

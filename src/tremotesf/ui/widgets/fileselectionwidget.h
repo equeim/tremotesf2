@@ -11,17 +11,17 @@ class QComboBox;
 class QLineEdit;
 class QPushButton;
 
-namespace tremotesf
-{
-    class FileSelectionWidget : public QWidget
-    {
+namespace tremotesf {
+    class FileSelectionWidget : public QWidget {
         Q_OBJECT
     public:
-        explicit FileSelectionWidget(bool directory,
-                                     const QString& filter,
-                                     bool connectTextWithFileDialog,
-                                     bool comboBox,
-                                     QWidget* parent = nullptr);
+        explicit FileSelectionWidget(
+            bool directory,
+            const QString& filter,
+            bool connectTextWithFileDialog,
+            bool comboBox,
+            QWidget* parent = nullptr
+        );
 
         QComboBox* textComboBox() const;
         QStringList textComboBoxItems() const;

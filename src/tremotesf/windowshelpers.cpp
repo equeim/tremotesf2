@@ -23,14 +23,15 @@ namespace tremotesf {
             info.dwBuildNumber = build;
             const auto conditionMask = VerSetConditionMask(
                 VerSetConditionMask(
-                    VerSetConditionMask(
-                        0, VER_MAJORVERSION, VER_GREATER_EQUAL
-                    ),
-                    VER_MINORVERSION, VER_GREATER_EQUAL
+                    VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL),
+                    VER_MINORVERSION,
+                    VER_GREATER_EQUAL
                 ),
-                VER_BUILDNUMBER, VER_GREATER_EQUAL
+                VER_BUILDNUMBER,
+                VER_GREATER_EQUAL
             );
-            return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) != FALSE;
+            return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) !=
+                   FALSE;
         }
 
         /**

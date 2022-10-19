@@ -13,27 +13,18 @@ class QDialogButtonBox;
 class QLabel;
 class QLineEdit;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class LocalTorrentFilesModel;
     class RemoteDirectorySelectionWidget;
     class Rpc;
 
-    class AddTorrentDialog : public QDialog
-    {
+    class AddTorrentDialog : public QDialog {
         Q_OBJECT
 
     public:
-        enum class Mode
-        {
-            File,
-            Url
-        };
+        enum class Mode { File, Url };
 
-        explicit AddTorrentDialog(Rpc* rpc,
-                                  const QString& url,
-                                  Mode mode,
-                                  QWidget* parent = nullptr);
+        explicit AddTorrentDialog(Rpc* rpc, const QString& url, Mode mode, QWidget* parent = nullptr);
 
         QSize sizeHint() const override;
         void accept() override;

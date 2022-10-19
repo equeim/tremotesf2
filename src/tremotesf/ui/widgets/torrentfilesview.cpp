@@ -27,15 +27,13 @@
 #include "commondelegate.h"
 #include "textinputdialog.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     TorrentFilesView::TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent)
         : BaseTreeView(parent),
           mLocalFile(true),
           mModel(model),
           mProxyModel(new TorrentFilesProxyModel(mModel, LocalTorrentFilesModel::SortRole, this)),
-          mRpc(rpc)
-    {
+          mRpc(rpc) {
         init();
         setItemDelegate(new CommonDelegate(this));
         if (!header()->restoreState(Settings::instance()->localTorrentFilesViewHeaderState())) {
@@ -43,17 +41,19 @@ namespace tremotesf
         }
     }
 
-    TorrentFilesView::TorrentFilesView(TorrentFilesModel* model,
-                                       Rpc* rpc,
-                                       QWidget* parent)
+    TorrentFilesView::TorrentFilesView(TorrentFilesModel* model, Rpc* rpc, QWidget* parent)
         : BaseTreeView(parent),
           mLocalFile(false),
           mModel(model),
           mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, this)),
-          mRpc(rpc)
-    {
+          mRpc(rpc) {
         init();
-        setItemDelegate(new CommonDelegate(static_cast<int>(TorrentFilesModel::Column::ProgressBar), TorrentFilesModel::SortRole, -1, this));
+        setItemDelegate(new CommonDelegate(
+            static_cast<int>(TorrentFilesModel::Column::ProgressBar),
+            TorrentFilesModel::SortRole,
+            -1,
+            this
+        ));
         if (!header()->restoreState(Settings::instance()->torrentFilesViewHeaderState())) {
             sortByColumn(static_cast<int>(TorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }
@@ -62,15 +62,14 @@ namespace tremotesf
             const QModelIndex sourceIndex(mProxyModel->sourceIndex(index));
             auto entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->sourceIndex(index).internalPointer());
             if (!entry->isDirectory() &&
-                    mRpc->isTorrentLocalMounted(static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
-                    entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
+                mRpc->isTorrentLocalMounted(static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
+                entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
                 desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
             }
         });
     }
 
-    TorrentFilesView::~TorrentFilesView()
-    {
+    TorrentFilesView::~TorrentFilesView() {
         if (mLocalFile) {
             Settings::instance()->setLocalTorrentFilesViewHeaderState(header()->saveState());
         } else {
@@ -78,21 +77,23 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesView::showFileRenameDialog(const QString& fileName, QWidget* parent, const std::function<void(const QString&)>& onAccepted)
-    {
-        auto dialog = new TextInputDialog(qApp->translate("tremotesf", "Rename"),
-                                          qApp->translate("tremotesf", "File name:"),
-                                          fileName,
-                                          qApp->translate("tremotesf", "Rename"),
-                                          false,
-                                          parent);
+    void TorrentFilesView::showFileRenameDialog(
+        const QString& fileName, QWidget* parent, const std::function<void(const QString&)>& onAccepted
+    ) {
+        auto dialog = new TextInputDialog(
+            qApp->translate("tremotesf", "Rename"),
+            qApp->translate("tremotesf", "File name:"),
+            fileName,
+            qApp->translate("tremotesf", "Rename"),
+            false,
+            parent
+        );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(dialog, &QDialog::accepted, parent, [=] { onAccepted(dialog->text()); });
         dialog->show();
     }
 
-    void TorrentFilesView::init()
-    {
+    void TorrentFilesView::init() {
         setContextMenuPolicy(Qt::CustomContextMenu);
         setModel(mProxyModel);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -103,8 +104,7 @@ namespace tremotesf
         onModelReset();
     }
 
-    void TorrentFilesView::onModelReset()
-    {
+    void TorrentFilesView::onModelReset() {
         if (mModel->rowCount() > 0) {
             if (mModel->rowCount(mModel->index(0, 0)) == 0) {
                 setRootIsDecorated(false);
@@ -115,11 +115,8 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesView::showContextMenu(QPoint pos)
-    {
-        if (!indexAt(pos).isValid()) {
-            return;
-        }
+    void TorrentFilesView::showContextMenu(QPoint pos) {
+        if (!indexAt(pos).isValid()) { return; }
 
         const QModelIndexList sourceIndexes(mProxyModel->sourceIndexes(selectionModel()->selectedRows()));
 
@@ -128,7 +125,8 @@ namespace tremotesf
         if (!mLocalFile) {
             bool show = true;
             for (const QModelIndex& index : sourceIndexes) {
-                if (static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() == TorrentFilesModelEntry::Unwanted) {
+                if (static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() ==
+                    TorrentFilesModelEntry::Unwanted) {
                     show = false;
                     break;
                 }
@@ -143,7 +141,8 @@ namespace tremotesf
                         disableOpen = true;
                     } else {
                         for (const QModelIndex& index : sourceIndexes) {
-                            if (!QFileInfo::exists(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index))) {
+                            if (!QFileInfo::exists(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index)
+                                )) {
                                 disableBoth = true;
                                 break;
                             }
@@ -153,15 +152,22 @@ namespace tremotesf
                     disableBoth = true;
                 }
 
-                QAction* openAction = contextMenu.addAction(QIcon::fromTheme("document-open"_l1), qApp->translate("tremotesf", "&Open"));
+                QAction* openAction =
+                    contextMenu.addAction(QIcon::fromTheme("document-open"_l1), qApp->translate("tremotesf", "&Open"));
                 openAction->setEnabled(!disableBoth && !disableOpen);
                 QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes] {
                     for (const QModelIndex& index : sourceIndexes) {
-                        desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index), this);
+                        desktoputils::openFile(
+                            static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index),
+                            this
+                        );
                     }
                 });
 
-                QAction* showInFileManagerAction = contextMenu.addAction(QIcon::fromTheme("go-jump"_l1), qApp->translate("tremotesf", "Show In &File Manager"));
+                QAction* showInFileManagerAction = contextMenu.addAction(
+                    QIcon::fromTheme("go-jump"_l1),
+                    qApp->translate("tremotesf", "Show In &File Manager")
+                );
                 showInFileManagerAction->setEnabled(!disableBoth);
                 QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, &sourceIndexes] {
                     std::vector<QString> files{};
@@ -176,12 +182,16 @@ namespace tremotesf
 
         contextMenu.addSeparator();
 
-        QAction* downloadAction = contextMenu.addAction(QIcon::fromTheme("download"_l1), qApp->translate("tremotesf", "&Download", "File menu item, verb"));
+        QAction* downloadAction = contextMenu.addAction(
+            QIcon::fromTheme("download"_l1),
+            qApp->translate("tremotesf", "&Download", "File menu item, verb")
+        );
         QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, true);
         });
 
-        QAction* notDownloadAction = contextMenu.addAction(QIcon::fromTheme("dialog-cancel"_l1), qApp->translate("tremotesf", "&Not Download"));
+        QAction* notDownloadAction =
+            contextMenu.addAction(QIcon::fromTheme("dialog-cancel"_l1), qApp->translate("tremotesf", "&Not Download"));
         QObject::connect(notDownloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, false);
         });
@@ -196,27 +206,21 @@ namespace tremotesf
         QAction* highPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&High"));
         highPriorityAction->setCheckable(true);
         QObject::connect(highPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
-            if (checked) {
-                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::HighPriority);
-            }
+            if (checked) { mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::HighPriority); }
         });
 
         //: Priority
         QAction* normalPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Normal"));
         normalPriorityAction->setCheckable(true);
         QObject::connect(normalPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
-            if (checked) {
-                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::NormalPriority);
-            }
+            if (checked) { mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::NormalPriority); }
         });
 
         //: Priority
         QAction* lowPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Low"));
         lowPriorityAction->setCheckable(true);
         QObject::connect(lowPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
-            if (checked) {
-                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::LowPriority);
-            }
+            if (checked) { mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::LowPriority); }
         });
 
         QAction* mixedPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Mixed"));
@@ -251,7 +255,8 @@ namespace tremotesf
 
         if (mRpc->serverSettings()->canRenameFiles()) {
             contextMenu.addSeparator();
-            QAction* renameAction = contextMenu.addAction(QIcon::fromTheme("edit-rename"_l1), qApp->translate("tremotesf", "&Rename"));
+            QAction* renameAction =
+                contextMenu.addAction(QIcon::fromTheme("edit-rename"_l1), qApp->translate("tremotesf", "&Rename"));
             renameAction->setEnabled(sourceIndexes.size() == 1);
             QObject::connect(renameAction, &QAction::triggered, this, [=] {
                 const QModelIndex& index = sourceIndexes.first();

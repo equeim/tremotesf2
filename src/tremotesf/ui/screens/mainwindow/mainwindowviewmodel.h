@@ -5,7 +5,6 @@
 #ifndef TREMOTESF_MAINWINDOWVIEWMODEL_H
 #define TREMOTESF_MAINWINDOWVIEWMODEL_H
 
-
 #include <QObject>
 #include <QStringList>
 

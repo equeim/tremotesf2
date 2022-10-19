@@ -9,25 +9,16 @@
 
 #include <QAbstractTableModel>
 
-namespace libtremotesf
-{
+namespace libtremotesf {
     class Torrent;
     class Tracker;
 }
 
-namespace tremotesf
-{
-    class TrackersModel : public QAbstractTableModel
-    {
+namespace tremotesf {
+    class TrackersModel : public QAbstractTableModel {
         Q_OBJECT
     public:
-        enum class Column
-        {
-            Announce,
-            Status,
-            Peers,
-            NextUpdate
-        };
+        enum class Column { Announce, Status, Peers, NextUpdate };
         Q_ENUM(Column)
 
         static constexpr auto SortRole = Qt::UserRole;
@@ -51,7 +42,8 @@ namespace tremotesf
         libtremotesf::Torrent* mTorrent;
         std::vector<libtremotesf::Tracker> mTrackers;
 
-        template<typename, typename, typename, typename> friend class ModelListUpdater;
+        template<typename, typename, typename, typename>
+        friend class ModelListUpdater;
         friend class TrackersModelUpdater;
     };
 }

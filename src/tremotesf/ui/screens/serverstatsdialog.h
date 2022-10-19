@@ -7,12 +7,10 @@
 
 #include <QDialog>
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
 
-    class ServerStatsDialog : public QDialog
-    {
+    class ServerStatsDialog : public QDialog {
         Q_OBJECT
     public:
         explicit ServerStatsDialog(Rpc* rpc, QWidget* parent = nullptr);

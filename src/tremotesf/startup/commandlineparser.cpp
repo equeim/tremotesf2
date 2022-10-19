@@ -14,18 +14,14 @@
 
 #include "libtremotesf/log.h"
 
-namespace tremotesf
-{
-    namespace
-    {
-        inline const char* parseAppName(const char* arg)
-        {
+namespace tremotesf {
+    namespace {
+        inline const char* parseAppName(const char* arg) {
             const char* sep = strrchr(arg, '/');
             return sep ? sep + 1 : arg;
         }
 
-        void parsePositionals(const std::vector<std::string>& torrents, CommandLineArgs& args)
-        {
+        void parsePositionals(const std::vector<std::string>& torrents, CommandLineArgs& args) {
             for (const std::string& arg : torrents) {
                 if (!arg.empty()) {
                     const auto argument(QString::fromStdString(arg));
@@ -36,9 +32,7 @@ namespace tremotesf
                         const QUrl url(argument);
                         if (url.isLocalFile()) {
                             const auto path = url.toLocalFile();
-                            if (QFileInfo(path).isFile()) {
-                                args.files.push_back(path);
-                            }
+                            if (QFileInfo(path).isFile()) { args.files.push_back(path); }
                         } else {
                             args.urls.push_back(argument);
                         }
@@ -48,21 +42,20 @@ namespace tremotesf
         }
     }
 
-    CommandLineArgs parseCommandLine(int& argc, char**& argv)
-    {
+    CommandLineArgs parseCommandLine(int& argc, char**& argv) {
         CommandLineArgs args{};
 
         const char* appName = parseAppName(argv[0]);
         const auto versionString = fmt::format("{} {}", appName, TREMOTESF_VERSION);
         cxxopts::Options opts(appName, versionString);
         std::vector<std::string> torrents;
-        opts.add_options()
-            ("v,version", "display version information", cxxopts::value<bool>())
-            ("h,help", "display this help", cxxopts::value<bool>())
-            ("m,minimized", "start minimized in notification area", cxxopts::value<bool>(args.minimized))
-            ("torrents", "", cxxopts::value<decltype(torrents)>(torrents));
-            opts.parse_positional("torrents");
-            opts.positional_help("torrents");
+        opts.add_options(
+        )("v,version", "display version information", cxxopts::value<bool>()
+        )("h,help", "display this help", cxxopts::value<bool>()
+        )("m,minimized", "start minimized in notification area", cxxopts::value<bool>(args.minimized)
+        )("torrents", "", cxxopts::value<decltype(torrents)>(torrents));
+        opts.parse_positional("torrents");
+        opts.positional_help("torrents");
         try {
             const auto result(opts.parse(argc, argv));
             if (result["help"].as<bool>()) {
@@ -76,9 +69,7 @@ namespace tremotesf
                 return args;
             }
             parsePositionals(torrents, args);
-        } catch (const cxxopts::OptionException& e) {
-            throw std::runtime_error(e.what());
-        }
+        } catch (const cxxopts::OptionException& e) { throw std::runtime_error(e.what()); }
 
         return args;
     }

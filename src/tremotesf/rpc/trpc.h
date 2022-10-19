@@ -7,10 +7,8 @@
 
 #include "libtremotesf/rpc.h"
 
-namespace tremotesf
-{
-    class Rpc : public libtremotesf::Rpc
-    {
+namespace tremotesf {
+    class Rpc : public libtremotesf::Rpc {
         Q_OBJECT
     public:
         explicit Rpc(QObject* parent = nullptr);
@@ -20,6 +18,7 @@ namespace tremotesf
         bool isTorrentLocalMounted(libtremotesf::Torrent* torrent) const;
         QString localTorrentFilesPath(libtremotesf::Torrent* torrent) const;
         QString localTorrentDownloadDirectoryPath(libtremotesf::Torrent* torrent) const;
+
     private:
         QString torrentRootFileName(const libtremotesf::Torrent* torrent) const;
 

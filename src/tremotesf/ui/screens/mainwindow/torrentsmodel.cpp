@@ -15,28 +15,18 @@
 #include "tremotesf/desktoputils.h"
 #include "tremotesf/utils.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     using libtremotesf::Torrent;
     using libtremotesf::TorrentData;
 
-    TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent)
-        : QAbstractTableModel(parent),
-          mRpc(nullptr)
-    {
+    TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent) : QAbstractTableModel(parent), mRpc(nullptr) {
         setRpc(rpc);
     }
 
-    int TorrentsModel::columnCount(const QModelIndex&) const
-    {
-        return QMetaEnum::fromType<Column>().keyCount();
-    }
+    int TorrentsModel::columnCount(const QModelIndex&) const { return QMetaEnum::fromType<Column>().keyCount(); }
 
-    QVariant TorrentsModel::data(const QModelIndex& index, int role) const
-    {
-        if (!index.isValid()) {
-            return {};
-        }
+    QVariant TorrentsModel::data(const QModelIndex& index, int role) const {
+        if (!index.isValid()) { return {}; }
         Torrent* torrent = mRpc->torrents()[static_cast<size_t>(index.row())].get();
         switch (role) {
         case Qt::DecorationRole:
@@ -122,9 +112,7 @@ namespace tremotesf
                 }
                 break;
             case Column::UploadSpeedLimit:
-                if (torrent->isUploadSpeedLimited()) {
-                    return Utils::formatSpeedLimit(torrent->uploadSpeedLimit());
-                }
+                if (torrent->isUploadSpeedLimited()) { return Utils::formatSpeedLimit(torrent->uploadSpeedLimit()); }
                 break;
             case Column::TotalDownloaded:
                 return Utils::formatByteSize(torrent->totalDownloaded());
@@ -163,9 +151,7 @@ namespace tremotesf
                 return torrent->totalSize();
             case Column::ProgressBar:
             case Column::Progress:
-                if (torrent->status() == TorrentData::Checking) {
-                    return torrent->recheckProgress();
-                }
+                if (torrent->status() == TorrentData::Checking) { return torrent->recheckProgress(); }
                 return torrent->percentDone();
             case Column::Status:
                 return torrent->status();
@@ -173,12 +159,9 @@ namespace tremotesf
                 return torrent->downloadSpeed();
             case Column::UploadSpeed:
                 return torrent->uploadSpeed();
-            case Column::Eta:
-            {
+            case Column::Eta: {
                 const auto eta = torrent->eta();
-                if (eta < 0) {
-                    return std::numeric_limits<decltype(eta)>::max();
-                }
+                if (eta < 0) { return std::numeric_limits<decltype(eta)>::max(); }
                 return eta;
             }
             case Column::Ratio:
@@ -188,14 +171,10 @@ namespace tremotesf
             case Column::DoneDate:
                 return torrent->doneDate();
             case Column::DownloadSpeedLimit:
-                if (torrent->isDownloadSpeedLimited()) {
-                    return torrent->downloadSpeedLimit();
-                }
+                if (torrent->isDownloadSpeedLimited()) { return torrent->downloadSpeedLimit(); }
                 return -1;
             case Column::UploadSpeedLimit:
-                if (torrent->isUploadSpeedLimited()) {
-                    return torrent->uploadSpeedLimit();
-                }
+                if (torrent->isUploadSpeedLimited()) { return torrent->uploadSpeedLimit(); }
                 return -1;
             case Column::TotalDownloaded:
                 return torrent->totalDownloaded();
@@ -211,19 +190,14 @@ namespace tremotesf
                 return data(index, Qt::DisplayRole);
             }
         case static_cast<int>(Role::TextElideMode):
-            if (static_cast<Column>(index.column()) == Column::DownloadDirectory) {
-                return Qt::ElideMiddle;
-            }
+            if (static_cast<Column>(index.column()) == Column::DownloadDirectory) { return Qt::ElideMiddle; }
             return Qt::ElideRight;
         }
         return {};
     }
 
-    QVariant TorrentsModel::headerData(int section, Qt::Orientation orientation, int role) const
-    {
-        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
-            return {};
-        }
+    QVariant TorrentsModel::headerData(int section, Qt::Orientation orientation, int role) const {
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) { return {}; }
         switch (static_cast<Column>(section)) {
         case Column::Name:
             return qApp->translate("tremotesf", "Name");
@@ -282,22 +256,13 @@ namespace tremotesf
         }
     }
 
-    int TorrentsModel::rowCount(const QModelIndex&) const
-    {
-        return static_cast<int>(mRpc->torrentsCount());
-    }
+    int TorrentsModel::rowCount(const QModelIndex&) const { return static_cast<int>(mRpc->torrentsCount()); }
 
-    Rpc* TorrentsModel::rpc() const
-    {
-        return mRpc;
-    }
+    Rpc* TorrentsModel::rpc() const { return mRpc; }
 
-    void TorrentsModel::setRpc(Rpc* rpc)
-    {
+    void TorrentsModel::setRpc(Rpc* rpc) {
         if (rpc != mRpc) {
-            if (mRpc) {
-                QObject::disconnect(mRpc, nullptr, this, nullptr);
-            }
+            if (mRpc) { QObject::disconnect(mRpc, nullptr, this, nullptr); }
             mRpc = rpc;
             if (rpc) {
                 QObject::connect(rpc, &Rpc::onAboutToAddTorrents, this, [=](size_t count) {
@@ -305,20 +270,19 @@ namespace tremotesf
                     beginInsertRows({}, first, first + static_cast<int>(count) - 1);
                 });
 
-                QObject::connect(rpc, &Rpc::onAddedTorrents, this, [=] {
-                    endInsertRows();
-                });
+                QObject::connect(rpc, &Rpc::onAddedTorrents, this, [=] { endInsertRows(); });
 
                 QObject::connect(rpc, &Rpc::onAboutToRemoveTorrents, this, [=](size_t first, size_t last) {
                     beginRemoveRows({}, static_cast<int>(first), static_cast<int>(last - 1));
                 });
 
-                QObject::connect(rpc, &Rpc::onRemovedTorrents, this, [=] {
-                    endRemoveRows();
-                });
+                QObject::connect(rpc, &Rpc::onRemovedTorrents, this, [=] { endRemoveRows(); });
 
                 QObject::connect(rpc, &Rpc::onChangedTorrents, this, [=](size_t first, size_t last) {
-                    emit dataChanged(index(static_cast<int>(first), 0), index(static_cast<int>(last), columnCount() - 1));
+                    emit dataChanged(
+                        index(static_cast<int>(first), 0),
+                        index(static_cast<int>(last), columnCount() - 1)
+                    );
                 });
 
                 const auto count = rpc->torrentsCount();
@@ -330,23 +294,14 @@ namespace tremotesf
         }
     }
 
-    Torrent* TorrentsModel::torrentAtIndex(const QModelIndex& index) const
-    {
-        return torrentAtRow(index.row());
-    }
+    Torrent* TorrentsModel::torrentAtIndex(const QModelIndex& index) const { return torrentAtRow(index.row()); }
 
-    Torrent* TorrentsModel::torrentAtRow(int row) const
-    {
-        return mRpc->torrents()[static_cast<size_t>(row)].get();
-    }
+    Torrent* TorrentsModel::torrentAtRow(int row) const { return mRpc->torrents()[static_cast<size_t>(row)].get(); }
 
-    QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const
-    {
+    QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const {
         QVariantList ids;
         ids.reserve(indexes.size());
-        for (const QModelIndex& index : indexes) {
-            ids.append(torrentAtIndex(index)->id());
-        }
+        for (const QModelIndex& index : indexes) { ids.append(torrentAtIndex(index)->id()); }
         return ids;
     }
 }

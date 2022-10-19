@@ -10,14 +10,11 @@
 class QTextDocument;
 class QWidget;
 
-namespace tremotesf
-{
-    namespace desktoputils
-    {
+namespace tremotesf {
+    namespace desktoputils {
         constexpr int defaultDbusTimeout = 2000; // 2 seconds
 
-        enum StatusIcon
-        {
+        enum StatusIcon {
             ActiveIcon,
             CheckingIcon,
             DownloadingIcon,

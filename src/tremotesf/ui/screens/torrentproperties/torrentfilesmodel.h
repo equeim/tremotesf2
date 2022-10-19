@@ -10,17 +10,15 @@
 #include "tremotesf/ui/itemmodels/basetorrentfilesmodel.h"
 #include "libtremotesf/torrent.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
 
-    class TorrentFilesModel : public BaseTorrentFilesModel
-    {
+    class TorrentFilesModel : public BaseTorrentFilesModel {
         Q_OBJECT
     public:
-        explicit TorrentFilesModel(libtremotesf::Torrent* torrent = nullptr,
-                                   Rpc* rpc = nullptr,
-                                   QObject* parent = nullptr);
+        explicit TorrentFilesModel(
+            libtremotesf::Torrent* torrent = nullptr, Rpc* rpc = nullptr, QObject* parent = nullptr
+        );
         ~TorrentFilesModel() override;
 
         libtremotesf::Torrent* torrent() const;
@@ -32,7 +30,8 @@ namespace tremotesf
         void setFileWanted(const QModelIndex& index, bool wanted) override;
         void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
         void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority) override;
-        void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) override;
+        void
+        setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority) override;
 
         void renameFile(const QModelIndex& index, const QString& newName) override;
         void fileRenamed(const QString& path, const QString& newName);

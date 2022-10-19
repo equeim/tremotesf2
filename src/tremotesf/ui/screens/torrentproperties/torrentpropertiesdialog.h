@@ -11,13 +11,11 @@
 class QTabWidget;
 class KMessageWidget;
 
-namespace libtremotesf
-{
+namespace libtremotesf {
     class Torrent;
 }
 
-namespace tremotesf
-{
+namespace tremotesf {
     class BaseTreeView;
     class PeersModel;
     class Rpc;
@@ -25,8 +23,7 @@ namespace tremotesf
     class TorrentFilesModel;
     class TrackersViewWidget;
 
-    class TorrentPropertiesDialog : public QDialog
-    {
+    class TorrentPropertiesDialog : public QDialog {
         Q_OBJECT
 
     public:

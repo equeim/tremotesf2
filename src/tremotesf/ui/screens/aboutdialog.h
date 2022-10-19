@@ -7,10 +7,8 @@
 
 #include <QDialog>
 
-namespace tremotesf
-{
-    class AboutDialog : public QDialog
-    {
+namespace tremotesf {
+    class AboutDialog : public QDialog {
         Q_OBJECT
     public:
         explicit AboutDialog(QWidget* parent = nullptr);

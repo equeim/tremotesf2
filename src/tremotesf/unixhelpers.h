@@ -22,9 +22,7 @@ namespace tremotesf {
      */
     template<typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_signed_v<T>>>
     T checkPosixError(T result, std::string_view functionName) {
-        if (result == T{-1}) {
-            impl::throwWithErrno(functionName);
-        }
+        if (result == T{-1}) { impl::throwWithErrno(functionName); }
         return result;
     }
 }

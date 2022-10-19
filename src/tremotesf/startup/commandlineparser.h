@@ -7,10 +7,8 @@
 
 #include <QStringList>
 
-namespace tremotesf
-{
-    struct CommandLineArgs
-    {
+namespace tremotesf {
+    struct CommandLineArgs {
         QStringList files;
         QStringList urls;
         bool minimized;

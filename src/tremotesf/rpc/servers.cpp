@@ -16,10 +16,8 @@
 #include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
 
-namespace tremotesf
-{
-    namespace
-    {
+namespace tremotesf {
+    namespace {
         constexpr QSettings::Format settingsFormat = [] {
             if constexpr (isTargetOsWindows) {
                 return QSettings::IniFormat;
@@ -67,22 +65,14 @@ namespace tremotesf
         const QLatin1String proxyTypeHttp("HTTP");
         const QLatin1String proxyTypeSocks5("SOCKS5");
 
-        Server::ProxyType proxyTypeFromSettings(const QString& value)
-        {
-            if (value.isEmpty() || value == proxyTypeDefault) {
-                return Server::ProxyType::Default;
-            }
-            if (value == proxyTypeHttp) {
-                return Server::ProxyType::Http;
-            }
-            if (value == proxyTypeSocks5) {
-                return Server::ProxyType::Socks5;
-            }
+        Server::ProxyType proxyTypeFromSettings(const QString& value) {
+            if (value.isEmpty() || value == proxyTypeDefault) { return Server::ProxyType::Default; }
+            if (value == proxyTypeHttp) { return Server::ProxyType::Http; }
+            if (value == proxyTypeSocks5) { return Server::ProxyType::Socks5; }
             return Server::ProxyType::Default;
         }
 
-        QLatin1String proxyTypeToSettings(Server::ProxyType type)
-        {
+        QLatin1String proxyTypeToSettings(Server::ProxyType type) {
             switch (type) {
             case Server::ProxyType::Default:
                 return proxyTypeDefault;
@@ -94,19 +84,13 @@ namespace tremotesf
             return proxyTypeDefault;
         }
 
-        void migrateFromAccounts()
-        {
-            QSettings accounts(settingsFormat,
-                               QSettings::UserScope,
-                               qApp->organizationName(),
-                               "accounts"_l1);
+        void migrateFromAccounts() {
+            QSettings accounts(settingsFormat, QSettings::UserScope, qApp->organizationName(), "accounts"_l1);
             if (!accounts.childGroups().isEmpty()) {
-                if (QFile::copy(accounts.fileName(),
-                                QSettings(settingsFormat,
-                                          QSettings::UserScope,
-                                          qApp->organizationName(),
-                                          fileName)
-                                    .fileName())) {
+                if (QFile::copy(
+                        accounts.fileName(),
+                        QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), fileName).fileName()
+                    )) {
                     QFile::remove(accounts.fileName());
                 }
             }
@@ -176,65 +160,43 @@ namespace tremotesf
 
     }
 
-    Servers* Servers::instance()
-    {
+    Servers* Servers::instance() {
         static auto* const instance = new Servers(qApp);
         return instance;
     }
 
-    void Servers::migrate()
-    {
-        migrateFromAccounts();
-    }
+    void Servers::migrate() { migrateFromAccounts(); }
 
-    bool Servers::hasServers() const
-    {
-        return !mSettings->childGroups().isEmpty();
-    }
+    bool Servers::hasServers() const { return !mSettings->childGroups().isEmpty(); }
 
-    std::vector<Server> Servers::servers()
-    {
+    std::vector<Server> Servers::servers() {
         std::vector<Server> list;
         const QStringList groups(mSettings->childGroups());
         list.reserve(static_cast<size_t>(groups.size()));
-        for (const QString& group : groups) {
-            list.push_back(getServer(group));
-        }
+        for (const QString& group : groups) { list.push_back(getServer(group)); }
         return list;
     }
 
-    Server Servers::currentServer() const
-    {
-        return getServer(currentServerName());
-    }
+    Server Servers::currentServer() const { return getServer(currentServerName()); }
 
-    QString Servers::currentServerName() const
-    {
-        return mSettings->value(currentServerKey).toString();
-    }
+    QString Servers::currentServerName() const { return mSettings->value(currentServerKey).toString(); }
 
-    QString Servers::currentServerAddress()
-    {
+    QString Servers::currentServerAddress() {
         mSettings->beginGroup(currentServerName());
         QString address(mSettings->value(addressKey).toString());
         mSettings->endGroup();
         return address;
     }
 
-    void Servers::setCurrentServer(const QString& name)
-    {
+    void Servers::setCurrentServer(const QString& name) {
         mSettings->setValue(currentServerKey, name);
         updateMountedDirectories();
         emit currentServerChanged();
     }
 
-    bool Servers::currentServerHasMountedDirectories() const
-    {
-        return !mCurrentServerMountedDirectories.empty();
-    }
+    bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
 
-    bool Servers::isUnderCurrentServerMountedDirectory(const QString& path) const
-    {
+    bool Servers::isUnderCurrentServerMountedDirectory(const QString& path) const {
         return std::any_of(
             mCurrentServerMountedDirectories.begin(),
             mCurrentServerMountedDirectories.end(),
@@ -242,21 +204,17 @@ namespace tremotesf
                 const auto& [localDirectory, remoteDirectory] = pair;
                 const auto localDirectoryPathLength = localDirectory.size();
                 return path.startsWith(localDirectory) &&
-                    (path.size() == localDirectoryPathLength || path[localDirectoryPathLength] == '/');
+                       (path.size() == localDirectoryPathLength || path[localDirectoryPathLength] == '/');
             }
         );
     }
 
-    QString Servers::firstLocalDirectory() const
-    {
-        if (mCurrentServerMountedDirectories.empty()) {
-            return {};
-        }
+    QString Servers::firstLocalDirectory() const {
+        if (mCurrentServerMountedDirectories.empty()) { return {}; }
         return mCurrentServerMountedDirectories.front().first;
     }
 
-    QString Servers::fromLocalToRemoteDirectory(const QString& path)
-    {
+    QString Servers::fromLocalToRemoteDirectory(const QString& path) {
         for (const std::pair<QString, QString>& directory : mCurrentServerMountedDirectories) {
             const int localSize = directory.first.size();
             if (path.startsWith(directory.first)) {
@@ -268,8 +226,7 @@ namespace tremotesf
         return {};
     }
 
-    QString Servers::fromRemoteToLocalDirectory(const QString& path)
-    {
+    QString Servers::fromRemoteToLocalDirectory(const QString& path) {
         for (const std::pair<QString, QString>& directory : mCurrentServerMountedDirectories) {
             const int remoteSize = directory.second.size();
             if (path.startsWith(directory.second)) {
@@ -281,8 +238,7 @@ namespace tremotesf
         return {};
     }
 
-    LastTorrents Servers::currentServerLastTorrents() const
-    {
+    LastTorrents Servers::currentServerLastTorrents() const {
         mSettings->beginGroup(currentServerName());
         LastTorrents lastTorrents;
         const QVariant lastTorrentsVariant(mSettings->value(lastTorrentsKey));
@@ -292,29 +248,29 @@ namespace tremotesf
             lastTorrents.torrents.reserve(static_cast<size_t>(torrentVariants.size()));
             for (const QVariant& variant : torrentVariants) {
                 const QVariantMap torrentMap(variant.toMap());
-                lastTorrents.torrents.push_back({torrentMap["hashString"_l1].toString(),
-                                                 torrentMap["finished"_l1].toBool()});
+                lastTorrents.torrents.push_back(
+                    {torrentMap["hashString"_l1].toString(), torrentMap["finished"_l1].toBool()}
+                );
             }
         }
         mSettings->endGroup();
         return lastTorrents;
     }
 
-    void Servers::saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc)
-    {
+    void Servers::saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc) {
         mSettings->beginGroup(currentServerName());
         QVariantList torrents;
         torrents.reserve(static_cast<QVariantList::size_type>(rpc->torrents().size()));
         for (const auto& torrent : rpc->torrents()) {
-            torrents.push_back(QVariantMap{{"hashString"_l1, torrent->hashString()},
-                                           {"finished"_l1, torrent->isFinished()}});
+            torrents.push_back(
+                QVariantMap{{"hashString"_l1, torrent->hashString()}, {"finished"_l1, torrent->isFinished()}}
+            );
         }
         mSettings->setValue(lastTorrentsKey, torrents);
         mSettings->endGroup();
     }
 
-    QStringList Servers::currentServerAddTorrentDialogDirectories() const
-    {
+    QStringList Servers::currentServerAddTorrentDialogDirectories() const {
         QStringList directories;
         mSettings->beginGroup(currentServerName());
         directories = mSettings->value(addTorrentDialogDirectoriesKey).toStringList();
@@ -322,49 +278,47 @@ namespace tremotesf
         return directories;
     }
 
-    void Servers::setCurrentServerAddTorrentDialogDirectories(const QStringList& directories)
-    {
+    void Servers::setCurrentServerAddTorrentDialogDirectories(const QStringList& directories) {
         mSettings->beginGroup(currentServerName());
         mSettings->setValue(addTorrentDialogDirectoriesKey, directories);
         mSettings->endGroup();
     }
 
-    void Servers::setServer(const QString& oldName,
-                            const QString& name,
-                            const QString& address,
-                            int port,
-                            const QString& apiPath,
+    void Servers::setServer(
+        const QString& oldName,
+        const QString& name,
+        const QString& address,
+        int port,
+        const QString& apiPath,
 
-                            Server::ProxyType proxyType,
-                            const QString& proxyHostname,
-                            int proxyPort,
-                            const QString& proxyUser,
-                            const QString& proxyPassword,
+        Server::ProxyType proxyType,
+        const QString& proxyHostname,
+        int proxyPort,
+        const QString& proxyUser,
+        const QString& proxyPassword,
 
-                            bool https,
-                            bool selfSignedCertificateEnabled,
-                            const QByteArray& selfSignedCertificate,
-                            bool clientCertificateEnabled,
-                            const QByteArray& clientCertificate,
+        bool https,
+        bool selfSignedCertificateEnabled,
+        const QByteArray& selfSignedCertificate,
+        bool clientCertificateEnabled,
+        const QByteArray& clientCertificate,
 
-                            bool authentication,
-                            const QString& username,
-                            const QString& password,
+        bool authentication,
+        const QString& username,
+        const QString& password,
 
-                            int updateInterval,
-                            int timeout,
+        int updateInterval,
+        int timeout,
 
-                            bool autoReconnectEnabled,
-                            int autoReconnectInterval,
+        bool autoReconnectEnabled,
+        int autoReconnectInterval,
 
-                            const QVariantMap& mountedDirectories)
-    {
+        const QVariantMap& mountedDirectories
+    ) {
         bool currentChanged = false;
         const QString current(currentServerName());
         if (oldName == current) {
-            if (name != oldName) {
-                mSettings->setValue(currentServerKey, name);
-            }
+            if (name != oldName) { mSettings->setValue(currentServerKey, name); }
             currentChanged = true;
         } else if (name == current) {
             currentChanged = true;
@@ -372,7 +326,8 @@ namespace tremotesf
 
         QStringList addTorrentDialogDirectories;
         if (!oldName.isEmpty() && name != oldName) {
-            addTorrentDialogDirectories = mSettings->value(oldName % '/' % addTorrentDialogDirectoriesKey).toStringList();
+            addTorrentDialogDirectories =
+                mSettings->value(oldName % '/' % addTorrentDialogDirectoriesKey).toStringList();
             mSettings->remove(oldName);
         }
 
@@ -414,13 +369,10 @@ namespace tremotesf
             emit currentServerChanged();
         }
 
-        if (oldName.isEmpty() && mSettings->childGroups().size() == 1) {
-            emit hasServersChanged();
-        }
+        if (oldName.isEmpty() && mSettings->childGroups().size() == 1) { emit hasServersChanged(); }
     }
 
-    void Servers::removeServer(const QString& name)
-    {
+    void Servers::removeServer(const QString& name) {
         mSettings->remove(name);
         const QStringList Servers(mSettings->childGroups());
         if (Servers.isEmpty()) {
@@ -431,8 +383,7 @@ namespace tremotesf
         }
     }
 
-    void Servers::saveServers(const std::vector<Server>& servers, const QString& current)
-    {
+    void Servers::saveServers(const std::vector<Server>& servers, const QString& current) {
         const bool hadServers = hasServers();
         mSettings->clear();
         mSettings->setValue(currentServerKey, current);
@@ -473,19 +424,12 @@ namespace tremotesf
         }
         updateMountedDirectories();
         emit currentServerChanged();
-        if (hasServers() != hadServers) {
-            emit hasServersChanged();
-        }
+        if (hasServers() != hadServers) { emit hasServersChanged(); }
     }
 
     Servers::Servers(QObject* parent)
         : QObject(parent),
-          mSettings(new QSettings(settingsFormat,
-                                  QSettings::UserScope,
-                                  qApp->organizationName(),
-                                  "servers"_l1,
-                                  this))
-    {
+          mSettings(new QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), "servers"_l1, this)) {
         if (hasServers()) {
             bool setFirst = true;
             const QString current(currentServerName());
@@ -498,9 +442,7 @@ namespace tremotesf
                     }
                 }
             }
-            if (setFirst) {
-                setCurrentServer(mSettings->childGroups().constFirst());
-            }
+            if (setFirst) { setCurrentServer(mSettings->childGroups().constFirst()); }
         } else {
             mSettings->remove(currentServerKey);
         }
@@ -522,54 +464,56 @@ namespace tremotesf
         updateMountedDirectories();
     }
 
-    Server Servers::getServer(const QString& name) const
-    {
+    Server Servers::getServer(const QString& name) const {
         mSettings->beginGroup(name);
-        Server server(mSettings->group(),
-                      mSettings->value(addressKey).toString(),
-                      mSettings->value(portKey).toInt(),
-                      mSettings->value(apiPathKey).toString(),
+        Server server(
+            mSettings->group(),
+            mSettings->value(addressKey).toString(),
+            mSettings->value(portKey).toInt(),
+            mSettings->value(apiPathKey).toString(),
 
-                      proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
-                      mSettings->value(proxyHostnameKey).toString(),
-                      mSettings->value(proxyPortKey).toInt(),
-                      mSettings->value(proxyUserKey).toString(),
-                      mSettings->value(proxyPasswordKey).toString(),
+            proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
+            mSettings->value(proxyHostnameKey).toString(),
+            mSettings->value(proxyPortKey).toInt(),
+            mSettings->value(proxyUserKey).toString(),
+            mSettings->value(proxyPasswordKey).toString(),
 
-                      mSettings->value(httpsKey, false).toBool(),
-                      mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
-                      mSettings->value(selfSignedCertificateKey).toByteArray(),
-                      mSettings->value(clientCertificateEnabledKey, false).toBool(),
-                      mSettings->value(clientCertificateKey).toByteArray(),
+            mSettings->value(httpsKey, false).toBool(),
+            mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
+            mSettings->value(selfSignedCertificateKey).toByteArray(),
+            mSettings->value(clientCertificateEnabledKey, false).toBool(),
+            mSettings->value(clientCertificateKey).toByteArray(),
 
-                      mSettings->value(authenticationKey, false).toBool(),
-                      mSettings->value(usernameKey).toString(),
-                      mSettings->value(passwordKey).toString(),
+            mSettings->value(authenticationKey, false).toBool(),
+            mSettings->value(usernameKey).toString(),
+            mSettings->value(passwordKey).toString(),
 
-                      mSettings->value(updateIntervalKey, 5).toInt(),
-                      mSettings->value(timeoutKey, 30).toInt(),
+            mSettings->value(updateIntervalKey, 5).toInt(),
+            mSettings->value(timeoutKey, 30).toInt(),
 
-                      mSettings->value(autoReconnectEnabledKey, false).toBool(),
-                      mSettings->value(autoReconnectIntervalKey, 30).toInt(),
+            mSettings->value(autoReconnectEnabledKey, false).toBool(),
+            mSettings->value(autoReconnectIntervalKey, 30).toInt(),
 
-                      mSettings->value(mountedDirectoriesKey).toMap(),
-                      mSettings->value(lastTorrentsKey),
-                      mSettings->value(addTorrentDialogDirectoriesKey));
+            mSettings->value(mountedDirectoriesKey).toMap(),
+            mSettings->value(lastTorrentsKey),
+            mSettings->value(addTorrentDialogDirectoriesKey)
+        );
         mSettings->endGroup();
         return server;
     }
 
-    void Servers::updateMountedDirectories(const QVariantMap& directories)
-    {
+    void Servers::updateMountedDirectories(const QVariantMap& directories) {
         mCurrentServerMountedDirectories.clear();
         mCurrentServerMountedDirectories.reserve(static_cast<size_t>(directories.size()));
         for (auto i = directories.cbegin(), end = directories.cend(); i != end; ++i) {
-            mCurrentServerMountedDirectories.emplace_back(QDir(i.key()).absolutePath(), QDir(i.value().toString()).absolutePath());
+            mCurrentServerMountedDirectories.emplace_back(
+                QDir(i.key()).absolutePath(),
+                QDir(i.value().toString()).absolutePath()
+            );
         }
     }
 
-    void Servers::updateMountedDirectories()
-    {
+    void Servers::updateMountedDirectories() {
         mSettings->beginGroup(currentServerName());
         updateMountedDirectories(mSettings->value(mountedDirectoriesKey).toMap());
         mSettings->endGroup();

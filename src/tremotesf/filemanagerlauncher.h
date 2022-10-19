@@ -19,11 +19,15 @@ namespace tremotesf {
             Q_OBJECT
         public:
             static FileManagerLauncher* createInstance();
-            void launchFileManagerAndSelectFiles(const std::vector<QString>& files, const QPointer<QWidget>& parentWidget);
+            void
+            launchFileManagerAndSelectFiles(const std::vector<QString>& files, const QPointer<QWidget>& parentWidget);
 
         protected:
             FileManagerLauncher() = default;
-            virtual void launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, const QPointer<QWidget>& parentWidget);
+            virtual void launchFileManagerAndSelectFiles(
+                const std::vector<std::pair<QString, std::vector<QString>>>& directories,
+                const QPointer<QWidget>& parentWidget
+            );
             virtual void fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget);
 
         signals:

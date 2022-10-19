@@ -11,12 +11,10 @@
 
 class OrgFreedesktopApplicationAdaptor;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class IpcServerDbus;
 
-    class IpcDbusService final : public QObject
-    {
+    class IpcDbusService final : public QObject {
         Q_OBJECT
     public:
         static constexpr auto desktopStartupIdField = "desktop-startup-id"_l1;
@@ -31,7 +29,8 @@ namespace tremotesf
         friend OrgFreedesktopApplicationAdaptor;
         void Activate(const QVariantMap& platform_data);
         void Open(const QStringList& uris, const QVariantMap& platform_data);
-        void ActivateAction(const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data);
+        void
+        ActivateAction(const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data);
 
         IpcServerDbus* mIpcServer;
     };

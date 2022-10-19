@@ -18,28 +18,33 @@
 #include "libtremotesf/literals.h"
 #include "tremotesf/utils.h"
 
-namespace tremotesf
-{
-    AboutDialog::AboutDialog(QWidget* parent)
-        : QDialog(parent)
-    {
+namespace tremotesf {
+    AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent) {
         setWindowTitle(qApp->translate("tremotesf", "About"));
 
         auto layout = new QVBoxLayout(this);
 
         auto titleWidget = new KTitleWidget(this);
         titleWidget->setIcon(qApp->windowIcon(), KTitleWidget::ImageLeft);
-        titleWidget->setText(QString::fromLatin1("%1 %2").arg(TREMOTESF_APP_NAME""_l1, qApp->applicationVersion()));
+        titleWidget->setText(QString::fromLatin1("%1 %2").arg(TREMOTESF_APP_NAME ""_l1, qApp->applicationVersion()));
         layout->addWidget(titleWidget);
 
         auto tabWidget = new QTabWidget(this);
 
         auto aboutPage = new QWidget(this);
         auto aboutPageLayout = new QVBoxLayout(aboutPage);
-        auto aboutPageLabel = new QLabel(qApp->translate("tremotesf", "<p>&#169; 2015-2020 Alexey Rochev &lt;<a href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>\n"
-                                                                      "<p>Source code: <a href=\"https://github.com/equeim/tremotesf2\">https://github.com/equeim/tremotesf2</a></p>\n"
-                                                                      "<p>Translations: <a href=\"https://www.transifex.com/equeim/tremotesf\">https://www.transifex.com/equeim/tremotesf</a></p>"),
-                                         this);
+        auto aboutPageLabel = new QLabel(
+            qApp->translate(
+                "tremotesf",
+                "<p>&#169; 2015-2020 Alexey Rochev &lt;<a "
+                "href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>\n"
+                "<p>Source code: <a "
+                "href=\"https://github.com/equeim/tremotesf2\">https://github.com/equeim/tremotesf2</a></p>\n"
+                "<p>Translations: <a "
+                "href=\"https://www.transifex.com/equeim/tremotesf\">https://www.transifex.com/equeim/tremotesf</a></p>"
+            ),
+            this
+        );
         QObject::connect(aboutPageLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
         aboutPageLayout->addWidget(aboutPageLabel);
 
@@ -75,8 +80,5 @@ namespace tremotesf
         setMinimumSize(minimumSizeHint());
     }
 
-    QSize AboutDialog::sizeHint() const
-    {
-        return minimumSizeHint().expandedTo(QSize(420, 384));
-    }
+    QSize AboutDialog::sizeHint() const { return minimumSizeHint().expandedTo(QSize(420, 384)); }
 }

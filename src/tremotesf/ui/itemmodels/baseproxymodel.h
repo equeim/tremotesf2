@@ -9,13 +9,13 @@
 #include <QModelIndexList>
 #include <QSortFilterProxyModel>
 
-namespace tremotesf
-{
-    class BaseProxyModel : public QSortFilterProxyModel
-    {
+namespace tremotesf {
+    class BaseProxyModel : public QSortFilterProxyModel {
         Q_OBJECT
     public:
-        explicit BaseProxyModel(QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
+        explicit BaseProxyModel(
+            QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
+        );
 
         QModelIndex sourceIndex(const QModelIndex& proxyIndex) const;
         QModelIndex sourceIndex(int proxyRow) const;

@@ -13,14 +13,11 @@
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/tracker.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     using libtremotesf::Tracker;
 
-    namespace
-    {
-        QString trackerStatusString(const Tracker& tracker)
-        {
+    namespace {
+        QString trackerStatusString(const Tracker& tracker) {
             switch (tracker.status()) {
             case Tracker::Inactive:
                 //: Tracker status
@@ -32,11 +29,8 @@ namespace tremotesf
             case Tracker::Updating:
                 //: Tracker status
                 return qApp->translate("tremotesf", "Updating");
-            case Tracker::Error:
-            {
-                if (tracker.errorMessage().isEmpty()) {
-                    return qApp->translate("tremotesf", "Error");
-                }
+            case Tracker::Error: {
+                if (tracker.errorMessage().isEmpty()) { return qApp->translate("tremotesf", "Error"); }
                 return qApp->translate("tremotesf", "Error: %1").arg(tracker.errorMessage());
             }
             default:
@@ -46,19 +40,13 @@ namespace tremotesf
     }
 
     TrackersModel::TrackersModel(libtremotesf::Torrent* torrent, QObject* parent)
-        : QAbstractTableModel(parent),
-          mTorrent(nullptr)
-    {
+        : QAbstractTableModel(parent), mTorrent(nullptr) {
         setTorrent(torrent);
     }
 
-    int TrackersModel::columnCount(const QModelIndex&) const
-    {
-        return QMetaEnum::fromType<Column>().keyCount();
-    }
+    int TrackersModel::columnCount(const QModelIndex&) const { return QMetaEnum::fromType<Column>().keyCount(); }
 
-    QVariant TrackersModel::data(const QModelIndex& index, int role) const
-    {
+    QVariant TrackersModel::data(const QModelIndex& index, int role) const {
         const Tracker& tracker = mTrackers[static_cast<size_t>(index.row())];
         if (role == Qt::DisplayRole) {
             switch (static_cast<Column>(index.column())) {
@@ -69,25 +57,18 @@ namespace tremotesf
             case Column::Peers:
                 return tracker.peers();
             case Column::NextUpdate:
-                if (tracker.nextUpdateEta() >= 0) {
-                    return Utils::formatEta(tracker.nextUpdateEta());
-                }
+                if (tracker.nextUpdateEta() >= 0) { return Utils::formatEta(tracker.nextUpdateEta()); }
                 break;
             }
         } else if (role == SortRole) {
-            if (static_cast<Column>(index.column()) == Column::NextUpdate) {
-                return tracker.nextUpdateTime();
-            }
+            if (static_cast<Column>(index.column()) == Column::NextUpdate) { return tracker.nextUpdateTime(); }
             return data(index, Qt::DisplayRole);
         }
         return {};
     }
 
-    QVariant TrackersModel::headerData(int section, Qt::Orientation orientation, int role) const
-    {
-        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
-            return {};
-        }
+    QVariant TrackersModel::headerData(int section, Qt::Orientation orientation, int role) const {
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) { return {}; }
         switch (static_cast<Column>(section)) {
         case Column::Announce:
             return qApp->translate("tremotesf", "Address");
@@ -102,22 +83,13 @@ namespace tremotesf
         }
     }
 
-    int TrackersModel::rowCount(const QModelIndex&) const
-    {
-        return static_cast<int>(mTrackers.size());
-    }
+    int TrackersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mTrackers.size()); }
 
-    libtremotesf::Torrent* TrackersModel::torrent() const
-    {
-        return mTorrent;
-    }
+    libtremotesf::Torrent* TrackersModel::torrent() const { return mTorrent; }
 
-    void TrackersModel::setTorrent(libtremotesf::Torrent* torrent)
-    {
+    void TrackersModel::setTorrent(libtremotesf::Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) {
-                QObject::disconnect(mTorrent, nullptr, this, nullptr);
-            }
+            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
 
             mTorrent = torrent;
 
@@ -132,18 +104,14 @@ namespace tremotesf
         }
     }
 
-    QVariantList TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const
-    {
+    QVariantList TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const {
         QVariantList ids;
         ids.reserve(indexes.size());
-        for (const QModelIndex& index : indexes) {
-            ids.append(mTrackers[static_cast<size_t>(index.row())].id());
-        }
+        for (const QModelIndex& index : indexes) { ids.append(mTrackers[static_cast<size_t>(index.row())].id()); }
         return ids;
     }
 
-    const libtremotesf::Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const
-    {
+    const libtremotesf::Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const {
         return mTrackers[static_cast<size_t>(index.row())];
     }
 
@@ -152,21 +120,19 @@ namespace tremotesf
         inline explicit TrackersModelUpdater(TrackersModel& model) : ModelListUpdater(model) {}
 
     protected:
-        std::vector<Tracker>::iterator findNewItemForItem(std::vector<Tracker>& newItems, const Tracker& item) override {
-            return std::find_if(newItems.begin(), newItems.end(), [item](const Tracker& tracker) { return tracker.id() == item.id(); });
+        std::vector<Tracker>::iterator
+        findNewItemForItem(std::vector<Tracker>& newItems, const Tracker& item) override {
+            return std::find_if(newItems.begin(), newItems.end(), [item](const Tracker& tracker) {
+                return tracker.id() == item.id();
+            });
         }
 
-        bool updateItem(Tracker& item, Tracker&& newItem) override {
-            return item != newItem;
-        }
+        bool updateItem(Tracker& item, Tracker&& newItem) override { return item != newItem; }
 
-        Tracker createItemFromNewItem(Tracker&& newItem) override {
-            return std::move(newItem);
-        }
+        Tracker createItemFromNewItem(Tracker&& newItem) override { return std::move(newItem); }
     };
 
-    void TrackersModel::update()
-    {
+    void TrackersModel::update() {
         TrackersModelUpdater updater(*this);
         updater.update(mTrackers, std::vector(mTorrent->trackers()));
     }

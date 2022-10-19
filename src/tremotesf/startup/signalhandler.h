@@ -5,8 +5,7 @@
 #ifndef TREMOTESF_SIGNALHANDLER_H
 #define TREMOTESF_SIGNALHANDLER_H
 
-namespace tremotesf
-{
+namespace tremotesf {
     namespace signalhandler {
         void initSignalHandler();
         void deinitSignalHandler();

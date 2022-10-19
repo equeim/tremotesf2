@@ -15,15 +15,14 @@
 #include "libtremotesf/log.h"
 
 #ifdef Q_OS_WIN
-#include <windows.h>
-#include "tremotesf/windowshelpers.h"
+#    include <windows.h>
+#    include "tremotesf/windowshelpers.h"
 #endif
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(QCborError::Code)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QCborValue)
 
-namespace tremotesf
-{
+namespace tremotesf {
     namespace {
         constexpr QStringView keyFiles = u"files";
         constexpr QStringView keyUrls = u"urls";
@@ -34,17 +33,13 @@ namespace tremotesf
             const auto array = value.toArray();
             strings.reserve(static_cast<QStringList::size_type>(array.size()));
             for (const QCborValue& v : array) {
-                if (v.isString()) {
-                    strings.push_back(v.toString());
-                }
+                if (v.isString()) { strings.push_back(v.toString()); }
             }
             return strings;
         }
     }
 
-    IpcServerSocket::IpcServerSocket(QObject* parent)
-        : IpcServer(parent)
-    {
+    IpcServerSocket::IpcServerSocket(QObject* parent) : IpcServer(parent) {
         auto server = new QLocalServer(this);
 
         const QString name(socketName());
@@ -54,9 +49,7 @@ namespace tremotesf
                 // We already tried to connect to it, removing
                 logWarning("Removing dead socket");
                 if (server->removeServer(name)) {
-                    if (!server->listen(name)) {
-                        logWarning("Failed to create socket: {}", server->errorString());
-                    }
+                    if (!server->listen(name)) { logWarning("Failed to create socket: {}", server->errorString()); }
                 } else {
                     logWarning("Failed to remove socket: {}", server->errorString());
                 }
@@ -65,9 +58,7 @@ namespace tremotesf
             }
         }
 
-        if (!server->isListening()) {
-            return;
-        }
+        if (!server->isListening()) { return; }
 
         QObject::connect(server, &QLocalServer::newConnection, this, [=]() {
             QLocalSocket* socket = server->nextPendingConnection();
@@ -82,7 +73,11 @@ namespace tremotesf
                     QCborParserError error{};
                     const auto cbor = QCborValue::fromCbor(message, &error);
                     if (error.error != QCborError::NoError) {
-                        logWarning("IpcServerSocket: failed to parse CBOR message: {} {}", error.error, error.errorString());
+                        logWarning(
+                            "IpcServerSocket: failed to parse CBOR message: {} {}",
+                            error.error,
+                            error.errorString()
+                        );
                         return;
                     }
                     logInfo("Arguments received: {}", cbor);
@@ -95,31 +90,26 @@ namespace tremotesf
         });
     }
 
-    QString IpcServerSocket::socketName()
-    {
-            QString name("tremotesf"_l1);
+    QString IpcServerSocket::socketName() {
+        QString name("tremotesf"_l1);
 #ifdef Q_OS_WIN
-            try {
-                DWORD sessionId{};
-                checkWin32Bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId), "ProcessIdToSessionId");
-                name += '-';
-                name += QString::number(sessionId);
-            } catch (const std::system_error& e) {
-                logWarningWithException(e, "IpcServerSocket: failed to append session id to socket name");
-            }
+        try {
+            DWORD sessionId{};
+            checkWin32Bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId), "ProcessIdToSessionId");
+            name += '-';
+            name += QString::number(sessionId);
+        } catch (const std::system_error& e) {
+            logWarningWithException(e, "IpcServerSocket: failed to append session id to socket name");
+        }
 #endif
-            return name;
+        return name;
     }
 
-    IpcServer* IpcServer::createInstance(QObject* parent)
-    {
-        return new IpcServerSocket(parent);
-    }
+    IpcServer* IpcServer::createInstance(QObject* parent) { return new IpcServerSocket(parent); }
 
     QByteArray IpcServerSocket::createAddTorrentsMessage(const QStringList& files, const QStringList& urls) {
-        return QCborMap{
-            {keyFiles, QCborArray::fromStringList(files)},
-            {keyUrls, QCborArray::fromStringList(urls)}
-        }.toCborValue().toCbor();
+        return QCborMap{{keyFiles, QCborArray::fromStringList(files)}, {keyUrls, QCborArray::fromStringList(urls)}}
+            .toCborValue()
+            .toCbor();
     }
 }

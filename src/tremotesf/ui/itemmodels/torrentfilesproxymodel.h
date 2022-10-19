@@ -7,16 +7,16 @@
 
 #include "tremotesf/ui/itemmodels/baseproxymodel.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     class BaseTorrentFilesModel;
 
-    class TorrentFilesProxyModel : public BaseProxyModel
-    {
+    class TorrentFilesProxyModel : public BaseProxyModel {
         Q_OBJECT
 
     public:
-        explicit TorrentFilesProxyModel(BaseTorrentFilesModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
+        explicit TorrentFilesProxyModel(
+            BaseTorrentFilesModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
+        );
 
     protected:
         bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;

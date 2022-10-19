@@ -40,30 +40,21 @@
 #include "torrentfilesmodel.h"
 #include "trackersviewwidget.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     using libtremotesf::Torrent;
     using libtremotesf::TorrentData;
 
-    namespace
-    {
+    namespace {
         const TorrentData::Priority priorityComboBoxItems[] = {
-            TorrentData::HighPriority,
-            TorrentData::NormalPriority,
-            TorrentData::LowPriority
-        };
+            TorrentData::HighPriority, TorrentData::NormalPriority, TorrentData::LowPriority};
 
         const TorrentData::RatioLimitMode ratioLimitComboBoxItems[] = {
-            TorrentData::GlobalRatioLimit,
-            TorrentData::UnlimitedRatio,
-            TorrentData::SingleRatioLimit
-        };
+            TorrentData::GlobalRatioLimit, TorrentData::UnlimitedRatio, TorrentData::SingleRatioLimit};
 
         const TorrentData::IdleSeedingLimitMode idleSeedingLimitComboBoxItems[] = {
             TorrentData::GlobalIdleSeedingLimit,
             TorrentData::UnlimitedIdleSeeding,
-            TorrentData::SingleIdleSeedingLimit
-        };
+            TorrentData::SingleIdleSeedingLimit};
     }
 
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)
@@ -76,8 +67,7 @@ namespace tremotesf
           mTrackersViewWidget(new TrackersViewWidget(mTorrent, mRpc, this)),
           mPeersView(nullptr),
           mPeersModel(nullptr),
-          mWebSeedersModel(nullptr)
-    {
+          mWebSeedersModel(nullptr) {
         auto layout = new QVBoxLayout(this);
 
         mMessageWidget->setCloseButtonVisible(false);
@@ -101,9 +91,7 @@ namespace tremotesf
         dialogButtonBox->button(QDialogButtonBox::Close)->setDefault(true);
 
         const QString torrentHash(mTorrent->hashString());
-        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] {
-            setTorrent(mRpc->torrentByHash(torrentHash));
-        });
+        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] { setTorrent(mRpc->torrentByHash(torrentHash)); });
 
         onTorrentChanged();
 
@@ -111,19 +99,14 @@ namespace tremotesf
         restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
     }
 
-    TorrentPropertiesDialog::~TorrentPropertiesDialog()
-    {
+    TorrentPropertiesDialog::~TorrentPropertiesDialog() {
         Settings::instance()->setPeersViewHeaderState(mPeersView->header()->saveState());
         Settings::instance()->setTorrentPropertiesDialogGeometry(saveGeometry());
     }
 
-    QSize TorrentPropertiesDialog::sizeHint() const
-    {
-        return minimumSizeHint();
-    }
+    QSize TorrentPropertiesDialog::sizeHint() const { return minimumSizeHint(); }
 
-    void TorrentPropertiesDialog::setupDetailsTab()
-    {
+    void TorrentPropertiesDialog::setupDetailsTab() {
         auto detailsTab = new QWidget(this);
         mTabWidget->addTab(detailsTab, qApp->translate("tremotesf", "Details"));
 
@@ -186,9 +169,11 @@ namespace tremotesf
 
             //: e.g. 100 MiB of 200 MiB (50%)
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
-                                        .arg(Utils::formatByteSize(mTorrent->completedSize()),
-                                             Utils::formatByteSize(mTorrent->sizeWhenDone()),
-                                             Utils::formatProgress(mTorrent->percentDone())));
+                                        .arg(
+                                            Utils::formatByteSize(mTorrent->completedSize()),
+                                            Utils::formatByteSize(mTorrent->sizeWhenDone()),
+                                            Utils::formatProgress(mTorrent->percentDone())
+                                        ));
             downloadedLabel->setText(Utils::formatByteSize(mTorrent->totalDownloaded()));
             uploadedLabel->setText(Utils::formatByteSize(mTorrent->totalUploaded()));
             ratioLabel->setText(Utils::formatRatio(mTorrent->ratio()));
@@ -214,8 +199,7 @@ namespace tremotesf
         };
     }
 
-    void TorrentPropertiesDialog::setupPeersTab()
-    {
+    void TorrentPropertiesDialog::setupPeersTab() {
         mPeersModel = new PeersModel(mTorrent, this);
         auto peersProxyModel = new BaseProxyModel(mPeersModel, PeersModel::SortRole, this);
 
@@ -223,7 +207,9 @@ namespace tremotesf
         auto peersTabLayout = new QVBoxLayout(peersTab);
 
         mPeersView = new BaseTreeView(this);
-        mPeersView->setItemDelegate(new CommonDelegate(static_cast<int>(PeersModel::Column::ProgressBar), PeersModel::SortRole, -1, this));
+        mPeersView->setItemDelegate(
+            new CommonDelegate(static_cast<int>(PeersModel::Column::ProgressBar), PeersModel::SortRole, -1, this)
+        );
         mPeersView->setModel(peersProxyModel);
         mPeersView->setRootIsDecorated(false);
         mPeersView->header()->restoreState(Settings::instance()->peersViewHeaderState());
@@ -233,8 +219,7 @@ namespace tremotesf
         mTabWidget->addTab(peersTab, qApp->translate("tremotesf", "Peers"));
     }
 
-    void TorrentPropertiesDialog::setupWebSeedersTab()
-    {
+    void TorrentPropertiesDialog::setupWebSeedersTab() {
         mWebSeedersModel = new StringListModel(qApp->translate("tremotesf", "Web seeder"), this);
         auto webSeedersProxyModel = new BaseProxyModel(mWebSeedersModel, Qt::DisplayRole, this);
 
@@ -251,8 +236,7 @@ namespace tremotesf
         mTabWidget->addTab(webSeedersTab, qApp->translate("tremotesf", "Web seeders"));
     }
 
-    void TorrentPropertiesDialog::setupLimitsTab()
-    {
+    void TorrentPropertiesDialog::setupLimitsTab() {
         auto limitsTab = new QWidget(this);
         mTabWidget->addTab(limitsTab, qApp->translate("tremotesf", "Limits"));
 
@@ -355,16 +339,18 @@ namespace tremotesf
         ratioLimitSpinBox->setSingleStep(0.1);
 
         ratioLimitSpinBox->setVisible(false);
-        QObject::connect(ratioLimitComboBox,
-                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                         this,
-                         [=](int index) {
-                             if (index == index_of_i(ratioLimitComboBoxItems, TorrentData::SingleRatioLimit)) {
-                                 ratioLimitSpinBox->show();
-                             } else {
-                                 ratioLimitSpinBox->hide();
-                             }
-                         });
+        QObject::connect(
+            ratioLimitComboBox,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            [=](int index) {
+                if (index == index_of_i(ratioLimitComboBoxItems, TorrentData::SingleRatioLimit)) {
+                    ratioLimitSpinBox->show();
+                } else {
+                    ratioLimitSpinBox->hide();
+                }
+            }
+        );
         ratioLimitLayout->addWidget(ratioLimitSpinBox);
 
         auto idleSeedingLimitLayout = new QHBoxLayout();
@@ -392,16 +378,18 @@ namespace tremotesf
         idleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
 
         idleSeedingLimitSpinBox->setVisible(false);
-        QObject::connect(idleSeedingLimitComboBox,
-                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                         this,
-                         [=](int index) {
-                             if (index == index_of_i(idleSeedingLimitComboBoxItems, TorrentData::SingleIdleSeedingLimit)) {
-                                 idleSeedingLimitSpinBox->show();
-                             } else {
-                                 idleSeedingLimitSpinBox->hide();
-                             }
-                         });
+        QObject::connect(
+            idleSeedingLimitComboBox,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            [=](int index) {
+                if (index == index_of_i(idleSeedingLimitComboBoxItems, TorrentData::SingleIdleSeedingLimit)) {
+                    idleSeedingLimitSpinBox->show();
+                } else {
+                    idleSeedingLimitSpinBox->hide();
+                }
+            }
+        );
         idleSeedingLimitLayout->addWidget(idleSeedingLimitSpinBox);
 
         limitsTabLayout->addWidget(seedingGroupBox);
@@ -434,83 +422,89 @@ namespace tremotesf
             QObject::connect(downloadSpeedCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setDownloadSpeedLimited);
 
             downloadSpeedSpinBox->setValue(mTorrent->downloadSpeedLimit());
-            QObject::connect(downloadSpeedSpinBox,
-                             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                             mTorrent,
-                             &Torrent::setDownloadSpeedLimit);
+            QObject::connect(
+                downloadSpeedSpinBox,
+                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                mTorrent,
+                &Torrent::setDownloadSpeedLimit
+            );
 
             uploadSpeedCheckBox->setChecked(mTorrent->isUploadSpeedLimited());
             QObject::connect(uploadSpeedCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setUploadSpeedLimited);
 
             uploadSpeedSpinBox->setValue(mTorrent->uploadSpeedLimit());
-            QObject::connect(uploadSpeedSpinBox,
-                             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                             mTorrent,
-                             &Torrent::setUploadSpeedLimit);
+            QObject::connect(
+                uploadSpeedSpinBox,
+                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                mTorrent,
+                &Torrent::setUploadSpeedLimit
+            );
 
             priorityComboBox->setCurrentIndex(index_of_i(priorityComboBoxItems, mTorrent->bandwidthPriority()));
-            QObject::connect(priorityComboBox,
-                             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                             mTorrent,
-                             [=](int index) {
-                                 mTorrent->setBandwidthPriority(priorityComboBoxItems[index]);
-                             });
+            QObject::connect(
+                priorityComboBox,
+                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                mTorrent,
+                [=](int index) { mTorrent->setBandwidthPriority(priorityComboBoxItems[index]); }
+            );
 
             ratioLimitComboBox->setCurrentIndex(index_of_i(ratioLimitComboBoxItems, mTorrent->ratioLimitMode()));
-            QObject::connect(ratioLimitComboBox,
-                             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                             mTorrent,
-                             [=](int index) {
-                                 mTorrent->setRatioLimitMode(ratioLimitComboBoxItems[index]);
-                             });
+            QObject::connect(
+                ratioLimitComboBox,
+                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                mTorrent,
+                [=](int index) { mTorrent->setRatioLimitMode(ratioLimitComboBoxItems[index]); }
+            );
 
             ratioLimitSpinBox->setValue(mTorrent->ratioLimit());
-            QObject::connect(ratioLimitSpinBox,
-                             static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-                             mTorrent,
-                             &Torrent::setRatioLimit);
+            QObject::connect(
+                ratioLimitSpinBox,
+                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+                mTorrent,
+                &Torrent::setRatioLimit
+            );
 
-            idleSeedingLimitComboBox->setCurrentIndex(index_of_i(idleSeedingLimitComboBoxItems, mTorrent->idleSeedingLimitMode()));
-            QObject::connect(idleSeedingLimitComboBox,
-                             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                             mTorrent,
-                             [=](int index) {
-                                 mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems[index]);
-                             });
+            idleSeedingLimitComboBox->setCurrentIndex(
+                index_of_i(idleSeedingLimitComboBoxItems, mTorrent->idleSeedingLimitMode())
+            );
+            QObject::connect(
+                idleSeedingLimitComboBox,
+                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                mTorrent,
+                [=](int index) { mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems[index]); }
+            );
 
             idleSeedingLimitSpinBox->setValue(mTorrent->idleSeedingLimit());
-            QObject::connect(idleSeedingLimitSpinBox,
-                             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                             mTorrent,
-                             &Torrent::setIdleSeedingLimit);
+            QObject::connect(
+                idleSeedingLimitSpinBox,
+                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                mTorrent,
+                &Torrent::setIdleSeedingLimit
+            );
 
             peersLimitsSpinBox->setValue(mTorrent->peersLimit());
-            QObject::connect(peersLimitsSpinBox,
-                             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                             mTorrent,
-                             &Torrent::setPeersLimit);
+            QObject::connect(
+                peersLimitsSpinBox,
+                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                mTorrent,
+                &Torrent::setPeersLimit
+            );
         };
     }
 
-    void TorrentPropertiesDialog::setTorrent(Torrent* torrent)
-    {
+    void TorrentPropertiesDialog::setTorrent(Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) {
-                QObject::disconnect(mTorrent, nullptr, this, nullptr);
-            }
+            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
             mTorrent = torrent;
             onTorrentChanged();
         }
     }
 
-    void TorrentPropertiesDialog::onTorrentChanged()
-    {
+    void TorrentPropertiesDialog::onTorrentChanged() {
         if (mTorrent) {
             mMessageWidget->animatedHide();
 
-            for (int i = 0, count = mTabWidget->count(); i < count; i++) {
-                mTabWidget->widget(i)->setEnabled(true);
-            }
+            for (int i = 0, count = mTabWidget->count(); i < count; i++) { mTabWidget->widget(i)->setEnabled(true); }
 
             mUpdateDetailsTab();
             mWebSeedersModel->setStringList(mTorrent->webSeeders());
@@ -528,9 +522,7 @@ namespace tremotesf
                 mMessageWidget->setText(qApp->translate("tremotesf", "Torrent Removed"));
             }
             mMessageWidget->animatedShow();
-            for (int i = 0, count = mTabWidget->count(); i < count; i++) {
-                mTabWidget->widget(i)->setEnabled(false);
-            }
+            for (int i = 0, count = mTabWidget->count(); i < count; i++) { mTabWidget->widget(i)->setEnabled(false); }
             mWebSeedersModel->setStringList({});
         }
 

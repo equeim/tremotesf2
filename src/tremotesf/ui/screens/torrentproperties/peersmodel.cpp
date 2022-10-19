@@ -11,31 +11,19 @@
 #include "libtremotesf/torrent.h"
 #include "tremotesf/utils.h"
 
-namespace tremotesf
-{
-    PeersModel::PeersModel(libtremotesf::Torrent* torrent, QObject* parent)
-        : QAbstractTableModel(parent)
-    {
+namespace tremotesf {
+    PeersModel::PeersModel(libtremotesf::Torrent* torrent, QObject* parent) : QAbstractTableModel(parent) {
         setTorrent(torrent);
     }
 
-    PeersModel::~PeersModel()
-    {
-        if (mTorrent) {
-            mTorrent->setPeersEnabled(false);
-        }
+    PeersModel::~PeersModel() {
+        if (mTorrent) { mTorrent->setPeersEnabled(false); }
     }
 
-    int PeersModel::columnCount(const QModelIndex&) const
-    {
-        return QMetaEnum::fromType<Column>().keyCount();
-    }
+    int PeersModel::columnCount(const QModelIndex&) const { return QMetaEnum::fromType<Column>().keyCount(); }
 
-    QVariant PeersModel::data(const QModelIndex& index, int role) const
-    {
-        if (!index.isValid()) {
-            return {};
-        }
+    QVariant PeersModel::data(const QModelIndex& index, int role) const {
+        if (!index.isValid()) { return {}; }
         const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::DisplayRole:
@@ -81,11 +69,8 @@ namespace tremotesf
         return {};
     }
 
-    QVariant PeersModel::headerData(int section, Qt::Orientation orientation, int role) const
-    {
-        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
-            return {};
-        }
+    QVariant PeersModel::headerData(int section, Qt::Orientation orientation, int role) const {
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) { return {}; }
         switch (static_cast<Column>(section)) {
         case Column::Address:
             return qApp->translate("tremotesf", "Address");
@@ -106,13 +91,9 @@ namespace tremotesf
         }
     }
 
-    int PeersModel::rowCount(const QModelIndex&) const
-    {
-        return static_cast<int>(mPeers.size());
-    }
+    int PeersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mPeers.size()); }
 
-    bool PeersModel::removeRows(int row, int count, const QModelIndex& parent)
-    {
+    bool PeersModel::removeRows(int row, int count, const QModelIndex& parent) {
         beginRemoveRows(parent, row, row + count - 1);
         const auto first(mPeers.begin() + row);
         mPeers.erase(first, first + count);
@@ -120,17 +101,11 @@ namespace tremotesf
         return true;
     }
 
-    libtremotesf::Torrent* PeersModel::torrent() const
-    {
-        return mTorrent;
-    }
+    libtremotesf::Torrent* PeersModel::torrent() const { return mTorrent; }
 
-    void PeersModel::setTorrent(libtremotesf::Torrent* torrent)
-    {
+    void PeersModel::setTorrent(libtremotesf::Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) {
-                QObject::disconnect(mTorrent, nullptr, this, nullptr);
-            }
+            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
 
             mTorrent = torrent;
 
@@ -148,8 +123,11 @@ namespace tremotesf
         }
     }
 
-    void PeersModel::update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount)
-    {
+    void PeersModel::update(
+        const std::vector<std::pair<int, int>>& removedIndexRanges,
+        const std::vector<std::pair<int, int>>& changedIndexRanges,
+        int addedCount
+    ) {
         for (const auto& [first, last] : removedIndexRanges) {
             beginRemoveRows({}, first, last - 1);
             mPeers.erase(mPeers.begin() + first, mPeers.begin() + last);
@@ -166,7 +144,11 @@ namespace tremotesf
         if (addedCount > 0) {
             beginInsertRows(QModelIndex(), static_cast<int>(mPeers.size()), static_cast<int>(newPeers.size()) - 1);
             mPeers.reserve(newPeers.size());
-            std::copy(newPeers.begin() + static_cast<ptrdiff_t>(mPeers.size()), newPeers.end(), std::back_insert_iterator(mPeers));
+            std::copy(
+                newPeers.begin() + static_cast<ptrdiff_t>(mPeers.size()),
+                newPeers.end(),
+                std::back_insert_iterator(mPeers)
+            );
             endInsertRows();
         }
     }

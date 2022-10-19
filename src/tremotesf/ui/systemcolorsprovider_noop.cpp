@@ -9,11 +9,7 @@ namespace tremotesf {
         return new SystemColorsProvider(parent);
     }
 
-    bool SystemColorsProvider::isDarkThemeFollowSystemSupported() {
-        return false;
-    }
+    bool SystemColorsProvider::isDarkThemeFollowSystemSupported() { return false; }
 
-    bool SystemColorsProvider::isAccentColorsSupported() {
-        return false;
-    }
+    bool SystemColorsProvider::isAccentColorsSupported() { return false; }
 }

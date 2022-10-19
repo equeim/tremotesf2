@@ -11,16 +11,16 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-namespace tremotesf
-{
-    TextInputDialog::TextInputDialog(const QString& title,
-                                     const QString& labelText,
-                                     const QString& text,
-                                     const QString& okButtonText,
-                                     bool multiline,
-                                     QWidget* parent)
-        : QDialog(parent)
-    {
+namespace tremotesf {
+    TextInputDialog::TextInputDialog(
+        const QString& title,
+        const QString& labelText,
+        const QString& text,
+        const QString& okButtonText,
+        bool multiline,
+        QWidget* parent
+    )
+        : QDialog(parent) {
         setWindowTitle(title);
 
         auto layout = new QVBoxLayout(this);
@@ -39,15 +39,11 @@ namespace tremotesf
         }
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-        if (!okButtonText.isEmpty()) {
-            dialogButtonBox->button(QDialogButtonBox::Ok)->setText(okButtonText);
-        }
+        if (!okButtonText.isEmpty()) { dialogButtonBox->button(QDialogButtonBox::Ok)->setText(okButtonText); }
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &TextInputDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &TextInputDialog::reject);
 
-        if (text.isEmpty()) {
-            dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-        }
+        if (text.isEmpty()) { dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false); }
 
         const auto onTextChanged = [=](const QString& text) {
             if (text.isEmpty()) {
@@ -70,13 +66,7 @@ namespace tremotesf
         setMinimumSize(minimumSizeHint());
     }
 
-    QSize TextInputDialog::sizeHint() const
-    {
-        return minimumSizeHint().expandedTo(QSize(256, 0));
-    }
+    QSize TextInputDialog::sizeHint() const { return minimumSizeHint().expandedTo(QSize(256, 0)); }
 
-    QString TextInputDialog::text() const
-    {
-        return mLineEdit ? mLineEdit->text() : mPlainTextEdit->toPlainText();
-    }
+    QString TextInputDialog::text() const { return mLineEdit ? mLineEdit->text() : mPlainTextEdit->toPlainText(); }
 }

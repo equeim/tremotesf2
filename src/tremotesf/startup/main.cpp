@@ -23,27 +23,20 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
 using namespace tremotesf;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     // This does not need QApplication instance, and we need it in windowsInitPrelude()
-    QCoreApplication::setOrganizationName(TREMOTESF_EXECUTABLE_NAME""_l1);
+    QCoreApplication::setOrganizationName(TREMOTESF_EXECUTABLE_NAME ""_l1);
     QCoreApplication::setApplicationName(QCoreApplication::organizationName());
-    QCoreApplication::setApplicationVersion(TREMOTESF_VERSION""_l1);
+    QCoreApplication::setApplicationVersion(TREMOTESF_VERSION ""_l1);
 
-    if constexpr (isTargetOsWindows) {
-        windowsInitPrelude();
-    }
+    if constexpr (isTargetOsWindows) { windowsInitPrelude(); }
     const auto preludeScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) {
-            windowsDeinitPrelude();
-        }
+        if constexpr (isTargetOsWindows) { windowsDeinitPrelude(); }
     });
 
     // Setup handler for UNIX signals or Windows console handler
     signalhandler::initSignalHandler();
-    const auto signalHandlerGuard = QScopeGuard([] {
-        signalhandler::deinitSignalHandler();
-    });
+    const auto signalHandlerGuard = QScopeGuard([] { signalhandler::deinitSignalHandler(); });
 
     //
     // Command line parsing
@@ -51,9 +44,7 @@ int main(int argc, char** argv)
     CommandLineArgs args{};
     try {
         args = parseCommandLine(argc, argv);
-        if (args.exit) {
-            return EXIT_SUCCESS;
-        }
+        if (args.exit) { return EXIT_SUCCESS; }
     } catch (const std::runtime_error& e) {
         logWarning("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
@@ -70,13 +61,9 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
-    if constexpr (isTargetOsWindows) {
-        windowsInitWinrt();
-    }
+    if constexpr (isTargetOsWindows) { windowsInitWinrt(); }
     const auto winrtScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) {
-            windowsDeinitWinrt();
-        }
+        if constexpr (isTargetOsWindows) { windowsDeinitWinrt(); }
     });
 
     //
@@ -87,11 +74,9 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
-    if constexpr (isTargetOsWindows) {
-        windowsInitApplication();
-    }
+    if constexpr (isTargetOsWindows) { windowsInitApplication(); }
 
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID""_l1));
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_l1));
     //
     // End of QApplication initialization
     //
@@ -102,12 +87,14 @@ int main(int argc, char** argv)
     {
         const QString qtTranslationsPath = [] {
             if constexpr (isTargetOsWindows) {
-                return QString::fromStdString(fmt::format("{}/{}", QCoreApplication::applicationDirPath(), TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR));
+                return QString::fromStdString(
+                    fmt::format("{}/{}", QCoreApplication::applicationDirPath(), TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR)
+                );
             } else {
                 return QLibraryInfo::location(QLibraryInfo::TranslationsPath);
             }
         }();
-        if (qtTranslator.load(QLocale(), TREMOTESF_QT_TRANSLATIONS_FILENAME""_l1, "_"_l1, qtTranslationsPath)) {
+        if (qtTranslator.load(QLocale(), TREMOTESF_QT_TRANSLATIONS_FILENAME ""_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
             logWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
@@ -123,9 +110,7 @@ int main(int argc, char** argv)
     MainWindow window(std::move(args.files), std::move(args.urls), ipcServer);
     window.showMinimized(args.minimized);
 
-    if (signalhandler::isExitRequested()) {
-        return EXIT_SUCCESS;
-    }
+    if (signalhandler::isExitRequested()) { return EXIT_SUCCESS; }
 
     return QCoreApplication::exec();
 }

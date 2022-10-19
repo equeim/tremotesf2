@@ -19,15 +19,17 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf {
     namespace impl {
-        void FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<QString>& files, const QPointer<QWidget>& parentWidget) {
+        void FileManagerLauncher::launchFileManagerAndSelectFiles(
+            const std::vector<QString>& files, const QPointer<QWidget>& parentWidget
+        ) {
             std::vector<std::pair<QString, std::vector<QString>>> directories{};
             for (const QString& filePath : files) {
                 QString dirPath = QFileInfo(filePath).path();
-                const auto found = std::find_if(directories.begin(), directories.end(), [&](const auto& d) { return d.first == dirPath; });
+                const auto found = std::find_if(directories.begin(), directories.end(), [&](const auto& d) {
+                    return d.first == dirPath;
+                });
                 auto& dirFiles = [&]() -> std::vector<QString>& {
-                    if (found != directories.end()) {
-                        return found->second;
-                    }
+                    if (found != directories.end()) { return found->second; }
                     directories.push_back({std::move(dirPath), {}});
                     return directories.back().second;
                 }();
@@ -36,10 +38,11 @@ namespace tremotesf {
             launchFileManagerAndSelectFiles(directories, parentWidget);
         }
 
-        void FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, const QPointer<QWidget>& parentWidget) {
-            for (const auto& [dirPath, _] : directories) {
-                fallbackForDirectory(dirPath, parentWidget);
-            }
+        void FileManagerLauncher::launchFileManagerAndSelectFiles(
+            const std::vector<std::pair<QString, std::vector<QString>>>& directories,
+            const QPointer<QWidget>& parentWidget
+        ) {
+            for (const auto& [dirPath, _] : directories) { fallbackForDirectory(dirPath, parentWidget); }
             emit done();
         }
 
@@ -48,7 +51,8 @@ namespace tremotesf {
             logInfo("FileManagerLauncher: executing QDesktopServices::openUrl() for {}", url);
             if (!QDesktopServices::openUrl(url)) {
                 logWarning("FileManagerLauncher: QDesktopServices::openUrl() failed for {}", url);
-                auto dialog = new QMessageBox(QMessageBox::Warning,
+                auto dialog = new QMessageBox(
+                    QMessageBox::Warning,
                     qApp->translate("tremotesf", "Error"),
                     qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(dirPath)),
                     QMessageBox::Close,

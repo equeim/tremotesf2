@@ -9,15 +9,14 @@
 
 #include "basetorrentsfilterssettingsmodel.h"
 
-namespace tremotesf
-{
-    class DownloadDirectoriesModel : public BaseTorrentsFiltersSettingsModel
-    {
+namespace tremotesf {
+    class DownloadDirectoriesModel : public BaseTorrentsFiltersSettingsModel {
         Q_OBJECT
     public:
         static constexpr auto DirectoryRole = Qt::UserRole;
 
-        inline explicit DownloadDirectoriesModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
+        inline explicit DownloadDirectoriesModel(QObject* parent = nullptr)
+            : BaseTorrentsFiltersSettingsModel(parent){};
 
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;
@@ -33,15 +32,15 @@ namespace tremotesf
     private:
         void update() override;
 
-        struct DirectoryItem
-        {
+        struct DirectoryItem {
             QString directory;
             int torrents;
         };
 
         std::vector<DirectoryItem> mDirectories;
 
-        template<typename, typename, typename, typename> friend class ModelListUpdater;
+        template<typename, typename, typename, typename>
+        friend class ModelListUpdater;
         friend class DownloadDirectoriesModelUpdater;
     };
 }

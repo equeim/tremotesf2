@@ -19,11 +19,8 @@
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/utils.h"
 
-namespace tremotesf
-{
-    ServerStatsDialog::ServerStatsDialog(Rpc* rpc, QWidget* parent)
-        : QDialog(parent)
-    {
+namespace tremotesf {
+    ServerStatsDialog::ServerStatsDialog(Rpc* rpc, QWidget* parent) : QDialog(parent) {
         setWindowTitle(qApp->translate("tremotesf", "Server Stats"));
 
         auto layout = new QVBoxLayout(this);
@@ -97,7 +94,9 @@ namespace tremotesf
             const libtremotesf::SessionStats currentSessionStats(rpc->serverStats()->currentSession());
             sessionDownloadedLabel->setText(Utils::formatByteSize(currentSessionStats.downloaded()));
             sessionUploadedLabel->setText(Utils::formatByteSize(currentSessionStats.uploaded()));
-            sessionRatioLabel->setText(Utils::formatRatio(currentSessionStats.downloaded(), currentSessionStats.uploaded()));
+            sessionRatioLabel->setText(
+                Utils::formatRatio(currentSessionStats.downloaded(), currentSessionStats.uploaded())
+            );
             sessionDurationLabel->setText(Utils::formatEta(currentSessionStats.duration()));
 
             const libtremotesf::SessionStats totalStats(rpc->serverStats()->total());
@@ -117,8 +116,5 @@ namespace tremotesf
         update();
     }
 
-    QSize ServerStatsDialog::sizeHint() const
-    {
-        return minimumSizeHint().expandedTo(QSize(300, 320));
-    }
+    QSize ServerStatsDialog::sizeHint() const { return minimumSizeHint().expandedTo(QSize(300, 320)); }
 }

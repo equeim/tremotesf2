@@ -14,13 +14,9 @@
 #include "tremotesf/desktoputils.h"
 #include "torrentsproxymodel.h"
 
-namespace tremotesf
-{
-    QVariant StatusFiltersModel::data(const QModelIndex& index, int role) const
-    {
-        if (!index.isValid()) {
-            return {};
-        }
+namespace tremotesf {
+    QVariant StatusFiltersModel::data(const QModelIndex& index, int role) const {
+        if (!index.isValid()) { return {}; }
         const Item& item = mItems[static_cast<size_t>(index.row())];
         switch (role) {
         case FilterRole:
@@ -49,7 +45,8 @@ namespace tremotesf
         case Qt::ToolTipRole:
             switch (item.filter) {
             case TorrentsProxyModel::All:
-                return qApp->translate("tremotesf", "All (%L1)", "All torrents, %L1 - torrents count").arg(item.torrents);
+                return qApp->translate("tremotesf", "All (%L1)", "All torrents, %L1 - torrents count")
+                    .arg(item.torrents);
             case TorrentsProxyModel::Active:
                 return qApp->translate("tremotesf", "Active (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Downloading:
@@ -70,13 +67,9 @@ namespace tremotesf
         return {};
     }
 
-    int StatusFiltersModel::rowCount(const QModelIndex&) const
-    {
-        return static_cast<int>(mItems.size());
-    }
+    int StatusFiltersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mItems.size()); }
 
-    bool StatusFiltersModel::removeRows(int row, int count, const QModelIndex& parent)
-    {
+    bool StatusFiltersModel::removeRows(int row, int count, const QModelIndex& parent) {
         beginRemoveRows(parent, row, row + count - 1);
         const auto first = mItems.begin() + row;
         mItems.erase(first, first + count);
@@ -84,42 +77,41 @@ namespace tremotesf
         return true;
     }
 
-    QModelIndex StatusFiltersModel::indexForStatusFilter(TorrentsProxyModel::StatusFilter filter) const
-    {
+    QModelIndex StatusFiltersModel::indexForStatusFilter(TorrentsProxyModel::StatusFilter filter) const {
         for (size_t i = 0, max = mItems.size(); i < max; ++i) {
             const auto& item = mItems[i];
-            if (item.filter == filter) {
-                return index(static_cast<int>(i));
-            }
+            if (item.filter == filter) { return index(static_cast<int>(i)); }
         }
         return {};
     }
 
-    QModelIndex StatusFiltersModel::indexForTorrentsProxyModelFilter() const
-    {
-        if (!torrentsProxyModel()) {
-            return {};
-        }
+    QModelIndex StatusFiltersModel::indexForTorrentsProxyModelFilter() const {
+        if (!torrentsProxyModel()) { return {}; }
         return indexForStatusFilter(torrentsProxyModel()->statusFilter());
     }
 
-    void StatusFiltersModel::resetTorrentsProxyModelFilter() const
-    {
-        if (torrentsProxyModel()) {
-            torrentsProxyModel()->setStatusFilter(TorrentsProxyModel::All);
-        }
+    void StatusFiltersModel::resetTorrentsProxyModelFilter() const {
+        if (torrentsProxyModel()) { torrentsProxyModel()->setStatusFilter(TorrentsProxyModel::All); }
     }
 
-    class StatusFiltersModelUpdater : public ModelListUpdater<StatusFiltersModel, StatusFiltersModel::Item, std::pair<const TorrentsProxyModel::StatusFilter, int>, std::map<TorrentsProxyModel::StatusFilter, int>> {
+    class StatusFiltersModelUpdater : public ModelListUpdater<
+                                          StatusFiltersModel,
+                                          StatusFiltersModel::Item,
+                                          std::pair<const TorrentsProxyModel::StatusFilter, int>,
+                                          std::map<TorrentsProxyModel::StatusFilter, int>> {
     public:
         inline explicit StatusFiltersModelUpdater(StatusFiltersModel& model) : ModelListUpdater(model) {}
 
     protected:
-        std::map<TorrentsProxyModel::StatusFilter, int>::iterator findNewItemForItem(std::map<TorrentsProxyModel::StatusFilter, int>& newItems, const StatusFiltersModel::Item& item) override {
+        std::map<TorrentsProxyModel::StatusFilter, int>::iterator findNewItemForItem(
+            std::map<TorrentsProxyModel::StatusFilter, int>& newItems, const StatusFiltersModel::Item& item
+        ) override {
             return newItems.find(item.filter);
         }
 
-        bool updateItem(StatusFiltersModel::Item& item, std::pair<const TorrentsProxyModel::StatusFilter, int>&& newItem) override {
+        bool updateItem(
+            StatusFiltersModel::Item& item, std::pair<const TorrentsProxyModel::StatusFilter, int>&& newItem
+        ) override {
             const auto& [filter, torrents] = newItem;
             if (item.torrents != torrents) {
                 item.torrents = torrents;
@@ -128,13 +120,13 @@ namespace tremotesf
             return false;
         }
 
-        StatusFiltersModel::Item createItemFromNewItem(std::pair<const TorrentsProxyModel::StatusFilter, int>&& newTracker) override {
+        StatusFiltersModel::Item
+        createItemFromNewItem(std::pair<const TorrentsProxyModel::StatusFilter, int>&& newTracker) override {
             return StatusFiltersModel::Item{newTracker.first, newTracker.second};
         }
     };
 
-    void StatusFiltersModel::update()
-    {
+    void StatusFiltersModel::update() {
         std::map<TorrentsProxyModel::StatusFilter, int> items{
             {TorrentsProxyModel::All, rpc()->torrentsCount()},
             {TorrentsProxyModel::Active, 0},
@@ -142,13 +134,10 @@ namespace tremotesf
             {TorrentsProxyModel::Seeding, 0},
             {TorrentsProxyModel::Paused, 0},
             {TorrentsProxyModel::Checking, 0},
-            {TorrentsProxyModel::Errored, 0}
-        };
+            {TorrentsProxyModel::Errored, 0}};
 
         const auto processFilter = [&](libtremotesf::Torrent* torrent, TorrentsProxyModel::StatusFilter filter) {
-            if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrent, filter)) {
-                ++(items.find(filter)->second);
-            }
+            if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrent, filter)) { ++(items.find(filter)->second); }
         };
 
         for (const auto& torrent : rpc()->torrents()) {

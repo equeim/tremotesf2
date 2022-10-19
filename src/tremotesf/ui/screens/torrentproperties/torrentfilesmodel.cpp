@@ -15,29 +15,22 @@
 #include "libtremotesf/serversettings.h"
 #include "tremotesf/rpc/trpc.h"
 
-namespace tremotesf
-{
-    namespace
-    {
-        void updateFile(TorrentFilesModelFile* treeFile, const libtremotesf::TorrentFile& file)
-        {
+namespace tremotesf {
+    namespace {
+        void updateFile(TorrentFilesModelFile* treeFile, const libtremotesf::TorrentFile& file) {
             treeFile->setChanged(false);
             treeFile->setCompletedSize(file.completedSize);
             treeFile->setWanted(file.wanted);
             treeFile->setPriority(TorrentFilesModelEntry::fromFilePriority(file.priority));
         }
 
-        QVariantList idsFromIndex(const QModelIndex& index)
-        {
+        QVariantList idsFromIndex(const QModelIndex& index) {
             auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-            if (entry->isDirectory()) {
-                return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
-            }
+            if (entry->isDirectory()) { return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds(); }
             return {static_cast<TorrentFilesModelFile*>(entry)->id()};
         }
 
-        QVariantList idsFromIndexes(const QList<QModelIndex>& indexes)
-        {
+        QVariantList idsFromIndexes(const QList<QModelIndex>& indexes) {
             QVariantList ids;
             // at least indexes.size(), but may be more
             ids.reserve(indexes.size());
@@ -54,11 +47,11 @@ namespace tremotesf
             return ids;
         }
 
-        using FutureWatcher = QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
+        using FutureWatcher =
+            QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
 
         std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
-        doCreateTree(const std::vector<libtremotesf::TorrentFile>& files)
-        {
+        doCreateTree(const std::vector<libtremotesf::TorrentFile>& files) {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> treeFiles;
             treeFiles.reserve(files.size());
@@ -70,13 +63,13 @@ namespace tremotesf
 
                 const std::vector<QString> parts(file.path);
 
-                for (size_t partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1; partIndex < partsCount; ++partIndex) {
+                for (size_t partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1;
+                     partIndex < partsCount;
+                     ++partIndex) {
                     const QString& part = parts[partIndex];
 
                     if (partIndex == lastPartIndex) {
-                        auto* childFile = currentDirectory->addFile(static_cast<int>(fileIndex),
-                                                                    part,
-                                                                    file.size);
+                        auto* childFile = currentDirectory->addFile(static_cast<int>(fileIndex), part, file.size);
                         updateFile(childFile, file);
                         childFile->setChanged(false);
                         treeFiles.push_back(childFile);
@@ -97,34 +90,22 @@ namespace tremotesf
     }
 
     TorrentFilesModel::TorrentFilesModel(libtremotesf::Torrent* torrent, Rpc* rpc, QObject* parent)
-        : BaseTorrentFilesModel({Column::Name,
-                                 Column::Size,
-                                 Column::ProgressBar,
-                                 Column::Progress,
-                                 Column::Priority}, parent)
-    {
+        : BaseTorrentFilesModel(
+              {Column::Name, Column::Size, Column::ProgressBar, Column::Progress, Column::Priority}, parent
+          ) {
         setRpc(rpc);
         setTorrent(torrent);
     }
 
-    TorrentFilesModel::~TorrentFilesModel()
-    {
-        if (mTorrent) {
-            mTorrent->setFilesEnabled(false);
-        }
+    TorrentFilesModel::~TorrentFilesModel() {
+        if (mTorrent) { mTorrent->setFilesEnabled(false); }
     }
 
-    libtremotesf::Torrent* TorrentFilesModel::torrent() const
-    {
-        return mTorrent;
-    }
+    libtremotesf::Torrent* TorrentFilesModel::torrent() const { return mTorrent; }
 
-    void TorrentFilesModel::setTorrent(libtremotesf::Torrent* torrent)
-    {
+    void TorrentFilesModel::setTorrent(libtremotesf::Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) {
-                QObject::disconnect(mTorrent, nullptr, this, nullptr);
-            }
+            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
 
             mTorrent = torrent;
 
@@ -141,50 +122,37 @@ namespace tremotesf
         }
     }
 
-    Rpc* TorrentFilesModel::rpc() const
-    {
-        return mRpc;
-    }
+    Rpc* TorrentFilesModel::rpc() const { return mRpc; }
 
-    void TorrentFilesModel::setRpc(Rpc* rpc)
-    {
-        mRpc = rpc;
-    }
+    void TorrentFilesModel::setRpc(Rpc* rpc) { mRpc = rpc; }
 
-    void TorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted)
-    {
+    void TorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted) {
         BaseTorrentFilesModel::setFileWanted(index, wanted);
         mTorrent->setFilesWanted(idsFromIndex(index), wanted);
     }
 
-    void TorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted)
-    {
+    void TorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted) {
         BaseTorrentFilesModel::setFilesWanted(indexes, wanted);
         mTorrent->setFilesWanted(idsFromIndexes(indexes), wanted);
     }
 
-    void TorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority)
-    {
+    void TorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority) {
         BaseTorrentFilesModel::setFilePriority(index, priority);
         mTorrent->setFilesPriority(idsFromIndex(index), TorrentFilesModelEntry::toFilePriority(priority));
     }
 
-    void TorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority)
-    {
+    void
+    TorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) {
         BaseTorrentFilesModel::setFilesPriority(indexes, priority);
         mTorrent->setFilesPriority(idsFromIndexes(indexes), TorrentFilesModelEntry::toFilePriority(priority));
     }
 
-    void TorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName)
-    {
+    void TorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName) {
         mTorrent->renameFile(static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->path(), newName);
     }
 
-    void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName)
-    {
-        if (!mLoaded || !mRootDirectory) {
-            return;
-        }
+    void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName) {
+        if (!mLoaded || !mRootDirectory) { return; }
         TorrentFilesModelEntry* entry = mRootDirectory.get();
         const auto parts = path.split('/', Qt::SkipEmptyParts);
         for (const QString& part : parts) {
@@ -193,14 +161,9 @@ namespace tremotesf
         BaseTorrentFilesModel::fileRenamed(entry, newName);
     }
 
-    QString TorrentFilesModel::localFilePath(const QModelIndex &index) const
-    {
-        if (!index.isValid()) {
-            return mRpc->localTorrentDownloadDirectoryPath(mTorrent);
-        }
-        if (mTorrent->isSingleFile()) {
-            return mRpc->localTorrentFilesPath(mTorrent);
-        }
+    QString TorrentFilesModel::localFilePath(const QModelIndex& index) const {
+        if (!index.isValid()) { return mRpc->localTorrentDownloadDirectoryPath(mTorrent); }
+        if (mTorrent->isSingleFile()) { return mRpc->localTorrentFilesPath(mTorrent); }
         const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
         QString path(entry->path());
         if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->renameIncompleteFiles()) {
@@ -209,16 +172,13 @@ namespace tremotesf
         return mRpc->localTorrentDownloadDirectoryPath(mTorrent) % '/' % path;
     }
 
-    bool TorrentFilesModel::isWanted(const QModelIndex& index) const
-    {
-        if (!index.isValid()) {
-            return true;
-        }
-        return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() != TorrentFilesModelEntry::Unwanted;
+    bool TorrentFilesModel::isWanted(const QModelIndex& index) const {
+        if (!index.isValid()) { return true; }
+        return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() !=
+               TorrentFilesModelEntry::Unwanted;
     }
 
-    void TorrentFilesModel::update(const std::vector<int>& changed)
-    {
+    void TorrentFilesModel::update(const std::vector<int>& changed) {
         if (mLoaded) {
             updateTree(changed);
         } else {
@@ -226,11 +186,8 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesModel::createTree()
-    {
-        if (mCreatingTree) {
-            return;
-        }
+    void TorrentFilesModel::createTree() {
+        if (mCreatingTree) { return; }
 
         mCreatingTree = true;
         beginResetModel();
@@ -254,8 +211,7 @@ namespace tremotesf
         watcher->setFuture(future);
     }
 
-    void TorrentFilesModel::resetTree()
-    {
+    void TorrentFilesModel::resetTree() {
         if (mLoaded) {
             beginResetModel();
             mRootDirectory.reset();
@@ -265,8 +221,7 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesModel::updateTree(const std::vector<int>& changed)
-    {
+    void TorrentFilesModel::updateTree(const std::vector<int>& changed) {
         if (!changed.empty()) {
             const auto& torrentFiles = mTorrent->files();
 
@@ -292,8 +247,5 @@ namespace tremotesf
         }
     }
 
-    void TorrentFilesModel::setLoaded(bool loaded)
-    {
-        mLoaded = loaded;
-    }
+    void TorrentFilesModel::setLoaded(bool loaded) { mLoaded = loaded; }
 }

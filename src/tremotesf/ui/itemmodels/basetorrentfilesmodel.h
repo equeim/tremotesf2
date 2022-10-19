@@ -11,20 +11,11 @@
 
 #include "torrentfilesmodelentry.h"
 
-namespace tremotesf
-{
-    class BaseTorrentFilesModel : public QAbstractItemModel
-    {
+namespace tremotesf {
+    class BaseTorrentFilesModel : public QAbstractItemModel {
         Q_OBJECT
     public:
-        enum class Column
-        {
-            Name,
-            Size,
-            ProgressBar,
-            Progress,
-            Priority
-        };
+        enum class Column { Name, Size, ProgressBar, Progress, Priority };
         static constexpr auto SortRole = Qt::UserRole;
 
         explicit BaseTorrentFilesModel(std::vector<Column>&& columns, QObject* parent = nullptr);
@@ -42,7 +33,8 @@ namespace tremotesf
         virtual void setFileWanted(const QModelIndex& index, bool wanted);
         virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted);
         virtual void setFilePriority(const QModelIndex& index, tremotesf::TorrentFilesModelEntry::Priority priority);
-        virtual void setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority);
+        virtual void
+        setFilesPriority(const QModelIndexList& indexes, tremotesf::TorrentFilesModelEntry::Priority priority);
 
         virtual void renameFile(const QModelIndex& index, const QString& newName) = 0;
         void fileRenamed(TorrentFilesModelEntry* entry, const QString& newName);

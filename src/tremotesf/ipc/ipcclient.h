@@ -8,10 +8,8 @@
 #include <memory>
 #include <QStringList>
 
-namespace tremotesf
-{
-    class IpcClient
-    {
+namespace tremotesf {
+    class IpcClient {
     public:
         static std::unique_ptr<IpcClient> createInstance();
 

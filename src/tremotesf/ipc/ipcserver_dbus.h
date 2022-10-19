@@ -12,17 +12,15 @@
 
 #include "libtremotesf/literals.h"
 
-namespace tremotesf
-{
-    class IpcServerDbus final : public IpcServer
-    {
+namespace tremotesf {
+    class IpcServerDbus final : public IpcServer {
         Q_OBJECT
     public:
         static constexpr auto serviceName = "org.equeim.Tremotesf"_l1;
         static constexpr auto objectPath = "/org/equeim/Tremotesf"_l1;
         static constexpr auto interfaceName = "org.freedesktop.Application"_l1;
 
-        inline explicit IpcServerDbus(QObject* parent = nullptr) : IpcServer(parent) {};
+        inline explicit IpcServerDbus(QObject* parent = nullptr) : IpcServer(parent){};
 
     private:
         IpcDbusService mDbusService{this, this};

@@ -22,10 +22,8 @@
 #include "libtremotesf/log.h"
 #include "tremotesf/unixhelpers.h"
 
-namespace tremotesf::signalhandler
-{
-    namespace
-    {
+namespace tremotesf::signalhandler {
+    namespace {
         int writeSocket{};
 
         // Not using std::atomic<std::optional<int>> because Clang might require linking to libatomic
@@ -33,8 +31,7 @@ namespace tremotesf::signalhandler
         std::atomic_int receivedSignal{notReceivedSignal};
         static_assert(std::atomic_int::is_always_lock_free, "std::atomic_int must be lock-free");
 
-        void signalHandler(int signal)
-        {
+        void signalHandler(int signal) {
             int expected = notReceivedSignal;
             if (!receivedSignal.compare_exchange_strong(expected, signal)) {
                 // Already requested exit
@@ -43,9 +40,7 @@ namespace tremotesf::signalhandler
             while (true) {
                 const char byte{};
                 const auto bytes = write(writeSocket, &byte, 1);
-                if (bytes == -1 && errno == EINTR) {
-                    continue;
-                }
+                if (bytes == -1 && errno == EINTR) { continue; }
                 break;
             }
         }
@@ -53,8 +48,7 @@ namespace tremotesf::signalhandler
         class SignalSocketReader {
         public:
             explicit SignalSocketReader(int readSocket, std::unordered_map<int, std::string_view>&& signalNames)
-                : mReadSocket(readSocket),
-                  mSignalNames(std::move(signalNames)) {
+                : mReadSocket(readSocket), mSignalNames(std::move(signalNames)) {
                 logDebug("signalhandler: starting read socket thread");
             }
 
@@ -71,9 +65,7 @@ namespace tremotesf::signalhandler
         private:
             void readFromSocket() {
                 logDebug("signalhandler: started read socket thread");
-                auto finishGuard = QScopeGuard([] {
-                    logDebug("signalhandler: finished read socket thread");
-                });
+                auto finishGuard = QScopeGuard([] { logDebug("signalhandler: finished read socket thread"); });
 
                 while (true) {
                     char byte{};
@@ -126,8 +118,7 @@ namespace tremotesf::signalhandler
             {SIGINT, "SIGINT"},
             {SIGTERM, "SIGTERM"},
             {SIGHUP, "SIGHUP"},
-            {SIGQUIT, "SIGQUIT"}
-        };
+            {SIGQUIT, "SIGQUIT"}};
 
         try {
             int sockets[2]{};
@@ -135,7 +126,7 @@ namespace tremotesf::signalhandler
             writeSocket = sockets[0];
             const int readSocket = sockets[1];
 
-            struct sigaction action{};
+            struct sigaction action {};
             action.sa_handler = signalHandler;
             action.sa_flags |= SA_RESTART;
             for (const auto& [signal, _] : signalNames) {
@@ -151,11 +142,7 @@ namespace tremotesf::signalhandler
         }
     }
 
-    void deinitSignalHandler() {
-        globalSignalSocketReader.reset();
-    }
+    void deinitSignalHandler() { globalSignalSocketReader.reset(); }
 
-    bool isExitRequested() {
-        return receivedSignal.load() != notReceivedSignal;
-    }
+    bool isExitRequested() { return receivedSignal.load() != notReceivedSignal; }
 }

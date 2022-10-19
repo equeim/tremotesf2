@@ -7,12 +7,10 @@
 
 #include "tremotesf/ui/widgets/basetreeview.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     class TorrentsProxyModel;
 
-    class TorrentsView : public BaseTreeView
-    {
+    class TorrentsView : public BaseTreeView {
         Q_OBJECT
     public:
         TorrentsView(TorrentsProxyModel* model, QWidget* parent = nullptr);

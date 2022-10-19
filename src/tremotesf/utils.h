@@ -8,13 +8,11 @@
 #include <QString>
 
 #ifdef Q_OS_UNIX
-#include <functional>
+#    include <functional>
 #endif
 
-namespace tremotesf
-{
-    class Utils
-    {
+namespace tremotesf {
+    class Utils {
     public:
         static QString formatByteSize(long long size);
         static QString formatByteSpeed(long long speed);

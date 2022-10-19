@@ -10,10 +10,8 @@
 
 #include "tremotesf/rpc/servers.h"
 
-namespace tremotesf
-{
-    class ServersModel : public QAbstractListModel
-    {
+namespace tremotesf {
+    class ServersModel : public QAbstractListModel {
         Q_OBJECT
     public:
         explicit ServersModel(QObject* parent = nullptr);
@@ -28,37 +26,40 @@ namespace tremotesf
 
         bool hasServer(const QString& name) const;
 
-        void setServer(const QString& oldName,
-                                   const QString& name,
-                                   const QString& address,
-                                   int port,
-                                   const QString& apiPath,
+        void setServer(
+            const QString& oldName,
+            const QString& name,
+            const QString& address,
+            int port,
+            const QString& apiPath,
 
-                                   libtremotesf::Server::ProxyType proxyType,
-                                   const QString& proxyHostname,
-                                   int proxyPort,
-                                   const QString& proxyUser,
-                                   const QString& proxyPassword,
+            libtremotesf::Server::ProxyType proxyType,
+            const QString& proxyHostname,
+            int proxyPort,
+            const QString& proxyUser,
+            const QString& proxyPassword,
 
-                                   bool https,
-                                   bool selfSignedCertificateEnabled,
-                                   const QByteArray& selfSignedCertificate,
-                                   bool clientCertificateEnabled,
-                                   const QByteArray& clientCertificate,
+            bool https,
+            bool selfSignedCertificateEnabled,
+            const QByteArray& selfSignedCertificate,
+            bool clientCertificateEnabled,
+            const QByteArray& clientCertificate,
 
-                                   bool authentication,
-                                   const QString& username,
-                                   const QString& password,
+            bool authentication,
+            const QString& username,
+            const QString& password,
 
-                                   int updateInterval,
-                                   int timeout,
+            int updateInterval,
+            int timeout,
 
-                                   bool autoReconnectEnabled,
-                                   int autoReconnectInterval,
+            bool autoReconnectEnabled,
+            int autoReconnectInterval,
 
-                                   const QVariantMap& mountedDirectories);
+            const QVariantMap& mountedDirectories
+        );
         void removeServerAtIndex(const QModelIndex& index);
         void removeServerAtRow(int row);
+
     private:
         int serverRow(const QString& name) const;
 
