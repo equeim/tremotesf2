@@ -31,21 +31,15 @@
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
 
-namespace tremotesf
-{
-    namespace
-    {
+namespace tremotesf {
+    namespace {
         const libtremotesf::ServerSettingsData::EncryptionMode encryptionModeComboBoxItems[] = {
             libtremotesf::ServerSettingsData::AllowedEncryption,
             libtremotesf::ServerSettingsData::PreferredEncryption,
-            libtremotesf::ServerSettingsData::RequiredEncryption
-        };
+            libtremotesf::ServerSettingsData::RequiredEncryption};
     }
 
-    ServerSettingsDialog::ServerSettingsDialog(const Rpc* rpc, QWidget* parent)
-        : QDialog(parent),
-          mRpc(rpc)
-    {
+    ServerSettingsDialog::ServerSettingsDialog(const Rpc* rpc, QWidget* parent) : QDialog(parent), mRpc(rpc) {
         setWindowTitle(qApp->translate("tremotesf", "Server Options"));
 
         setupUi();
@@ -74,13 +68,9 @@ namespace tremotesf
         loadSettings();
     }
 
-    QSize ServerSettingsDialog::sizeHint() const
-    {
-        return minimumSizeHint().expandedTo(QSize(700, 550));
-    }
+    QSize ServerSettingsDialog::sizeHint() const { return minimumSizeHint().expandedTo(QSize(700, 550)); }
 
-    void ServerSettingsDialog::accept()
-    {
+    void ServerSettingsDialog::accept() {
         libtremotesf::ServerSettings* settings = mRpc->serverSettings();
 
         settings->setSaveOnSet(false);
@@ -115,7 +105,11 @@ namespace tremotesf
         settings->setAlternativeSpeedLimitsBeginTime(mLimitScheduleBeginTimeEdit->time());
         settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time());
 
-        settings->setAlternativeSpeedLimitsDays(static_cast<libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt()));
+        settings->setAlternativeSpeedLimitsDays(
+            static_cast<libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays>(
+                mLimitScheduleDaysComboBox->currentData().toInt()
+            )
+        );
 
         settings->setPeerPort(mPeerPortSpinBox->value());
         settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
@@ -134,8 +128,7 @@ namespace tremotesf
         QDialog::accept();
     }
 
-    void ServerSettingsDialog::setupUi()
-    {
+    void ServerSettingsDialog::setupUi() {
         //
         // Creating layout
         //
@@ -153,7 +146,8 @@ namespace tremotesf
         // Downloading page
         mDownloadingPageWidget = new QWidget(this);
 
-        KPageWidgetItem* downloadingPageItem = pageWidget->addPage(mDownloadingPageWidget, qApp->translate("tremotesf", "Downloading", "Noun"));
+        KPageWidgetItem* downloadingPageItem =
+            pageWidget->addPage(mDownloadingPageWidget, qApp->translate("tremotesf", "Downloading", "Noun"));
         downloadingPageItem->setIcon(QIcon::fromTheme("folder-download"_l1));
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
@@ -167,24 +161,32 @@ namespace tremotesf
         /*mTrashTorrentFilesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Trash .torrent files"), this);
         downloadingPageLayout->addRow(mTrashTorrentFilesCheckBox);*/
 
-        mIncompleteFilesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Append \".part\" to names of incomplete files"), this);
+        mIncompleteFilesCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Append \".part\" to names of incomplete files"), this);
         downloadingPageLayout->addRow(mIncompleteFilesCheckBox);
 
-        mIncompleteDirectoryCheckBox = new QCheckBox(qApp->translate("tremotesf", "Directory for incomplete files:"), this);
+        mIncompleteDirectoryCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Directory for incomplete files:"), this);
         downloadingPageLayout->addRow(mIncompleteDirectoryCheckBox);
 
         auto incompleteDirectoryWidgetLayout = new QHBoxLayout();
         downloadingPageLayout->addRow(incompleteDirectoryWidgetLayout);
         mIncompleteDirectoryWidget = new RemoteDirectorySelectionWidget(QString(), mRpc, false, this);
         mIncompleteDirectoryWidget->setEnabled(false);
-        QObject::connect(mIncompleteDirectoryCheckBox, &QCheckBox::toggled, mIncompleteDirectoryWidget, &FileSelectionWidget::setEnabled);
+        QObject::connect(
+            mIncompleteDirectoryCheckBox,
+            &QCheckBox::toggled,
+            mIncompleteDirectoryWidget,
+            &FileSelectionWidget::setEnabled
+        );
         //downloadingPageLayout->addRow(mIncompleteDirectoryCheckBox, mIncompleteDirectoryWidget);
         incompleteDirectoryWidgetLayout->addSpacing(28);
         incompleteDirectoryWidgetLayout->addWidget(mIncompleteDirectoryWidget);
 
         // Seeding page
         mSeedingPageWidget = new QWidget(this);
-        KPageWidgetItem* seedingPageItem = pageWidget->addPage(mSeedingPageWidget, qApp->translate("tremotesf", "Seeding", "Noun"));
+        KPageWidgetItem* seedingPageItem =
+            pageWidget->addPage(mSeedingPageWidget, qApp->translate("tremotesf", "Seeding", "Noun"));
         seedingPageItem->setIcon(QIcon::fromTheme("network-server"_l1));
 
         auto seedingPageLayout = new QGridLayout(mSeedingPageWidget);
@@ -206,7 +208,12 @@ namespace tremotesf
         mIdleSeedingLimitSpinBox->setMaximum(9999);
         //: Minutes
         mIdleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
-        QObject::connect(mIdleSeedingLimitCheckBox, &QCheckBox::toggled, mIdleSeedingLimitSpinBox, &QSpinBox::setEnabled);
+        QObject::connect(
+            mIdleSeedingLimitCheckBox,
+            &QCheckBox::toggled,
+            mIdleSeedingLimitSpinBox,
+            &QSpinBox::setEnabled
+        );
         seedingPageLayout->addWidget(mIdleSeedingLimitSpinBox, 3, 1, Qt::AlignTop);
 
         seedingPageLayout->setRowStretch(3, 1);
@@ -220,13 +227,19 @@ namespace tremotesf
 
         auto queuePageLayout = new QGridLayout(mQueuePageWidget);
 
-        mMaximumActiveDownloadsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Maximum active downloads:"), this);
+        mMaximumActiveDownloadsCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Maximum active downloads:"), this);
         queuePageLayout->addWidget(mMaximumActiveDownloadsCheckBox, 0, 0, 1, 2, Qt::AlignTop);
 
         mMaximumActiveDownloadsSpinBox = new QSpinBox(this);
         mMaximumActiveDownloadsSpinBox->setEnabled(false);
         mMaximumActiveDownloadsSpinBox->setMaximum(std::numeric_limits<int>::max());
-        QObject::connect(mMaximumActiveDownloadsCheckBox, &QCheckBox::toggled, mMaximumActiveDownloadsSpinBox, &QSpinBox::setEnabled);
+        QObject::connect(
+            mMaximumActiveDownloadsCheckBox,
+            &QCheckBox::toggled,
+            mMaximumActiveDownloadsSpinBox,
+            &QSpinBox::setEnabled
+        );
         queuePageLayout->addWidget(mMaximumActiveDownloadsSpinBox, 1, 1, Qt::AlignTop);
 
         mMaximumActiveUploadsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Maximum active uploads:"), this);
@@ -235,10 +248,16 @@ namespace tremotesf
         mMaximumActiveUploadsSpinBox = new QSpinBox(this);
         mMaximumActiveUploadsSpinBox->setEnabled(false);
         mMaximumActiveUploadsSpinBox->setMaximum(std::numeric_limits<int>::max());
-        QObject::connect(mMaximumActiveUploadsCheckBox, &QCheckBox::toggled, mMaximumActiveUploadsSpinBox, &QSpinBox::setEnabled);
+        QObject::connect(
+            mMaximumActiveUploadsCheckBox,
+            &QCheckBox::toggled,
+            mMaximumActiveUploadsSpinBox,
+            &QSpinBox::setEnabled
+        );
         queuePageLayout->addWidget(mMaximumActiveUploadsSpinBox, 3, 1, Qt::AlignTop);
 
-        mIdleQueueLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Ignore queue position if idle for:"), this);
+        mIdleQueueLimitCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Ignore queue position if idle for:"), this);
         queuePageLayout->addWidget(mIdleQueueLimitCheckBox, 4, 0, 1, 2, Qt::AlignTop);
 
         mIdleQueueLimitSpinBox = new QSpinBox(this);
@@ -275,7 +294,12 @@ namespace tremotesf
         mDownloadSpeedLimitSpinBox->setEnabled(false);
         mDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
         mDownloadSpeedLimitSpinBox->setSuffix(suffix);
-        QObject::connect(mDownloadSpeedLimitCheckBox, &QCheckBox::toggled, mDownloadSpeedLimitSpinBox, &QSpinBox::setEnabled);
+        QObject::connect(
+            mDownloadSpeedLimitCheckBox,
+            &QCheckBox::toggled,
+            mDownloadSpeedLimitSpinBox,
+            &QSpinBox::setEnabled
+        );
         speedLimitsGroupBoxLayout->addWidget(mDownloadSpeedLimitSpinBox, 1, 1);
 
         //: Noun
@@ -286,7 +310,12 @@ namespace tremotesf
         mUploadSpeedLimitSpinBox->setEnabled(false);
         mUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
         mUploadSpeedLimitSpinBox->setSuffix(suffix);
-        QObject::connect(mUploadSpeedLimitCheckBox, &QCheckBox::toggled, mUploadSpeedLimitSpinBox, &QSpinBox::setEnabled);
+        QObject::connect(
+            mUploadSpeedLimitCheckBox,
+            &QCheckBox::toggled,
+            mUploadSpeedLimitSpinBox,
+            &QSpinBox::setEnabled
+        );
         speedLimitsGroupBoxLayout->addWidget(mUploadSpeedLimitSpinBox, 3, 1);
 
         speedLimitsGroupBoxLayout->setColumnMinimumWidth(0, 28 - speedLimitsGroupBoxLayout->spacing());
@@ -304,11 +333,17 @@ namespace tremotesf
         mAlternativeDownloadSpeedLimitSpinBox = new QSpinBox(this);
         mAlternativeDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
         mAlternativeDownloadSpeedLimitSpinBox->setSuffix(suffix);
-        enableAlternativeLimitsGroupBoxLayout->addRow(qApp->translate("tremotesf", "Download:"), mAlternativeDownloadSpeedLimitSpinBox);
+        enableAlternativeLimitsGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Download:"),
+            mAlternativeDownloadSpeedLimitSpinBox
+        );
         mAlternativeUploadSpeedLimitSpinBox = new QSpinBox(this);
         mAlternativeUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
         mAlternativeUploadSpeedLimitSpinBox->setSuffix(suffix);
-        enableAlternativeLimitsGroupBoxLayout->addRow(qApp->translate("tremotesf", "Upload:"), mAlternativeUploadSpeedLimitSpinBox);
+        enableAlternativeLimitsGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Upload:"),
+            mAlternativeUploadSpeedLimitSpinBox
+        );
 
         alternativeSpeedLimitsGroupBoxLayout->addWidget(mEnableAlternativeSpeedLimitsGroupBox);
 
@@ -335,9 +370,7 @@ namespace tremotesf
         mLimitScheduleDaysComboBox->insertSeparator(mLimitScheduleDaysComboBox->count());
         {
             auto nextDay = [](Qt::DayOfWeek day) {
-                if (day == Qt::Sunday) {
-                    return Qt::Monday;
-                }
+                if (day == Qt::Sunday) { return Qt::Monday; }
                 return static_cast<Qt::DayOfWeek>(day + 1);
             };
 
@@ -385,7 +418,8 @@ namespace tremotesf
 
         // Network page
         mNetworkPageWidget = new QWidget(this);
-        KPageWidgetItem* networkPageItem = pageWidget->addPage(mNetworkPageWidget, qApp->translate("tremotesf", "Network"));
+        KPageWidgetItem* networkPageItem =
+            pageWidget->addPage(mNetworkPageWidget, qApp->translate("tremotesf", "Network"));
         networkPageItem->setIcon(QIcon::fromTheme("preferences-system-network"_l1));
 
         auto networkPageLayout = new QVBoxLayout(mNetworkPageWidget);
@@ -444,11 +478,17 @@ namespace tremotesf
 
         mTorrentPeerLimitSpinBox = new QSpinBox(this);
         mTorrentPeerLimitSpinBox->setMaximum(std::numeric_limits<int>::max());
-        peerLimitsGroupBoxLayout->addRow(qApp->translate("tremotesf", "Maximum peers per torrent:"), mTorrentPeerLimitSpinBox);
+        peerLimitsGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Maximum peers per torrent:"),
+            mTorrentPeerLimitSpinBox
+        );
 
         mGlobalPeerLimitSpinBox = new QSpinBox(this);
         mGlobalPeerLimitSpinBox->setMaximum(std::numeric_limits<int>::max());
-        peerLimitsGroupBoxLayout->addRow(qApp->translate("tremotesf", "Maximum peers globally:"), mGlobalPeerLimitSpinBox);
+        peerLimitsGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Maximum peers globally:"),
+            mGlobalPeerLimitSpinBox
+        );
 
         networkPageLayout->addWidget(peerLimitsGroupBox);
 
@@ -468,8 +508,7 @@ namespace tremotesf
         setMinimumSize(minimumSizeHint());
     }
 
-    void ServerSettingsDialog::loadSettings()
-    {
+    void ServerSettingsDialog::loadSettings() {
         const libtremotesf::ServerSettings* settings = mRpc->serverSettings();
 
         mDownloadDirectoryWidget->setText(settings->downloadDirectory());
@@ -502,7 +541,8 @@ namespace tremotesf
         mLimitScheduleBeginTimeEdit->setTime(settings->alternativeSpeedLimitsBeginTime());
         mLimitScheduleEndTimeEdit->setTime(settings->alternativeSpeedLimitsEndTime());
 
-        const libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays days = settings->alternativeSpeedLimitsDays();
+        const libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays days =
+            settings->alternativeSpeedLimitsDays();
         for (int i = 0, max = mLimitScheduleDaysComboBox->count(); i < max; i++) {
             if (mLimitScheduleDaysComboBox->itemData(i).toInt() == days) {
                 mLimitScheduleDaysComboBox->setCurrentIndex(i);

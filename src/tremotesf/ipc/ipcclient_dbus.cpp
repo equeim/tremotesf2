@@ -14,12 +14,9 @@
 #include "ipcserver_dbus.h"
 #include "ipcserver_dbus_service.h"
 
-namespace tremotesf
-{
-    namespace
-    {
-        inline bool waitForReply(QDBusPendingReply<>&& pending)
-        {
+namespace tremotesf {
+    namespace {
+        inline bool waitForReply(QDBusPendingReply<>&& pending) {
             pending.waitForFinished();
             const auto reply(pending.reply());
             if (reply.type() != QDBusMessage::ReplyMessage) {
@@ -30,50 +27,37 @@ namespace tremotesf
         }
     }
 
-    class IpcClientDbus final : public IpcClient
-    {
+    class IpcClientDbus final : public IpcClient {
     public:
-        [[nodiscard]] bool isConnected() const override
-        {
-            return mInterface.isValid();
-        }
+        [[nodiscard]] bool isConnected() const override { return mInterface.isValid(); }
 
-        void activateWindow() override
-        {
+        void activateWindow() override {
             logInfo("Requesting window activation");
-            if (mInterface.isValid()) {
-                waitForReply(mInterface.Activate(getPlatformData()));
-            }
+            if (mInterface.isValid()) { waitForReply(mInterface.Activate(getPlatformData())); }
         }
 
-        void addTorrents(const QStringList& files, const QStringList& urls) override
-        {
+        void addTorrents(const QStringList& files, const QStringList& urls) override {
             logInfo("Requesting torrents adding");
             if (mInterface.isValid()) {
                 QStringList uris;
                 uris.reserve(files.size() + urls.size());
-                for (const QString& filePath : files) {
-                    uris.push_back(QUrl::fromLocalFile(filePath).toString());
-                }
+                for (const QString& filePath : files) { uris.push_back(QUrl::fromLocalFile(filePath).toString()); }
                 uris.append(urls);
                 waitForReply(mInterface.Open(uris, getPlatformData()));
             }
         }
 
     private:
-        static inline QVariantMap getPlatformData()
-        {
+        static inline QVariantMap getPlatformData() {
             if (qEnvironmentVariableIsSet("DESKTOP_STARTUP_ID")) {
                 return {{IpcDbusService::desktopStartupIdField, qgetenv("DESKTOP_STARTUP_ID")}};
             }
             return {};
         }
 
-        OrgFreedesktopApplicationInterface mInterface{IpcServerDbus::serviceName, IpcServerDbus::objectPath, QDBusConnection::sessionBus()};
+        OrgFreedesktopApplicationInterface mInterface{
+            IpcServerDbus::serviceName, IpcServerDbus::objectPath, QDBusConnection::sessionBus()};
     };
 
-    std::unique_ptr<IpcClient> IpcClient::createInstance()
-    {
-        return std::make_unique<IpcClientDbus>();
-    }
+    std::unique_ptr<IpcClient> IpcClient::createInstance() { return std::make_unique<IpcClientDbus>(); }
 }

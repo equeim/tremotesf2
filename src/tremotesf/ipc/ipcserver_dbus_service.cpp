@@ -15,12 +15,8 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QStringList)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantMap)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantList)
 
-namespace tremotesf
-{
-    IpcDbusService::IpcDbusService(IpcServerDbus* ipcServer, QObject *parent)
-        : QObject(parent),
-          mIpcServer(ipcServer)
-    {
+namespace tremotesf {
+    IpcDbusService::IpcDbusService(IpcServerDbus* ipcServer, QObject* parent) : QObject(parent), mIpcServer(ipcServer) {
         new OrgFreedesktopApplicationAdaptor(this);
 
         auto connection(QDBusConnection::sessionBus());
@@ -39,14 +35,15 @@ namespace tremotesf
     /*
      * org.freedesktop.Application methods
      */
-    void IpcDbusService::Activate(const QVariantMap& platform_data)
-    {
+    void IpcDbusService::Activate(const QVariantMap& platform_data) {
         logInfo("Window activation requested, platform_data = {}", platform_data);
-        emit mIpcServer->windowActivationRequested(platform_data.value(torrentHashField).toString(), platform_data.value(desktopStartupIdField).toByteArray());
+        emit mIpcServer->windowActivationRequested(
+            platform_data.value(torrentHashField).toString(),
+            platform_data.value(desktopStartupIdField).toByteArray()
+        );
     }
 
-    void IpcDbusService::Open(const QStringList& uris, const QVariantMap& platform_data)
-    {
+    void IpcDbusService::Open(const QStringList& uris, const QVariantMap& platform_data) {
         logInfo("Torrents adding requested, uris = {}, platform_data = {}", uris, platform_data);
         QStringList files;
         QStringList urls;
@@ -62,8 +59,14 @@ namespace tremotesf
         emit mIpcServer->torrentsAddingRequested(files, urls, platform_data.value(desktopStartupIdField).toByteArray());
     }
 
-    void IpcDbusService::ActivateAction(const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data)
-    {
-        logInfo("Action activated, action_name = {}, parameter = {}, platform_data = {}", action_name, parameter, platform_data);
+    void IpcDbusService::ActivateAction(
+        const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data
+    ) {
+        logInfo(
+            "Action activated, action_name = {}, parameter = {}, platform_data = {}",
+            action_name,
+            parameter,
+            platform_data
+        );
     }
 }

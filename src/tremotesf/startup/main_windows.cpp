@@ -34,9 +34,7 @@ namespace tremotesf {
                     logWarningWithException(e, "Unhandled exception");
                 } catch (const winrt::hresult_error& e) {
                     logWarningWithException(e, "Unhandled exception");
-                } catch (...) {
-                    logWarning("Unhandled exception of unknown type");
-                }
+                } catch (...) { logWarning("Unhandled exception of unknown type"); }
             }
             std::abort();
         }
@@ -46,18 +44,14 @@ namespace tremotesf {
         public:
             static thread_local bool drawingMenuItem;
 
-            explicit WindowsStyle(QObject* parent = nullptr) : QProxyStyle("fusion"_l1) {
-                setParent(parent);
-            }
+            explicit WindowsStyle(QObject* parent = nullptr) : QProxyStyle("fusion"_l1) { setParent(parent); }
 
-            void drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = nullptr) const override {
-                if (element == CE_MenuItem) {
-                    drawingMenuItem = true;
-                }
+            void drawControl(
+                ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = nullptr
+            ) const override {
+                if (element == CE_MenuItem) { drawingMenuItem = true; }
                 QProxyStyle::drawControl(element, option, painter, widget);
-                if (element == CE_MenuItem) {
-                    drawingMenuItem = false;
-                }
+                if (element == CE_MenuItem) { drawingMenuItem = false; }
             }
         };
 
@@ -67,24 +61,19 @@ namespace tremotesf {
         public:
             QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override {
                 // QFusionStyle passes QIcon::Active for selected menu items, but KIconEngine expects QIcon::Selected
-                if (WindowsStyle::drawingMenuItem && mode == QIcon::Active) {
-                    mode = QIcon::Selected;
-                }
+                if (WindowsStyle::drawingMenuItem && mode == QIcon::Active) { mode = QIcon::Selected; }
                 return RecoloringSvgIconEngine::pixmap(size, mode, state);
             }
         };
 
-        class SvgIconEnginePlugin : public QIconEnginePlugin
-        {
+        class SvgIconEnginePlugin : public QIconEnginePlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QIconEngineFactoryInterface" FILE "svgiconengineplugin.json")
 
         public:
-            QIconEngine* create(const QString& file) override
-            {
+            QIconEngine* create(const QString& file) override {
                 SvgIconEngine* engine = new SvgIconEngine;
-                if (!file.isNull())
-                    engine->addFile(file, QSize(), QIcon::Normal, QIcon::Off);
+                if (!file.isNull()) engine->addFile(file, QSize(), QIcon::Normal, QIcon::Off);
                 return engine;
             }
         };
@@ -98,20 +87,16 @@ namespace tremotesf {
     void windowsInitWinrt() {
         try {
             winrt::init_apartment(winrt::apartment_type::single_threaded);
-        } catch (const winrt::hresult_error& e) {
-            logWarning("winrt::init_apartment failed: {}", e);
-        }
+        } catch (const winrt::hresult_error& e) { logWarning("winrt::init_apartment failed: {}", e); }
     }
 
     void windowsInitApplication() {
         try {
             checkWin32Bool(AllowSetForegroundWindow(ASFW_ANY), "AllowSetForegroundWindow");
-        } catch (const std::system_error& e) {
-            logWarning(e);
-        }
+        } catch (const std::system_error& e) { logWarning(e); }
         QApplication::setStyle(new WindowsStyle(QApplication::instance()));
-        QIcon::setThemeSearchPaths({ QCoreApplication::applicationDirPath() % '/' % TREMOTESF_BUNDLED_ICONS_DIR""_l1 });
-        QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME""_l1);
+        QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % '/' % TREMOTESF_BUNDLED_ICONS_DIR ""_l1});
+        QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_l1);
         const auto systemColorsProvider = tremotesf::SystemColorsProvider::createInstance(QApplication::instance());
         tremotesf::applyDarkThemeToPalette(systemColorsProvider);
     }
@@ -119,14 +104,10 @@ namespace tremotesf {
     void windowsDeinitWinrt() {
         try {
             winrt::uninit_apartment();
-        } catch (const winrt::hresult_error& e) {
-            logWarning("winrt::uninit_apartment failed: {}", e);
-        }
+        } catch (const winrt::hresult_error& e) { logWarning("winrt::uninit_apartment failed: {}", e); }
     }
 
-    void windowsDeinitPrelude() {
-        deinitWindowsMessageHandler();
-    }
+    void windowsDeinitPrelude() { deinitWindowsMessageHandler(); }
 }
 
 Q_IMPORT_PLUGIN(SvgIconEnginePlugin)

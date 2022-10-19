@@ -6,22 +6,16 @@
 
 #include "tremotesf/ui/itemmodels/basetorrentfilesmodel.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     TorrentFilesProxyModel::TorrentFilesProxyModel(BaseTorrentFilesModel* sourceModel, int sortRole, QObject* parent)
-        : BaseProxyModel(sourceModel, sortRole, parent)
-    {
-    }
+        : BaseProxyModel(sourceModel, sortRole, parent) {}
 
-    bool TorrentFilesProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
-    {
+    bool TorrentFilesProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {
         const bool leftIsDirectory = static_cast<TorrentFilesModelEntry*>(left.internalPointer())->isDirectory();
         const bool rightIsDirectory = static_cast<TorrentFilesModelEntry*>(right.internalPointer())->isDirectory();
 
         if (leftIsDirectory != rightIsDirectory) {
-            if (sortOrder() == Qt::AscendingOrder) {
-                return leftIsDirectory;
-            }
+            if (sortOrder() == Qt::AscendingOrder) { return leftIsDirectory; }
             return rightIsDirectory;
         }
 

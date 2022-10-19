@@ -14,29 +14,16 @@
 
 #include "libtremotesf/torrentfile.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     class TorrentFilesModelDirectory;
 
-    class TorrentFilesModelEntry
-    {
+    class TorrentFilesModelEntry {
         Q_GADGET
     public:
-        enum WantedState
-        {
-            Wanted,
-            Unwanted,
-            MixedWanted
-        };
+        enum WantedState { Wanted, Unwanted, MixedWanted };
         Q_ENUM(WantedState)
 
-        enum Priority
-        {
-            LowPriority,
-            NormalPriority,
-            HighPriority,
-            MixedPriority
-        };
+        enum Priority { LowPriority, NormalPriority, HighPriority, MixedPriority };
         Q_ENUM(Priority)
 
         static Priority fromFilePriority(libtremotesf::TorrentFile::Priority priority);
@@ -80,8 +67,7 @@ namespace tremotesf
 
     class TorrentFilesModelFile;
 
-    class TorrentFilesModelDirectory final : public TorrentFilesModelEntry
-    {
+    class TorrentFilesModelDirectory final : public TorrentFilesModelEntry {
     public:
         TorrentFilesModelDirectory() = default;
         explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
@@ -113,14 +99,11 @@ namespace tremotesf
         std::unordered_map<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 
-    class TorrentFilesModelFile final : public TorrentFilesModelEntry
-    {
+    class TorrentFilesModelFile final : public TorrentFilesModelEntry {
     public:
-        explicit TorrentFilesModelFile(int row,
-                                       TorrentFilesModelDirectory* parentDirectory,
-                                       int id,
-                                       const QString& name,
-                                       long long size);
+        explicit TorrentFilesModelFile(
+            int row, TorrentFilesModelDirectory* parentDirectory, int id, const QString& name, long long size
+        );
 
         bool isDirectory() const override;
         long long size() const override;

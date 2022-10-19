@@ -34,7 +34,8 @@ using namespace winrt::Windows::System;
 
 namespace tremotesf {
     namespace {
-        std::unique_ptr<std::remove_pointer_t<LPITEMIDLIST>, decltype(&ILFree)> createItemIdList(const QString& nativePath) {
+        std::unique_ptr<std::remove_pointer_t<LPITEMIDLIST>, decltype(&ILFree)>
+        createItemIdList(const QString& nativePath) {
             LPITEMIDLIST value{};
             checkHResult(
                 SHParseDisplayName(getCWString(nativePath), nullptr, &value, 0, nullptr),
@@ -47,9 +48,7 @@ namespace tremotesf {
             explicit ItemIdListList(size_t capacity) { values.reserve(capacity); }
             ~ItemIdListList() { std::for_each(values.begin(), values.end(), &ILFree); }
 
-            void add(const QString& nativePath) {
-                values.push_back(createItemIdList(nativePath).release());
-            }
+            void add(const QString& nativePath) { values.push_back(createItemIdList(nativePath).release()); }
 
             std::vector<LPITEMIDLIST> values{};
         };
@@ -57,7 +56,10 @@ namespace tremotesf {
         class WindowsFileManagerLauncher : public impl::FileManagerLauncher {
             Q_OBJECT
         protected:
-            void launchFileManagerAndSelectFiles(const std::vector<std::pair<QString, std::vector<QString>>>& directories, const QPointer<QWidget>& parentWidget) override {
+            void launchFileManagerAndSelectFiles(
+                const std::vector<std::pair<QString, std::vector<QString>>>& directories,
+                const QPointer<QWidget>& parentWidget
+            ) override {
                 QtConcurrent::run([=] {
                     try {
                         winrt::init_apartment(winrt::apartment_type::multi_threaded);
@@ -68,14 +70,21 @@ namespace tremotesf {
                         try {
                             winrt::uninit_apartment();
                         } catch (const winrt::hresult_error& e) {
-                            logWarningWithException(e, "WindowsFileManagerLauncher: winrt::uninit_apartment failed: {}");
+                            logWarningWithException(
+                                e,
+                                "WindowsFileManagerLauncher: winrt::uninit_apartment failed: {}"
+                            );
                         }
                         emit done();
                     });
 
                     for (const auto& [dirPath, dirFiles] : directories) {
                         const QString nativePath = QDir::toNativeSeparators(dirPath);
-                        logInfo("WindowsFileManagerLauncher: attempting to select {} items in folder {}", dirFiles.size(), nativePath);
+                        logInfo(
+                            "WindowsFileManagerLauncher: attempting to select {} items in folder {}",
+                            dirFiles.size(),
+                            nativePath
+                        );
                         try {
                             if (isRunningOnWindows10OrGreater()) {
                                 openFolderWindows10(nativePath, dirFiles);
@@ -112,17 +121,29 @@ namespace tremotesf {
                         try {
                             options.ItemsToSelect().Append(StorageFolder::GetFolderFromPathAsync(winPath).get());
                         } catch (const winrt::hresult_error& e) {
-                            logWarningWithException(e, "WindowsFileManagerLauncher: failed to create StorageFolder from {}", winPath);
+                            logWarningWithException(
+                                e,
+                                "WindowsFileManagerLauncher: failed to create StorageFolder from {}",
+                                winPath
+                            );
                         }
                     } else {
                         try {
                             options.ItemsToSelect().Append(StorageFile::GetFileFromPathAsync(winPath).get());
                         } catch (const winrt::hresult_error& e) {
-                            logWarningWithException(e, "WindowsFileManagerLauncher: failed to create StorageFile from {}", winPath);
+                            logWarningWithException(
+                                e,
+                                "WindowsFileManagerLauncher: failed to create StorageFile from {}",
+                                winPath
+                            );
                         }
                     }
                 }
-                logInfo("WindowsFileManagerLauncher: opening folder {} and selecting {} items", nativeDirPath, options.ItemsToSelect().Size());
+                logInfo(
+                    "WindowsFileManagerLauncher: opening folder {} and selecting {} items",
+                    nativeDirPath,
+                    options.ItemsToSelect().Size()
+                );
                 Launcher::LaunchFolderPathAsync(folderPath, options).get();
             }
 
@@ -134,13 +155,19 @@ namespace tremotesf {
                     try {
                         items.add(nativeFilePath);
                     } catch (const winrt::hresult_error& e) {
-                        logWarningWithException(e, "WindowsFileManagerLauncher: failed to create LPITEMIDLIST from {}", nativeFilePath);
+                        logWarningWithException(
+                            e,
+                            "WindowsFileManagerLauncher: failed to create LPITEMIDLIST from {}",
+                            nativeFilePath
+                        );
                     }
                 }
-                if (items.values.empty()) {
-                    throw std::runtime_error("No items to select");
-                }
-                logInfo("WindowsFileManagerLauncher: opening folder {} and selecting {} items", nativeDirPath, items.values.size());
+                if (items.values.empty()) { throw std::runtime_error("No items to select"); }
+                logInfo(
+                    "WindowsFileManagerLauncher: opening folder {} and selecting {} items",
+                    nativeDirPath,
+                    items.values.size()
+                );
                 checkHResult(
                     SHOpenFolderAndSelectItems(
                         directory.get(),
@@ -155,9 +182,7 @@ namespace tremotesf {
     }
 
     namespace impl {
-        FileManagerLauncher* FileManagerLauncher::createInstance() {
-            return new WindowsFileManagerLauncher();
-        }
+        FileManagerLauncher* FileManagerLauncher::createInstance() { return new WindowsFileManagerLauncher(); }
     }
 }
 

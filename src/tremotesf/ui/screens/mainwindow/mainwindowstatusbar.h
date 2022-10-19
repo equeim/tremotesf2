@@ -10,12 +10,10 @@
 class QLabel;
 class KSeparator;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
 
-    class MainWindowStatusBar : public QStatusBar
-    {
+    class MainWindowStatusBar : public QStatusBar {
         Q_OBJECT
 
     public:

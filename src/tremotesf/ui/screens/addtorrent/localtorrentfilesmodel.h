@@ -13,12 +13,10 @@
 #include "tremotesf/ui/itemmodels/basetorrentfilesmodel.h"
 #include "tremotesf/bencodeparser.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     class TorrentFileParser;
 
-    class LocalTorrentFilesModel : public BaseTorrentFilesModel
-    {
+    class LocalTorrentFilesModel : public BaseTorrentFilesModel {
         Q_OBJECT
     public:
         explicit LocalTorrentFilesModel(QObject* parent = nullptr);

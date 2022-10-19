@@ -10,21 +10,17 @@
 
 #include <QAbstractTableModel>
 
-namespace libtremotesf
-{
+namespace libtremotesf {
     class Torrent;
 }
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
 
-    class TorrentsModel : public QAbstractTableModel
-    {
+    class TorrentsModel : public QAbstractTableModel {
         Q_OBJECT
     public:
-        enum class Column
-        {
+        enum class Column {
             Name,
             SizeWhenDone,
             TotalSize,
@@ -52,11 +48,7 @@ namespace tremotesf
         };
         Q_ENUM(Column)
 
-        enum class Role
-        {
-            Sort = Qt::UserRole,
-            TextElideMode
-        };
+        enum class Role { Sort = Qt::UserRole, TextElideMode };
 
         explicit TorrentsModel(Rpc* rpc = nullptr, QObject* parent = nullptr);
 

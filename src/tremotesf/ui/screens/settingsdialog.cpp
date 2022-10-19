@@ -21,11 +21,8 @@
 #include "tremotesf/settings.h"
 #include "tremotesf/ui/systemcolorsprovider.h"
 
-namespace tremotesf
-{
-    SettingsDialog::SettingsDialog(QWidget* parent)
-        : QDialog(parent)
-    {
+namespace tremotesf {
+    SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
         setWindowTitle(qApp->translate("tremotesf", "Options"));
 
         auto layout = new QVBoxLayout(this);
@@ -50,7 +47,8 @@ namespace tremotesf
             appearanceGroupBoxLayout->addRow(qApp->translate("tremotesf", "Dark theme"), darkThemeComboBox);
 
             if (SystemColorsProvider::isAccentColorsSupported()) {
-                systemAccentColorCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
+                systemAccentColorCheckBox =
+                    new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
                 appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
             }
 
@@ -60,7 +58,8 @@ namespace tremotesf
         auto connectionGroupBox = new QGroupBox(qApp->translate("tremotesf", "Connection"), this);
         auto connectionGroupBoxBoxLayout = new QVBoxLayout(connectionGroupBox);
 
-        auto connectOnStartupCheckBox = new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this);
+        auto connectOnStartupCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Connect to server on startup"), this);
         connectionGroupBoxBoxLayout->addWidget(connectOnStartupCheckBox);
 
         layout->addWidget(connectionGroupBox);
@@ -68,12 +67,19 @@ namespace tremotesf
         auto addTorrentsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Adding torrents"), this);
         auto addTorrentsGroupBoxBoxLayout = new QVBoxLayout(addTorrentsGroupBox);
 
-        auto rememberDownloadDirCheckBox = new QCheckBox(qApp->translate("tremotesf", "Remember last download dir"), this);
+        auto rememberDownloadDirCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Remember last download dir"), this);
         addTorrentsGroupBoxBoxLayout->addWidget(rememberDownloadDirCheckBox);
 
-        auto fillTorrentLinkFromKeyboardCheckBox = new QCheckBox(qApp->translate("tremotesf", "Automatically fill link from clipboard when adding torrent link"), this);
+        auto fillTorrentLinkFromKeyboardCheckBox = new QCheckBox(
+            qApp->translate("tremotesf", "Automatically fill link from clipboard when adding torrent link"),
+            this
+        );
         addTorrentsGroupBoxBoxLayout->addWidget(fillTorrentLinkFromKeyboardCheckBox);
-        auto pasteTipLabel = new QLabel(qApp->translate("tremotesf", "Tip: you can also press %1 in main window to add torrents from clipboard").arg(QKeySequence(QKeySequence::Paste).toString(QKeySequence::NativeText)));
+        auto pasteTipLabel = new QLabel(
+            qApp->translate("tremotesf", "Tip: you can also press %1 in main window to add torrents from clipboard")
+                .arg(QKeySequence(QKeySequence::Paste).toString(QKeySequence::NativeText))
+        );
         addTorrentsGroupBoxBoxLayout->addWidget(pasteTipLabel);
 
         layout->addWidget(addTorrentsGroupBox);
@@ -82,13 +88,16 @@ namespace tremotesf
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
         notificationsGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
-        auto notificationOnDisconnectingCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify when disconnecting from server"), this);
+        auto notificationOnDisconnectingCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Notify when disconnecting from server"), this);
         notificationsGroupBoxLayout->addWidget(notificationOnDisconnectingCheckBox);
 
-        auto notificationOnAddingTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on added torrents"), this);
+        auto notificationOnAddingTorrentCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Notify on added torrents"), this);
         notificationsGroupBoxLayout->addWidget(notificationOnAddingTorrentCheckBox);
 
-        auto notificationOfFinishedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on finished torrents"), this);
+        auto notificationOfFinishedTorrentsCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Notify on finished torrents"), this);
         notificationsGroupBoxLayout->addWidget(notificationOfFinishedTorrentsCheckBox);
 
         auto trayIconCheckBox = new QCheckBox(qApp->translate("tremotesf", "Show icon in the notification area"), this);
@@ -98,10 +107,16 @@ namespace tremotesf
         auto whenConnectingGroupBoxLayout = new QVBoxLayout(whenConnectingGroupBox);
         whenConnectingGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
-        auto addedSinceLastConnectionCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on added torrents since last connection to server"), this);
+        auto addedSinceLastConnectionCheckBox = new QCheckBox(
+            qApp->translate("tremotesf", "Notify on added torrents since last connection to server"),
+            this
+        );
         whenConnectingGroupBoxLayout->addWidget(addedSinceLastConnectionCheckBox);
 
-        auto finishedSinceLastConnectionCheckBox = new QCheckBox(qApp->translate("tremotesf", "Notify on finished torrents since last connection to server"), this);
+        auto finishedSinceLastConnectionCheckBox = new QCheckBox(
+            qApp->translate("tremotesf", "Notify on finished torrents since last connection to server"),
+            this
+        );
         whenConnectingGroupBoxLayout->addWidget(finishedSinceLastConnectionCheckBox);
 
         notificationsGroupBoxLayout->addWidget(whenConnectingGroupBox);
@@ -128,11 +143,8 @@ namespace tremotesf
 
         if constexpr (isTargetOsWindows) {
             darkThemeComboBox->setCurrentIndex(index_of_i(darkThemeComboBoxValues, settings->darkThemeMode()));
-            if (systemAccentColorCheckBox) {
-                systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
-            }
+            if (systemAccentColorCheckBox) { systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor()); }
         }
-
 
         QObject::connect(this, &SettingsDialog::accepted, this, [=] {
             auto settings = Settings::instance();
@@ -142,7 +154,9 @@ namespace tremotesf
             settings->setNotificationOfFinishedTorrents(notificationOfFinishedTorrentsCheckBox->isChecked());
             settings->setShowTrayIcon(trayIconCheckBox->isChecked());
             settings->setNotificationsOnAddedTorrentsSinceLastConnection(addedSinceLastConnectionCheckBox->isChecked());
-            settings->setNotificationsOnFinishedTorrentsSinceLastConnection(finishedSinceLastConnectionCheckBox->isChecked());
+            settings->setNotificationsOnFinishedTorrentsSinceLastConnection(
+                finishedSinceLastConnectionCheckBox->isChecked()
+            );
             settings->setRememberDownloadDir(rememberDownloadDirCheckBox->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {

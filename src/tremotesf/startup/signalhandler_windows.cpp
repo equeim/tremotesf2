@@ -12,14 +12,11 @@
 #include "libtremotesf/log.h"
 #include "tremotesf/windowshelpers.h"
 
-namespace tremotesf::signalhandler
-{
-    namespace
-    {
+namespace tremotesf::signalhandler {
+    namespace {
         std::atomic_bool exitRequested{};
 
-        BOOL WINAPI consoleHandler(DWORD dwCtrlType)
-        {
+        BOOL WINAPI consoleHandler(DWORD dwCtrlType) {
             exitRequested = true;
             std::string_view type{};
             switch (dwCtrlType) {
@@ -57,8 +54,7 @@ namespace tremotesf::signalhandler
         }
     }
 
-    void initSignalHandler()
-    {
+    void initSignalHandler() {
         try {
             checkWin32Bool(SetConsoleCtrlHandler(&consoleHandler, TRUE), "SetConsoleCtrlHandler");
             logDebug("signalhandler: added console signal handler");
@@ -76,7 +72,5 @@ namespace tremotesf::signalhandler
         }
     }
 
-    bool isExitRequested() {
-        return exitRequested;
-    }
+    bool isExitRequested() { return exitRequested; }
 }

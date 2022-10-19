@@ -7,19 +7,19 @@
 
 #include <QObject>
 
-namespace tremotesf
-{
-    class IpcServer : public QObject
-    {
+namespace tremotesf {
+    class IpcServer : public QObject {
         Q_OBJECT
     public:
         static IpcServer* createInstance(QObject* parent = nullptr);
 
-        inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent) {};
+        inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent){};
 
     signals:
         void windowActivationRequested(const QString& torrentHash, const QByteArray& startupNoficationId);
-        void torrentsAddingRequested(const QStringList& files, const QStringList& urls, const QByteArray& startupNoficationId);
+        void torrentsAddingRequested(
+            const QStringList& files, const QStringList& urls, const QByteArray& startupNoficationId
+        );
     };
 }
 

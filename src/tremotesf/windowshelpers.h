@@ -33,8 +33,7 @@ namespace tremotesf {
      */
     void checkHResult(int32_t hresult, std::string_view functionName);
 
-    [[nodiscard]]
-    inline const wchar_t* getCWString(const QString& string) {
+    [[nodiscard]] inline const wchar_t* getCWString(const QString& string) {
         using utf16Type = std::remove_pointer_t<decltype(string.utf16())>;
         static_assert(sizeof(utf16Type) == sizeof(wchar_t));
         return reinterpret_cast<const wchar_t*>(string.utf16());

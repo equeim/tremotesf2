@@ -7,10 +7,8 @@
 
 #include <QTreeView>
 
-namespace tremotesf
-{
-    class BaseTreeView : public QTreeView
-    {
+namespace tremotesf {
+    class BaseTreeView : public QTreeView {
         Q_OBJECT
     public:
         explicit BaseTreeView(QWidget* parent = nullptr);

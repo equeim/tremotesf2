@@ -19,8 +19,7 @@ class QStackedLayout;
 class QSystemTrayIcon;
 class QToolBar;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class IpcServer;
     class MainWindowSideBar;
     class MainWindowViewModel;
@@ -31,8 +30,7 @@ namespace tremotesf
     class TorrentsProxyModel;
     class TorrentsView;
 
-    class MainWindow final : public QMainWindow
-    {
+    class MainWindow final : public QMainWindow {
         Q_OBJECT
 
     public:

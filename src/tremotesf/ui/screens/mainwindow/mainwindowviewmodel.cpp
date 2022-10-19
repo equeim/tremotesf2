@@ -28,14 +28,22 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(Qt::DropActions)
 
 template<>
 struct fmt::formatter<QDropEvent> : libtremotesf::SimpleFormatter {
-    auto format(const QDropEvent& event, format_context& ctx) FORMAT_CONST -> decltype(ctx.out()) {
+    auto format(const QDropEvent& event, format_context& ctx) FORMAT_CONST->decltype(ctx.out()) {
         const auto mime = event.mimeData();
-        return fmt::format_to(ctx.out(), R"(
+        return fmt::format_to(
+            ctx.out(),
+            R"(
     proposedAction = {}
     possibleActions = {}
     formats = {}
     urls = {}
-    text = {})", event.proposedAction(), event.possibleActions(), mime->formats(), mime->urls(), mime->text());
+    text = {})",
+            event.proposedAction(),
+            event.possibleActions(),
+            mime->formats(),
+            mime->urls(),
+            mime->text()
+        );
     }
 };
 
@@ -46,27 +54,30 @@ namespace tremotesf {
     }
 
     MainWindowViewModel::MainWindowViewModel(
-        QStringList&& commandLineFiles,
-        QStringList&& commandLineUrls,
-        Rpc* rpc,
-        IpcServer* ipcServer,
-        QObject* parent
-    ) : QObject(parent),
-        mRpc(rpc)
-    {
+        QStringList&& commandLineFiles, QStringList&& commandLineUrls, Rpc* rpc, IpcServer* ipcServer, QObject* parent
+    )
+        : QObject(parent), mRpc(rpc) {
         if (!commandLineFiles.isEmpty() || !commandLineUrls.isEmpty()) {
-            QMetaObject::invokeMethod(this, [=] {
-                addTorrents(commandLineFiles, commandLineUrls, true);
-            }, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(
+                this,
+                [=] { addTorrents(commandLineFiles, commandLineUrls, true); },
+                Qt::QueuedConnection
+            );
         }
 
-        QObject::connect(ipcServer, &IpcServer::windowActivationRequested, this, [=](const auto&, const auto& startupNoficationId) {
-            emit showWindow(startupNoficationId);
-        });
+        QObject::connect(
+            ipcServer,
+            &IpcServer::windowActivationRequested,
+            this,
+            [=](const auto&, const auto& startupNoficationId) { emit showWindow(startupNoficationId); }
+        );
 
-        QObject::connect(ipcServer, &IpcServer::torrentsAddingRequested, this, [=](const auto& files, const auto& urls) {
-            addTorrents(files, urls);
-        });
+        QObject::connect(
+            ipcServer,
+            &IpcServer::torrentsAddingRequested,
+            this,
+            [=](const auto& files, const auto& urls) { addTorrents(files, urls); }
+        );
 
         QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
             if (rpc->isConnected()) {
@@ -114,8 +125,7 @@ namespace tremotesf {
         addTorrents(dropped.files, dropped.urls);
     }
 
-    void MainWindowViewModel::pasteShortcutActivated()
-    {
+    void MainWindowViewModel::pasteShortcutActivated() {
         logDebug("MainWindowViewModel: pasteShortcutActivated() called");
         const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
         if (dropped.isEmpty()) {
@@ -126,8 +136,9 @@ namespace tremotesf {
         addTorrents(dropped.files, dropped.urls);
     }
 
-    void MainWindowViewModel::addTorrents(const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay)
-    {
+    void MainWindowViewModel::addTorrents(
+        const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay
+    ) {
         logInfo("MainWindowViewModel: addTorrents() called");
         logInfo("MainWindowViewModel: files = {}", files);
         logInfo("MainWindowViewModel: urls = {}", urls);
@@ -149,7 +160,12 @@ namespace tremotesf {
                     delayedTorrentAddMessageTimer = nullptr;
                     emit showDelayedTorrentAddMessage(files + urls);
                 });
-                QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, delayedTorrentAddMessageTimer, &QTimer::deleteLater);
+                QObject::connect(
+                    delayedTorrentAddMessageTimer,
+                    &QTimer::timeout,
+                    delayedTorrentAddMessageTimer,
+                    &QTimer::deleteLater
+                );
                 delayedTorrentAddMessageTimer->start();
             } else {
                 emit showDelayedTorrentAddMessage(files + urls);

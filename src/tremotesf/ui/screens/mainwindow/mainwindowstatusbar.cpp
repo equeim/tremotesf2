@@ -16,12 +16,8 @@
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/utils.h"
 
-namespace tremotesf
-{
-    MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent)
-        : QStatusBar(parent),
-          mRpc(rpc)
-    {
+namespace tremotesf {
+    MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
         setSizeGripEnabled(false);
 
         delete layout();
@@ -70,8 +66,18 @@ namespace tremotesf
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
 
         updateServerLabel();
-        QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, &MainWindowStatusBar::updateServerLabel);
-        QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateServerLabel);
+        QObject::connect(
+            Servers::instance(),
+            &Servers::currentServerChanged,
+            this,
+            &MainWindowStatusBar::updateServerLabel
+        );
+        QObject::connect(
+            Servers::instance(),
+            &Servers::hasServersChanged,
+            this,
+            &MainWindowStatusBar::updateServerLabel
+        );
 
         updateStatusLabels();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateStatusLabels);
@@ -82,8 +88,7 @@ namespace tremotesf
         });
     }
 
-    void MainWindowStatusBar::updateLayout()
-    {
+    void MainWindowStatusBar::updateLayout() {
         if (Servers::instance()->hasServers()) {
             mNoServersErrorImage->hide();
             mServerLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
@@ -118,18 +123,19 @@ namespace tremotesf
         }
     }
 
-    void MainWindowStatusBar::updateServerLabel()
-    {
+    void MainWindowStatusBar::updateServerLabel() {
         if (Servers::instance()->hasServers()) {
             //: %s is server's name, %2 is server's address
-            mServerLabel->setText(QString::fromLatin1("%1 (%2)").arg(Servers::instance()->currentServerName(), Servers::instance()->currentServerAddress()));
+            mServerLabel->setText(QString::fromLatin1("%1 (%2)").arg(
+                Servers::instance()->currentServerName(),
+                Servers::instance()->currentServerAddress()
+            ));
         } else {
             mServerLabel->setText(qApp->translate("tremotesf", "No servers"));
         }
     }
 
-    void MainWindowStatusBar::updateStatusLabels()
-    {
+    void MainWindowStatusBar::updateStatusLabels() {
         mStatusLabel->setText(mRpc->statusString());
         if (mRpc->error() != libtremotesf::RpcError::NoError) {
             setToolTip(mRpc->errorMessage());

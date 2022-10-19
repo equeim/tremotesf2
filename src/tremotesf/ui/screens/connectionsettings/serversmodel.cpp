@@ -4,26 +4,18 @@
 
 #include "serversmodel.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     ServersModel::ServersModel(QObject* parent)
         : QAbstractListModel(parent),
           mServers(Servers::instance()->servers()),
-          mCurrentServer(Servers::instance()->currentServerName())
-    {
-    }
+          mCurrentServer(Servers::instance()->currentServerName()) {}
 
-    QVariant ServersModel::data(const QModelIndex& index, int role) const
-    {
-        if (!index.isValid()) {
-            return {};
-        }
+    QVariant ServersModel::data(const QModelIndex& index, int role) const {
+        if (!index.isValid()) { return {}; }
         const Server& server = mServers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::CheckStateRole:
-            if (server.name == mCurrentServer) {
-                return Qt::Checked;
-            }
+            if (server.name == mCurrentServer) { return Qt::Checked; }
             return Qt::Unchecked;
         case Qt::DisplayRole:
             return server.name;
@@ -32,24 +24,15 @@ namespace tremotesf
         }
     }
 
-    Qt::ItemFlags ServersModel::flags(const QModelIndex& index) const
-    {
-        if (!index.isValid()) {
-            return {};
-        }
+    Qt::ItemFlags ServersModel::flags(const QModelIndex& index) const {
+        if (!index.isValid()) { return {}; }
         return QAbstractListModel::flags(index) | Qt::ItemIsUserCheckable;
     }
 
-    int ServersModel::rowCount(const QModelIndex&) const
-    {
-        return static_cast<int>(mServers.size());
-    }
+    int ServersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mServers.size()); }
 
-    bool ServersModel::setData(const QModelIndex& modelIndex, const QVariant& value, int role)
-    {
-        if (!modelIndex.isValid()
-                || role != Qt::CheckStateRole
-                || value.value<Qt::CheckState>() != Qt::Checked) {
+    bool ServersModel::setData(const QModelIndex& modelIndex, const QVariant& value, int role) {
+        if (!modelIndex.isValid() || role != Qt::CheckStateRole || value.value<Qt::CheckState>() != Qt::Checked) {
             return false;
         }
         const QString current(mServers[static_cast<size_t>(modelIndex.row())].name);
@@ -61,61 +44,49 @@ namespace tremotesf
         return false;
     }
 
-    const std::vector<Server>& ServersModel::servers() const
-    {
-        return mServers;
-    }
+    const std::vector<Server>& ServersModel::servers() const { return mServers; }
 
-    const QString& ServersModel::currentServerName() const
-    {
-        return mCurrentServer;
-    }
+    const QString& ServersModel::currentServerName() const { return mCurrentServer; }
 
-    bool ServersModel::hasServer(const QString& name) const
-    {
-        return serverRow(name) != -1;
-    }
+    bool ServersModel::hasServer(const QString& name) const { return serverRow(name) != -1; }
 
-    void ServersModel::setServer(const QString& oldName,
-                                 const QString& name,
-                                 const QString& address,
-                                 int port,
-                                 const QString& apiPath,
+    void ServersModel::setServer(
+        const QString& oldName,
+        const QString& name,
+        const QString& address,
+        int port,
+        const QString& apiPath,
 
-                                 Server::ProxyType proxyType,
-                                 const QString& proxyHostname,
-                                 int proxyPort,
-                                 const QString& proxyUser,
-                                 const QString& proxyPassword,
+        Server::ProxyType proxyType,
+        const QString& proxyHostname,
+        int proxyPort,
+        const QString& proxyUser,
+        const QString& proxyPassword,
 
-                                 bool https,
-                                 bool selfSignedCertificateEnabled,
-                                 const QByteArray& selfSignedCertificate,
-                                 bool clientCertificateEnabled,
-                                 const QByteArray& clientCertificate,
+        bool https,
+        bool selfSignedCertificateEnabled,
+        const QByteArray& selfSignedCertificate,
+        bool clientCertificateEnabled,
+        const QByteArray& clientCertificate,
 
-                                 bool authentication,
-                                 const QString& username,
-                                 const QString& password,
+        bool authentication,
+        const QString& username,
+        const QString& password,
 
-                                 int updateInterval,
-                                 int timeout,
+        int updateInterval,
+        int timeout,
 
-                                 bool autoReconnectEnabled,
-                                 int autoReconnectInterval,
+        bool autoReconnectEnabled,
+        int autoReconnectInterval,
 
-                                 const QVariantMap& mountedDirectories)
-    {
+        const QVariantMap& mountedDirectories
+    ) {
         const int oldRow = serverRow(oldName);
         int row = serverRow(name);
 
-        Server *const server = [=]() -> Server* {
-            if (oldRow != -1) {
-                return &mServers[static_cast<size_t>(oldRow)];
-            }
-            if (row != -1) {
-                return &mServers[static_cast<size_t>(row)];
-            }
+        Server* const server = [=]() -> Server* {
+            if (oldRow != -1) { return &mServers[static_cast<size_t>(oldRow)]; }
+            if (row != -1) { return &mServers[static_cast<size_t>(row)]; }
             return nullptr;
         }();
 
@@ -161,56 +132,50 @@ namespace tremotesf
                 endRemoveRows();
             }
 
-            if (oldName == mCurrentServer) {
-                mCurrentServer = name;
-            }
+            if (oldName == mCurrentServer) { mCurrentServer = name; }
         } else {
             row = static_cast<int>(mServers.size());
             beginInsertRows(QModelIndex(), row, row);
-            mServers.emplace_back(name,
-                                  address,
-                                  port,
-                                  apiPath,
+            mServers.emplace_back(
+                name,
+                address,
+                port,
+                apiPath,
 
-                                  proxyType,
-                                  proxyHostname,
-                                  proxyPort,
-                                  proxyUser,
-                                  proxyPassword,
+                proxyType,
+                proxyHostname,
+                proxyPort,
+                proxyUser,
+                proxyPassword,
 
-                                  https,
-                                  selfSignedCertificateEnabled,
-                                  selfSignedCertificate,
-                                  clientCertificateEnabled,
-                                  clientCertificate,
+                https,
+                selfSignedCertificateEnabled,
+                selfSignedCertificate,
+                clientCertificateEnabled,
+                clientCertificate,
 
-                                  authentication,
-                                  username,
-                                  password,
+                authentication,
+                username,
+                password,
 
-                                  updateInterval,
-                                  timeout,
+                updateInterval,
+                timeout,
 
-                                  autoReconnectEnabled,
-                                  autoReconnectInterval,
+                autoReconnectEnabled,
+                autoReconnectInterval,
 
-                                  mountedDirectories,
-                                  QVariant(),
-                                  QVariant());
+                mountedDirectories,
+                QVariant(),
+                QVariant()
+            );
             endInsertRows();
-            if (row == 0) {
-                mCurrentServer = name;
-            }
+            if (row == 0) { mCurrentServer = name; }
         }
     }
 
-    void ServersModel::removeServerAtIndex(const QModelIndex& index)
-    {
-        removeServerAtRow(index.row());
-    }
+    void ServersModel::removeServerAtIndex(const QModelIndex& index) { removeServerAtRow(index.row()); }
 
-    void ServersModel::removeServerAtRow(int row)
-    {
+    void ServersModel::removeServerAtRow(int row) {
         const bool current = (mServers[static_cast<size_t>(row)].name == mCurrentServer);
         beginRemoveRows(QModelIndex(), row, row);
         mServers.erase(mServers.begin() + row);
@@ -222,12 +187,9 @@ namespace tremotesf
         }
     }
 
-    int ServersModel::serverRow(const QString& name) const
-    {
+    int ServersModel::serverRow(const QString& name) const {
         for (size_t i = 0, max = mServers.size(); i < max; ++i) {
-            if (mServers[i].name == name) {
-                return static_cast<int>(i);
-            }
+            if (mServers[i].name == name) { return static_cast<int>(i); }
         }
         return -1;
     }

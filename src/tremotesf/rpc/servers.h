@@ -14,52 +14,50 @@
 
 class QSettings;
 
-namespace tremotesf
-{
-    struct Server : libtremotesf::Server
-    {
+namespace tremotesf {
+    struct Server : libtremotesf::Server {
         Server() = default;
 
-        Server(const QString& name,
-               const QString& address,
-               int port,
-               const QString& apiPath,
+        Server(
+            const QString& name,
+            const QString& address,
+            int port,
+            const QString& apiPath,
 
-               ProxyType proxyType,
-               const QString& proxyHostname,
-               int proxyPort,
-               const QString& proxyUser,
-               const QString& proxyPassword,
+            ProxyType proxyType,
+            const QString& proxyHostname,
+            int proxyPort,
+            const QString& proxyUser,
+            const QString& proxyPassword,
 
-               bool https,
-               bool selfSignedCertificateEnabled,
-               const QByteArray& selfSignedCertificate,
-               bool clientCertificateEnabled,
-               const QByteArray& clientCertificate,
+            bool https,
+            bool selfSignedCertificateEnabled,
+            const QByteArray& selfSignedCertificate,
+            bool clientCertificateEnabled,
+            const QByteArray& clientCertificate,
 
-               bool authentication,
-               const QString& username,
-               const QString& password,
+            bool authentication,
+            const QString& username,
+            const QString& password,
 
-               int updateInterval,
-               int timeout,
+            int updateInterval,
+            int timeout,
 
-               bool autoReconnectEnabled,
-               int autoReconnectInterval,
+            bool autoReconnectEnabled,
+            int autoReconnectInterval,
 
-               const QVariantMap& mountedDirectories,
-               const QVariant& lastTorrents,
-               const QVariant& addTorrentDialogDirectories);
+            const QVariantMap& mountedDirectories,
+            const QVariant& lastTorrents,
+            const QVariant& addTorrentDialogDirectories
+        );
 
         QVariantMap mountedDirectories;
         QVariant lastTorrents;
         QVariant addTorrentDialogDirectories;
     };
 
-    struct LastTorrents
-    {
-        struct Torrent
-        {
+    struct LastTorrents {
+        struct Torrent {
             QString hashString;
             bool finished;
         };
@@ -68,8 +66,7 @@ namespace tremotesf
         std::vector<Torrent> torrents;
     };
 
-    class Servers : public QObject
-    {
+    class Servers : public QObject {
         Q_OBJECT
     public:
         static Servers* instance();
@@ -96,35 +93,37 @@ namespace tremotesf
         QStringList currentServerAddTorrentDialogDirectories() const;
         void setCurrentServerAddTorrentDialogDirectories(const QStringList& directories);
 
-        void setServer(const QString& oldName,
-                                   const QString& name,
-                                   const QString& address,
-                                   int port,
-                                   const QString& apiPath,
+        void setServer(
+            const QString& oldName,
+            const QString& name,
+            const QString& address,
+            int port,
+            const QString& apiPath,
 
-                                   libtremotesf::Server::ProxyType proxyType,
-                                   const QString& proxyHostname,
-                                   int proxyPort,
-                                   const QString& proxyUser,
-                                   const QString& proxyPassword,
+            libtremotesf::Server::ProxyType proxyType,
+            const QString& proxyHostname,
+            int proxyPort,
+            const QString& proxyUser,
+            const QString& proxyPassword,
 
-                                   bool https,
-                                   bool selfSignedCertificateEnabled,
-                                   const QByteArray& selfSignedCertificate,
-                                   bool clientCertificateEnabled,
-                                   const QByteArray& clientCertificate,
+            bool https,
+            bool selfSignedCertificateEnabled,
+            const QByteArray& selfSignedCertificate,
+            bool clientCertificateEnabled,
+            const QByteArray& clientCertificate,
 
-                                   bool authentication,
-                                   const QString& username,
-                                   const QString& password,
+            bool authentication,
+            const QString& username,
+            const QString& password,
 
-                                   int updateInterval,
-                                   int timeout,
+            int updateInterval,
+            int timeout,
 
-                                   bool autoReconnectEnabled,
-                                   int autoReconnectInterval,
+            bool autoReconnectEnabled,
+            int autoReconnectInterval,
 
-                                   const QVariantMap& mountedDirectories);
+            const QVariantMap& mountedDirectories
+        );
 
         void removeServer(const QString& name);
 

@@ -10,13 +10,11 @@
 class QListView;
 class KMessageWidget;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class ServersModel;
     class BaseProxyModel;
 
-    class ConnectionSettingsDialog : public QDialog
-    {
+    class ConnectionSettingsDialog : public QDialog {
         Q_OBJECT
 
     public:

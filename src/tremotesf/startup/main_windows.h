@@ -6,11 +6,11 @@
 #define TREMOTEST_MAIN_WINDOWS_H
 
 namespace tremotesf {
-	void windowsInitPrelude();
-	void windowsInitWinrt();
-	void windowsInitApplication();
-	void windowsDeinitWinrt();
-	void windowsDeinitPrelude();
+    void windowsInitPrelude();
+    void windowsInitWinrt();
+    void windowsInitApplication();
+    void windowsDeinitWinrt();
+    void windowsDeinitPrelude();
 }
 
 #endif // TREMOTEST_MAIN_WINDOWS_H

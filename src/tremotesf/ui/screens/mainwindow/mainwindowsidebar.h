@@ -7,13 +7,11 @@
 
 #include <QScrollArea>
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
     class TorrentsProxyModel;
 
-    class MainWindowSideBar : public QScrollArea
-    {
+    class MainWindowSideBar : public QScrollArea {
         Q_OBJECT
     public:
         explicit MainWindowSideBar(Rpc* rpc, TorrentsProxyModel* proxyModel, QWidget* parent = nullptr);

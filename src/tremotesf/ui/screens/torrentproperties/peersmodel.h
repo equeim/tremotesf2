@@ -11,27 +11,15 @@
 
 #include "libtremotesf/peer.h"
 
-namespace libtremotesf
-{
+namespace libtremotesf {
     class Torrent;
 }
 
-namespace tremotesf
-{
-    class PeersModel : public QAbstractTableModel
-    {
+namespace tremotesf {
+    class PeersModel : public QAbstractTableModel {
         Q_OBJECT
     public:
-        enum class Column
-        {
-            Address,
-            DownloadSpeed,
-            UploadSpeed,
-            ProgressBar,
-            Progress,
-            Flags,
-            Client
-        };
+        enum class Column { Address, DownloadSpeed, UploadSpeed, ProgressBar, Progress, Flags, Client };
         Q_ENUM(Column)
 
         static constexpr auto SortRole = Qt::UserRole;
@@ -49,7 +37,11 @@ namespace tremotesf
         void setTorrent(libtremotesf::Torrent* torrent);
 
     private:
-        void update(const std::vector<std::pair<int, int>>& removedIndexRanges, const std::vector<std::pair<int, int>>& changedIndexRanges, int addedCount);
+        void update(
+            const std::vector<std::pair<int, int>>& removedIndexRanges,
+            const std::vector<std::pair<int, int>>& changedIndexRanges,
+            int addedCount
+        );
 
         std::vector<libtremotesf::Peer> mPeers{};
         libtremotesf::Torrent* mTorrent{};

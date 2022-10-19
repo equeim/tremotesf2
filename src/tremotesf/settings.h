@@ -14,39 +14,47 @@
 class QSettings;
 
 #define SETTINGS_PROPERTY_IMPL(type, getter, setterType, setter) \
-public: \
-    type getter() const; \
-    void setter(setterType value); \
-Q_SIGNALS: \
+public:                                                          \
+    type getter() const;                                         \
+    void setter(setterType value);                               \
+Q_SIGNALS:                                                       \
     void getter##Changed();
 
-#define SETTINGS_PROPERTY_TRIVIAL(type, getter, setter) SETTINGS_PROPERTY_IMPL(type, getter, type, setter)
+#define SETTINGS_PROPERTY_TRIVIAL(type, getter, setter)     SETTINGS_PROPERTY_IMPL(type, getter, type, setter)
 #define SETTINGS_PROPERTY_NON_TRIVIAL(type, getter, setter) SETTINGS_PROPERTY_IMPL(type, getter, const type&, setter)
 
-namespace tremotesf
-{
-    class Settings : public QObject
-    {
+namespace tremotesf {
+    class Settings : public QObject {
         Q_OBJECT
 
         SETTINGS_PROPERTY_TRIVIAL(bool, connectOnStartup, setConnectOnStartup)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents)
-        SETTINGS_PROPERTY_TRIVIAL(bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection)
-        SETTINGS_PROPERTY_TRIVIAL(bool, notificationsOnFinishedTorrentsSinceLastConnection, setNotificationsOnFinishedTorrentsSinceLastConnection)
+        SETTINGS_PROPERTY_TRIVIAL(
+            bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection
+        )
+        SETTINGS_PROPERTY_TRIVIAL(
+            bool,
+            notificationsOnFinishedTorrentsSinceLastConnection,
+            setNotificationsOnFinishedTorrentsSinceLastConnection
+        )
 
         SETTINGS_PROPERTY_TRIVIAL(bool, rememberDownloadDir, setRememberDownloadDir)
         SETTINGS_PROPERTY_NON_TRIVIAL(QString, lastDownloadDirectory, setLastDownloadDirectory)
         SETTINGS_PROPERTY_TRIVIAL(bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard)
 
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled)
-        SETTINGS_PROPERTY_TRIVIAL(tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter)
+        SETTINGS_PROPERTY_TRIVIAL(
+            tremotesf::TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter
+        )
 
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsTrackerFilterEnabled, setTorrentsTrackerFilterEnabled)
         SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsTrackerFilter, setTorrentsTrackerFilter)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled)
+        SETTINGS_PROPERTY_TRIVIAL(
+            bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled
+        )
         SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter)
 
         SETTINGS_PROPERTY_TRIVIAL(bool, showTrayIcon, setShowTrayIcon)
@@ -67,11 +75,7 @@ namespace tremotesf
         SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState)
 
     public:
-        enum class DarkThemeMode {
-            FollowSystem,
-            On,
-            Off
-        };
+        enum class DarkThemeMode { FollowSystem, On, Off };
         Q_ENUM(DarkThemeMode)
 
         SETTINGS_PROPERTY_TRIVIAL(tremotesf::Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode)

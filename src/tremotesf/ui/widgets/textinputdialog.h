@@ -10,19 +10,19 @@
 class QLineEdit;
 class QPlainTextEdit;
 
-namespace tremotesf
-{
-    class TextInputDialog : public QDialog
-    {
+namespace tremotesf {
+    class TextInputDialog : public QDialog {
         Q_OBJECT
 
     public:
-        explicit TextInputDialog(const QString& title,
-                                 const QString& labelText,
-                                 const QString& text,
-                                 const QString& okButtonText,
-                                 bool multiline,
-                                 QWidget* parent = nullptr);
+        explicit TextInputDialog(
+            const QString& title,
+            const QString& labelText,
+            const QString& text,
+            const QString& okButtonText,
+            bool multiline,
+            QWidget* parent = nullptr
+        );
         QSize sizeHint() const override;
         QString text() const;
 

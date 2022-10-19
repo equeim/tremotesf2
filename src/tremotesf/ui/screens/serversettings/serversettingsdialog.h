@@ -16,13 +16,11 @@ class QTimeEdit;
 
 class KMessageWidget;
 
-namespace tremotesf
-{
+namespace tremotesf {
     class RemoteDirectorySelectionWidget;
     class Rpc;
 
-    class ServerSettingsDialog : public QDialog
-    {
+    class ServerSettingsDialog : public QDialog {
         Q_OBJECT
 
     public:

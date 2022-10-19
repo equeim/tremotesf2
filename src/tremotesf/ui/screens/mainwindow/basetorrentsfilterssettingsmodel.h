@@ -7,16 +7,14 @@
 
 #include <QAbstractListModel>
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
     class TorrentsProxyModel;
 
-    class BaseTorrentsFiltersSettingsModel : public QAbstractListModel
-    {
+    class BaseTorrentsFiltersSettingsModel : public QAbstractListModel {
         Q_OBJECT
     public:
-        inline explicit BaseTorrentsFiltersSettingsModel(QObject* parent = nullptr) : QAbstractListModel(parent) {};
+        inline explicit BaseTorrentsFiltersSettingsModel(QObject* parent = nullptr) : QAbstractListModel(parent){};
 
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);

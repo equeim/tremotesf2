@@ -7,19 +7,16 @@
 
 #include "fileselectionwidget.h"
 
-namespace tremotesf
-{
+namespace tremotesf {
     class Rpc;
 
-    class RemoteDirectorySelectionWidget : public FileSelectionWidget
-    {
+    class RemoteDirectorySelectionWidget : public FileSelectionWidget {
         Q_OBJECT
 
     public:
-        RemoteDirectorySelectionWidget(const QString& directory,
-                                       const Rpc* rpc,
-                                       bool comboBox,
-                                       QWidget* parent = nullptr);
+        RemoteDirectorySelectionWidget(
+            const QString& directory, const Rpc* rpc, bool comboBox, QWidget* parent = nullptr
+        );
         void updateComboBox(const QString& setAsCurrent);
 
     private:

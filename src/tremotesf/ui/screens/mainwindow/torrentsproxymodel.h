@@ -7,33 +7,22 @@
 
 #include "tremotesf/ui/itemmodels/baseproxymodel.h"
 
-namespace libtremotesf
-{
+namespace libtremotesf {
     class Torrent;
 }
 
-namespace tremotesf
-{
+namespace tremotesf {
     class TorrentsModel;
 
-    class TorrentsProxyModel : public BaseProxyModel
-    {
+    class TorrentsProxyModel : public BaseProxyModel {
         Q_OBJECT
     public:
-        enum StatusFilter
-        {
-            All,
-            Active,
-            Downloading,
-            Seeding,
-            Paused,
-            Checking,
-            Errored,
-            StatusFilterCount
-        };
+        enum StatusFilter { All, Active, Downloading, Seeding, Paused, Checking, Errored, StatusFilterCount };
         Q_ENUM(StatusFilter)
 
-        explicit TorrentsProxyModel(TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr);
+        explicit TorrentsProxyModel(
+            TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
+        );
         ~TorrentsProxyModel();
 
         QString searchString() const;

@@ -7,10 +7,8 @@
 
 #include "ipcserver.h"
 
-namespace tremotesf
-{
-    class IpcServerSocket final : public IpcServer
-    {
+namespace tremotesf {
+    class IpcServerSocket final : public IpcServer {
     public:
         static QString socketName();
         explicit IpcServerSocket(QObject* parent = nullptr);

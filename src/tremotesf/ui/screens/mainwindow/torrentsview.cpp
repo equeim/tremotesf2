@@ -11,20 +11,15 @@
 #include "torrentsmodel.h"
 #include "torrentsproxymodel.h"
 
-namespace tremotesf
-{
-    TorrentsView::TorrentsView(TorrentsProxyModel* model, QWidget* parent)
-        : BaseTreeView(parent)
-    {
+namespace tremotesf {
+    TorrentsView::TorrentsView(TorrentsProxyModel* model, QWidget* parent) : BaseTreeView(parent) {
         setContextMenuPolicy(Qt::CustomContextMenu);
-        setItemDelegate(
-            new CommonDelegate(
-                static_cast<int>(TorrentsModel::Column::ProgressBar),
-                static_cast<int>(TorrentsModel::Role::Sort),
-                static_cast<int>(TorrentsModel::Role::TextElideMode),
-                this
-            )
-        );
+        setItemDelegate(new CommonDelegate(
+            static_cast<int>(TorrentsModel::Column::ProgressBar),
+            static_cast<int>(TorrentsModel::Role::Sort),
+            static_cast<int>(TorrentsModel::Role::TextElideMode),
+            this
+        ));
         setModel(model);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setRootIsDecorated(false);
@@ -42,17 +37,11 @@ namespace tremotesf
                 TorrentsModel::Column::LeftUntilDone,
                 TorrentsModel::Column::DownloadDirectory,
                 TorrentsModel::Column::CompletedSize,
-                TorrentsModel::Column::ActivityDate
-            };
-            for (auto column : hiddenColumns) {
-                hideColumn(static_cast<int>(column));
-            }
+                TorrentsModel::Column::ActivityDate};
+            for (auto column : hiddenColumns) { hideColumn(static_cast<int>(column)); }
             sortByColumn(static_cast<int>(TorrentsModel::Column::Name), Qt::AscendingOrder);
         }
     }
 
-    TorrentsView::~TorrentsView()
-    {
-        Settings::instance()->setTorrentsViewHeaderState(header()->saveState());
-    }
+    TorrentsView::~TorrentsView() { Settings::instance()->setTorrentsViewHeaderState(header()->saveState()); }
 }

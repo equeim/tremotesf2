@@ -38,9 +38,7 @@ namespace tremotesf {
                 {
                     std::lock_guard lock(mMutex);
                     if (mNewMessagesCancelled) return;
-                    if (mQueue.size() == maximumSize) {
-                        mQueue.pop_front();
-                    }
+                    if (mQueue.size() == maximumSize) { mQueue.pop_front(); }
                     mQueue.push_back(std::move(message));
                 }
                 mCv.notify_one();
@@ -74,10 +72,7 @@ namespace tremotesf {
 
         class [[maybe_unused]] FileLogger final {
         public:
-
-            void logMessage(QString&& message) {
-                mQueue.pushEvicting(std::move(message));
-            }
+            void logMessage(QString&& message) { mQueue.pushEvicting(std::move(message)); }
 
             // We are not doing this in destructor because we need
             // thread to be able to call logMessage() while we are joining it
@@ -119,11 +114,9 @@ namespace tremotesf {
                 }
                 logDebug("FileLogger: created logs directory");
 
-                auto filePath = QString::fromStdString(fmt::format(
-                    "{}/{}.log",
-                    dirPath,
-                    QDateTime::currentDateTime().toString(u"yyyy-MM-dd_hh-mm-ss.zzz")
-                ));
+                auto filePath = QString::fromStdString(
+                    fmt::format("{}/{}.log", dirPath, QDateTime::currentDateTime().toString(u"yyyy-MM-dd_hh-mm-ss.zzz"))
+                );
                 logDebug("FileLogger: creating log file {}", QDir::toNativeSeparators(filePath));
                 QFile file(filePath);
                 if (!file.open(QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Text | QIODevice::Unbuffered)) {
@@ -140,9 +133,7 @@ namespace tremotesf {
 
                 while (true) {
                     const auto message = mQueue.popBlocking();
-                    if (!message.has_value()) {
-                        return;
-                    }
+                    if (!message.has_value()) { return; }
                     writeMessageToFile(*message, file);
                 }
             }
@@ -171,16 +162,12 @@ namespace tremotesf {
 
         std::unique_ptr<FileLogger> globalFileLogger{};
 
-        [[maybe_unused]]
-        void releaseMessageHandler(QString&& message) {
+        [[maybe_unused]] void releaseMessageHandler(QString&& message) {
             writeToDebugger(getCWString(message));
-            if (globalFileLogger) {
-                globalFileLogger->logMessage(std::move(message));
-            }
+            if (globalFileLogger) { globalFileLogger->logMessage(std::move(message)); }
         }
 
-        [[maybe_unused]]
-        void debugMessageHandler(QString&& message) {
+        [[maybe_unused]] void debugMessageHandler(QString&& message) {
             const auto wstr = getCWString(message);
             writeToDebugger(wstr);
             static const auto stderrHandle = GetStdHandle(STD_ERROR_HANDLE);
@@ -211,7 +198,9 @@ namespace tremotesf {
 
     void initWindowsMessageHandler() {
         qInstallMessageHandler(windowsMessageHandler);
-        qSetMessagePattern("[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_l1);
+        qSetMessagePattern(
+            "[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_l1
+        );
 #ifdef NDEBUG
         globalFileLogger = std::make_unique<FileLogger>();
         logDebug("FileLogger: created, starting write thread");
@@ -220,9 +209,7 @@ namespace tremotesf {
 
     void deinitWindowsMessageHandler() {
 #ifdef NDEBUG
-        if (globalFileLogger) {
-            globalFileLogger->finishWriting();
-        }
+        if (globalFileLogger) { globalFileLogger->finishWriting(); }
 #endif
     }
 }
