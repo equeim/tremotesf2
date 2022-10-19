@@ -11,11 +11,15 @@ namespace tremotesf {
           mCurrentServer(Servers::instance()->currentServerName()) {}
 
     QVariant ServersModel::data(const QModelIndex& index, int role) const {
-        if (!index.isValid()) { return {}; }
+        if (!index.isValid()) {
+            return {};
+        }
         const Server& server = mServers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::CheckStateRole:
-            if (server.name == mCurrentServer) { return Qt::Checked; }
+            if (server.name == mCurrentServer) {
+                return Qt::Checked;
+            }
             return Qt::Unchecked;
         case Qt::DisplayRole:
             return server.name;
@@ -25,7 +29,9 @@ namespace tremotesf {
     }
 
     Qt::ItemFlags ServersModel::flags(const QModelIndex& index) const {
-        if (!index.isValid()) { return {}; }
+        if (!index.isValid()) {
+            return {};
+        }
         return QAbstractListModel::flags(index) | Qt::ItemIsUserCheckable;
     }
 
@@ -85,8 +91,12 @@ namespace tremotesf {
         int row = serverRow(name);
 
         Server* const server = [=]() -> Server* {
-            if (oldRow != -1) { return &mServers[static_cast<size_t>(oldRow)]; }
-            if (row != -1) { return &mServers[static_cast<size_t>(row)]; }
+            if (oldRow != -1) {
+                return &mServers[static_cast<size_t>(oldRow)];
+            }
+            if (row != -1) {
+                return &mServers[static_cast<size_t>(row)];
+            }
             return nullptr;
         }();
 
@@ -132,7 +142,9 @@ namespace tremotesf {
                 endRemoveRows();
             }
 
-            if (oldName == mCurrentServer) { mCurrentServer = name; }
+            if (oldName == mCurrentServer) {
+                mCurrentServer = name;
+            }
         } else {
             row = static_cast<int>(mServers.size());
             beginInsertRows(QModelIndex(), row, row);
@@ -169,7 +181,9 @@ namespace tremotesf {
                 QVariant()
             );
             endInsertRows();
-            if (row == 0) { mCurrentServer = name; }
+            if (row == 0) {
+                mCurrentServer = name;
+            }
         }
     }
 
@@ -189,7 +203,9 @@ namespace tremotesf {
 
     int ServersModel::serverRow(const QString& name) const {
         for (size_t i = 0, max = mServers.size(); i < max; ++i) {
-            if (mServers[i].name == name) { return static_cast<int>(i); }
+            if (mServers[i].name == name) {
+                return static_cast<int>(i);
+            }
         }
         return -1;
     }

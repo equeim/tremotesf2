@@ -13,7 +13,9 @@ namespace tremotesf {
 
     void BaseTorrentsFiltersSettingsModel::setRpc(Rpc* rpc) {
         if (rpc != mRpc) {
-            if (mRpc) { QObject::disconnect(mRpc, nullptr, this, nullptr); }
+            if (mRpc) {
+                QObject::disconnect(mRpc, nullptr, this, nullptr);
+            }
             mRpc = rpc;
             if (rpc) {
                 QObject::connect(rpc, &Rpc::torrentsUpdated, this, &BaseTorrentsFiltersSettingsModel::updateImpl);
@@ -37,7 +39,11 @@ namespace tremotesf {
             populatedChanged = true;
         }
         update();
-        if (!indexForTorrentsProxyModelFilter().isValid()) { resetTorrentsProxyModelFilter(); }
-        if (populatedChanged) { emit this->populatedChanged(); }
+        if (!indexForTorrentsProxyModelFilter().isValid()) {
+            resetTorrentsProxyModelFilter();
+        }
+        if (populatedChanged) {
+            emit this->populatedChanged();
+        }
     }
 }

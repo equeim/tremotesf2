@@ -53,7 +53,9 @@ namespace tremotesf {
             showNotification(title, torrentNames.first());
         } else {
             auto names = torrentNames;
-            for (auto& name : names) { name.prepend(u"\u2022 "); }
+            for (auto& name : names) {
+                name.prepend(u"\u2022 ");
+            }
             showNotification(title, names.join('\n'));
         }
     }

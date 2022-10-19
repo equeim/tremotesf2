@@ -86,7 +86,9 @@ namespace tremotesf::desktoputils {
         auto cursor = QTextCursor();
         while (true) {
             cursor = document->find(regex, cursor);
-            if (cursor.isNull()) { break; }
+            if (cursor.isNull()) {
+                break;
+            }
             auto format = baseFormat;
             format.setAnchorHref(cursor.selection().toPlainText());
             cursor.setCharFormat(format);

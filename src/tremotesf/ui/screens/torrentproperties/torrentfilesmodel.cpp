@@ -26,7 +26,9 @@ namespace tremotesf {
 
         QVariantList idsFromIndex(const QModelIndex& index) {
             auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-            if (entry->isDirectory()) { return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds(); }
+            if (entry->isDirectory()) {
+                return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
+            }
             return {static_cast<TorrentFilesModelFile*>(entry)->id()};
         }
 
@@ -98,14 +100,18 @@ namespace tremotesf {
     }
 
     TorrentFilesModel::~TorrentFilesModel() {
-        if (mTorrent) { mTorrent->setFilesEnabled(false); }
+        if (mTorrent) {
+            mTorrent->setFilesEnabled(false);
+        }
     }
 
     libtremotesf::Torrent* TorrentFilesModel::torrent() const { return mTorrent; }
 
     void TorrentFilesModel::setTorrent(libtremotesf::Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
+            if (mTorrent) {
+                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            }
 
             mTorrent = torrent;
 
@@ -152,7 +158,9 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName) {
-        if (!mLoaded || !mRootDirectory) { return; }
+        if (!mLoaded || !mRootDirectory) {
+            return;
+        }
         TorrentFilesModelEntry* entry = mRootDirectory.get();
         const auto parts = path.split('/', Qt::SkipEmptyParts);
         for (const QString& part : parts) {
@@ -162,8 +170,12 @@ namespace tremotesf {
     }
 
     QString TorrentFilesModel::localFilePath(const QModelIndex& index) const {
-        if (!index.isValid()) { return mRpc->localTorrentDownloadDirectoryPath(mTorrent); }
-        if (mTorrent->isSingleFile()) { return mRpc->localTorrentFilesPath(mTorrent); }
+        if (!index.isValid()) {
+            return mRpc->localTorrentDownloadDirectoryPath(mTorrent);
+        }
+        if (mTorrent->isSingleFile()) {
+            return mRpc->localTorrentFilesPath(mTorrent);
+        }
         const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
         QString path(entry->path());
         if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->renameIncompleteFiles()) {
@@ -173,7 +185,9 @@ namespace tremotesf {
     }
 
     bool TorrentFilesModel::isWanted(const QModelIndex& index) const {
-        if (!index.isValid()) { return true; }
+        if (!index.isValid()) {
+            return true;
+        }
         return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() !=
                TorrentFilesModelEntry::Unwanted;
     }
@@ -187,7 +201,9 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::createTree() {
-        if (mCreatingTree) { return; }
+        if (mCreatingTree) {
+            return;
+        }
 
         mCreatingTree = true;
         beginResetModel();

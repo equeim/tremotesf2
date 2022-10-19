@@ -38,7 +38,9 @@ namespace tremotesf {
                 {
                     std::lock_guard lock(mMutex);
                     if (mNewMessagesCancelled) return;
-                    if (mQueue.size() == maximumSize) { mQueue.pop_front(); }
+                    if (mQueue.size() == maximumSize) {
+                        mQueue.pop_front();
+                    }
                     mQueue.push_back(std::move(message));
                 }
                 mCv.notify_one();
@@ -133,7 +135,9 @@ namespace tremotesf {
 
                 while (true) {
                     const auto message = mQueue.popBlocking();
-                    if (!message.has_value()) { return; }
+                    if (!message.has_value()) {
+                        return;
+                    }
                     writeMessageToFile(*message, file);
                 }
             }
@@ -164,7 +168,9 @@ namespace tremotesf {
 
         [[maybe_unused]] void releaseMessageHandler(QString&& message) {
             writeToDebugger(getCWString(message));
-            if (globalFileLogger) { globalFileLogger->logMessage(std::move(message)); }
+            if (globalFileLogger) {
+                globalFileLogger->logMessage(std::move(message));
+            }
         }
 
         [[maybe_unused]] void debugMessageHandler(QString&& message) {
@@ -209,7 +215,9 @@ namespace tremotesf {
 
     void deinitWindowsMessageHandler() {
 #ifdef NDEBUG
-        if (globalFileLogger) { globalFileLogger->finishWriting(); }
+        if (globalFileLogger) {
+            globalFileLogger->finishWriting();
+        }
 #endif
     }
 }

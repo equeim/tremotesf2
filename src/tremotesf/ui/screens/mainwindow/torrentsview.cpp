@@ -38,7 +38,9 @@ namespace tremotesf {
                 TorrentsModel::Column::DownloadDirectory,
                 TorrentsModel::Column::CompletedSize,
                 TorrentsModel::Column::ActivityDate};
-            for (auto column : hiddenColumns) { hideColumn(static_cast<int>(column)); }
+            for (auto column : hiddenColumns) {
+                hideColumn(static_cast<int>(column));
+            }
             sortByColumn(static_cast<int>(TorrentsModel::Column::Name), Qt::AscendingOrder);
         }
     }

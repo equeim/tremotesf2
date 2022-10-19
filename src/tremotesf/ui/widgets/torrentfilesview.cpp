@@ -116,7 +116,9 @@ namespace tremotesf {
     }
 
     void TorrentFilesView::showContextMenu(QPoint pos) {
-        if (!indexAt(pos).isValid()) { return; }
+        if (!indexAt(pos).isValid()) {
+            return;
+        }
 
         const QModelIndexList sourceIndexes(mProxyModel->sourceIndexes(selectionModel()->selectedRows()));
 
@@ -206,21 +208,27 @@ namespace tremotesf {
         QAction* highPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&High"));
         highPriorityAction->setCheckable(true);
         QObject::connect(highPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
-            if (checked) { mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::HighPriority); }
+            if (checked) {
+                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::HighPriority);
+            }
         });
 
         //: Priority
         QAction* normalPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Normal"));
         normalPriorityAction->setCheckable(true);
         QObject::connect(normalPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
-            if (checked) { mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::NormalPriority); }
+            if (checked) {
+                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::NormalPriority);
+            }
         });
 
         //: Priority
         QAction* lowPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Low"));
         lowPriorityAction->setCheckable(true);
         QObject::connect(lowPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
-            if (checked) { mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::LowPriority); }
+            if (checked) {
+                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::LowPriority);
+            }
         });
 
         QAction* mixedPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Mixed"));

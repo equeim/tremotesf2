@@ -66,9 +66,15 @@ namespace tremotesf {
         const QLatin1String proxyTypeSocks5("SOCKS5");
 
         Server::ProxyType proxyTypeFromSettings(const QString& value) {
-            if (value.isEmpty() || value == proxyTypeDefault) { return Server::ProxyType::Default; }
-            if (value == proxyTypeHttp) { return Server::ProxyType::Http; }
-            if (value == proxyTypeSocks5) { return Server::ProxyType::Socks5; }
+            if (value.isEmpty() || value == proxyTypeDefault) {
+                return Server::ProxyType::Default;
+            }
+            if (value == proxyTypeHttp) {
+                return Server::ProxyType::Http;
+            }
+            if (value == proxyTypeSocks5) {
+                return Server::ProxyType::Socks5;
+            }
             return Server::ProxyType::Default;
         }
 
@@ -173,7 +179,9 @@ namespace tremotesf {
         std::vector<Server> list;
         const QStringList groups(mSettings->childGroups());
         list.reserve(static_cast<size_t>(groups.size()));
-        for (const QString& group : groups) { list.push_back(getServer(group)); }
+        for (const QString& group : groups) {
+            list.push_back(getServer(group));
+        }
         return list;
     }
 
@@ -210,7 +218,9 @@ namespace tremotesf {
     }
 
     QString Servers::firstLocalDirectory() const {
-        if (mCurrentServerMountedDirectories.empty()) { return {}; }
+        if (mCurrentServerMountedDirectories.empty()) {
+            return {};
+        }
         return mCurrentServerMountedDirectories.front().first;
     }
 
@@ -318,7 +328,9 @@ namespace tremotesf {
         bool currentChanged = false;
         const QString current(currentServerName());
         if (oldName == current) {
-            if (name != oldName) { mSettings->setValue(currentServerKey, name); }
+            if (name != oldName) {
+                mSettings->setValue(currentServerKey, name);
+            }
             currentChanged = true;
         } else if (name == current) {
             currentChanged = true;
@@ -369,7 +381,9 @@ namespace tremotesf {
             emit currentServerChanged();
         }
 
-        if (oldName.isEmpty() && mSettings->childGroups().size() == 1) { emit hasServersChanged(); }
+        if (oldName.isEmpty() && mSettings->childGroups().size() == 1) {
+            emit hasServersChanged();
+        }
     }
 
     void Servers::removeServer(const QString& name) {
@@ -424,7 +438,9 @@ namespace tremotesf {
         }
         updateMountedDirectories();
         emit currentServerChanged();
-        if (hasServers() != hadServers) { emit hasServersChanged(); }
+        if (hasServers() != hadServers) {
+            emit hasServersChanged();
+        }
     }
 
     Servers::Servers(QObject* parent)
@@ -442,7 +458,9 @@ namespace tremotesf {
                     }
                 }
             }
-            if (setFirst) { setCurrentServer(mSettings->childGroups().constFirst()); }
+            if (setFirst) {
+                setCurrentServer(mSettings->childGroups().constFirst());
+            }
         } else {
             mSettings->remove(currentServerKey);
         }

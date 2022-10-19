@@ -55,7 +55,9 @@ namespace tremotesf {
                     }
                     emit done();
                 };
-                if (pendingReply.isFinished()) { onFinished(); }
+                if (pendingReply.isFinished()) {
+                    onFinished();
+                }
                 auto watcher = new QDBusPendingCallWatcher(pendingReply, this);
                 QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, onFinished);
                 QObject::connect(

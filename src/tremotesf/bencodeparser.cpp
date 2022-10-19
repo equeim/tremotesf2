@@ -66,7 +66,9 @@ namespace tremotesf::bencode {
 
     template<typename Expected>
     Expected Value::takeValue() {
-        if (auto maybeValue = maybeTakeValue<Expected>(); maybeValue) { return std::move(*maybeValue); }
+        if (auto maybeValue = maybeTakeValue<Expected>(); maybeValue) {
+            return std::move(*maybeValue);
+        }
         throw Error(Error::Type::Parsing, std::string("Value is not of ") + getValueTypeName<Expected>() + " type");
     }
 
@@ -87,9 +89,15 @@ namespace tremotesf::bencode {
         private:
             Value parseValue() {
                 const char byte = peekByte();
-                if (byte == integerPrefix) { return parseInteger(); }
-                if (byte == listPrefix) { return parseList(); }
-                if (byte == dictionaryPrefix) { return parseDictionary(); }
+                if (byte == integerPrefix) {
+                    return parseInteger();
+                }
+                if (byte == listPrefix) {
+                    return parseList();
+                }
+                if (byte == dictionaryPrefix) {
+                    return parseDictionary();
+                }
                 return parseByteArray();
             }
 
@@ -166,7 +174,9 @@ namespace tremotesf::bencode {
 
             Integer readIntegerUntilTerminator(char integerTerminator) {
                 const auto peeked = mDevice.peek(mIntegerBuffer.data(), integerBufferSize);
-                if (peeked <= 0) { throwErrorFromIODevice("Failed to peek integer buffer"); }
+                if (peeked <= 0) {
+                    throwErrorFromIODevice("Failed to peek integer buffer");
+                }
                 Integer integer{};
                 const auto result =
                     std::from_chars(mIntegerBuffer.data(), mIntegerBuffer.data() + integerBufferSize, integer);
@@ -193,7 +203,9 @@ namespace tremotesf::bencode {
 
             char peekByte() {
                 char byte{};
-                if (mDevice.peek(&byte, 1) != 1) { throwErrorFromIODevice("Failed to peek 1 byte"); }
+                if (mDevice.peek(&byte, 1) != 1) {
+                    throwErrorFromIODevice("Failed to peek 1 byte");
+                }
                 return byte;
             }
 
@@ -229,7 +241,9 @@ namespace tremotesf::bencode {
     }
 
     Value parse(QIODevice& device) {
-        if (device.isSequential()) { return Parser<true>(device).parse(); }
+        if (device.isSequential()) {
+            return Parser<true>(device).parse();
+        }
         return Parser<false>(device).parse();
     }
 }

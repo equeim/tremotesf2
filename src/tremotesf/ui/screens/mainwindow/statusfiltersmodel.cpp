@@ -16,7 +16,9 @@
 
 namespace tremotesf {
     QVariant StatusFiltersModel::data(const QModelIndex& index, int role) const {
-        if (!index.isValid()) { return {}; }
+        if (!index.isValid()) {
+            return {};
+        }
         const Item& item = mItems[static_cast<size_t>(index.row())];
         switch (role) {
         case FilterRole:
@@ -80,18 +82,24 @@ namespace tremotesf {
     QModelIndex StatusFiltersModel::indexForStatusFilter(TorrentsProxyModel::StatusFilter filter) const {
         for (size_t i = 0, max = mItems.size(); i < max; ++i) {
             const auto& item = mItems[i];
-            if (item.filter == filter) { return index(static_cast<int>(i)); }
+            if (item.filter == filter) {
+                return index(static_cast<int>(i));
+            }
         }
         return {};
     }
 
     QModelIndex StatusFiltersModel::indexForTorrentsProxyModelFilter() const {
-        if (!torrentsProxyModel()) { return {}; }
+        if (!torrentsProxyModel()) {
+            return {};
+        }
         return indexForStatusFilter(torrentsProxyModel()->statusFilter());
     }
 
     void StatusFiltersModel::resetTorrentsProxyModelFilter() const {
-        if (torrentsProxyModel()) { torrentsProxyModel()->setStatusFilter(TorrentsProxyModel::All); }
+        if (torrentsProxyModel()) {
+            torrentsProxyModel()->setStatusFilter(TorrentsProxyModel::All);
+        }
     }
 
     class StatusFiltersModelUpdater : public ModelListUpdater<
@@ -137,7 +145,9 @@ namespace tremotesf {
             {TorrentsProxyModel::Errored, 0}};
 
         const auto processFilter = [&](libtremotesf::Torrent* torrent, TorrentsProxyModel::StatusFilter filter) {
-            if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrent, filter)) { ++(items.find(filter)->second); }
+            if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrent, filter)) {
+                ++(items.find(filter)->second);
+            }
         };
 
         for (const auto& torrent : rpc()->torrents()) {

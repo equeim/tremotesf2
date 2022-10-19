@@ -121,7 +121,9 @@ namespace tremotesf {
                 setMinimumSize(minimumSizeHint());
 
                 QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
-                    if (!rpc->isConnected()) { reject(); }
+                    if (!rpc->isConnected()) {
+                        reject();
+                    }
                 });
             }
 
@@ -143,10 +145,16 @@ namespace tremotesf {
         }
 
         void showAndRaiseWindow(QWidget* window, bool activate = true) {
-            if (window->isHidden()) { window->show(); }
-            if (window->isMinimized()) { window->setWindowState(window->windowState() & ~Qt::WindowMinimized); }
+            if (window->isHidden()) {
+                window->show();
+            }
+            if (window->isMinimized()) {
+                window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
+            }
             window->raise();
-            if (activate) { window->activateWindow(); }
+            if (activate) {
+                window->activateWindow();
+            }
         }
 
         template<typename Dialog, typename CreateDialogFunction>
@@ -186,7 +194,9 @@ namespace tremotesf {
 
         setAcceptDrops(true);
 
-        if (Servers::instance()->hasServers()) { mRpc->setServer(Servers::instance()->currentServer()); }
+        if (Servers::instance()->hasServers()) {
+            mRpc->setServer(Servers::instance()->currentServer());
+        }
 
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this] {
             if (Servers::instance()->hasServers()) {
@@ -199,7 +209,9 @@ namespace tremotesf {
 
         mSplitter->setChildrenCollapsible(false);
 
-        if (!Settings::instance()->isSideBarVisible()) { mSideBar->hide(); }
+        if (!Settings::instance()->isSideBarVisible()) {
+            mSideBar->hide();
+        }
         mSplitter->addWidget(mSideBar);
 
         auto mainWidgetContainer = new QWidget(this);
@@ -225,7 +237,9 @@ namespace tremotesf {
 
         torrentsViewLayout->addWidget(mTorrentsView);
         QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [=](auto point) {
-            if (mTorrentsView->indexAt(point).isValid()) { mTorrentMenu->popup(QCursor::pos()); }
+            if (mTorrentsView->indexAt(point).isValid()) {
+                mTorrentMenu->popup(QCursor::pos());
+            }
         });
         QObject::connect(mTorrentsView, &TorrentsView::activated, this, &MainWindow::showTorrentsPropertiesDialogs);
 
@@ -252,7 +266,9 @@ namespace tremotesf {
         );
 
         setStatusBar(new MainWindowStatusBar(mRpc));
-        if (!Settings::instance()->isStatusBarVisible()) { statusBar()->hide(); }
+        if (!Settings::instance()->isStatusBarVisible()) {
+            statusBar()->hide();
+        }
 
         setupMenuBar();
         setupTrayIcon();
@@ -263,7 +279,9 @@ namespace tremotesf {
             move((screenSize.width() - windowSize.width()) / 2, (screenSize.height() - windowSize.height()) / 2);
         }
 
-        if (!restoreState(Settings::instance()->mainWindowState())) { addToolBar(Qt::TopToolBarArea, mToolBar); }
+        if (!restoreState(Settings::instance()->mainWindowState())) {
+            addToolBar(Qt::TopToolBarArea, mToolBar);
+        }
         mToolBarAction->setChecked(!mToolBar->isHidden());
 
         QObject::connect(mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::showWindow);
@@ -272,7 +290,9 @@ namespace tremotesf {
             &MainWindowViewModel::showAddTorrentDialogs,
             this,
             [=](const auto& files, const auto& urls) {
-                if (messageWidget->isVisible()) { messageWidget->animatedHide(); }
+                if (messageWidget->isVisible()) {
+                    messageWidget->animatedHide();
+                }
                 const bool wasHidden = isHidden();
                 showWindow();
                 if (wasHidden) {
@@ -361,13 +381,17 @@ namespace tremotesf {
         });
 
         if (Servers::instance()->hasServers()) {
-            if (Settings::instance()->connectOnStartup()) { mRpc->connect(); }
+            if (Settings::instance()->connectOnStartup()) {
+                mRpc->connect();
+            }
         } else {
             runAfterDelay([=] {
                 auto dialog = new ServerEditDialog(nullptr, -1, this);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 QObject::connect(dialog, &ServerEditDialog::accepted, this, [=] {
-                    if (Settings::instance()->connectOnStartup()) { mRpc->connect(); }
+                    if (Settings::instance()->connectOnStartup()) {
+                        mRpc->connect();
+                    }
                 });
                 dialog->open();
             });
@@ -394,7 +418,9 @@ namespace tremotesf {
 
     void MainWindow::closeEvent(QCloseEvent* event) {
         QMainWindow::closeEvent(event);
-        if (!(mTrayIcon->isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) { qApp->quit(); }
+        if (!(mTrayIcon->isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) {
+            qApp->quit();
+        }
     }
 
     void MainWindow::dragEnterEvent(QDragEnterEvent* event) { MainWindowViewModel::processDragEnterEvent(event); }
@@ -636,7 +662,9 @@ namespace tremotesf {
         }
 
         const bool connected = mRpc->isConnected();
-        for (auto action : mConnectionDependentActions) { action->setEnabled(connected); }
+        for (auto action : mConnectionDependentActions) {
+            action->setEnabled(connected);
+        }
     }
 
     void MainWindow::addTorrentsFiles() {
@@ -692,7 +720,9 @@ namespace tremotesf {
     void MainWindow::updateTorrentActions() {
         if (mTorrentsView->selectionModel()->hasSelection()) {
             const QList<QAction*> actions(mTorrentMenu->actions());
-            for (QAction* action : actions) { action->setEnabled(true); }
+            for (QAction* action : actions) {
+                action->setEnabled(true);
+            }
             const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
             if (selectedRows.size() == 1) {
                 switch (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))->status()
@@ -738,7 +768,9 @@ namespace tremotesf {
             }
         } else {
             const QList<QAction*> actions(mTorrentMenu->actions());
-            for (QAction* action : actions) { action->setEnabled(false); }
+            for (QAction* action : actions) {
+                action->setEnabled(false);
+            }
         }
     }
 
@@ -771,7 +803,9 @@ namespace tremotesf {
         const QVariantList ids(mTorrentsModel->idsFromIndexes(
             mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
         ));
-        if (ids.isEmpty()) { return; }
+        if (ids.isEmpty()) {
+            return;
+        }
 
         QMessageBox dialog(this);
         dialog.setIcon(QMessageBox::Warning);
@@ -866,7 +900,9 @@ namespace tremotesf {
                 }
             } else {
                 statusText = mRpc->statusString();
-                if (mRpc->error() != Rpc::Error::NoError) { errorText = mRpc->errorMessage(); }
+                if (mRpc->error() != Rpc::Error::NoError) {
+                    errorText = mRpc->errorMessage();
+                }
             }
             status->setText(statusText);
             status->setVisible(!statusText.isEmpty());
@@ -1074,14 +1110,18 @@ namespace tremotesf {
             contextMenu.addActions(group.actions());
 
             QAction* action = contextMenu.exec(QCursor::pos());
-            if (action) { setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action))); }
+            if (action) {
+                setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action)));
+            }
         });
     }
 
     void MainWindow::setupTrayIcon() {
         auto contextMenu = new QMenu(mFileMenu);
         const QList<QAction*> actions(mFileMenu->actions());
-        for (QAction* action : actions) { contextMenu->addAction(action); }
+        for (QAction* action : actions) {
+            contextMenu->addAction(action);
+        }
 
         mTrayIcon->setContextMenu(contextMenu);
         mTrayIcon->setToolTip(mRpc->statusString());
@@ -1106,7 +1146,9 @@ namespace tremotesf {
                                       ));
         });
 
-        if (Settings::instance()->showTrayIcon()) { mTrayIcon->show(); }
+        if (Settings::instance()->showTrayIcon()) {
+            mTrayIcon->show();
+        }
 
         QObject::connect(Settings::instance(), &Settings::showTrayIconChanged, this, [=] {
             if (Settings::instance()->showTrayIcon()) {
@@ -1120,7 +1162,9 @@ namespace tremotesf {
 
     void MainWindow::showWindow([[maybe_unused]] const QByteArray& newStartupNotificationId) {
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-        if (!newStartupNotificationId.isEmpty()) { KStartupInfo::appStarted(newStartupNotificationId); }
+        if (!newStartupNotificationId.isEmpty()) {
+            KStartupInfo::appStarted(newStartupNotificationId);
+        }
 #endif
         showAndRaiseWindow(this, false);
         QWidget* lastDialog = nullptr;
@@ -1133,8 +1177,12 @@ namespace tremotesf {
             }
         }
         QWidget* widgetToActivate = qApp->activeModalWidget();
-        if (!widgetToActivate) { widgetToActivate = lastDialog; }
-        if (!widgetToActivate) { widgetToActivate = this; }
+        if (!widgetToActivate) {
+            widgetToActivate = lastDialog;
+        }
+        if (!widgetToActivate) {
+            widgetToActivate = this;
+        }
         widgetToActivate->activateWindow();
     }
 

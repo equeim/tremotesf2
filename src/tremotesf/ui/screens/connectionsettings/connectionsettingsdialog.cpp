@@ -42,7 +42,9 @@ namespace tremotesf {
 
         mNoServersWidget->setCloseButtonVisible(false);
         mNoServersWidget->setMessageType(KMessageWidget::Warning);
-        if (!mModel->servers().empty()) { mNoServersWidget->hide(); }
+        if (!mModel->servers().empty()) {
+            mNoServersWidget->hide();
+        }
         layout->addWidget(mNoServersWidget, 0, 0);
 
         mServersView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -77,7 +79,9 @@ namespace tremotesf {
             auto dialog = new ServerEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             QObject::connect(dialog, &ServerEditDialog::accepted, this, [=] {
-                if (mModel->servers().size() == 1) { mNoServersWidget->animatedHide(); }
+                if (mModel->servers().size() == 1) {
+                    mNoServersWidget->animatedHide();
+                }
             });
             dialog->show();
         });
@@ -130,6 +134,8 @@ namespace tremotesf {
                 mProxyModel->sourceIndex(mServersView->selectionModel()->selectedIndexes().first())
             );
         }
-        if (mModel->servers().empty()) { mNoServersWidget->animatedShow(); }
+        if (mModel->servers().empty()) {
+            mNoServersWidget->animatedShow();
+        }
     }
 }

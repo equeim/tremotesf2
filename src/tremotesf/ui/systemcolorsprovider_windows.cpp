@@ -51,7 +51,9 @@ namespace tremotesf {
 
         private:
             bool isDarkThemeEnabledImpl() {
-                if (!isDarkThemeFollowSystemSupported()) { return false; }
+                if (!isDarkThemeFollowSystemSupported()) {
+                    return false;
+                }
                 // Apparently this is the way to do it according to Microsoft
                 const auto foreground = settings.GetColorValue(UIColorType::Foreground);
                 return (((5 * foreground.G) + (2 * foreground.R) + foreground.B) > (8 * 128));

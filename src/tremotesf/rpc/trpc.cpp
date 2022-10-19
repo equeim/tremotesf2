@@ -147,7 +147,9 @@ namespace tremotesf {
 
     QString Rpc::localTorrentFilesPath(libtremotesf::Torrent* torrent) const {
         const QString downloadDirectoryPath(localTorrentDownloadDirectoryPath(torrent));
-        if (downloadDirectoryPath.isEmpty()) { return {}; }
+        if (downloadDirectoryPath.isEmpty()) {
+            return {};
+        }
         return downloadDirectoryPath % '/' % torrentRootFileName(torrent);
     }
 

@@ -33,7 +33,9 @@ namespace tremotesf {
 
         void activateWindow() override {
             logInfo("Requesting window activation");
-            if (mInterface.isValid()) { waitForReply(mInterface.Activate(getPlatformData())); }
+            if (mInterface.isValid()) {
+                waitForReply(mInterface.Activate(getPlatformData()));
+            }
         }
 
         void addTorrents(const QStringList& files, const QStringList& urls) override {
@@ -41,7 +43,9 @@ namespace tremotesf {
             if (mInterface.isValid()) {
                 QStringList uris;
                 uris.reserve(files.size() + urls.size());
-                for (const QString& filePath : files) { uris.push_back(QUrl::fromLocalFile(filePath).toString()); }
+                for (const QString& filePath : files) {
+                    uris.push_back(QUrl::fromLocalFile(filePath).toString());
+                }
                 uris.append(urls);
                 waitForReply(mInterface.Open(uris, getPlatformData()));
             }

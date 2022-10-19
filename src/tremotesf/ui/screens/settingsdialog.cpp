@@ -143,7 +143,9 @@ namespace tremotesf {
 
         if constexpr (isTargetOsWindows) {
             darkThemeComboBox->setCurrentIndex(index_of_i(darkThemeComboBoxValues, settings->darkThemeMode()));
-            if (systemAccentColorCheckBox) { systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor()); }
+            if (systemAccentColorCheckBox) {
+                systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
+            }
         }
 
         QObject::connect(this, &SettingsDialog::accepted, this, [=] {

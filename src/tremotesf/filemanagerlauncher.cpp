@@ -29,7 +29,9 @@ namespace tremotesf {
                     return d.first == dirPath;
                 });
                 auto& dirFiles = [&]() -> std::vector<QString>& {
-                    if (found != directories.end()) { return found->second; }
+                    if (found != directories.end()) {
+                        return found->second;
+                    }
                     directories.push_back({std::move(dirPath), {}});
                     return directories.back().second;
                 }();
@@ -42,7 +44,9 @@ namespace tremotesf {
             const std::vector<std::pair<QString, std::vector<QString>>>& directories,
             const QPointer<QWidget>& parentWidget
         ) {
-            for (const auto& [dirPath, _] : directories) { fallbackForDirectory(dirPath, parentWidget); }
+            for (const auto& [dirPath, _] : directories) {
+                fallbackForDirectory(dirPath, parentWidget);
+            }
             emit done();
         }
 

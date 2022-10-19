@@ -34,11 +34,15 @@ namespace tremotesf {
 
     void CommonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
         QStyleOptionViewItem opt(option);
-        if (mTextElideModeRole != -1) { opt.textElideMode = index.data(mTextElideModeRole).value<Qt::TextElideMode>(); }
+        if (mTextElideModeRole != -1) {
+            opt.textElideMode = index.data(mTextElideModeRole).value<Qt::TextElideMode>();
+        }
 
         QStyledItemDelegate::paint(painter, opt, index);
 
-        if (mProgressBarColumn == -1 || mProgressBarRole == -1) { return; }
+        if (mProgressBarColumn == -1 || mProgressBarRole == -1) {
+            return;
+        }
 
         if (index.column() == mProgressBarColumn) {
             QStyleOptionProgressBar progressBar;
@@ -47,7 +51,9 @@ namespace tremotesf {
             progressBar.minimum = 0;
             progressBar.maximum = 100;
             progressBar.progress = static_cast<int>(index.data(mProgressBarRole).toDouble() * 100);
-            if (progressBar.progress == 0) { progressBar.progress = 1; }
+            if (progressBar.progress == 0) {
+                progressBar.progress = 1;
+            }
             progressBar.state = opt.state | QStyle::State_Horizontal;
             const auto style = opt.widget ? opt.widget->style() : qApp->style();
             style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
@@ -57,7 +63,9 @@ namespace tremotesf {
     bool CommonDelegate::helpEvent(
         QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index
     ) {
-        if (event->type() != QEvent::ToolTip) { return QStyledItemDelegate::helpEvent(event, view, option, index); }
+        if (event->type() != QEvent::ToolTip) {
+            return QStyledItemDelegate::helpEvent(event, view, option, index);
+        }
 
         if (!index.isValid()) {
             event->ignore();

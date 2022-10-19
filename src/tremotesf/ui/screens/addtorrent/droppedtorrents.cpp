@@ -24,19 +24,25 @@ namespace tremotesf {
         // or BitTorrent magnet link in order to not accept event and tell OS that we don't want it
         if (mime->hasUrls()) {
             const auto mimeUrls = mime->urls();
-            for (const auto& url : mimeUrls) { processUrl(url); }
+            for (const auto& url : mimeUrls) {
+                processUrl(url);
+            }
         } else if (mime->hasText()) {
             const auto text = mime->text();
             const auto lines = QStringView(text).split(u'\n');
             for (auto line : lines) {
-                if (!line.isEmpty()) { processUrl(QUrl(line.toString())); }
+                if (!line.isEmpty()) {
+                    processUrl(QUrl(line.toString()));
+                }
             }
         }
     }
 
     void DroppedTorrents::processUrl(const QUrl& url) {
         if (url.isLocalFile()) {
-            if (auto path = url.toLocalFile(); path.endsWith(torrentFileSuffix)) { files.push_back(path); }
+            if (auto path = url.toLocalFile(); path.endsWith(torrentFileSuffix)) {
+                files.push_back(path);
+            }
         } else {
             const auto scheme = url.scheme();
             if (scheme == magnetScheme && url.hasQuery()) {

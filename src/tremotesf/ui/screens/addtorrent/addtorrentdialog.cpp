@@ -44,7 +44,9 @@ namespace tremotesf {
             libtremotesf::Torrent::Priority::LowPriority};
 
         libtremotesf::Torrent::Priority priorityFromComboBoxIndex(int index) {
-            if (index >= 0) { return priorityComboBoxItems[index]; }
+            if (index >= 0) {
+                return priorityComboBoxItems[index];
+            }
             return libtremotesf::Torrent::Priority::NormalPriority;
         }
     }
@@ -57,11 +59,15 @@ namespace tremotesf {
           mFilesModel(mode == Mode::File ? new LocalTorrentFilesModel(this) : nullptr) {
         setupUi();
 
-        if (mFilesModel) { mFilesModel->load(url); }
+        if (mFilesModel) {
+            mFilesModel->load(url);
+        }
     }
 
     QSize AddTorrentDialog::sizeHint() const {
-        if (mMode == Mode::File) { return minimumSizeHint().expandedTo(QSize(448, 512)); }
+        if (mMode == Mode::File) {
+            return minimumSizeHint().expandedTo(QSize(448, 512));
+        }
         return minimumSizeHint().expandedTo(QSize(448, 0));
     }
 
@@ -127,7 +133,9 @@ namespace tremotesf {
                     mTorrentLinkLineEdit->setText(dropped.urls.first());
                 }
             }
-            if (!mTorrentLinkLineEdit->text().isEmpty()) { mTorrentLinkLineEdit->setCursorPosition(0); }
+            if (!mTorrentLinkLineEdit->text().isEmpty()) {
+                mTorrentLinkLineEdit->setCursorPosition(0);
+            }
             QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
         }
 
@@ -252,7 +260,9 @@ namespace tremotesf {
                 firstFormLayout->itemAt(i)->widget()->setEnabled(enabled);
             }
 
-            if (torrentFilesView) { torrentFilesView->setEnabled(enabled); }
+            if (torrentFilesView) {
+                torrentFilesView->setEnabled(enabled);
+            }
 
             if (secondFormLayout) {
                 for (int i = 0, max = secondFormLayout->count(); i < max; ++i) {
@@ -317,8 +327,12 @@ namespace tremotesf {
 
     void AddTorrentDialog::canAcceptUpdate() {
         bool can = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
-        if (mMode == Mode::Url && mTorrentLinkLineEdit->text().isEmpty()) { can = false; }
-        if (mDownloadDirectoryWidget->text().isEmpty()) { can = false; }
+        if (mMode == Mode::Url && mTorrentLinkLineEdit->text().isEmpty()) {
+            can = false;
+        }
+        if (mDownloadDirectoryWidget->text().isEmpty()) {
+            can = false;
+        }
         mDialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(can);
     }
 }

@@ -29,9 +29,13 @@ int main(int argc, char** argv) {
     QCoreApplication::setApplicationName(QCoreApplication::organizationName());
     QCoreApplication::setApplicationVersion(TREMOTESF_VERSION ""_l1);
 
-    if constexpr (isTargetOsWindows) { windowsInitPrelude(); }
+    if constexpr (isTargetOsWindows) {
+        windowsInitPrelude();
+    }
     const auto preludeScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) { windowsDeinitPrelude(); }
+        if constexpr (isTargetOsWindows) {
+            windowsDeinitPrelude();
+        }
     });
 
     // Setup handler for UNIX signals or Windows console handler
@@ -44,7 +48,9 @@ int main(int argc, char** argv) {
     CommandLineArgs args{};
     try {
         args = parseCommandLine(argc, argv);
-        if (args.exit) { return EXIT_SUCCESS; }
+        if (args.exit) {
+            return EXIT_SUCCESS;
+        }
     } catch (const std::runtime_error& e) {
         logWarning("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
@@ -61,9 +67,13 @@ int main(int argc, char** argv) {
         return EXIT_SUCCESS;
     }
 
-    if constexpr (isTargetOsWindows) { windowsInitWinrt(); }
+    if constexpr (isTargetOsWindows) {
+        windowsInitWinrt();
+    }
     const auto winrtScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) { windowsDeinitWinrt(); }
+        if constexpr (isTargetOsWindows) {
+            windowsDeinitWinrt();
+        }
     });
 
     //
@@ -74,7 +84,9 @@ int main(int argc, char** argv) {
     QApplication app(argc, argv);
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
-    if constexpr (isTargetOsWindows) { windowsInitApplication(); }
+    if constexpr (isTargetOsWindows) {
+        windowsInitApplication();
+    }
 
     QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_l1));
     //
@@ -110,7 +122,9 @@ int main(int argc, char** argv) {
     MainWindow window(std::move(args.files), std::move(args.urls), ipcServer);
     window.showMinimized(args.minimized);
 
-    if (signalhandler::isExitRequested()) { return EXIT_SUCCESS; }
+    if (signalhandler::isExitRequested()) {
+        return EXIT_SUCCESS;
+    }
 
     return QCoreApplication::exec();
 }
