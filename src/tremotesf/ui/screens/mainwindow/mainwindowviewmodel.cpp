@@ -28,7 +28,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(Qt::DropActions)
 
 template<>
 struct fmt::formatter<QDropEvent> : libtremotesf::SimpleFormatter {
-    auto format(const QDropEvent& event, format_context& ctx) FORMAT_CONST->decltype(ctx.out()) {
+    format_context::iterator format(const QDropEvent& event, format_context& ctx) FORMAT_CONST {
         const auto mime = event.mimeData();
         return fmt::format_to(
             ctx.out(),
