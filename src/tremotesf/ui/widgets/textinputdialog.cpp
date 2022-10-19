@@ -39,11 +39,15 @@ namespace tremotesf {
         }
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-        if (!okButtonText.isEmpty()) { dialogButtonBox->button(QDialogButtonBox::Ok)->setText(okButtonText); }
+        if (!okButtonText.isEmpty()) {
+            dialogButtonBox->button(QDialogButtonBox::Ok)->setText(okButtonText);
+        }
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &TextInputDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &TextInputDialog::reject);
 
-        if (text.isEmpty()) { dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false); }
+        if (text.isEmpty()) {
+            dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        }
 
         const auto onTextChanged = [=](const QString& text) {
             if (text.isEmpty()) {

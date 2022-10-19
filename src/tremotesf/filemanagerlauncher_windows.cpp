@@ -162,7 +162,9 @@ namespace tremotesf {
                         );
                     }
                 }
-                if (items.values.empty()) { throw std::runtime_error("No items to select"); }
+                if (items.values.empty()) {
+                    throw std::runtime_error("No items to select");
+                }
                 logInfo(
                     "WindowsFileManagerLauncher: opening folder {} and selecting {} items",
                     nativeDirPath,

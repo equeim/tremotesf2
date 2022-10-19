@@ -370,7 +370,9 @@ namespace tremotesf {
         mLimitScheduleDaysComboBox->insertSeparator(mLimitScheduleDaysComboBox->count());
         {
             auto nextDay = [](Qt::DayOfWeek day) {
-                if (day == Qt::Sunday) { return Qt::Monday; }
+                if (day == Qt::Sunday) {
+                    return Qt::Monday;
+                }
                 return static_cast<Qt::DayOfWeek>(day + 1);
             };
 

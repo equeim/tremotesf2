@@ -45,7 +45,9 @@ namespace tremotesf {
             Server::ProxyType::Default, Server::ProxyType::Http, Server::ProxyType::Socks5};
 
         Server::ProxyType proxyTypeFromComboBoxIndex(int index) {
-            if (index >= 0) { return proxyTypeComboBoxValues[index]; }
+            if (index >= 0) {
+                return proxyTypeComboBoxValues[index];
+            }
             return Server::ProxyType::Default;
         }
     }
@@ -75,12 +77,16 @@ namespace tremotesf {
 
             QObject::connect(removeAction, &QAction::triggered, this, [=] {
                 const auto items(selectionModel()->selectedIndexes());
-                if (!items.isEmpty()) { removeRow(items.first().row()); }
+                if (!items.isEmpty()) {
+                    removeRow(items.first().row());
+                }
             });
 
             QObject::connect(this, &QWidget::customContextMenuRequested, this, [=](auto pos) {
                 const QModelIndex index(indexAt(pos));
-                if (!index.isValid()) { return; }
+                if (!index.isValid()) {
+                    return;
+                }
 
                 QMenu contextMenu;
 
@@ -123,7 +129,9 @@ namespace tremotesf {
             case Qt::Key_Return:
             case Qt::Key_Enter:
                 event->accept();
-                if (state() != EditingState) { edit(currentIndex()); }
+                if (state() != EditingState) {
+                    edit(currentIndex());
+                }
                 break;
             }
         }
@@ -201,7 +209,9 @@ namespace tremotesf {
                 );
                 messageBox.setDefaultButton(QMessageBox::Cancel);
                 messageBox.button(QMessageBox::Ok)->setText(qApp->translate("tremotesf", "Overwrite"));
-                if (messageBox.exec() != QMessageBox::Ok) { return; }
+                if (messageBox.exec() != QMessageBox::Ok) {
+                    return;
+                }
             }
         }
         setServer();
@@ -379,14 +389,18 @@ namespace tremotesf {
             new QPushButton(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "Add"), this);
         QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=] {
             const QString directory(QFileDialog::getExistingDirectory(this));
-            if (!directory.isEmpty()) { mMountedDirectoriesWidget->addRow(directory, QString()); }
+            if (!directory.isEmpty()) {
+                mMountedDirectoriesWidget->addRow(directory, QString());
+            }
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
         auto removeDirectoriesButton =
             new QPushButton(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "Remove"), this);
         QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=] {
             const auto items(mMountedDirectoriesWidget->selectionModel()->selectedIndexes());
-            if (!items.isEmpty()) { mMountedDirectoriesWidget->removeRow(items.first().row()); }
+            if (!items.isEmpty()) {
+                mMountedDirectoriesWidget->removeRow(items.first().row());
+            }
         });
         mountedDirectoriesLayout->addWidget(removeDirectoriesButton, 1, 1);
         formLayout->addRow(mountedDirectoriesGroupBox);

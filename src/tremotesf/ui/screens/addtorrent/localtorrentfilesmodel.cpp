@@ -60,7 +60,9 @@ namespace tremotesf {
 
         CreateTreeResult createTree(bencode::Value&& bencodeParseResult) {
             auto rootMap = bencodeParseResult.maybeTakeDictionary();
-            if (!rootMap) { throw bencode::Error(bencode::Error::Type::Parsing, "Root element is not a dictionary"); }
+            if (!rootMap) {
+                throw bencode::Error(bencode::Error::Type::Parsing, "Root element is not a dictionary");
+            }
 
             auto infoMap = takeDictValue<bencode::Dictionary>(*rootMap, infoKey, "<root dictionary>");
 
@@ -179,7 +181,9 @@ namespace tremotesf {
     bool LocalTorrentFilesModel::isSuccessfull() const { return !mErrorType.has_value(); }
 
     QString LocalTorrentFilesModel::errorString() const {
-        if (!mErrorType) { return {}; }
+        if (!mErrorType) {
+            return {};
+        }
         switch (*mErrorType) {
         case bencode::Error::Type::Reading:
             return qApp->translate("tremotesf", "Error reading torrent file");
@@ -193,7 +197,9 @@ namespace tremotesf {
     QVariantList LocalTorrentFilesModel::unwantedFiles() const {
         QVariantList files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->wantedState() == TorrentFilesModelEntry::Unwanted) { files.append(file->id()); }
+            if (file->wantedState() == TorrentFilesModelEntry::Unwanted) {
+                files.append(file->id());
+            }
         }
         return files;
     }
@@ -201,7 +207,9 @@ namespace tremotesf {
     QVariantList LocalTorrentFilesModel::highPriorityFiles() const {
         QVariantList files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::HighPriority) { files.append(file->id()); }
+            if (file->priority() == TorrentFilesModelEntry::HighPriority) {
+                files.append(file->id());
+            }
         }
         return files;
     }
@@ -209,7 +217,9 @@ namespace tremotesf {
     QVariantList LocalTorrentFilesModel::lowPriorityFiles() const {
         QVariantList files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::LowPriority) { files.append(file->id()); }
+            if (file->priority() == TorrentFilesModelEntry::LowPriority) {
+                files.append(file->id());
+            }
         }
         return files;
     }

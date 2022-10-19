@@ -66,12 +66,16 @@ namespace tremotesf {
 
         if (comboBox) {
             QObject::connect(mTextComboBox, &QComboBox::currentTextChanged, this, [=](const auto& text) {
-                if (connectTextWithFileDialog) { mFileDialogDirectory = text; }
+                if (connectTextWithFileDialog) {
+                    mFileDialogDirectory = text;
+                }
                 emit textChanged(text);
             });
         } else {
             QObject::connect(mTextLineEdit, &QLineEdit::textEdited, this, [=](const auto& text) {
-                if (connectTextWithFileDialog) { mFileDialogDirectory = text; }
+                if (connectTextWithFileDialog) {
+                    mFileDialogDirectory = text;
+                }
                 emit textChanged(text);
             });
         }
@@ -91,7 +95,9 @@ namespace tremotesf {
             QObject::connect(dialog, &QFileDialog::accepted, this, [=] {
                 const QString filePath(dialog->selectedFiles().constFirst());
 
-                if (directory && connectTextWithFileDialog) { mFileDialogDirectory = filePath; }
+                if (directory && connectTextWithFileDialog) {
+                    mFileDialogDirectory = filePath;
+                }
 
                 if (connectTextWithFileDialog) {
                     if (comboBox) {
@@ -118,14 +124,20 @@ namespace tremotesf {
         QStringList items;
         if (mTextComboBox) {
             items.reserve(mTextComboBox->count() + 1);
-            for (int i = 0, max = mTextComboBox->count(); i < max; ++i) { items.push_back(mTextComboBox->itemText(i)); }
-            if (!items.contains(mTextComboBox->currentText())) { items.push_back(mTextComboBox->currentText()); }
+            for (int i = 0, max = mTextComboBox->count(); i < max; ++i) {
+                items.push_back(mTextComboBox->itemText(i));
+            }
+            if (!items.contains(mTextComboBox->currentText())) {
+                items.push_back(mTextComboBox->currentText());
+            }
         }
         return items;
     }
 
     QString FileSelectionWidget::text() const {
-        if (mTextLineEdit) { return mTextLineEdit->text(); }
+        if (mTextLineEdit) {
+            return mTextLineEdit->text();
+        }
         return mTextComboBox->currentText();
     }
 
@@ -135,7 +147,9 @@ namespace tremotesf {
         } else {
             mTextComboBox->setCurrentText(text);
         }
-        if (mConnectTextWithFileDialog) { mFileDialogDirectory = text; }
+        if (mConnectTextWithFileDialog) {
+            mFileDialogDirectory = text;
+        }
     }
 
     QPushButton* FileSelectionWidget::selectionButton() const { return mSelectionButton; }

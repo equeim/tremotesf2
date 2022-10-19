@@ -32,7 +32,9 @@ namespace tremotesf {
                         const QUrl url(argument);
                         if (url.isLocalFile()) {
                             const auto path = url.toLocalFile();
-                            if (QFileInfo(path).isFile()) { args.files.push_back(path); }
+                            if (QFileInfo(path).isFile()) {
+                                args.files.push_back(path);
+                            }
                         } else {
                             args.urls.push_back(argument);
                         }
@@ -69,7 +71,9 @@ namespace tremotesf {
                 return args;
             }
             parsePositionals(torrents, args);
-        } catch (const cxxopts::OptionException& e) { throw std::runtime_error(e.what()); }
+        } catch (const cxxopts::OptionException& e) {
+            throw std::runtime_error(e.what());
+        }
 
         return args;
     }

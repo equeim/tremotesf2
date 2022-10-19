@@ -53,7 +53,8 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
 
 template<>
 struct fmt::formatter<tremotesf::SystemColorsProvider::AccentColors> : libtremotesf::SimpleFormatter {
-    format_context::iterator format(const tremotesf::SystemColorsProvider::AccentColors& colors, format_context& ctx) FORMAT_CONST {
+    format_context::iterator format(const tremotesf::SystemColorsProvider::AccentColors& colors, format_context& ctx)
+        FORMAT_CONST {
         return format_to(
             ctx.out(),
             "AccentColors(accentColor={}, accentColorLight1={})",

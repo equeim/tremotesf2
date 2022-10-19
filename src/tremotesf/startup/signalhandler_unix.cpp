@@ -40,7 +40,9 @@ namespace tremotesf::signalhandler {
             while (true) {
                 const char byte{};
                 const auto bytes = write(writeSocket, &byte, 1);
-                if (bytes == -1 && errno == EINTR) { continue; }
+                if (bytes == -1 && errno == EINTR) {
+                    continue;
+                }
                 break;
             }
         }

@@ -90,44 +90,58 @@ namespace tremotesf {
 
     long long TorrentFilesModelDirectory::size() const {
         long long bytes = 0;
-        for (const auto& child : mChildren) { bytes += child->size(); }
+        for (const auto& child : mChildren) {
+            bytes += child->size();
+        }
         return bytes;
     }
 
     long long TorrentFilesModelDirectory::completedSize() const {
         long long bytes = 0;
-        for (const auto& child : mChildren) { bytes += child->completedSize(); }
+        for (const auto& child : mChildren) {
+            bytes += child->completedSize();
+        }
         return bytes;
     }
 
     double TorrentFilesModelDirectory::progress() const {
         const long long bytes = size();
-        if (bytes > 0) { return static_cast<double>(completedSize()) / static_cast<double>(bytes); }
+        if (bytes > 0) {
+            return static_cast<double>(completedSize()) / static_cast<double>(bytes);
+        }
         return 0;
     }
 
     TorrentFilesModelEntry::WantedState TorrentFilesModelDirectory::wantedState() const {
         const TorrentFilesModelEntry::WantedState first = mChildren.front()->wantedState();
         for (size_t i = 1, max = mChildren.size(); i < max; ++i) {
-            if (mChildren[i]->wantedState() != first) { return MixedWanted; }
+            if (mChildren[i]->wantedState() != first) {
+                return MixedWanted;
+            }
         }
         return first;
     }
 
     void TorrentFilesModelDirectory::setWanted(bool wanted) {
-        for (auto& child : mChildren) { child->setWanted(wanted); }
+        for (auto& child : mChildren) {
+            child->setWanted(wanted);
+        }
     }
 
     TorrentFilesModelEntry::Priority TorrentFilesModelDirectory::priority() const {
         const Priority first = mChildren.front()->priority();
         for (size_t i = 1, max = mChildren.size(); i < max; ++i) {
-            if (mChildren[i]->priority() != first) { return MixedPriority; }
+            if (mChildren[i]->priority() != first) {
+                return MixedPriority;
+            }
         }
         return first;
     }
 
     void TorrentFilesModelDirectory::setPriority(Priority priority) {
-        for (const auto& child : mChildren) { child->setPriority(priority); }
+        for (const auto& child : mChildren) {
+            child->setPriority(priority);
+        }
     }
 
     const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& TorrentFilesModelDirectory::children() const {
@@ -173,7 +187,9 @@ namespace tremotesf {
 
     bool TorrentFilesModelDirectory::isChanged() const {
         for (auto& child : mChildren) {
-            if (child->isChanged()) { return true; }
+            if (child->isChanged()) {
+                return true;
+            }
         }
         return false;
     }
@@ -201,7 +217,9 @@ namespace tremotesf {
     long long TorrentFilesModelFile::completedSize() const { return mCompletedSize; }
 
     double TorrentFilesModelFile::progress() const {
-        if (mSize > 0) { return static_cast<double>(mCompletedSize) / static_cast<double>(mSize); }
+        if (mSize > 0) {
+            return static_cast<double>(mCompletedSize) / static_cast<double>(mSize);
+        }
         return 0;
     }
 
@@ -223,7 +241,9 @@ namespace tremotesf {
     TorrentFilesModelEntry::Priority TorrentFilesModelFile::priority() const { return mPriority; }
 
     void TorrentFilesModelFile::setPriority(Priority priority) {
-        if (priority != mPriority) { mPriority = priority; }
+        if (priority != mPriority) {
+            mPriority = priority;
+        }
     }
 
     bool TorrentFilesModelFile::isChanged() const { return mChanged; }

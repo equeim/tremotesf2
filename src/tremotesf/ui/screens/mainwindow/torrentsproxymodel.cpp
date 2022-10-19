@@ -130,7 +130,9 @@ namespace tremotesf {
             accepts = false;
         }
 
-        if (mStatusFilterEnabled && !statusFilterAcceptsTorrent(torrent, mStatusFilter)) { accepts = false; }
+        if (mStatusFilterEnabled && !statusFilterAcceptsTorrent(torrent, mStatusFilter)) {
+            accepts = false;
+        }
 
         if (mTrackerFilterEnabled && !mTrackerFilter.isEmpty()) {
             bool found = false;
@@ -140,11 +142,15 @@ namespace tremotesf {
                     break;
                 }
             }
-            if (!found) { accepts = false; }
+            if (!found) {
+                accepts = false;
+            }
         }
 
         if (mDownloadDirectoryFilterEnabled && !mDownloadDirectoryFilter.isEmpty()) {
-            if (torrent->downloadDirectory() != mDownloadDirectoryFilter) { accepts = false; }
+            if (torrent->downloadDirectory() != mDownloadDirectoryFilter) {
+                accepts = false;
+            }
         }
 
         return accepts;

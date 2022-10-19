@@ -17,7 +17,9 @@
 
 namespace tremotesf {
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const {
-        if (!index.isValid()) { return {}; }
+        if (!index.isValid()) {
+            return {};
+        }
         const DirectoryItem& item = mDirectories[static_cast<size_t>(index.row())];
         switch (role) {
         case DirectoryRole:
@@ -50,18 +52,24 @@ namespace tremotesf {
     QModelIndex DownloadDirectoriesModel::indexForDirectory(const QString& downloadDirectory) const {
         for (size_t i = 0, max = mDirectories.size(); i < max; ++i) {
             const auto& item = mDirectories[i];
-            if (item.directory == downloadDirectory) { return index(static_cast<int>(i)); }
+            if (item.directory == downloadDirectory) {
+                return index(static_cast<int>(i));
+            }
         }
         return {};
     }
 
     QModelIndex DownloadDirectoriesModel::indexForTorrentsProxyModelFilter() const {
-        if (!torrentsProxyModel()) { return {}; }
+        if (!torrentsProxyModel()) {
+            return {};
+        }
         return indexForDirectory(torrentsProxyModel()->downloadDirectoryFilter());
     }
 
     void DownloadDirectoriesModel::resetTorrentsProxyModelFilter() const {
-        if (torrentsProxyModel()) { torrentsProxyModel()->setDownloadDirectoryFilter({}); }
+        if (torrentsProxyModel()) {
+            torrentsProxyModel()->setDownloadDirectoryFilter({});
+        }
     }
 
     class DownloadDirectoriesModelUpdater : public ModelListUpdater<
@@ -100,7 +108,9 @@ namespace tremotesf {
         directories.emplace(QString(), rpc()->torrentsCount());
         for (const auto& torrent : rpc()->torrents()) {
             QString directory(torrent->downloadDirectory());
-            if (directory.endsWith('/')) { directory.chop(1); }
+            if (directory.endsWith('/')) {
+                directory.chop(1);
+            }
             auto found = directories.find(directory);
             if (found == directories.end()) {
                 directories.emplace(std::move(directory), 1);

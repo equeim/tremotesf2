@@ -67,7 +67,9 @@ namespace tremotesf {
                 setModel(model);
 
                 QObject::connect(model, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [=] {
-                    if (model->isPopulated()) { updateCurrentIndex(); }
+                    if (model->isPopulated()) {
+                        updateCurrentIndex();
+                    }
                 });
 
                 QObject::connect(
@@ -75,7 +77,9 @@ namespace tremotesf {
                     &QItemSelectionModel::currentChanged,
                     this,
                     [=](const QModelIndex& current) {
-                        if (model->isPopulated()) { setTorrentsModelFilterFromIndex(current); }
+                        if (model->isPopulated()) {
+                            setTorrentsModelFilterFromIndex(current);
+                        }
                     }
                 );
 
@@ -95,7 +99,9 @@ namespace tremotesf {
                 model->setTorrentsProxyModel(torrentsProxyModel);
                 model->setRpc(rpc);
 
-                if (model->isPopulated()) { updateCurrentIndex(); }
+                if (model->isPopulated()) {
+                    updateCurrentIndex();
+                }
             }
 
             void updateCurrentIndex() {

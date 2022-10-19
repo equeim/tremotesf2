@@ -46,7 +46,9 @@ namespace tremotesf {
                     QWindow* window = nullptr;
                     window = qobject_cast<QWindow*>(watched);
                     if (!window) {
-                        if (auto widget = qobject_cast<QWidget*>(watched); widget) { window = widget->windowHandle(); }
+                        if (auto widget = qobject_cast<QWidget*>(watched); widget) {
+                            window = widget->windowHandle();
+                        }
                     }
                     if (window) {
                         switch (window->type()) {

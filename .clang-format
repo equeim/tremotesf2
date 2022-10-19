@@ -15,7 +15,7 @@ AlignOperands: Align
 AlignTrailingComments: false
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: Always
+AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: All
@@ -25,6 +25,7 @@ AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
+AttributeMacros: ['ALWAYS_INLINE', 'FORMAT_CONST']
 BinPackArguments: false
 BinPackParameters: false
 BitFieldColonSpacing: Both
@@ -87,6 +88,8 @@ SpacesInConditionalStatement: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard: c++17
+StatementAttributeLikeMacros: ['emit']
+StatementMacros: ['Q_OBJECT', 'Q_GADGET', 'Q_ENUM', 'Q_ENUM_NS', 'Q_PROPERTY']
 UseCRLF: false
 UseTab: Never
 

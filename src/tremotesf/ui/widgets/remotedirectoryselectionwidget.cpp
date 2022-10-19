@@ -18,7 +18,9 @@
 namespace tremotesf {
     namespace {
         inline QString chopTrailingSeparator(QString directory) {
-            if (directory.endsWith('/')) { directory.chop(1); }
+            if (directory.endsWith('/')) {
+                directory.chop(1);
+            }
             return directory;
         }
     }
@@ -33,7 +35,9 @@ namespace tremotesf {
         if (mounted && !rpc->isLocal()) {
             QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
                 const QString directory(Servers::instance()->fromRemoteToLocalDirectory(text));
-                if (!directory.isEmpty()) { setFileDialogDirectory(directory); }
+                if (!directory.isEmpty()) {
+                    setFileDialogDirectory(directory);
+                }
             });
             const QString localDownloadDirectory(Servers::instance()->fromRemoteToLocalDirectory(directory));
             if (localDownloadDirectory.isEmpty()) {
@@ -59,7 +63,9 @@ namespace tremotesf {
     }
 
     void RemoteDirectorySelectionWidget::updateComboBox(const QString& setAsCurrent) {
-        if (!textComboBox()) { return; }
+        if (!textComboBox()) {
+            return;
+        }
 
         QStringList currentServerAddTorrentDialogDirectories;
         {

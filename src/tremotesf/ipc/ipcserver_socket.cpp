@@ -33,7 +33,9 @@ namespace tremotesf {
             const auto array = value.toArray();
             strings.reserve(static_cast<QStringList::size_type>(array.size()));
             for (const QCborValue& v : array) {
-                if (v.isString()) { strings.push_back(v.toString()); }
+                if (v.isString()) {
+                    strings.push_back(v.toString());
+                }
             }
             return strings;
         }
@@ -49,7 +51,9 @@ namespace tremotesf {
                 // We already tried to connect to it, removing
                 logWarning("Removing dead socket");
                 if (server->removeServer(name)) {
-                    if (!server->listen(name)) { logWarning("Failed to create socket: {}", server->errorString()); }
+                    if (!server->listen(name)) {
+                        logWarning("Failed to create socket: {}", server->errorString());
+                    }
                 } else {
                     logWarning("Failed to remove socket: {}", server->errorString());
                 }
@@ -58,7 +62,9 @@ namespace tremotesf {
             }
         }
 
-        if (!server->isListening()) { return; }
+        if (!server->isListening()) {
+            return;
+        }
 
         QObject::connect(server, &QLocalServer::newConnection, this, [=]() {
             QLocalSocket* socket = server->nextPendingConnection();

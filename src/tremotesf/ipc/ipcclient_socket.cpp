@@ -43,12 +43,16 @@ namespace tremotesf {
 
         void sendMessage(char message) {
             const bool written = mSocket.putChar(message);
-            if (!written) { logWarning("Failed to write to socket: {}", mSocket.errorString()); }
+            if (!written) {
+                logWarning("Failed to write to socket: {}", mSocket.errorString());
+            }
             waitForBytesWritten();
         }
 
         void waitForBytesWritten() {
-            if (!mSocket.waitForBytesWritten()) { logWarning("Timed out when waiting for bytes written"); }
+            if (!mSocket.waitForBytesWritten()) {
+                logWarning("Timed out when waiting for bytes written");
+            }
         }
 
         QLocalSocket mSocket;

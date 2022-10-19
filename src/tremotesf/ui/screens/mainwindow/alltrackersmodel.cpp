@@ -17,13 +17,17 @@
 
 namespace tremotesf {
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const {
-        if (!index.isValid()) { return {}; }
+        if (!index.isValid()) {
+            return {};
+        }
         const TrackerItem& item = mTrackers[static_cast<size_t>(index.row())];
         switch (role) {
         case TrackerRole:
             return item.tracker;
         case Qt::DecorationRole:
-            if (item.tracker.isEmpty()) { return QApplication::style()->standardIcon(QStyle::SP_DirIcon); }
+            if (item.tracker.isEmpty()) {
+                return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
+            }
             return QIcon::fromTheme("network-server"_l1);
         case Qt::DisplayRole:
         case Qt::ToolTipRole:
@@ -51,18 +55,24 @@ namespace tremotesf {
     QModelIndex AllTrackersModel::indexForTracker(const QString& tracker) const {
         for (size_t i = 0, max = mTrackers.size(); i < max; ++i) {
             const auto& item = mTrackers[i];
-            if (item.tracker == tracker) { return index(static_cast<int>(i)); }
+            if (item.tracker == tracker) {
+                return index(static_cast<int>(i));
+            }
         }
         return {};
     }
 
     QModelIndex AllTrackersModel::indexForTorrentsProxyModelFilter() const {
-        if (!torrentsProxyModel()) { return {}; }
+        if (!torrentsProxyModel()) {
+            return {};
+        }
         return indexForTracker(torrentsProxyModel()->trackerFilter());
     }
 
     void AllTrackersModel::resetTorrentsProxyModelFilter() const {
-        if (torrentsProxyModel()) { torrentsProxyModel()->setTrackerFilter({}); }
+        if (torrentsProxyModel()) {
+            torrentsProxyModel()->setTrackerFilter({});
+        }
     }
 
     class AllTrackersModelUpdater : public ModelListUpdater<

@@ -494,7 +494,9 @@ namespace tremotesf {
 
     void TorrentPropertiesDialog::setTorrent(Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
+            if (mTorrent) {
+                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            }
             mTorrent = torrent;
             onTorrentChanged();
         }
@@ -504,7 +506,9 @@ namespace tremotesf {
         if (mTorrent) {
             mMessageWidget->animatedHide();
 
-            for (int i = 0, count = mTabWidget->count(); i < count; i++) { mTabWidget->widget(i)->setEnabled(true); }
+            for (int i = 0, count = mTabWidget->count(); i < count; i++) {
+                mTabWidget->widget(i)->setEnabled(true);
+            }
 
             mUpdateDetailsTab();
             mWebSeedersModel->setStringList(mTorrent->webSeeders());
@@ -522,7 +526,9 @@ namespace tremotesf {
                 mMessageWidget->setText(qApp->translate("tremotesf", "Torrent Removed"));
             }
             mMessageWidget->animatedShow();
-            for (int i = 0, count = mTabWidget->count(); i < count; i++) { mTabWidget->widget(i)->setEnabled(false); }
+            for (int i = 0, count = mTabWidget->count(); i < count; i++) {
+                mTabWidget->widget(i)->setEnabled(false);
+            }
             mWebSeedersModel->setStringList({});
         }
 

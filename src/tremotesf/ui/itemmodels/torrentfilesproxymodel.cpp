@@ -15,7 +15,9 @@ namespace tremotesf {
         const bool rightIsDirectory = static_cast<TorrentFilesModelEntry*>(right.internalPointer())->isDirectory();
 
         if (leftIsDirectory != rightIsDirectory) {
-            if (sortOrder() == Qt::AscendingOrder) { return leftIsDirectory; }
+            if (sortOrder() == Qt::AscendingOrder) {
+                return leftIsDirectory;
+            }
             return rightIsDirectory;
         }
 

@@ -159,7 +159,9 @@ namespace tremotesf {
     }
 
     void TrackersViewWidget::removeTrackers() {
-        if (!mTrackersView->selectionModel()->hasSelection()) { return; }
+        if (!mTrackersView->selectionModel()->hasSelection()) {
+            return;
+        }
 
         QMessageBox dialog(this);
         dialog.setIcon(QMessageBox::Warning);
@@ -184,7 +186,9 @@ namespace tremotesf {
             ));
         }
 
-        if (dialog.exec() == QMessageBox::Ok) { mTorrent->removeTrackers(ids); }
+        if (dialog.exec() == QMessageBox::Ok) {
+            mTorrent->removeTrackers(ids);
+        }
     }
 }
 

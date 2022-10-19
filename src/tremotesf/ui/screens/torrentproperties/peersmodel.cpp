@@ -17,13 +17,17 @@ namespace tremotesf {
     }
 
     PeersModel::~PeersModel() {
-        if (mTorrent) { mTorrent->setPeersEnabled(false); }
+        if (mTorrent) {
+            mTorrent->setPeersEnabled(false);
+        }
     }
 
     int PeersModel::columnCount(const QModelIndex&) const { return QMetaEnum::fromType<Column>().keyCount(); }
 
     QVariant PeersModel::data(const QModelIndex& index, int role) const {
-        if (!index.isValid()) { return {}; }
+        if (!index.isValid()) {
+            return {};
+        }
         const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
         switch (role) {
         case Qt::DisplayRole:
@@ -70,7 +74,9 @@ namespace tremotesf {
     }
 
     QVariant PeersModel::headerData(int section, Qt::Orientation orientation, int role) const {
-        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) { return {}; }
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
+            return {};
+        }
         switch (static_cast<Column>(section)) {
         case Column::Address:
             return qApp->translate("tremotesf", "Address");
@@ -105,7 +111,9 @@ namespace tremotesf {
 
     void PeersModel::setTorrent(libtremotesf::Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) { QObject::disconnect(mTorrent, nullptr, this, nullptr); }
+            if (mTorrent) {
+                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            }
 
             mTorrent = torrent;
 
