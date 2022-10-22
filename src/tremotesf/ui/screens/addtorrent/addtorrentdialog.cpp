@@ -10,6 +10,7 @@
 #include <QComboBox>
 #include <QCollator>
 #include <QDialogButtonBox>
+#include <QFileInfo>
 #include <QFormLayout>
 #include <QGuiApplication>
 #include <QLabel>
@@ -95,6 +96,9 @@ namespace tremotesf {
         Servers::instance()->setCurrentServerAddTorrentDialogDirectories(mDownloadDirectoryWidget->textComboBoxItems());
 
         Settings::instance()->setLastDownloadDirectory(mDownloadDirectoryWidget->text());
+        if (mMode == Mode::File) {
+            Settings::instance()->setLastOpenTorrentDirectory(QFileInfo(mUrl).path());
+        }
 
         QDialog::accept();
     }
