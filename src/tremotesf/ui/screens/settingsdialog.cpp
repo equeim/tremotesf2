@@ -68,8 +68,12 @@ namespace tremotesf {
         auto addTorrentsGroupBoxBoxLayout = new QVBoxLayout(addTorrentsGroupBox);
 
         auto rememberDownloadDirCheckBox =
-            new QCheckBox(qApp->translate("tremotesf", "Remember last download dir"), this);
+            new QCheckBox(qApp->translate("tremotesf", "Remember last download directory"), this);
         addTorrentsGroupBoxBoxLayout->addWidget(rememberDownloadDirCheckBox);
+
+        auto rememberOpenTorrentDirCheckbox =
+            new QCheckBox(qApp->translate("tremotesf", "Remember last torrent open directory"), this);
+        addTorrentsGroupBoxBoxLayout->addWidget(rememberOpenTorrentDirCheckbox);
 
         auto fillTorrentLinkFromKeyboardCheckBox = new QCheckBox(
             qApp->translate("tremotesf", "Automatically fill link from clipboard when adding torrent link"),
@@ -136,6 +140,7 @@ namespace tremotesf {
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
         rememberDownloadDirCheckBox->setChecked(settings->rememberDownloadDir());
+        rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());
         fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         trayIconCheckBox->setChecked(settings->showTrayIcon());
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
@@ -160,6 +165,7 @@ namespace tremotesf {
                 finishedSinceLastConnectionCheckBox->isChecked()
             );
             settings->setRememberDownloadDir(rememberDownloadDirCheckBox->isChecked());
+            settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {
                 if (int index = darkThemeComboBox->currentIndex(); index != -1) {

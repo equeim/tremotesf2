@@ -670,11 +670,12 @@ namespace tremotesf {
     void MainWindow::addTorrentsFiles() {
         setWindowState(windowState() & ~Qt::WindowMinimized);
 
+        auto settings = Settings::instance();
         auto showDialog = [=] {
             auto fileDialog = new QFileDialog(
                 this,
                 qApp->translate("tremotesf", "Select Files"),
-                QString(),
+                settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString(),
                 qApp->translate("tremotesf", "Torrent Files (*.torrent)")
             );
             fileDialog->setAttribute(Qt::WA_DeleteOnClose);
