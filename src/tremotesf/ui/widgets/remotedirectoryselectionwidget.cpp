@@ -4,10 +4,12 @@
 
 #include "remotedirectoryselectionwidget.h"
 
+#include "libtremotesf/pathutils.h"
 #include "libtremotesf/serversettings.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/rpc/servers.h"
+#include "tremotesf/settings.h"
 
 #include <QCollator>
 #include <QComboBox>
@@ -25,84 +27,143 @@ namespace tremotesf {
         }
     }
 
-    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(
-        const QString& directory, const Rpc* rpc, bool comboBox, QWidget* parent
+    RemoteDirectorySelectionWidgetViewModel::RemoteDirectorySelectionWidgetViewModel(
+        const QString& path, const Rpc* rpc, QObject* parent
     )
-        : FileSelectionWidget(true, QString(), rpc->isLocal(), comboBox, parent), mRpc(rpc) {
-        const bool mounted = Servers::instance()->currentServerHasMountedDirectories();
-        selectionButton()->setEnabled(rpc->isLocal() || mounted);
-        setText(directory);
-        if (mounted && !rpc->isLocal()) {
-            QObject::connect(this, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
-                const QString directory(Servers::instance()->fromRemoteToLocalDirectory(text));
-                if (!directory.isEmpty()) {
-                    setFileDialogDirectory(directory);
-                }
-            });
-            const QString localDownloadDirectory(Servers::instance()->fromRemoteToLocalDirectory(directory));
-            if (localDownloadDirectory.isEmpty()) {
-                setFileDialogDirectory(Servers::instance()->firstLocalDirectory());
-            } else {
-                setFileDialogDirectory(localDownloadDirectory);
-            }
+        : DirectorySelectionWidgetViewModel(path, toNativeRemoteSeparators(path, rpc), parent),
+          mRpc(rpc),
+          mMode(
+              rpc->isLocal()
+                  ? Mode::Local
+                  : (Servers::instance()->currentServerHasMountedDirectories() ? Mode::RemoteMounted : Mode::Remote)
+          ) {}
 
-            QObject::connect(this, &FileSelectionWidget::fileDialogAccepted, this, [=](const auto& filePath) {
-                const QString directory(Servers::instance()->fromLocalToRemoteDirectory(filePath));
-                if (directory.isEmpty()) {
-                    QMessageBox::warning(
-                        this,
-                        qApp->translate("tremotesf", "Error"),
-                        qApp->translate("tremotesf", "Selected directory should be inside mounted directory")
-                    );
-                } else {
-                    setText(directory);
-                    setFileDialogDirectory(filePath);
-                }
-            });
+    QString RemoteDirectorySelectionWidgetViewModel::fileDialogDirectory() const {
+        if (mMode == Mode::RemoteMounted) {
+            return Servers::instance()->fromRemoteToLocalDirectory(mPath);
+        }
+        return mPath;
+    }
+
+    void RemoteDirectorySelectionWidgetViewModel::onFileDialogAccepted(const QString& path) {
+        if (mMode != Mode::RemoteMounted) {
+            DirectorySelectionWidgetViewModel::onFileDialogAccepted(path);
+            return;
+        }
+        const QString remoteDirectory = Servers::instance()->fromLocalToRemoteDirectory(path);
+        if (remoteDirectory.isEmpty()) {
+            emit showMountedDirectoryError();
+        } else {
+            DirectorySelectionWidgetViewModel::onFileDialogAccepted(remoteDirectory);
         }
     }
 
-    void RemoteDirectorySelectionWidget::updateComboBox(const QString& setAsCurrent) {
-        if (!textComboBox()) {
-            return;
-        }
+    QString RemoteDirectorySelectionWidgetViewModel::normalizeToInternalPath(const QString& path) const {
+        return normalizeRemotePath(path, mRpc);
+    }
 
-        QStringList currentServerAddTorrentDialogDirectories;
+    QString RemoteDirectorySelectionWidgetViewModel::convertToDisplayPath(const QString& path) const {
+        return toNativeRemoteSeparators(path, mRpc);
+    }
+
+    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& path, const Rpc* rpc, QWidget* parent)
+        : RemoteDirectorySelectionWidget(new RemoteDirectorySelectionWidgetViewModel(path, rpc), parent) {}
+
+    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(
+        RemoteDirectorySelectionWidgetViewModel* viewModel, QWidget* parent
+    )
+        : DirectorySelectionWidget(viewModel, parent) {
+        QObject::connect(
+            static_cast<RemoteDirectorySelectionWidgetViewModel*>(mViewModel),
+            &RemoteDirectorySelectionWidgetViewModel::showMountedDirectoryError,
+            this,
+            [=] {
+                QMessageBox::warning(
+                    this,
+                    qApp->translate("tremotesf", "Error"),
+                    qApp->translate("tremotesf", "Selected directory should be inside mounted directory")
+                );
+            }
+        );
+    }
+
+    std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>
+    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createComboBoxItems() const {
+        QStringList directories{};
         {
             const auto saved = Servers::instance()->currentServerAddTorrentDialogDirectories();
-            currentServerAddTorrentDialogDirectories.reserve(
-                saved.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 1
-            );
+            directories.reserve(saved.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 1);
             for (const auto& directory : saved) {
-                currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(directory));
+                directories.push_back(chopTrailingSeparator(directory));
             }
         }
-        const bool wasEmpty = currentServerAddTorrentDialogDirectories.empty();
-
         for (const auto& torrent : mRpc->torrents()) {
-            currentServerAddTorrentDialogDirectories.push_back(chopTrailingSeparator(torrent->downloadDirectory()));
+            directories.push_back(chopTrailingSeparator(torrent->downloadDirectory()));
         }
-        currentServerAddTorrentDialogDirectories.push_back(
-            chopTrailingSeparator(mRpc->serverSettings()->downloadDirectory())
-        );
+        directories.push_back(chopTrailingSeparator(mPath));
+        directories.push_back(chopTrailingSeparator(mRpc->serverSettings()->downloadDirectory()));
 
-        currentServerAddTorrentDialogDirectories.removeDuplicates();
+        directories.removeDuplicates();
 
-        QCollator collator;
+        QCollator collator{};
         collator.setCaseSensitivity(Qt::CaseInsensitive);
         collator.setNumericMode(true);
-        std::sort(
-            currentServerAddTorrentDialogDirectories.begin(),
-            currentServerAddTorrentDialogDirectories.end(),
-            [&collator](const auto& first, const auto& second) { return collator.compare(first, second) < 0; }
-        );
+        std::sort(directories.begin(), directories.end(), [&collator](const auto& first, const auto& second) {
+            return collator.compare(first, second) < 0;
+        });
 
-        if (wasEmpty && !currentServerAddTorrentDialogDirectories.empty()) {
-            Servers::instance()->setCurrentServerAddTorrentDialogDirectories(currentServerAddTorrentDialogDirectories);
+        std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem> items{};
+        items.reserve(static_cast<size_t>(directories.size()));
+        std::transform(directories.begin(), directories.end(), std::back_inserter(items), [=](const auto& dir) {
+            return DirectorySelectionWidgetViewModel::ComboBoxItem{dir, convertToDisplayPath(dir)};
+        });
+        return items;
+    }
+
+    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::
+        TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(const QString& path, const Rpc* rpc, QObject* parent)
+        : RemoteDirectorySelectionWidgetViewModel(path, rpc, parent) {}
+
+    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories() {
+        QStringList paths{};
+        paths.reserve(static_cast<QStringList::size_type>(mComboBoxItems.size() + 1));
+        std::transform(mComboBoxItems.begin(), mComboBoxItems.end(), std::back_inserter(paths), [](const auto& item) {
+            return item.path;
+        });
+        if (!paths.contains(mPath)) {
+            paths.push_back(mPath);
         }
+        Servers::instance()->setCurrentServerAddTorrentDialogDirectories(paths);
+        Settings::instance()->setLastDownloadDirectory(mPath);
+    }
 
-        textComboBox()->clear();
-        textComboBox()->addItems(currentServerAddTorrentDialogDirectories);
-        textComboBox()->setCurrentIndex(currentServerAddTorrentDialogDirectories.indexOf(setAsCurrent));
+    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updateComboBoxItems() {
+        auto items = createComboBoxItems();
+        if (items != mComboBoxItems) {
+            mComboBoxItems = std::move(items);
+            emit comboBoxItemsChanged();
+        }
+    }
+
+    QString
+    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::initialPath(const QString& torrentDownloadDirectory) {
+        if (Settings::instance()->rememberDownloadDir()) {
+            auto lastDir = Settings::instance()->lastDownloadDirectory();
+            if (!lastDir.isEmpty()) return lastDir;
+        }
+        return torrentDownloadDirectory;
+    }
+
+    TorrentDownloadDirectoryDirectorySelectionWidget::TorrentDownloadDirectoryDirectorySelectionWidget(
+        const QString& path, const Rpc* rpc, QWidget* parent
+    )
+        : RemoteDirectorySelectionWidget(
+              new TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(path, rpc), parent
+          ) {}
+
+    void TorrentDownloadDirectoryDirectorySelectionWidget::update(const QString& path) {
+        auto model = static_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel);
+        model->updateComboBoxItems();
+        model->updatePath(path);
     }
 }
