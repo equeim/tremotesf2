@@ -83,7 +83,7 @@ namespace tremotesf {
         public:
             explicit SetLocationDialog(const QString& downloadDirectory, Rpc* rpc, QWidget* parent = nullptr)
                 : QDialog(parent),
-                  mDirectoryWidget(new RemoteDirectorySelectionWidget(downloadDirectory, rpc, true, this)),
+                  mDirectoryWidget(new TorrentDownloadDirectoryDirectorySelectionWidget(downloadDirectory, rpc, this)),
                   mMoveFilesCheckBox(
                       new QCheckBox(qApp->translate("tremotesf", "Move files from current directory"), this)
                   ) {
@@ -97,7 +97,6 @@ namespace tremotesf {
                 layout->addWidget(label);
 
                 mDirectoryWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-                mDirectoryWidget->updateComboBox(downloadDirectory);
                 layout->addWidget(mDirectoryWidget);
 
                 mMoveFilesCheckBox->setChecked(true);
@@ -105,15 +104,13 @@ namespace tremotesf {
 
                 auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, [=] {
-                    Servers::instance()->setCurrentServerAddTorrentDialogDirectories(
-                        mDirectoryWidget->textComboBoxItems()
-                    );
+                    mDirectoryWidget->saveDirectories();
                     accept();
                 });
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
 
-                QObject::connect(mDirectoryWidget, &FileSelectionWidget::textChanged, this, [=](const auto& text) {
-                    dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(!text.isEmpty());
+                QObject::connect(mDirectoryWidget, &DirectorySelectionWidget::pathChanged, this, [=] {
+                    dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(!mDirectoryWidget->path().isEmpty());
                 });
 
                 layout->addWidget(dialogButtonBox);
@@ -129,12 +126,12 @@ namespace tremotesf {
 
             [[nodiscard]] QSize sizeHint() const override { return QDialog::sizeHint().expandedTo(QSize(320, 0)); }
 
-            [[nodiscard]] QString downloadDirectory() const { return mDirectoryWidget->text(); }
+            [[nodiscard]] QString downloadDirectory() const { return mDirectoryWidget->path(); }
 
             [[nodiscard]] bool moveFiles() const { return mMoveFilesCheckBox->isChecked(); }
 
         private:
-            RemoteDirectorySelectionWidget* const mDirectoryWidget;
+            TorrentDownloadDirectoryDirectorySelectionWidget* const mDirectoryWidget;
             QCheckBox* const mMoveFilesCheckBox;
         };
 
