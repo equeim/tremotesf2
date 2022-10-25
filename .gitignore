@@ -2,9 +2,12 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+/.cache
 /.kdev4
 /.vs
+/.vscode
 /build
+/compile_commands.json
 /installroot
 /out
 /RPMS
