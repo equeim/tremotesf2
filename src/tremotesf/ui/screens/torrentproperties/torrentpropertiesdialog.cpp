@@ -26,6 +26,7 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
+#include "libtremotesf/pathutils.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/ui/itemmodels/baseproxymodel.h"
@@ -189,7 +190,7 @@ namespace tremotesf {
             lastActivityLabel->setText(mTorrent->activityDate().toString());
 
             totalSizeLabel->setText(Utils::formatByteSize(mTorrent->totalSize()));
-            locationLabel->setText(mTorrent->downloadDirectory());
+            locationLabel->setText(toNativeRemoteSeparators(mTorrent->downloadDirectory(), mRpc));
             creatorLabel->setText(mTorrent->creator());
             creationDateLabel->setText(mTorrent->creationDate().toString());
             if (mTorrent->comment() != commentTextEdit->toPlainText()) {

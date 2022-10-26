@@ -33,11 +33,12 @@ namespace tremotesf {
         void update() override;
 
         struct DirectoryItem {
-            QString directory;
-            int torrents;
+            QString directory{};
+            QString displayDirectory{};
+            int torrents{};
         };
 
-        std::vector<DirectoryItem> mDirectories;
+        std::vector<DirectoryItem> mDirectories{};
 
         template<typename, typename, typename, typename>
         friend class ModelListUpdater;
