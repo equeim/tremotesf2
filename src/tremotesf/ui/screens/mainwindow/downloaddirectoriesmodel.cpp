@@ -4,16 +4,18 @@
 
 #include "downloaddirectoriesmodel.h"
 
+#include <algorithm>
 #include <map>
 
 #include <QApplication>
 #include <QStyle>
 
+#include "libtremotesf/pathutils.h"
 #include "libtremotesf/torrent.h"
-
 #include "tremotesf/ui/itemmodels/modelutils.h"
 #include "tremotesf/rpc/trpc.h"
 #include "torrentsproxymodel.h"
+#include "tremotesf/ui/screens/mainwindow/downloaddirectoriesmodel.h"
 
 namespace tremotesf {
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const {
@@ -33,7 +35,7 @@ namespace tremotesf {
                     .arg(item.torrents);
             }
             //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
-            return qApp->translate("tremotesf", "%1 (%L2)").arg(item.directory).arg(item.torrents);
+            return qApp->translate("tremotesf", "%1 (%L2)").arg(item.displayDirectory).arg(item.torrents);
         default:
             return {};
         }
@@ -72,50 +74,49 @@ namespace tremotesf {
         }
     }
 
-    class DownloadDirectoriesModelUpdater : public ModelListUpdater<
-                                                DownloadDirectoriesModel,
-                                                DownloadDirectoriesModel::DirectoryItem,
-                                                std::pair<const QString, int>,
-                                                std::map<QString, int>> {
+    class DownloadDirectoriesModelUpdater
+        : public ModelListUpdater<DownloadDirectoriesModel, DownloadDirectoriesModel::DirectoryItem> {
     public:
         inline explicit DownloadDirectoriesModelUpdater(DownloadDirectoriesModel& model) : ModelListUpdater(model) {}
 
     protected:
-        std::map<QString, int>::iterator findNewItemForItem(
-            std::map<QString, int>& newItems, const DownloadDirectoriesModel::DirectoryItem& item
+        std::vector<DownloadDirectoriesModel::DirectoryItem>::iterator findNewItemForItem(
+            std::vector<DownloadDirectoriesModel::DirectoryItem>& newItems,
+            const DownloadDirectoriesModel::DirectoryItem& item
         ) override {
-            return newItems.find(item.directory);
+            return std::find_if(newItems.begin(), newItems.end(), [&](const auto& newItem) {
+                return newItem.directory == item.directory;
+            });
         }
 
-        bool
-        updateItem(DownloadDirectoriesModel::DirectoryItem& item, std::pair<const QString, int>&& newItem) override {
-            const auto& [directory, torrents] = newItem;
-            if (item.torrents != torrents) {
-                item.torrents = torrents;
+        bool updateItem(
+            DownloadDirectoriesModel::DirectoryItem& item, DownloadDirectoriesModel::DirectoryItem&& newItem
+        ) override {
+            if (item.torrents != newItem.torrents) {
+                item.torrents = newItem.torrents;
                 return true;
             }
             return false;
         }
 
-        DownloadDirectoriesModel::DirectoryItem createItemFromNewItem(std::pair<const QString, int>&& newItem
+        DownloadDirectoriesModel::DirectoryItem createItemFromNewItem(DownloadDirectoriesModel::DirectoryItem&& newItem
         ) override {
-            return DownloadDirectoriesModel::DirectoryItem{newItem.first, newItem.second};
+            return DownloadDirectoriesModel::DirectoryItem{std::move(newItem)};
         }
     };
 
     void DownloadDirectoriesModel::update() {
-        std::map<QString, int> directories;
-        directories.emplace(QString(), rpc()->torrentsCount());
+        std::vector<DirectoryItem> directories;
+        directories.push_back({{}, {}, rpc()->torrentsCount()});
         for (const auto& torrent : rpc()->torrents()) {
-            QString directory(torrent->downloadDirectory());
-            if (directory.endsWith('/')) {
-                directory.chop(1);
-            }
-            auto found = directories.find(directory);
+            const QString& directory = torrent->downloadDirectory();
+            auto found = std::find_if(directories.begin(), directories.end(), [&](const auto& item) {
+                return item.directory == directory;
+            });
             if (found == directories.end()) {
-                directories.emplace(std::move(directory), 1);
+                directories.push_back({directory, toNativeRemoteSeparators(directory, rpc()), 1});
             } else {
-                ++(found->second);
+                ++(found->torrents);
             }
         }
 
