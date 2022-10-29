@@ -13,7 +13,6 @@
 #include "libtremotesf/target_os.h"
 #include "tremotesf/ipc/ipcclient.h"
 #include "tremotesf/ipc/ipcserver.h"
-#include "tremotesf/rpc/servers.h"
 #include "tremotesf/ui/screens/mainwindow/mainwindow.h"
 #include "commandlineparser.h"
 #include "main_windows.h"
@@ -116,8 +115,6 @@ int main(int argc, char** argv) {
     QTranslator appTranslator;
     appTranslator.load(QLocale().name(), ":/translations"_l1);
     qApp->installTranslator(&appTranslator);
-
-    Servers::migrate();
 
     MainWindow window(std::move(args.files), std::move(args.urls), ipcServer);
     window.showMinimized(args.minimized);

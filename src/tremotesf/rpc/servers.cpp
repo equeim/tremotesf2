@@ -89,18 +89,6 @@ namespace tremotesf {
             }
             return proxyTypeDefault;
         }
-
-        void migrateFromAccounts() {
-            QSettings accounts(settingsFormat, QSettings::UserScope, qApp->organizationName(), "accounts"_l1);
-            if (!accounts.childGroups().isEmpty()) {
-                if (QFile::copy(
-                        accounts.fileName(),
-                        QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), fileName).fileName()
-                    )) {
-                    QFile::remove(accounts.fileName());
-                }
-            }
-        }
     }
 
     Server::Server(const QString& name,
@@ -170,8 +158,6 @@ namespace tremotesf {
         static auto* const instance = new Servers(qApp);
         return instance;
     }
-
-    void Servers::migrate() { migrateFromAccounts(); }
 
     bool Servers::hasServers() const { return !mSettings->childGroups().isEmpty(); }
 
@@ -445,7 +431,7 @@ namespace tremotesf {
 
     Servers::Servers(QObject* parent)
         : QObject(parent),
-          mSettings(new QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), "servers"_l1, this)) {
+          mSettings(new QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), fileName, this)) {
         if (hasServers()) {
             bool setFirst = true;
             const QString current(currentServerName());
