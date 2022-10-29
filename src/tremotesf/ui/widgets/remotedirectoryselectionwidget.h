@@ -24,8 +24,8 @@ namespace tremotesf {
         void showMountedDirectoryError();
 
     protected:
-        [[nodiscard]] QString normalizeToInternalPath(const QString& path) const override;
-        [[nodiscard]] QString convertToDisplayPath(const QString& path) const override;
+        [[nodiscard]] QString normalizePath(const QString& path) const override;
+        [[nodiscard]] QString toNativeSeparators(const QString& path) const override;
 
         const Rpc* mRpc{};
 

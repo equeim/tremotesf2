@@ -44,8 +44,8 @@ namespace tremotesf {
         void onComboBoxItemSelected(const QString& path, const QString& displayPath);
 
     protected:
-        [[nodiscard]] virtual QString normalizeToInternalPath(const QString& path) const;
-        [[nodiscard]] virtual QString convertToDisplayPath(const QString& path) const;
+        [[nodiscard]] virtual QString normalizePath(const QString& path) const;
+        [[nodiscard]] virtual QString toNativeSeparators(const QString& path) const;
 
         void updatePath(const QString& path, const QString& displayPath);
 
