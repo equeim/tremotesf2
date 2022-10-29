@@ -190,7 +190,7 @@ namespace tremotesf {
             lastActivityLabel->setText(mTorrent->activityDate().toString());
 
             totalSizeLabel->setText(Utils::formatByteSize(mTorrent->totalSize()));
-            locationLabel->setText(toNativeRemoteSeparators(mTorrent->downloadDirectory(), mRpc));
+            locationLabel->setText(toNativeSeparators(mTorrent->downloadDirectory()));
             creatorLabel->setText(mTorrent->creator());
             creationDateLabel->setText(mTorrent->creationDate().toString());
             if (mTorrent->comment() != commentTextEdit->toPlainText()) {

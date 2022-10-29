@@ -114,7 +114,7 @@ namespace tremotesf {
                 return item.directory == directory;
             });
             if (found == directories.end()) {
-                directories.push_back({directory, toNativeRemoteSeparators(directory, rpc()), 1});
+                directories.push_back({directory, toNativeSeparators(directory), 1});
             } else {
                 ++(found->torrents);
             }

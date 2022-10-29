@@ -20,28 +20,28 @@
 
 namespace tremotesf {
     void DirectorySelectionWidgetViewModel::updatePath(const QString& path) {
-        updatePath(path, convertToDisplayPath(path));
+        updatePath(path, toNativeSeparators(path));
     }
 
     void DirectorySelectionWidgetViewModel::onPathEditedByUser(const QString& text) {
         const auto displayPath = text.trimmed();
-        const auto path = normalizeToInternalPath(displayPath);
+        const auto path = normalizePath(displayPath);
         updatePath(path, displayPath);
     }
 
     void DirectorySelectionWidgetViewModel::onFileDialogAccepted(const QString& path) {
-        updatePath(path, convertToDisplayPath(path));
+        updatePath(path, toNativeSeparators(path));
     }
 
     void DirectorySelectionWidgetViewModel::onComboBoxItemSelected(const QString& path, const QString& displayPath) {
         updatePath(path, displayPath);
     }
 
-    QString DirectorySelectionWidgetViewModel::convertToDisplayPath(const QString& path) const {
+    QString DirectorySelectionWidgetViewModel::normalizePath(const QString& path) const {
         return QDir::toNativeSeparators(path);
     }
 
-    QString DirectorySelectionWidgetViewModel::normalizeToInternalPath(const QString& path) const {
+    QString DirectorySelectionWidgetViewModel::toNativeSeparators(const QString& path) const {
         return QDir::fromNativeSeparators(path);
     }
 

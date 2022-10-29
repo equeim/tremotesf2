@@ -30,7 +30,7 @@ namespace tremotesf {
     RemoteDirectorySelectionWidgetViewModel::RemoteDirectorySelectionWidgetViewModel(
         const QString& path, const Rpc* rpc, QObject* parent
     )
-        : DirectorySelectionWidgetViewModel(path, toNativeRemoteSeparators(path, rpc), parent),
+        : DirectorySelectionWidgetViewModel(path, toNativeSeparators(path), parent),
           mRpc(rpc),
           mMode(
               rpc->isLocal()
@@ -58,12 +58,12 @@ namespace tremotesf {
         }
     }
 
-    QString RemoteDirectorySelectionWidgetViewModel::normalizeToInternalPath(const QString& path) const {
-        return normalizeRemotePath(path, mRpc);
+    QString RemoteDirectorySelectionWidgetViewModel::normalizePath(const QString& path) const {
+        return tremotesf::normalizePath(path);
     }
 
-    QString RemoteDirectorySelectionWidgetViewModel::convertToDisplayPath(const QString& path) const {
-        return toNativeRemoteSeparators(path, mRpc);
+    QString RemoteDirectorySelectionWidgetViewModel::toNativeSeparators(const QString& path) const {
+        return tremotesf::toNativeSeparators(path);
     }
 
     RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& path, const Rpc* rpc, QWidget* parent)
@@ -115,7 +115,7 @@ namespace tremotesf {
         std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem> items{};
         items.reserve(static_cast<size_t>(directories.size()));
         std::transform(directories.begin(), directories.end(), std::back_inserter(items), [=](const auto& dir) {
-            return DirectorySelectionWidgetViewModel::ComboBoxItem{dir, convertToDisplayPath(dir)};
+            return DirectorySelectionWidgetViewModel::ComboBoxItem{dir, toNativeSeparators(dir)};
         });
         return items;
     }
