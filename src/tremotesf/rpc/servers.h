@@ -71,8 +71,6 @@ namespace tremotesf {
     public:
         static Servers* instance();
 
-        static void migrate();
-
         bool hasServers() const;
         std::vector<Server> servers();
 
