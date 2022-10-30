@@ -9,10 +9,7 @@
 #include <utility>
 
 #include <QCoreApplication>
-#include <QFile>
-#include <QDir>
 #include <QSettings>
-#include <QStandardPaths>
 #include <QStringBuilder>
 
 #include "libtremotesf/pathutils.h"
@@ -110,9 +107,7 @@ namespace tremotesf {
         std::vector<MountedDirectory> dirs{};
         dirs.reserve(static_cast<size_t>(map.size()));
         for (auto i = map.begin(), end = map.end(); i != end; ++i) {
-            dirs.push_back(
-                {QDir(normalizePath(i.key())).absolutePath(), QDir(normalizePath(i.value().toString())).absolutePath()}
-            );
+            dirs.push_back({normalizePath(i.key()), normalizePath(i.value().toString())});
         }
         return dirs;
     }
