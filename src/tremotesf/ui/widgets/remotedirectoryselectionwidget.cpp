@@ -18,15 +18,6 @@
 #include <QPushButton>
 
 namespace tremotesf {
-    namespace {
-        inline QString chopTrailingSeparator(QString directory) {
-            if (directory.endsWith('/')) {
-                directory.chop(1);
-            }
-            return directory;
-        }
-    }
-
     RemoteDirectorySelectionWidgetViewModel::RemoteDirectorySelectionWidgetViewModel(
         const QString& path, const Rpc* rpc, QObject* parent
     )
@@ -89,19 +80,15 @@ namespace tremotesf {
 
     std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>
     TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createComboBoxItems() const {
-        QStringList directories{};
-        {
-            const auto saved = Servers::instance()->currentServerAddTorrentDialogDirectories();
-            directories.reserve(saved.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 1);
-            for (const auto& directory : saved) {
-                directories.push_back(chopTrailingSeparator(directory));
-            }
-        }
+        QStringList directories = Servers::instance()->currentServerAddTorrentDialogDirectories();
+        directories.reserve(directories.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 2);
         for (const auto& torrent : mRpc->torrents()) {
-            directories.push_back(chopTrailingSeparator(torrent->downloadDirectory()));
+            directories.push_back(torrent->downloadDirectory());
         }
-        directories.push_back(chopTrailingSeparator(mPath));
-        directories.push_back(chopTrailingSeparator(mRpc->serverSettings()->downloadDirectory()));
+        if (!mPath.isEmpty()) {
+            directories.push_back(mPath);
+        }
+        directories.push_back(mRpc->serverSettings()->downloadDirectory());
 
         directories.removeDuplicates();
 
@@ -143,15 +130,6 @@ namespace tremotesf {
             mComboBoxItems = std::move(items);
             emit comboBoxItemsChanged();
         }
-    }
-
-    QString
-    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::initialPath(const QString& torrentDownloadDirectory) {
-        if (Settings::instance()->rememberDownloadDir()) {
-            auto lastDir = Settings::instance()->lastDownloadDirectory();
-            if (!lastDir.isEmpty()) return lastDir;
-        }
-        return torrentDownloadDirectory;
     }
 
     TorrentDownloadDirectoryDirectorySelectionWidget::TorrentDownloadDirectoryDirectorySelectionWidget(
