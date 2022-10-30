@@ -5,6 +5,8 @@
 #include "servers.h"
 
 #include <algorithm>
+#include <iterator>
+#include <utility>
 
 #include <QCoreApplication>
 #include <QFile>
@@ -58,7 +60,10 @@ namespace tremotesf {
 
         const QLatin1String mountedDirectoriesKey("mountedDirectories");
         const QLatin1String addTorrentDialogDirectoriesKey("addTorrentDialogDirectories");
-        const QLatin1String lastTorrentsKey("lastTorrents");
+
+        constexpr auto lastTorrentsKey = "lastTorrents"_l1;
+        constexpr auto lastTorrentsHashStringKey = "hashString"_l1;
+        constexpr auto lastTorrentsFinishedKey = "finished"_l1;
 
         const QLatin1String localCertificateKey("localCertificate");
 
@@ -92,6 +97,63 @@ namespace tremotesf {
         }
     }
 
+    QVariant MountedDirectory::toVariant(const std::vector<MountedDirectory>& dirs) {
+        QVariantMap map{};
+        for (const auto& dir : dirs) {
+            map.insert(dir.localPath, dir.remotePath);
+        }
+        return map;
+    }
+
+    std::vector<MountedDirectory> MountedDirectory::fromVariant(const QVariant& var) {
+        const QVariantMap map = var.toMap();
+        std::vector<MountedDirectory> dirs{};
+        dirs.reserve(static_cast<size_t>(map.size()));
+        for (auto i = map.begin(), end = map.end(); i != end; ++i) {
+            dirs.push_back(
+                {QDir(normalizePath(i.key())).absolutePath(), QDir(normalizePath(i.value().toString())).absolutePath()}
+            );
+        }
+        return dirs;
+    }
+
+    QVariant LastTorrents::toVariant() const {
+        QVariantList list{};
+        list.reserve(static_cast<QVariantList::size_type>(torrents.size()));
+        std::transform(
+            torrents.begin(),
+            torrents.end(),
+            std::back_inserter(list),
+            [](const LastTorrents::Torrent& torrent) {
+                return QVariantMap{
+                    {lastTorrentsHashStringKey, torrent.hashString},
+                    {lastTorrentsFinishedKey, torrent.finished}};
+            }
+        );
+        return list;
+    }
+
+    LastTorrents LastTorrents::fromVariant(const QVariant& var) {
+        LastTorrents lastTorrents{};
+        if (var.isValid() && var.type() == QVariant::List) {
+            lastTorrents.saved = true;
+            const QVariantList torrentVariants = var.toList();
+            lastTorrents.torrents.reserve(static_cast<size_t>(torrentVariants.size()));
+            std::transform(
+                torrentVariants.begin(),
+                torrentVariants.end(),
+                std::back_inserter(lastTorrents.torrents),
+                [](const QVariant& torrentVar) {
+                    const QVariantMap map = torrentVar.toMap();
+                    return LastTorrents::Torrent{
+                        map[lastTorrentsHashStringKey].toString(),
+                        map[lastTorrentsFinishedKey].toBool()};
+                }
+            );
+        }
+        return lastTorrents;
+    }
+
     Server::Server(const QString& name,
                    const QString& address,
                    int port,
@@ -119,9 +181,9 @@ namespace tremotesf {
                    bool autoReconnectEnabled,
                    int autoReconnectInterval,
 
-                   const QVariantMap& mountedDirectories,
-                   const QVariant& lastTorrents,
-                   const QVariant& addTorrentDialogDirectories)
+                   const std::vector<MountedDirectory>& mountedDirectories,
+                   const LastTorrents& lastTorrents,
+                   const QStringList& addTorrentDialogDirectories)
         : libtremotesf::Server{name,
                                address,
                                port,
@@ -204,31 +266,24 @@ namespace tremotesf {
         );
     }
 
-    QString Servers::firstLocalDirectory() const {
-        if (mCurrentServerMountedDirectories.empty()) {
-            return {};
-        }
-        return mCurrentServerMountedDirectories.front().first;
-    }
-
-    QString Servers::fromLocalToRemoteDirectory(const QString& path) {
-        for (const std::pair<QString, QString>& directory : mCurrentServerMountedDirectories) {
-            const int localSize = directory.first.size();
-            if (path.startsWith(directory.first)) {
-                if (path.size() == localSize || path[localSize] == '/') {
-                    return directory.second % path.midRef(localSize);
+    QString Servers::fromLocalToRemoteDirectory(const QString& localPath) {
+        for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
+            const auto localDirectoryLength = localDirectory.size();
+            if (localPath.startsWith(localDirectory)) {
+                if (localPath.size() == localDirectoryLength || localPath[localDirectoryLength] == '/') {
+                    return remoteDirectory % localPath.midRef(localDirectoryLength);
                 }
             }
         }
         return {};
     }
 
-    QString Servers::fromRemoteToLocalDirectory(const QString& path) {
-        for (const std::pair<QString, QString>& directory : mCurrentServerMountedDirectories) {
-            const int remoteSize = directory.second.size();
-            if (path.startsWith(directory.second)) {
-                if (path.size() == remoteSize || path[remoteSize] == '/') {
-                    return directory.first % path.midRef(remoteSize);
+    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath) {
+        for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
+            const auto remoteDirectoryLength = remoteDirectory.size();
+            if (remotePath.startsWith(remoteDirectory)) {
+                if (remotePath.size() == remoteDirectoryLength || remotePath[remoteDirectoryLength] == '/') {
+                    return localDirectory % remotePath.midRef(remoteDirectoryLength);
                 }
             }
         }
@@ -237,33 +292,20 @@ namespace tremotesf {
 
     LastTorrents Servers::currentServerLastTorrents() const {
         mSettings->beginGroup(currentServerName());
-        LastTorrents lastTorrents;
-        const QVariant lastTorrentsVariant(mSettings->value(lastTorrentsKey));
-        if (lastTorrentsVariant.isValid() && lastTorrentsVariant.type() == QVariant::List) {
-            lastTorrents.saved = true;
-            const QVariantList torrentVariants(lastTorrentsVariant.toList());
-            lastTorrents.torrents.reserve(static_cast<size_t>(torrentVariants.size()));
-            for (const QVariant& variant : torrentVariants) {
-                const QVariantMap torrentMap(variant.toMap());
-                lastTorrents.torrents.push_back(
-                    {torrentMap["hashString"_l1].toString(), torrentMap["finished"_l1].toBool()}
-                );
-            }
-        }
+        auto lastTorrents = LastTorrents::fromVariant(mSettings->value(lastTorrentsKey));
         mSettings->endGroup();
         return lastTorrents;
     }
 
     void Servers::saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc) {
         mSettings->beginGroup(currentServerName());
-        QVariantList torrents;
-        torrents.reserve(static_cast<QVariantList::size_type>(rpc->torrents().size()));
-        for (const auto& torrent : rpc->torrents()) {
-            torrents.push_back(
-                QVariantMap{{"hashString"_l1, torrent->hashString()}, {"finished"_l1, torrent->isFinished()}}
-            );
-        }
-        mSettings->setValue(lastTorrentsKey, torrents);
+        LastTorrents torrents{};
+        const auto& rpcTorrents = rpc->torrents();
+        torrents.torrents.reserve(static_cast<QVariantList::size_type>(rpcTorrents.size()));
+        std::transform(rpcTorrents.begin(), rpcTorrents.end(), std::back_inserter(torrents.torrents), [](const auto& torrent) {
+            return LastTorrents::Torrent{torrent->hashString(), torrent->isFinished()};
+        });
+        mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();
     }
 
@@ -310,7 +352,7 @@ namespace tremotesf {
         bool autoReconnectEnabled,
         int autoReconnectInterval,
 
-        const QVariantMap& mountedDirectories
+        const std::vector<MountedDirectory>& mountedDirectories
     ) {
         bool currentChanged = false;
         const QString current(currentServerName());
@@ -358,13 +400,13 @@ namespace tremotesf {
         mSettings->setValue(autoReconnectEnabledKey, autoReconnectEnabled);
         mSettings->setValue(autoReconnectEnabledKey, autoReconnectInterval);
 
-        mSettings->setValue(mountedDirectoriesKey, mountedDirectories);
+        mSettings->setValue(mountedDirectoriesKey, MountedDirectory::toVariant(mountedDirectories));
         mSettings->setValue(addTorrentDialogDirectoriesKey, addTorrentDialogDirectories);
 
         mSettings->endGroup();
 
         if (currentChanged) {
-            updateMountedDirectories(mountedDirectories);
+            mCurrentServerMountedDirectories = mountedDirectories;
             emit currentServerChanged();
         }
 
@@ -417,8 +459,8 @@ namespace tremotesf {
             mSettings->setValue(autoReconnectEnabledKey, server.autoReconnectEnabled);
             mSettings->setValue(autoReconnectIntervalKey, server.autoReconnectInterval);
 
-            mSettings->setValue(mountedDirectoriesKey, server.mountedDirectories);
-            mSettings->setValue(lastTorrentsKey, server.lastTorrents);
+            mSettings->setValue(mountedDirectoriesKey, MountedDirectory::toVariant(server.mountedDirectories));
+            mSettings->setValue(lastTorrentsKey, server.lastTorrents.toVariant());
             mSettings->setValue(addTorrentDialogDirectoriesKey, server.addTorrentDialogDirectories);
 
             mSettings->endGroup();
@@ -499,28 +541,17 @@ namespace tremotesf {
             mSettings->value(autoReconnectEnabledKey, false).toBool(),
             mSettings->value(autoReconnectIntervalKey, 30).toInt(),
 
-            mSettings->value(mountedDirectoriesKey).toMap(),
-            mSettings->value(lastTorrentsKey),
-            mSettings->value(addTorrentDialogDirectoriesKey)
+            MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
+            LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
+            mSettings->value(addTorrentDialogDirectoriesKey).toStringList()
         );
         mSettings->endGroup();
         return server;
     }
 
-    void Servers::updateMountedDirectories(const QVariantMap& directories) {
-        mCurrentServerMountedDirectories.clear();
-        mCurrentServerMountedDirectories.reserve(static_cast<size_t>(directories.size()));
-        for (auto i = directories.cbegin(), end = directories.cend(); i != end; ++i) {
-            mCurrentServerMountedDirectories.emplace_back(
-                QDir(normalizePath(i.key())).absolutePath(),
-                QDir(normalizePath(i.value().toString())).absolutePath()
-            );
-        }
-    }
-
     void Servers::updateMountedDirectories() {
         mSettings->beginGroup(currentServerName());
-        updateMountedDirectories(mSettings->value(mountedDirectoriesKey).toMap());
+        mCurrentServerMountedDirectories = MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey));
         mSettings->endGroup();
     }
 }

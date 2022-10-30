@@ -29,6 +29,7 @@
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <vector>
 
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/target_os.h"
@@ -186,8 +187,8 @@ namespace tremotesf {
             mAutoReconnectGroupBox->setChecked(server.autoReconnectEnabled);
             mAutoReconnectSpinBox->setValue(server.autoReconnectInterval);
 
-            for (auto i = server.mountedDirectories.cbegin(), end = server.mountedDirectories.cend(); i != end; ++i) {
-                mMountedDirectoriesWidget->addRow(i.key(), i.value().toString());
+            for (const auto& [localDirectory, remoteDirectory] : server.mountedDirectories) {
+                mMountedDirectoriesWidget->addRow(localDirectory, remoteDirectory);
             }
         }
 
@@ -430,14 +431,15 @@ namespace tremotesf {
     }
 
     void ServerEditDialog::setServer() {
-        QVariantMap mountedDirectories;
+        std::vector<MountedDirectory> mountedDirectories{};
+        mountedDirectories.reserve(static_cast<size_t>(mMountedDirectoriesWidget->rowCount()));
         for (int i = 0, max = mMountedDirectoriesWidget->rowCount(); i < max; ++i) {
             const auto localItem = mMountedDirectoriesWidget->item(i, 0);
-            const QString localDirectory(localItem ? localItem->text().trimmed() : QString());
+            const QString localDirectory = localItem ? localItem->text().trimmed() : QString{};
             const auto remoteItem = mMountedDirectoriesWidget->item(i, 1);
-            const QString remoteDirectory(remoteItem ? remoteItem->text().trimmed() : QString());
+            const QString remoteDirectory = remoteItem ? remoteItem->text().trimmed() : QString{};
             if (!localDirectory.isEmpty() && !remoteDirectory.isEmpty()) {
-                mountedDirectories.insert(localDirectory, remoteDirectory);
+                mountedDirectories.push_back({localDirectory, remoteDirectory});
             }
         }
 

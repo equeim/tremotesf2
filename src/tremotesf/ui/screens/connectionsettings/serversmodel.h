@@ -55,7 +55,7 @@ namespace tremotesf {
             bool autoReconnectEnabled,
             int autoReconnectInterval,
 
-            const QVariantMap& mountedDirectories
+            const std::vector<MountedDirectory>& mountedDirectories
         );
         void removeServerAtIndex(const QModelIndex& index);
         void removeServerAtRow(int row);
