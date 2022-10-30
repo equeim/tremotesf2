@@ -85,7 +85,7 @@ namespace tremotesf {
         bool autoReconnectEnabled,
         int autoReconnectInterval,
 
-        const QVariantMap& mountedDirectories
+        const std::vector<MountedDirectory>& mountedDirectories
     ) {
         const int oldRow = serverRow(oldName);
         int row = serverRow(name);
@@ -177,8 +177,8 @@ namespace tremotesf {
                 autoReconnectInterval,
 
                 mountedDirectories,
-                QVariant(),
-                QVariant()
+                LastTorrents{},
+                QStringList{}
             );
             endInsertRows();
             if (row == 0) {

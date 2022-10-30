@@ -6,7 +6,6 @@
 #define TREMOTESF_SERVERS_H
 
 #include <vector>
-#include <utility>
 
 #include <QObject>
 
@@ -15,6 +14,27 @@
 class QSettings;
 
 namespace tremotesf {
+    struct MountedDirectory {
+        QString localPath{};
+        QString remotePath{};
+
+        static QVariant toVariant(const std::vector<MountedDirectory>& dirs);
+        static std::vector<MountedDirectory> fromVariant(const QVariant& var);
+    };
+
+    struct LastTorrents {
+        struct Torrent {
+            QString hashString{};
+            bool finished{};
+        };
+
+        bool saved{};
+        std::vector<Torrent> torrents{};
+
+        QVariant toVariant() const;
+        static LastTorrents fromVariant(const QVariant& var);
+    };
+
     struct Server : libtremotesf::Server {
         Server() = default;
 
@@ -46,24 +66,14 @@ namespace tremotesf {
             bool autoReconnectEnabled,
             int autoReconnectInterval,
 
-            const QVariantMap& mountedDirectories,
-            const QVariant& lastTorrents,
-            const QVariant& addTorrentDialogDirectories
+            const std::vector<MountedDirectory>& mountedDirectories,
+            const LastTorrents& lastTorrents,
+            const QStringList& addTorrentDialogDirectories
         );
 
-        QVariantMap mountedDirectories;
-        QVariant lastTorrents;
-        QVariant addTorrentDialogDirectories;
-    };
-
-    struct LastTorrents {
-        struct Torrent {
-            QString hashString;
-            bool finished;
-        };
-
-        bool saved = false;
-        std::vector<Torrent> torrents;
+        std::vector<MountedDirectory> mountedDirectories{};
+        LastTorrents lastTorrents{};
+        QStringList addTorrentDialogDirectories{};
     };
 
     class Servers : public QObject {
@@ -81,9 +91,8 @@ namespace tremotesf {
 
         bool currentServerHasMountedDirectories() const;
         bool isUnderCurrentServerMountedDirectory(const QString& path) const;
-        QString firstLocalDirectory() const;
-        QString fromLocalToRemoteDirectory(const QString& path);
-        QString fromRemoteToLocalDirectory(const QString& path);
+        QString fromLocalToRemoteDirectory(const QString& localPath);
+        QString fromRemoteToLocalDirectory(const QString& remotePath);
 
         LastTorrents currentServerLastTorrents() const;
         void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
@@ -120,7 +129,7 @@ namespace tremotesf {
             bool autoReconnectEnabled,
             int autoReconnectInterval,
 
-            const QVariantMap& mountedDirectories
+            const std::vector<MountedDirectory>& mountedDirectories
         );
 
         void removeServer(const QString& name);
@@ -130,11 +139,10 @@ namespace tremotesf {
     private:
         explicit Servers(QObject* parent = nullptr);
         Server getServer(const QString& name) const;
-        void updateMountedDirectories(const QVariantMap& directories);
         void updateMountedDirectories();
 
-        QSettings* mSettings;
-        std::vector<std::pair<QString, QString>> mCurrentServerMountedDirectories;
+        QSettings* mSettings{};
+        std::vector<MountedDirectory> mCurrentServerMountedDirectories{};
     signals:
         void currentServerChanged();
         void hasServersChanged();
