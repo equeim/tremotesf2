@@ -13,6 +13,7 @@
 #include <QStandardPaths>
 #include <QStringBuilder>
 
+#include "libtremotesf/pathutils.h"
 #include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
 
@@ -511,8 +512,8 @@ namespace tremotesf {
         mCurrentServerMountedDirectories.reserve(static_cast<size_t>(directories.size()));
         for (auto i = directories.cbegin(), end = directories.cend(); i != end; ++i) {
             mCurrentServerMountedDirectories.emplace_back(
-                QDir(i.key()).absolutePath(),
-                QDir(i.value().toString()).absolutePath()
+                QDir(normalizePath(i.key())).absolutePath(),
+                QDir(normalizePath(i.value().toString())).absolutePath()
             );
         }
     }
