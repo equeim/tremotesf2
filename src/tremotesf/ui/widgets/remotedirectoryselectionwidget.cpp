@@ -80,7 +80,7 @@ namespace tremotesf {
 
     std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>
     TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createComboBoxItems() const {
-        QStringList directories = Servers::instance()->currentServerAddTorrentDialogDirectories();
+        QStringList directories = Servers::instance()->currentServerLastDownloadDirectories();
         directories.reserve(directories.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 2);
         for (const auto& torrent : mRpc->torrents()) {
             directories.push_back(torrent->downloadDirectory());
@@ -120,8 +120,9 @@ namespace tremotesf {
         if (!paths.contains(mPath)) {
             paths.push_back(mPath);
         }
-        Servers::instance()->setCurrentServerAddTorrentDialogDirectories(paths);
-        Settings::instance()->setLastDownloadDirectory(mPath);
+        auto servers = Servers::instance();
+        servers->setCurrentServerLastDownloadDirectories(paths);
+        servers->setCurrentServerLastDownloadDirectory(mPath);
     }
 
     void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updateComboBoxItems() {
