@@ -24,6 +24,7 @@
 #include <KMessageWidget>
 
 #include "libtremotesf/log.h"
+#include "libtremotesf/pathutils.h"
 #include "libtremotesf/serversettings.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
@@ -103,7 +104,7 @@ namespace tremotesf {
 
     QString AddTorrentDialog::initialDownloadDirectory() {
         if (Settings::instance()->rememberDownloadDir()) {
-            auto lastDir = Settings::instance()->lastDownloadDirectory();
+            auto lastDir = normalizePath(Settings::instance()->lastDownloadDirectory());
             if (!lastDir.isEmpty()) return lastDir;
         }
         return mRpc->serverSettings()->downloadDirectory();

@@ -308,6 +308,9 @@ namespace tremotesf {
         QStringList directories;
         mSettings->beginGroup(currentServerName());
         directories = mSettings->value(addTorrentDialogDirectoriesKey).toStringList();
+        for (auto& dir : directories) {
+            dir = normalizePath(dir);
+        }
         mSettings->endGroup();
         return directories;
     }
