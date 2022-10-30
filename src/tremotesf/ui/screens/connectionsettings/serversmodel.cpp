@@ -178,7 +178,8 @@ namespace tremotesf {
 
                 mountedDirectories,
                 LastTorrents{},
-                QStringList{}
+                QStringList{},
+                QString{}
             );
             endInsertRows();
             if (row == 0) {

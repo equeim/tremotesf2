@@ -28,6 +28,7 @@
 #include "libtremotesf/serversettings.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
+#include "tremotesf/rpc/servers.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/utils.h"
 #include "tremotesf/settings.h"
@@ -104,7 +105,7 @@ namespace tremotesf {
 
     QString AddTorrentDialog::initialDownloadDirectory() {
         if (Settings::instance()->rememberDownloadDir()) {
-            auto lastDir = normalizePath(Settings::instance()->lastDownloadDirectory());
+            auto lastDir = normalizePath(Servers::instance()->currentServerLastDownloadDirectory());
             if (!lastDir.isEmpty()) return lastDir;
         }
         return mRpc->serverSettings()->downloadDirectory();

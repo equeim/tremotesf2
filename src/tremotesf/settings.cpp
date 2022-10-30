@@ -91,9 +91,6 @@ namespace tremotesf {
     )
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberDownloadDir, setRememberDownloadDir, "rememberDownloadDir", true)
-    SETTINGS_PROPERTY_DEF_NON_TRIVIAL(
-        QString, lastDownloadDirectory, setLastDownloadDirectory, "lastDownloadDirectory", {}
-    )
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberOpenTorrentDir, setRememberOpenTorrentDir, "rememberOpenTorrentTorrentDir", true)
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(
         QString, lastOpenTorrentDirectory, setLastOpenTorrentDirectory, "lastOpenTorrentDirectory", {}

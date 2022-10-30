@@ -56,7 +56,9 @@ namespace tremotesf {
         const QLatin1String autoReconnectIntervalKey("autoReconnectInterval");
 
         const QLatin1String mountedDirectoriesKey("mountedDirectories");
-        const QLatin1String addTorrentDialogDirectoriesKey("addTorrentDialogDirectories");
+
+        constexpr auto lastDownloadDirectoriesKey = "addTorrentDialogDirectories"_l1;
+        constexpr auto lastDownloadDirectoryKey = "lastDownloadDirectory"_l1;
 
         constexpr auto lastTorrentsKey = "lastTorrents"_l1;
         constexpr auto lastTorrentsHashStringKey = "hashString"_l1;
@@ -178,7 +180,8 @@ namespace tremotesf {
 
                    const std::vector<MountedDirectory>& mountedDirectories,
                    const LastTorrents& lastTorrents,
-                   const QStringList& addTorrentDialogDirectories)
+                   const QStringList& lastDownloadDirectories,
+                   const QString& lastDownloadDirectory)
         : libtremotesf::Server{name,
                                address,
                                port,
@@ -207,7 +210,8 @@ namespace tremotesf {
                                autoReconnectInterval},
           mountedDirectories(mountedDirectories),
           lastTorrents(lastTorrents),
-          addTorrentDialogDirectories(addTorrentDialogDirectories)
+          lastDownloadDirectories(lastDownloadDirectories),
+          lastDownloadDirectory(lastDownloadDirectory)
     {
 
     }
@@ -296,7 +300,7 @@ namespace tremotesf {
         mSettings->beginGroup(currentServerName());
         LastTorrents torrents{};
         const auto& rpcTorrents = rpc->torrents();
-        torrents.torrents.reserve(static_cast<QVariantList::size_type>(rpcTorrents.size()));
+        torrents.torrents.reserve(rpcTorrents.size());
         std::transform(rpcTorrents.begin(), rpcTorrents.end(), std::back_inserter(torrents.torrents), [](const auto& torrent) {
             return LastTorrents::Torrent{torrent->hashString(), torrent->isFinished()};
         });
@@ -304,10 +308,10 @@ namespace tremotesf {
         mSettings->endGroup();
     }
 
-    QStringList Servers::currentServerAddTorrentDialogDirectories() const {
-        QStringList directories;
+    QStringList Servers::currentServerLastDownloadDirectories() const {
+        QStringList directories{};
         mSettings->beginGroup(currentServerName());
-        directories = mSettings->value(addTorrentDialogDirectoriesKey).toStringList();
+        directories = mSettings->value(lastDownloadDirectoriesKey).toStringList();
         for (auto& dir : directories) {
             dir = normalizePath(dir);
         }
@@ -315,9 +319,23 @@ namespace tremotesf {
         return directories;
     }
 
-    void Servers::setCurrentServerAddTorrentDialogDirectories(const QStringList& directories) {
+    void Servers::setCurrentServerLastDownloadDirectories(const QStringList& directories) {
         mSettings->beginGroup(currentServerName());
-        mSettings->setValue(addTorrentDialogDirectoriesKey, directories);
+        mSettings->setValue(lastDownloadDirectoriesKey, directories);
+        mSettings->endGroup();
+    }
+
+    QString Servers::currentServerLastDownloadDirectory() const {
+        QString directory{};
+        mSettings->beginGroup(currentServerName());
+        directory = normalizePath(mSettings->value(lastDownloadDirectoryKey).toString());
+        mSettings->endGroup();
+        return directory;
+    }
+
+    void Servers::setCurrentServerLastDownloadDirectory(const QString& directory) {
+        mSettings->beginGroup(currentServerName());
+        mSettings->setValue(lastDownloadDirectoryKey, directory);
         mSettings->endGroup();
     }
 
@@ -363,10 +381,12 @@ namespace tremotesf {
             currentChanged = true;
         }
 
-        QStringList addTorrentDialogDirectories;
+        QStringList lastDownloadDirectories{};
+        QString lastDownloadDirectory{};
         if (!oldName.isEmpty() && name != oldName) {
-            addTorrentDialogDirectories =
-                mSettings->value(oldName % '/' % addTorrentDialogDirectoriesKey).toStringList();
+            lastDownloadDirectories = mSettings->value(oldName % '/' % lastDownloadDirectoriesKey).toStringList();
+            lastDownloadDirectory = mSettings->value(oldName % '/' % lastDownloadDirectoryKey).toString();
+
             mSettings->remove(oldName);
         }
 
@@ -399,7 +419,8 @@ namespace tremotesf {
         mSettings->setValue(autoReconnectEnabledKey, autoReconnectInterval);
 
         mSettings->setValue(mountedDirectoriesKey, MountedDirectory::toVariant(mountedDirectories));
-        mSettings->setValue(addTorrentDialogDirectoriesKey, addTorrentDialogDirectories);
+        mSettings->setValue(lastDownloadDirectoriesKey, lastDownloadDirectories);
+        mSettings->setValue(lastDownloadDirectoryKey, lastDownloadDirectory);
 
         mSettings->endGroup();
 
@@ -459,7 +480,8 @@ namespace tremotesf {
 
             mSettings->setValue(mountedDirectoriesKey, MountedDirectory::toVariant(server.mountedDirectories));
             mSettings->setValue(lastTorrentsKey, server.lastTorrents.toVariant());
-            mSettings->setValue(addTorrentDialogDirectoriesKey, server.addTorrentDialogDirectories);
+            mSettings->setValue(lastDownloadDirectoriesKey, server.lastDownloadDirectories);
+            mSettings->setValue(lastDownloadDirectoryKey, server.lastDownloadDirectory);
 
             mSettings->endGroup();
         }
@@ -541,7 +563,8 @@ namespace tremotesf {
 
             MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
             LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
-            mSettings->value(addTorrentDialogDirectoriesKey).toStringList()
+            mSettings->value(lastDownloadDirectoriesKey).toStringList(),
+            mSettings->value(lastDownloadDirectoryKey).toString()
         );
         mSettings->endGroup();
         return server;

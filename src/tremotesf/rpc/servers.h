@@ -68,12 +68,14 @@ namespace tremotesf {
 
             const std::vector<MountedDirectory>& mountedDirectories,
             const LastTorrents& lastTorrents,
-            const QStringList& addTorrentDialogDirectories
+            const QStringList& lastDownloadDirectories,
+            const QString& lastDownloadDirectory
         );
 
         std::vector<MountedDirectory> mountedDirectories{};
         LastTorrents lastTorrents{};
-        QStringList addTorrentDialogDirectories{};
+        QStringList lastDownloadDirectories{};
+        QString lastDownloadDirectory{};
     };
 
     class Servers : public QObject {
@@ -97,8 +99,11 @@ namespace tremotesf {
         LastTorrents currentServerLastTorrents() const;
         void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
 
-        QStringList currentServerAddTorrentDialogDirectories() const;
-        void setCurrentServerAddTorrentDialogDirectories(const QStringList& directories);
+        QStringList currentServerLastDownloadDirectories() const;
+        void setCurrentServerLastDownloadDirectories(const QStringList& directories);
+
+        QString currentServerLastDownloadDirectory() const;
+        void setCurrentServerLastDownloadDirectory(const QString& directory);
 
         void setServer(
             const QString& oldName,
