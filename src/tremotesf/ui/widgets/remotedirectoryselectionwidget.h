@@ -63,7 +63,6 @@ namespace tremotesf {
         void updateComboBoxItems();
 
     private:
-        [[nodiscard]] static QString initialPath(const QString& torrentDownloadDirectory);
         [[nodiscard]] std::vector<ComboBoxItem> createComboBoxItems() const;
 
         std::vector<ComboBoxItem> mComboBoxItems{createComboBoxItems()};
