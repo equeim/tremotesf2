@@ -52,10 +52,11 @@ namespace tremotesf {
         cxxopts::Options opts(appName, versionString);
         std::vector<std::string> torrents;
         opts.add_options(
-        )("v,version", "display version information", cxxopts::value<bool>()
-        )("h,help", "display this help", cxxopts::value<bool>()
-        )("m,minimized", "start minimized in notification area", cxxopts::value<bool>(args.minimized)
-        )("torrents", "", cxxopts::value<decltype(torrents)>(torrents));
+        )("v,version", "display version information", cxxopts::value<bool>()->default_value("false")
+        )("h,help", "display this help", cxxopts::value<bool>()->default_value("false")
+        )("m,minimized", "start minimized in notification area", cxxopts::value(args.minimized)->default_value("false")
+        )("d,debug-logs", "enable debug logs", cxxopts::value(args.enableDebugLogs)->implicit_value("true")
+        )("torrents", "", cxxopts::value(torrents));
         opts.parse_positional("torrents");
         opts.positional_help("torrents");
         try {

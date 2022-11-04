@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QIcon>
 #include <QLibraryInfo>
+#include <QLoggingCategory>
 #include <QLocale>
 #include <QScopeGuard>
 #include <QTranslator>
@@ -28,19 +29,6 @@ int main(int argc, char** argv) {
     QCoreApplication::setApplicationName(QCoreApplication::organizationName());
     QCoreApplication::setApplicationVersion(TREMOTESF_VERSION ""_l1);
 
-    if constexpr (isTargetOsWindows) {
-        windowsInitPrelude();
-    }
-    const auto preludeScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) {
-            windowsDeinitPrelude();
-        }
-    });
-
-    // Setup handler for UNIX signals or Windows console handler
-    signalhandler::initSignalHandler();
-    const auto signalHandlerGuard = QScopeGuard([] { signalhandler::deinitSignalHandler(); });
-
     //
     // Command line parsing
     //
@@ -54,6 +42,30 @@ int main(int argc, char** argv) {
         logWarning("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
     }
+
+    if (args.enableDebugLogs.has_value()) {
+        // Override QT_LOGGING_RULES env variable if command line option was specified
+        QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, *args.enableDebugLogs);
+    } else {
+        // Disable by default but let QT_LOGGING_RULES override us
+        QLoggingCategory::setFilterRules("default.debug=false"_l1);
+    }
+    if (QLoggingCategory::defaultCategory()->isDebugEnabled()) {
+        logDebug("Debug logging is enabled");
+    }
+
+    if constexpr (isTargetOsWindows) {
+        windowsInitPrelude();
+    }
+    const auto preludeScopeGuard = QScopeGuard([] {
+        if constexpr (isTargetOsWindows) {
+            windowsDeinitPrelude();
+        }
+    });
+
+    // Setup handler for UNIX signals or Windows console handler
+    signalhandler::initSignalHandler();
+    const auto signalHandlerGuard = QScopeGuard([] { signalhandler::deinitSignalHandler(); });
 
     // Send command to another instance
     if (const auto client = IpcClient::createInstance(); client->isConnected()) {
