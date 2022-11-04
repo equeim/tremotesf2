@@ -1,13 +1,13 @@
 {
   "default-registry": {
     "kind": "builtin",
-    "baseline": "01b29f6d8212bc845da64773b18665d682f5ab66"
+    "baseline": "a4013afe6d3053e739b37c4cb6b5e64b55611e24"
   },
   "registries": [
     {
       "kind": "git",
       "repository": "https://github.com/equeim/vcpkg-registry.git",
-      "baseline": "3933eb72178f6fdcfd863196a0304f6864299512",
+      "baseline": "42c4126a741fd105f718ba950fd8770e7b3b0cb0",
       "packages": [
         "kf5breezeicons",
         "hicolor-icon-theme",
