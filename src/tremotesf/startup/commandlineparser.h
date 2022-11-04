@@ -5,15 +5,17 @@
 #ifndef TREMOTESF_COMMANDLINEPARSER_H
 #define TREMOTESF_COMMANDLINEPARSER_H
 
+#include <optional>
 #include <QStringList>
 
 namespace tremotesf {
     struct CommandLineArgs {
-        QStringList files;
-        QStringList urls;
-        bool minimized;
+        QStringList files{};
+        QStringList urls{};
+        bool minimized{};
+        std::optional<bool> enableDebugLogs{};
 
-        bool exit;
+        bool exit{};
     };
 
     CommandLineArgs parseCommandLine(int& argc, char**& argv);
