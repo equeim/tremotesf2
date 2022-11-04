@@ -15,7 +15,8 @@ jobs:
     env:
       ROOT_DIRECTORY: tremotesf-${{ github.event.release.tag_name }}
       ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar
-      COMPRESSED_ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar.zst
+      ZSTD_ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar.zst
+      GZIP_ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar.gz
 
     steps:
     - name: Checkout
@@ -23,7 +24,7 @@ jobs:
       with:
         submodules: 'true'
 
-    - name: Make source archive
+    - name: Make source archives
       run: |
         echo 'Event payload is ${{ toJSON(github.event) }}'
         echo 'Making archive ${{ env.ARCHIVE_NAME }} for root repository'
@@ -32,13 +33,15 @@ jobs:
         readonly subarchives="$(git submodule --quiet foreach 'echo "$sm_path/archive.tar"')"
         echo "Concatenating ${{ env.ARCHIVE_NAME }} with $subarchives"
         tar -f '${{ env.ARCHIVE_NAME }}' --concatenate $subarchives
-        echo "Compressing ${{ env.ARCHIVE_NAME }} to ${{ env.COMPRESSED_ARCHIVE_NAME }}"
-        zstd '${{ env.ARCHIVE_NAME }}' -o '${{ env.COMPRESSED_ARCHIVE_NAME }}'
+        echo 'Compressing ${{ env.ARCHIVE_NAME }} to ${{ env.ZSTD_ARCHIVE_NAME }}'
+        zstd '${{ env.ARCHIVE_NAME }}' -o '${{ env.ZSTD_ARCHIVE_NAME }}'
+        echo 'Compressing ${{ env.ARCHIVE_NAME }} to ${{ env.GZIP_ARCHIVE_NAME }}'
+        gzip --keep --stdout '${{ env.ARCHIVE_NAME }}' > '${{ env.GZIP_ARCHIVE_NAME }}'
 
-    - name: Upload source archive to release
+    - name: Upload source archives to release
       run: |
-        echo 'Uploading source archive ${{ env.COMPRESSED_ARCHIVE_NAME }}'
-        gh release upload '${{ github.event.release.tag_name }}' '${{ env.COMPRESSED_ARCHIVE_NAME }}'
+        echo 'Uploading source archives'
+        gh release upload '${{ github.event.release.tag_name }}' '${{ env.ZSTD_ARCHIVE_NAME }}' '${{ env.GZIP_ARCHIVE_NAME }}'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
