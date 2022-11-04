@@ -428,27 +428,27 @@
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="67"/>
         <source>Adding torrents</source>
-        <translation type="unfinished"/>
+        <translation>Добавление торрентов</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="71"/>
         <source>Remember last download directory</source>
-        <translation type="unfinished"/>
+        <translation>Запоминать последний каталог загрузки</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="75"/>
         <source>Remember last torrent open directory</source>
-        <translation type="unfinished"/>
+        <translation>Запоминать последний каталог открытых торрент-файлов</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="79"/>
         <source>Automatically fill link from clipboard when adding torrent link</source>
-        <translation type="unfinished"/>
+        <translation>Автоматически копировать ссылку из буфера обмена при добавлении ссылки на торрент</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="84"/>
         <source>Tip: you can also press %1 in main window to add torrents from clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Совет: также можно нажать %1 в главном окне чтобы добавить торрент из буфера обмена</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="91"/>
@@ -754,7 +754,7 @@
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="899"/>
         <source>No torrents matching filters</source>
-        <translation type="unfinished"/>
+        <translation>Нет торрентов соответствующих фильтрам</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="945"/>
@@ -769,12 +769,12 @@
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="317"/>
         <source>Torrents will be added after connection to server:</source>
-        <translation type="unfinished"/>
+        <translation>Торренты будут добавлены после подключения к серверу:</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="327"/>
         <source>And %n more</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>И еще %n</numerusform><numerusform>И еще %n</numerusform><numerusform>И еще %n</numerusform><numerusform>И еще %n</numerusform></translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="475"/>
@@ -1220,32 +1220,32 @@
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="35"/>
         <source>Appearance</source>
-        <translation type="unfinished"/>
+        <translation>Внешний вид</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="40"/>
         <source>Follow system</source>
-        <translation type="unfinished"/>
+        <translation>Как в системе</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="43"/>
         <source>On</source>
-        <translation type="unfinished"/>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="45"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="47"/>
         <source>Dark theme</source>
-        <translation type="unfinished"/>
+        <translation>Темная тема</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="51"/>
         <source>Use system accent color</source>
-        <translation type="unfinished"/>
+        <translation>Использовать цвета системы</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/settingsdialog.cpp" line="107"/>
