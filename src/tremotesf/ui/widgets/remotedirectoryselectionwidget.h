@@ -17,6 +17,7 @@ namespace tremotesf {
             const QString& path, const Rpc* rpc, QObject* parent = nullptr
         );
 
+        [[nodiscard]] bool enableFileDialog() const override;
         [[nodiscard]] QString fileDialogDirectory() const override;
         void onFileDialogAccepted(const QString& path) override;
 
