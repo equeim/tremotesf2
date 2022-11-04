@@ -53,19 +53,19 @@ namespace tremotesf {
         auto authorsPage = new QWidget(this);
         auto authorsPageLayout = new QVBoxLayout(authorsPage);
         auto authorsWidget = new QTextBrowser(this);
-        authorsWidget->setText(Utils::readTextResource(":/authors.html"));
+        authorsWidget->setHtml(Utils::readTextResource(":/authors.html"));
         authorsWidget->setOpenExternalLinks(true);
         authorsPageLayout->addWidget(authorsWidget);
         authorsPageLayout->addStretch();
         tabWidget->addTab(authorsPage, qApp->translate("tremotesf", "Authors"));
 
         auto translatorsWidget = new QTextBrowser(this);
-        translatorsWidget->setText(Utils::readTextResource(":/translators.html"));
+        translatorsWidget->setHtml(Utils::readTextResource(":/translators.html"));
         translatorsWidget->setOpenExternalLinks(true);
         tabWidget->addTab(translatorsWidget, qApp->translate("tremotesf", "Translators"));
 
         auto licenseWidget = new QTextBrowser(this);
-        licenseWidget->setText(Utils::readTextResource(":/license.html"));
+        licenseWidget->setHtml(Utils::readTextResource(":/license.html"));
         licenseWidget->setOpenExternalLinks(true);
         tabWidget->addTab(licenseWidget, qApp->translate("tremotesf", "License"));
 
