@@ -5,14 +5,16 @@
 - Dark theme support on Windows (dark window title bar on Windows 10
 is supported only on 1809 or newer and it can be buggy because Windows 10 doesn't support this officially)
 - System accent color on Windows is used in app UI (can be disabled in settings)
+- Windows builds now write logs to `C:\Users\User\AppData\Local\tremotesf\tremotesf` directory
 - Opening of torrents (local files or HTTP(S) links) and magnet links is now supported via drag & drop or Ctrl+V on main window
 - Option to automatically fill link from clipboard when adding torrent link (disabled by default)
-- Last download dir is now remembered when adding torrents (can be disabled in settings) (thanks Alex Bell)
+- Last download directory is now remembered when adding torrents (can be disabled in settings) (thanks Alex Bell)
+- Directory of last opened torrent is now remembered (can be disabled in settings)
 - When adding torrents via opening file/link, drag & drop or clipboard while disconnected from server,
 Tremotesf will now show message explaining that they will be added after connection to server
 (instead of doing this sliently, confusing users)
-- When disconnected from server (or while connecting), status (or error) message will be shown
-over empty torrents list
+- Status message is shown over empty torrent list when not connected to server
+- Command line option to enable debug logs
 
 ### Changed
 - Raised minimum version of Qt to 5.15
@@ -26,6 +28,10 @@ over empty torrents list
 - Removed special handling for various file managers when using "Show in file manager" action
 Now Tremotesf uncoditionally tries to use org.freedesktop.FileManager1 D-Bus interface,
 and if it fails then QDesktopServices::openUrl() is used
+
+### Fixed
+- IPv6 address can be now used to connect to server
+- Windows paths are always displayed with native directory separators
 
 ## [1.11.3] - 2022-03-18
 ### Fixed
