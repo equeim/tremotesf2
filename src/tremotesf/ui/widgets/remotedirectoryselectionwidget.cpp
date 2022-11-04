@@ -29,6 +29,8 @@ namespace tremotesf {
                   : (Servers::instance()->currentServerHasMountedDirectories() ? Mode::RemoteMounted : Mode::Remote)
           ) {}
 
+    bool RemoteDirectorySelectionWidgetViewModel::enableFileDialog() const { return mRpc->isLocal(); }
+
     QString RemoteDirectorySelectionWidgetViewModel::fileDialogDirectory() const {
         if (mMode == Mode::RemoteMounted) {
             return Servers::instance()->fromRemoteToLocalDirectory(mPath);
