@@ -93,7 +93,7 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 * Wed Mar 16 2022 Alexey Rochev <equeim@gmail.com> - 1.11.2-1
 - tremotesf-1.11.2
 
-* Sun Feb 28 2022 Alexey Rochev <equeim@gmail.com> - 1.11.1-1
+* Mon Feb 28 2022 Alexey Rochev <equeim@gmail.com> - 1.11.1-1
 - tremotesf-1.11.1
 
 * Sun Feb 13 2022 Alexey Rochev <equeim@gmail.com> - 1.11.0-1
