@@ -5,7 +5,7 @@
 %global app_id org.equeim.Tremotesf
 
 Name:       tremotesf
-Version:    1.11.3
+Version:    2.0.0
 Release:    1%{!?suse_version:%{?dist}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
@@ -16,7 +16,7 @@ License:    GPLv3+
 %endif
 URL:        https://github.com/equeim/tremotesf2
 
-Source0:    https://github.com/equeim/tremotesf2/archive/%{version}.tar.gz
+Source0:    https://github.com/equeim/tremotesf2/releases/download/%{version}/%{name}-%{version}.tar.gz
 
 Requires:      hicolor-icon-theme
 BuildRequires: cmake
@@ -84,6 +84,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %{_metainfodir}/%{app_id}.appdata.xml
 
 %changelog
+* Sat Nov 05 2022 Alexey Rochev <equeim@gmail.com> - 2.0.0-1
+- tremotesf-2.0.0
+
 * Fri Mar 18 2022 Alexey Rochev <equeim@gmail.com> - 1.11.3-1
 - tremotesf-1.11.3
 
