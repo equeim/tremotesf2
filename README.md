@@ -48,7 +48,7 @@ You can invoke CMake in a different way if you want.
 - Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ```sh
-wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/Release.key -O - | sudo apt-key add -
+wget -O - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
 sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/ /"
 sudo apt update
 sudo apt install tremotesf
@@ -77,8 +77,8 @@ sudo zypper in tremotesf
 - Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ```sh
-wget https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_21.10/Release.key -O - | sudo apt-key add -
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_21.10/ /"
+wget -O - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_22.04/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_22.04/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
