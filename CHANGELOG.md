@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] - 2022-11-05
 ### Added
 - Dark theme support on Windows (dark window title bar on Windows 10
 is supported only on 1809 or newer and it can be buggy because Windows 10 doesn't support this officially)

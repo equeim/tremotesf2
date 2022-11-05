@@ -9,7 +9,7 @@ else()
 endif()
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.23)
 
-project(tremotesf VERSION 1.11.3 LANGUAGES CXX)
+project(tremotesf VERSION 2.0.0 LANGUAGES CXX)
 
 option(TREMOTESF_BUILD_TESTS "Build tests" ON)
 

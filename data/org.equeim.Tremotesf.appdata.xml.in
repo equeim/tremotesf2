@@ -50,6 +50,7 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2022-11-05" version="2.0.0"/>
     <release date="2022-03-18" version="1.11.3"/>
     <release date="2022-03-16" version="1.11.2"/>
     <release date="2022-02-28" version="1.11.1"/>
