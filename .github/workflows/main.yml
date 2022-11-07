@@ -54,11 +54,20 @@ jobs:
     - name: Install build dependencies
       run: ${{env.INSTALL_PACKAGES}} $(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} -q --srpm --qf '[%{REQUIRES} ]' rpm/tremotesf.spec)
 
+    - name: Make source archive
+      run: |
+        # Git complains if we don't do that
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        source_archive="$(.github/workflows/make-source-archive.py gzip)"
+        sourcedir="$(rpmbuild --eval '%_sourcedir')"
+        mkdir -p "$sourcedir"
+        mv "$source_archive" "$sourcedir"
+
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
 
-    - name: Build Tremotesf
-      run: rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb --build-in-place rpm/tremotesf.spec
+    - name: Build RPM
+      run: rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb rpm/tremotesf.spec
 
   build-debian-ubuntu:
     strategy:
