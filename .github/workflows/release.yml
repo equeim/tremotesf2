@@ -12,35 +12,17 @@ jobs:
   upload-source-archives:
     runs-on: ubuntu-latest
 
-    env:
-      ROOT_DIRECTORY: tremotesf-${{ github.event.release.tag_name }}
-      ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar
-      ZSTD_ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar.zst
-      GZIP_ARCHIVE_NAME: tremotesf-${{ github.event.release.tag_name }}.tar.gz
-
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: 'true'
 
-    - name: Make source archives
-      run: |
-        echo 'Making archive ${{ env.ARCHIVE_NAME }} for root repository'
-        git archive --format=tar --prefix='${{ env.ROOT_DIRECTORY }}/' -o '${{ env.ARCHIVE_NAME }}' HEAD
-        git submodule foreach 'echo "Making archive for submodule $sm_path"; git archive --format=tar --prefix="${{ env.ROOT_DIRECTORY }}/$sm_path/" -o 'archive.tar' HEAD'
-        readonly subarchives="$(git submodule --quiet foreach 'echo "$sm_path/archive.tar"')"
-        echo "Concatenating ${{ env.ARCHIVE_NAME }} with $subarchives"
-        tar -f '${{ env.ARCHIVE_NAME }}' --concatenate $subarchives
-        echo 'Compressing ${{ env.ARCHIVE_NAME }} to ${{ env.ZSTD_ARCHIVE_NAME }}'
-        zstd '${{ env.ARCHIVE_NAME }}' -o '${{ env.ZSTD_ARCHIVE_NAME }}'
-        echo 'Compressing ${{ env.ARCHIVE_NAME }} to ${{ env.GZIP_ARCHIVE_NAME }}'
-        gzip --keep --stdout '${{ env.ARCHIVE_NAME }}' > '${{ env.GZIP_ARCHIVE_NAME }}'
-
     - name: Upload source archives to release
       run: |
+        archives="$(.github/workflows/make-source-archive.py all)"
         echo 'Uploading source archives'
-        gh release upload '${{ github.event.release.tag_name }}' '${{ env.ZSTD_ARCHIVE_NAME }}' '${{ env.GZIP_ARCHIVE_NAME }}'
+        gh release upload '${{ github.event.release.tag_name }}' $archives
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
