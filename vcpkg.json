@@ -26,7 +26,7 @@
     {
       "name": "qt5-base",
       "version": "5.15.7",
-      "port-version": 0
+      "port-version": 2
     },
     {
       "name": "qt5-tools",
@@ -51,12 +51,12 @@
     {
       "name": "openssl",
       "version-string": "3.0.7",
-      "port-version": 0
+      "port-version": 1
     },
     {
       "name": "kf5widgetsaddons",
-      "version": "5.89.0",
-      "port-version": 1
+      "version": "5.98.0",
+      "port-version": 0
     },
     {
       "name": "hicolor-icon-theme",
@@ -65,8 +65,8 @@
     },
     {
       "name": "kf5breezeicons",
-      "version": "5.89.0",
-      "port-version": 2
+      "version": "5.98.0",
+      "port-version": 0
     }
   ]
 }
