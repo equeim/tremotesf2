@@ -37,19 +37,12 @@ def make_tar_archive() -> str:
     root_directory = f"tremotesf-{get_project_version()}"
     archive_filename = f"{root_directory}.tar"
     logging.info(f"Making tar archive {archive_filename}")
-    logging.info(f"Making archive for root directory")
-    subprocess.run(["git", "archive", "--format=tar", f"--prefix={root_directory}/", "-o", archive_filename, "HEAD"],
-                   check=True, stdout=sys.stderr)
-    logging.info(f"Making archives for submodules")
-    subprocess.run(["git", "submodule", "foreach",
-                    f"echo \"Making archive for submodule $sm_path\"; git archive --format=tar --prefix=\"{root_directory}/$sm_path/\" -o 'archive.tar' HEAD"],
-                   check=True, stdout=sys.stderr)
-    submodule_archives = subprocess.run(["git", "submodule", "--quiet", "foreach", "echo \"$sm_path/archive.tar\""],
-                                        check=True,
-                                        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                                        text=True).stdout.splitlines()
-    logging.info(f"Concatenating {archive_filename} with {submodule_archives}")
-    subprocess.run(["tar", "-f", archive_filename, "--concatenate"] + submodule_archives, check=True, stdout=sys.stderr)
+    files = subprocess.run(["git", "ls-files", "--recurse-submodules"],
+                           check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                           text=True).stdout.splitlines()
+    logging.info(f"Archiving {len(files)} files")
+    subprocess.run(["tar", "--create", "--file", archive_filename, "--transform", f"s,^,/{root_directory}/,"] + files, check=True, stdout=sys.stderr)
     return archive_filename
 
 
