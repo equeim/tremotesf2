@@ -44,7 +44,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        submodules: 'true'
+        submodules: 'recursive'
 
     - name: Set Fedora compiler RPM macro
       id: fedora-compiler
@@ -80,12 +80,12 @@ jobs:
 
     steps:
     - name: Install packages
-      run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libfmt-dev libkf5widgetsaddons-dev libkf5windowsystem-dev gettext ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }}
+      run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libfmt-dev libkf5widgetsaddons-dev libkf5windowsystem-dev libssl-dev gettext ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }}
 
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        submodules: 'true'
+        submodules: 'recursive'
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -109,7 +109,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        submodules: 'true'
+        submodules: 'recursive'
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
