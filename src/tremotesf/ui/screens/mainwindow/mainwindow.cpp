@@ -859,6 +859,19 @@ namespace tremotesf {
             label->setAlignment(Qt::AlignHCenter);
             label->setForegroundRole(QPalette::PlaceholderText);
             label->setTextInteractionFlags(Qt::NoTextInteraction);
+            const auto setPalette = [label] {
+#if QT_VERSION_MAJOR < 6
+                auto palette = label->palette();
+                auto brush = QGuiApplication::palette().placeholderText();
+                brush.setStyle(Qt::SolidPattern);
+                palette.setBrush(QPalette::PlaceholderText, brush);
+                label->setPalette(palette);
+#else
+                static_assert(false, "Do we need this?");
+#endif
+            };
+            setPalette();
+            QObject::connect(qApp, &QGuiApplication::paletteChanged, label, setPalette);
         };
 
         layout->addStretch();
