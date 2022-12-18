@@ -99,20 +99,27 @@ namespace tremotesf {
         using libtremotesf::TorrentData;
         switch (filter) {
         case Active:
-            return !torrent->hasError() &&
-                   ((torrent->status() == TorrentData::Status::Downloading && !torrent->isDownloadingStalled()) ||
-                    (torrent->status() == TorrentData::Status::Seeding && !torrent->isSeedingStalled()));
+            return (
+                (torrent->status() == TorrentData::Status::Downloading && !torrent->isDownloadingStalled()) ||
+                (torrent->status() == TorrentData::Status::Seeding && !torrent->isSeedingStalled())
+            );
         case Downloading:
-            return !torrent->hasError() && (torrent->status() == TorrentData::Status::Downloading ||
-                                            torrent->status() == TorrentData::Status::QueuedForDownloading);
+            return (
+                torrent->status() == TorrentData::Status::Downloading ||
+                torrent->status() == TorrentData::Status::QueuedForDownloading
+            );
         case Seeding:
-            return !torrent->hasError() && (torrent->status() == TorrentData::Status::Seeding ||
-                                            torrent->status() == TorrentData::Status::QueuedForSeeding);
+            return (
+                torrent->status() == TorrentData::Status::Seeding ||
+                torrent->status() == TorrentData::Status::QueuedForSeeding
+            );
         case Paused:
-            return !torrent->hasError() && torrent->status() == TorrentData::Status::Paused;
+            return torrent->status() == TorrentData::Status::Paused;
         case Checking:
-            return !torrent->hasError() && (torrent->status() == TorrentData::Status::Checking ||
-                                            torrent->status() == TorrentData::Status::QueuedForChecking);
+            return (
+                torrent->status() == TorrentData::Status::Checking ||
+                torrent->status() == TorrentData::Status::QueuedForChecking
+            );
         case Errored:
             return torrent->hasError();
         default:

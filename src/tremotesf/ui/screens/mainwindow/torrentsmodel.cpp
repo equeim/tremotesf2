@@ -75,17 +75,41 @@ namespace tremotesf {
             case Column::Status: {
                 switch (torrent->status()) {
                 case TorrentData::Status::Paused:
+                    if (torrent->hasError()) {
+                        return qApp->translate("tremotesf", "Paused (%1)", "Torrent status with error")
+                            .arg(torrent->errorString());
+                    }
                     return qApp->translate("tremotesf", "Paused", "Torrent status");
                 case TorrentData::Status::Downloading:
+                    if (torrent->hasError()) {
+                        return qApp->translate("tremotesf", "Downloading (%1)", "Torrent status with error")
+                            .arg(torrent->errorString());
+                    }
                     return qApp->translate("tremotesf", "Downloading", "Torrent status");
                 case TorrentData::Status::Seeding:
+                    if (torrent->hasError()) {
+                        return qApp->translate("tremotesf", "Seeding (%1)", "Torrent status with error")
+                            .arg(torrent->errorString());
+                    }
                     return qApp->translate("tremotesf", "Seeding", "Torrent status");
                 case TorrentData::Status::QueuedForDownloading:
                 case TorrentData::Status::QueuedForSeeding:
+                    if (torrent->hasError()) {
+                        return qApp->translate("tremotesf", "Queued (%1)", "Torrent status with error")
+                            .arg(torrent->errorString());
+                    }
                     return qApp->translate("tremotesf", "Queued", "Torrent status");
                 case TorrentData::Status::Checking:
+                    if (torrent->hasError()) {
+                        return qApp->translate("tremotesf", "Checking (%1)", "Torrent status with error")
+                            .arg(torrent->errorString());
+                    }
                     return qApp->translate("tremotesf", "Checking", "Torrent status");
                 case TorrentData::Status::QueuedForChecking:
+                    if (torrent->hasError()) {
+                        return qApp->translate("tremotesf", "Queued for checking (%1)", "Torrent status with error")
+                            .arg(torrent->errorString());
+                    }
                     return qApp->translate("tremotesf", "Queued for checking");
                 }
                 break;
