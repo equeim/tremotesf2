@@ -13,11 +13,11 @@ namespace tremotesf {
     TorrentFilesModelEntry::fromFilePriority(libtremotesf::TorrentFile::Priority priority) {
         using libtremotesf::TorrentFile;
         switch (priority) {
-        case TorrentFile::LowPriority:
+        case TorrentFile::Priority::Low:
             return LowPriority;
-        case TorrentFile::NormalPriority:
+        case TorrentFile::Priority::Normal:
             return NormalPriority;
-        case TorrentFile::HighPriority:
+        case TorrentFile::Priority::High:
             return HighPriority;
         default:
             return NormalPriority;
@@ -29,13 +29,13 @@ namespace tremotesf {
         using libtremotesf::TorrentFile;
         switch (priority) {
         case LowPriority:
-            return TorrentFile::LowPriority;
+            return TorrentFile::Priority::Low;
         case NormalPriority:
-            return TorrentFile::NormalPriority;
+            return TorrentFile::Priority::Normal;
         case HighPriority:
-            return TorrentFile::HighPriority;
+            return TorrentFile::Priority::High;
         default:
-            return TorrentFile::NormalPriority;
+            return TorrentFile::Priority::Normal;
         }
     }
 

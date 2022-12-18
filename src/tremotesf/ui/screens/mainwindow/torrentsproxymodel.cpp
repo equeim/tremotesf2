@@ -99,23 +99,22 @@ namespace tremotesf {
         using libtremotesf::TorrentData;
         switch (filter) {
         case Active:
-            return (torrent->status() == TorrentData::Downloading || torrent->status() == TorrentData::Seeding);
+            return !torrent->hasError() &&
+                   ((torrent->status() == TorrentData::Status::Downloading && !torrent->isDownloadingStalled()) ||
+                    (torrent->status() == TorrentData::Status::Seeding && !torrent->isSeedingStalled()));
         case Downloading:
-            return (
-                torrent->status() == TorrentData::Downloading || torrent->status() == TorrentData::StalledDownloading ||
-                torrent->status() == TorrentData::QueuedForDownloading
-            );
+            return !torrent->hasError() && (torrent->status() == TorrentData::Status::Downloading ||
+                                            torrent->status() == TorrentData::Status::QueuedForDownloading);
         case Seeding:
-            return (
-                torrent->status() == TorrentData::Seeding || torrent->status() == TorrentData::StalledSeeding ||
-                torrent->status() == TorrentData::QueuedForSeeding
-            );
+            return !torrent->hasError() && (torrent->status() == TorrentData::Status::Seeding ||
+                                            torrent->status() == TorrentData::Status::QueuedForSeeding);
         case Paused:
-            return torrent->status() == TorrentData::Paused;
+            return !torrent->hasError() && torrent->status() == TorrentData::Status::Paused;
         case Checking:
-            return (torrent->status() == TorrentData::Checking || torrent->status() == TorrentData::QueuedForChecking);
+            return !torrent->hasError() && (torrent->status() == TorrentData::Status::Checking ||
+                                            torrent->status() == TorrentData::Status::QueuedForChecking);
         case Errored:
-            return torrent->status() == TorrentData::Errored;
+            return torrent->hasError();
         default:
             return true;
         }
