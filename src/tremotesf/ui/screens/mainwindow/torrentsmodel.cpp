@@ -34,25 +34,28 @@ namespace tremotesf {
         case Qt::DecorationRole:
             if (static_cast<Column>(index.column()) == Column::Name) {
                 using namespace desktoputils;
-                switch (torrent->status()) {
-                case TorrentData::Paused:
-                    return QPixmap(statusIconPath(PausedIcon));
-                case TorrentData::Seeding:
-                    return QPixmap(statusIconPath(SeedingIcon));
-                case TorrentData::Downloading:
-                    return QPixmap(statusIconPath(DownloadingIcon));
-                case TorrentData::StalledDownloading:
-                    return QPixmap(statusIconPath(StalledDownloadingIcon));
-                case TorrentData::StalledSeeding:
-                    return QPixmap(statusIconPath(StalledSeedingIcon));
-                case TorrentData::QueuedForDownloading:
-                case TorrentData::QueuedForSeeding:
-                    return QPixmap(statusIconPath(QueuedIcon));
-                case TorrentData::Checking:
-                case TorrentData::QueuedForChecking:
-                    return QPixmap(statusIconPath(CheckingIcon));
-                case TorrentData::Errored:
+                if (torrent->error() != TorrentData::Error::None) {
                     return QPixmap(statusIconPath(ErroredIcon));
+                }
+                switch (torrent->status()) {
+                case TorrentData::Status::Paused:
+                    return QPixmap(statusIconPath(PausedIcon));
+                case TorrentData::Status::Seeding:
+                    if (torrent->isSeedingStalled()) {
+                        return QPixmap(statusIconPath(StalledSeedingIcon));
+                    }
+                    return QPixmap(statusIconPath(SeedingIcon));
+                case TorrentData::Status::Downloading:
+                    if (torrent->isDownloadingStalled()) {
+                        return QPixmap(statusIconPath(StalledDownloadingIcon));
+                    }
+                    return QPixmap(statusIconPath(DownloadingIcon));
+                case TorrentData::Status::QueuedForDownloading:
+                case TorrentData::Status::QueuedForSeeding:
+                    return QPixmap(statusIconPath(QueuedIcon));
+                case TorrentData::Status::Checking:
+                case TorrentData::Status::QueuedForChecking:
+                    return QPixmap(statusIconPath(CheckingIcon));
                 }
             }
             break;
@@ -65,31 +68,28 @@ namespace tremotesf {
             case Column::TotalSize:
                 return Utils::formatByteSize(torrent->totalSize());
             case Column::Progress:
-                if (torrent->status() == TorrentData::Checking) {
+                if (torrent->status() == TorrentData::Status::Checking) {
                     return Utils::formatProgress(torrent->recheckProgress());
                 }
                 return Utils::formatProgress(torrent->percentDone());
-            case Column::Status:
+            case Column::Status: {
                 switch (torrent->status()) {
-                case TorrentData::Paused:
+                case TorrentData::Status::Paused:
                     return qApp->translate("tremotesf", "Paused", "Torrent status");
-                case TorrentData::Downloading:
-                case TorrentData::StalledDownloading:
+                case TorrentData::Status::Downloading:
                     return qApp->translate("tremotesf", "Downloading", "Torrent status");
-                case TorrentData::Seeding:
-                case TorrentData::StalledSeeding:
+                case TorrentData::Status::Seeding:
                     return qApp->translate("tremotesf", "Seeding", "Torrent status");
-                case TorrentData::QueuedForDownloading:
-                case TorrentData::QueuedForSeeding:
+                case TorrentData::Status::QueuedForDownloading:
+                case TorrentData::Status::QueuedForSeeding:
                     return qApp->translate("tremotesf", "Queued", "Torrent status");
-                case TorrentData::Checking:
+                case TorrentData::Status::Checking:
                     return qApp->translate("tremotesf", "Checking", "Torrent status");
-                case TorrentData::QueuedForChecking:
+                case TorrentData::Status::QueuedForChecking:
                     return qApp->translate("tremotesf", "Queued for checking");
-                case TorrentData::Errored:
-                    return torrent->errorString();
                 }
                 break;
+            }
             case Column::QueuePosition:
                 return torrent->queuePosition();
             case Column::Seeders:
@@ -155,12 +155,12 @@ namespace tremotesf {
                 return torrent->totalSize();
             case Column::ProgressBar:
             case Column::Progress:
-                if (torrent->status() == TorrentData::Checking) {
+                if (torrent->status() == TorrentData::Status::Checking) {
                     return torrent->recheckProgress();
                 }
                 return torrent->percentDone();
             case Column::Status:
-                return torrent->status();
+                return static_cast<int>(torrent->status());
             case Column::DownloadSpeed:
                 return torrent->downloadSpeed();
             case Column::UploadSpeed:

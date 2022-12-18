@@ -40,16 +40,16 @@
 
 namespace tremotesf {
     namespace {
-        constexpr libtremotesf::Torrent::Priority priorityComboBoxItems[]{
-            libtremotesf::Torrent::Priority::HighPriority,
-            libtremotesf::Torrent::Priority::NormalPriority,
-            libtremotesf::Torrent::Priority::LowPriority};
+        constexpr libtremotesf::TorrentData::Priority priorityComboBoxItems[]{
+            libtremotesf::TorrentData::Priority::High,
+            libtremotesf::TorrentData::Priority::Normal,
+            libtremotesf::TorrentData::Priority::Low};
 
-        libtremotesf::Torrent::Priority priorityFromComboBoxIndex(int index) {
+        libtremotesf::TorrentData::Priority priorityFromComboBoxIndex(int index) {
             if (index >= 0) {
                 return priorityComboBoxItems[index];
             }
-            return libtremotesf::Torrent::Priority::NormalPriority;
+            return libtremotesf::TorrentData::Priority::Normal;
         }
     }
 
@@ -212,24 +212,24 @@ namespace tremotesf {
 
         mPriorityComboBox = new QComboBox(this);
         mPriorityComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        for (libtremotesf::Torrent::Priority priority : priorityComboBoxItems) {
+        for (libtremotesf::TorrentData::Priority priority : priorityComboBoxItems) {
             switch (priority) {
-            case libtremotesf::Torrent::Priority::HighPriority:
+            case libtremotesf::TorrentData::Priority::High:
                 //: Priority
                 mPriorityComboBox->addItem(qApp->translate("tremotesf", "High"));
                 break;
-            case libtremotesf::Torrent::Priority::NormalPriority:
+            case libtremotesf::TorrentData::Priority::Normal:
                 //: Priority
                 mPriorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
                 break;
-            case libtremotesf::Torrent::Priority::LowPriority:
+            case libtremotesf::TorrentData::Priority::Low:
                 //: Priority
                 mPriorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
                 break;
             }
         }
         mPriorityComboBox->setCurrentIndex(
-            index_of_i(priorityComboBoxItems, libtremotesf::Torrent::Priority::NormalPriority)
+            index_of_i(priorityComboBoxItems, libtremotesf::TorrentData::Priority::Normal)
         );
 
         QFormLayout* secondFormLayout = nullptr;

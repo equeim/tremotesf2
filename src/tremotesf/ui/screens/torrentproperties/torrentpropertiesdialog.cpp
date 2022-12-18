@@ -47,15 +47,17 @@ namespace tremotesf {
 
     namespace {
         const TorrentData::Priority priorityComboBoxItems[] = {
-            TorrentData::HighPriority, TorrentData::NormalPriority, TorrentData::LowPriority};
+            TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low};
 
         const TorrentData::RatioLimitMode ratioLimitComboBoxItems[] = {
-            TorrentData::GlobalRatioLimit, TorrentData::UnlimitedRatio, TorrentData::SingleRatioLimit};
+            TorrentData::RatioLimitMode::Global,
+            TorrentData::RatioLimitMode::Unlimited,
+            TorrentData::RatioLimitMode::Single};
 
         const TorrentData::IdleSeedingLimitMode idleSeedingLimitComboBoxItems[] = {
-            TorrentData::GlobalIdleSeedingLimit,
-            TorrentData::UnlimitedIdleSeeding,
-            TorrentData::SingleIdleSeedingLimit};
+            TorrentData::IdleSeedingLimitMode::Global,
+            TorrentData::IdleSeedingLimitMode::Unlimited,
+            TorrentData::IdleSeedingLimitMode::Single};
     }
 
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)
@@ -291,15 +293,15 @@ namespace tremotesf {
         auto priorityComboBox = new QComboBox(this);
         for (TorrentData::Priority priority : priorityComboBoxItems) {
             switch (priority) {
-            case TorrentData::HighPriority:
+            case TorrentData::Priority::High:
                 //: Priority
                 priorityComboBox->addItem(qApp->translate("tremotesf", "High"));
                 break;
-            case TorrentData::NormalPriority:
+            case TorrentData::Priority::Normal:
                 //: Priority
                 priorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
                 break;
-            case TorrentData::LowPriority:
+            case TorrentData::Priority::Low:
                 //: Priority
                 priorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
                 break;
@@ -322,13 +324,13 @@ namespace tremotesf {
         auto ratioLimitComboBox = new QComboBox(this);
         for (TorrentData::RatioLimitMode mode : ratioLimitComboBoxItems) {
             switch (mode) {
-            case TorrentData::GlobalRatioLimit:
+            case TorrentData::RatioLimitMode::Global:
                 ratioLimitComboBox->addItem(qApp->translate("tremotesf", "Use global settings"));
                 break;
-            case TorrentData::SingleRatioLimit:
+            case TorrentData::RatioLimitMode::Single:
                 ratioLimitComboBox->addItem(qApp->translate("tremotesf", "Stop seeding at ratio:"));
                 break;
-            case TorrentData::UnlimitedRatio:
+            case TorrentData::RatioLimitMode::Unlimited:
                 ratioLimitComboBox->addItem(qApp->translate("tremotesf", "Seed regardless of ratio"));
                 break;
             }
@@ -345,7 +347,7 @@ namespace tremotesf {
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             [=](int index) {
-                if (index == index_of_i(ratioLimitComboBoxItems, TorrentData::SingleRatioLimit)) {
+                if (index == index_of_i(ratioLimitComboBoxItems, TorrentData::RatioLimitMode::Single)) {
                     ratioLimitSpinBox->show();
                 } else {
                     ratioLimitSpinBox->hide();
@@ -360,13 +362,13 @@ namespace tremotesf {
         auto idleSeedingLimitComboBox = new QComboBox(this);
         for (TorrentData::IdleSeedingLimitMode mode : idleSeedingLimitComboBoxItems) {
             switch (mode) {
-            case TorrentData::GlobalIdleSeedingLimit:
+            case TorrentData::IdleSeedingLimitMode::Global:
                 idleSeedingLimitComboBox->addItem(qApp->translate("tremotesf", "Use global settings"));
                 break;
-            case TorrentData::SingleIdleSeedingLimit:
+            case TorrentData::IdleSeedingLimitMode::Single:
                 idleSeedingLimitComboBox->addItem(qApp->translate("tremotesf", "Stop seeding if idle for:"));
                 break;
-            case TorrentData::UnlimitedIdleSeeding:
+            case TorrentData::IdleSeedingLimitMode::Unlimited:
                 idleSeedingLimitComboBox->addItem(qApp->translate("tremotesf", "Seed regardless of activity"));
                 break;
             }
@@ -384,7 +386,7 @@ namespace tremotesf {
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             [=](int index) {
-                if (index == index_of_i(idleSeedingLimitComboBoxItems, TorrentData::SingleIdleSeedingLimit)) {
+                if (index == index_of_i(idleSeedingLimitComboBoxItems, TorrentData::IdleSeedingLimitMode::Single)) {
                     idleSeedingLimitSpinBox->show();
                 } else {
                     idleSeedingLimitSpinBox->hide();

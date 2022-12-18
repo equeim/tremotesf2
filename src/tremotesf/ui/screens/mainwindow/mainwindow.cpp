@@ -723,13 +723,10 @@ namespace tremotesf {
             }
             const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
             if (selectedRows.size() == 1) {
-                switch (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))->status()
-                ) {
-                case libtremotesf::TorrentData::Paused:
-                case libtremotesf::TorrentData::Errored:
+                if (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))->status() ==
+                    libtremotesf::TorrentData::Status::Paused) {
                     mPauseTorrentAction->setEnabled(false);
-                    break;
-                default:
+                } else {
                     mStartTorrentAction->setEnabled(false);
                     mStartTorrentNowAction->setEnabled(false);
                 }

@@ -19,25 +19,19 @@ namespace tremotesf {
     namespace {
         QString trackerStatusString(const Tracker& tracker) {
             switch (tracker.status()) {
-            case Tracker::Inactive:
-                //: Tracker status
-                return qApp->translate("tremotesf", "Inactive");
-            case Tracker::Active:
-                return qApp->translate("tremotesf", "Active", "Tracker status");
-            case Tracker::Queued:
-                return qApp->translate("tremotesf", "Queued", "Tracker status");
-            case Tracker::Updating:
-                //: Tracker status
-                return qApp->translate("tremotesf", "Updating");
-            case Tracker::Error: {
-                if (tracker.errorMessage().isEmpty()) {
-                    return qApp->translate("tremotesf", "Error");
+            case Tracker::Status::Inactive:
+                if (!tracker.errorMessage().isEmpty()) {
+                    return qApp->translate("tremotesf", "Error: %1").arg(tracker.errorMessage());
                 }
-                return qApp->translate("tremotesf", "Error: %1").arg(tracker.errorMessage());
+                return qApp->translate("tremotesf", "Inactive", "Tracker status");
+            case Tracker::Status::WaitingForUpdate:
+                return qApp->translate("tremotesf", "Waiting for update", "Tracker status");
+            case Tracker::Status::QueuedForUpdate:
+                return qApp->translate("tremotesf", "About to update", "Tracker status");
+            case Tracker::Status::Updating:
+                return qApp->translate("tremotesf", "Updating", "Tracker status");
             }
-            default:
-                return {};
-            }
+            return {};
         }
     }
 
