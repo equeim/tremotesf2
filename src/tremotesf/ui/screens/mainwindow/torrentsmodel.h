@@ -63,7 +63,7 @@ namespace tremotesf {
         libtremotesf::Torrent* torrentAtIndex(const QModelIndex& index) const;
         libtremotesf::Torrent* torrentAtRow(int row) const;
 
-        QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
+        std::vector<int> idsFromIndexes(const QModelIndexList& indexes) const;
 
     private:
         Rpc* mRpc;

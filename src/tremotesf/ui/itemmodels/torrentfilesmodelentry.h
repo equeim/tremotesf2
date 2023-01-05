@@ -10,7 +10,6 @@
 #include <unordered_map>
 
 #include <QObject>
-#include <QVariantList>
 
 #include "libtremotesf/torrentfile.h"
 
@@ -88,7 +87,7 @@ namespace tremotesf {
         TorrentFilesModelDirectory* addDirectory(const QString& name);
 
         void clearChildren();
-        QVariantList childrenIds() const;
+        std::vector<int> childrenIds() const;
 
         bool isChanged() const override;
 
