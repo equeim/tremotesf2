@@ -18,7 +18,7 @@ namespace tremotesf {
     class TrackersModel : public QAbstractTableModel {
         Q_OBJECT
     public:
-        enum class Column { Announce, Status, Peers, NextUpdate };
+        enum class Column { Announce, Status, Error, NextUpdate, Peers };
         Q_ENUM(Column)
 
         static constexpr auto SortRole = Qt::UserRole;
