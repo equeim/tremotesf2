@@ -795,10 +795,10 @@ namespace tremotesf {
     }
 
     void MainWindow::removeSelectedTorrents(bool deleteFiles) {
-        const QVariantList ids(mTorrentsModel->idsFromIndexes(
+        const auto ids = mTorrentsModel->idsFromIndexes(
             mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
-        ));
-        if (ids.isEmpty()) {
+        );
+        if (ids.empty()) {
             return;
         }
 
@@ -834,7 +834,7 @@ namespace tremotesf {
                 "tremotesf",
                 "Are you sure you want to delete %Ln selected torrents?",
                 nullptr,
-                ids.size()
+                static_cast<int>(ids.size())
             ));
         }
 

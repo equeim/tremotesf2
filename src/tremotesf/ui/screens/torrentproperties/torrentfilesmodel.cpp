@@ -24,7 +24,7 @@ namespace tremotesf {
             treeFile->setPriority(TorrentFilesModelEntry::fromFilePriority(file.priority));
         }
 
-        QVariantList idsFromIndex(const QModelIndex& index) {
+        std::vector<int> idsFromIndex(const QModelIndex& index) {
             auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
             if (entry->isDirectory()) {
                 return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
@@ -32,19 +32,21 @@ namespace tremotesf {
             return {static_cast<TorrentFilesModelFile*>(entry)->id()};
         }
 
-        QVariantList idsFromIndexes(const QList<QModelIndex>& indexes) {
-            QVariantList ids;
+        std::vector<int> idsFromIndexes(const QList<QModelIndex>& indexes) {
+            std::vector<int> ids{};
             // at least indexes.size(), but may be more
-            ids.reserve(indexes.size());
+            ids.reserve(static_cast<size_t>(indexes.size()));
             for (const QModelIndex& index : indexes) {
                 auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
                 if (entry->isDirectory()) {
-                    ids.append(static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds());
+                    const auto childrenIds = static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
+                    ids.reserve(ids.size() + childrenIds.size());
+                    ids.insert(ids.end(), childrenIds.begin(), childrenIds.end());
                 } else {
-                    ids.append(static_cast<TorrentFilesModelFile*>(entry)->id());
+                    ids.push_back(static_cast<TorrentFilesModelFile*>(entry)->id());
                 }
             }
-            std::sort(ids.begin(), ids.end(), [](const auto& a, const auto& b) { return a.toInt() < b.toInt(); });
+            std::sort(ids.begin(), ids.end());
             ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
             return ids;
         }

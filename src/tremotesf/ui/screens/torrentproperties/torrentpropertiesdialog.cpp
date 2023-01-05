@@ -189,12 +189,12 @@ namespace tremotesf {
             activeWebSeedersLabel->setText(locale.toString(mTorrent->activeWebSeeders()));
             leechersLabel->setText(locale.toString(mTorrent->leechers()));
 
-            lastActivityLabel->setText(mTorrent->activityDate().toString());
+            lastActivityLabel->setText(mTorrent->activityDate().toLocalTime().toString());
 
             totalSizeLabel->setText(Utils::formatByteSize(mTorrent->totalSize()));
             locationLabel->setText(toNativeSeparators(mTorrent->downloadDirectory()));
             creatorLabel->setText(mTorrent->creator());
-            creationDateLabel->setText(mTorrent->creationDate().toString());
+            creationDateLabel->setText(mTorrent->creationDate().toLocalTime().toString());
             if (mTorrent->comment() != commentTextEdit->toPlainText()) {
                 commentTextEdit->document()->setPlainText(mTorrent->comment());
                 desktoputils::findLinksAndAddAnchors(commentTextEdit->document());

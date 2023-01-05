@@ -194,41 +194,41 @@ namespace tremotesf {
         }
     }
 
-    QVariantList LocalTorrentFilesModel::unwantedFiles() const {
-        QVariantList files;
+    std::vector<int> LocalTorrentFilesModel::unwantedFiles() const {
+        std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
             if (file->wantedState() == TorrentFilesModelEntry::Unwanted) {
-                files.append(file->id());
+                files.push_back(file->id());
             }
         }
         return files;
     }
 
-    QVariantList LocalTorrentFilesModel::highPriorityFiles() const {
-        QVariantList files;
+    std::vector<int> LocalTorrentFilesModel::highPriorityFiles() const {
+        std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
             if (file->priority() == TorrentFilesModelEntry::HighPriority) {
-                files.append(file->id());
+                files.push_back(file->id());
             }
         }
         return files;
     }
 
-    QVariantList LocalTorrentFilesModel::lowPriorityFiles() const {
-        QVariantList files;
+    std::vector<int> LocalTorrentFilesModel::lowPriorityFiles() const {
+        std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
             if (file->priority() == TorrentFilesModelEntry::LowPriority) {
-                files.append(file->id());
+                files.push_back(file->id());
             }
         }
         return files;
     }
 
-    const QVariantMap& LocalTorrentFilesModel::renamedFiles() const { return mRenamedFiles; }
+    const std::map<QString, QString>& LocalTorrentFilesModel::renamedFiles() const { return mRenamedFiles; }
 
     void LocalTorrentFilesModel::renameFile(const QModelIndex& index, const QString& newName) {
         auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-        mRenamedFiles.insert(entry->path(), newName);
+        mRenamedFiles.emplace(entry->path(), newName);
         fileRenamed(entry, newName);
     }
 }

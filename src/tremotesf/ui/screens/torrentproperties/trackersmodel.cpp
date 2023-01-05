@@ -108,12 +108,12 @@ namespace tremotesf {
         }
     }
 
-    QVariantList TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        QVariantList ids;
-        ids.reserve(indexes.size());
-        for (const QModelIndex& index : indexes) {
-            ids.append(mTrackers[static_cast<size_t>(index.row())].id());
-        }
+    std::vector<int> TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const {
+        std::vector<int> ids{};
+        ids.reserve(static_cast<size_t>(indexes.size()));
+        std::transform(indexes.begin(), indexes.end(), std::back_inserter(ids), [this](const QModelIndex& index) {
+            return mTrackers[static_cast<size_t>(index.row())].id();
+        });
         return ids;
     }
 

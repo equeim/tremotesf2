@@ -33,7 +33,7 @@ namespace tremotesf {
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);
 
-        QVariantList idsFromIndexes(const QModelIndexList& indexes) const;
+        std::vector<int> idsFromIndexes(const QModelIndexList& indexes) const;
         const libtremotesf::Tracker& trackerAtIndex(const QModelIndex& index) const;
 
     private:

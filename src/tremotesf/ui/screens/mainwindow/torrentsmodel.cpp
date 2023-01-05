@@ -129,9 +129,9 @@ namespace tremotesf {
             case Column::Ratio:
                 return Utils::formatRatio(torrent->ratio());
             case Column::AddedDate:
-                return torrent->addedDate();
+                return torrent->addedDate().toLocalTime();
             case Column::DoneDate:
-                return torrent->doneDate();
+                return torrent->doneDate().toLocalTime();
             case Column::DownloadSpeedLimit:
                 if (torrent->isDownloadSpeedLimited()) {
                     return Utils::formatSpeedLimit(torrent->downloadSpeedLimit());
@@ -153,7 +153,7 @@ namespace tremotesf {
             case Column::CompletedSize:
                 return Utils::formatByteSize(torrent->completedSize());
             case Column::ActivityDate:
-                return torrent->activityDate();
+                return torrent->activityDate().toLocalTime();
             default:
                 break;
             }
@@ -340,12 +340,12 @@ namespace tremotesf {
 
     Torrent* TorrentsModel::torrentAtRow(int row) const { return mRpc->torrents()[static_cast<size_t>(row)].get(); }
 
-    QVariantList TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        QVariantList ids;
-        ids.reserve(indexes.size());
-        for (const QModelIndex& index : indexes) {
-            ids.append(torrentAtIndex(index)->id());
-        }
+    std::vector<int> TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const {
+        std::vector<int> ids{};
+        ids.reserve(static_cast<size_t>(indexes.size()));
+        std::transform(indexes.begin(), indexes.end(), std::back_inserter(ids), [this](const QModelIndex& index) {
+            return torrentAtIndex(index)->id();
+        });
         return ids;
     }
 }

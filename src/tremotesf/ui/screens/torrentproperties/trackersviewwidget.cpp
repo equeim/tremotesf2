@@ -170,9 +170,8 @@ namespace tremotesf {
         dialog.button(QMessageBox::Ok)->setText(qApp->translate("tremotesf", "Remove"));
         dialog.setDefaultButton(QMessageBox::Cancel);
 
-        const QVariantList ids(
-            mModel->idsFromIndexes(mProxyModel->sourceIndexes(mTrackersView->selectionModel()->selectedRows()))
-        );
+        const auto ids =
+            mModel->idsFromIndexes(mProxyModel->sourceIndexes(mTrackersView->selectionModel()->selectedRows()));
         if (ids.size() == 1) {
             dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Tracker"));
             dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove this tracker?"));
@@ -182,7 +181,7 @@ namespace tremotesf {
                 "tremotesf",
                 "Are you sure you want to remove %Ln selected trackers?",
                 nullptr,
-                ids.size()
+                static_cast<int>(ids.size())
             ));
         }
 

@@ -173,13 +173,16 @@ namespace tremotesf {
         mChildrenHash.clear();
     }
 
-    QVariantList TorrentFilesModelDirectory::childrenIds() const {
-        QVariantList ids;
+    std::vector<int> TorrentFilesModelDirectory::childrenIds() const {
+        std::vector<int> ids{};
+        ids.reserve(mChildren.size());
         for (const auto& child : mChildren) {
             if (child->isDirectory()) {
-                ids.append(static_cast<const TorrentFilesModelDirectory*>(child.get())->childrenIds());
+                const auto childrenIds = static_cast<TorrentFilesModelDirectory*>(child.get())->childrenIds();
+                ids.reserve(ids.size() + childrenIds.size());
+                ids.insert(ids.end(), childrenIds.begin(), childrenIds.end());
             } else {
-                ids.append(static_cast<const TorrentFilesModelFile*>(child.get())->id());
+                ids.push_back(static_cast<const TorrentFilesModelFile*>(child.get())->id());
             }
         }
         return ids;

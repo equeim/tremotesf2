@@ -5,10 +5,9 @@
 #ifndef TREMOTESF_LOCALTORRENTFILESMODEL_H
 #define TREMOTESF_LOCALTORRENTFILESMODEL_H
 
+#include <map>
 #include <optional>
 #include <vector>
-#include <QVariant>
-#include <QVariantMap>
 
 #include "tremotesf/ui/itemmodels/basetorrentfilesmodel.h"
 #include "tremotesf/bencodeparser.h"
@@ -27,20 +26,20 @@ namespace tremotesf {
         bool isSuccessfull() const;
         QString errorString() const;
 
-        QVariantList unwantedFiles() const;
-        QVariantList highPriorityFiles() const;
-        QVariantList lowPriorityFiles() const;
+        std::vector<int> unwantedFiles() const;
+        std::vector<int> highPriorityFiles() const;
+        std::vector<int> lowPriorityFiles() const;
 
-        const QVariantMap& renamedFiles() const;
+        const std::map<QString, QString>& renamedFiles() const;
 
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
     private:
-        std::vector<TorrentFilesModelFile*> mFiles;
-        bool mLoaded;
-        std::optional<bencode::Error::Type> mErrorType;
+        std::vector<TorrentFilesModelFile*> mFiles{};
+        bool mLoaded{};
+        std::optional<bencode::Error::Type> mErrorType{};
 
-        QVariantMap mRenamedFiles;
+        std::map<QString, QString> mRenamedFiles{};
 
     signals:
         void loadedChanged();
