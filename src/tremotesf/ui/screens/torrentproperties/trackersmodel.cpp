@@ -20,9 +20,6 @@ namespace tremotesf {
         QString trackerStatusString(const Tracker& tracker) {
             switch (tracker.status()) {
             case Tracker::Status::Inactive:
-                if (!tracker.errorMessage().isEmpty()) {
-                    return qApp->translate("tremotesf", "Error: %1").arg(tracker.errorMessage());
-                }
                 return qApp->translate("tremotesf", "Inactive", "Tracker status");
             case Tracker::Status::WaitingForUpdate:
                 return qApp->translate("tremotesf", "Waiting for update", "Tracker status");
@@ -50,13 +47,15 @@ namespace tremotesf {
                 return tracker.announce();
             case Column::Status:
                 return trackerStatusString(tracker);
-            case Column::Peers:
-                return tracker.peers();
+            case Column::Error:
+                return tracker.errorMessage();
             case Column::NextUpdate:
                 if (tracker.nextUpdateEta() >= 0) {
                     return Utils::formatEta(tracker.nextUpdateEta());
                 }
                 break;
+            case Column::Peers:
+                return tracker.peers();
             }
         } else if (role == SortRole) {
             if (static_cast<Column>(index.column()) == Column::NextUpdate) {
@@ -76,13 +75,14 @@ namespace tremotesf {
             return qApp->translate("tremotesf", "Address");
         case Column::Status:
             return qApp->translate("tremotesf", "Status");
+        case Column::Error:
+            return qApp->translate("tremotesf", "Error");
         case Column::NextUpdate:
             return qApp->translate("tremotesf", "Next Update");
         case Column::Peers:
             return qApp->translate("tremotesf", "Peers");
-        default:
-            return {};
         }
+        return {};
     }
 
     int TrackersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mTrackers.size()); }
