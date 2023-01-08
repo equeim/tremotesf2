@@ -20,7 +20,7 @@ namespace tremotesf {
     protected:
         void onChangedItems(size_t first, size_t last) override {
             emit mModel.dataChanged(
-                mModel.index(static_cast<int>(first), lastColumn),
+                mModel.index(static_cast<int>(first), 0),
                 mModel.index(static_cast<int>(last - 1), lastColumn)
             );
         }
@@ -38,7 +38,6 @@ namespace tremotesf {
 
         void onAddedItems(size_t) override { mModel.endInsertRows(); };
 
-    protected:
         Model& mModel;
         const int lastColumn = static_cast<QAbstractItemModel&>(mModel).columnCount() - 1;
     };
