@@ -18,7 +18,8 @@ namespace tremotesf {
             : QAbstractListModel(parent), mHeader(header){};
 
         inline QVariant data(const QModelIndex& index, int role) const override {
-            return role == Qt::DisplayRole ? mStringList[static_cast<size_t>(index.row())] : QVariant{};
+            return index.isValid() && role == Qt::DisplayRole ? mStringList.at(static_cast<size_t>(index.row()))
+                                                              : QVariant{};
         };
         inline QVariant headerData(int, Qt::Orientation orientation, int role) const override {
             return orientation == Qt::Horizontal && role == Qt::DisplayRole ? mHeader : QVariant{};

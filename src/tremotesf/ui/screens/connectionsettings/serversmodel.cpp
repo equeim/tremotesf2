@@ -14,7 +14,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return {};
         }
-        const Server& server = mServers[static_cast<size_t>(index.row())];
+        const Server& server = mServers.at(static_cast<size_t>(index.row()));
         switch (role) {
         case Qt::CheckStateRole:
             if (server.name == mCurrentServer) {
@@ -41,9 +41,9 @@ namespace tremotesf {
         if (!modelIndex.isValid() || role != Qt::CheckStateRole || value.value<Qt::CheckState>() != Qt::Checked) {
             return false;
         }
-        const QString current(mServers[static_cast<size_t>(modelIndex.row())].name);
-        if (current != mCurrentServer) {
-            mCurrentServer = current;
+        const auto& current = mServers.at(static_cast<size_t>(modelIndex.row()));
+        if (current.name != mCurrentServer) {
+            mCurrentServer = current.name;
             emit dataChanged(index(0), index(static_cast<int>(mServers.size()) - 1));
             return true;
         }
@@ -92,10 +92,10 @@ namespace tremotesf {
 
         Server* const server = [=]() -> Server* {
             if (oldRow != -1) {
-                return &mServers[static_cast<size_t>(oldRow)];
+                return &mServers.at(static_cast<size_t>(oldRow));
             }
             if (row != -1) {
-                return &mServers[static_cast<size_t>(row)];
+                return &mServers.at(static_cast<size_t>(row));
             }
             return nullptr;
         }();
@@ -191,7 +191,7 @@ namespace tremotesf {
     void ServersModel::removeServerAtIndex(const QModelIndex& index) { removeServerAtRow(index.row()); }
 
     void ServersModel::removeServerAtRow(int row) {
-        const bool current = (mServers[static_cast<size_t>(row)].name == mCurrentServer);
+        const bool current = (mServers.at(static_cast<size_t>(row)).name == mCurrentServer);
         beginRemoveRows(QModelIndex(), row, row);
         mServers.erase(mServers.begin() + row);
         endRemoveRows();

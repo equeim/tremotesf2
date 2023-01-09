@@ -21,7 +21,7 @@ namespace tremotesf {
             return {};
         }
         const TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-        const Column column = mColumns[static_cast<size_t>(index.column())];
+        const Column column = mColumns.at(static_cast<size_t>(index.column()));
         switch (role) {
         case Qt::CheckStateRole:
             if (column == Column::Name) {
@@ -91,11 +91,10 @@ namespace tremotesf {
     }
 
     QVariant BaseTorrentFilesModel::headerData(int section, Qt::Orientation orientation, int role) const {
-        if (section < 0 || static_cast<size_t>(section) >= mColumns.size() || orientation != Qt::Horizontal ||
-            role != Qt::DisplayRole) {
+        if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
             return {};
         }
-        switch (mColumns[static_cast<size_t>(section)]) {
+        switch (mColumns.at(static_cast<size_t>(section))) {
         case Column::Name:
             return qApp->translate("tremotesf", "Name");
         case Column::Size:
@@ -131,10 +130,7 @@ namespace tremotesf {
         } else {
             return {};
         }
-        if (row >= 0 && static_cast<size_t>(row) < parentDirectory->children().size()) {
-            return createIndex(row, column, parentDirectory->children()[static_cast<size_t>(row)].get());
-        }
-        return {};
+        return createIndex(row, column, parentDirectory->children().at(static_cast<size_t>(row)).get());
     }
 
     QModelIndex BaseTorrentFilesModel::parent(const QModelIndex& child) const {

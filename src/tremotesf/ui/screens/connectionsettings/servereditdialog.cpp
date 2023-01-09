@@ -156,7 +156,7 @@ namespace tremotesf {
             mAutoReconnectGroupBox->setChecked(false);
             mAutoReconnectSpinBox->setValue(30);
         } else {
-            const Server& server = mServersModel->servers()[static_cast<size_t>(row)];
+            const Server& server = mServersModel->servers().at(static_cast<size_t>(row));
 
             mServerName = server.name;
             setWindowTitle(mServerName);

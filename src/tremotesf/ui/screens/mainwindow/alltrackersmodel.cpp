@@ -20,7 +20,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return {};
         }
-        const TrackerItem& item = mTrackers[static_cast<size_t>(index.row())];
+        const TrackerItem& item = mTrackers.at(static_cast<size_t>(index.row()));
         switch (role) {
         case TrackerRole:
             return item.tracker;
