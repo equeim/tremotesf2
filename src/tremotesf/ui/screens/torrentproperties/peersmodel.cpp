@@ -28,7 +28,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return {};
         }
-        const libtremotesf::Peer& peer = mPeers[static_cast<size_t>(index.row())];
+        const libtremotesf::Peer& peer = mPeers.at(static_cast<size_t>(index.row()));
         switch (role) {
         case Qt::DisplayRole:
             switch (static_cast<Column>(index.column())) {

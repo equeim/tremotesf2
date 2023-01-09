@@ -250,7 +250,7 @@ namespace tremotesf {
             for (int i = 0, max = static_cast<int>(mFiles.size()); i < max; ++i) {
                 const auto& file = mFiles[static_cast<size_t>(i)];
                 if (i == changedIndex) {
-                    updateFile(file, torrentFiles[static_cast<size_t>(changedIndex)]);
+                    updateFile(file, torrentFiles.at(static_cast<size_t>(changedIndex)));
                     ++changedIter;
                     if (changedIter == changedEnd) {
                         changedIndex = -1;
