@@ -9,6 +9,8 @@
 
 #include <QAbstractTableModel>
 
+class QTimer;
+
 namespace libtremotesf {
     class Torrent;
     class Tracker;
@@ -24,6 +26,7 @@ namespace tremotesf {
         static constexpr auto SortRole = Qt::UserRole;
 
         explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
+        ~TrackersModel() override;
 
         int columnCount(const QModelIndex& = {}) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -38,9 +41,14 @@ namespace tremotesf {
 
     private:
         void update();
+        void updateEtas();
 
-        libtremotesf::Torrent* mTorrent;
-        std::vector<libtremotesf::Tracker> mTrackers;
+        libtremotesf::Torrent* mTorrent{};
+
+        struct TrackerItem;
+        std::vector<TrackerItem> mTrackers;
+
+        QTimer* mEtaUpdateTimer{};
 
         template<typename, typename, typename, typename>
         friend class ModelListUpdater;
