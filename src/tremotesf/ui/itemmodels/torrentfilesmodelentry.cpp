@@ -114,8 +114,8 @@ namespace tremotesf {
 
     TorrentFilesModelEntry::WantedState TorrentFilesModelDirectory::wantedState() const {
         const TorrentFilesModelEntry::WantedState first = mChildren.front()->wantedState();
-        for (size_t i = 1, max = mChildren.size(); i < max; ++i) {
-            if (mChildren[i]->wantedState() != first) {
+        for (auto i = mChildren.begin() + 1, end = mChildren.end(); i != end; ++i) {
+            if ((*i)->wantedState() != first) {
                 return MixedWanted;
             }
         }
@@ -130,8 +130,8 @@ namespace tremotesf {
 
     TorrentFilesModelEntry::Priority TorrentFilesModelDirectory::priority() const {
         const Priority first = mChildren.front()->priority();
-        for (size_t i = 1, max = mChildren.size(); i < max; ++i) {
-            if (mChildren[i]->priority() != first) {
+        for (auto i = mChildren.begin() + 1, end = mChildren.end(); i != end; ++i) {
+            if ((*i)->priority() != first) {
                 return MixedPriority;
             }
         }
