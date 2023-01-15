@@ -35,43 +35,9 @@ namespace tremotesf {
         static LastTorrents fromVariant(const QVariant& var);
     };
 
-    struct Server : libtremotesf::Server {
-        Server() = default;
-
-        Server(
-            const QString& name,
-            const QString& address,
-            int port,
-            const QString& apiPath,
-
-            ProxyType proxyType,
-            const QString& proxyHostname,
-            int proxyPort,
-            const QString& proxyUser,
-            const QString& proxyPassword,
-
-            bool https,
-            bool selfSignedCertificateEnabled,
-            const QByteArray& selfSignedCertificate,
-            bool clientCertificateEnabled,
-            const QByteArray& clientCertificate,
-
-            bool authentication,
-            const QString& username,
-            const QString& password,
-
-            int updateInterval,
-            int timeout,
-
-            bool autoReconnectEnabled,
-            int autoReconnectInterval,
-
-            const std::vector<MountedDirectory>& mountedDirectories,
-            const LastTorrents& lastTorrents,
-            const QStringList& lastDownloadDirectories,
-            const QString& lastDownloadDirectory
-        );
-
+    struct Server {
+        QString name{};
+        libtremotesf::ConnectionConfiguration connectionConfiguration{};
         std::vector<MountedDirectory> mountedDirectories{};
         LastTorrents lastTorrents{};
         QStringList lastDownloadDirectories{};
@@ -112,7 +78,7 @@ namespace tremotesf {
             int port,
             const QString& apiPath,
 
-            libtremotesf::Server::ProxyType proxyType,
+            libtremotesf::ConnectionConfiguration::ProxyType proxyType,
             const QString& proxyHostname,
             int proxyPort,
             const QString& proxyUser,
