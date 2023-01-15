@@ -17,6 +17,8 @@
 #include "libtremotesf/torrent.h"
 
 namespace tremotesf {
+    using libtremotesf::ConnectionConfiguration;
+
     namespace {
         constexpr QSettings::Format settingsFormat = [] {
             if constexpr (isTargetOsWindows) {
@@ -70,26 +72,26 @@ namespace tremotesf {
         const QLatin1String proxyTypeHttp("HTTP");
         const QLatin1String proxyTypeSocks5("SOCKS5");
 
-        Server::ProxyType proxyTypeFromSettings(const QString& value) {
+        ConnectionConfiguration::ProxyType proxyTypeFromSettings(const QString& value) {
             if (value.isEmpty() || value == proxyTypeDefault) {
-                return Server::ProxyType::Default;
+                return ConnectionConfiguration::ProxyType::Default;
             }
             if (value == proxyTypeHttp) {
-                return Server::ProxyType::Http;
+                return ConnectionConfiguration::ProxyType::Http;
             }
             if (value == proxyTypeSocks5) {
-                return Server::ProxyType::Socks5;
+                return ConnectionConfiguration::ProxyType::Socks5;
             }
-            return Server::ProxyType::Default;
+            return ConnectionConfiguration::ProxyType::Default;
         }
 
-        QLatin1String proxyTypeToSettings(Server::ProxyType type) {
+        QLatin1String proxyTypeToSettings(ConnectionConfiguration::ProxyType type) {
             switch (type) {
-            case Server::ProxyType::Default:
+            case ConnectionConfiguration::ProxyType::Default:
                 return proxyTypeDefault;
-            case Server::ProxyType::Http:
+            case ConnectionConfiguration::ProxyType::Http:
                 return proxyTypeHttp;
-            case Server::ProxyType::Socks5:
+            case ConnectionConfiguration::ProxyType::Socks5:
                 return proxyTypeSocks5;
             }
             return proxyTypeDefault;
@@ -149,71 +151,6 @@ namespace tremotesf {
             );
         }
         return lastTorrents;
-    }
-
-    Server::Server(const QString& name,
-                   const QString& address,
-                   int port,
-                   const QString& apiPath,
-
-                   ProxyType proxyType,
-                   const QString& proxyHostname,
-                   int proxyPort,
-                   const QString& proxyUser,
-                   const QString& proxyPassword,
-
-                   bool https,
-                   bool selfSignedCertificateEnabled,
-                   const QByteArray& selfSignedCertificate,
-                   bool clientCertificateEnabled,
-                   const QByteArray& clientCertificate,
-
-                   bool authentication,
-                   const QString& username,
-                   const QString& password,
-
-                   int updateInterval,
-                   int timeout,
-
-                   bool autoReconnectEnabled,
-                   int autoReconnectInterval,
-
-                   const std::vector<MountedDirectory>& mountedDirectories,
-                   const LastTorrents& lastTorrents,
-                   const QStringList& lastDownloadDirectories,
-                   const QString& lastDownloadDirectory)
-        : libtremotesf::Server{name,
-                               address,
-                               port,
-                               apiPath,
-
-                               proxyType,
-                               proxyHostname,
-                               proxyPort,
-                               proxyUser,
-                               proxyPassword,
-
-                               https,
-                               selfSignedCertificateEnabled,
-                               selfSignedCertificate,
-                               clientCertificateEnabled,
-                               clientCertificate,
-
-                               authentication,
-                               username,
-                               password,
-
-                               updateInterval,
-                               timeout,
-
-                               autoReconnectEnabled,
-                               autoReconnectInterval},
-          mountedDirectories(mountedDirectories),
-          lastTorrents(lastTorrents),
-          lastDownloadDirectories(lastDownloadDirectories),
-          lastDownloadDirectory(lastDownloadDirectory)
-    {
-
     }
 
     Servers* Servers::instance() {
@@ -301,9 +238,14 @@ namespace tremotesf {
         LastTorrents torrents{};
         const auto& rpcTorrents = rpc->torrents();
         torrents.torrents.reserve(rpcTorrents.size());
-        std::transform(rpcTorrents.begin(), rpcTorrents.end(), std::back_inserter(torrents.torrents), [](const auto& torrent) {
-            return LastTorrents::Torrent{torrent->hashString(), torrent->isFinished()};
-        });
+        std::transform(
+            rpcTorrents.begin(),
+            rpcTorrents.end(),
+            std::back_inserter(torrents.torrents),
+            [](const auto& torrent) {
+                return LastTorrents::Torrent{torrent->hashString(), torrent->isFinished()};
+            }
+        );
         mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();
     }
@@ -346,7 +288,7 @@ namespace tremotesf {
         int port,
         const QString& apiPath,
 
-        Server::ProxyType proxyType,
+        ConnectionConfiguration::ProxyType proxyType,
         const QString& proxyHostname,
         int proxyPort,
         const QString& proxyUser,
@@ -452,31 +394,34 @@ namespace tremotesf {
         for (const Server& server : servers) {
             mSettings->beginGroup(server.name);
 
-            mSettings->setValue(addressKey, server.address);
-            mSettings->setValue(portKey, server.port);
-            mSettings->setValue(apiPathKey, server.apiPath);
+            mSettings->setValue(addressKey, server.connectionConfiguration.address);
+            mSettings->setValue(portKey, server.connectionConfiguration.port);
+            mSettings->setValue(apiPathKey, server.connectionConfiguration.apiPath);
 
-            mSettings->setValue(proxyTypeKey, proxyTypeToSettings(server.proxyType));
-            mSettings->setValue(proxyHostnameKey, server.proxyHostname);
-            mSettings->setValue(proxyPortKey, server.proxyPort);
-            mSettings->setValue(proxyUserKey, server.proxyUser);
-            mSettings->setValue(proxyPasswordKey, server.proxyPassword);
+            mSettings->setValue(proxyTypeKey, proxyTypeToSettings(server.connectionConfiguration.proxyType));
+            mSettings->setValue(proxyHostnameKey, server.connectionConfiguration.proxyHostname);
+            mSettings->setValue(proxyPortKey, server.connectionConfiguration.proxyPort);
+            mSettings->setValue(proxyUserKey, server.connectionConfiguration.proxyUser);
+            mSettings->setValue(proxyPasswordKey, server.connectionConfiguration.proxyPassword);
 
-            mSettings->setValue(httpsKey, server.https);
-            mSettings->setValue(selfSignedCertificateEnabledKey, server.selfSignedCertificateEnabled);
-            mSettings->setValue(selfSignedCertificateKey, server.selfSignedCertificate);
-            mSettings->setValue(clientCertificateEnabledKey, server.clientCertificateEnabled);
-            mSettings->setValue(clientCertificateKey, server.clientCertificate);
+            mSettings->setValue(httpsKey, server.connectionConfiguration.https);
+            mSettings->setValue(
+                selfSignedCertificateEnabledKey,
+                server.connectionConfiguration.selfSignedCertificateEnabled
+            );
+            mSettings->setValue(selfSignedCertificateKey, server.connectionConfiguration.selfSignedCertificate);
+            mSettings->setValue(clientCertificateEnabledKey, server.connectionConfiguration.clientCertificateEnabled);
+            mSettings->setValue(clientCertificateKey, server.connectionConfiguration.clientCertificate);
 
-            mSettings->setValue(authenticationKey, server.authentication);
-            mSettings->setValue(usernameKey, server.username);
-            mSettings->setValue(passwordKey, server.password);
+            mSettings->setValue(authenticationKey, server.connectionConfiguration.authentication);
+            mSettings->setValue(usernameKey, server.connectionConfiguration.username);
+            mSettings->setValue(passwordKey, server.connectionConfiguration.password);
 
-            mSettings->setValue(updateIntervalKey, server.updateInterval);
-            mSettings->setValue(timeoutKey, server.timeout);
+            mSettings->setValue(updateIntervalKey, server.connectionConfiguration.updateInterval);
+            mSettings->setValue(timeoutKey, server.connectionConfiguration.timeout);
 
-            mSettings->setValue(autoReconnectEnabledKey, server.autoReconnectEnabled);
-            mSettings->setValue(autoReconnectIntervalKey, server.autoReconnectInterval);
+            mSettings->setValue(autoReconnectEnabledKey, server.connectionConfiguration.autoReconnectEnabled);
+            mSettings->setValue(autoReconnectIntervalKey, server.connectionConfiguration.autoReconnectInterval);
 
             mSettings->setValue(mountedDirectoriesKey, MountedDirectory::toVariant(server.mountedDirectories));
             mSettings->setValue(lastTorrentsKey, server.lastTorrents.toVariant());
@@ -533,39 +478,38 @@ namespace tremotesf {
 
     Server Servers::getServer(const QString& name) const {
         mSettings->beginGroup(name);
-        Server server(
+        Server server{
             mSettings->group(),
-            mSettings->value(addressKey).toString(),
-            mSettings->value(portKey).toInt(),
-            mSettings->value(apiPathKey).toString(),
+            ConnectionConfiguration{
+                mSettings->value(addressKey).toString(),
+                mSettings->value(portKey).toInt(),
+                mSettings->value(apiPathKey).toString(),
 
-            proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
-            mSettings->value(proxyHostnameKey).toString(),
-            mSettings->value(proxyPortKey).toInt(),
-            mSettings->value(proxyUserKey).toString(),
-            mSettings->value(proxyPasswordKey).toString(),
+                proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
+                mSettings->value(proxyHostnameKey).toString(),
+                mSettings->value(proxyPortKey).toInt(),
+                mSettings->value(proxyUserKey).toString(),
+                mSettings->value(proxyPasswordKey).toString(),
 
-            mSettings->value(httpsKey, false).toBool(),
-            mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
-            mSettings->value(selfSignedCertificateKey).toByteArray(),
-            mSettings->value(clientCertificateEnabledKey, false).toBool(),
-            mSettings->value(clientCertificateKey).toByteArray(),
+                mSettings->value(httpsKey, false).toBool(),
+                mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
+                mSettings->value(selfSignedCertificateKey).toByteArray(),
+                mSettings->value(clientCertificateEnabledKey, false).toBool(),
+                mSettings->value(clientCertificateKey).toByteArray(),
 
-            mSettings->value(authenticationKey, false).toBool(),
-            mSettings->value(usernameKey).toString(),
-            mSettings->value(passwordKey).toString(),
+                mSettings->value(authenticationKey, false).toBool(),
+                mSettings->value(usernameKey).toString(),
+                mSettings->value(passwordKey).toString(),
 
-            mSettings->value(updateIntervalKey, 5).toInt(),
-            mSettings->value(timeoutKey, 30).toInt(),
+                mSettings->value(updateIntervalKey, 5).toInt(),
+                mSettings->value(timeoutKey, 30).toInt(),
 
-            mSettings->value(autoReconnectEnabledKey, false).toBool(),
-            mSettings->value(autoReconnectIntervalKey, 30).toInt(),
-
+                mSettings->value(autoReconnectEnabledKey, false).toBool(),
+                mSettings->value(autoReconnectIntervalKey, 30).toInt()},
             MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
             LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
             mSettings->value(lastDownloadDirectoriesKey).toStringList(),
-            mSettings->value(lastDownloadDirectoryKey).toString()
-        );
+            mSettings->value(lastDownloadDirectoryKey).toString()};
         mSettings->endGroup();
         return server;
     }

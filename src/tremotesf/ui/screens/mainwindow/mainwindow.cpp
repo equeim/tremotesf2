@@ -192,15 +192,15 @@ namespace tremotesf {
         setAcceptDrops(true);
 
         if (Servers::instance()->hasServers()) {
-            mRpc->setServer(Servers::instance()->currentServer());
+            mRpc->setConnectionConfiguration(Servers::instance()->currentServer().connectionConfiguration);
         }
 
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this] {
             if (Servers::instance()->hasServers()) {
-                mRpc->setServer(Servers::instance()->currentServer());
+                mRpc->setConnectionConfiguration(Servers::instance()->currentServer().connectionConfiguration);
                 mRpc->connect();
             } else {
-                mRpc->resetServer();
+                mRpc->resetConnectionConfiguration();
             }
         });
 

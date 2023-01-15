@@ -40,17 +40,21 @@
 #include "serversmodel.h"
 
 namespace tremotesf {
+    using libtremotesf::ConnectionConfiguration;
+
     namespace {
         const auto removeIconName = "list-remove"_l1;
 
-        constexpr Server::ProxyType proxyTypeComboBoxValues[]{
-            Server::ProxyType::Default, Server::ProxyType::Http, Server::ProxyType::Socks5};
+        constexpr ConnectionConfiguration::ProxyType proxyTypeComboBoxValues[]{
+            ConnectionConfiguration::ProxyType::Default,
+            ConnectionConfiguration::ProxyType::Http,
+            ConnectionConfiguration::ProxyType::Socks5};
 
-        Server::ProxyType proxyTypeFromComboBoxIndex(int index) {
+        ConnectionConfiguration::ProxyType proxyTypeFromComboBoxIndex(int index) {
             if (index >= 0) {
                 return proxyTypeComboBoxValues[index];
             }
-            return Server::ProxyType::Default;
+            return ConnectionConfiguration::ProxyType::Default;
         }
     }
 
@@ -148,7 +152,9 @@ namespace tremotesf {
 
             mPortSpinBox->setValue(9091);
             mApiPathLineEdit->setText("/transmission/rpc"_l1);
-            mProxyTypeComboBox->setCurrentIndex(index_of_i(proxyTypeComboBoxValues, Server::ProxyType::Default));
+            mProxyTypeComboBox->setCurrentIndex(
+                index_of_i(proxyTypeComboBoxValues, ConnectionConfiguration::ProxyType::Default)
+            );
             mHttpsGroupBox->setChecked(false);
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
@@ -162,31 +168,33 @@ namespace tremotesf {
             setWindowTitle(mServerName);
 
             mNameLineEdit->setText(mServerName);
-            mAddressLineEdit->setText(server.address);
-            mPortSpinBox->setValue(server.port);
-            mApiPathLineEdit->setText(server.apiPath);
+            mAddressLineEdit->setText(server.connectionConfiguration.address);
+            mPortSpinBox->setValue(server.connectionConfiguration.port);
+            mApiPathLineEdit->setText(server.connectionConfiguration.apiPath);
 
-            mProxyTypeComboBox->setCurrentIndex(index_of_i(proxyTypeComboBoxValues, server.proxyType));
-            mProxyHostnameLineEdit->setText(server.proxyHostname);
-            mProxyPortSpinBox->setValue(server.proxyPort);
-            mProxyUserLineEdit->setText(server.proxyUser);
-            mProxyPasswordLineEdit->setText(server.proxyPassword);
+            mProxyTypeComboBox->setCurrentIndex(
+                index_of_i(proxyTypeComboBoxValues, server.connectionConfiguration.proxyType)
+            );
+            mProxyHostnameLineEdit->setText(server.connectionConfiguration.proxyHostname);
+            mProxyPortSpinBox->setValue(server.connectionConfiguration.proxyPort);
+            mProxyUserLineEdit->setText(server.connectionConfiguration.proxyUser);
+            mProxyPasswordLineEdit->setText(server.connectionConfiguration.proxyPassword);
 
-            mHttpsGroupBox->setChecked(server.https);
-            mSelfSignedCertificateCheckBox->setChecked(server.selfSignedCertificateEnabled);
-            mSelfSignedCertificateEdit->setPlainText(server.selfSignedCertificate);
-            mClientCertificateCheckBox->setChecked(server.clientCertificateEnabled);
-            mClientCertificateEdit->setPlainText(server.clientCertificate);
+            mHttpsGroupBox->setChecked(server.connectionConfiguration.https);
+            mSelfSignedCertificateCheckBox->setChecked(server.connectionConfiguration.selfSignedCertificateEnabled);
+            mSelfSignedCertificateEdit->setPlainText(server.connectionConfiguration.selfSignedCertificate);
+            mClientCertificateCheckBox->setChecked(server.connectionConfiguration.clientCertificateEnabled);
+            mClientCertificateEdit->setPlainText(server.connectionConfiguration.clientCertificate);
 
-            mAuthenticationGroupBox->setChecked(server.authentication);
-            mUsernameLineEdit->setText(server.username);
-            mPasswordLineEdit->setText(server.password);
+            mAuthenticationGroupBox->setChecked(server.connectionConfiguration.authentication);
+            mUsernameLineEdit->setText(server.connectionConfiguration.username);
+            mPasswordLineEdit->setText(server.connectionConfiguration.password);
 
-            mUpdateIntervalSpinBox->setValue(server.updateInterval);
-            mTimeoutSpinBox->setValue(server.timeout);
+            mUpdateIntervalSpinBox->setValue(server.connectionConfiguration.updateInterval);
+            mTimeoutSpinBox->setValue(server.connectionConfiguration.timeout);
 
-            mAutoReconnectGroupBox->setChecked(server.autoReconnectEnabled);
-            mAutoReconnectSpinBox->setValue(server.autoReconnectInterval);
+            mAutoReconnectGroupBox->setChecked(server.connectionConfiguration.autoReconnectEnabled);
+            mAutoReconnectSpinBox->setValue(server.connectionConfiguration.autoReconnectInterval);
 
             for (const auto& [localDirectory, remoteDirectory] : server.mountedDirectories) {
                 mMountedDirectoriesWidget->addRow(localDirectory, remoteDirectory);
@@ -257,15 +265,15 @@ namespace tremotesf {
 
         mProxyTypeComboBox = new QComboBox(this);
         mProxyTypeComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        for (Server::ProxyType type : proxyTypeComboBoxValues) {
+        for (ConnectionConfiguration::ProxyType type : proxyTypeComboBoxValues) {
             switch (type) {
-            case Server::ProxyType::Default:
+            case ConnectionConfiguration::ProxyType::Default:
                 mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "Default"));
                 break;
-            case Server::ProxyType::Http:
+            case ConnectionConfiguration::ProxyType::Http:
                 mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "HTTP"));
                 break;
-            case Server::ProxyType::Socks5:
+            case ConnectionConfiguration::ProxyType::Socks5:
                 mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "SOCKS5"));
                 break;
             }
@@ -419,7 +427,8 @@ namespace tremotesf {
 
     void ServerEditDialog::setProxyFieldsVisible() {
         const bool visible =
-            (proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()) != Server::ProxyType::Default);
+            (proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()) !=
+             ConnectionConfiguration::ProxyType::Default);
         for (int i = 1, max = mProxyLayout->rowCount(); i < max; ++i) {
             mProxyLayout->itemAt(i, QFormLayout::LabelRole)->widget()->setVisible(visible);
             mProxyLayout->itemAt(i, QFormLayout::FieldRole)->widget()->setVisible(visible);

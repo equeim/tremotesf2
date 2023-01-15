@@ -63,7 +63,7 @@ namespace tremotesf {
         int port,
         const QString& apiPath,
 
-        Server::ProxyType proxyType,
+        libtremotesf::ConnectionConfiguration::ProxyType proxyType,
         const QString& proxyHostname,
         int proxyPort,
         const QString& proxyUser,
@@ -104,31 +104,31 @@ namespace tremotesf {
             // Overwrite an existing server
 
             server->name = name;
-            server->address = address;
-            server->port = port;
-            server->apiPath = apiPath;
+            server->connectionConfiguration.address = address;
+            server->connectionConfiguration.port = port;
+            server->connectionConfiguration.apiPath = apiPath;
 
-            server->proxyType = proxyType;
-            server->proxyHostname = proxyHostname;
-            server->proxyPort = proxyPort;
-            server->proxyUser = proxyUser;
-            server->proxyPassword = proxyPassword;
+            server->connectionConfiguration.proxyType = proxyType;
+            server->connectionConfiguration.proxyHostname = proxyHostname;
+            server->connectionConfiguration.proxyPort = proxyPort;
+            server->connectionConfiguration.proxyUser = proxyUser;
+            server->connectionConfiguration.proxyPassword = proxyPassword;
 
-            server->https = https;
-            server->selfSignedCertificateEnabled = selfSignedCertificateEnabled;
-            server->selfSignedCertificate = selfSignedCertificate;
-            server->clientCertificateEnabled = clientCertificateEnabled;
-            server->clientCertificate = clientCertificate;
+            server->connectionConfiguration.https = https;
+            server->connectionConfiguration.selfSignedCertificateEnabled = selfSignedCertificateEnabled;
+            server->connectionConfiguration.selfSignedCertificate = selfSignedCertificate;
+            server->connectionConfiguration.clientCertificateEnabled = clientCertificateEnabled;
+            server->connectionConfiguration.clientCertificate = clientCertificate;
 
-            server->authentication = authentication;
-            server->username = username;
-            server->password = password;
+            server->connectionConfiguration.authentication = authentication;
+            server->connectionConfiguration.username = username;
+            server->connectionConfiguration.password = password;
 
-            server->updateInterval = updateInterval;
-            server->timeout = timeout;
+            server->connectionConfiguration.updateInterval = updateInterval;
+            server->connectionConfiguration.timeout = timeout;
 
-            server->autoReconnectEnabled = autoReconnectEnabled;
-            server->autoReconnectInterval = autoReconnectInterval;
+            server->connectionConfiguration.autoReconnectEnabled = autoReconnectEnabled;
+            server->connectionConfiguration.autoReconnectInterval = autoReconnectInterval;
 
             server->mountedDirectories = mountedDirectories;
 
@@ -148,39 +148,38 @@ namespace tremotesf {
         } else {
             row = static_cast<int>(mServers.size());
             beginInsertRows(QModelIndex(), row, row);
-            mServers.emplace_back(
+            mServers.push_back(Server{
                 name,
-                address,
-                port,
-                apiPath,
+                libtremotesf::ConnectionConfiguration{
+                    address,
+                    port,
+                    apiPath,
 
-                proxyType,
-                proxyHostname,
-                proxyPort,
-                proxyUser,
-                proxyPassword,
+                    proxyType,
+                    proxyHostname,
+                    proxyPort,
+                    proxyUser,
+                    proxyPassword,
 
-                https,
-                selfSignedCertificateEnabled,
-                selfSignedCertificate,
-                clientCertificateEnabled,
-                clientCertificate,
+                    https,
+                    selfSignedCertificateEnabled,
+                    selfSignedCertificate,
+                    clientCertificateEnabled,
+                    clientCertificate,
 
-                authentication,
-                username,
-                password,
+                    authentication,
+                    username,
+                    password,
 
-                updateInterval,
-                timeout,
+                    updateInterval,
+                    timeout,
 
-                autoReconnectEnabled,
-                autoReconnectInterval,
-
+                    autoReconnectEnabled,
+                    autoReconnectInterval},
                 mountedDirectories,
                 LastTorrents{},
                 QStringList{},
-                QString{}
-            );
+                QString{}});
             endInsertRows();
             if (row == 0) {
                 mCurrentServer = name;
