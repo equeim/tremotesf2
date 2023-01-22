@@ -147,7 +147,8 @@ namespace tremotesf {
         finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
 
         if constexpr (isTargetOsWindows) {
-            darkThemeComboBox->setCurrentIndex(index_of_i(darkThemeComboBoxValues, settings->darkThemeMode()));
+            darkThemeComboBox->setCurrentIndex(indexOfCasted<int>(darkThemeComboBoxValues, settings->darkThemeMode()).value()
+            );
             if (systemAccentColorCheckBox) {
                 systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
             }

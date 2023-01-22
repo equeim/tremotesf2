@@ -46,15 +46,15 @@ namespace tremotesf {
     using libtremotesf::TorrentData;
 
     namespace {
-        const TorrentData::Priority priorityComboBoxItems[] = {
+        constexpr TorrentData::Priority priorityComboBoxItems[] = {
             TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low};
 
-        const TorrentData::RatioLimitMode ratioLimitComboBoxItems[] = {
+        constexpr TorrentData::RatioLimitMode ratioLimitComboBoxItems[] = {
             TorrentData::RatioLimitMode::Global,
             TorrentData::RatioLimitMode::Unlimited,
             TorrentData::RatioLimitMode::Single};
 
-        const TorrentData::IdleSeedingLimitMode idleSeedingLimitComboBoxItems[] = {
+        constexpr TorrentData::IdleSeedingLimitMode idleSeedingLimitComboBoxItems[] = {
             TorrentData::IdleSeedingLimitMode::Global,
             TorrentData::IdleSeedingLimitMode::Unlimited,
             TorrentData::IdleSeedingLimitMode::Single};
@@ -347,7 +347,7 @@ namespace tremotesf {
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             [=](int index) {
-                if (index == index_of_i(ratioLimitComboBoxItems, TorrentData::RatioLimitMode::Single)) {
+                if (index == indexOfCasted<int>(ratioLimitComboBoxItems, TorrentData::RatioLimitMode::Single)) {
                     ratioLimitSpinBox->show();
                 } else {
                     ratioLimitSpinBox->hide();
@@ -386,7 +386,8 @@ namespace tremotesf {
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             [=](int index) {
-                if (index == index_of_i(idleSeedingLimitComboBoxItems, TorrentData::IdleSeedingLimitMode::Single)) {
+                if (index ==
+                    indexOfCasted<int>(idleSeedingLimitComboBoxItems, TorrentData::IdleSeedingLimitMode::Single)) {
                     idleSeedingLimitSpinBox->show();
                 } else {
                     idleSeedingLimitSpinBox->hide();
@@ -443,7 +444,9 @@ namespace tremotesf {
                 &Torrent::setUploadSpeedLimit
             );
 
-            priorityComboBox->setCurrentIndex(index_of_i(priorityComboBoxItems, mTorrent->bandwidthPriority()));
+            priorityComboBox->setCurrentIndex(
+                indexOfCasted<int>(priorityComboBoxItems, mTorrent->bandwidthPriority()).value()
+            );
             QObject::connect(
                 priorityComboBox,
                 static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -451,7 +454,9 @@ namespace tremotesf {
                 [=](int index) { mTorrent->setBandwidthPriority(priorityComboBoxItems[index]); }
             );
 
-            ratioLimitComboBox->setCurrentIndex(index_of_i(ratioLimitComboBoxItems, mTorrent->ratioLimitMode()));
+            ratioLimitComboBox->setCurrentIndex(
+                indexOfCasted<int>(ratioLimitComboBoxItems, mTorrent->ratioLimitMode()).value()
+            );
             QObject::connect(
                 ratioLimitComboBox,
                 static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -468,7 +473,7 @@ namespace tremotesf {
             );
 
             idleSeedingLimitComboBox->setCurrentIndex(
-                index_of_i(idleSeedingLimitComboBoxItems, mTorrent->idleSeedingLimitMode())
+                indexOfCasted<int>(idleSeedingLimitComboBoxItems, mTorrent->idleSeedingLimitMode()).value()
             );
             QObject::connect(
                 idleSeedingLimitComboBox,

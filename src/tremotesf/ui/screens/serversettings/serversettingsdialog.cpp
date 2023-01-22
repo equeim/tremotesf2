@@ -33,7 +33,7 @@
 
 namespace tremotesf {
     namespace {
-        const libtremotesf::ServerSettingsData::EncryptionMode encryptionModeComboBoxItems[] = {
+        constexpr libtremotesf::ServerSettingsData::EncryptionMode encryptionModeComboBoxItems[] = {
             libtremotesf::ServerSettingsData::EncryptionMode::Allowed,
             libtremotesf::ServerSettingsData::EncryptionMode::Preferred,
             libtremotesf::ServerSettingsData::EncryptionMode::Required};
@@ -565,7 +565,9 @@ namespace tremotesf {
         mPeerPortSpinBox->setValue(settings->peerPort());
         mRandomPortCheckBox->setChecked(settings->isRandomPortEnabled());
         mPortForwardingCheckBox->setChecked(settings->isPortForwardingEnabled());
-        mEncryptionComboBox->setCurrentIndex(index_of_i(encryptionModeComboBoxItems, settings->encryptionMode()));
+        mEncryptionComboBox->setCurrentIndex(
+            indexOfCasted<int>(encryptionModeComboBoxItems, settings->encryptionMode()).value()
+        );
         mUtpCheckBox->setChecked(settings->isUtpEnabled());
         mPexCheckBox->setChecked(settings->isPexEnabled());
         mDhtCheckBox->setChecked(settings->isDhtEnabled());
