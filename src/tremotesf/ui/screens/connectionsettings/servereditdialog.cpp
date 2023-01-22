@@ -43,7 +43,7 @@ namespace tremotesf {
     using libtremotesf::ConnectionConfiguration;
 
     namespace {
-        const auto removeIconName = "list-remove"_l1;
+        constexpr auto removeIconName = "list-remove"_l1;
 
         constexpr ConnectionConfiguration::ProxyType proxyTypeComboBoxValues[]{
             ConnectionConfiguration::ProxyType::Default,

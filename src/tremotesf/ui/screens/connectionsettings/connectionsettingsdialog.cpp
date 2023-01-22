@@ -24,8 +24,8 @@
 
 namespace tremotesf {
     namespace {
-        const auto editIconName = "document-properties"_l1;
-        const auto removeIconName = "list-remove"_l1;
+        constexpr auto editIconName = "document-properties"_l1;
+        constexpr auto removeIconName = "list-remove"_l1;
     }
 
     ConnectionSettingsDialog::ConnectionSettingsDialog(QWidget* parent)
