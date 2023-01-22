@@ -107,7 +107,7 @@ namespace tremotesf {
         std::map<QString, int> trackers;
         trackers.emplace(QString(), rpc()->torrentsCount());
         for (const auto& torrent : rpc()->torrents()) {
-            for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
+            for (const libtremotesf::Tracker& tracker : torrent->data().trackers) {
                 const QString& site = tracker.site();
                 auto found = trackers.find(site);
                 if (found == trackers.end()) {

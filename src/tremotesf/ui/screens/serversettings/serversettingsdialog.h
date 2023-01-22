@@ -32,7 +32,6 @@ namespace tremotesf {
         void setupUi();
         void loadSettings();
 
-    private:
         const Rpc* mRpc;
 
         KMessageWidget* mDisconnectedMessageWidget = nullptr;
@@ -40,7 +39,6 @@ namespace tremotesf {
         QWidget* mDownloadingPageWidget = nullptr;
         RemoteDirectorySelectionWidget* mDownloadDirectoryWidget = nullptr;
         QCheckBox* mStartAddedTorrentsCheckBox = nullptr;
-        //QCheckBox* mTrashTorrentFilesCheckBox = nullptr;
         QCheckBox* mIncompleteFilesCheckBox = nullptr;
         QCheckBox* mIncompleteDirectoryCheckBox = nullptr;
         RemoteDirectorySelectionWidget* mIncompleteDirectoryWidget = nullptr;

@@ -28,7 +28,7 @@ namespace tremotesf {
                         QStringList finishedHashes;
                         QStringList finishedNames;
                         for (const auto& torrent : torrents()) {
-                            const QString hashString(torrent->hashString());
+                            const QString hashString(torrent->data().hashString);
                             const auto found = std::find_if(
                                 lastTorrents.torrents.cbegin(),
                                 lastTorrents.torrents.cend(),
@@ -36,13 +36,13 @@ namespace tremotesf {
                             );
                             if (found == lastTorrents.torrents.cend()) {
                                 if (notifyOnAdded) {
-                                    addedHashes.push_back(torrent->hashString());
-                                    addedNames.push_back(torrent->name());
+                                    addedHashes.push_back(torrent->data().hashString);
+                                    addedNames.push_back(torrent->data().name);
                                 }
                             } else {
-                                if (notifyOnFinished && !found->finished && torrent->isFinished()) {
-                                    finishedHashes.push_back(torrent->hashString());
-                                    finishedNames.push_back(torrent->name());
+                                if (notifyOnFinished && !found->finished && torrent->data().isFinished()) {
+                                    finishedHashes.push_back(torrent->data().hashString);
+                                    finishedNames.push_back(torrent->data().name);
                                 }
                             }
                         }
@@ -62,13 +62,13 @@ namespace tremotesf {
 
         QObject::connect(this, &Rpc::torrentAdded, this, [=](const auto* torrent) {
             if (Settings::instance()->notificationOnAddingTorrent()) {
-                emit addedNotificationRequested({torrent->hashString()}, {torrent->name()});
+                emit addedNotificationRequested({torrent->data().hashString}, {torrent->data().name});
             }
         });
 
         QObject::connect(this, &Rpc::torrentFinished, this, [=](const auto* torrent) {
             if (Settings::instance()->notificationOfFinishedTorrents()) {
-                emit finishedNotificationRequested({torrent->hashString()}, {torrent->name()});
+                emit finishedNotificationRequested({torrent->data().hashString}, {torrent->data().name});
             }
         });
 
@@ -78,7 +78,7 @@ namespace tremotesf {
 
         QObject::connect(this, &Rpc::torrentsUpdated, this, [=] {
             mMountedIncompleteDirectory =
-                Servers::instance()->fromRemoteToLocalDirectory(serverSettings()->incompleteDirectory());
+                Servers::instance()->fromRemoteToLocalDirectory(serverSettings()->data().incompleteDirectory);
             mIncompleteDirectoryMounted = !mMountedIncompleteDirectory.isEmpty();
         });
     }
@@ -115,30 +115,31 @@ namespace tremotesf {
     bool Rpc::isIncompleteDirectoryMounted() const { return mIncompleteDirectoryMounted; }
 
     bool Rpc::isTorrentLocalMounted(libtremotesf::Torrent* torrent) const {
-        return isLocal() || (Servers::instance()->currentServerHasMountedDirectories() &&
-                             (serverSettings()->isIncompleteDirectoryEnabled() && torrent->leftUntilDone() > 0
-                                  ? mIncompleteDirectoryMounted
-                                  : true) &&
-                             !Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory()).isEmpty());
+        return isLocal() ||
+               (Servers::instance()->currentServerHasMountedDirectories() &&
+                (serverSettings()->data().incompleteDirectoryEnabled && torrent->data().leftUntilDone > 0
+                     ? mIncompleteDirectoryMounted
+                     : true) &&
+                !Servers::instance()->fromRemoteToLocalDirectory(torrent->data().downloadDirectory).isEmpty());
     }
 
     QString Rpc::localTorrentDownloadDirectoryPath(libtremotesf::Torrent* torrent) const {
-        const bool incompleteDirectoryEnabled = serverSettings()->isIncompleteDirectoryEnabled();
+        const bool incompleteDirectoryEnabled = serverSettings()->data().incompleteDirectoryEnabled;
         QString filePath;
         if (isLocal()) {
-            if (incompleteDirectoryEnabled && torrent->leftUntilDone() > 0 &&
-                QFileInfo::exists(serverSettings()->incompleteDirectory() % '/' % torrentRootFileName(torrent))) {
-                filePath = serverSettings()->incompleteDirectory();
+            if (incompleteDirectoryEnabled && torrent->data().leftUntilDone > 0 &&
+                QFileInfo::exists(serverSettings()->data().incompleteDirectory % '/' % torrentRootFileName(torrent))) {
+                filePath = serverSettings()->data().incompleteDirectory;
             } else {
-                filePath = torrent->downloadDirectory();
+                filePath = torrent->data().downloadDirectory;
             }
         } else {
             if (Servers::instance()->currentServerHasMountedDirectories()) {
-                if (incompleteDirectoryEnabled && torrent->leftUntilDone() > 0 && mIncompleteDirectoryMounted &&
+                if (incompleteDirectoryEnabled && torrent->data().leftUntilDone > 0 && mIncompleteDirectoryMounted &&
                     QFileInfo::exists(mMountedIncompleteDirectory % '/' % torrentRootFileName(torrent))) {
                     filePath = mMountedIncompleteDirectory;
                 } else {
-                    filePath = Servers::instance()->fromRemoteToLocalDirectory(torrent->downloadDirectory());
+                    filePath = Servers::instance()->fromRemoteToLocalDirectory(torrent->data().downloadDirectory);
                 }
             }
         }
@@ -154,9 +155,10 @@ namespace tremotesf {
     }
 
     QString Rpc::torrentRootFileName(const libtremotesf::Torrent* torrent) const {
-        if (torrent->isSingleFile() && torrent->leftUntilDone() > 0 && serverSettings()->renameIncompleteFiles()) {
-            return torrent->name() % ".part"_l1;
+        if (torrent->data().singleFile && torrent->data().leftUntilDone > 0 &&
+            serverSettings()->data().renameIncompleteFiles) {
+            return torrent->data().name % ".part"_l1;
         }
-        return torrent->name();
+        return torrent->data().name;
     }
 }

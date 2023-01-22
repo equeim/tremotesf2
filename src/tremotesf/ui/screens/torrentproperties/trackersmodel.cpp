@@ -13,6 +13,7 @@
 #include "tremotesf/ui/itemmodels/modelutils.h"
 #include "tremotesf/utils.h"
 
+#include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "libtremotesf/tracker.h"
 
@@ -148,12 +149,9 @@ namespace tremotesf {
     }
 
     std::vector<int> TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        std::vector<int> ids{};
-        ids.reserve(static_cast<size_t>(indexes.size()));
-        std::transform(indexes.begin(), indexes.end(), std::back_inserter(ids), [this](const QModelIndex& index) {
+        return createTransforming<std::vector<int>>(indexes, [this](const QModelIndex& index) {
             return mTrackers.at(static_cast<size_t>(index.row())).tracker.id();
         });
-        return ids;
     }
 
     const libtremotesf::Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const {
@@ -185,7 +183,7 @@ namespace tremotesf {
     void TrackersModel::update() {
         mEtaUpdateTimer->stop();
         TrackersModelUpdater updater(*this);
-        const auto& trackers = mTorrent->trackers();
+        const auto& trackers = mTorrent->data().trackers;
         updater.update(mTrackers, std::vector<TrackerItem>(trackers.begin(), trackers.end()));
         if (std::any_of(trackers.begin(), trackers.end(), [](const libtremotesf::Tracker& tracker) {
                 return tracker.nextUpdateTime().isValid();
@@ -196,14 +194,9 @@ namespace tremotesf {
 
     void TrackersModel::updateEtas() {
         TrackersModelUpdater updater(*this);
-        std::vector<TrackerItem> newItems{};
-        newItems.reserve(mTrackers.size());
-        std::transform(
-            mTrackers.begin(),
-            mTrackers.end(),
-            std::back_inserter(newItems),
-            std::mem_fn(&TrackerItem::withUpdatedEta)
+        updater.update(
+            mTrackers,
+            createTransforming<std::vector<TrackerItem>>(mTrackers, std::mem_fn(&TrackerItem::withUpdatedEta))
         );
-        updater.update(mTrackers, std::move(newItems));
     }
 }

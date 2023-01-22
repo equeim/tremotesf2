@@ -522,38 +522,36 @@ namespace tremotesf {
     void ServerSettingsDialog::loadSettings() {
         const libtremotesf::ServerSettings* settings = mRpc->serverSettings();
 
-        mDownloadDirectoryWidget->updatePath(settings->downloadDirectory());
-        mStartAddedTorrentsCheckBox->setChecked(settings->startAddedTorrents());
-        //mTrashTorrentFilesCheckBox->setChecked(settings->trashTorrentFiles());
-        mIncompleteFilesCheckBox->setChecked(settings->renameIncompleteFiles());
-        mIncompleteDirectoryCheckBox->setChecked(settings->isIncompleteDirectoryEnabled());
-        mIncompleteDirectoryWidget->updatePath(settings->incompleteDirectory());
+        mDownloadDirectoryWidget->updatePath(settings->data().downloadDirectory);
+        mStartAddedTorrentsCheckBox->setChecked(settings->data().startAddedTorrents);
+        mIncompleteFilesCheckBox->setChecked(settings->data().renameIncompleteFiles);
+        mIncompleteDirectoryCheckBox->setChecked(settings->data().incompleteDirectoryEnabled);
+        mIncompleteDirectoryWidget->updatePath(settings->data().incompleteDirectory);
 
-        mRatioLimitCheckBox->setChecked(settings->isRatioLimited());
-        mRatioLimitSpinBox->setValue(settings->ratioLimit());
-        mIdleSeedingLimitCheckBox->setChecked(settings->isIdleSeedingLimited());
-        mIdleSeedingLimitSpinBox->setValue(settings->idleSeedingLimit());
+        mRatioLimitCheckBox->setChecked(settings->data().ratioLimited);
+        mRatioLimitSpinBox->setValue(settings->data().ratioLimit);
+        mIdleSeedingLimitCheckBox->setChecked(settings->data().idleSeedingLimited);
+        mIdleSeedingLimitSpinBox->setValue(settings->data().idleSeedingLimit);
 
-        mMaximumActiveDownloadsCheckBox->setChecked(settings->isDownloadQueueEnabled());
-        mMaximumActiveDownloadsSpinBox->setValue(settings->downloadQueueSize());
-        mMaximumActiveUploadsCheckBox->setChecked(settings->isSeedQueueEnabled());
-        mMaximumActiveUploadsSpinBox->setValue(settings->seedQueueSize());
-        mIdleQueueLimitCheckBox->setChecked(settings->isIdleQueueLimited());
-        mIdleQueueLimitSpinBox->setValue(settings->idleQueueLimit());
+        mMaximumActiveDownloadsCheckBox->setChecked(settings->data().downloadQueueEnabled);
+        mMaximumActiveDownloadsSpinBox->setValue(settings->data().downloadQueueSize);
+        mMaximumActiveUploadsCheckBox->setChecked(settings->data().seedQueueEnabled);
+        mMaximumActiveUploadsSpinBox->setValue(settings->data().seedQueueSize);
+        mIdleQueueLimitCheckBox->setChecked(settings->data().idleQueueLimited);
+        mIdleQueueLimitSpinBox->setValue(settings->data().idleQueueLimit);
 
-        mDownloadSpeedLimitCheckBox->setChecked(settings->isDownloadSpeedLimited());
-        mDownloadSpeedLimitSpinBox->setValue(settings->downloadSpeedLimit());
-        mUploadSpeedLimitCheckBox->setChecked(settings->isUploadSpeedLimited());
-        mUploadSpeedLimitSpinBox->setValue(settings->uploadSpeedLimit());
-        mEnableAlternativeSpeedLimitsGroupBox->setChecked(settings->isAlternativeSpeedLimitsEnabled());
-        mAlternativeDownloadSpeedLimitSpinBox->setValue(settings->alternativeDownloadSpeedLimit());
-        mAlternativeUploadSpeedLimitSpinBox->setValue(settings->alternativeUploadSpeedLimit());
-        mLimitScheduleGroupBox->setChecked(settings->isAlternativeSpeedLimitsScheduled());
-        mLimitScheduleBeginTimeEdit->setTime(settings->alternativeSpeedLimitsBeginTime());
-        mLimitScheduleEndTimeEdit->setTime(settings->alternativeSpeedLimitsEndTime());
+        mDownloadSpeedLimitCheckBox->setChecked(settings->data().downloadSpeedLimited);
+        mDownloadSpeedLimitSpinBox->setValue(settings->data().downloadSpeedLimit);
+        mUploadSpeedLimitCheckBox->setChecked(settings->data().uploadSpeedLimited);
+        mUploadSpeedLimitSpinBox->setValue(settings->data().uploadSpeedLimit);
+        mEnableAlternativeSpeedLimitsGroupBox->setChecked(settings->data().alternativeSpeedLimitsEnabled);
+        mAlternativeDownloadSpeedLimitSpinBox->setValue(settings->data().alternativeDownloadSpeedLimit);
+        mAlternativeUploadSpeedLimitSpinBox->setValue(settings->data().alternativeUploadSpeedLimit);
+        mLimitScheduleGroupBox->setChecked(settings->data().alternativeSpeedLimitsScheduled);
+        mLimitScheduleBeginTimeEdit->setTime(settings->data().alternativeSpeedLimitsBeginTime);
+        mLimitScheduleEndTimeEdit->setTime(settings->data().alternativeSpeedLimitsEndTime);
 
-        const libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays days =
-            settings->alternativeSpeedLimitsDays();
+        const auto days = settings->data().alternativeSpeedLimitsDays;
         for (int i = 0, max = mLimitScheduleDaysComboBox->count(); i < max; i++) {
             if (mLimitScheduleDaysComboBox->itemData(i)
                     .value<libtremotesf::ServerSettingsData::AlternativeSpeedLimitsDays>() == days) {
@@ -562,17 +560,17 @@ namespace tremotesf {
             }
         }
 
-        mPeerPortSpinBox->setValue(settings->peerPort());
-        mRandomPortCheckBox->setChecked(settings->isRandomPortEnabled());
-        mPortForwardingCheckBox->setChecked(settings->isPortForwardingEnabled());
+        mPeerPortSpinBox->setValue(settings->data().peerPort);
+        mRandomPortCheckBox->setChecked(settings->data().randomPortEnabled);
+        mPortForwardingCheckBox->setChecked(settings->data().portForwardingEnabled);
         mEncryptionComboBox->setCurrentIndex(
-            indexOfCasted<int>(encryptionModeComboBoxItems, settings->encryptionMode()).value()
+            indexOfCasted<int>(encryptionModeComboBoxItems, settings->data().encryptionMode).value()
         );
-        mUtpCheckBox->setChecked(settings->isUtpEnabled());
-        mPexCheckBox->setChecked(settings->isPexEnabled());
-        mDhtCheckBox->setChecked(settings->isDhtEnabled());
-        mLpdCheckBox->setChecked(settings->isLpdEnabled());
-        mTorrentPeerLimitSpinBox->setValue(settings->maximumPeersPerTorrent());
-        mGlobalPeerLimitSpinBox->setValue(settings->maximumPeersGlobally());
+        mUtpCheckBox->setChecked(settings->data().utpEnabled);
+        mPexCheckBox->setChecked(settings->data().pexEnabled);
+        mDhtCheckBox->setChecked(settings->data().dhtEnabled);
+        mLpdCheckBox->setChecked(settings->data().lpdEnabled);
+        mTorrentPeerLimitSpinBox->setValue(settings->data().maximumPeersPerTorrent);
+        mGlobalPeerLimitSpinBox->setValue(settings->data().maximumPeersGlobally);
     }
 }

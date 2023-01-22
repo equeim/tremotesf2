@@ -101,7 +101,7 @@ namespace tremotesf {
         auto reannounceButton =
             new QPushButton(QIcon::fromTheme("view-refresh"_l1), qApp->translate("tremotesf", "Reanno&unce"), this);
         QObject::connect(reannounceButton, &QPushButton::clicked, this, [=] {
-            mRpc->reannounceTorrents({mTorrent->id()});
+            mRpc->reannounceTorrents({mTorrent->data().id});
         });
         buttonsLayout->addWidget(reannounceButton);
         buttonsLayout->addStretch();

@@ -175,12 +175,12 @@ namespace tremotesf {
         if (!index.isValid()) {
             return mRpc->localTorrentDownloadDirectoryPath(mTorrent);
         }
-        if (mTorrent->isSingleFile()) {
+        if (mTorrent->data().singleFile) {
             return mRpc->localTorrentFilesPath(mTorrent);
         }
         const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
         QString path(entry->path());
-        if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->renameIncompleteFiles()) {
+        if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->data().renameIncompleteFiles) {
             path += ".part"_l1;
         }
         return mRpc->localTorrentDownloadDirectoryPath(mTorrent) % '/' % path;
