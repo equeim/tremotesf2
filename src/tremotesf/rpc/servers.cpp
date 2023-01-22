@@ -28,36 +28,36 @@ namespace tremotesf {
             }
         }();
 
-        const QLatin1String fileName("servers");
+        constexpr auto fileName = "servers"_l1;
 
-        const QLatin1String currentServerKey("current");
-        const QLatin1String addressKey("address");
-        const QLatin1String portKey("port");
-        const QLatin1String apiPathKey("apiPath");
+        constexpr auto currentServerKey = "current"_l1;
+        constexpr auto addressKey = "address"_l1;
+        constexpr auto portKey = "port"_l1;
+        constexpr auto apiPathKey = "apiPath"_l1;
 
-        const QLatin1String proxyTypeKey("proxyType");
-        const QLatin1String proxyHostnameKey("proxyHostname");
-        const QLatin1String proxyPortKey("proxyPort");
-        const QLatin1String proxyUserKey("proxyUser");
-        const QLatin1String proxyPasswordKey("proxyPassword");
+        constexpr auto proxyTypeKey = "proxyType"_l1;
+        constexpr auto proxyHostnameKey = "proxyHostname"_l1;
+        constexpr auto proxyPortKey = "proxyPort"_l1;
+        constexpr auto proxyUserKey = "proxyUser"_l1;
+        constexpr auto proxyPasswordKey = "proxyPassword"_l1;
 
-        const QLatin1String httpsKey("https");
-        const QLatin1String selfSignedCertificateEnabledKey("selfSignedCertificateEnabled");
-        const QLatin1String selfSignedCertificateKey("selfSignedCertificate");
-        const QLatin1String clientCertificateEnabledKey("clientCertificateEnabled");
-        const QLatin1String clientCertificateKey("clientCertificate");
+        constexpr auto httpsKey = "https"_l1;
+        constexpr auto selfSignedCertificateEnabledKey = "selfSignedCertificateEnabled"_l1;
+        constexpr auto selfSignedCertificateKey = "selfSignedCertificate"_l1;
+        constexpr auto clientCertificateEnabledKey = "clientCertificateEnabled"_l1;
+        constexpr auto clientCertificateKey = "clientCertificate"_l1;
 
-        const QLatin1String authenticationKey("authentication");
-        const QLatin1String usernameKey("username");
-        const QLatin1String passwordKey("password");
+        constexpr auto authenticationKey = "authentication"_l1;
+        constexpr auto usernameKey = "username"_l1;
+        constexpr auto passwordKey = "password"_l1;
 
-        const QLatin1String updateIntervalKey("updateInterval");
-        const QLatin1String timeoutKey("timeout");
+        constexpr auto updateIntervalKey = "updateInterval"_l1;
+        constexpr auto timeoutKey = "timeout"_l1;
 
-        const QLatin1String autoReconnectEnabledKey("autoReconnectEnabled");
-        const QLatin1String autoReconnectIntervalKey("autoReconnectInterval");
+        constexpr auto autoReconnectEnabledKey = "autoReconnectEnabled"_l1;
+        constexpr auto autoReconnectIntervalKey = "autoReconnectInterval"_l1;
 
-        const QLatin1String mountedDirectoriesKey("mountedDirectories");
+        constexpr auto mountedDirectoriesKey = "mountedDirectories"_l1;
 
         constexpr auto lastDownloadDirectoriesKey = "addTorrentDialogDirectories"_l1;
         constexpr auto lastDownloadDirectoryKey = "lastDownloadDirectory"_l1;
@@ -66,11 +66,11 @@ namespace tremotesf {
         constexpr auto lastTorrentsHashStringKey = "hashString"_l1;
         constexpr auto lastTorrentsFinishedKey = "finished"_l1;
 
-        const QLatin1String localCertificateKey("localCertificate");
+        constexpr auto localCertificateKey = "localCertificate"_l1;
 
-        const QLatin1String proxyTypeDefault("Default");
-        const QLatin1String proxyTypeHttp("HTTP");
-        const QLatin1String proxyTypeSocks5("SOCKS5");
+        constexpr auto proxyTypeDefault = "Default"_l1;
+        constexpr auto proxyTypeHttp = "HTTP"_l1;
+        constexpr auto proxyTypeSocks5 = "SOCKS5"_l1;
 
         ConnectionConfiguration::ProxyType proxyTypeFromSettings(const QString& value) {
             if (value.isEmpty() || value == proxyTypeDefault) {
