@@ -100,28 +100,29 @@ namespace tremotesf {
         switch (filter) {
         case Active:
             return (
-                (torrent->status() == TorrentData::Status::Downloading && !torrent->isDownloadingStalled()) ||
-                (torrent->status() == TorrentData::Status::Seeding && !torrent->isSeedingStalled())
+                (torrent->data().status == TorrentData::Status::Downloading && !torrent->data().isDownloadingStalled()
+                ) ||
+                (torrent->data().status == TorrentData::Status::Seeding && !torrent->data().isSeedingStalled())
             );
         case Downloading:
             return (
-                torrent->status() == TorrentData::Status::Downloading ||
-                torrent->status() == TorrentData::Status::QueuedForDownloading
+                torrent->data().status == TorrentData::Status::Downloading ||
+                torrent->data().status == TorrentData::Status::QueuedForDownloading
             );
         case Seeding:
             return (
-                torrent->status() == TorrentData::Status::Seeding ||
-                torrent->status() == TorrentData::Status::QueuedForSeeding
+                torrent->data().status == TorrentData::Status::Seeding ||
+                torrent->data().status == TorrentData::Status::QueuedForSeeding
             );
         case Paused:
-            return torrent->status() == TorrentData::Status::Paused;
+            return torrent->data().status == TorrentData::Status::Paused;
         case Checking:
             return (
-                torrent->status() == TorrentData::Status::Checking ||
-                torrent->status() == TorrentData::Status::QueuedForChecking
+                torrent->data().status == TorrentData::Status::Checking ||
+                torrent->data().status == TorrentData::Status::QueuedForChecking
             );
         case Errored:
-            return torrent->hasError();
+            return torrent->data().hasError();
         default:
             return true;
         }
@@ -132,7 +133,7 @@ namespace tremotesf {
 
         const libtremotesf::Torrent* torrent = static_cast<TorrentsModel*>(sourceModel())->torrentAtRow(sourceRow);
 
-        if (!mSearchString.isEmpty() && !torrent->name().contains(mSearchString, Qt::CaseInsensitive)) {
+        if (!mSearchString.isEmpty() && !torrent->data().name.contains(mSearchString, Qt::CaseInsensitive)) {
             accepts = false;
         }
 
@@ -142,7 +143,7 @@ namespace tremotesf {
 
         if (mTrackerFilterEnabled && !mTrackerFilter.isEmpty()) {
             bool found = false;
-            for (const libtremotesf::Tracker& tracker : torrent->trackers()) {
+            for (const libtremotesf::Tracker& tracker : torrent->data().trackers) {
                 if (tracker.site() == mTrackerFilter) {
                     found = true;
                     break;
@@ -154,7 +155,7 @@ namespace tremotesf {
         }
 
         if (mDownloadDirectoryFilterEnabled && !mDownloadDirectoryFilter.isEmpty()) {
-            if (torrent->downloadDirectory() != mDownloadDirectoryFilter) {
+            if (torrent->data().downloadDirectory != mDownloadDirectoryFilter) {
                 accepts = false;
             }
         }

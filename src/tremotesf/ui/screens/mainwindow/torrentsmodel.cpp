@@ -10,6 +10,7 @@
 #include <QMetaEnum>
 #include <QPixmap>
 
+#include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/desktoputils.h"
@@ -34,19 +35,19 @@ namespace tremotesf {
         case Qt::DecorationRole:
             if (static_cast<Column>(index.column()) == Column::Name) {
                 using namespace desktoputils;
-                if (torrent->error() != TorrentData::Error::None) {
+                if (torrent->data().error != TorrentData::Error::None) {
                     return QPixmap(statusIconPath(ErroredIcon));
                 }
-                switch (torrent->status()) {
+                switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
                     return QPixmap(statusIconPath(PausedIcon));
                 case TorrentData::Status::Seeding:
-                    if (torrent->isSeedingStalled()) {
+                    if (torrent->data().isSeedingStalled()) {
                         return QPixmap(statusIconPath(StalledSeedingIcon));
                     }
                     return QPixmap(statusIconPath(SeedingIcon));
                 case TorrentData::Status::Downloading:
-                    if (torrent->isDownloadingStalled()) {
+                    if (torrent->data().isDownloadingStalled()) {
                         return QPixmap(statusIconPath(StalledDownloadingIcon));
                     }
                     return QPixmap(statusIconPath(DownloadingIcon));
@@ -62,98 +63,98 @@ namespace tremotesf {
         case Qt::DisplayRole:
             switch (static_cast<Column>(index.column())) {
             case Column::Name:
-                return torrent->name();
+                return torrent->data().name;
             case Column::SizeWhenDone:
-                return Utils::formatByteSize(torrent->sizeWhenDone());
+                return Utils::formatByteSize(torrent->data().sizeWhenDone);
             case Column::TotalSize:
-                return Utils::formatByteSize(torrent->totalSize());
+                return Utils::formatByteSize(torrent->data().totalSize);
             case Column::Progress:
-                if (torrent->status() == TorrentData::Status::Checking) {
-                    return Utils::formatProgress(torrent->recheckProgress());
+                if (torrent->data().status == TorrentData::Status::Checking) {
+                    return Utils::formatProgress(torrent->data().recheckProgress);
                 }
-                return Utils::formatProgress(torrent->percentDone());
+                return Utils::formatProgress(torrent->data().percentDone);
             case Column::Status: {
-                switch (torrent->status()) {
+                switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
-                    if (torrent->hasError()) {
+                    if (torrent->data().hasError()) {
                         return qApp->translate("tremotesf", "Paused (%1)", "Torrent status with error")
-                            .arg(torrent->errorString());
+                            .arg(torrent->data().errorString);
                     }
                     return qApp->translate("tremotesf", "Paused", "Torrent status");
                 case TorrentData::Status::Downloading:
-                    if (torrent->hasError()) {
+                    if (torrent->data().hasError()) {
                         return qApp->translate("tremotesf", "Downloading (%1)", "Torrent status with error")
-                            .arg(torrent->errorString());
+                            .arg(torrent->data().errorString);
                     }
                     return qApp->translate("tremotesf", "Downloading", "Torrent status");
                 case TorrentData::Status::Seeding:
-                    if (torrent->hasError()) {
+                    if (torrent->data().hasError()) {
                         return qApp->translate("tremotesf", "Seeding (%1)", "Torrent status with error")
-                            .arg(torrent->errorString());
+                            .arg(torrent->data().errorString);
                     }
                     return qApp->translate("tremotesf", "Seeding", "Torrent status");
                 case TorrentData::Status::QueuedForDownloading:
                 case TorrentData::Status::QueuedForSeeding:
-                    if (torrent->hasError()) {
+                    if (torrent->data().hasError()) {
                         return qApp->translate("tremotesf", "Queued (%1)", "Torrent status with error")
-                            .arg(torrent->errorString());
+                            .arg(torrent->data().errorString);
                     }
                     return qApp->translate("tremotesf", "Queued", "Torrent status");
                 case TorrentData::Status::Checking:
-                    if (torrent->hasError()) {
+                    if (torrent->data().hasError()) {
                         return qApp->translate("tremotesf", "Checking (%1)", "Torrent status with error")
-                            .arg(torrent->errorString());
+                            .arg(torrent->data().errorString);
                     }
                     return qApp->translate("tremotesf", "Checking", "Torrent status");
                 case TorrentData::Status::QueuedForChecking:
-                    if (torrent->hasError()) {
+                    if (torrent->data().hasError()) {
                         return qApp->translate("tremotesf", "Queued for checking (%1)", "Torrent status with error")
-                            .arg(torrent->errorString());
+                            .arg(torrent->data().errorString);
                     }
                     return qApp->translate("tremotesf", "Queued for checking");
                 }
                 break;
             }
             case Column::QueuePosition:
-                return torrent->queuePosition();
+                return torrent->data().queuePosition;
             case Column::Seeders:
-                return torrent->seeders();
+                return torrent->data().activeSeedersCount;
             case Column::Leechers:
-                return torrent->leechers();
+                return torrent->data().activeLeechersCount;
             case Column::DownloadSpeed:
-                return Utils::formatByteSpeed(torrent->downloadSpeed());
+                return Utils::formatByteSpeed(torrent->data().downloadSpeed);
             case Column::UploadSpeed:
-                return Utils::formatByteSpeed(torrent->uploadSpeed());
+                return Utils::formatByteSpeed(torrent->data().uploadSpeed);
             case Column::Eta:
-                return Utils::formatEta(torrent->eta());
+                return Utils::formatEta(torrent->data().eta);
             case Column::Ratio:
-                return Utils::formatRatio(torrent->ratio());
+                return Utils::formatRatio(torrent->data().ratio);
             case Column::AddedDate:
-                return torrent->addedDate().toLocalTime();
+                return torrent->data().addedDate.toLocalTime();
             case Column::DoneDate:
-                return torrent->doneDate().toLocalTime();
+                return torrent->data().doneDate.toLocalTime();
             case Column::DownloadSpeedLimit:
-                if (torrent->isDownloadSpeedLimited()) {
-                    return Utils::formatSpeedLimit(torrent->downloadSpeedLimit());
+                if (torrent->data().downloadSpeedLimited) {
+                    return Utils::formatSpeedLimit(torrent->data().downloadSpeedLimit);
                 }
                 break;
             case Column::UploadSpeedLimit:
-                if (torrent->isUploadSpeedLimited()) {
-                    return Utils::formatSpeedLimit(torrent->uploadSpeedLimit());
+                if (torrent->data().uploadSpeedLimited) {
+                    return Utils::formatSpeedLimit(torrent->data().uploadSpeedLimit);
                 }
                 break;
             case Column::TotalDownloaded:
-                return Utils::formatByteSize(torrent->totalDownloaded());
+                return Utils::formatByteSize(torrent->data().totalDownloaded);
             case Column::TotalUploaded:
-                return Utils::formatByteSize(torrent->totalUploaded());
+                return Utils::formatByteSize(torrent->data().totalUploaded);
             case Column::LeftUntilDone:
-                return Utils::formatByteSize(torrent->leftUntilDone());
+                return Utils::formatByteSize(torrent->data().leftUntilDone);
             case Column::DownloadDirectory:
-                return torrent->downloadDirectory();
+                return torrent->data().downloadDirectory;
             case Column::CompletedSize:
-                return Utils::formatByteSize(torrent->completedSize());
+                return Utils::formatByteSize(torrent->data().completedSize);
             case Column::ActivityDate:
-                return torrent->activityDate().toLocalTime();
+                return torrent->data().activityDate.toLocalTime();
             default:
                 break;
             }
@@ -174,54 +175,54 @@ namespace tremotesf {
         case static_cast<int>(Role::Sort):
             switch (static_cast<Column>(index.column())) {
             case Column::SizeWhenDone:
-                return torrent->sizeWhenDone();
+                return torrent->data().sizeWhenDone;
             case Column::TotalSize:
-                return torrent->totalSize();
+                return torrent->data().totalSize;
             case Column::ProgressBar:
             case Column::Progress:
-                if (torrent->status() == TorrentData::Status::Checking) {
-                    return torrent->recheckProgress();
+                if (torrent->data().status == TorrentData::Status::Checking) {
+                    return torrent->data().recheckProgress;
                 }
-                return torrent->percentDone();
+                return torrent->data().percentDone;
             case Column::Status:
-                return static_cast<int>(torrent->status());
+                return static_cast<int>(torrent->data().status);
             case Column::DownloadSpeed:
-                return torrent->downloadSpeed();
+                return torrent->data().downloadSpeed;
             case Column::UploadSpeed:
-                return torrent->uploadSpeed();
+                return torrent->data().uploadSpeed;
             case Column::Eta: {
-                const auto eta = torrent->eta();
+                const auto eta = torrent->data().eta;
                 if (eta < 0) {
                     return std::numeric_limits<decltype(eta)>::max();
                 }
                 return eta;
             }
             case Column::Ratio:
-                return torrent->ratio();
+                return torrent->data().ratio;
             case Column::AddedDate:
-                return torrent->addedDate();
+                return torrent->data().addedDate;
             case Column::DoneDate:
-                return torrent->doneDate();
+                return torrent->data().doneDate;
             case Column::DownloadSpeedLimit:
-                if (torrent->isDownloadSpeedLimited()) {
-                    return torrent->downloadSpeedLimit();
+                if (torrent->data().downloadSpeedLimited) {
+                    return torrent->data().downloadSpeedLimit;
                 }
                 return -1;
             case Column::UploadSpeedLimit:
-                if (torrent->isUploadSpeedLimited()) {
-                    return torrent->uploadSpeedLimit();
+                if (torrent->data().uploadSpeedLimited) {
+                    return torrent->data().uploadSpeedLimit;
                 }
                 return -1;
             case Column::TotalDownloaded:
-                return torrent->totalDownloaded();
+                return torrent->data().totalDownloaded;
             case Column::TotalUploaded:
-                return torrent->totalUploaded();
+                return torrent->data().totalUploaded;
             case Column::LeftUntilDone:
-                return torrent->leftUntilDone();
+                return torrent->data().leftUntilDone;
             case Column::CompletedSize:
-                return torrent->completedSize();
+                return torrent->data().completedSize;
             case Column::ActivityDate:
-                return torrent->activityDate();
+                return torrent->data().activityDate;
             default:
                 return data(index, Qt::DisplayRole);
             }
@@ -341,11 +342,8 @@ namespace tremotesf {
     Torrent* TorrentsModel::torrentAtRow(int row) const { return mRpc->torrents()[static_cast<size_t>(row)].get(); }
 
     std::vector<int> TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        std::vector<int> ids{};
-        ids.reserve(static_cast<size_t>(indexes.size()));
-        std::transform(indexes.begin(), indexes.end(), std::back_inserter(ids), [this](const QModelIndex& index) {
-            return torrentAtIndex(index)->id();
+        return createTransforming<std::vector<int>>(indexes, [this](const QModelIndex& index) {
+            return torrentAtIndex(index)->data().id;
         });
-        return ids;
     }
 }

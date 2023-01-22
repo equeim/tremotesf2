@@ -13,6 +13,7 @@
 #include <QStringBuilder>
 
 #include "libtremotesf/pathutils.h"
+#include "libtremotesf/stdutils.h"
 #include "libtremotesf/target_os.h"
 #include "libtremotesf/torrent.h"
 
@@ -117,38 +118,24 @@ namespace tremotesf {
     }
 
     QVariant LastTorrents::toVariant() const {
-        QVariantList list{};
-        list.reserve(static_cast<QVariantList::size_type>(torrents.size()));
-        std::transform(
-            torrents.begin(),
-            torrents.end(),
-            std::back_inserter(list),
-            [](const LastTorrents::Torrent& torrent) {
-                return QVariantMap{
-                    {lastTorrentsHashStringKey, torrent.hashString},
-                    {lastTorrentsFinishedKey, torrent.finished}};
-            }
-        );
-        return list;
+        return createTransforming<QVariantList>(torrents, [](const LastTorrents::Torrent& torrent) {
+            return QVariantMap{
+                {lastTorrentsHashStringKey, torrent.hashString},
+                {lastTorrentsFinishedKey, torrent.finished}};
+        });
     }
 
     LastTorrents LastTorrents::fromVariant(const QVariant& var) {
         LastTorrents lastTorrents{};
         if (var.isValid() && var.type() == QVariant::List) {
             lastTorrents.saved = true;
-            const QVariantList torrentVariants = var.toList();
-            lastTorrents.torrents.reserve(static_cast<size_t>(torrentVariants.size()));
-            std::transform(
-                torrentVariants.begin(),
-                torrentVariants.end(),
-                std::back_inserter(lastTorrents.torrents),
-                [](const QVariant& torrentVar) {
+            lastTorrents.torrents =
+                createTransforming<std::vector<LastTorrents::Torrent>>(var.toList(), [](QVariant&& torrentVar) {
                     const QVariantMap map = torrentVar.toMap();
                     return LastTorrents::Torrent{
                         map[lastTorrentsHashStringKey].toString(),
                         map[lastTorrentsFinishedKey].toBool()};
-                }
-            );
+                });
         }
         return lastTorrents;
     }
@@ -236,16 +223,10 @@ namespace tremotesf {
     void Servers::saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc) {
         mSettings->beginGroup(currentServerName());
         LastTorrents torrents{};
-        const auto& rpcTorrents = rpc->torrents();
-        torrents.torrents.reserve(rpcTorrents.size());
-        std::transform(
-            rpcTorrents.begin(),
-            rpcTorrents.end(),
-            std::back_inserter(torrents.torrents),
-            [](const auto& torrent) {
-                return LastTorrents::Torrent{torrent->hashString(), torrent->isFinished()};
-            }
-        );
+        torrents.torrents =
+            createTransforming<std::vector<LastTorrents::Torrent>>(rpc->torrents(), [](const auto& torrent) {
+                return LastTorrents::Torrent{torrent->data().hashString, torrent->data().isFinished()};
+            });
         mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();
     }

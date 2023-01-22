@@ -6,10 +6,10 @@
 
 #include "libtremotesf/pathutils.h"
 #include "libtremotesf/serversettings.h"
+#include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/rpc/servers.h"
-#include "tremotesf/settings.h"
 
 #include <QCollator>
 #include <QComboBox>
@@ -85,12 +85,12 @@ namespace tremotesf {
         QStringList directories = Servers::instance()->currentServerLastDownloadDirectories();
         directories.reserve(directories.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 2);
         for (const auto& torrent : mRpc->torrents()) {
-            directories.push_back(torrent->downloadDirectory());
+            directories.push_back(torrent->data().downloadDirectory);
         }
         if (!mPath.isEmpty()) {
             directories.push_back(mPath);
         }
-        directories.push_back(mRpc->serverSettings()->downloadDirectory());
+        directories.push_back(mRpc->serverSettings()->data().downloadDirectory);
 
         directories.removeDuplicates();
 
@@ -101,12 +101,13 @@ namespace tremotesf {
             return collator.compare(first, second) < 0;
         });
 
-        std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem> items{};
-        items.reserve(static_cast<size_t>(directories.size()));
-        std::transform(directories.begin(), directories.end(), std::back_inserter(items), [=](const auto& dir) {
-            return DirectorySelectionWidgetViewModel::ComboBoxItem{dir, toNativeSeparators(dir)};
-        });
-        return items;
+        return createTransforming<std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>>(
+            std::move(directories),
+            [=](QString&& dir) {
+                QString display = toNativeSeparators(dir);
+                return DirectorySelectionWidgetViewModel::ComboBoxItem{std::move(dir), std::move(display)};
+            }
+        );
     }
 
     TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::
@@ -114,11 +115,7 @@ namespace tremotesf {
         : RemoteDirectorySelectionWidgetViewModel(path, rpc, parent) {}
 
     void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories() {
-        QStringList paths{};
-        paths.reserve(static_cast<QStringList::size_type>(mComboBoxItems.size() + 1));
-        std::transform(mComboBoxItems.begin(), mComboBoxItems.end(), std::back_inserter(paths), [](const auto& item) {
-            return item.path;
-        });
+        auto paths = createTransforming<QStringList>(mComboBoxItems, [](const auto& item) { return item.path; });
         if (!paths.contains(mPath)) {
             paths.push_back(mPath);
         }

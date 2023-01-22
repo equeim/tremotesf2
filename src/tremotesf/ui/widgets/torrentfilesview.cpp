@@ -261,7 +261,7 @@ namespace tremotesf {
             }
         }
 
-        if (mRpc->serverSettings()->canRenameFiles()) {
+        if (mRpc->serverSettings()->data().canRenameFiles()) {
             contextMenu.addSeparator();
             QAction* renameAction =
                 contextMenu.addAction(QIcon::fromTheme("edit-rename"_l1), qApp->translate("tremotesf", "&Rename"));

@@ -549,7 +549,7 @@ namespace tremotesf {
                     mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
                 );
                 auto dialog = new SetLocationDialog(
-                    mTorrentsModel->torrentAtIndex(indexes.first())->downloadDirectory(),
+                    mTorrentsModel->torrentAtIndex(indexes.first())->data().downloadDirectory,
                     mRpc,
                     this
                 );
@@ -571,8 +571,8 @@ namespace tremotesf {
             const auto indexes = mTorrentsView->selectionModel()->selectedRows();
             if (indexes.size() == 1) {
                 const auto torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(indexes.first()));
-                const auto id = torrent->id();
-                const auto name = torrent->name();
+                const auto id = torrent->data().id;
+                const auto name = torrent->data().name;
                 TorrentFilesView::showFileRenameDialog(name, this, [=](const auto& newName) {
                     mRpc->renameTorrentFile(id, name, newName);
                 });
@@ -723,8 +723,9 @@ namespace tremotesf {
             }
             const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
             if (selectedRows.size() == 1) {
-                if (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))->status() ==
-                    libtremotesf::TorrentData::Status::Paused) {
+                if (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))
+                        ->data()
+                        .status == libtremotesf::TorrentData::Status::Paused) {
                     mPauseTorrentAction->setEnabled(false);
                 } else {
                     mStartTorrentAction->setEnabled(false);
@@ -775,7 +776,7 @@ namespace tremotesf {
         for (int i = 0, max = selectedRows.size(); i < max; i++) {
             libtremotesf::Torrent* torrent =
                 mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
-            const int id = torrent->id();
+            const int id = torrent->data().id;
             if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
                 if (i == (max - 1)) {
                     TorrentPropertiesDialog* dialog = mTorrentsDialogs[id];

@@ -108,7 +108,7 @@ namespace tremotesf {
             auto lastDir = normalizePath(Servers::instance()->currentServerLastDownloadDirectory());
             if (!lastDir.isEmpty()) return lastDir;
         }
-        return mRpc->serverSettings()->downloadDirectory();
+        return mRpc->serverSettings()->data().downloadDirectory;
     }
 
     void AddTorrentDialog::setupUi() {
@@ -158,11 +158,11 @@ namespace tremotesf {
         auto freeSpaceLabel = new QLabel(this);
         auto getFreeSpace = [=](const QString& directory) {
             if (!directory.isEmpty()) {
-                if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
+                if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
                     mRpc->getFreeSpaceForPath(directory);
                     return;
                 }
-                if (directory == mRpc->serverSettings()->downloadDirectory()) {
+                if (directory == mRpc->serverSettings()->data().downloadDirectory) {
                     mRpc->getDownloadDirFreeSpace();
                     return;
                 }
@@ -173,7 +173,7 @@ namespace tremotesf {
         QObject::connect(mDownloadDirectoryWidget, &DirectorySelectionWidget::pathChanged, this, [=] {
             getFreeSpace(mDownloadDirectoryWidget->path());
         });
-        if (mRpc->serverSettings()->canShowFreeSpaceForPath()) {
+        if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
             QObject::connect(
                 mRpc,
                 &Rpc::gotFreeSpaceForPath,
@@ -193,7 +193,7 @@ namespace tremotesf {
             );
         } else {
             QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](auto bytes) {
-                if (mDownloadDirectoryWidget->path() == mRpc->serverSettings()->downloadDirectory()) {
+                if (mDownloadDirectoryWidget->path() == mRpc->serverSettings()->data().downloadDirectory) {
                     freeSpaceLabel->setText(
                         qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes))
                     );
@@ -246,7 +246,7 @@ namespace tremotesf {
         }
 
         mStartTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start downloading after adding"), this);
-        mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->startAddedTorrents());
+        mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->data().startAddedTorrents);
         layout->addWidget(mStartTorrentCheckBox);
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);

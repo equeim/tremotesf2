@@ -93,7 +93,7 @@ namespace tremotesf {
 
         dialogButtonBox->button(QDialogButtonBox::Close)->setDefault(true);
 
-        const QString torrentHash(mTorrent->hashString());
+        const QString torrentHash(mTorrent->data().hashString);
         QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=] { setTorrent(mRpc->torrentByHash(torrentHash)); });
 
         onTorrentChanged();
@@ -151,7 +151,7 @@ namespace tremotesf {
         auto locationLabel = new QLabel(this);
         locationLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Location:"), locationLabel);
-        auto hashLabel = new QLabel(mTorrent->hashString(), this);
+        auto hashLabel = new QLabel(mTorrent->data().hashString, this);
         hashLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Hash:"), hashLabel);
         auto creatorLabel = new QLabel(this);
@@ -168,35 +168,35 @@ namespace tremotesf {
         resizer->addWidgetsFromLayout(infoGroupBoxLayout);
 
         mUpdateDetailsTab = [=] {
-            setWindowTitle(mTorrent->name());
+            setWindowTitle(mTorrent->data().name);
 
             //: e.g. 100 MiB of 200 MiB (50%)
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
                                         .arg(
-                                            Utils::formatByteSize(mTorrent->completedSize()),
-                                            Utils::formatByteSize(mTorrent->sizeWhenDone()),
-                                            Utils::formatProgress(mTorrent->percentDone())
+                                            Utils::formatByteSize(mTorrent->data().completedSize),
+                                            Utils::formatByteSize(mTorrent->data().sizeWhenDone),
+                                            Utils::formatProgress(mTorrent->data().percentDone)
                                         ));
-            downloadedLabel->setText(Utils::formatByteSize(mTorrent->totalDownloaded()));
-            uploadedLabel->setText(Utils::formatByteSize(mTorrent->totalUploaded()));
-            ratioLabel->setText(Utils::formatRatio(mTorrent->ratio()));
-            downloadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->downloadSpeed()));
-            uploadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->uploadSpeed()));
-            etaLabel->setText(Utils::formatEta(mTorrent->eta()));
+            downloadedLabel->setText(Utils::formatByteSize(mTorrent->data().totalDownloaded));
+            uploadedLabel->setText(Utils::formatByteSize(mTorrent->data().totalUploaded));
+            ratioLabel->setText(Utils::formatRatio(mTorrent->data().ratio));
+            downloadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->data().downloadSpeed));
+            uploadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->data().uploadSpeed));
+            etaLabel->setText(Utils::formatEta(mTorrent->data().eta));
 
             const QLocale locale;
-            seedersLabel->setText(locale.toString(mTorrent->seeders()));
-            activeWebSeedersLabel->setText(locale.toString(mTorrent->activeWebSeeders()));
-            leechersLabel->setText(locale.toString(mTorrent->leechers()));
+            seedersLabel->setText(locale.toString(mTorrent->data().activeSeedersCount));
+            activeWebSeedersLabel->setText(locale.toString(mTorrent->data().activeWebSeedersCount));
+            leechersLabel->setText(locale.toString(mTorrent->data().activeLeechersCount));
 
-            lastActivityLabel->setText(mTorrent->activityDate().toLocalTime().toString());
+            lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
 
-            totalSizeLabel->setText(Utils::formatByteSize(mTorrent->totalSize()));
-            locationLabel->setText(toNativeSeparators(mTorrent->downloadDirectory()));
-            creatorLabel->setText(mTorrent->creator());
-            creationDateLabel->setText(mTorrent->creationDate().toLocalTime().toString());
-            if (mTorrent->comment() != commentTextEdit->toPlainText()) {
-                commentTextEdit->document()->setPlainText(mTorrent->comment());
+            totalSizeLabel->setText(Utils::formatByteSize(mTorrent->data().totalSize));
+            locationLabel->setText(toNativeSeparators(mTorrent->data().downloadDirectory));
+            creatorLabel->setText(mTorrent->data().creator);
+            creationDateLabel->setText(mTorrent->data().creationDate.toLocalTime().toString());
+            if (mTorrent->data().comment != commentTextEdit->toPlainText()) {
+                commentTextEdit->document()->setPlainText(mTorrent->data().comment);
                 desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
             }
         };
@@ -419,13 +419,13 @@ namespace tremotesf {
         resizer->addWidgetsFromLayout(peersGroupBoxLayout);
 
         mUpdateLimitsTab = [=] {
-            globalLimitsCheckBox->setChecked(mTorrent->honorSessionLimits());
+            globalLimitsCheckBox->setChecked(mTorrent->data().honorSessionLimits);
             QObject::connect(globalLimitsCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setHonorSessionLimits);
 
-            downloadSpeedCheckBox->setChecked(mTorrent->isDownloadSpeedLimited());
+            downloadSpeedCheckBox->setChecked(mTorrent->data().downloadSpeedLimited);
             QObject::connect(downloadSpeedCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setDownloadSpeedLimited);
 
-            downloadSpeedSpinBox->setValue(mTorrent->downloadSpeedLimit());
+            downloadSpeedSpinBox->setValue(mTorrent->data().downloadSpeedLimit);
             QObject::connect(
                 downloadSpeedSpinBox,
                 static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -433,10 +433,10 @@ namespace tremotesf {
                 &Torrent::setDownloadSpeedLimit
             );
 
-            uploadSpeedCheckBox->setChecked(mTorrent->isUploadSpeedLimited());
+            uploadSpeedCheckBox->setChecked(mTorrent->data().uploadSpeedLimited);
             QObject::connect(uploadSpeedCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setUploadSpeedLimited);
 
-            uploadSpeedSpinBox->setValue(mTorrent->uploadSpeedLimit());
+            uploadSpeedSpinBox->setValue(mTorrent->data().uploadSpeedLimit);
             QObject::connect(
                 uploadSpeedSpinBox,
                 static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -445,7 +445,7 @@ namespace tremotesf {
             );
 
             priorityComboBox->setCurrentIndex(
-                indexOfCasted<int>(priorityComboBoxItems, mTorrent->bandwidthPriority()).value()
+                indexOfCasted<int>(priorityComboBoxItems, mTorrent->data().bandwidthPriority).value()
             );
             QObject::connect(
                 priorityComboBox,
@@ -455,7 +455,7 @@ namespace tremotesf {
             );
 
             ratioLimitComboBox->setCurrentIndex(
-                indexOfCasted<int>(ratioLimitComboBoxItems, mTorrent->ratioLimitMode()).value()
+                indexOfCasted<int>(ratioLimitComboBoxItems, mTorrent->data().ratioLimitMode).value()
             );
             QObject::connect(
                 ratioLimitComboBox,
@@ -464,7 +464,7 @@ namespace tremotesf {
                 [=](int index) { mTorrent->setRatioLimitMode(ratioLimitComboBoxItems[index]); }
             );
 
-            ratioLimitSpinBox->setValue(mTorrent->ratioLimit());
+            ratioLimitSpinBox->setValue(mTorrent->data().ratioLimit);
             QObject::connect(
                 ratioLimitSpinBox,
                 static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
@@ -473,7 +473,7 @@ namespace tremotesf {
             );
 
             idleSeedingLimitComboBox->setCurrentIndex(
-                indexOfCasted<int>(idleSeedingLimitComboBoxItems, mTorrent->idleSeedingLimitMode()).value()
+                indexOfCasted<int>(idleSeedingLimitComboBoxItems, mTorrent->data().idleSeedingLimitMode).value()
             );
             QObject::connect(
                 idleSeedingLimitComboBox,
@@ -482,7 +482,7 @@ namespace tremotesf {
                 [=](int index) { mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems[index]); }
             );
 
-            idleSeedingLimitSpinBox->setValue(mTorrent->idleSeedingLimit());
+            idleSeedingLimitSpinBox->setValue(mTorrent->data().idleSeedingLimit);
             QObject::connect(
                 idleSeedingLimitSpinBox,
                 static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -490,7 +490,7 @@ namespace tremotesf {
                 &Torrent::setIdleSeedingLimit
             );
 
-            peersLimitsSpinBox->setValue(mTorrent->peersLimit());
+            peersLimitsSpinBox->setValue(mTorrent->data().peersLimit);
             QObject::connect(
                 peersLimitsSpinBox,
                 static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -519,12 +519,12 @@ namespace tremotesf {
             }
 
             mUpdateDetailsTab();
-            mWebSeedersModel->setStringList(mTorrent->webSeeders());
+            mWebSeedersModel->setStringList(mTorrent->data().webSeeders);
             mUpdateLimitsTab();
 
             QObject::connect(mTorrent, &Torrent::changed, this, [this] {
                 mUpdateDetailsTab();
-                mWebSeedersModel->setStringList(mTorrent->webSeeders());
+                mWebSeedersModel->setStringList(mTorrent->data().webSeeders);
                 mUpdateLimitsTab();
             });
         } else {
