@@ -153,7 +153,7 @@ namespace tremotesf {
             mPortSpinBox->setValue(9091);
             mApiPathLineEdit->setText("/transmission/rpc"_l1);
             mProxyTypeComboBox->setCurrentIndex(
-                index_of_i(proxyTypeComboBoxValues, ConnectionConfiguration::ProxyType::Default)
+                indexOfCasted<int>(proxyTypeComboBoxValues, ConnectionConfiguration::ProxyType::Default).value()
             );
             mHttpsGroupBox->setChecked(false);
             mAuthenticationGroupBox->setChecked(false);
@@ -173,7 +173,7 @@ namespace tremotesf {
             mApiPathLineEdit->setText(server.connectionConfiguration.apiPath);
 
             mProxyTypeComboBox->setCurrentIndex(
-                index_of_i(proxyTypeComboBoxValues, server.connectionConfiguration.proxyType)
+                indexOfCasted<int>(proxyTypeComboBoxValues, server.connectionConfiguration.proxyType).value()
             );
             mProxyHostnameLineEdit->setText(server.connectionConfiguration.proxyHostname);
             mProxyPortSpinBox->setValue(server.connectionConfiguration.proxyPort);

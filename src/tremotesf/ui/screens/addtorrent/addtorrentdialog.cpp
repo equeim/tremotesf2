@@ -229,7 +229,7 @@ namespace tremotesf {
             }
         }
         mPriorityComboBox->setCurrentIndex(
-            index_of_i(priorityComboBoxItems, libtremotesf::TorrentData::Priority::Normal)
+            indexOfCasted<int>(priorityComboBoxItems, libtremotesf::TorrentData::Priority::Normal).value()
         );
 
         QFormLayout* secondFormLayout = nullptr;
