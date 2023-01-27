@@ -32,12 +32,18 @@ jobs:
         echo '"C:\msys64\usr\bin\tar.exe" %*' > '${{ runner.temp }}\tar\tar.bat'
         echo '${{ runner.temp }}\tar' >> '${{ github.path }}'
 
+    - name: Set VCPKG_ROOT environment variable
+      run: |
+        echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> '${{ github.env }}'
+
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@v3
+      uses: equeim/action-setup-vcpkg@v4
       with:
-        vcpkg-root: C:\vcpkg
         run-install: true
+        install-root: C:\vcpkg_installed
         triplet: x64-windows-static
+        host-triplet: x64-windows-static
+        binary-cache-path: C:\vcpkg_binary_cache
         save-cache: ${{ github.event_name != 'pull_request' }}
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
@@ -47,7 +53,7 @@ jobs:
       if: inputs.build-with-clang-cl
       uses: equeim/action-cmake-build@v9
       with:
-        cmake-arguments: --preset windows-clang -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed
+        cmake-arguments: --preset windows-clang -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
         output-directories-suffix: -clang-cl
 
     - name: Remove clang-cl build directories
@@ -60,7 +66,7 @@ jobs:
       id: build
       uses: equeim/action-cmake-build@v9
       with:
-        cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=${{github.workspace}}\vcpkg_installed
+        cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
         package: true
 
     - name: Archive debug packages
