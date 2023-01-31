@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Trackers list shows number of seeders and leechers for trackers, not just total number peers
+
+### Changed
+- "Seeders" and "leechers" now refer to total number of seeders and leechers reported by trackers,
+  while number of peers that we are currently downloading from / uploading to is displayed separately
+- Tracker's error is displayed in separate column
+- Torrents that have an error but are still being downloaded/uploaded are displayed under both "Status" filters simultaneously
+
+### Fixed
+- Fixed issues with lists or torrents/trackers not being updated sometimes
+- Main window placeholder when there is no torrents in list is now displayed correctly
+
 ## [2.0.0] - 2022-11-05
 ### Added
 - Dark theme support on Windows (dark window title bar on Windows 10
