@@ -96,6 +96,10 @@ namespace tremotesf {
                 break;
             case Column::Peers:
                 return tracker.tracker.peers();
+            case Column::Seeders:
+                return tracker.tracker.seeders();
+            case Column::Leechers:
+                return tracker.tracker.leechers();
             }
         } else if (role == SortRole) {
             if (static_cast<Column>(index.column()) == Column::NextUpdate && tracker.nextUpdateEta.has_value()) {
@@ -121,6 +125,10 @@ namespace tremotesf {
             return qApp->translate("tremotesf", "Next Update");
         case Column::Peers:
             return qApp->translate("tremotesf", "Peers");
+        case Column::Seeders:
+            return qApp->translate("tremotesf", "Seeders");
+        case Column::Leechers:
+            return qApp->translate("tremotesf", "Leechers");
         }
         return {};
     }
