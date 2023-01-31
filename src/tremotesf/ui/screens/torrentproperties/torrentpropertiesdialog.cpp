@@ -136,10 +136,23 @@ namespace tremotesf {
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "ETA:"), etaLabel);
         auto seedersLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Seeders:"), seedersLabel);
-        auto activeWebSeedersLabel = new QLabel(this);
-        activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Active web seeders:"), activeWebSeedersLabel);
         auto leechersLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Leechers:"), leechersLabel);
+        auto peersSendingToUsLabel = new QLabel(this);
+        activityGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Peers we are downloading from:"),
+            peersSendingToUsLabel
+        );
+        auto webSeedersSendingToUsLabel = new QLabel(this);
+        activityGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Web seeders we are downloading from:"),
+            webSeedersSendingToUsLabel
+        );
+        auto peersGettingFromUsLabel = new QLabel(this);
+        activityGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Peers we are uploading to:"),
+            peersGettingFromUsLabel
+        );
         auto lastActivityLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Last activity:"), lastActivityLabel);
         detailsTabLayout->addWidget(activityGroupBox);
@@ -184,10 +197,12 @@ namespace tremotesf {
             uploadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->data().uploadSpeed));
             etaLabel->setText(Utils::formatEta(mTorrent->data().eta));
 
-            const QLocale locale;
-            seedersLabel->setText(locale.toString(mTorrent->data().activeSeedersCount));
-            activeWebSeedersLabel->setText(locale.toString(mTorrent->data().activeWebSeedersCount));
-            leechersLabel->setText(locale.toString(mTorrent->data().activeLeechersCount));
+            const QLocale locale{};
+            seedersLabel->setText(locale.toString(mTorrent->data().totalSeedersFromTrackersCount));
+            leechersLabel->setText(locale.toString(mTorrent->data().totalLeechersFromTrackersCount));
+            peersSendingToUsLabel->setText(locale.toString(mTorrent->data().peersSendingToUsCount));
+            webSeedersSendingToUsLabel->setText(locale.toString(mTorrent->data().webSeedersSendingToUsCount));
+            peersGettingFromUsLabel->setText(locale.toString(mTorrent->data().peersGettingFromUsCount));
 
             lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
 

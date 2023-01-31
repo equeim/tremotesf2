@@ -31,6 +31,8 @@ namespace tremotesf {
             QueuePosition,
             Seeders,
             Leechers,
+            PeersSendingToUs,
+            PeersGettingFromUs,
             DownloadSpeed,
             UploadSpeed,
             Eta,
