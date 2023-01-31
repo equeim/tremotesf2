@@ -118,9 +118,13 @@ namespace tremotesf {
             case Column::QueuePosition:
                 return torrent->data().queuePosition;
             case Column::Seeders:
-                return torrent->data().activeSeedersCount;
+                return torrent->data().totalSeedersFromTrackersCount;
             case Column::Leechers:
-                return torrent->data().activeLeechersCount;
+                return torrent->data().totalLeechersFromTrackersCount;
+            case Column::PeersSendingToUs:
+                return torrent->data().peersSendingToUsCount;
+            case Column::PeersGettingFromUs:
+                return torrent->data().peersGettingFromUsCount;
             case Column::DownloadSpeed:
                 return Utils::formatByteSpeed(torrent->data().downloadSpeed);
             case Column::UploadSpeed:
@@ -260,6 +264,10 @@ namespace tremotesf {
             return qApp->translate("tremotesf", "Seeders");
         case Column::Leechers:
             return qApp->translate("tremotesf", "Leechers");
+        case Column::PeersSendingToUs:
+            return qApp->translate("tremotesf", "Downloading to peers");
+        case Column::PeersGettingFromUs:
+            return qApp->translate("tremotesf", "Uploading to peers");
         case Column::DownloadSpeed:
             return qApp->translate("tremotesf", "Down Speed");
         case Column::UploadSpeed:
