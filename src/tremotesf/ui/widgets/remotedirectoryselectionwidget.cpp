@@ -73,6 +73,7 @@ namespace tremotesf {
             [=] {
                 QMessageBox::warning(
                     this,
+                    //: Dialog title
                     qApp->translate("tremotesf", "Error"),
                     qApp->translate("tremotesf", "Selected directory should be inside mounted directory")
                 );

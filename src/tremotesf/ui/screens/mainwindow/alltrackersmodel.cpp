@@ -32,10 +32,10 @@ namespace tremotesf {
         case Qt::DisplayRole:
         case Qt::ToolTipRole:
             if (item.tracker.isEmpty()) {
-                return qApp->translate("tremotesf", "All (%L1)", "All trackers, %L1 - torrents count")
-                    .arg(item.torrents);
+                //: Filter option of torrents list's tracker filter. %L1 is total number of torrents
+                return qApp->translate("tremotesf", "All (%L1)").arg(item.torrents);
             }
-            //: %1 is a string (directory name or tracker domain name), %L2 is number of torrents
+            //: Filter option of torrents list's tracker filter. %1 is tracker domain name, %L2 is number of torrents with that tracker
             return qApp->translate("tremotesf", "%1 (%L2)").arg(item.tracker).arg(item.torrents);
         default:
             return {};

@@ -96,14 +96,19 @@ namespace tremotesf {
         }
         switch (mColumns.at(static_cast<size_t>(section))) {
         case Column::Name:
+            //: Column title in torrent's file list
             return qApp->translate("tremotesf", "Name");
         case Column::Size:
+            //: Column title in torrent's file list
             return qApp->translate("tremotesf", "Size");
         case Column::ProgressBar:
+            //: Column title in torrent's file list
             return qApp->translate("tremotesf", "Progress Bar");
         case Column::Progress:
+            //: Column title in torrent's file list
             return qApp->translate("tremotesf", "Progress");
         case Column::Priority:
+            //: Column title in torrent's file list
             return qApp->translate("tremotesf", "Priority");
         default:
             return {};

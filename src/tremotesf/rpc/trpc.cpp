@@ -88,24 +88,33 @@ namespace tremotesf {
         case ConnectionState::Disconnected:
             switch (error()) {
             case Error::NoError:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Disconnected");
             case Error::TimedOut:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Timed out");
             case Error::ConnectionError:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Connection error");
             case Error::AuthenticationError:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Authentication error");
             case Error::ParseError:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Parse error");
             case Error::ServerIsTooNew:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Server is too new");
             case Error::ServerIsTooOld:
+                //: Server connection status
                 return qApp->translate("tremotesf", "Server is too old");
             }
             break;
         case ConnectionState::Connecting:
+            //: Server connection status
             return qApp->translate("tremotesf", "Connecting...");
         case ConnectionState::Connected:
+            //: Server connection status
             return qApp->translate("tremotesf", "Connected");
         }
 

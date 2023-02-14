@@ -77,40 +77,47 @@ namespace tremotesf {
                 switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
                     if (torrent->data().hasError()) {
-                        return qApp->translate("tremotesf", "Paused (%1)", "Torrent status with error")
-                            .arg(torrent->data().errorString);
+                        //: Torrent status while torrent also has an error. %1 is error string
+                        return qApp->translate("tremotesf", "Paused (%1)").arg(torrent->data().errorString);
                     }
-                    return qApp->translate("tremotesf", "Paused", "Torrent status");
+                    //: Torrent status
+                    return qApp->translate("tremotesf", "Paused");
                 case TorrentData::Status::Downloading:
                     if (torrent->data().hasError()) {
-                        return qApp->translate("tremotesf", "Downloading (%1)", "Torrent status with error")
-                            .arg(torrent->data().errorString);
+                        //: Torrent status while torrent also has an error. %1 is error string
+                        return qApp->translate("tremotesf", "Downloading (%1)").arg(torrent->data().errorString);
                     }
+                    //: Torrent status
                     return qApp->translate("tremotesf", "Downloading", "Torrent status");
                 case TorrentData::Status::Seeding:
                     if (torrent->data().hasError()) {
-                        return qApp->translate("tremotesf", "Seeding (%1)", "Torrent status with error")
-                            .arg(torrent->data().errorString);
+                        //: Torrent status while torrent also has an error. %1 is error string
+                        return qApp->translate("tremotesf", "Seeding (%1)").arg(torrent->data().errorString);
                     }
+                    //: Torrent status
                     return qApp->translate("tremotesf", "Seeding", "Torrent status");
                 case TorrentData::Status::QueuedForDownloading:
                 case TorrentData::Status::QueuedForSeeding:
                     if (torrent->data().hasError()) {
-                        return qApp->translate("tremotesf", "Queued (%1)", "Torrent status with error")
-                            .arg(torrent->data().errorString);
+                        //: Torrent status while torrent also has an error. %1 is error string
+                        return qApp->translate("tremotesf", "Queued (%1)").arg(torrent->data().errorString);
                     }
-                    return qApp->translate("tremotesf", "Queued", "Torrent status");
+                    //: Torrent status
+                    return qApp->translate("tremotesf", "Queued");
                 case TorrentData::Status::Checking:
                     if (torrent->data().hasError()) {
-                        return qApp->translate("tremotesf", "Checking (%1)", "Torrent status with error")
-                            .arg(torrent->data().errorString);
+                        //: Torrent status while torrent also has an error. %1 is error string
+                        return qApp->translate("tremotesf", "Checking (%1)").arg(torrent->data().errorString);
                     }
-                    return qApp->translate("tremotesf", "Checking", "Torrent status");
+                    //: Torrent status
+                    return qApp->translate("tremotesf", "Checking");
                 case TorrentData::Status::QueuedForChecking:
                     if (torrent->data().hasError()) {
-                        return qApp->translate("tremotesf", "Queued for checking (%1)", "Torrent status with error")
+                        //: Torrent status while torrent also has an error. %1 is error string
+                        return qApp->translate("tremotesf", "Queued for checking (%1)")
                             .arg(torrent->data().errorString);
                     }
+                    //: Torrent status
                     return qApp->translate("tremotesf", "Queued for checking");
                 }
                 break;
@@ -245,60 +252,82 @@ namespace tremotesf {
         }
         switch (static_cast<Column>(section)) {
         case Column::Name:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Name");
         case Column::SizeWhenDone:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Size");
         case Column::TotalSize:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Total Size");
         case Column::ProgressBar:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Progress Bar");
         case Column::Progress:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Progress");
         case Column::Priority:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Priority");
         case Column::QueuePosition:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Queue Position");
         case Column::Status:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Status");
         case Column::Seeders:
+            //: Torrents list column name, number of seeders reported by trackers
             return qApp->translate("tremotesf", "Seeders");
         case Column::Leechers:
+            //: Torrents list column name, number of leechers reported by trackers
             return qApp->translate("tremotesf", "Leechers");
         case Column::PeersSendingToUs:
+            //: Torrents list column name, number of peers that we are downloading from
             return qApp->translate("tremotesf", "Downloading to peers");
         case Column::PeersGettingFromUs:
+            //: Torrents list column name, number of peers that we are uploading to
             return qApp->translate("tremotesf", "Uploading to peers");
         case Column::DownloadSpeed:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Down Speed");
         case Column::UploadSpeed:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Up Speed");
         case Column::Eta:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "ETA");
         case Column::Ratio:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Ratio");
         case Column::AddedDate:
+            //: Torrents list column name, date/time when torrent was added
             return qApp->translate("tremotesf", "Added on");
         case Column::DoneDate:
+            //: Torrents list column name, date/time when torrent was completed
             return qApp->translate("tremotesf", "Completed on");
         case Column::DownloadSpeedLimit:
+            //: Torrents list column name, download speed limit
             return qApp->translate("tremotesf", "Down Limit");
         case Column::UploadSpeedLimit:
+            //: Torrents list column name, upload speed limit
             return qApp->translate("tremotesf", "Up Limit");
         case Column::TotalDownloaded:
-            //: Torrent's downloaded size
+            //: Torrents list column name, downloaded byte size
             return qApp->translate("tremotesf", "Downloaded");
         case Column::TotalUploaded:
-            //: Torrent's uploaded size
+            //: Torrents list column name, uploaded byte size
             return qApp->translate("tremotesf", "Uploaded");
         case Column::LeftUntilDone:
-            //: Torrents's remaining size
+            //: Torrents list column name, remaining byte size
             return qApp->translate("tremotesf", "Remaining");
         case Column::DownloadDirectory:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Download Directory");
         case Column::CompletedSize:
-            //: Torrent's completed size
+            //: Torrents list column name, completed byte size
             return qApp->translate("tremotesf", "Completed");
         case Column::ActivityDate:
+            //: Torrents list column name
             return qApp->translate("tremotesf", "Last Activity");
         default:
             return {};

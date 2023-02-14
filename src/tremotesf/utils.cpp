@@ -26,7 +26,6 @@ namespace tremotesf {
             ExbiByte,
             ZebiByte,
             YobiByte,
-            NumberOfByteUnits
         };
 
         struct ByteUnitStrings {
@@ -35,48 +34,57 @@ namespace tremotesf {
         };
 
         // Should be kept in sync with `enum ByteUnit`
-        const std::array<ByteUnitStrings, NumberOfByteUnits> byteUnits{
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 B"); },
-                [] { return qApp->translate("tremotesf", "%L1 B/s"); }},
+        constexpr auto byteUnits = std::array{
+            ByteUnitStrings{//: Size suffix in bytes
+                            [] { return qApp->translate("tremotesf", "%L1 B"); },
+                            //: Download speed suffix in bytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 B/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 KiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
+            ByteUnitStrings{//: Size suffix in kibibytes
+                            [] { return qApp->translate("tremotesf", "%L1 KiB"); },
+                            //: Download speed suffix in kibibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 MiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
+            ByteUnitStrings{//: Size suffix in mebibytes
+                            [] { return qApp->translate("tremotesf", "%L1 MiB"); },
+                            //: Download speed suffix in mebibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 GiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
+            ByteUnitStrings{//: Size suffix in gibibytes
+                            [] { return qApp->translate("tremotesf", "%L1 GiB"); },
+                            //: Download speed suffix in gibibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 TiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
+            ByteUnitStrings{//: Size suffix in tebibytes
+                            [] { return qApp->translate("tremotesf", "%L1 TiB"); },
+                            //: Download speed suffix in tebibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 PiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
+            ByteUnitStrings{//: Size suffix in pebibytes
+                            [] { return qApp->translate("tremotesf", "%L1 PiB"); },
+                            //: Download speed suffix in pebibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 EiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
+            ByteUnitStrings{//: Size suffix in exbibytes
+                            [] { return qApp->translate("tremotesf", "%L1 EiB"); },
+                            //: Download speed suffix in exbibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 ZiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
+            ByteUnitStrings{//: Size suffix in zebibytes
+                            [] { return qApp->translate("tremotesf", "%L1 ZiB"); },
+                            //: Download speed suffix in zebibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
-            ByteUnitStrings{
-                [] { return qApp->translate("tremotesf", "%L1 YiB"); },
-                [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
+            ByteUnitStrings{//: Size suffix in yobibytes
+                            [] { return qApp->translate("tremotesf", "%L1 YiB"); },
+                            //: Download speed suffix in yobibytes per second
+                            [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
         };
 
         QString formatBytes(long long bytes, ByteUnitStrings::Type stringType) {
             size_t unit = 0;
             auto bytes_d = static_cast<double>(bytes);
-            while (bytes_d >= 1024.0 && unit <= NumberOfByteUnits) {
+            while (bytes_d >= 1024.0 && unit <= byteUnits.size()) {
                 bytes_d /= 1024.0;
                 ++unit;
             }
@@ -102,12 +110,17 @@ namespace tremotesf {
 
     QString Utils::formatByteSpeed(long long speed) { return formatBytes(speed, ByteUnitStrings::Speed); }
 
-    QString Utils::formatSpeedLimit(int limit) { return qApp->translate("tremotesf", "%L1 KiB/s").arg(limit); }
+    QString Utils::formatSpeedLimit(int limit) {
+        //: Download speed suffix in kibibytes per second
+        return qApp->translate("tremotesf", "%L1 KiB/s").arg(limit);
+    }
 
     QString Utils::formatProgress(double progress) {
         if (qFuzzyCompare(progress, 1.0)) {
+            //: Progress in percents. %L1 must remain unchanged, % after it is a percent character
             return qApp->translate("tremotesf", "%L1%").arg(100);
         }
+        //: Progress in percents. %L1 must remain unchanged, % after it is a percent character
         return qApp->translate("tremotesf", "%L1%").arg(std::trunc(progress * 1000.0) / 10.0, 0, 'f', 1);
     }
 
@@ -145,17 +158,21 @@ namespace tremotesf {
         seconds %= 60;
 
         if (days > 0) {
+            //: Remaining time string. %L1 is days, %L2 is hours, e.g. "2 d 5 h"
             return qApp->translate("tremotesf", "%L1 d %L2 h").arg(days).arg(hours);
         }
 
         if (hours > 0) {
+            //: Remaining time string. %L1 is hours, %L2 is minutes, e.g. "2 h 5 m"
             return qApp->translate("tremotesf", "%L1 h %L2 m").arg(hours).arg(minutes);
         }
 
         if (minutes > 0) {
+            //: Remaining time string. %L1 is minutes, %L2 is seconds, e.g. "2 m 5 s"
             return qApp->translate("tremotesf", "%L1 m %L2 s").arg(minutes).arg(seconds);
         }
 
+        //: Remaining time string. %L1 is seconds, "10 s"
         return qApp->translate("tremotesf", "%L1 s").arg(seconds);
     }
 

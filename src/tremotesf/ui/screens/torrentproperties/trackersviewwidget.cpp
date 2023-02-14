@@ -61,8 +61,12 @@ namespace tremotesf {
         mTrackersView->header()->restoreState(Settings::instance()->trackersViewHeaderState());
         QObject::connect(mTrackersView, &EnterEatingTreeView::activated, this, &TrackersViewWidget::showEditDialogs);
 
-        auto removeAction =
-            new QAction(QIcon::fromTheme("list-remove"_l1), qApp->translate("tremotesf", "&Remove"), this);
+        auto removeAction = new QAction(
+            QIcon::fromTheme("list-remove"_l1),
+            //: Tracker's context menu item
+            qApp->translate("tremotesf", "&Remove"),
+            this
+        );
         removeAction->setShortcut(QKeySequence::Delete);
         mTrackersView->addAction(removeAction);
         QObject::connect(removeAction, &QAction::triggered, this, &TrackersViewWidget::removeTrackers);
@@ -72,6 +76,7 @@ namespace tremotesf {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(
                     QIcon::fromTheme("document-properties"_l1),
+                    //: Tracker's context menu item
                     qApp->translate("tremotesf", "&Edit...")
                 );
                 QObject::connect(editAction, &QAction::triggered, this, &TrackersViewWidget::showEditDialogs);
@@ -84,22 +89,38 @@ namespace tremotesf {
 
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout);
-        auto addTrackersButton =
-            new QPushButton(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "Add..."), this);
+        auto addTrackersButton = new QPushButton(
+            QIcon::fromTheme("list-add"_l1),
+            //: Button
+            qApp->translate("tremotesf", "Add..."),
+            this
+        );
         QObject::connect(addTrackersButton, &QPushButton::clicked, this, &TrackersViewWidget::addTrackers);
         buttonsLayout->addWidget(addTrackersButton);
-        auto editButton =
-            new QPushButton(QIcon::fromTheme("document-properties"_l1), qApp->translate("tremotesf", "Edit..."), this);
+        auto editButton = new QPushButton(
+            QIcon::fromTheme("document-properties"_l1),
+            //: Button
+            qApp->translate("tremotesf", "Edit..."),
+            this
+        );
         QObject::connect(editButton, &QPushButton::clicked, this, &TrackersViewWidget::showEditDialogs);
         editButton->setEnabled(false);
         buttonsLayout->addWidget(editButton);
-        auto removeButton =
-            new QPushButton(QIcon::fromTheme("list-remove"_l1), qApp->translate("tremotesf", "Remove"), this);
+        auto removeButton = new QPushButton(
+            QIcon::fromTheme("list-remove"_l1),
+            //: Button
+            qApp->translate("tremotesf", "Remove"),
+            this
+        );
         removeButton->setEnabled(false);
         QObject::connect(removeButton, &QPushButton::clicked, this, &TrackersViewWidget::removeTrackers);
         buttonsLayout->addWidget(removeButton);
-        auto reannounceButton =
-            new QPushButton(QIcon::fromTheme("view-refresh"_l1), qApp->translate("tremotesf", "Reanno&unce"), this);
+        auto reannounceButton = new QPushButton(
+            QIcon::fromTheme("view-refresh"_l1),
+            //: Button
+            qApp->translate("tremotesf", "Reanno&unce"),
+            this
+        );
         QObject::connect(reannounceButton, &QPushButton::clicked, this, [=] {
             mRpc->reannounceTorrents({mTorrent->data().id});
         });
@@ -124,9 +145,11 @@ namespace tremotesf {
 
     void TrackersViewWidget::addTrackers() {
         auto dialog = new TextInputDialog(
+            //: Dialog title
             qApp->translate("tremotesf", "Add Trackers"),
             qApp->translate("tremotesf", "Trackers announce URLs:"),
             QString(),
+            //: Dialog confirmation button
             qApp->translate("tremotesf", "Add"),
             true,
             this
@@ -144,6 +167,7 @@ namespace tremotesf {
             const libtremotesf::Tracker& tracker = mModel->trackerAtIndex(mProxyModel->sourceIndex(index));
             const int id = tracker.id();
             auto dialog = new TextInputDialog(
+                //: Dialog title
                 qApp->translate("tremotesf", "Edit Tracker"),
                 qApp->translate("tremotesf", "Tracker announce URL:"),
                 tracker.announce(),
@@ -167,22 +191,25 @@ namespace tremotesf {
         dialog.setIcon(QMessageBox::Warning);
 
         dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        //: Dialog confirmation button
         dialog.button(QMessageBox::Ok)->setText(qApp->translate("tremotesf", "Remove"));
         dialog.setDefaultButton(QMessageBox::Cancel);
 
         const auto ids =
             mModel->idsFromIndexes(mProxyModel->sourceIndexes(mTrackersView->selectionModel()->selectedRows()));
         if (ids.size() == 1) {
+            //: Dialog title
             dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Tracker"));
             dialog.setText(qApp->translate("tremotesf", "Are you sure you want to remove this tracker?"));
         } else {
+            //: Dialog title
             dialog.setWindowTitle(qApp->translate("tremotesf", "Remove Trackers"));
-            dialog.setText(qApp->translate(
-                "tremotesf",
-                "Are you sure you want to remove %Ln selected trackers?",
-                nullptr,
-                static_cast<int>(ids.size())
-            ));
+            // Don't put static_cast in qApp->translate() - lupdate doesn't like it
+            const auto count = static_cast<int>(ids.size());
+            //: %Ln is number of trackers selected for deletion
+            dialog.setText(
+                qApp->translate("tremotesf", "Are you sure you want to remove %Ln selected trackers?", nullptr, count)
+            );
         }
 
         if (dialog.exec() == QMessageBox::Ok) {

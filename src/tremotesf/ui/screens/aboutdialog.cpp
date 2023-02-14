@@ -20,6 +20,7 @@
 
 namespace tremotesf {
     AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent) {
+        //: "About" dialog title
         setWindowTitle(qApp->translate("tremotesf", "About"));
 
         auto layout = new QVBoxLayout(this);
@@ -34,6 +35,7 @@ namespace tremotesf {
         auto aboutPage = new QWidget(this);
         auto aboutPageLayout = new QVBoxLayout(aboutPage);
         auto aboutPageLabel = new QLabel(
+            //: "About" dialog text
             qApp->translate(
                 "tremotesf",
                 "<p>&#169; 2015-2020 Alexey Rochev &lt;<a "
@@ -48,6 +50,7 @@ namespace tremotesf {
         QObject::connect(aboutPageLabel, &QLabel::linkActivated, this, &QDesktopServices::openUrl);
         aboutPageLayout->addWidget(aboutPageLabel);
 
+        //: "About" dialog's "About" tab title
         tabWidget->addTab(aboutPage, qApp->translate("tremotesf", "About"));
 
         auto authorsPage = new QWidget(this);
@@ -57,16 +60,19 @@ namespace tremotesf {
         authorsWidget->setOpenExternalLinks(true);
         authorsPageLayout->addWidget(authorsWidget);
         authorsPageLayout->addStretch();
+        //: "About" dialog's "Authors" tab title
         tabWidget->addTab(authorsPage, qApp->translate("tremotesf", "Authors"));
 
         auto translatorsWidget = new QTextBrowser(this);
         translatorsWidget->setHtml(Utils::readTextResource(":/translators.html"));
         translatorsWidget->setOpenExternalLinks(true);
+        //: "About" dialog's "Translators" tab title
         tabWidget->addTab(translatorsWidget, qApp->translate("tremotesf", "Translators"));
 
         auto licenseWidget = new QTextBrowser(this);
         licenseWidget->setHtml(Utils::readTextResource(":/license.html"));
         licenseWidget->setOpenExternalLinks(true);
+        //: "About" dialog's "License" tab title
         tabWidget->addTab(licenseWidget, qApp->translate("tremotesf", "License"));
 
         layout->addWidget(tabWidget);

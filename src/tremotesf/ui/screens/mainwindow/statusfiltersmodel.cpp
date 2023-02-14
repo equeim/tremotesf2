@@ -47,19 +47,25 @@ namespace tremotesf {
         case Qt::ToolTipRole:
             switch (item.filter) {
             case TorrentsProxyModel::All:
-                return qApp->translate("tremotesf", "All (%L1)", "All torrents, %L1 - torrents count")
-                    .arg(item.torrents);
+                //: Filter option of torrents list's status filter. %L1 is total number of torrents
+                return qApp->translate("tremotesf", "All (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Active:
+                //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Active (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Downloading:
+                //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Downloading (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Seeding:
+                //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Seeding (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Paused:
+                //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Paused (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Checking:
+                //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Checking (%L1)").arg(item.torrents);
             case TorrentsProxyModel::Errored:
+                //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Errored (%L1)").arg(item.torrents);
             default:
                 break;

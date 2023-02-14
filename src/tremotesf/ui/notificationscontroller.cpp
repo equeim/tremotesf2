@@ -34,7 +34,9 @@ namespace tremotesf {
     void NotificationsController::showFinishedTorrentsNotification(const QStringList& torrentNames) {
         showTorrentsNotification(
             torrentNames.size() == 1
+                //: Notification title
                 ? qApp->translate("tremotesf", "Torrent finished")
+                //: Notification title, %Ln is number of finished torrents
                 : qApp->translate("tremotesf", "%Ln torrents finished", nullptr, torrentNames.size()),
             torrentNames
         );
@@ -42,8 +44,11 @@ namespace tremotesf {
 
     void NotificationsController::showAddedTorrentsNotification(const QStringList& torrentNames) {
         showTorrentsNotification(
-            torrentNames.size() == 1 ? qApp->translate("tremotesf", "Torrent added")
-                                     : qApp->translate("tremotesf", "%Ln torrents added", nullptr, torrentNames.size()),
+            torrentNames.size() == 1
+                //: Notification title
+                ? qApp->translate("tremotesf", "Torrent added")
+                //: Notification title, %Ln is number of added torrents
+                : qApp->translate("tremotesf", "%Ln torrents added", nullptr, torrentNames.size()),
             torrentNames
         );
     }

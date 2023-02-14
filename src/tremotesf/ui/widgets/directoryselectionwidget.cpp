@@ -153,8 +153,12 @@ namespace tremotesf {
     }
 
     void DirectorySelectionWidget::showFileDialog() {
-        auto dialog =
-            new QFileDialog(this, qApp->translate("tremotesf", "Select Directory"), mViewModel->fileDialogDirectory());
+        auto dialog = new QFileDialog(
+            this,
+            //: Directory chooser dialog title
+            qApp->translate("tremotesf", "Select Directory"),
+            mViewModel->fileDialogDirectory()
+        );
         dialog->setFileMode(QFileDialog::Directory);
         dialog->setOptions(QFileDialog::ShowDirsOnly);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
