@@ -79,18 +79,25 @@ namespace tremotesf {
         }
         switch (static_cast<Column>(section)) {
         case Column::Address:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Address");
         case Column::DownloadSpeed:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Down Speed");
         case Column::UploadSpeed:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Up Speed");
         case Column::ProgressBar:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Progress Bar");
         case Column::Progress:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Progress");
         case Column::Flags:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Flags");
         case Column::Client:
+            //: Peers list column title
             return qApp->translate("tremotesf", "Client");
         default:
             return {};

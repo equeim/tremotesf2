@@ -21,42 +21,53 @@
 
 namespace tremotesf {
     ServerStatsDialog::ServerStatsDialog(Rpc* rpc, QWidget* parent) : QDialog(parent) {
+        //: Dialog title
         setWindowTitle(qApp->translate("tremotesf", "Server Stats"));
 
         auto layout = new QVBoxLayout(this);
 
+        //: Message that appears when disconnected from server
         auto disconnectedWidget = new KMessageWidget(qApp->translate("tremotesf", "Disconnected"));
         disconnectedWidget->setCloseButtonVisible(false);
         disconnectedWidget->setMessageType(KMessageWidget::Warning);
         disconnectedWidget->hide();
         layout->addWidget(disconnectedWidget);
 
+        //: Server stats section for current Transmission launch
         auto currentSessionGroupBox = new QGroupBox(qApp->translate("tremotesf", "Current session"), this);
         auto currentSessionGroupBoxLayout = new QFormLayout(currentSessionGroupBox);
 
         auto sessionDownloadedLabel = new QLabel(this);
+        //: Downloaded bytes
         currentSessionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Downloaded:"), sessionDownloadedLabel);
         auto sessionUploadedLabel = new QLabel(this);
+        //: Uploaded bytes
         currentSessionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Uploaded:"), sessionUploadedLabel);
         auto sessionRatioLabel = new QLabel(this);
         currentSessionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Ratio:"), sessionRatioLabel);
         auto sessionDurationLabel = new QLabel(this);
+        //: How much time Transmission is running
         currentSessionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Duration:"), sessionDurationLabel);
 
         layout->addWidget(currentSessionGroupBox);
 
+        //: Server stats section for all Transmission launches (accumulated)
         auto totalGroupBox = new QGroupBox(qApp->translate("tremotesf", "Total"), this);
         auto totalGroupBoxLayout = new QFormLayout(totalGroupBox);
 
         auto totalDownloadedLabel = new QLabel(this);
+        //: Downloaded bytes
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Downloaded:"), totalDownloadedLabel);
         auto totalUploadedLabel = new QLabel(this);
+        //: Uploaded bytes
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Uploaded:"), totalUploadedLabel);
         auto totalRatioLabel = new QLabel(this);
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Ratio:"), totalRatioLabel);
         auto totalDurationLabel = new QLabel(this);
+        //: How much time Transmission is running
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Duration:"), totalDurationLabel);
         auto sessionCountLabel = new QLabel(this);
+        //: How many times Transmission was launched
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Started:"), sessionCountLabel);
         auto freeSpaceField = new QLabel(this);
         totalGroupBoxLayout->addRow(qApp->translate("tremotesf", "Free space in download directory:"), freeSpaceField);
@@ -105,6 +116,7 @@ namespace tremotesf {
             totalRatioLabel->setText(Utils::formatRatio(totalStats.downloaded(), totalStats.uploaded()));
             totalDurationLabel->setText(Utils::formatEta(totalStats.duration()));
 
+            //: How many times Transmission was launched
             sessionCountLabel->setText(qApp->translate("tremotesf", "%Ln times", nullptr, totalStats.sessionCount()));
 
             rpc->getDownloadDirFreeSpace();

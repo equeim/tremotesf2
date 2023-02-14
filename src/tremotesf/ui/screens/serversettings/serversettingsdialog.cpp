@@ -40,6 +40,7 @@ namespace tremotesf {
     }
 
     ServerSettingsDialog::ServerSettingsDialog(const Rpc* rpc, QWidget* parent) : QDialog(parent), mRpc(rpc) {
+        //: Dialog title
         setWindowTitle(qApp->translate("tremotesf", "Server Options"));
 
         setupUi();
@@ -135,6 +136,7 @@ namespace tremotesf {
 
         auto layout = new QVBoxLayout(this);
 
+        //: Message that appears when disconnected from server
         mDisconnectedMessageWidget = new KMessageWidget(qApp->translate("tremotesf", "Disconnected"), this);
         mDisconnectedMessageWidget->setCloseButtonVisible(false);
         mDisconnectedMessageWidget->setMessageType(KMessageWidget::Warning);
@@ -146,8 +148,11 @@ namespace tremotesf {
         // Downloading page
         mDownloadingPageWidget = new QWidget(this);
 
-        KPageWidgetItem* downloadingPageItem =
-            pageWidget->addPage(mDownloadingPageWidget, qApp->translate("tremotesf", "Downloading", "Noun"));
+        KPageWidgetItem* downloadingPageItem = pageWidget->addPage(
+            mDownloadingPageWidget,
+            //: "Downloading" server setting page
+            qApp->translate("tremotesf", "Downloading", "Noun")
+        );
         downloadingPageItem->setIcon(QIcon::fromTheme("folder-download"_l1));
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
@@ -155,14 +160,18 @@ namespace tremotesf {
         mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(QString(), mRpc, this);
         downloadingPageLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
+        //: Check box label
         mStartAddedTorrentsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start added torrents"), this);
         downloadingPageLayout->addRow(mStartAddedTorrentsCheckBox);
 
         /*mTrashTorrentFilesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Trash .torrent files"), this);
         downloadingPageLayout->addRow(mTrashTorrentFilesCheckBox);*/
 
-        mIncompleteFilesCheckBox =
-            new QCheckBox(qApp->translate("tremotesf", "Append \".part\" to names of incomplete files"), this);
+        mIncompleteFilesCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Append \".part\" to names of incomplete files"),
+            this
+        );
         downloadingPageLayout->addRow(mIncompleteFilesCheckBox);
 
         mIncompleteDirectoryCheckBox =
@@ -185,8 +194,11 @@ namespace tremotesf {
 
         // Seeding page
         mSeedingPageWidget = new QWidget(this);
-        KPageWidgetItem* seedingPageItem =
-            pageWidget->addPage(mSeedingPageWidget, qApp->translate("tremotesf", "Seeding", "Noun"));
+        KPageWidgetItem* seedingPageItem = pageWidget->addPage(
+            mSeedingPageWidget,
+            //: "Seeding" server setting page
+            qApp->translate("tremotesf", "Seeding", "Noun")
+        );
         seedingPageItem->setIcon(QIcon::fromTheme("network-server"_l1));
 
         auto seedingPageLayout = new QGridLayout(mSeedingPageWidget);
@@ -206,7 +218,7 @@ namespace tremotesf {
         mIdleSeedingLimitSpinBox = new QSpinBox(this);
         mIdleSeedingLimitSpinBox->setEnabled(false);
         mIdleSeedingLimitSpinBox->setMaximum(9999);
-        //: Minutes
+        //: Suffix that is added to input field with number of minuts, e.g. "5 min"
         mIdleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
         QObject::connect(
             mIdleSeedingLimitCheckBox,
@@ -222,7 +234,11 @@ namespace tremotesf {
 
         // Queue page
         mQueuePageWidget = new QWidget(this);
-        KPageWidgetItem* queuePageItem = pageWidget->addPage(mQueuePageWidget, qApp->translate("tremotesf", "Queue"));
+        KPageWidgetItem* queuePageItem = pageWidget->addPage(
+            mQueuePageWidget,
+            //: "Queue" server settings page
+            qApp->translate("tremotesf", "Queue")
+        );
         queuePageItem->setIcon(QIcon::fromTheme("applications-utilities"_l1));
 
         auto queuePageLayout = new QGridLayout(mQueuePageWidget);
@@ -263,7 +279,7 @@ namespace tremotesf {
         mIdleQueueLimitSpinBox = new QSpinBox(this);
         mIdleQueueLimitSpinBox->setEnabled(false);
         mIdleQueueLimitSpinBox->setMaximum(9999);
-        //: Minutes
+        //: Suffix that is added to input field with number of minuts, e.g. "5 min"
         mIdleQueueLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
         QObject::connect(mIdleQueueLimitCheckBox, &QCheckBox::toggled, mIdleQueueLimitSpinBox, &QSpinBox::setEnabled);
         queuePageLayout->addWidget(mIdleQueueLimitSpinBox, 5, 1, Qt::AlignTop);
@@ -274,19 +290,24 @@ namespace tremotesf {
 
         // Speed page
         mSpeedPageWidget = new QWidget(this);
-        KPageWidgetItem* speedPageItem = pageWidget->addPage(mSpeedPageWidget, qApp->translate("tremotesf", "Speed"));
+        KPageWidgetItem* speedPageItem = pageWidget->addPage(
+            mSpeedPageWidget,
+            //: "Speed" server settings page
+            qApp->translate("tremotesf", "Speed")
+        );
         speedPageItem->setIcon(QIcon::fromTheme("preferences-system-time"_l1));
 
         auto speedPageLayout = new QVBoxLayout(mSpeedPageWidget);
 
+        //: Speed limits section
         auto speedLimitsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Limits"), this);
         auto speedLimitsGroupBoxLayout = new QGridLayout(speedLimitsGroupBox);
 
         const int maxSpeedLimit = static_cast<int>(std::numeric_limits<uint>::max() / 1024);
-        //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
+        //: Suffix that is added to input field with download/upload speed limit, e.g. "5000 kB/s". 'k' prefix means SI prefix, i.e kB = 1000 bytes
         const QString suffix(qApp->translate("tremotesf", " kB/s"));
 
-        //: Noun
+        //: Download speed limit input field label
         mDownloadSpeedLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);
         speedLimitsGroupBoxLayout->addWidget(mDownloadSpeedLimitCheckBox, 0, 0, 1, 2);
 
@@ -302,7 +323,7 @@ namespace tremotesf {
         );
         speedLimitsGroupBoxLayout->addWidget(mDownloadSpeedLimitSpinBox, 1, 1);
 
-        //: Noun
+        //: Upload speed limit input field label
         mUploadSpeedLimitCheckBox = new QCheckBox(qApp->translate("tremotesf", "Upload:"), this);
         speedLimitsGroupBoxLayout->addWidget(mUploadSpeedLimitCheckBox, 2, 0, 1, 2);
 
@@ -322,9 +343,11 @@ namespace tremotesf {
 
         speedPageLayout->addWidget(speedLimitsGroupBox);
 
+        //: Alternative speed limits section
         auto alternativeSpeedLimitsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Alternative Limits"), this);
         auto alternativeSpeedLimitsGroupBoxLayout = new QVBoxLayout(alternativeSpeedLimitsGroupBox);
 
+        //: Check box label
         mEnableAlternativeSpeedLimitsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Enable"), this);
         mEnableAlternativeSpeedLimitsGroupBox->setCheckable(true);
         auto enableAlternativeLimitsGroupBoxLayout = new QFormLayout(mEnableAlternativeSpeedLimitsGroupBox);
@@ -334,6 +357,7 @@ namespace tremotesf {
         mAlternativeDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
         mAlternativeDownloadSpeedLimitSpinBox->setSuffix(suffix);
         enableAlternativeLimitsGroupBoxLayout->addRow(
+            //: Download speed limit input field label
             qApp->translate("tremotesf", "Download:"),
             mAlternativeDownloadSpeedLimitSpinBox
         );
@@ -341,12 +365,14 @@ namespace tremotesf {
         mAlternativeUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
         mAlternativeUploadSpeedLimitSpinBox->setSuffix(suffix);
         enableAlternativeLimitsGroupBoxLayout->addRow(
+            //: Upload speed limit input field label
             qApp->translate("tremotesf", "Upload:"),
             mAlternativeUploadSpeedLimitSpinBox
         );
 
         alternativeSpeedLimitsGroupBoxLayout->addWidget(mEnableAlternativeSpeedLimitsGroupBox);
 
+        //: Title of alternative speed limit scheduling section
         mLimitScheduleGroupBox = new QGroupBox(qApp->translate("tremotesf", "Scheduled"), this);
         mLimitScheduleGroupBox->setCheckable(true);
         auto scheduleGroupBoxLayout = new QFormLayout(mLimitScheduleGroupBox);
@@ -356,7 +382,7 @@ namespace tremotesf {
         scheduleGroupBoxLayout->addRow(scheduleTimeLayout);
         mLimitScheduleBeginTimeEdit = new QTimeEdit(this);
         scheduleTimeLayout->addWidget(mLimitScheduleBeginTimeEdit, 1);
-        //: e.g. inside "From 1:00 AM to 5:00 AM"
+        //: Separates time range input fields. E.g. "to" inside "1:00 AM to 5:00 AM"
         scheduleTimeLayout->addWidget(new QLabel(qApp->translate("tremotesf", "to")));
         mLimitScheduleEndTimeEdit = new QTimeEdit(this);
         scheduleTimeLayout->addWidget(mLimitScheduleEndTimeEdit, 1);
@@ -429,12 +455,16 @@ namespace tremotesf {
 
         // Network page
         mNetworkPageWidget = new QWidget(this);
-        KPageWidgetItem* networkPageItem =
-            pageWidget->addPage(mNetworkPageWidget, qApp->translate("tremotesf", "Network"));
+        KPageWidgetItem* networkPageItem = pageWidget->addPage(
+            mNetworkPageWidget,
+            //: "Network" server settings page
+            qApp->translate("tremotesf", "Network")
+        );
         networkPageItem->setIcon(QIcon::fromTheme("preferences-system-network"_l1));
 
         auto networkPageLayout = new QVBoxLayout(mNetworkPageWidget);
 
+        //: Title of settings section related to peer connections
         auto connectionGroupBox = new QGroupBox(qApp->translate("tremotesf", "Connection"), this);
         auto connectionGroupBoxLayout = new QFormLayout(connectionGroupBox);
         connectionGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
@@ -443,9 +473,11 @@ namespace tremotesf {
         mPeerPortSpinBox->setMaximum(65535);
         connectionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Peer port:"), mPeerPortSpinBox);
 
+        //: Check box label
         mRandomPortCheckBox = new QCheckBox(qApp->translate("tremotesf", "Random port on Transmission start"), this);
         connectionGroupBoxLayout->addRow(mRandomPortCheckBox);
 
+        //: Check box label
         mPortForwardingCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable port forwarding"));
         connectionGroupBoxLayout->addRow(mPortForwardingCheckBox);
 
@@ -453,15 +485,15 @@ namespace tremotesf {
         for (ServerSettingsData::EncryptionMode mode : encryptionModeComboBoxItems) {
             switch (mode) {
             case ServerSettingsData::EncryptionMode::Allowed:
-                //: Encryption mode
+                //: Encryption mode (allow/prefer/require)
                 mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Allow"));
                 break;
             case ServerSettingsData::EncryptionMode::Preferred:
-                //: Encryption mode
+                //: Encryption mode (allow/prefer/require)
                 mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Prefer"));
                 break;
             case ServerSettingsData::EncryptionMode::Required:
-                //: Encryption mode
+                //: Encryption mode (allow/prefer/require)
                 mEncryptionComboBox->addItem(qApp->translate("tremotesf", "Require"));
                 break;
             }
@@ -469,16 +501,20 @@ namespace tremotesf {
 
         connectionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Encryption:"), mEncryptionComboBox);
 
-        mUtpCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable uTP"), this);
+        //: Check box label
+        mUtpCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable μTP (Micro Transport Protocol)"), this);
         connectionGroupBoxLayout->addRow(mUtpCheckBox);
 
-        mPexCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable PEX"), this);
+        //: Check box label
+        mPexCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable PEX (Peer exchange)"), this);
         connectionGroupBoxLayout->addRow(mPexCheckBox);
 
+        //: Check box label
         mDhtCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable DHT"), this);
         connectionGroupBoxLayout->addRow(mDhtCheckBox);
 
-        mLpdCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable LPD"), this);
+        //: Check box label
+        mLpdCheckBox = new QCheckBox(qApp->translate("tremotesf", "Enable local peer discovery"), this);
         connectionGroupBoxLayout->addRow(mLpdCheckBox);
 
         networkPageLayout->addWidget(connectionGroupBox);

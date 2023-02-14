@@ -113,8 +113,10 @@ namespace tremotesf {
 
     void AddTorrentDialog::setupUi() {
         if (mMode == Mode::File) {
+            //: Dialog title
             setWindowTitle(qApp->translate("tremotesf", "Add Torrent File"));
         } else {
+            //: Dialog title
             setWindowTitle(qApp->translate("tremotesf", "Add Torrent Link"));
         }
 
@@ -135,8 +137,10 @@ namespace tremotesf {
         mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
         if (mMode == Mode::File) {
             mTorrentLinkLineEdit->setReadOnly(true);
+            //: Input field's label
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
         } else {
+            //: Input field's label
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
             if (mUrl.isEmpty() && Settings::instance()->fillTorrentLinkFromClipboard()) {
                 const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
@@ -153,6 +157,7 @@ namespace tremotesf {
 
         mDownloadDirectoryWidget =
             new TorrentDownloadDirectoryDirectorySelectionWidget(initialDownloadDirectory(), mRpc, this);
+        //: Input field's label
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         auto freeSpaceLabel = new QLabel(this);
@@ -182,6 +187,7 @@ namespace tremotesf {
                     if (path == mDownloadDirectoryWidget->path()) {
                         if (success) {
                             freeSpaceLabel->setText(
+                                //: %1 is a amount of free space in a directory, e.g. 1 GiB
                                 qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes))
                             );
                         } else {
@@ -215,15 +221,15 @@ namespace tremotesf {
         for (libtremotesf::TorrentData::Priority priority : priorityComboBoxItems) {
             switch (priority) {
             case libtremotesf::TorrentData::Priority::High:
-                //: Priority
+                //: Torrent's loading priority
                 mPriorityComboBox->addItem(qApp->translate("tremotesf", "High"));
                 break;
             case libtremotesf::TorrentData::Priority::Normal:
-                //: Priority
+                //: Torrent's loading priority
                 mPriorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
                 break;
             case libtremotesf::TorrentData::Priority::Low:
-                //: Priority
+                //: Torrent's loading priority
                 mPriorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
                 break;
             }
@@ -235,6 +241,7 @@ namespace tremotesf {
         QFormLayout* secondFormLayout = nullptr;
         if (mMode == Mode::File) {
             secondFormLayout = new QFormLayout();
+            //: Combo box label
             secondFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
             layout->addLayout(secondFormLayout);
 
@@ -242,6 +249,7 @@ namespace tremotesf {
             resizer->addWidgetsFromLayout(firstFormLayout);
             resizer->addWidgetsFromLayout(secondFormLayout);
         } else {
+            //: Combo box label
             firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
         }
 
@@ -287,10 +295,12 @@ namespace tremotesf {
                 messageWidget->animatedHide();
             } else if (mFilesModel && !mFilesModel->isLoaded()) {
                 messageWidget->setMessageType(KMessageWidget::Information);
+                //: Placeholder shown when torrent file is being read/parsed
                 messageWidget->setText(qApp->translate("tremotesf", "Loading"));
                 messageWidget->animatedShow();
             } else {
                 messageWidget->setMessageType(KMessageWidget::Warning);
+                //: Server connection status
                 messageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
                 messageWidget->animatedShow();
             }
@@ -313,6 +323,7 @@ namespace tremotesf {
                 } else {
                     auto messageBox = new QMessageBox(
                         QMessageBox::Critical,
+                        //: Dialog title
                         qApp->translate("tremotesf", "Error"),
                         mFilesModel->errorString(),
                         QMessageBox::Close,

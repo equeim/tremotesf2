@@ -53,7 +53,9 @@ namespace tremotesf::desktoputils {
             logWarning("QDesktopServices::openUrl() failed for {}", url);
             auto dialog = new QMessageBox(
                 QMessageBox::Warning,
+                //: Dialog title
                 qApp->translate("tremotesf", "Error"),
+                //: File opening error, %1 is a file path
                 qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(filePath)),
                 QMessageBox::Close,
                 parent

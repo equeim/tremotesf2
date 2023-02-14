@@ -40,6 +40,7 @@ namespace tremotesf {
                         TREMOTESF_APP_ID ""_l1,
                         title,
                         message,
+                        //: Button on notification
                         {"default"_l1, qApp->translate("tremotesf", "Show Tremotesf")},
                         {{"desktop-entry"_l1, TREMOTESF_APP_ID ""_l1},
                          {"x-kde-origin-name"_l1, Servers::instance()->currentServerName()}},

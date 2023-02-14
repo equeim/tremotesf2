@@ -198,6 +198,7 @@ namespace tremotesf {
 
         auto searchLineEdit = new QLineEdit(this);
         searchLineEdit->setClearButtonEnabled(true);
+        //: Search field placeholder
         searchLineEdit->setPlaceholderText(qApp->translate("tremotesf", "Search..."));
         QObject::connect(searchLineEdit, &QLineEdit::textChanged, this, [proxyModel](const auto& text) {
             proxyModel->setSearchString(text);
@@ -212,6 +213,7 @@ namespace tremotesf {
         checkBoxFont.setBold(true);
         checkBoxFont.setCapitalization(QFont::AllUppercase);
 
+        //: Title of torrents status filters list
         auto statusCheckBox = new QCheckBox(qApp->translate("tremotesf", "Status"), this);
         statusCheckBox->setChecked(true);
         statusCheckBox->setFont(checkBoxFont);
@@ -227,6 +229,7 @@ namespace tremotesf {
         layout->addWidget(statusFiltersListView);
         statusCheckBox->setChecked(proxyModel->isStatusFilterEnabled());
 
+        //: Title of torrents download directory filters list
         auto directoriesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Directories"), this);
         directoriesCheckBox->setChecked(true);
         directoriesCheckBox->setFont(checkBoxFont);
@@ -242,6 +245,7 @@ namespace tremotesf {
         layout->addWidget(directoriesListView);
         directoriesCheckBox->setChecked(proxyModel->isDownloadDirectoryFilterEnabled());
 
+        //: Title of torrents tracker filters list
         auto trackersCheckBox = new QCheckBox(qApp->translate("tremotesf", "Trackers"), this);
         trackersCheckBox->setChecked(true);
         trackersCheckBox->setFont(checkBoxFont);

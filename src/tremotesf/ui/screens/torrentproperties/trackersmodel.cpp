@@ -26,13 +26,17 @@ namespace tremotesf {
             using libtremotesf::Tracker;
             switch (tracker.status()) {
             case Tracker::Status::Inactive:
-                return qApp->translate("tremotesf", "Inactive", "Tracker status");
+                //: Tracker status
+                return qApp->translate("tremotesf", "Inactive");
             case Tracker::Status::WaitingForUpdate:
-                return qApp->translate("tremotesf", "Waiting for update", "Tracker status");
+                //: Tracker status
+                return qApp->translate("tremotesf", "Waiting for update");
             case Tracker::Status::QueuedForUpdate:
-                return qApp->translate("tremotesf", "About to update", "Tracker status");
+                //: Tracker status
+                return qApp->translate("tremotesf", "About to update");
             case Tracker::Status::Updating:
-                return qApp->translate("tremotesf", "Updating", "Tracker status");
+                //: Tracker status
+                return qApp->translate("tremotesf", "Updating");
             }
             return {};
         }
@@ -116,18 +120,25 @@ namespace tremotesf {
         }
         switch (static_cast<Column>(section)) {
         case Column::Announce:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Address");
         case Column::Status:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Status");
         case Column::Error:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Error");
         case Column::NextUpdate:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Next Update");
         case Column::Peers:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Peers");
         case Column::Seeders:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Seeders");
         case Column::Leechers:
+            //: Trackers list column title
             return qApp->translate("tremotesf", "Leechers");
         }
         return {};

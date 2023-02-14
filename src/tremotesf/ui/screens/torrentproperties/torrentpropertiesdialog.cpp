@@ -79,7 +79,9 @@ namespace tremotesf {
         layout->addWidget(mMessageWidget);
 
         setupDetailsTab();
+        //: Torrent properties dialog tab
         mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc), qApp->translate("tremotesf", "Files"));
+        //: Torrent properties dialog tab
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));
         setupPeersTab();
         setupWebSeedersTab();
@@ -111,10 +113,12 @@ namespace tremotesf {
 
     void TorrentPropertiesDialog::setupDetailsTab() {
         auto detailsTab = new QWidget(this);
+        //: Torrent's properties dialog tab
         mTabWidget->addTab(detailsTab, qApp->translate("tremotesf", "Details"));
 
         auto detailsTabLayout = new QVBoxLayout(detailsTab);
 
+        //: Torrent's details tab section
         auto activityGroupBox = new QGroupBox(qApp->translate("tremotesf", "Activity"), this);
         auto activityGroupBoxLayout = new QFormLayout(activityGroupBox);
         auto completedLabel = new QLabel(this);
@@ -157,22 +161,28 @@ namespace tremotesf {
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Last activity:"), lastActivityLabel);
         detailsTabLayout->addWidget(activityGroupBox);
 
+        //: Torrent's details tab section
         auto infoGroupBox = new QGroupBox(qApp->translate("tremotesf", "Information"), this);
         auto infoGroupBoxLayout = new QFormLayout(infoGroupBox);
         auto totalSizeLabel = new QLabel(this);
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Total size:"), totalSizeLabel);
         auto locationLabel = new QLabel(this);
         locationLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        //: Torrent's download directory
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Location:"), locationLabel);
         auto hashLabel = new QLabel(mTorrent->data().hashString, this);
         hashLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        //: Torrent's hash string
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Hash:"), hashLabel);
         auto creatorLabel = new QLabel(this);
+        //: Program that created torrent file
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Created by:"), creatorLabel);
         auto creationDateLabel = new QLabel(this);
+        //: Date/time when torrent was created
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Created on:"), creationDateLabel);
         auto commentTextEdit = new QTextBrowser(this);
         commentTextEdit->setOpenExternalLinks(true);
+        //: Torrent's comment text
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Comment:"), commentTextEdit);
         detailsTabLayout->addWidget(infoGroupBox);
 
@@ -183,7 +193,7 @@ namespace tremotesf {
         mUpdateDetailsTab = [=] {
             setWindowTitle(mTorrent->data().name);
 
-            //: e.g. 100 MiB of 200 MiB (50%)
+            //: Torrent's completion size, e.g. 100 MiB of 200 MiB (50%). %1 is completed size, %2 is size, %3 is progress in percents
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
                                         .arg(
                                             Utils::formatByteSize(mTorrent->data().completedSize),
@@ -233,11 +243,12 @@ namespace tremotesf {
         mPeersView->header()->restoreState(Settings::instance()->peersViewHeaderState());
 
         peersTabLayout->addWidget(mPeersView);
-
+        //: Torrent's properties dialog tab
         mTabWidget->addTab(peersTab, qApp->translate("tremotesf", "Peers"));
     }
 
     void TorrentPropertiesDialog::setupWebSeedersTab() {
+        //: Web seeders list column title
         mWebSeedersModel = new StringListModel(qApp->translate("tremotesf", "Web seeder"), this);
         auto webSeedersProxyModel = new BaseProxyModel(mWebSeedersModel, Qt::DisplayRole, this);
 
@@ -251,11 +262,13 @@ namespace tremotesf {
 
         webSeedersTabLayout->addWidget(webSeedersView);
 
+        //: Torrent's properties dialog tab
         mTabWidget->addTab(webSeedersTab, qApp->translate("tremotesf", "Web seeders"));
     }
 
     void TorrentPropertiesDialog::setupLimitsTab() {
         auto limitsTab = new QWidget(this);
+        //: Torrent's properties dialog tab
         mTabWidget->addTab(limitsTab, qApp->translate("tremotesf", "Limits"));
 
         auto limitsTabLayout = new QVBoxLayout(limitsTab);
@@ -263,16 +276,19 @@ namespace tremotesf {
         //
         // Speed group box
         //
+        //: Torrent's limits tab section
         auto speedGroupBox = new QGroupBox(qApp->translate("tremotesf", "Speed"), this);
         auto speedGroupBoxLayout = new QFormLayout(speedGroupBox);
         speedGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
         speedGroupBoxLayout->setFormAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
+        //: Check box label
         auto globalLimitsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Honor global limits"), this);
         speedGroupBoxLayout->addRow(globalLimitsCheckBox);
 
         const int maxSpeedLimit = static_cast<int>(std::numeric_limits<uint>::max() / 1024);
 
+        //: Download speed limit input field label
         auto downloadSpeedCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);
         speedGroupBoxLayout->addRow(downloadSpeedCheckBox);
 
@@ -281,7 +297,7 @@ namespace tremotesf {
         auto downloadSpeedSpinBox = new QSpinBox(this);
         downloadSpeedSpinBox->setEnabled(false);
         downloadSpeedSpinBox->setMaximum(maxSpeedLimit);
-        //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
+        //: Suffix that is added to input field with download/upload speed limit, e.g. "5000 kB/s". 'k' prefix means SI prefix, i.e kB = 1000 bytes
         downloadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " kB/s"));
 
         QObject::connect(downloadSpeedCheckBox, &QCheckBox::toggled, downloadSpeedSpinBox, &QSpinBox::setEnabled);
@@ -289,6 +305,7 @@ namespace tremotesf {
         downloadSpeedSpinBoxLayout->addSpacing(28);
         downloadSpeedSpinBoxLayout->addWidget(downloadSpeedSpinBox);
 
+        //: Upload speed limit input field label
         auto uploadSpeedCheckBox = new QCheckBox(qApp->translate("tremotesf", "Upload:"), this);
         speedGroupBoxLayout->addRow(uploadSpeedCheckBox);
 
@@ -297,7 +314,7 @@ namespace tremotesf {
         auto uploadSpeedSpinBox = new QSpinBox(this);
         uploadSpeedSpinBox->setEnabled(false);
         uploadSpeedSpinBox->setMaximum(maxSpeedLimit);
-        //: In this context, 'k' prefix means SI prefix, i.e kB = 1000 bytes
+        //: Suffix that is added to input field with download/upload speed limit, e.g. "5000 kB/s". 'k' prefix means SI prefix, i.e kB = 1000 bytes
         uploadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " kB/s"));
 
         QObject::connect(uploadSpeedCheckBox, &QCheckBox::toggled, uploadSpeedSpinBox, &QSpinBox::setEnabled);
@@ -309,15 +326,15 @@ namespace tremotesf {
         for (TorrentData::Priority priority : priorityComboBoxItems) {
             switch (priority) {
             case TorrentData::Priority::High:
-                //: Priority
+                //: Torrent's loading priotiry
                 priorityComboBox->addItem(qApp->translate("tremotesf", "High"));
                 break;
             case TorrentData::Priority::Normal:
-                //: Priority
+                //: Torrent's loading priotiry
                 priorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
                 break;
             case TorrentData::Priority::Low:
-                //: Priority
+                //: Torrent's loading priotiry
                 priorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
                 break;
             }
@@ -329,7 +346,8 @@ namespace tremotesf {
         //
         // Seeding group box
         //
-        auto seedingGroupBox = new QGroupBox(qApp->translate("tremotesf", "Seeding", "Noun"), this);
+        //: Torrent's limits tab section
+        auto seedingGroupBox = new QGroupBox(qApp->translate("tremotesf", "Seeding", "Options section"), this);
         auto seedingGroupBoxLayout = new QFormLayout(seedingGroupBox);
         seedingGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
@@ -340,12 +358,15 @@ namespace tremotesf {
         for (TorrentData::RatioLimitMode mode : ratioLimitComboBoxItems) {
             switch (mode) {
             case TorrentData::RatioLimitMode::Global:
+                //: Seeding ratio limit mode (global settings/stop at ratio/unlimited)
                 ratioLimitComboBox->addItem(qApp->translate("tremotesf", "Use global settings"));
                 break;
             case TorrentData::RatioLimitMode::Single:
+                //: Seeding ratio limit mode (global settings/stop at ratio/unlimited)
                 ratioLimitComboBox->addItem(qApp->translate("tremotesf", "Stop seeding at ratio:"));
                 break;
             case TorrentData::RatioLimitMode::Unlimited:
+                //: Seeding ratio limit mode (global settings/stop at ratio/unlimited)
                 ratioLimitComboBox->addItem(qApp->translate("tremotesf", "Seed regardless of ratio"));
                 break;
             }
@@ -378,12 +399,15 @@ namespace tremotesf {
         for (TorrentData::IdleSeedingLimitMode mode : idleSeedingLimitComboBoxItems) {
             switch (mode) {
             case TorrentData::IdleSeedingLimitMode::Global:
+                //: Seeding idle limit mode (global settings/stop if idle for/unlimited)
                 idleSeedingLimitComboBox->addItem(qApp->translate("tremotesf", "Use global settings"));
                 break;
             case TorrentData::IdleSeedingLimitMode::Single:
+                //: Seeding idle limit mode (global settings/stop if idle for/unlimited)
                 idleSeedingLimitComboBox->addItem(qApp->translate("tremotesf", "Stop seeding if idle for:"));
                 break;
             case TorrentData::IdleSeedingLimitMode::Unlimited:
+                //: Seeding idle limit mode (global settings/stop if idle for/unlimited)
                 idleSeedingLimitComboBox->addItem(qApp->translate("tremotesf", "Seed regardless of activity"));
                 break;
             }
@@ -392,7 +416,7 @@ namespace tremotesf {
         idleSeedingLimitLayout->addWidget(idleSeedingLimitComboBox);
         auto idleSeedingLimitSpinBox = new QSpinBox(this);
         idleSeedingLimitSpinBox->setMaximum(9999);
-        //: Minutes
+        //: Suffix that is added to input field with number of minuts, e.g. "5 min"
         idleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
 
         idleSeedingLimitSpinBox->setVisible(false);
@@ -416,6 +440,7 @@ namespace tremotesf {
         //
         // Peers group box
         //
+        //: Torrent's limits tab section
         auto peersGroupBox = new QGroupBox(qApp->translate("tremotesf", "Peers"), this);
         auto peersGroupBoxLayout = new QFormLayout(peersGroupBox);
         peersGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
@@ -544,8 +569,10 @@ namespace tremotesf {
             });
         } else {
             if (mRpc->connectionState() == Rpc::ConnectionState::Disconnected) {
+                //: Message that appears when disconnected from server
                 mMessageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
             } else {
+                //: Message that appears when torrent is removed
                 mMessageWidget->setText(qApp->translate("tremotesf", "Torrent Removed"));
             }
             mMessageWidget->animatedShow();

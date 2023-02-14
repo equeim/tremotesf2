@@ -81,9 +81,11 @@ namespace tremotesf {
         const QString& fileName, QWidget* parent, const std::function<void(const QString&)>& onAccepted
     ) {
         auto dialog = new TextInputDialog(
+            //: Dialog title
             qApp->translate("tremotesf", "Rename"),
             qApp->translate("tremotesf", "File name:"),
             fileName,
+            //: Dialog confirmation button
             qApp->translate("tremotesf", "Rename"),
             false,
             parent
@@ -154,8 +156,11 @@ namespace tremotesf {
                     disableBoth = true;
                 }
 
-                QAction* openAction =
-                    contextMenu.addAction(QIcon::fromTheme("document-open"_l1), qApp->translate("tremotesf", "&Open"));
+                QAction* openAction = contextMenu.addAction(
+                    QIcon::fromTheme("document-open"_l1),
+                    //: Context menu item
+                    qApp->translate("tremotesf", "&Open")
+                );
                 openAction->setEnabled(!disableBoth && !disableOpen);
                 QObject::connect(openAction, &QAction::triggered, this, [=, &sourceIndexes] {
                     for (const QModelIndex& index : sourceIndexes) {
@@ -168,6 +173,7 @@ namespace tremotesf {
 
                 QAction* showInFileManagerAction = contextMenu.addAction(
                     QIcon::fromTheme("go-jump"_l1),
+                    //: Context menu item
                     qApp->translate("tremotesf", "Show In &File Manager")
                 );
                 showInFileManagerAction->setEnabled(!disableBoth);
@@ -186,14 +192,18 @@ namespace tremotesf {
 
         QAction* downloadAction = contextMenu.addAction(
             QIcon::fromTheme("download"_l1),
-            qApp->translate("tremotesf", "&Download", "File menu item, verb")
+            //: Context menu item to select file for downloading
+            qApp->translate("tremotesf", "&Download")
         );
         QObject::connect(downloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, true);
         });
 
-        QAction* notDownloadAction =
-            contextMenu.addAction(QIcon::fromTheme("dialog-cancel"_l1), qApp->translate("tremotesf", "&Not Download"));
+        QAction* notDownloadAction = contextMenu.addAction(
+            QIcon::fromTheme("dialog-cancel"_l1),
+            //: Context menu item to unselect file for downloading
+            qApp->translate("tremotesf", "&Not Download")
+        );
         QObject::connect(notDownloadAction, &QAction::triggered, this, [=, &sourceIndexes] {
             mModel->setFilesWanted(sourceIndexes, false);
         });
@@ -204,7 +214,7 @@ namespace tremotesf {
         QActionGroup priorityGroup(this);
         priorityGroup.setExclusive(true);
 
-        //: Priority
+        //: File loading priority
         QAction* highPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&High"));
         highPriorityAction->setCheckable(true);
         QObject::connect(highPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
@@ -213,7 +223,7 @@ namespace tremotesf {
             }
         });
 
-        //: Priority
+        //: File loading priority
         QAction* normalPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Normal"));
         normalPriorityAction->setCheckable(true);
         QObject::connect(normalPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
@@ -222,7 +232,7 @@ namespace tremotesf {
             }
         });
 
-        //: Priority
+        //: File loading priority
         QAction* lowPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "&Low"));
         lowPriorityAction->setCheckable(true);
         QObject::connect(lowPriorityAction, &QAction::triggered, this, [=, &sourceIndexes](bool checked) {
@@ -231,6 +241,7 @@ namespace tremotesf {
             }
         });
 
+        //: File loading priority
         QAction* mixedPriorityAction = priorityGroup.addAction(qApp->translate("tremotesf", "Mixed"));
         mixedPriorityAction->setCheckable(true);
         mixedPriorityAction->setChecked(true);
@@ -263,8 +274,11 @@ namespace tremotesf {
 
         if (mRpc->serverSettings()->data().canRenameFiles()) {
             contextMenu.addSeparator();
-            QAction* renameAction =
-                contextMenu.addAction(QIcon::fromTheme("edit-rename"_l1), qApp->translate("tremotesf", "&Rename"));
+            QAction* renameAction = contextMenu.addAction(
+                QIcon::fromTheme("edit-rename"_l1),
+                //: Context menu item
+                qApp->translate("tremotesf", "&Rename")
+            );
             renameAction->setEnabled(sourceIndexes.size() == 1);
             QObject::connect(renameAction, &QAction::triggered, this, [=] {
                 const QModelIndex& index = sourceIndexes.first();

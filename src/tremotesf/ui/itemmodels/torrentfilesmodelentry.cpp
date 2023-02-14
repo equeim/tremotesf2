@@ -66,16 +66,16 @@ namespace tremotesf {
     QString TorrentFilesModelEntry::priorityString() const {
         switch (priority()) {
         case LowPriority:
-            //: Priority
+            //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Low");
         case NormalPriority:
-            //: Priority
+            //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Normal");
         case HighPriority:
-            //: Priority
+            //: Torrent's file loading priority
             return qApp->translate("tremotesf", "High");
         case MixedPriority:
-            //: Priority
+            //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Mixed");
         }
         return {};

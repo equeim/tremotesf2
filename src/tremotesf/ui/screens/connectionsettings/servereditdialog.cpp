@@ -67,15 +67,17 @@ namespace tremotesf {
             setMinimumHeight(192);
             setSelectionMode(QAbstractItemView::SingleSelection);
             setItemDelegate(new CommonDelegate(this));
-            setHorizontalHeaderLabels(
-                {qApp->translate("tremotesf", "Local directory"), qApp->translate("tremotesf", "Remote directory")}
-            );
+            setHorizontalHeaderLabels({//: Column title in the list of mounted directories
+                                       qApp->translate("tremotesf", "Local directory"),
+                                       //: Column title in the list of mounted directories
+                                       qApp->translate("tremotesf", "Remote directory")});
             horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
             horizontalHeader()->setSectionsClickable(false);
             verticalHeader()->setVisible(false);
 
             setContextMenuPolicy(Qt::CustomContextMenu);
 
+            //: Context menu item
             auto removeAction =
                 new QAction(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "&Remove"), this);
             removeAction->setShortcut(QKeySequence::Delete);
@@ -98,6 +100,7 @@ namespace tremotesf {
 
                 QAction* selectAction = nullptr;
                 if (index.column() == 0) {
+                    //: Context menu item to open directory chooser
                     selectAction = contextMenu.addAction(qApp->translate("tremotesf", "&Select..."));
                 }
 
@@ -148,6 +151,7 @@ namespace tremotesf {
         setupUi();
 
         if (row == -1) {
+            //: Dialog title
             setWindowTitle(qApp->translate("tremotesf", "Add Server"));
 
             mPortSpinBox->setValue(9091);
@@ -212,12 +216,14 @@ namespace tremotesf {
             if (newName != mServerName && mServersModel->hasServer(newName)) {
                 QMessageBox messageBox(
                     QMessageBox::Warning,
+                    //: Dialog title
                     qApp->translate("tremotesf", "Overwrite Server"),
                     qApp->translate("tremotesf", "Server already exists"),
                     QMessageBox::Ok | QMessageBox::Cancel,
                     this
                 );
                 messageBox.setDefaultButton(QMessageBox::Cancel);
+                //: Dialog's confirmation button
                 messageBox.button(QMessageBox::Ok)->setText(qApp->translate("tremotesf", "Overwrite"));
                 if (messageBox.exec() != QMessageBox::Ok) {
                     return;
@@ -268,12 +274,15 @@ namespace tremotesf {
         for (ConnectionConfiguration::ProxyType type : proxyTypeComboBoxValues) {
             switch (type) {
             case ConnectionConfiguration::ProxyType::Default:
+                //: Default proxy option
                 mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "Default"));
                 break;
             case ConnectionConfiguration::ProxyType::Http:
+                //: HTTP proxy option
                 mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "HTTP"));
                 break;
             case ConnectionConfiguration::ProxyType::Socks5:
+                //: SOCKS5 proxy option
                 mProxyTypeComboBox->addItem(qApp->translate("tremotesf", "SOCKS5"));
                 break;
             }
@@ -307,18 +316,25 @@ namespace tremotesf {
 
         auto httpsGroupBoxLayout = new QVBoxLayout(mHttpsGroupBox);
 
-        mSelfSignedCertificateCheckBox =
-            new QCheckBox(qApp->translate("tremotesf", "Server uses self-signed certificate"), this);
+        mSelfSignedCertificateCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Server uses self-signed certificate"),
+            this
+        );
         httpsGroupBoxLayout->addWidget(mSelfSignedCertificateCheckBox);
         mSelfSignedCertificateEdit = new QPlainTextEdit(this);
         mSelfSignedCertificateEdit->setMinimumHeight(192);
         mSelfSignedCertificateEdit->setPlaceholderText(
+            //: Text field placeholder
             qApp->translate("tremotesf", "Server's certificate in PEM format")
         );
         mSelfSignedCertificateEdit->setVisible(false);
         httpsGroupBoxLayout->addWidget(mSelfSignedCertificateEdit);
-        auto* selfSignedCertificateLoadFromFile =
-            new QPushButton(qApp->translate("tremotesf", "Load from file..."), this);
+        auto* selfSignedCertificateLoadFromFile = new QPushButton(
+            //: Button
+            qApp->translate("tremotesf", "Load from file..."),
+            this
+        );
         selfSignedCertificateLoadFromFile->setVisible(false);
         QObject::connect(selfSignedCertificateLoadFromFile, &QPushButton::clicked, this, [this] {
             loadCertificateFromFile(mSelfSignedCertificateEdit);
@@ -329,16 +345,21 @@ namespace tremotesf {
             selfSignedCertificateLoadFromFile->setVisible(checked);
         });
 
-        mClientCertificateCheckBox =
-            new QCheckBox(qApp->translate("tremotesf", "Use client certificate authentication"), this);
+        mClientCertificateCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Use client certificate authentication"),
+            this
+        );
         httpsGroupBoxLayout->addWidget(mClientCertificateCheckBox);
         mClientCertificateEdit = new QPlainTextEdit(this);
         mClientCertificateEdit->setMinimumHeight(192);
         mClientCertificateEdit->setPlaceholderText(
+            //: Text field placeholder
             qApp->translate("tremotesf", "Certificate in PEM format with private key")
         );
         mClientCertificateEdit->setVisible(false);
         httpsGroupBoxLayout->addWidget(mClientCertificateEdit);
+        //: Button
         auto* clientCertificateLoadFromFile = new QPushButton(qApp->translate("tremotesf", "Load from file..."), this);
         clientCertificateLoadFromFile->setVisible(false);
         QObject::connect(clientCertificateLoadFromFile, &QPushButton::clicked, this, [this] {
@@ -352,6 +373,7 @@ namespace tremotesf {
 
         formLayout->addRow(mHttpsGroupBox);
 
+        //: Check box label
         mAuthenticationGroupBox = new QGroupBox(qApp->translate("tremotesf", "Authentication"), this);
         mAuthenticationGroupBox->setCheckable(true);
         auto authenticationGroupBoxLayout = new QFormLayout(mAuthenticationGroupBox);
@@ -365,17 +387,18 @@ namespace tremotesf {
         mUpdateIntervalSpinBox = new QSpinBox(this);
         mUpdateIntervalSpinBox->setMinimum(1);
         mUpdateIntervalSpinBox->setMaximum(3600);
-        //: Seconds
+        //: Suffix that is added to input field with number of seconds, e.g. "30 s"
         mUpdateIntervalSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Update interval:"), mUpdateIntervalSpinBox);
 
         mTimeoutSpinBox = new QSpinBox(this);
         mTimeoutSpinBox->setMinimum(5);
         mTimeoutSpinBox->setMaximum(60);
-        //: Seconds
+        //: Suffix that is added to input field with number of seconds, e.g. "30 s"
         mTimeoutSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         formLayout->addRow(qApp->translate("tremotesf", "Timeout:"), mTimeoutSpinBox);
 
+        //: Check box label
         mAutoReconnectGroupBox = new QGroupBox(qApp->translate("tremotesf", "Auto reconnect on error"), this);
         mAutoReconnectGroupBox->setCheckable(true);
         formLayout->addRow(mAutoReconnectGroupBox);
@@ -384,7 +407,7 @@ namespace tremotesf {
         mAutoReconnectSpinBox = new QSpinBox(this);
         mAutoReconnectSpinBox->setMinimum(1);
         mAutoReconnectSpinBox->setMaximum(3600);
-        //: Seconds
+        //: Suffix that is added to input field with number of seconds, e.g. "30 s"
         mAutoReconnectSpinBox->setSuffix(qApp->translate("tremotesf", " s"));
         autoReconnectFormLayout->addRow(
             qApp->translate("tremotesf", "Auto reconnect interval:"),
@@ -395,8 +418,12 @@ namespace tremotesf {
         auto mountedDirectoriesLayout = new QGridLayout(mountedDirectoriesGroupBox);
         mMountedDirectoriesWidget = new MountedDirectoriesWidget(0, 2);
         mountedDirectoriesLayout->addWidget(mMountedDirectoriesWidget, 0, 0, 1, 2);
-        auto addDirectoriesButton =
-            new QPushButton(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "Add"), this);
+        auto addDirectoriesButton = new QPushButton(
+            QIcon::fromTheme("list-add"_l1),
+            //: Button
+            qApp->translate("tremotesf", "Add"),
+            this
+        );
         QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=] {
             const QString directory(QFileDialog::getExistingDirectory(this));
             if (!directory.isEmpty()) {
@@ -404,8 +431,12 @@ namespace tremotesf {
             }
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
-        auto removeDirectoriesButton =
-            new QPushButton(QIcon::fromTheme(removeIconName), qApp->translate("tremotesf", "Remove"), this);
+        auto removeDirectoriesButton = new QPushButton(
+            QIcon::fromTheme(removeIconName),
+            //: Button
+            qApp->translate("tremotesf", "Remove"),
+            this
+        );
         QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=] {
             const auto items(mMountedDirectoriesWidget->selectionModel()->selectedIndexes());
             if (!items.isEmpty()) {
@@ -523,6 +554,7 @@ namespace tremotesf {
     void ServerEditDialog::loadCertificateFromFile(QPlainTextEdit* target) {
         auto* fileDialog = new QFileDialog(
             this,
+            //: File chooser dialog title
             qApp->translate("tremotesf", "Select Files"),
             {},
             /*qApp->translate("tremotesf", "Torrent Files (*.torrent)")*/ {}
