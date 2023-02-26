@@ -14,11 +14,20 @@
     "openssl",
     "kf5widgetsaddons",
     {
+      "name": "libpsl",
+      "default-features": false,
+      "features": ["icu"]
+    },
+    {
       "name": "hicolor-icon-theme",
       "platform": "windows"
     },
     {
       "name": "kf5breezeicons",
+      "platform": "windows"
+    },
+    {
+      "name": "pkgconf",
       "platform": "windows"
     }
   ],
@@ -67,6 +76,11 @@
       "name": "kf5breezeicons",
       "version": "5.98.0",
       "port-version": 0
+    },
+    {
+      "name": "libpsl",
+      "version": "0.21.2",
+      "port-version": 1
     }
   ]
 }
