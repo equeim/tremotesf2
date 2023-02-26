@@ -21,6 +21,7 @@ Table of Contents
 - Qt 5.15 (Core, Network, Concurrent, Gui, Widgets)
 - fmt 7.0 or newer
 - KWidgetsAddons
+- libpsl
 - OpenSSL 1.1.1 or newer (for tests only)
 
 On GNU/Linux and BSD, also:
