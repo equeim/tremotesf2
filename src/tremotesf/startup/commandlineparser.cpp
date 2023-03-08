@@ -10,7 +10,7 @@
 #include <QUrl>
 
 #define CXXOPTS_VECTOR_DELIMITER '\0'
-#include "3rdparty/cxxopts.hpp"
+#include <cxxopts.hpp>
 
 #include "libtremotesf/log.h"
 
@@ -72,7 +72,7 @@ namespace tremotesf {
                 return args;
             }
             parsePositionals(torrents, args);
-        } catch (const cxxopts::OptionException& e) {
+        } catch (const std::exception& e) {
             throw std::runtime_error(e.what());
         }
 

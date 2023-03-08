@@ -34,6 +34,7 @@ BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(fmt)
 BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
+BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
 BuildRequires: pkgconfig(openssl)
 

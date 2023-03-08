@@ -9,6 +9,7 @@ set(TREMOTESF_COMMON_TARGET_PROPERTIES AUTOMOC ON AUTORCC ON)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Concurrent Network Widgets)
 find_package(KF5WidgetsAddons REQUIRED)
+find_package(cxxopts REQUIRED)
 find_package(Threads REQUIRED)
 
 list(APPEND QRC_FILES tremotesf/resources.qrc)
@@ -16,7 +17,6 @@ list(APPEND QRC_FILES tremotesf/resources.qrc)
 add_executable(
     tremotesf
 
-    3rdparty/cxxopts.hpp
     tremotesf/bencodeparser.cpp
     tremotesf/bencodeparser.h
     tremotesf/desktoputils.cpp
@@ -119,7 +119,8 @@ add_executable(
     ${QRC_FILES}
 )
 
-target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF5::WidgetsAddons Threads::Threads)
+target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF5::WidgetsAddons cxxopts::cxxopts Threads::Threads)
+
 target_include_directories(tremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 target_compile_definitions(
     tremotesf PRIVATE
