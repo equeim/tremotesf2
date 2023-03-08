@@ -27,7 +27,6 @@
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
-                "-DCMAKE_CXX_STANDARD=17",
                 "-DFMT_DOC=OFF",
                 "-DFMT_TEST=OFF"
             ],
@@ -36,6 +35,24 @@
                     "type" : "archive",
                     "url" : "https://github.com/fmtlib/fmt/releases/download/9.1.0/fmt-9.1.0.zip",
                     "sha256" : "cceb4cb9366e18a5742128cb3524ce5f50e88b476f1e54737a47ffdf4df4c996"
+                }
+            ]
+        },
+        {
+            "name" : "cxxopts",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
+                "-DCXXOPTS_BUILD_EXAMPLES=OFF",
+                "-DCXXOPTS_BUILD_TESTS=OFF"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.1.1.tar.gz",
+                    "sha256" : "523175f792eb0ff04f9e653c90746c12655f10cb70f1d5e6d6d9491420298a08"
                 }
             ]
         },

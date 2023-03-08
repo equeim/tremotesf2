@@ -18,10 +18,12 @@ Table of Contents
 ### Dependencies
 - C++17 compiler
 - CMake 3.16 or newer (3.21 on Windows)
-- Qt 5.15 (Core, Network, Concurrent, Gui, Widgets)
+- Qt 5.15 (Core, Network, Concurrent, Gui, Widgets modules)
 - fmt 7.0 or newer
 - KWidgetsAddons
 - libpsl
+- cxxopts
+- Qt Test module (for tests only)
 - OpenSSL 1.1.1 or newer (for tests only)
 
 On GNU/Linux and BSD, also:
@@ -29,9 +31,9 @@ On GNU/Linux and BSD, also:
 - Qt D-Bus
 - KWindowSystem
 
-On Windows:
+On Windows, also:
 - Windows 11 SDK is needed to build
-- Minimum supported OS version is Windows 8.1
+- Minimum supported OS version at runtime is Windows 8.1
 
 ### Building
 ```sh
