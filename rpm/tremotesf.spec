@@ -38,6 +38,10 @@ BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
 BuildRequires: pkgconfig(openssl)
 
+%if %{defined fedora}
+BuildRequires: cmake(httplib)
+%endif
+
 %if %{defined suse_version}
 BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time

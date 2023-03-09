@@ -25,6 +25,7 @@ Table of Contents
 - cxxopts
 - Qt Test module (for tests only)
 - OpenSSL 1.1.1 or newer (for tests only)
+- cpp-httplib 0.11.0 or newer (for tests only, optional)
 
 On GNU/Linux and BSD, also:
 - Gettext 0.19.7 or newer
