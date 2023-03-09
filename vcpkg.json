@@ -30,7 +30,8 @@
       "name": "pkgconf",
       "platform": "windows"
     },
-    "cxxopts"
+    "cxxopts",
+    "cpp-httplib"
   ],
   "overrides": [
     {
