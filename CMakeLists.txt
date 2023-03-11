@@ -11,13 +11,8 @@ cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.25)
 
 project(tremotesf VERSION 2.0.0 LANGUAGES CXX)
 
-option(TREMOTESF_BUILD_TESTS "Build tests" ON)
-
+include(CTest)
 include(GNUInstallDirs)
-
-if (TREMOTESF_BUILD_TESTS)
-    enable_testing()
-endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
