@@ -50,6 +50,26 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2023-03-12" version="2.1.0">
+      <description>
+        <p>Added</p>
+        <ul>
+        <li>Trackers list shows number of seeders and leechers for trackers, not just total number peers</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+        <li>"Seeders" and "leechers" now refer to total number of seeders and leechers reported by trackers,
+          while number of peers that we are currently downloading from / uploading to is displayed separately</li>
+        <li>Tracker's error is displayed in separate column</li>
+        <li>Torrents that have an error but are still being downloaded/uploaded are displayed under both "Status" filters simultaneously</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+        <li>Fixed issues with lists or torrents/trackers not being updated sometimes</li>
+        <li>Main window placeholder when there is no torrents in list is now displayed correctly</li>
+        </ul>
+      </description>
+    </release>
     <release date="2022-11-05" version="2.0.0"/>
     <release date="2022-03-18" version="1.11.3"/>
     <release date="2022-03-16" version="1.11.2"/>
