@@ -80,7 +80,7 @@ jobs:
 
     steps:
     - name: Install packages
-      run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev libqt5x11extras5-dev qttools5-dev libfmt-dev libkf5widgetsaddons-dev libkf5windowsystem-dev libpsl-dev libcxxopts-dev libssl-dev gettext pkgconf ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }} ${{ startsWith(matrix.container-image, 'ubuntu') && 'libcpp-httplib-dev' || '' }}
+      run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev qttools5-dev libfmt-dev libkf5widgetsaddons-dev libkf5windowsystem-dev libpsl-dev libcxxopts-dev libssl-dev gettext pkgconf ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }} ${{ startsWith(matrix.container-image, 'ubuntu') && 'libcpp-httplib-dev' || '' }}
 
     - name: Checkout
       uses: actions/checkout@v3
