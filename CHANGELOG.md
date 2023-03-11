@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.1.0] - 2023-03-12
 ### Added
 - Trackers list shows number of seeders and leechers for trackers, not just total number peers
 - New dependencies:
