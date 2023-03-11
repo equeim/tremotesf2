@@ -3,6 +3,10 @@
 ## [Unreleased]
 ### Added
 - Trackers list shows number of seeders and leechers for trackers, not just total number peers
+- New dependencies:
+  1. libpsl
+  2. cxxopts
+  3. cpp-httplib 0.11 or newer (for tests only, optional)
 
 ### Changed
 - "Seeders" and "leechers" now refer to total number of seeders and leechers reported by trackers,
