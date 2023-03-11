@@ -13,6 +13,7 @@
   while number of peers that we are currently downloading from / uploading to is displayed separately
 - Tracker's error is displayed in separate column
 - Torrents that have an error but are still being downloaded/uploaded are displayed under both "Status" filters simultaneously
+- TREMOTESF_BUILD_TESTS CMake option is replaced by standard BUILD_TESTING option
 
 ### Fixed
 - Fixed issues with lists or torrents/trackers not being updated sometimes
