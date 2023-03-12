@@ -757,67 +757,67 @@ Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomme
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="81"/>
         <source>Paused (%1)</source>
         <extracomment>Torrent status while torrent also has an error. %1 is error string</extracomment>
-        <translation type="unfinished"/>
+        <translation>En pausa (%1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="84"/>
         <source>Paused</source>
         <extracomment>Torrent status</extracomment>
-        <translation type="unfinished"/>
+        <translation>En pausa</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="88"/>
         <source>Downloading (%1)</source>
         <extracomment>Torrent status while torrent also has an error. %1 is error string</extracomment>
-        <translation type="unfinished"/>
+        <translation>Descargando (%1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="95"/>
         <source>Seeding (%1)</source>
         <extracomment>Torrent status while torrent also has an error. %1 is error string</extracomment>
-        <translation type="unfinished"/>
+        <translation>Enviando (%1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="103"/>
         <source>Queued (%1)</source>
         <extracomment>Torrent status while torrent also has an error. %1 is error string</extracomment>
-        <translation type="unfinished"/>
+        <translation>En cola (%1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="106"/>
         <source>Queued</source>
         <extracomment>Torrent status</extracomment>
-        <translation type="unfinished"/>
+        <translation>En cola</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="110"/>
         <source>Checking (%1)</source>
         <extracomment>Torrent status while torrent also has an error. %1 is error string</extracomment>
-        <translation type="unfinished"/>
+        <translation>Comprobando (%1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="113"/>
         <source>Checking</source>
         <extracomment>Torrent status</extracomment>
-        <translation type="unfinished"/>
+        <translation>Comprobando</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="117"/>
         <source>Queued for checking (%1)</source>
         <extracomment>Torrent status while torrent also has an error. %1 is error string</extracomment>
-        <translation type="unfinished"/>
+        <translation>En cola para comprobar (%1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="286"/>
         <source>Downloading to peers</source>
         <extracomment>Torrents list column name, number of peers that we are downloading from</extracomment>
-        <translation type="unfinished"/>
+        <translation>Descargando de pares</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="289"/>
         <source>Uploading to peers</source>
         <extracomment>Torrents list column name, number of peers that we are uploading to</extracomment>
-        <translation type="unfinished"/>
+        <translation>Subiendo a los pares</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="319"/>
@@ -962,7 +962,7 @@ Trackers list column title</extracomment>
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="897"/>
         <source>Are you sure you want to delete %Ln selected torrents?</source>
         <extracomment>%Ln is a number of torrents selected for deletion</extracomment>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>¿Estás seguro de que quieres borrar %Ln torrent seleccionado?</numerusform><numerusform>¿Estás seguro de que quieres borrar %Ln torrents seleccionados?</numerusform><numerusform>¿Estás seguro de que quieres borrar %Ln torrents seleccionados?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/mainwindow.cpp" line="968"/>
@@ -1474,19 +1474,19 @@ Tracker's context menu item</extracomment>
         <location filename="../src/tremotesf/ui/screens/serversettings/serversettingsdialog.cpp" line="505"/>
         <source>Enable μTP (Micro Transport Protocol)</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Habilitar μTP (Micro Transport Protocol)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/serversettings/serversettingsdialog.cpp" line="509"/>
         <source>Enable PEX (Peer exchange)</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Habilitar PEX (Intercambio de pares)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/serversettings/serversettingsdialog.cpp" line="517"/>
         <source>Enable local peer discovery</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Habilitar búsqueda local de pares</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/serversettings/serversettingsdialog.cpp" line="529"/>
@@ -1549,7 +1549,7 @@ Tracker's context menu item</extracomment>
         <location filename="../src/tremotesf/ui/widgets/torrentfilesview.cpp" line="196"/>
         <source>&amp;Download</source>
         <extracomment>Context menu item to select file for downloading</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Descargar</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/widgets/torrentfilesview.cpp" line="205"/>
@@ -1679,17 +1679,17 @@ Torrent's uploaded size</extracomment>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="147"/>
         <source>Peers we are downloading from:</source>
-        <translation type="unfinished"/>
+        <translation>Pares desde los que se está descargando:</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="152"/>
         <source>Web seeders we are downloading from:</source>
-        <translation type="unfinished"/>
+        <translation>Semillas web desde los que se está descargando:</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="157"/>
         <source>Peers we are uploading to:</source>
-        <translation type="unfinished"/>
+        <translation>Pares a los que se está subiendo:</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="161"/>
@@ -1748,7 +1748,7 @@ Torrent's uploaded size</extracomment>
         <source>Seeding</source>
         <comment>Options section</comment>
         <extracomment>Torrent's limits tab section</extracomment>
-        <translation type="unfinished"/>
+        <translation>Enviando</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="355"/>
@@ -1802,7 +1802,7 @@ Torrent's uploaded size</extracomment>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/trackersviewwidget.cpp" line="211"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
         <extracomment>%Ln is number of trackers selected for deletion</extracomment>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>¿Estás seguro de que quieres eliminar %Ln rastreador seleccionado?</numerusform><numerusform>¿Estás seguro de que quieres eliminar %Ln rastreadores seleccionados?</numerusform><numerusform>¿Estás seguro de que quieres eliminar %Ln rastreadores seleccionados?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/torrentsmodel.cpp" line="292"/>
@@ -1982,25 +1982,25 @@ Peers list column title</extracomment>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/trackersmodel.cpp" line="30"/>
         <source>Inactive</source>
         <extracomment>Tracker status</extracomment>
-        <translation type="unfinished"/>
+        <translation>Inactivo</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/trackersmodel.cpp" line="33"/>
         <source>Waiting for update</source>
         <extracomment>Tracker status</extracomment>
-        <translation type="unfinished"/>
+        <translation>Esperando actualización</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/trackersmodel.cpp" line="36"/>
         <source>About to update</source>
         <extracomment>Tracker status</extracomment>
-        <translation type="unfinished"/>
+        <translation>A punto de actualizar</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/trackersmodel.cpp" line="39"/>
         <source>Updating</source>
         <extracomment>Tracker status</extracomment>
-        <translation type="unfinished"/>
+        <translation>Actualizando</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/torrentproperties/trackersmodel.cpp" line="133"/>
@@ -2188,7 +2188,7 @@ Directory opening error, %1 is a file path</extracomment>
 Filter option of torrents list's download directory filter. %L1 is total number of torrents
 ----------
 Filter option of torrents list's status filter. %L1 is total number of torrents</extracomment>
-        <translation type="unfinished"/>
+        <translation>Todo (%L1)</translation>
     </message>
     <message>
         <location filename="../src/tremotesf/ui/screens/mainwindow/alltrackersmodel.cpp" line="39"/>
