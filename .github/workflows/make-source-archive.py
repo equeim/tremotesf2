@@ -42,7 +42,7 @@ def make_tar_archive() -> str:
                            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
                            text=True).stdout.splitlines()
     logging.info(f"Archiving {len(files)} files")
-    subprocess.run(["tar", "--create", "--file", archive_filename, "--transform", f"s,^,/{root_directory}/,"] + files, check=True, stdout=sys.stderr)
+    subprocess.run(["tar", "--create", "--file", archive_filename, "--transform", f"s,^,{root_directory}/,"] + files, check=True, stdout=sys.stderr)
     return archive_filename
 
 
