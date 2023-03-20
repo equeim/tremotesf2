@@ -17,6 +17,7 @@ on:
 jobs:
   build-rpm:
     strategy:
+      fail-fast: false
       matrix:
         container-image: ['fedora:36', 'fedora:37', 'opensuse/tumbleweed:latest', 'mageia:8']
         compiler: [gcc]
@@ -71,6 +72,7 @@ jobs:
 
   build-debian-ubuntu:
     strategy:
+      fail-fast: false
       matrix:
         container-image: ['debian:11', 'ubuntu:22.04', 'ubuntu:22.10']
         compiler: [gcc, clang]
@@ -95,6 +97,44 @@ jobs:
       with:
         # Can't use presets on Debian, CMake is too old
         cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+
+  build-freebsd:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build on FreeBSD
+      uses: vmactions/freebsd-vm@22aefae156db38ea5ab7563f89808dc82db8e325
+      with:
+        release: '13.1'
+        copyback: 'false'
+        usesh: 'true'
+        prepare: |
+          set -e -o pipefail
+          pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
+        run: |
+          set -e -o pipefail
+          echo '::group::Configuring CMake'
+          cmake -S . --preset base-multi
+          echo '::endgroup'
+          echo '::group::Building Debug'
+          cmake --build --preset base-multi-debug -v
+          echo '::endgroup'
+          echo '::group::Testing Debug'
+          ctest --output-on-failure -C Debug --test-dir out/build/base-multi
+          echo '::endgroup'
+          echo '::group::Building Release'
+          cmake --build --preset base-multi-release -v
+          echo '::endgroup'
+          echo '::group::Testing Release'
+          ctest --output-on-failure -C Release --test-dir out/build/base-multi
+          echo '::endgroup'
 
   build-flatpak:
     runs-on: ubuntu-latest
@@ -122,7 +162,7 @@ jobs:
     uses: ./.github/workflows/build-windows.yml
 
   reuse-lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - name: Check out
       uses: actions/checkout@v3
