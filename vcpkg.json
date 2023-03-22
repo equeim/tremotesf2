@@ -16,7 +16,7 @@
     {
       "name": "libpsl",
       "default-features": false,
-      "features": ["icu"]
+      "features": ["libidn2"]
     },
     {
       "name": "hicolor-icon-theme",
@@ -32,57 +32,5 @@
     },
     "cxxopts",
     "cpp-httplib"
-  ],
-  "overrides": [
-    {
-      "name": "qt5-base",
-      "version": "5.15.8",
-      "port-version": 4
-    },
-    {
-      "name": "qt5-tools",
-      "version": "5.15.8",
-      "port-version": 0
-    },
-    {
-      "name": "qt5-translations",
-      "version": "5.15.8",
-      "port-version": 0
-    },
-    {
-      "name": "qt5-svg",
-      "version": "5.15.8",
-      "port-version": 0
-    },
-    {
-      "name": "fmt",
-      "version": "9.1.0",
-      "port-version": 1
-    },
-    {
-      "name": "openssl",
-      "version-string": "3.0.8",
-      "port-version": 1
-    },
-    {
-      "name": "kf5widgetsaddons",
-      "version": "5.98.0",
-      "port-version": 0
-    },
-    {
-      "name": "hicolor-icon-theme",
-      "version": "0.17",
-      "port-version": 1
-    },
-    {
-      "name": "kf5breezeicons",
-      "version": "5.98.0",
-      "port-version": 0
-    },
-    {
-      "name": "libpsl",
-      "version": "0.21.2",
-      "port-version": 1
-    }
   ]
 }
