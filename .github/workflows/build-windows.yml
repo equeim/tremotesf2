@@ -26,12 +26,6 @@ jobs:
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1
 
-    - name: Add GNU Tar from MSYS2 to PATH so that zstd will work
-      run: |
-        mkdir '${{ runner.temp }}\tar'
-        echo '"C:\msys64\usr\bin\tar.exe" %*' > '${{ runner.temp }}\tar\tar.bat'
-        echo '${{ runner.temp }}\tar' >> '${{ github.path }}'
-
     - name: Set VCPKG_ROOT environment variable
       run: |
         echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> '${{ github.env }}'
