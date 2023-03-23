@@ -7,8 +7,8 @@
 #include <limits>
 
 #include <QCoreApplication>
+#include <QIcon>
 #include <QMetaEnum>
-#include <QPixmap>
 
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
@@ -36,27 +36,27 @@ namespace tremotesf {
             if (static_cast<Column>(index.column()) == Column::Name) {
                 using namespace desktoputils;
                 if (torrent->data().error != TorrentData::Error::None) {
-                    return QPixmap(statusIconPath(ErroredIcon));
+                    return QIcon(statusIconPath(ErroredIcon));
                 }
                 switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
-                    return QPixmap(statusIconPath(PausedIcon));
+                    return QIcon(statusIconPath(PausedIcon));
                 case TorrentData::Status::Seeding:
                     if (torrent->data().isSeedingStalled()) {
-                        return QPixmap(statusIconPath(StalledSeedingIcon));
+                        return QIcon(statusIconPath(StalledSeedingIcon));
                     }
-                    return QPixmap(statusIconPath(SeedingIcon));
+                    return QIcon(statusIconPath(SeedingIcon));
                 case TorrentData::Status::Downloading:
                     if (torrent->data().isDownloadingStalled()) {
-                        return QPixmap(statusIconPath(StalledDownloadingIcon));
+                        return QIcon(statusIconPath(StalledDownloadingIcon));
                     }
-                    return QPixmap(statusIconPath(DownloadingIcon));
+                    return QIcon(statusIconPath(DownloadingIcon));
                 case TorrentData::Status::QueuedForDownloading:
                 case TorrentData::Status::QueuedForSeeding:
-                    return QPixmap(statusIconPath(QueuedIcon));
+                    return QIcon(statusIconPath(QueuedIcon));
                 case TorrentData::Status::Checking:
                 case TorrentData::Status::QueuedForChecking:
-                    return QPixmap(statusIconPath(CheckingIcon));
+                    return QIcon(statusIconPath(CheckingIcon));
                 }
             }
             break;

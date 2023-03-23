@@ -6,14 +6,14 @@ SPDX-License-Identifier: CC0-1.0
 
 <RCC>
     <qresource prefix="/">
-        <file>active.png</file>
-        <file>checking.png</file>
-        <file>downloading.png</file>
-        <file>errored.png</file>
-        <file>paused.png</file>
-        <file>queued.png</file>
-        <file>seeding.png</file>
-        <file>stalled-downloading.png</file>
-        <file>stalled-seeding.png</file>
+        <file>active.svg</file>
+        <file>checking.svg</file>
+        <file>downloading.svg</file>
+        <file>errored.svg</file>
+        <file>paused.svg</file>
+        <file>queued.svg</file>
+        <file>seeding.svg</file>
+        <file>stalled-downloading.svg</file>
+        <file>stalled-seeding.svg</file>
     </qresource>
 </RCC>
