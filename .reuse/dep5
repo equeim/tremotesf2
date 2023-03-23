@@ -19,8 +19,9 @@ Copyright: 2015-2022 Alexey Rochev
            2018 Carlos Gonzalez
 License: GPL-3.0-or-later
 
-Files: data/icons/status/*.png
+Files: data/icons/status/*.svg
 Copyright: 2009 Mateusz Tobola
+           2023 Alexey Rochev
 License: GPL-2.0-or-later
 
 Files: data/icons/hicolor/*/apps/org.equeim.Tremotesf.png data/icons/hicolor/scalable/apps/org.equeim.Tremotesf.svg src/tremotesf/tremotesf.ico

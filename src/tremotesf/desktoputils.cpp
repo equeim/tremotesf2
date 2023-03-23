@@ -24,23 +24,23 @@ namespace tremotesf::desktoputils {
     QString statusIconPath(StatusIcon icon) {
         switch (icon) {
         case ActiveIcon:
-            return ":/active.png"_l1;
+            return ":/active.svg"_l1;
         case CheckingIcon:
-            return ":/checking.png"_l1;
+            return ":/checking.svg"_l1;
         case DownloadingIcon:
-            return ":/downloading.png"_l1;
+            return ":/downloading.svg"_l1;
         case ErroredIcon:
-            return ":/errored.png"_l1;
+            return ":/errored.svg"_l1;
         case PausedIcon:
-            return ":/paused.png"_l1;
+            return ":/paused.svg"_l1;
         case QueuedIcon:
-            return ":/queued.png"_l1;
+            return ":/queued.svg"_l1;
         case SeedingIcon:
-            return ":/seeding.png"_l1;
+            return ":/seeding.svg"_l1;
         case StalledDownloadingIcon:
-            return ":/stalled-downloading.png"_l1;
+            return ":/stalled-downloading.svg"_l1;
         case StalledSeedingIcon:
-            return ":/stalled-seeding.png"_l1;
+            return ":/stalled-seeding.svg"_l1;
         }
 
         return {};
