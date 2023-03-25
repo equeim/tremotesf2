@@ -10,6 +10,7 @@
 ### Fixed
 - Torrent status icons being pixelated on high DPI displays
 - Torrent priority column being empty
+- Zero number of leechers
 
 ## [2.1.0] - 2023-03-12
 ### Added
