@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Torrent priority selection in torrent's context menu
+
+### Changed
+- Torrent status icons are redrawn to be more contrasting
+
+### Fixed
+- Torrent status icons being pixelated on high DPI displays
+- Torrent priority column being empty
+
 ## [2.1.0] - 2023-03-12
 ### Added
 - Trackers list shows number of seeders and leechers for trackers, not just total number peers

@@ -697,6 +697,42 @@ namespace tremotesf {
                 mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
             ));
         });
+
+        const auto priorityMenu = mTorrentMenu->addMenu(
+            //: Torrent's context menu item
+            qApp->translate("tremotesf", "&Priority")
+        );
+        const auto priorityGroup = new QActionGroup(priorityMenu);
+        priorityGroup->setExclusive(true);
+        const auto setTorrentsPriority = [this](libtremotesf::TorrentData::Priority priority) {
+            for (const auto& index :
+                 mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())) {
+                mTorrentsModel->torrentAtIndex(index)->setBandwidthPriority(priority);
+            }
+        };
+        //: Torrent's loading priority
+        mHighPriorityAction = priorityMenu->addAction(qApp->translate("tremotesf", "High"));
+        QObject::connect(mHighPriorityAction, &QAction::triggered, this, [=] {
+            setTorrentsPriority(libtremotesf::TorrentData::Priority::High);
+        });
+        mHighPriorityAction->setCheckable(true);
+        priorityGroup->addAction(mHighPriorityAction);
+
+        //: Torrent's loading priority
+        mNormalPriorityAction = priorityMenu->addAction(qApp->translate("tremotesf", "Normal"));
+        QObject::connect(mNormalPriorityAction, &QAction::triggered, this, [=] {
+            setTorrentsPriority(libtremotesf::TorrentData::Priority::Normal);
+        });
+        mNormalPriorityAction->setCheckable(true);
+        priorityGroup->addAction(mNormalPriorityAction);
+
+        //: Torrent's loading priority
+        mLowPriorityAction = priorityMenu->addAction(qApp->translate("tremotesf", "Low"));
+        QObject::connect(mLowPriorityAction, &QAction::triggered, this, [=] {
+            setTorrentsPriority(libtremotesf::TorrentData::Priority::Low);
+        });
+        mLowPriorityAction->setCheckable(true);
+        priorityGroup->addAction(mLowPriorityAction);
     }
 
     void MainWindow::updateRpcActions() {
@@ -769,57 +805,72 @@ namespace tremotesf {
     }
 
     void MainWindow::updateTorrentActions() {
-        if (mTorrentsView->selectionModel()->hasSelection()) {
-            const QList<QAction*> actions(mTorrentMenu->actions());
-            for (QAction* action : actions) {
-                action->setEnabled(true);
-            }
-            const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
-            if (selectedRows.size() == 1) {
-                if (mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()))
-                        ->data()
-                        .status == libtremotesf::TorrentData::Status::Paused) {
-                    mPauseTorrentAction->setEnabled(false);
-                } else {
-                    mStartTorrentAction->setEnabled(false);
-                    mStartTorrentNowAction->setEnabled(false);
-                }
-            } else {
-                mRenameTorrentAction->setEnabled(false);
-            }
+        const auto actions = mTorrentMenu->actions();
 
-            if (mRpc->isLocal() || Servers::instance()->currentServerHasMountedDirectories()) {
-                bool disableOpen = false;
-                bool disableBoth = false;
-                for (const QModelIndex& index : selectedRows) {
-                    libtremotesf::Torrent* torrent =
-                        mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
-                    if (mRpc->isTorrentLocalMounted(torrent) &&
-                        QFile::exists(mRpc->localTorrentDownloadDirectoryPath(torrent))) {
-                        if (!disableOpen && !QFile::exists(mRpc->localTorrentFilesPath(torrent))) {
-                            disableOpen = true;
-                        }
-                    } else {
-                        disableBoth = true;
-                        break;
-                    }
-                }
-
-                if (disableBoth) {
-                    mOpenTorrentFilesAction->setEnabled(false);
-                    mShowInFileManagerAction->setEnabled(false);
-                } else if (disableOpen) {
-                    mOpenTorrentFilesAction->setEnabled(false);
-                }
-            } else {
-                mOpenTorrentFilesAction->setEnabled(false);
-                mShowInFileManagerAction->setEnabled(false);
-            }
-        } else {
-            const QList<QAction*> actions(mTorrentMenu->actions());
+        if (!mTorrentsView->selectionModel()->hasSelection()) {
             for (QAction* action : actions) {
                 action->setEnabled(false);
             }
+            return;
+        }
+
+        for (QAction* action : actions) {
+            action->setEnabled(true);
+        }
+        mHighPriorityAction->setChecked(false);
+        mNormalPriorityAction->setChecked(false);
+        mLowPriorityAction->setChecked(false);
+
+        const QModelIndexList selectedRows = mTorrentsView->selectionModel()->selectedRows();
+        if (selectedRows.size() == 1) {
+            const auto torrent = mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()));
+            if (torrent->data().status == libtremotesf::TorrentData::Status::Paused) {
+                mPauseTorrentAction->setEnabled(false);
+            } else {
+                mStartTorrentAction->setEnabled(false);
+                mStartTorrentNowAction->setEnabled(false);
+            }
+            switch (torrent->data().bandwidthPriority) {
+            case libtremotesf::TorrentData::Priority::High:
+                mHighPriorityAction->setChecked(true);
+                break;
+            case libtremotesf::TorrentData::Priority::Normal:
+                mNormalPriorityAction->setChecked(true);
+                break;
+            case libtremotesf::TorrentData::Priority::Low:
+                mLowPriorityAction->setChecked(true);
+                break;
+            }
+        } else {
+            mRenameTorrentAction->setEnabled(false);
+        }
+
+        if (mRpc->isLocal() || Servers::instance()->currentServerHasMountedDirectories()) {
+            bool disableOpen = false;
+            bool disableBoth = false;
+            for (const QModelIndex& index : selectedRows) {
+                libtremotesf::Torrent* torrent =
+                    mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
+                if (mRpc->isTorrentLocalMounted(torrent) &&
+                    QFile::exists(mRpc->localTorrentDownloadDirectoryPath(torrent))) {
+                    if (!disableOpen && !QFile::exists(mRpc->localTorrentFilesPath(torrent))) {
+                        disableOpen = true;
+                    }
+                } else {
+                    disableBoth = true;
+                    break;
+                }
+            }
+
+            if (disableBoth) {
+                mOpenTorrentFilesAction->setEnabled(false);
+                mShowInFileManagerAction->setEnabled(false);
+            } else if (disableOpen) {
+                mOpenTorrentFilesAction->setEnabled(false);
+            }
+        } else {
+            mOpenTorrentFilesAction->setEnabled(false);
+            mShowInFileManagerAction->setEnabled(false);
         }
     }
 

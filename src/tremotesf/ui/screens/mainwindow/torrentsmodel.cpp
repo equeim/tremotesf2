@@ -125,13 +125,13 @@ namespace tremotesf {
             case Column::Priority:
                 switch (torrent->data().bandwidthPriority) {
                 case TorrentData::Priority::High:
-                    //: Torrent's loading priotiry
+                    //: Torrent's loading priority
                     return qApp->translate("tremotesf", "High");
                 case TorrentData::Priority::Normal:
-                    //: Torrent's loading priotiry
+                    //: Torrent's loading priority
                     return qApp->translate("tremotesf", "Normal");
                 case TorrentData::Priority::Low:
-                    //: Torrent's loading priotiry
+                    //: Torrent's loading priority
                     return qApp->translate("tremotesf", "Low");
                 }
             case Column::QueuePosition:

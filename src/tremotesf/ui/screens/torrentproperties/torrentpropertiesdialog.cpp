@@ -326,15 +326,15 @@ namespace tremotesf {
         for (TorrentData::Priority priority : priorityComboBoxItems) {
             switch (priority) {
             case TorrentData::Priority::High:
-                //: Torrent's loading priotiry
+                //: Torrent's loading priority
                 priorityComboBox->addItem(qApp->translate("tremotesf", "High"));
                 break;
             case TorrentData::Priority::Normal:
-                //: Torrent's loading priotiry
+                //: Torrent's loading priority
                 priorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
                 break;
             case TorrentData::Priority::Low:
-                //: Torrent's loading priotiry
+                //: Torrent's loading priority
                 priorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
                 break;
             }

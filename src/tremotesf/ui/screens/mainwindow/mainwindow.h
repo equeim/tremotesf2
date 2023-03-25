@@ -105,6 +105,10 @@ namespace tremotesf {
         QAction* mOpenTorrentFilesAction = nullptr;
         QAction* mShowInFileManagerAction = nullptr;
 
+        QAction* mHighPriorityAction{};
+        QAction* mNormalPriorityAction{};
+        QAction* mLowPriorityAction{};
+
         std::vector<QAction*> mConnectionDependentActions;
 
         QMenu* mFileMenu = nullptr;
