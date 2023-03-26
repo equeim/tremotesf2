@@ -99,6 +99,7 @@ int main(int argc, char** argv) {
         windowsInitApplication();
     }
 
+    QGuiApplication::setDesktopFileName(TREMOTESF_APP_ID ""_l1);
     QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_l1));
     //
     // End of QApplication initialization
