@@ -134,6 +134,7 @@ namespace tremotesf {
                     //: Torrent's loading priority
                     return qApp->translate("tremotesf", "Low");
                 }
+                break;
             case Column::QueuePosition:
                 return torrent->data().queuePosition;
             case Column::Seeders:
