@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.0] - 2023-03-28
 ### Added
 - Torrent priority selection in torrent's context menu
 

@@ -50,6 +50,25 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2023-03-28" version="2.2.0">
+      <description>
+        <p>Added</p>
+        <ul>
+        <li>Torrent priority selection in torrent's context menu</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+        <li>Torrent status icons are redrawn to be more contrasting</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+        <li>Torrent status icons being pixelated on high DPI displays</li>
+        <li>Torrent priority column being empty</li>
+        <li>Zero number of leechers</li>
+        <li>No icon in task switcher in KDE Plasma Wayland</li>
+        </ul>
+      </description>
+    </release>
     <release date="2023-03-12" version="2.1.0">
       <description>
         <p>Added</p>
