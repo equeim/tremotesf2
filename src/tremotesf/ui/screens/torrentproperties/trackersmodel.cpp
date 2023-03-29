@@ -56,11 +56,7 @@ namespace tremotesf {
         TrackerItem(libtremotesf::Tracker tracker)
             : tracker(std::move(tracker)), nextUpdateEta(nextUpdateEtaFor(this->tracker)) {}
 
-        [[nodiscard]] bool operator==(const TrackerItem& other) const {
-            return tracker == other.tracker && nextUpdateEta == other.nextUpdateEta;
-        }
-
-        [[nodiscard]] bool operator!=(const TrackerItem& other) const { return !(*this == other); }
+        [[nodiscard]] bool operator==(const TrackerItem& other) const = default;
 
         [[nodiscard]] TrackerItem withUpdatedEta() const {
             TrackerItem updated = *this;

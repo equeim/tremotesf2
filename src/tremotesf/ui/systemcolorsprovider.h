@@ -24,14 +24,8 @@ namespace tremotesf {
             QColor accentColorLight1{};
             QColor accentColorDark1{};
 
-            bool isValid() const { return accentColor.isValid(); }
-
-            bool operator==(const AccentColors& other) const {
-                return accentColor == other.accentColor && accentColorLight1 == other.accentColorLight1 &&
-                       accentColorDark1 == other.accentColorDark1;
-            }
-
-            bool operator!=(const AccentColors& other) const { return !(*this == other); }
+            [[nodiscard]] bool isValid() const { return accentColor.isValid(); }
+            [[nodiscard]] bool operator==(const AccentColors&) const = default;
         };
 
         virtual AccentColors accentColors() const { return {}; };

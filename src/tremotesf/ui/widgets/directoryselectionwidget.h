@@ -31,9 +31,7 @@ namespace tremotesf {
         struct ComboBoxItem {
             QString path{};
             QString displayPath{};
-            bool operator==(const ComboBoxItem& other) const {
-                return path == other.path && displayPath == other.displayPath;
-            }
+            [[nodiscard]] bool operator==(const ComboBoxItem&) const = default;
         };
         [[nodiscard]] virtual std::vector<ComboBoxItem> comboBoxItems() const { return {}; };
 
