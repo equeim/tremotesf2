@@ -55,7 +55,7 @@ namespace tremotesf {
             QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
 
         std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
-        doCreateTree(const std::vector<libtremotesf::TorrentFile>& files) {
+        doCreateTree(std::vector<libtremotesf::TorrentFile>&& files) {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> treeFiles;
             treeFiles.reserve(files.size());
@@ -210,7 +210,9 @@ namespace tremotesf {
         mCreatingTree = true;
         beginResetModel();
 
-        const auto future = QtConcurrent::run(doCreateTree, mTorrent->files());
+        const auto future = QtConcurrent::run([files = std::vector(mTorrent->files())]() mutable {
+            return doCreateTree(std::move(files));
+        });
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=, this] {
