@@ -31,7 +31,7 @@ BinPackParameters: false
 BitFieldColonSpacing: Both
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Attach
-#BreakBeforeConceptDeclarations: Always
+BreakBeforeConceptDeclarations: Always
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
@@ -50,10 +50,10 @@ IndentCaseLabels: false
 IndentExternBlock: Indent
 IndentGotoLabels: true
 IndentPPDirectives: AfterHash
-#IndentRequiresClause: true
+IndentRequiresClause: true
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-#InsertBraces: false
+InsertBraces: false
 InsertTrailingCommas: None
 KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: Signature
@@ -65,7 +65,7 @@ QualifierAlignment: Leave
 ReferenceAlignment: Left
 ReflowComments: false
 #RemoveSemicolon: false
-#RequiresClausePosition: WithPreceding
+RequiresClausePosition: OwnLine
 SeparateDefinitionBlocks: Leave
 SortIncludes: false
 SortUsingDeclarations: true
@@ -87,7 +87,7 @@ SpacesInCStyleCastParentheses: false
 SpacesInConditionalStatement: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard: c++17
+Standard: c++20
 StatementAttributeLikeMacros: ['emit']
 StatementMacros: ['Q_OBJECT', 'Q_GADGET', 'Q_ENUM', 'Q_ENUM_NS', 'Q_PROPERTY']
 UseCRLF: false
