@@ -70,7 +70,7 @@ namespace tremotesf {
             static_cast<RemoteDirectorySelectionWidgetViewModel*>(mViewModel),
             &RemoteDirectorySelectionWidgetViewModel::showMountedDirectoryError,
             this,
-            [=] {
+            [=, this] {
                 QMessageBox::warning(
                     this,
                     //: Dialog title
@@ -104,7 +104,7 @@ namespace tremotesf {
 
         return createTransforming<std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>>(
             std::move(directories),
-            [=](QString&& dir) {
+            [=, this](QString&& dir) {
                 QString display = toNativeSeparators(dir);
                 return DirectorySelectionWidgetViewModel::ComboBoxItem{std::move(dir), std::move(display)};
             }

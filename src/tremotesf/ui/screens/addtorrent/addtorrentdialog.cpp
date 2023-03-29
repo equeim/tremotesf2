@@ -161,7 +161,7 @@ namespace tremotesf {
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         auto freeSpaceLabel = new QLabel(this);
-        auto getFreeSpace = [=](const QString& directory) {
+        auto getFreeSpace = [=, this](const QString& directory) {
             if (!directory.isEmpty()) {
                 if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
                     mRpc->getFreeSpaceForPath(directory);
@@ -175,7 +175,7 @@ namespace tremotesf {
             freeSpaceLabel->hide();
             freeSpaceLabel->clear();
         };
-        QObject::connect(mDownloadDirectoryWidget, &DirectorySelectionWidget::pathChanged, this, [=] {
+        QObject::connect(mDownloadDirectoryWidget, &DirectorySelectionWidget::pathChanged, this, [=, this] {
             getFreeSpace(mDownloadDirectoryWidget->path());
         });
         if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
@@ -183,7 +183,7 @@ namespace tremotesf {
                 mRpc,
                 &Rpc::gotFreeSpaceForPath,
                 this,
-                [=](const QString& path, bool success, long long bytes) {
+                [=, this](const QString& path, bool success, long long bytes) {
                     if (path == mDownloadDirectoryWidget->path()) {
                         if (success) {
                             freeSpaceLabel->setText(
@@ -198,7 +198,7 @@ namespace tremotesf {
                 }
             );
         } else {
-            QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=](auto bytes) {
+            QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=, this](auto bytes) {
                 if (mDownloadDirectoryWidget->path() == mRpc->serverSettings()->data().downloadDirectory) {
                     freeSpaceLabel->setText(
                         qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes))
@@ -264,7 +264,7 @@ namespace tremotesf {
 
         setMinimumSize(minimumSizeHint());
 
-        const auto updateUi = [=] {
+        const auto updateUi = [=, this] {
             const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
             if (enabled) {
                 mDownloadDirectoryWidget->update(initialDownloadDirectory());
@@ -317,7 +317,7 @@ namespace tremotesf {
         );
 
         if (mFilesModel) {
-            QObject::connect(mFilesModel, &LocalTorrentFilesModel::loadedChanged, this, [=] {
+            QObject::connect(mFilesModel, &LocalTorrentFilesModel::loadedChanged, this, [=, this] {
                 if (mFilesModel->isSuccessfull()) {
                     updateUi();
                 } else {

@@ -73,7 +73,7 @@ namespace tremotesf {
         mTrackersView->addAction(removeAction);
         QObject::connect(removeAction, &QAction::triggered, this, &TrackersViewWidget::removeTrackers);
 
-        QObject::connect(mTrackersView, &EnterEatingTreeView::customContextMenuRequested, this, [=](auto pos) {
+        QObject::connect(mTrackersView, &EnterEatingTreeView::customContextMenuRequested, this, [=, this](auto pos) {
             if (mTrackersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(
@@ -123,13 +123,13 @@ namespace tremotesf {
             qApp->translate("tremotesf", "Reanno&unce"),
             this
         );
-        QObject::connect(reannounceButton, &QPushButton::clicked, this, [=] {
+        QObject::connect(reannounceButton, &QPushButton::clicked, this, [=, this] {
             mRpc->reannounceTorrents(std::array{mTorrent->data().id});
         });
         buttonsLayout->addWidget(reannounceButton);
         buttonsLayout->addStretch();
 
-        QObject::connect(mTrackersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=] {
+        QObject::connect(mTrackersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=, this] {
             const bool hasSelection = mTrackersView->selectionModel()->hasSelection();
             editButton->setEnabled(hasSelection);
             removeButton->setEnabled(hasSelection);
@@ -156,7 +156,7 @@ namespace tremotesf {
             true,
             this
         );
-        QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
+        QObject::connect(dialog, &TextInputDialog::accepted, this, [=, this] {
             const auto lines = dialog->text().split('\n', Qt::SkipEmptyParts);
             mTorrent->addTrackers(lines);
         });
@@ -177,7 +177,7 @@ namespace tremotesf {
                 false,
                 this
             );
-            QObject::connect(dialog, &TextInputDialog::accepted, this, [=] {
+            QObject::connect(dialog, &TextInputDialog::accepted, this, [=, this] {
                 mTorrent->setTracker(id, dialog->text());
             });
             dialog->show();

@@ -48,7 +48,7 @@ namespace tremotesf {
                     ),
                     this
                 );
-                const auto onFinished = [=] {
+                const auto onFinished = [=, this] {
                     if (!call->isError()) {
                         logInfo("FreedesktopNotificationsController: executed org.freedesktop.Notifications.Notify() "
                                 "D-Bus call");
@@ -64,7 +64,7 @@ namespace tremotesf {
                 if (call->isFinished()) {
                     onFinished();
                 } else {
-                    QObject::connect(call, &QDBusPendingCallWatcher::finished, this, [=] {
+                    QObject::connect(call, &QDBusPendingCallWatcher::finished, this, [=, this] {
                         onFinished();
                         call->deleteLater();
                     });

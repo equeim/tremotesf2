@@ -90,7 +90,7 @@ namespace tremotesf {
 
         setMinimumSize(minimumSizeHint());
 
-        QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
+        QObject::connect(rpc, &Rpc::connectedChanged, this, [=, this] {
             if (rpc->isConnected()) {
                 disconnectedWidget->animatedHide();
             } else {
@@ -101,7 +101,7 @@ namespace tremotesf {
             sessionCountLabel->setEnabled(rpc->isConnected());
         });
 
-        auto update = [=] {
+        auto update = [=, this] {
             const libtremotesf::SessionStats currentSessionStats(rpc->serverStats()->currentSession());
             sessionDownloadedLabel->setText(Utils::formatByteSize(currentSessionStats.downloaded()));
             sessionUploadedLabel->setText(Utils::formatByteSize(currentSessionStats.uploaded()));

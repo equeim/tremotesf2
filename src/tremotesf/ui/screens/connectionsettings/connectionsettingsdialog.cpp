@@ -64,7 +64,7 @@ namespace tremotesf {
         mServersView->addAction(removeAction);
         QObject::connect(removeAction, &QAction::triggered, this, &ConnectionSettingsDialog::removeServers);
 
-        QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=](auto pos) {
+        QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=, this](auto pos) {
             if (mServersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(
@@ -88,10 +88,10 @@ namespace tremotesf {
             qApp->translate("tremotesf", "Add Server..."),
             this
         );
-        QObject::connect(addServerButton, &QPushButton::clicked, this, [=] {
+        QObject::connect(addServerButton, &QPushButton::clicked, this, [=, this] {
             auto dialog = new ServerEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
-            QObject::connect(dialog, &ServerEditDialog::accepted, this, [=] {
+            QObject::connect(dialog, &ServerEditDialog::accepted, this, [=, this] {
                 if (mModel->servers().size() == 1) {
                     mNoServersWidget->animatedHide();
                 }
@@ -119,7 +119,7 @@ namespace tremotesf {
         buttonsLayout->addWidget(removeButton);
         buttonsLayout->addStretch();
 
-        QObject::connect(mServersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=] {
+        QObject::connect(mServersView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=, this] {
             const bool hasSelection = mServersView->selectionModel()->hasSelection();
             editButton->setEnabled(hasSelection);
             removeButton->setEnabled(hasSelection);

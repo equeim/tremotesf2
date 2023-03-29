@@ -83,14 +83,14 @@ namespace tremotesf {
             removeAction->setShortcut(QKeySequence::Delete);
             addAction(removeAction);
 
-            QObject::connect(removeAction, &QAction::triggered, this, [=] {
+            QObject::connect(removeAction, &QAction::triggered, this, [=, this] {
                 const auto items(selectionModel()->selectedIndexes());
                 if (!items.isEmpty()) {
                     removeRow(items.first().row());
                 }
             });
 
-            QObject::connect(this, &QWidget::customContextMenuRequested, this, [=](auto pos) {
+            QObject::connect(this, &QWidget::customContextMenuRequested, this, [=, this](auto pos) {
                 const QModelIndex index(indexAt(pos));
                 if (!index.isValid()) {
                     return;
@@ -340,7 +340,7 @@ namespace tremotesf {
             loadCertificateFromFile(mSelfSignedCertificateEdit);
         });
         httpsGroupBoxLayout->addWidget(selfSignedCertificateLoadFromFile);
-        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, this, [=](bool checked) {
+        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, this, [=, this](bool checked) {
             mSelfSignedCertificateEdit->setVisible(checked);
             selfSignedCertificateLoadFromFile->setVisible(checked);
         });
@@ -366,7 +366,7 @@ namespace tremotesf {
             loadCertificateFromFile(mClientCertificateEdit);
         });
         httpsGroupBoxLayout->addWidget(clientCertificateLoadFromFile);
-        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, this, [=](bool checked) {
+        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, this, [=, this](bool checked) {
             mClientCertificateEdit->setVisible(checked);
             clientCertificateLoadFromFile->setVisible(checked);
         });
@@ -424,7 +424,7 @@ namespace tremotesf {
             qApp->translate("tremotesf", "Add"),
             this
         );
-        QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=] {
+        QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=, this] {
             const QString directory(QFileDialog::getExistingDirectory(this));
             if (!directory.isEmpty()) {
                 mMountedDirectoriesWidget->addRow(directory, QString());
@@ -437,7 +437,7 @@ namespace tremotesf {
             qApp->translate("tremotesf", "Remove"),
             this
         );
-        QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=] {
+        QObject::connect(removeDirectoriesButton, &QPushButton::clicked, this, [=, this] {
             const auto items(mMountedDirectoriesWidget->selectionModel()->selectedIndexes());
             if (!items.isEmpty()) {
                 mMountedDirectoriesWidget->removeRow(items.first().row());
@@ -563,7 +563,7 @@ namespace tremotesf {
         fileDialog->setFileMode(QFileDialog::ExistingFile);
         fileDialog->setMimeTypeFilters({"application/x-pem-file"_l1});
 
-        QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
+        QObject::connect(fileDialog, &QFileDialog::accepted, this, [=, this] {
             target->setPlainText(Utils::readTextFile(fileDialog->selectedFiles().first()));
         });
 

@@ -15,7 +15,7 @@
 
 namespace tremotesf {
     Rpc::Rpc(QObject* parent) : libtremotesf::Rpc(parent), mIncompleteDirectoryMounted(false) {
-        QObject::connect(this, &Rpc::connectedChanged, this, [=] {
+        QObject::connect(this, &Rpc::connectedChanged, this, [=, this] {
             if (isConnected()) {
                 const bool notifyOnAdded = Settings::instance()->notificationsOnAddedTorrentsSinceLastConnection();
                 const bool notifyOnFinished =
@@ -60,23 +60,23 @@ namespace tremotesf {
             }
         });
 
-        QObject::connect(this, &Rpc::torrentAdded, this, [=](const auto* torrent) {
+        QObject::connect(this, &Rpc::torrentAdded, this, [=, this](const auto* torrent) {
             if (Settings::instance()->notificationOnAddingTorrent()) {
                 emit addedNotificationRequested({torrent->data().hashString}, {torrent->data().name});
             }
         });
 
-        QObject::connect(this, &Rpc::torrentFinished, this, [=](const auto* torrent) {
+        QObject::connect(this, &Rpc::torrentFinished, this, [=, this](const auto* torrent) {
             if (Settings::instance()->notificationOfFinishedTorrents()) {
                 emit finishedNotificationRequested({torrent->data().hashString}, {torrent->data().name});
             }
         });
 
-        QObject::connect(this, &Rpc::aboutToDisconnect, this, [=] {
+        QObject::connect(this, &Rpc::aboutToDisconnect, this, [=, this] {
             Servers::instance()->saveCurrentServerLastTorrents(this);
         });
 
-        QObject::connect(this, &Rpc::torrentsUpdated, this, [=] {
+        QObject::connect(this, &Rpc::torrentsUpdated, this, [=, this] {
             mMountedIncompleteDirectory =
                 Servers::instance()->fromRemoteToLocalDirectory(serverSettings()->data().incompleteDirectory);
             mIncompleteDirectoryMounted = !mMountedIncompleteDirectory.isEmpty();

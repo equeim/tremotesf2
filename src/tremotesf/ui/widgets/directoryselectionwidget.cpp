@@ -118,16 +118,16 @@ namespace tremotesf {
     }
 
     void DirectorySelectionWidget::setupPathTextField() {
-        const auto onPathChanged = [=]() { mTextLineEdit->setText(mViewModel->displayPath()); };
+        const auto onPathChanged = [=, this]() { mTextLineEdit->setText(mViewModel->displayPath()); };
         onPathChanged();
         QObject::connect(mViewModel, &DirectorySelectionWidgetViewModel::pathChanged, this, onPathChanged);
 
-        QObject::connect(mTextLineEdit, &QLineEdit::textEdited, this, [=](const auto& text) {
+        QObject::connect(mTextLineEdit, &QLineEdit::textEdited, this, [=, this](const auto& text) {
             mViewModel->onPathEditedByUser(text);
         });
 
         if (mTextComboBox) {
-            QObject::connect(mTextComboBox, qOverload<int>(&QComboBox::activated), this, [=](int index) {
+            QObject::connect(mTextComboBox, qOverload<int>(&QComboBox::activated), this, [=, this](int index) {
                 if (index != -1) {
                     mViewModel->onComboBoxItemSelected(
                         mTextComboBox->itemData(index).toString(),
@@ -140,7 +140,7 @@ namespace tremotesf {
 
     void DirectorySelectionWidget::setupComboBoxItems() {
         if (!mTextComboBox) return;
-        const auto setup = [=] {
+        const auto setup = [=, this] {
             const auto items = mViewModel->comboBoxItems();
             mTextComboBox->clear();
             for (const auto& [path, displayPath] : items) {
@@ -163,7 +163,7 @@ namespace tremotesf {
         dialog->setOptions(QFileDialog::ShowDirsOnly);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
 
-        QObject::connect(dialog, &QFileDialog::accepted, this, [=] {
+        QObject::connect(dialog, &QFileDialog::accepted, this, [=, this] {
             mViewModel->onFileDialogAccepted(dialog->selectedFiles().constFirst());
         });
 

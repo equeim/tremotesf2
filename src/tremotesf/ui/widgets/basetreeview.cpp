@@ -16,7 +16,7 @@ namespace tremotesf {
 
         header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
-        QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, [=] {
+        QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, [=, this] {
             if (!model()) {
                 return;
             }
