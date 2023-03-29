@@ -29,7 +29,7 @@ jobs:
   build-windows:
     uses: ./.github/workflows/build-windows.yml
     with:
-      build-with-clang-cl: false
+      build-with-msvc-clang-toolchain: false
 
   upload-windows-build:
     needs: build-windows

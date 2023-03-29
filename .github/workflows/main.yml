@@ -121,19 +121,19 @@ jobs:
         run: |
           set -e -o pipefail
           echo '::group::Configuring CMake'
-          cmake -S . --preset base-multi
+          cmake -S . --preset base
           echo '::endgroup'
           echo '::group::Building Debug'
-          cmake --build --preset base-multi-debug -v
+          cmake --build --preset base-debug
           echo '::endgroup'
           echo '::group::Testing Debug'
-          ctest --output-on-failure -C Debug --test-dir out/build/base-multi
+          ctest --preset base-debug
           echo '::endgroup'
           echo '::group::Building Release'
-          cmake --build --preset base-multi-release -v
+          cmake --build --preset base-release
           echo '::endgroup'
           echo '::group::Testing Release'
-          ctest --output-on-failure -C Release --test-dir out/build/base-multi
+          ctest --preset base-release
           echo '::endgroup'
 
   build-flatpak:

@@ -7,8 +7,8 @@ name: Build Tremotesf for Windows
 on:
   workflow_call:
     inputs:
-      build-with-clang-cl:
-        description: Also build with clang-cl
+      build-with-msvc-clang-toolchain:
+        description: Also build with MSVC + clang toolchain
         type: boolean
         required: false
         default: true
@@ -39,29 +39,24 @@ jobs:
         host-triplet: x64-windows-static
         binary-cache-path: C:\vcpkg_binary_cache
         save-cache: ${{ github.event_name != 'pull_request' }}
+      env:
+        VCPKG_OVERLAY_TRIPLETS: ${{ github.workspace }}\src\libtremotesf\vcpkg-windows-overlay-triplets
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
-    - name: Build Tremotesf with clang-cl
-      id: clang-cl-build
-      if: inputs.build-with-clang-cl
-      uses: equeim/action-cmake-build@v9
-      with:
-        cmake-arguments: --preset windows-clang -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
-        output-directories-suffix: -clang-cl
-
-    - name: Remove clang-cl build directories
-      if: inputs.build-with-clang-cl
-      run: |
-        Remove-Item ${{ steps.clang-cl-build.outputs.build-directory-debug }} -Recurse
-        Remove-Item ${{ steps.clang-cl-build.outputs.build-directory-release }} -Recurse
-
-    - name: Build Tremotesf with MSVC
+    - name: Build Tremotesf with MSVC toolchain
       id: build
       uses: equeim/action-cmake-build@v9
       with:
-        cmake-arguments: --preset windows -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
+        cmake-arguments: --preset windows-msvc-vcpkg -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
         package: true
+
+    - name: Build Tremotesf with MSVC + Clang toolchain
+      if: inputs.build-with-clang-cl
+      uses: equeim/action-cmake-build@v9
+      with:
+        cmake-arguments: --preset windows-msvc-clang-vcpkg -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
+        output-directories-suffix: -clang
 
     - name: Archive debug packages
       uses: actions/upload-artifact@v3
