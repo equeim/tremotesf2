@@ -23,17 +23,21 @@ namespace tremotesf {
         constexpr auto pathKey = "path"sv;
         constexpr auto lengthKey = "length"sv;
 
-        template<typename ValueType>
-        std::optional<ValueType>
+        template<bencode::ValueType Expected>
+        std::optional<Expected>
         maybeTakeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName) {
             if (auto found = dict.find(key); found != dict.end()) {
                 auto& [_, value] = *found;
-                auto maybeValue = value.maybeTakeValue<ValueType>();
+                auto maybeValue = value.maybeTakeValue<Expected>();
                 if (!maybeValue) {
                     throw bencode::Error(
                         bencode::Error::Type::Parsing,
-                        std::string("Value of dictionary \"") + dictName.data() + "\" with key \"" + key.data() +
-                            "\" is not of " + bencode::getValueTypeName<ValueType>() + " type"
+                        fmt::format(
+                            "Value of dictionary \"{}\" with key \"{}\" is not of {} type",
+                            dictName,
+                            key,
+                            bencode::getValueTypeName<Expected>()
+                        )
                     );
                 }
                 return maybeValue;
@@ -41,15 +45,14 @@ namespace tremotesf {
             return {};
         }
 
-        template<typename ValueType>
-        ValueType takeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName) {
-            if (auto maybeValue = maybeTakeDictValue<ValueType>(dict, key, dictName); maybeValue) {
+        template<bencode::ValueType Expected>
+        Expected takeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName) {
+            if (auto maybeValue = maybeTakeDictValue<Expected>(dict, key, dictName); maybeValue) {
                 return std::move(*maybeValue);
             }
             throw bencode::Error(
                 bencode::Error::Type::Parsing,
-                std::string("Dictionary \"") + dictName.data() + "\" does not contain value with key \"" + key.data() +
-                    "\""
+                fmt::format("Dictionary \"{}\" does not contain value with key \"{}\"", dictName, key)
             );
         }
 
@@ -84,7 +87,7 @@ namespace tremotesf {
                     if (!fileMap) {
                         throw bencode::Error(
                             bencode::Error::Type::Parsing,
-                            "Files list element at index " + std::to_string(fileIndex) + " is not a dictionary"
+                            fmt::format("Files list element at index {} is not a dictionary", fileIndex)
                         );
                     }
 
@@ -102,8 +105,11 @@ namespace tremotesf {
                         if (!part) {
                             throw bencode::Error(
                                 bencode::Error::Type::Parsing,
-                                "Path element at index " + std::to_string(partIndex) + " for file at index " +
-                                    std::to_string(fileIndex) + " is not a string"
+                                fmt::format(
+                                    "Path element at index {} for file at index is not a string",
+                                    partIndex,
+                                    fileIndex
+                                )
                             );
                         }
 

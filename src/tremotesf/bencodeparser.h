@@ -34,21 +34,22 @@ namespace tremotesf {
         };
         using Dictionary = std::map<ByteArray, Value, DictionaryComparator>;
 
-        template<typename ValueType>
+        template<typename T>
+        concept ValueType = std::same_as<T, Integer> || std::same_as<T, ByteArray> || std::same_as<T, List> ||
+                            std::same_as<T, Dictionary> || std::same_as<T, QString>;
+
+        template<ValueType ValueType>
         inline constexpr const char* getValueTypeName() {
-            using T = std::decay_t<ValueType>;
-            if constexpr (std::is_same_v<T, Integer>) {
+            if constexpr (std::same_as<ValueType, Integer>) {
                 return "Integer";
-            } else if constexpr (std::is_same_v<T, ByteArray>) {
+            } else if constexpr (std::same_as<ValueType, ByteArray>) {
                 return "ByteArray";
-            } else if constexpr (std::is_same_v<T, List>) {
+            } else if constexpr (std::same_as<ValueType, List>) {
                 return "List";
-            } else if constexpr (std::is_same_v<T, Dictionary>) {
+            } else if constexpr (std::same_as<ValueType, Dictionary>) {
                 return "Dictionary";
-            } else if constexpr (std::is_same_v<T, QString>) {
+            } else if constexpr (std::same_as<ValueType, QString>) {
                 return "String";
-            } else {
-                static_assert(!std::is_same_v<T, T>, "Unsupported type");
             }
         }
 
@@ -72,10 +73,10 @@ namespace tremotesf {
             inline List takeList();
             inline Dictionary takeDictionary();
 
-            template<typename Expected>
+            template<ValueType Expected>
             std::optional<Expected> maybeTakeValue();
 
-            template<typename Expected>
+            template<ValueType Expected>
             Expected takeValue();
 
         private:
