@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_TORRENTFILESMODEL_H
 #define TREMOTESF_TORRENTFILESMODEL_H
 
+#include <span>
 #include <vector>
 
 #include "tremotesf/ui/itemmodels/basetorrentfilesmodel.h"
@@ -40,10 +41,10 @@ namespace tremotesf {
         bool isWanted(const QModelIndex& index) const;
 
     private:
-        void update(const std::vector<int>& changed);
+        void update(std::span<const int> changed);
         void createTree();
         void resetTree();
-        void updateTree(const std::vector<int>& changed);
+        void updateTree(std::span<const int> changed);
 
         void setLoaded(bool loaded);
 

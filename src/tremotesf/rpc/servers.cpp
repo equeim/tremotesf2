@@ -99,7 +99,7 @@ namespace tremotesf {
         }
     }
 
-    QVariant MountedDirectory::toVariant(const std::vector<MountedDirectory>& dirs) {
+    QVariant MountedDirectory::toVariant(std::span<const MountedDirectory> dirs) {
         QVariantMap map{};
         for (const auto& dir : dirs) {
             map.insert(dir.localPath, dir.remotePath);

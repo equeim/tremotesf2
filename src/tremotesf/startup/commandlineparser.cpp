@@ -4,6 +4,7 @@
 
 #include "commandlineparser.h"
 
+#include <span>
 #include <stdexcept>
 
 #include <QFileInfo>
@@ -21,7 +22,7 @@ namespace tremotesf {
             return sep ? sep + 1 : arg;
         }
 
-        void parsePositionals(const std::vector<std::string>& torrents, CommandLineArgs& args) {
+        void parsePositionals(std::span<const std::string> torrents, CommandLineArgs& args) {
             for (const std::string& arg : torrents) {
                 if (!arg.empty()) {
                     const auto argument(QString::fromStdString(arg));
