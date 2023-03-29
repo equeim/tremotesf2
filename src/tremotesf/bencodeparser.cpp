@@ -27,12 +27,12 @@ namespace tremotesf::bencode {
         constexpr int integerBufferSize = std::numeric_limits<Integer>::digits10 + 3;
     }
 
-    template<typename Expected>
+    template<ValueType Expected>
     std::optional<Expected> Value::maybeTakeValue() {
         return std::visit(
             [](auto&& value) -> std::optional<Expected> {
                 using T = std::decay_t<decltype(value)>;
-                if constexpr (std::is_same_v<T, Expected>) {
+                if constexpr (std::same_as<T, Expected>) {
                     return std::forward<Expected>(value);
                 } else {
                     return std::nullopt;
@@ -52,7 +52,7 @@ namespace tremotesf::bencode {
         return std::visit(
             [](auto&& value) -> std::optional<QString> {
                 using T = std::decay_t<decltype(value)>;
-                if constexpr (std::is_same_v<T, ByteArray>) {
+                if constexpr (std::same_as<T, ByteArray>) {
                     auto string = QString::fromStdString(value);
                     value.clear();
                     return string;
@@ -64,12 +64,12 @@ namespace tremotesf::bencode {
         );
     }
 
-    template<typename Expected>
+    template<ValueType Expected>
     Expected Value::takeValue() {
         if (auto maybeValue = maybeTakeValue<Expected>(); maybeValue) {
             return std::move(*maybeValue);
         }
-        throw Error(Error::Type::Parsing, std::string("Value is not of ") + getValueTypeName<Expected>() + " type");
+        throw Error(Error::Type::Parsing, fmt::format("Value is not of {} type", getValueTypeName<Expected>()));
     }
 
     template Integer Value::takeValue();
@@ -102,7 +102,7 @@ namespace tremotesf::bencode {
             }
 
             Dictionary parseDictionary() {
-                return parseContainer<Dictionary>([&](auto& dict) {
+                return parseContainer<Dictionary>([&](Dictionary& dict) {
                     ByteArray key(parseByteArray());
                     Value value(parseValue());
                     dict.emplace(std::move(key), std::move(value));
@@ -110,10 +110,10 @@ namespace tremotesf::bencode {
             }
 
             List parseList() {
-                return parseContainer<List>([&](auto& list) { list.push_back(parseValue()); });
+                return parseContainer<List>([&](List& list) { list.push_back(parseValue()); });
             }
 
-            template<typename Container, typename Append>
+            template<std::default_initializable Container, std::invocable<Container&> Append>
             Container parseContainer(Append&& append) {
                 const auto containerPos = mDevice.pos();
                 try {
