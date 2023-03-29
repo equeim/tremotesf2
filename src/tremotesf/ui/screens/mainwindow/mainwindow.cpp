@@ -156,7 +156,8 @@ namespace tremotesf {
             }
         }
 
-        template<typename Dialog, typename CreateDialogFunction>
+        template<std::derived_from<QDialog> Dialog, typename CreateDialogFunction>
+            requires std::is_invocable_r_v<Dialog*, CreateDialogFunction>
         void showSingleInstanceDialog(QWidget* mainWindow, CreateDialogFunction&& createDialog) {
             auto existingDialog = mainWindow->findChild<Dialog*>({}, Qt::FindDirectChildrenOnly);
             if (existingDialog) {

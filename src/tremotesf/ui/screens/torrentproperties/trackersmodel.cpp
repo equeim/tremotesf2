@@ -177,7 +177,8 @@ namespace tremotesf {
         return mTrackers.at(static_cast<size_t>(index.row())).tracker;
     }
 
-    class TrackersModelUpdater : public ModelListUpdater<TrackersModel, TrackersModel::TrackerItem> {
+    class TrackersModelUpdater
+        : public ModelListUpdater<TrackersModel, TrackersModel::TrackerItem, std::vector<TrackersModel::TrackerItem>> {
     public:
         inline explicit TrackersModelUpdater(TrackersModel& model) : ModelListUpdater(model) {}
 

@@ -25,22 +25,23 @@ namespace tremotesf {
 
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
-    protected:
-        void resetTorrentsProxyModelFilter() const override;
-
-    private:
-        void update() override;
+        using QAbstractItemModel::beginInsertRows;
+        using QAbstractItemModel::beginRemoveRows;
+        using QAbstractItemModel::endInsertRows;
+        using QAbstractItemModel::endRemoveRows;
 
         struct TrackerItem {
             QString tracker;
             int torrents;
         };
 
-        std::vector<TrackerItem> mTrackers;
+    protected:
+        void resetTorrentsProxyModelFilter() const override;
 
-        template<typename, typename, typename, typename>
-        friend class ModelListUpdater;
-        friend class AllTrackersModelUpdater;
+    private:
+        void update() override;
+
+        std::vector<TrackerItem> mTrackers;
     };
 }
 

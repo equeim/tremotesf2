@@ -10,10 +10,11 @@
 #include "libtremotesf/itemlistupdater.h"
 
 namespace tremotesf {
-    template<typename Model, typename Item, typename NewItem = Item, typename NewItemContainer = std::vector<NewItem>>
-    class ModelListUpdater : public ItemListUpdater<Item, NewItem, NewItemContainer> {
-        static_assert(std::is_base_of_v<QAbstractItemModel, Model>);
-
+    template<
+        std::derived_from<QAbstractItemModel> Model,
+        typename Item,
+        std::ranges::forward_range NewItemsRange = std::vector<Item>>
+    class ModelListUpdater : public ItemListUpdater<Item, NewItemsRange> {
     public:
         inline explicit ModelListUpdater(Model& model) : mModel(model) {}
 
