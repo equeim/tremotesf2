@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "libtremotesf/log.h"
-
 #include "windowsmessagehandler.h"
 
 #include <condition_variable>
@@ -26,6 +24,8 @@
 
 #include <windows.h>
 
+#include "libtremotesf/literals.h"
+#include "libtremotesf/log.h"
 #include "tremotesf/windowshelpers.h"
 
 namespace fs = std::filesystem;

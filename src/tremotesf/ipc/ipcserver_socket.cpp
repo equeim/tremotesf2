@@ -12,6 +12,7 @@
 #include <QLocalSocket>
 #include <QTimer>
 
+#include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 
 #ifdef Q_OS_WIN

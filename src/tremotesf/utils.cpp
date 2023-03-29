@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cmath>
+#include <concepts>
 #include <stdexcept>
 
 #include <QCoreApplication>

@@ -16,6 +16,7 @@
 #include <QTextDocumentFragment>
 #include <QUrl>
 
+#include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)

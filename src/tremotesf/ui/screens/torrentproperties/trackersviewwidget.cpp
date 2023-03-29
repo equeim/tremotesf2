@@ -4,6 +4,8 @@
 
 #include "trackersviewwidget.h"
 
+#include <array>
+
 #include <QCoreApplication>
 #include <QCursor>
 #include <QHBoxLayout>
@@ -122,7 +124,7 @@ namespace tremotesf {
             this
         );
         QObject::connect(reannounceButton, &QPushButton::clicked, this, [=] {
-            mRpc->reannounceTorrents({mTorrent->data().id});
+            mRpc->reannounceTorrents(std::array{mTorrent->data().id});
         });
         buttonsLayout->addWidget(reannounceButton);
         buttonsLayout->addStretch();

@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_MODELUTILS_H
 #define TREMOTESF_MODELUTILS_H
 
+#include <concepts>
 #include <QAbstractItemModel>
 
 #include "libtremotesf/itemlistupdater.h"

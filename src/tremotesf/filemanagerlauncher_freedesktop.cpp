@@ -8,6 +8,7 @@
 #include <QDBusPendingCallWatcher>
 #include <QUrl>
 
+#include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 #include "tremotesf/desktoputils.h"
 #include "tremotesf_dbus_generated/org.freedesktop.FileManager1.h"
