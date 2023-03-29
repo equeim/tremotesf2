@@ -75,11 +75,8 @@ namespace tremotesf {
         }
     }
 
-    class AllTrackersModelUpdater : public ModelListUpdater<
-                                        AllTrackersModel,
-                                        AllTrackersModel::TrackerItem,
-                                        std::pair<const QString, int>,
-                                        std::map<QString, int>> {
+    class AllTrackersModelUpdater
+        : public ModelListUpdater<AllTrackersModel, AllTrackersModel::TrackerItem, std::map<QString, int>> {
     public:
         inline explicit AllTrackersModelUpdater(AllTrackersModel& model) : ModelListUpdater(model) {}
 

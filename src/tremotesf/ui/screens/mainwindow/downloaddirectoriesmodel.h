@@ -26,11 +26,10 @@ namespace tremotesf {
 
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
-    protected:
-        void resetTorrentsProxyModelFilter() const override;
-
-    private:
-        void update() override;
+        using QAbstractItemModel::beginInsertRows;
+        using QAbstractItemModel::beginRemoveRows;
+        using QAbstractItemModel::endInsertRows;
+        using QAbstractItemModel::endRemoveRows;
 
         struct DirectoryItem {
             QString directory{};
@@ -38,11 +37,13 @@ namespace tremotesf {
             int torrents{};
         };
 
-        std::vector<DirectoryItem> mDirectories{};
+    protected:
+        void resetTorrentsProxyModelFilter() const override;
 
-        template<typename, typename, typename, typename>
-        friend class ModelListUpdater;
-        friend class DownloadDirectoriesModelUpdater;
+    private:
+        void update() override;
+
+        std::vector<DirectoryItem> mDirectories{};
     };
 }
 

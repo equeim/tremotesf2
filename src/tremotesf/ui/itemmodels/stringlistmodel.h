@@ -28,12 +28,14 @@ namespace tremotesf {
 
         void setStringList(const std::vector<QString>& stringList);
 
+        using QAbstractItemModel::beginInsertRows;
+        using QAbstractItemModel::beginRemoveRows;
+        using QAbstractItemModel::endInsertRows;
+        using QAbstractItemModel::endRemoveRows;
+
     private:
         QString mHeader;
         std::vector<QString> mStringList;
-
-        template<typename, typename, typename, typename>
-        friend class ModelListUpdater;
     };
 }
 

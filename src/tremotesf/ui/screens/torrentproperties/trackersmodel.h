@@ -39,20 +39,22 @@ namespace tremotesf {
         std::vector<int> idsFromIndexes(const QModelIndexList& indexes) const;
         const libtremotesf::Tracker& trackerAtIndex(const QModelIndex& index) const;
 
+        using QAbstractItemModel::beginInsertRows;
+        using QAbstractItemModel::beginRemoveRows;
+        using QAbstractItemModel::endInsertRows;
+        using QAbstractItemModel::endRemoveRows;
+
+        struct TrackerItem;
+
     private:
         void update();
         void updateEtas();
 
         libtremotesf::Torrent* mTorrent{};
 
-        struct TrackerItem;
         std::vector<TrackerItem> mTrackers;
 
         QTimer* mEtaUpdateTimer{};
-
-        template<typename, typename, typename, typename>
-        friend class ModelListUpdater;
-        friend class TrackersModelUpdater;
     };
 }
 
