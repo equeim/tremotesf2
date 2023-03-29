@@ -70,7 +70,7 @@ namespace tremotesf {
             QLocalSocket* socket = server->nextPendingConnection();
             QObject::connect(socket, &QLocalSocket::disconnected, socket, &QLocalSocket::deleteLater);
             QTimer::singleShot(30000, socket, &QLocalSocket::disconnectFromServer);
-            QObject::connect(socket, &QLocalSocket::readyRead, this, [=]() {
+            QObject::connect(socket, &QLocalSocket::readyRead, this, [=, this]() {
                 const QByteArray message(socket->readAll());
                 if (message.size() == 1 && message.front() == activateWindowMessage) {
                     logInfo("IpcServerSocket: window activation requested");

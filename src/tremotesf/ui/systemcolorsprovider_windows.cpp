@@ -29,8 +29,8 @@ namespace tremotesf {
             explicit SystemColorsProviderWindows(QObject* parent = nullptr) : SystemColorsProvider(parent) {
                 logInfo("System dark theme enabled = {}", mDarkThemeEnabled);
                 logInfo("System accent colors = {}", mAccentColors);
-                revoker = settings.ColorValuesChanged(winrt::auto_revoke, [=](auto...) {
-                    QMetaObject::invokeMethod(this, [=] {
+                revoker = settings.ColorValuesChanged(winrt::auto_revoke, [=, this](auto...) {
+                    QMetaObject::invokeMethod(this, [=, this] {
                         if (bool newDarkThemeEnabled = isDarkThemeEnabledImpl();
                             newDarkThemeEnabled != mDarkThemeEnabled) {
                             logInfo("System dark theme state changed to {}", newDarkThemeEnabled);

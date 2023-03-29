@@ -7,7 +7,7 @@
 #include <cerrno>
 #include <system_error>
 
-#include "libtremotesf/log.h"
+#include <fmt/core.h>
 
 namespace tremotesf::impl {
     void throwWithErrno(std::string_view functionName) {
