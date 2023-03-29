@@ -147,7 +147,7 @@ namespace tremotesf {
 
     QString Utils::formatEta(int seconds) {
         if (seconds < 0) {
-            return u8"\u221E";
+            return "\u221E";
         }
 
         const int days = seconds / 86400;
