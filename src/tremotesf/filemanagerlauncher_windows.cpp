@@ -5,6 +5,7 @@
 #include "filemanagerlauncher.h"
 
 #include <memory>
+#include <span>
 #include <type_traits>
 
 #include <QCoreApplication>
@@ -112,7 +113,7 @@ namespace tremotesf {
             }
 
         private:
-            void openFolderWindows10(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
+            void openFolderWindows10(const QString& nativeDirPath, std::span<const QString> dirFiles) {
                 const winrt::hstring folderPath(nativeDirPath.toStdWString());
                 auto options = FolderLauncherOptions();
                 for (const QString& filePath : dirFiles) {
@@ -147,7 +148,7 @@ namespace tremotesf {
                 Launcher::LaunchFolderPathAsync(folderPath, options).get();
             }
 
-            void openFolderWindows81(const QString& nativeDirPath, const std::vector<QString>& dirFiles) {
+            void openFolderWindows81(const QString& nativeDirPath, std::span<const QString> dirFiles) {
                 auto directory = createItemIdList(nativeDirPath);
                 ItemIdListList items(dirFiles.size());
                 for (const QString& filePath : dirFiles) {

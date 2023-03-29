@@ -194,7 +194,7 @@ namespace tremotesf {
                TorrentFilesModelEntry::Unwanted;
     }
 
-    void TorrentFilesModel::update(const std::vector<int>& changed) {
+    void TorrentFilesModel::update(std::span<const int> changed) {
         if (mLoaded) {
             updateTree(changed);
         } else {
@@ -239,7 +239,7 @@ namespace tremotesf {
         }
     }
 
-    void TorrentFilesModel::updateTree(const std::vector<int>& changed) {
+    void TorrentFilesModel::updateTree(std::span<const int> changed) {
         if (!changed.empty()) {
             const auto& torrentFiles = mTorrent->files();
 

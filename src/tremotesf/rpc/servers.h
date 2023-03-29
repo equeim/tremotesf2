@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_SERVERS_H
 #define TREMOTESF_SERVERS_H
 
+#include <span>
 #include <vector>
 
 #include <QObject>
@@ -18,7 +19,7 @@ namespace tremotesf {
         QString localPath{};
         QString remotePath{};
 
-        static QVariant toVariant(const std::vector<MountedDirectory>& dirs);
+        static QVariant toVariant(std::span<const MountedDirectory> dirs);
         static std::vector<MountedDirectory> fromVariant(const QVariant& var);
     };
 
