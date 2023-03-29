@@ -45,7 +45,7 @@ namespace tremotesf {
 
         setupUi();
 
-        QObject::connect(mRpc, &Rpc::connectedChanged, this, [=] {
+        QObject::connect(mRpc, &Rpc::connectedChanged, this, [=, this] {
             if (mRpc->isConnected()) {
                 mDisconnectedMessageWidget->animatedHide();
                 mDisconnectedMessageWidget->setEnabled(true);

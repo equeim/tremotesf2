@@ -360,20 +360,20 @@ namespace tremotesf {
             }
             mRpc = rpc;
             if (rpc) {
-                QObject::connect(rpc, &Rpc::onAboutToAddTorrents, this, [=](size_t count) {
+                QObject::connect(rpc, &Rpc::onAboutToAddTorrents, this, [=, this](size_t count) {
                     const auto first = mRpc->torrentsCount();
                     beginInsertRows({}, first, first + static_cast<int>(count) - 1);
                 });
 
-                QObject::connect(rpc, &Rpc::onAddedTorrents, this, [=] { endInsertRows(); });
+                QObject::connect(rpc, &Rpc::onAddedTorrents, this, [=, this] { endInsertRows(); });
 
-                QObject::connect(rpc, &Rpc::onAboutToRemoveTorrents, this, [=](size_t first, size_t last) {
+                QObject::connect(rpc, &Rpc::onAboutToRemoveTorrents, this, [=, this](size_t first, size_t last) {
                     beginRemoveRows({}, static_cast<int>(first), static_cast<int>(last - 1));
                 });
 
-                QObject::connect(rpc, &Rpc::onRemovedTorrents, this, [=] { endRemoveRows(); });
+                QObject::connect(rpc, &Rpc::onRemovedTorrents, this, [=, this] { endRemoveRows(); });
 
-                QObject::connect(rpc, &Rpc::onChangedTorrents, this, [=](size_t first, size_t last) {
+                QObject::connect(rpc, &Rpc::onChangedTorrents, this, [=, this](size_t first, size_t last) {
                     emit dataChanged(
                         index(static_cast<int>(first), 0),
                         index(static_cast<int>(last), columnCount() - 1)

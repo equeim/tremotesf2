@@ -49,7 +49,7 @@ namespace tremotesf {
             dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
-        const auto onTextChanged = [=](const QString& text) {
+        const auto onTextChanged = [=, this](const QString& text) {
             if (text.isEmpty()) {
                 dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             } else {
@@ -58,7 +58,7 @@ namespace tremotesf {
         };
 
         if (multiline) {
-            QObject::connect(mPlainTextEdit, &QPlainTextEdit::textChanged, this, [=] {
+            QObject::connect(mPlainTextEdit, &QPlainTextEdit::textChanged, this, [=, this] {
                 onTextChanged(mPlainTextEdit->toPlainText());
             });
         } else {

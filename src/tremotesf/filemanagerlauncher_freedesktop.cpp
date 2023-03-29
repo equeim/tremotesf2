@@ -40,7 +40,7 @@ namespace tremotesf {
                     }
                 }
                 const auto pendingReply = interface.ShowItems(uris, {});
-                const auto onFinished = [=] {
+                const auto onFinished = [=, this] {
                     if (!pendingReply.isError()) {
                         logInfo("FreedesktopFileManagerLauncher: executed org.freedesktop.FileManager1.ShowItems() "
                                 "D-Bus call");

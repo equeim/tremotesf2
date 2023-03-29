@@ -90,7 +90,7 @@ namespace tremotesf {
         const int oldRow = serverRow(oldName);
         int row = serverRow(name);
 
-        Server* const server = [=]() -> Server* {
+        Server* const server = [=, this]() -> Server* {
             if (oldRow != -1) {
                 return &mServers.at(static_cast<size_t>(oldRow));
             }

@@ -66,7 +66,7 @@ namespace tremotesf {
             void init(BaseTorrentsFiltersSettingsModel* model, TorrentsProxyModel* torrentsProxyModel, Rpc* rpc) {
                 setModel(model);
 
-                QObject::connect(model, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [=] {
+                QObject::connect(model, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [=, this] {
                     if (model->isPopulated()) {
                         updateCurrentIndex();
                     }
@@ -76,7 +76,7 @@ namespace tremotesf {
                     selectionModel(),
                     &QItemSelectionModel::currentChanged,
                     this,
-                    [=](const QModelIndex& current) {
+                    [=, this](const QModelIndex& current) {
                         if (model->isPopulated()) {
                             setTorrentsModelFilterFromIndex(current);
                         }
@@ -123,7 +123,7 @@ namespace tremotesf {
             StatusFiltersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
                 : BaseListView(torrentsModel, parent) {
                 init(new StatusFiltersModel(this), torrentsModel, rpc);
-                QObject::connect(torrentsModel, &TorrentsProxyModel::statusFilterChanged, this, [=] {
+                QObject::connect(torrentsModel, &TorrentsProxyModel::statusFilterChanged, this, [=, this] {
                     updateCurrentIndex();
                 });
             }
@@ -147,7 +147,7 @@ namespace tremotesf {
             TrackersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
                 : BaseListView(torrentsModel, parent) {
                 init(new AllTrackersModel(this), torrentsModel, rpc);
-                QObject::connect(torrentsModel, &TorrentsProxyModel::trackerFilterChanged, this, [=] {
+                QObject::connect(torrentsModel, &TorrentsProxyModel::trackerFilterChanged, this, [=, this] {
                     updateCurrentIndex();
                 });
             }
@@ -169,7 +169,7 @@ namespace tremotesf {
             DirectoriesListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
                 : BaseListView(torrentsModel, parent) {
                 init(new DownloadDirectoriesModel(this), torrentsModel, rpc);
-                QObject::connect(torrentsModel, &TorrentsProxyModel::downloadDirectoryFilterChanged, this, [=] {
+                QObject::connect(torrentsModel, &TorrentsProxyModel::downloadDirectoryFilterChanged, this, [=, this] {
                     updateCurrentIndex();
                 });
             }

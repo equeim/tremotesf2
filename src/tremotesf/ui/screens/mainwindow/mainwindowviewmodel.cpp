@@ -56,7 +56,7 @@ namespace tremotesf {
         if (!commandLineFiles.isEmpty() || !commandLineUrls.isEmpty()) {
             QMetaObject::invokeMethod(
                 this,
-                [=] { addTorrents(commandLineFiles, commandLineUrls, true); },
+                [=, this] { addTorrents(commandLineFiles, commandLineUrls, true); },
                 Qt::QueuedConnection
             );
         }
@@ -65,17 +65,17 @@ namespace tremotesf {
             ipcServer,
             &IpcServer::windowActivationRequested,
             this,
-            [=](const auto&, const auto& startupNoficationId) { emit showWindow(startupNoficationId); }
+            [=, this](const auto&, const auto& startupNoficationId) { emit showWindow(startupNoficationId); }
         );
 
         QObject::connect(
             ipcServer,
             &IpcServer::torrentsAddingRequested,
             this,
-            [=](const auto& files, const auto& urls) { addTorrents(files, urls); }
+            [=, this](const auto& files, const auto& urls) { addTorrents(files, urls); }
         );
 
-        QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
+        QObject::connect(rpc, &Rpc::connectedChanged, this, [=, this] {
             if (rpc->isConnected()) {
                 if (delayedTorrentAddMessageTimer) {
                     delayedTorrentAddMessageTimer->stop();
@@ -152,7 +152,7 @@ namespace tremotesf {
                 delayedTorrentAddMessageTimer = new QTimer(this);
                 delayedTorrentAddMessageTimer->setInterval(initialDelayedTorrentAddMessageDelay);
                 delayedTorrentAddMessageTimer->setSingleShot(true);
-                QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=] {
+                QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=, this] {
                     delayedTorrentAddMessageTimer = nullptr;
                     emit showDelayedTorrentAddMessage(files + urls);
                 });
