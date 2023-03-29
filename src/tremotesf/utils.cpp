@@ -95,8 +95,8 @@ namespace tremotesf {
             return byteUnits[unit].strings[stringType]().arg(bytes_d, 0, 'f', 1);
         }
 
-        template<typename Functor>
-        QString readTextFileImpl(const QString& filePath, Functor&& onError) {
+        template<std::invocable OnError>
+        QString readTextFileImpl(const QString& filePath, OnError&& onError) {
             QFile file(filePath);
             if (file.open(QIODevice::ReadOnly)) {
                 return file.readAll();

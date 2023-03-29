@@ -44,7 +44,7 @@ namespace tremotesf {
                     return defaultValue;
                 }
             }
-            if constexpr (std::is_same_v<T, Settings::DarkThemeMode>) {
+            if constexpr (std::same_as<T, Settings::DarkThemeMode>) {
                 if (value == Settings::DarkThemeMode::FollowSystem &&
                     !SystemColorsProvider::isDarkThemeFollowSystemSupported()) {
                     logWarning("Settings: {} is not supported", Settings::DarkThemeMode::FollowSystem);
@@ -91,7 +91,9 @@ namespace tremotesf {
     )
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberDownloadDir, setRememberDownloadDir, "rememberDownloadDir", true)
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberOpenTorrentDir, setRememberOpenTorrentDir, "rememberOpenTorrentTorrentDir", true)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool, rememberOpenTorrentDir, setRememberOpenTorrentDir, "rememberOpenTorrentTorrentDir", true
+    )
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(
         QString, lastOpenTorrentDirectory, setLastOpenTorrentDirectory, "lastOpenTorrentDirectory", {}
     )
