@@ -16,6 +16,7 @@
 #include <QStringBuilder>
 #include <QStyle>
 
+#include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 #include "tremotesf/startup/windowsmessagehandler.h"
 #include "tremotesf/ui/darkthemeapplier.h"

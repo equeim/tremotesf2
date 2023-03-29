@@ -10,6 +10,7 @@
 #include <QScopeGuard>
 #include <QTranslator>
 
+#include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 #include "libtremotesf/target_os.h"
 #include "tremotesf/ipc/ipcclient.h"
