@@ -30,7 +30,11 @@ SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::WindowType)
 namespace tremotesf {
 
     namespace {
-        inline constexpr DWORD DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004 = 19;
+        namespace DWMWINDOWATTRIBUTE_compat {
+            inline constexpr DWORD DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004 = 19;
+            inline constexpr DWORD DWMWA_USE_IMMERSIVE_DARK_MODE_SINCE_2004 = 20;
+            inline constexpr DWORD DWMWA_CAPTION_COLOR = 35;
+        }
 
         class TitleBarBackgroundEventFilter : public QObject {
             Q_OBJECT
@@ -96,7 +100,7 @@ namespace tremotesf {
                         checkHResult(
                             DwmSetWindowAttribute(
                                 reinterpret_cast<HWND>(window->winId()),
-                                DWMWA_CAPTION_COLOR,
+                                DWMWINDOWATTRIBUTE_compat::DWMWA_CAPTION_COLOR,
                                 &color,
                                 sizeof(color)
                             ),
@@ -109,9 +113,9 @@ namespace tremotesf {
                     logInfo("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
                     const auto attribute = []() -> DWORD {
                         if (isRunningOnWindows10_2004OrGreater()) {
-                            return DWMWA_USE_IMMERSIVE_DARK_MODE;
+                            return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_SINCE_2004;
                         } else {
-                            return DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;
+                            return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;
                         }
                     }();
                     const bool darkTheme = [&] {
