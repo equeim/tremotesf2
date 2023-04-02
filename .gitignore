@@ -11,7 +11,7 @@
 /installroot
 /out
 /RPMS
-/vcpkg_installed
+/vcpkg-installed
 *.list
 *.user
 *.user.*
