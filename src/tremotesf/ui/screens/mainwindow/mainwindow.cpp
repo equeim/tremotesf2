@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 
 #include <algorithm>
+#include <functional>
 #include <cmath>
 
 #include <QAction>
@@ -311,7 +312,7 @@ namespace tremotesf {
             mViewModel,
             &MainWindowViewModel::showDelayedTorrentAddMessage,
             this,
-            [=, this](const QStringList& torrents) {
+            [messageWidget](const QStringList& torrents) {
                 logDebug("MainWindow: showing delayed torrent add message");
                 messageWidget->setMessageType(KMessageWidget::Information);
                 //: Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents
@@ -713,25 +714,34 @@ namespace tremotesf {
         };
         //: Torrent's loading priority
         mHighPriorityAction = priorityMenu->addAction(qApp->translate("tremotesf", "High"));
-        QObject::connect(mHighPriorityAction, &QAction::triggered, this, [=, this] {
-            setTorrentsPriority(libtremotesf::TorrentData::Priority::High);
-        });
+        QObject::connect(
+            mHighPriorityAction,
+            &QAction::triggered,
+            this,
+            std::bind_front(setTorrentsPriority, libtremotesf::TorrentData::Priority::High)
+        );
         mHighPriorityAction->setCheckable(true);
         priorityGroup->addAction(mHighPriorityAction);
 
         //: Torrent's loading priority
         mNormalPriorityAction = priorityMenu->addAction(qApp->translate("tremotesf", "Normal"));
-        QObject::connect(mNormalPriorityAction, &QAction::triggered, this, [=, this] {
-            setTorrentsPriority(libtremotesf::TorrentData::Priority::Normal);
-        });
+        QObject::connect(
+            mNormalPriorityAction,
+            &QAction::triggered,
+            this,
+            std::bind_front(setTorrentsPriority, libtremotesf::TorrentData::Priority::Normal)
+        );
         mNormalPriorityAction->setCheckable(true);
         priorityGroup->addAction(mNormalPriorityAction);
 
         //: Torrent's loading priority
         mLowPriorityAction = priorityMenu->addAction(qApp->translate("tremotesf", "Low"));
-        QObject::connect(mLowPriorityAction, &QAction::triggered, this, [=, this] {
-            setTorrentsPriority(libtremotesf::TorrentData::Priority::Low);
-        });
+        QObject::connect(
+            mLowPriorityAction,
+            &QAction::triggered,
+            this,
+            std::bind_front(setTorrentsPriority, libtremotesf::TorrentData::Priority::Low)
+        );
         mLowPriorityAction->setCheckable(true);
         priorityGroup->addAction(mLowPriorityAction);
     }
