@@ -185,7 +185,8 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
     )
 elseif (WIN32)
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
-    target_link_libraries(tremotesf PRIVATE Qt::Svg)
+    find_library(Dwmapi Dwmapi REQUIRED)
+    target_link_libraries(tremotesf PRIVATE Qt::Svg "${Dwmapi}")
     target_sources(
         tremotesf PRIVATE
         tremotesf/filemanagerlauncher_windows.cpp
