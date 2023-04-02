@@ -52,7 +52,7 @@ jobs:
         package: true
 
     - name: Build Tremotesf with MSVC + Clang toolchain
-      if: inputs.build-with-clang-cl
+      if: inputs.build-with-msvc-clang-toolchain
       uses: equeim/action-cmake-build@v9
       with:
         cmake-arguments: --preset windows-msvc-clang-vcpkg -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
