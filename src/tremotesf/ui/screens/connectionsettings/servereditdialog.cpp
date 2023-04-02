@@ -563,7 +563,7 @@ namespace tremotesf {
         fileDialog->setFileMode(QFileDialog::ExistingFile);
         fileDialog->setMimeTypeFilters({"application/x-pem-file"_l1});
 
-        QObject::connect(fileDialog, &QFileDialog::accepted, this, [=, this] {
+        QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
             target->setPlainText(Utils::readTextFile(fileDialog->selectedFiles().first()));
         });
 

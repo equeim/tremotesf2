@@ -191,7 +191,7 @@ namespace tremotesf {
             }
         }
 
-        QObject::connect(this, &SettingsDialog::accepted, this, [=, this] {
+        QObject::connect(this, &SettingsDialog::accepted, this, [=] {
             auto settings = Settings::instance();
             settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
             settings->setNotificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());

@@ -64,7 +64,7 @@ namespace tremotesf {
                 if (call->isFinished()) {
                     onFinished();
                 } else {
-                    QObject::connect(call, &QDBusPendingCallWatcher::finished, this, [=, this] {
+                    QObject::connect(call, &QDBusPendingCallWatcher::finished, this, [=] {
                         onFinished();
                         call->deleteLater();
                     });

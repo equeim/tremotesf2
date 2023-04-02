@@ -96,7 +96,9 @@ namespace tremotesf {
         dialogButtonBox->button(QDialogButtonBox::Close)->setDefault(true);
 
         const QString torrentHash(mTorrent->data().hashString);
-        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=, this] { setTorrent(mRpc->torrentByHash(torrentHash)); });
+        QObject::connect(mRpc, &Rpc::torrentsUpdated, this, [=, this] {
+            setTorrent(mRpc->torrentByHash(torrentHash));
+        });
 
         onTorrentChanged();
 
@@ -382,7 +384,7 @@ namespace tremotesf {
             ratioLimitComboBox,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
-            [=, this](int index) {
+            [ratioLimitSpinBox](int index) {
                 if (index == indexOfCasted<int>(ratioLimitComboBoxItems, TorrentData::RatioLimitMode::Single)) {
                     ratioLimitSpinBox->show();
                 } else {
@@ -424,7 +426,7 @@ namespace tremotesf {
             idleSeedingLimitComboBox,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
-            [=, this](int index) {
+            [idleSeedingLimitSpinBox](int index) {
                 if (index ==
                     indexOfCasted<int>(idleSeedingLimitComboBoxItems, TorrentData::IdleSeedingLimitMode::Single)) {
                     idleSeedingLimitSpinBox->show();

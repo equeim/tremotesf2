@@ -155,7 +155,7 @@ namespace tremotesf {
         using FutureResult = std::variant<CreateTreeResult, bencode::Error::Type>;
         using FutureWatcher = QFutureWatcher<FutureResult>;
 
-        const auto future = QtConcurrent::run([=, this]() -> FutureResult {
+        const auto future = QtConcurrent::run([filePath]() -> FutureResult {
             try {
                 auto bencodeParseResult = bencode::parse(filePath);
                 return createTree(std::move(bencodeParseResult));

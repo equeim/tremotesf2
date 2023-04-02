@@ -49,7 +49,7 @@ namespace tremotesf {
             dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
-        const auto onTextChanged = [=, this](const QString& text) {
+        const auto onTextChanged = [dialogButtonBox](const QString& text) {
             if (text.isEmpty()) {
                 dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             } else {
