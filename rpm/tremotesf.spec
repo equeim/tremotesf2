@@ -36,7 +36,7 @@ BuildRequires: cmake(KF5WidgetsAddons)
 BuildRequires: cmake(KF5WindowSystem)
 BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
-BuildRequires: pkgconfig(openssl)
+BuildRequires: openssl-devel
 
 %if %{defined fedora}
 BuildRequires: cmake(httplib)
