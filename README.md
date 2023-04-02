@@ -16,7 +16,10 @@ Table of Contents
 
 ## Installation
 ### Dependencies
-- C++17 compiler
+- C++ compiler with partial C++20 support. Minimum tested versions of GCC and Clang toolchains:
+  1. GCC 10
+  2. Clang 11 with libstdc++ 10
+  3. Clang 13 with libc++ 13
 - CMake 3.16 or newer (3.21 on Windows)
 - Qt 5.15 (Core, Network, Concurrent, Gui, Widgets modules)
 - fmt 7.0 or newer
