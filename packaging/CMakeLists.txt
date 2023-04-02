@@ -22,14 +22,11 @@ endif()
 
 set(package_suffix "")
 get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if (NOT is_multi_config)
-    string(LENGTH "${CMAKE_BUILD_TYPE}" build_type_length)
-    if (build_type_length GREATER 0)
-        set(package_suffix "-${CMAKE_BUILD_TYPE}")
-    endif()
+if (is_multi_config)
+    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CPACK_SYSTEM_NAME}-\${CPACK_BUILD_CONFIG}")
+else()
+    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CPACK_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}")
 endif()
-
-set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CPACK_SYSTEM_NAME}${package_suffix}")
 
 set(CPACK_PACKAGE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 
