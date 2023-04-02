@@ -190,7 +190,6 @@ elseif (WIN32)
     target_sources(
         tremotesf PRIVATE
         tremotesf/filemanagerlauncher_windows.cpp
-        tremotesf/tremotesf.manifest
         tremotesf/windowshelpers.cpp
         tremotesf/windowshelpers.h
         tremotesf/ipc/ipcclient_socket.cpp
@@ -206,7 +205,6 @@ elseif (WIN32)
         tremotesf/ui/recoloringsvgiconengine.cpp
         tremotesf/ui/recoloringsvgiconengine.h
         tremotesf/ui/systemcolorsprovider_windows.cpp
-
         tremotesf/tremotesf.rc
     )
     set(
@@ -219,6 +217,18 @@ elseif (WIN32)
         tremotesf/tremotesf.rc
         PROPERTIES COMPILE_DEFINITIONS "${rc_definitions}"
     )
+    if (MSVC)
+        target_sources(
+            tremotesf PRIVATE
+            tremotesf/tremotesf.manifest
+        )
+    else()
+        target_sources(
+            tremotesf PRIVATE
+            tremotesf/tremotesf.manifest.rc
+        )
+    endif()
+
     set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf/tremotesf.ico" PARENT_SCOPE)
     target_compile_definitions(tremotesf PRIVATE
         TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
@@ -226,6 +236,7 @@ elseif (WIN32)
         TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
         QT_STATICPLUGIN
     )
+
     set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
 
     qt_import_plugins(
