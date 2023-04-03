@@ -19,14 +19,6 @@
       "features": ["libidn2"]
     },
     {
-      "name": "hicolor-icon-theme",
-      "platform": "windows"
-    },
-    {
-      "name": "kf5breezeicons",
-      "platform": "windows"
-    },
-    {
       "name": "pkgconf",
       "platform": "windows"
     },

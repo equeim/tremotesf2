@@ -47,43 +47,28 @@ elseif (WIN32)
 
     install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}")
 
-    if (DEFINED VCPKG_TARGET_TRIPLET)
-        message(STATUS "Building with vcpkg, attempting to deploy icon themes")
+    if (WIN32)
+        message(STATUS "Building for Windows, deploying icon themes")
 
-        set(hicolor_theme_name "hicolor")
+        include(FetchContent)
 
-        set(hicolor_dir "")
-        set(bundled_icon_theme_dir "")
+        cmake_policy(SET CMP0135 NEW)
+        set(FETCHCONTENT_QUIET OFF)
 
-        set(found_hicolor OFF)
-        set(found_bundled OFF)
-        foreach(prefix ${CMAKE_PREFIX_PATH})
-            set(tmp_hicolor_dir "${prefix}/${CMAKE_INSTALL_DATADIR}/icons/${hicolor_theme_name}")
-            if ((NOT found_hicolor) AND (EXISTS "${tmp_hicolor_dir}"))
-                set(found_hicolor ON)
-                set(hicolor_dir "${tmp_hicolor_dir}")
-            endif()
-            set(tmp_bundled_icon_theme_dir "${prefix}/${CMAKE_INSTALL_DATADIR}/icons/${TREMOTESF_BUNDLED_ICON_THEME}")
-            if ((NOT found_bundled) AND (EXISTS "${tmp_bundled_icon_theme_dir}"))
-                set(found_bundled ON)
-                set(bundled_icon_theme_dir "${tmp_bundled_icon_theme_dir}")
-            endif()
-            if (found_hicolor AND found_bundled)
-                break()
-            endif()
-        endforeach()
+        FetchContent_Declare(
+            hicolor_icon_theme
+            URL "https://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.17.tar.xz"
+            URL_HASH SHA256=317484352271d18cbbcfac3868eab798d67fff1b8402e740baa6ff41d588a9d8
+        )
+        FetchContent_Populate(hicolor_icon_theme)
+        install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/hicolor")
 
-        if (NOT found_hicolor)
-            message(FATAL_ERROR "hicolor icon theme not found")
-        endif()
-        message(STATUS "Deploying hicolor icon theme from ${hicolor_dir}")
-
-        if (NOT found_bundled)
-            message(FATAL_ERROR "${TREMOTESF_BUNDLED_ICON_THEME} icon theme not found")
-        endif()
-        message(STATUS "Deploying ${TREMOTESF_BUNDLED_ICON_THEME} icon theme from ${bundled_icon_theme_dir}")
-
-        install(FILES "${hicolor_dir}/index.theme" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/${hicolor_theme_name}")
+        FetchContent_Declare(
+            breeze_icons
+            URL "https://download.kde.org/stable/frameworks/5.104/breeze-icons-5.104.0.zip"
+            URL_HASH SHA256=b4ea76a5737ca48abd61e0cee2c54cceb8bf3d3bd6f5d15f1f740c5c7432e60c
+        )
+        FetchContent_Populate(breeze_icons)
 
         # Keep in sync with QIcon::fromTheme() calls in source code
         set(bundled_icon_theme_files
@@ -135,7 +120,7 @@ elseif (WIN32)
         string(PREPEND bundled_icon_theme_files_regex "^.*\\/(")
         string(APPEND bundled_icon_theme_files_regex ")$")
 
-        install(DIRECTORY "${bundled_icon_theme_dir}" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
+        install(DIRECTORY "${breeze_icons_SOURCE_DIR}/icons/" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/breeze" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
     endif()
 endif()
 

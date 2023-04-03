@@ -9,8 +9,6 @@
       "repository": "https://github.com/equeim/vcpkg-registry.git",
       "baseline": "71588c66533ff9da37c1957adb8e9522c0ad9268",
       "packages": [
-        "kf5breezeicons",
-        "hicolor-icon-theme",
         "qt5-tools",
         "libpsl"
       ]
