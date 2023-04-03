@@ -14,7 +14,7 @@ on:
         default: true
 
 jobs:
-  build-windows:
+  build-windows-msvc:
     runs-on: windows-latest
 
     steps:

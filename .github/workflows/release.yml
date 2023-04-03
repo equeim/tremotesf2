@@ -26,19 +26,16 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-windows:
-    uses: ./.github/workflows/build-windows.yml
+  build-windows-msvc:
+    uses: ./.github/workflows/build-windows-msvc.yml
     with:
       build-with-msvc-clang-toolchain: false
 
   upload-windows-build:
-    needs: build-windows
+    needs: build-windows-msvc
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
     - name: Download debug build artifact
       uses: actions/download-artifact@v3
       with:
