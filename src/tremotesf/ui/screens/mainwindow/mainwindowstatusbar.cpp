@@ -20,9 +20,10 @@ namespace tremotesf {
     MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
         setSizeGripEnabled(false);
 
-        delete layout();
+        auto container = new QWidget(this);
+        addPermanentWidget(container, 1);
 
-        auto layout = new QHBoxLayout(this);
+        auto layout = new QHBoxLayout(container);
         layout->setContentsMargins(8, 4, 8, 4);
 
         mNoServersErrorImage = new QLabel(this);
