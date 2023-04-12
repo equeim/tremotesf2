@@ -31,16 +31,15 @@ jobs:
         echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> '${{ github.env }}'
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@v4
+      uses: equeim/action-setup-vcpkg@v5
       with:
         run-install: true
         install-root: C:\vcpkg_installed
         triplet: x64-windows-static
         host-triplet: x64-windows-static
+        overlay-triplets-path: ${{ github.workspace }}\src\libtremotesf\vcpkg-windows-overlay-triplets
         binary-cache-path: C:\vcpkg_binary_cache
         save-cache: ${{ github.event_name != 'pull_request' }}
-      env:
-        VCPKG_OVERLAY_TRIPLETS: ${{ github.workspace }}\src\libtremotesf\vcpkg-windows-overlay-triplets
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
