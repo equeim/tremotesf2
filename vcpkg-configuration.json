@@ -1,16 +1,15 @@
 {
   "default-registry": {
     "kind": "builtin",
-    "baseline": "69efe9cc2df0015f0bb2d37d55acde4a75c9a25b"
+    "baseline": "4f9d25a7f299db656c376af402637819ee2caba0"
   },
   "registries": [
     {
       "kind": "git",
       "repository": "https://github.com/equeim/vcpkg-registry.git",
-      "baseline": "71588c66533ff9da37c1957adb8e9522c0ad9268",
+      "baseline": "68f239993f8b9ec552e4439fb71c2c48b0b2f71f",
       "packages": [
-        "qt5-tools",
-        "libpsl"
+        "qt5-tools"
       ]
     }
   ]
