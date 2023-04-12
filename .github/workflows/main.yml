@@ -99,6 +99,13 @@ jobs:
         cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
 
   build-freebsd:
+    strategy:
+      fail-fast: false
+      matrix:
+        freebsd-version: ['12', '13']
+    env:
+      FREEBSD_VERSION: ${{ matrix.freebsd-version }}
+
     runs-on: macos-latest
     steps:
     - name: Checkout
@@ -109,32 +116,42 @@ jobs:
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
 
-    - name: Build on FreeBSD
-      uses: vmactions/freebsd-vm@22aefae156db38ea5ab7563f89808dc82db8e325
-      with:
-        release: '13.1'
-        copyback: 'false'
-        usesh: 'true'
-        prepare: |
-          set -e -o pipefail
-          pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
-        run: |
-          set -e -o pipefail
-          echo '::group::Configuring CMake'
-          cmake -S . --preset base
-          echo '::endgroup'
-          echo '::group::Building Debug'
-          cmake --build --preset base-debug
-          echo '::endgroup'
-          echo '::group::Testing Debug'
-          ctest --preset base-debug
-          echo '::endgroup'
-          echo '::group::Building Release'
-          cmake --build --preset base-release
-          echo '::endgroup'
-          echo '::group::Testing Release'
-          ctest --preset base-release
-          echo '::endgroup'
+    - name: Start FreeBSD VM
+      run: |
+        echo '::group::Starting VM'
+        VAGRANT_CWD="$GITHUB_WORKSPACE/src/libtremotesf/.github/workflows" vagrant up --provider=virtualbox
+        echo '::endgroup'
+        echo '::group::Adding vagrant shell to PATH'
+        echo "$GITHUB_WORKSPACE/src/libtremotesf/.github/workflows" >> "$GITHUB_PATH"
+        echo '::endgroup'
+
+    - name: Install dependencies
+      shell: vagrant-freebsd-shell.sh {0}
+      run: |
+        # Switch from latest to quarterly repo
+        sudo rm /usr/local/etc/pkg/repos/FreeBSD.conf
+        sudo pkg update -f
+        sudo pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
+
+    - name: Build for FreeBSD
+      shell: vagrant-freebsd-shell.sh {0}
+      run: |
+        set -e -o pipefail
+        echo '::group::Configuring CMake'
+        cmake -S . --preset base
+        echo '::endgroup'
+        echo '::group::Building Debug'
+        cmake --build --preset base-debug
+        echo '::endgroup'
+        echo '::group::Testing Debug'
+        ctest --preset base-debug
+        echo '::endgroup'
+        echo '::group::Building Release'
+        cmake --build --preset base-release
+        echo '::endgroup'
+        echo '::group::Testing Release'
+        ctest --preset base-release
+        echo '::endgroup'
 
   build-flatpak:
     runs-on: ubuntu-latest
