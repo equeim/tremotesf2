@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2015-2022 Alexey Rochev
+// SPDX-FileCopyrightText: 2015-2023 Alexey Rochev
 // SPDX-FileCopyrightText: 2021 LuK1337
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
