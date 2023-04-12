@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:36', 'fedora:37', 'opensuse/tumbleweed:latest', 'mageia:8']
+        container-image: ['fedora:37', 'fedora:38', 'opensuse/tumbleweed:latest', 'mageia:8']
         compiler: [gcc]
         include:
         - container-image: 'fedora:36'
@@ -74,7 +74,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:11', 'ubuntu:22.04', 'ubuntu:22.10']
+        container-image: ['debian:11', 'debian:bookworm', 'ubuntu:22.04', 'ubuntu:22.10']
         compiler: [gcc, clang]
 
     runs-on: ubuntu-latest
