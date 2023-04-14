@@ -2,10 +2,6 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-if (NOT WIN32)
-    return()
-endif()
-
 set(CPACK_GENERATOR ZIP WIX)
 set(CPACK_PACKAGE_NAME "Tremotesf")
 set(CPACK_PACKAGE_VENDOR "Tremotesf")
