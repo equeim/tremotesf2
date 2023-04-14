@@ -9,7 +9,7 @@ Source: https://github.com/equeim/tremotesf2
 # Copyright: $YEAR $NAME <$CONTACT>
 # License: ...
 
-Files: CHANGELOG.md README.md *.json
+Files: CHANGELOG.md README.md *.json debian/*
 Copyright: 2015-2023 Alexey Rochev
 License: CC0-1.0
 
