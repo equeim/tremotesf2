@@ -1,0 +1,31 @@
+Source: tremotesf
+Maintainer: Alexey Rochev <equeim@gmail.com>
+Section: net
+Priority: optional
+Build-Depends: debhelper (>= 12),
+               debhelper-compat (= 13),
+               dh-cmake,
+               dh-cmake-compat (= 1),
+               dh-sequence-cmake,
+               dh-sequence-ctest,
+               g++,
+               cmake,
+               ninja-build,
+               gettext,
+               qtbase5-dev,
+               qttools5-dev,
+               libkf5widgetsaddons-dev,
+               libkf5windowsystem-dev,
+               libfmt-dev,
+               libcxxopts-dev,
+               libpsl-dev,
+               libssl-dev,
+               pkgconf
+Standards-Version: 4.6.2
+Homepage: https://github.com/equeim/tremotesf2
+Vcs-Git: https://github.com/equeim/tremotesf2.git
+
+Package: tremotesf
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Remote GUI for transmission-daemon

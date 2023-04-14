@@ -70,33 +70,39 @@ jobs:
     - name: Build RPM
       run: rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb rpm/tremotesf.spec
 
-  build-debian-ubuntu:
+  build-deb:
     strategy:
       fail-fast: false
       matrix:
         container-image: ['debian:11', 'debian:bookworm', 'ubuntu:22.04', 'ubuntu:22.10']
-        compiler: [gcc, clang]
 
     runs-on: ubuntu-latest
     container: ${{ matrix.container-image }}
 
     steps:
-    - name: Install packages
-      run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git cmake ninja-build qtbase5-dev qttools5-dev libfmt-dev libkf5widgetsaddons-dev libkf5windowsystem-dev libpsl-dev libcxxopts-dev libssl-dev gettext pkgconf ${{ matrix.compiler == 'gcc' && 'g++' || 'clang' }} ${{ startsWith(matrix.container-image, 'ubuntu') && 'libcpp-httplib-dev' || '' }}
+    - name: Set up environment
+      run: |
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git
 
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
 
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
+    - name: Install build dependencies
+      run: |
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes build-dep .
 
-    - name: Build Tremotesf
-      uses: equeim/action-cmake-build@v9
-      with:
-        # Can't use presets on Debian, CMake is too old
-        cmake-arguments: -D CMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+    - name: Make source archive
+      run: |
+        # Git complains if we don't do that
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        source_archive="$(.github/workflows/make-source-archive.py --debian gzip)"
+        mv "${source_archive}" ../
+
+    - name: Build DEB
+      run: |
+        dpkg-buildpackage
 
   build-freebsd:
     strategy:

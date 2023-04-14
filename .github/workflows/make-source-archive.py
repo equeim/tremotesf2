@@ -4,7 +4,9 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+import argparse
 import json
+import os
 import subprocess
 import sys
 from enum import Enum
@@ -33,13 +35,17 @@ def get_project_version() -> str:
     raise RuntimeError("Failed to find version in CMake trace output")
 
 
-def make_tar_archive() -> str:
-    root_directory = f"tremotesf-{get_project_version()}"
-    archive_filename = f"{root_directory}.tar"
+def make_tar_archive(debian: bool) -> str:
+    version = get_project_version()
+    root_directory = f"tremotesf-{version}"
+    if debian:
+        archive_filename = f"tremotesf_{version}.orig.tar"
+    else:
+        archive_filename = f"{root_directory}.tar"
     logging.info(f"Making tar archive {archive_filename}")
     files = subprocess.run(["git", "ls-files", "--recurse-submodules"],
                            check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                           stdout=subprocess.PIPE,
                            text=True).stdout.splitlines()
     logging.info(f"Archiving {len(files)} files")
     subprocess.run(["tar", "--create", "--file", archive_filename, "--transform", f"s,^,{root_directory}/,"] + files, check=True, stdout=sys.stderr)
@@ -68,21 +74,18 @@ class CompressionType(Enum):
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr)
 
-compression_types_values = [member.value for member in list(CompressionType)]
-try:
-    compression_type = CompressionType(sys.argv[1])
-except IndexError:
-    print(
-        f"Compression type must be specified as command-line option. Valid types are {compression_types_values}",
-        file=sys.stderr)
-    exit(1)
-except ValueError:
-    print(
-        f"{sys.argv[1]} is not a valid compression type. Valid types are {compression_types_values}",
-        file=sys.stderr)
-    exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('compression',
+                    choices=[member.value for member in list(CompressionType)],
+                    help="Compression type")
+parser.add_argument("--debian",
+                    action="store_true",
+                    help="Make Debian upstream tarball")
 
-tar = make_tar_archive()
+args = parser.parse_args()
+compression_type = CompressionType(args.compression)
+
+tar = make_tar_archive(args.debian)
 if compression_type == CompressionType.ALL:
     print(compress_gzip(tar))
     print(compress_zstd(tar))
@@ -90,3 +93,5 @@ elif compression_type == CompressionType.GZIP:
     print(compress_gzip(tar))
 elif compression_type == CompressionType.ZSTD:
     print(compress_zstd(tar))
+logging.info(f"Removing {tar}")
+os.remove(tar)
