@@ -16,13 +16,14 @@ License:    GPLv3+
 %endif
 URL:        https://github.com/equeim/tremotesf2
 
-Source0:    https://github.com/equeim/tremotesf2/releases/download/%{version}/%{name}-%{version}.tar.gz
+Source0:    https://github.com/equeim/tremotesf2/releases/download/%{version}/%{name}-%{version}.tar.zst
 
 Requires:      hicolor-icon-theme
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
 BuildRequires: make
+BuildRequires: zstd
 BuildRequires: cmake(Qt5)
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5Core)
