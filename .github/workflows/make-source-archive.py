@@ -5,13 +5,17 @@
 # SPDX-License-Identifier: CC0-1.0
 
 import argparse
+import gzip
 import json
+import logging
 import os
+import os.path
+import shutil
 import subprocess
 import sys
+import tarfile
 from enum import Enum
 from pathlib import Path
-import logging
 
 
 def get_project_version() -> str:
@@ -48,14 +52,17 @@ def make_tar_archive(debian: bool) -> str:
                            stdout=subprocess.PIPE,
                            text=True).stdout.splitlines()
     logging.info(f"Archiving {len(files)} files")
-    subprocess.run(["tar", "--create", "--file", archive_filename, "--transform", f"s,^,{root_directory}/,"] + files, check=True, stdout=sys.stderr)
+    with tarfile.open(archive_filename, mode="x") as tar:
+        for file in files:
+            tar.add(file, arcname=os.path.join(root_directory, file), recursive=False)
     return archive_filename
 
 
 def compress_gzip(path: str) -> str:
     compressed_path = f"{path}.gz"
     logging.info(f"Compressing {path} to {compressed_path}")
-    subprocess.run(["gzip", "-k", path], check=True, stdout=sys.stderr)
+    with open(path, mode="rb") as tar, gzip.open(compressed_path, mode="xb") as compressed:
+        shutil.copyfileobj(tar, compressed)
     return compressed_path
 
 
