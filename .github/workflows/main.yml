@@ -22,9 +22,9 @@ jobs:
         container-image: ['fedora:37', 'fedora:38', 'opensuse/tumbleweed:latest', 'mageia:8']
         compiler: [gcc]
         include:
-        - container-image: 'fedora:36'
-          compiler: clang
         - container-image: 'fedora:37'
+          compiler: clang
+        - container-image: 'fedora:38'
           compiler: clang
 
     runs-on: ubuntu-latest
