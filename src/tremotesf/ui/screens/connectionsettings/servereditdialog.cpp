@@ -4,6 +4,9 @@
 
 #include "servereditdialog.h"
 
+#include <array>
+#include <vector>
+
 #include <QAbstractButton>
 #include <QCheckBox>
 #include <QComboBox>
@@ -29,7 +32,6 @@
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QVBoxLayout>
-#include <vector>
 
 #include "libtremotesf/pathutils.h"
 #include "libtremotesf/stdutils.h"
@@ -45,16 +47,16 @@ namespace tremotesf {
     namespace {
         constexpr auto removeIconName = "list-remove"_l1;
 
-        constexpr ConnectionConfiguration::ProxyType proxyTypeComboBoxValues[]{
+        constexpr std::array proxyTypeComboBoxValues{
             ConnectionConfiguration::ProxyType::Default,
             ConnectionConfiguration::ProxyType::Http,
             ConnectionConfiguration::ProxyType::Socks5};
 
         ConnectionConfiguration::ProxyType proxyTypeFromComboBoxIndex(int index) {
-            if (index >= 0) {
-                return proxyTypeComboBoxValues[index];
+            if (index == -1) {
+                return ConnectionConfiguration::ProxyType::Default;
             }
-            return ConnectionConfiguration::ProxyType::Default;
+            return proxyTypeComboBoxValues.at(static_cast<size_t>(index));
         }
     }
 
@@ -271,7 +273,7 @@ namespace tremotesf {
 
         mProxyTypeComboBox = new QComboBox(this);
         mProxyTypeComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        for (ConnectionConfiguration::ProxyType type : proxyTypeComboBoxValues) {
+        for (const auto type : proxyTypeComboBoxValues) {
             switch (type) {
             case ConnectionConfiguration::ProxyType::Default:
                 //: Default proxy option

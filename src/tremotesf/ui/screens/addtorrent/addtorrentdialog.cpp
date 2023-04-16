@@ -5,6 +5,8 @@
 
 #include "addtorrentdialog.h"
 
+#include <array>
+
 #include <QCheckBox>
 #include <QClipboard>
 #include <QComboBox>
@@ -40,16 +42,16 @@
 
 namespace tremotesf {
     namespace {
-        constexpr libtremotesf::TorrentData::Priority priorityComboBoxItems[]{
+        constexpr std::array priorityComboBoxItems{
             libtremotesf::TorrentData::Priority::High,
             libtremotesf::TorrentData::Priority::Normal,
             libtremotesf::TorrentData::Priority::Low};
 
         libtremotesf::TorrentData::Priority priorityFromComboBoxIndex(int index) {
-            if (index >= 0) {
-                return priorityComboBoxItems[index];
+            if (index == -1) {
+                return libtremotesf::TorrentData::Priority::Normal;
             }
-            return libtremotesf::TorrentData::Priority::Normal;
+            return priorityComboBoxItems.at(static_cast<size_t>(index));
         }
     }
 
@@ -218,7 +220,7 @@ namespace tremotesf {
 
         mPriorityComboBox = new QComboBox(this);
         mPriorityComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        for (libtremotesf::TorrentData::Priority priority : priorityComboBoxItems) {
+        for (const auto priority : priorityComboBoxItems) {
             switch (priority) {
             case libtremotesf::TorrentData::Priority::High:
                 //: Torrent's loading priority
