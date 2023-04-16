@@ -4,6 +4,7 @@
 
 #include "serversettingsdialog.h"
 
+#include <array>
 #include <limits>
 
 #include <QCoreApplication>
@@ -33,10 +34,17 @@
 
 namespace tremotesf {
     namespace {
-        constexpr libtremotesf::ServerSettingsData::EncryptionMode encryptionModeComboBoxItems[] = {
+        constexpr std::array encryptionModeComboBoxItems{
             libtremotesf::ServerSettingsData::EncryptionMode::Allowed,
             libtremotesf::ServerSettingsData::EncryptionMode::Preferred,
             libtremotesf::ServerSettingsData::EncryptionMode::Required};
+
+        libtremotesf::ServerSettingsData::EncryptionMode encryptionModeFromComboBoxItem(int index) {
+            if (index == -1) {
+                return {};
+            }
+            return encryptionModeComboBoxItems.at(static_cast<size_t>(index));
+        }
     }
 
     ServerSettingsDialog::ServerSettingsDialog(const Rpc* rpc, QWidget* parent) : QDialog(parent), mRpc(rpc) {
@@ -115,7 +123,7 @@ namespace tremotesf {
         settings->setPeerPort(mPeerPortSpinBox->value());
         settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
         settings->setPortForwardingEnabled(mPortForwardingCheckBox->isChecked());
-        settings->setEncryptionMode(encryptionModeComboBoxItems[mEncryptionComboBox->currentIndex()]);
+        settings->setEncryptionMode(encryptionModeFromComboBoxItem(mEncryptionComboBox->currentIndex()));
         settings->setUtpEnabled(mUtpCheckBox->isChecked());
         settings->setPexEnabled(mPexCheckBox->isChecked());
         settings->setDhtEnabled(mDhtCheckBox->isChecked());
@@ -482,7 +490,7 @@ namespace tremotesf {
         connectionGroupBoxLayout->addRow(mPortForwardingCheckBox);
 
         mEncryptionComboBox = new QComboBox();
-        for (ServerSettingsData::EncryptionMode mode : encryptionModeComboBoxItems) {
+        for (const auto mode : encryptionModeComboBoxItems) {
             switch (mode) {
             case ServerSettingsData::EncryptionMode::Allowed:
                 //: Encryption mode (allow/prefer/require)
