@@ -8,14 +8,13 @@ import argparse
 import gzip
 import json
 import logging
-import os
-import os.path
 import shutil
 import subprocess
 import sys
 import tarfile
 from enum import Enum
-from pathlib import Path
+from pathlib import Path, PurePath
+from tempfile import TemporaryDirectory
 
 
 def get_project_version() -> str:
@@ -39,38 +38,39 @@ def get_project_version() -> str:
     raise RuntimeError("Failed to find version in CMake trace output")
 
 
-def make_tar_archive(debian: bool) -> str:
+def make_tar_archive(tempdir: PurePath, debian: bool) -> PurePath:
     version = get_project_version()
     root_directory = f"tremotesf-{version}"
     if debian:
         archive_filename = f"tremotesf_{version}.orig.tar"
     else:
-        archive_filename = f"{root_directory}.tar"
-    logging.info(f"Making tar archive {archive_filename}")
+        archive_filename = f"tremotesf-{version}.tar"
+    archive_path = tempdir / archive_filename
+    logging.info(f"Making tar archive {archive_path}")
     files = subprocess.run(["git", "ls-files", "--recurse-submodules"],
                            check=True,
                            stdout=subprocess.PIPE,
                            text=True).stdout.splitlines()
     logging.info(f"Archiving {len(files)} files")
-    with tarfile.open(archive_filename, mode="x") as tar:
+    with tarfile.open(archive_path, mode="x") as tar:
         for file in files:
-            tar.add(file, arcname=os.path.join(root_directory, file), recursive=False)
-    return archive_filename
+            tar.add(file, arcname=str(PurePath(root_directory, file)), recursive=False)
+    return archive_path
 
 
-def compress_gzip(path: str) -> str:
-    compressed_path = f"{path}.gz"
-    logging.info(f"Compressing {path} to {compressed_path}")
-    with open(path, mode="rb") as tar, gzip.open(compressed_path, mode="xb") as compressed:
-        shutil.copyfileobj(tar, compressed)
-    return compressed_path
+def compress_gzip(output_directory: PurePath, tar_path: PurePath) -> PurePath:
+    gzip_path = output_directory / tar_path.with_suffix(".tar.gz").name
+    logging.info(f"Compressing {tar_path} to {gzip_path}")
+    with open(tar_path, mode="rb") as tar_file, gzip.open(gzip_path, mode="xb") as gzip_file:
+        shutil.copyfileobj(tar_file, gzip_file)
+    return gzip_path
 
 
-def compress_zstd(path: str) -> str:
-    compressed_path = f"{path}.zst"
-    logging.info(f"Compressing {path} to {compressed_path}")
-    subprocess.run(["zstd", path, "-o", compressed_path], check=True, stdout=sys.stderr)
-    return compressed_path
+def compress_zstd(output_directory: PurePath, tar_path: PurePath) -> PurePath:
+    zstd_path = output_directory / tar_path.with_suffix(".tar.zst").name
+    logging.info(f"Compressing {tar_path} to {zstd_path}")
+    subprocess.run(["zstd", str(tar_path), "-o", str(zstd_path)], check=True, stdout=sys.stderr)
+    return zstd_path
 
 
 class CompressionType(Enum):
@@ -79,26 +79,36 @@ class CompressionType(Enum):
     ZSTD = "zstd"
 
 
-logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+def main():
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
 
-parser = argparse.ArgumentParser()
-parser.add_argument('compression',
-                    choices=[member.value for member in list(CompressionType)],
-                    help="Compression type")
-parser.add_argument("--debian",
-                    action="store_true",
-                    help="Make Debian upstream tarball")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('compression',
+                        choices=[member.value for member in list(CompressionType)],
+                        help="Compression type")
+    parser.add_argument("--output-directory",
+                        help="Directory where to place archives. Defaults to current directory")
+    parser.add_argument("--debian",
+                        action="store_true",
+                        help="Make Debian upstream tarball")
 
-args = parser.parse_args()
-compression_type = CompressionType(args.compression)
+    args = parser.parse_args()
+    compression_type = CompressionType(args.compression)
+    if args.output_directory:
+        output_directory = PurePath(args.output_directory)
+    else:
+        output_directory = Path.cwd()
 
-tar = make_tar_archive(args.debian)
-if compression_type == CompressionType.ALL:
-    print(compress_gzip(tar))
-    print(compress_zstd(tar))
-elif compression_type == CompressionType.GZIP:
-    print(compress_gzip(tar))
-elif compression_type == CompressionType.ZSTD:
-    print(compress_zstd(tar))
-logging.info(f"Removing {tar}")
-os.remove(tar)
+    with TemporaryDirectory() as tempdir:
+        tar = make_tar_archive(PurePath(tempdir), args.debian)
+        if compression_type == CompressionType.ALL:
+            print(compress_gzip(output_directory, tar))
+            print(compress_zstd(output_directory, tar))
+        elif compression_type == CompressionType.GZIP:
+            print(compress_gzip(output_directory, tar))
+        elif compression_type == CompressionType.ZSTD:
+            print(compress_zstd(output_directory, tar))
+
+
+if __name__ == "__main__":
+    main()

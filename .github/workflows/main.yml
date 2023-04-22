@@ -59,10 +59,10 @@ jobs:
       run: |
         # Git complains if we don't do that
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
-        source_archive="$(.github/workflows/make-source-archive.py zstd)"
+
         sourcedir="$(rpmbuild --eval '%_sourcedir')"
         mkdir -p "$sourcedir"
-        mv "$source_archive" "$sourcedir"
+        .github/workflows/make-source-archive.py --output-directory "$sourcedir" zstd
 
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -97,8 +97,8 @@ jobs:
       run: |
         # Git complains if we don't do that
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
-        source_archive="$(.github/workflows/make-source-archive.py --debian gzip)"
-        mv "${source_archive}" ../
+
+        .github/workflows/make-source-archive.py --output-directory .. --debian gzip
 
     - name: Build DEB
       run: |
