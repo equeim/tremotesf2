@@ -82,7 +82,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: vcpkg-logs
+        name: windows-msvc-vcpkg-logs
         retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: ${{ env.VCPKG_ROOT }}\buildtrees\*\*.log
 
@@ -90,7 +90,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: build-logs
+        name: windows-msvc-build-logs
         retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: |
           ${{ github.workspace }}\build-*\*.log
