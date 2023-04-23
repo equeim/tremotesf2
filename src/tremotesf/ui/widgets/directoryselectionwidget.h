@@ -8,6 +8,8 @@
 #include <vector>
 #include <QWidget>
 
+#include "libtremotesf/pathutils.h"
+
 class QComboBox;
 class QLineEdit;
 class QPushButton;

@@ -10,6 +10,7 @@
 #include "libtremotesf/torrent.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/rpc/servers.h"
+#include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
 
 #include <QCollator>
 #include <QComboBox>
@@ -21,19 +22,21 @@ namespace tremotesf {
     RemoteDirectorySelectionWidgetViewModel::RemoteDirectorySelectionWidgetViewModel(
         const QString& path, const Rpc* rpc, QObject* parent
     )
-        : DirectorySelectionWidgetViewModel(path, toNativeSeparators(path), parent),
+        : DirectorySelectionWidgetViewModel({}, {}, parent),
           mRpc(rpc),
           mMode(
               rpc->isLocal()
                   ? Mode::Local
                   : (Servers::instance()->currentServerHasMountedDirectories() ? Mode::RemoteMounted : Mode::Remote)
-          ) {}
+          ) {
+        updatePath(path);
+    }
 
-    bool RemoteDirectorySelectionWidgetViewModel::enableFileDialog() const { return mRpc->isLocal(); }
+    bool RemoteDirectorySelectionWidgetViewModel::enableFileDialog() const { return mMode != Mode::Remote; }
 
     QString RemoteDirectorySelectionWidgetViewModel::fileDialogDirectory() const {
         if (mMode == Mode::RemoteMounted) {
-            return Servers::instance()->fromRemoteToLocalDirectory(mPath);
+            return Servers::instance()->fromRemoteToLocalDirectory(mPath, mRpc->serverSettings());
         }
         return mPath;
     }
@@ -43,7 +46,7 @@ namespace tremotesf {
             DirectorySelectionWidgetViewModel::onFileDialogAccepted(path);
             return;
         }
-        const QString remoteDirectory = Servers::instance()->fromLocalToRemoteDirectory(path);
+        const QString remoteDirectory = Servers::instance()->fromLocalToRemoteDirectory(path, mRpc->serverSettings());
         if (remoteDirectory.isEmpty()) {
             emit showMountedDirectoryError();
         } else {
@@ -52,11 +55,11 @@ namespace tremotesf {
     }
 
     QString RemoteDirectorySelectionWidgetViewModel::normalizePath(const QString& path) const {
-        return tremotesf::normalizePath(path);
+        return tremotesf::normalizePath(path, mRpc->serverSettings()->data().pathOs);
     }
 
     QString RemoteDirectorySelectionWidgetViewModel::toNativeSeparators(const QString& path) const {
-        return tremotesf::toNativeSeparators(path);
+        return tremotesf::toNativeSeparators(path, mRpc->serverSettings()->data().pathOs);
     }
 
     RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& path, const Rpc* rpc, QWidget* parent)
@@ -83,7 +86,7 @@ namespace tremotesf {
 
     std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>
     TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createComboBoxItems() const {
-        QStringList directories = Servers::instance()->currentServerLastDownloadDirectories();
+        QStringList directories = Servers::instance()->currentServerLastDownloadDirectories(mRpc->serverSettings());
         directories.reserve(directories.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 2);
         for (const auto& torrent : mRpc->torrents()) {
             directories.push_back(torrent->data().downloadDirectory);

@@ -478,11 +478,11 @@ namespace tremotesf {
         mountedDirectories.reserve(static_cast<size_t>(mMountedDirectoriesWidget->rowCount()));
         for (int i = 0, max = mMountedDirectoriesWidget->rowCount(); i < max; ++i) {
             const auto localItem = mMountedDirectoriesWidget->item(i, 0);
-            const QString localDirectory = localItem ? normalizePath(localItem->text().trimmed()) : QString{};
+            const QString localDirectory = localItem ? normalizePath(localItem->text().trimmed(), localPathOs) : QString{};
             const auto remoteItem = mMountedDirectoriesWidget->item(i, 1);
-            const QString remoteDirectory = remoteItem ? normalizePath(remoteItem->text().trimmed()) : QString{};
+            const QString remoteDirectory = remoteItem ? remoteItem->text().trimmed() : QString{};
             if (!localDirectory.isEmpty() && !remoteDirectory.isEmpty()) {
-                mountedDirectories.push_back({localDirectory, remoteDirectory});
+                mountedDirectories.push_back({.localPath = localDirectory, .remotePath = remoteDirectory});
             }
         }
 
