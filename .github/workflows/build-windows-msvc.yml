@@ -57,23 +57,15 @@ jobs:
         cmake-arguments: --preset windows-msvc-clang-vcpkg -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
         output-directories-suffix: -clang
 
-    - name: Archive debug packages
+    - name: Archive packages
       if: inputs.build-for-release == ''
       uses: actions/upload-artifact@v3
       with:
-        name: tremotesf-win64-debug
+        name: windows-msvc-packages
         retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
         path: |
           ${{ steps.build.outputs.build-directory-debug }}\windows-packaging\*.zip
           ${{ steps.build.outputs.build-directory-debug }}\windows-packaging\*.msi
-
-    - name: Archive release packages
-      if: inputs.build-for-release == ''
-      uses: actions/upload-artifact@v3
-      with:
-        name: tremotesf-win64-release
-        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
-        path: |
           ${{ steps.build.outputs.build-directory-release }}\windows-packaging\*.zip
           ${{ steps.build.outputs.build-directory-release }}\windows-packaging\*.msi
 
