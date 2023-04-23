@@ -68,18 +68,19 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: tremotesf-win64-debug
-        path: ${{ runner.temp }}/artifacts
+        path: ${{ github.workspace }}
 
     - name: Download release build artifact
       uses: actions/download-artifact@v3
       with:
         name: tremotesf-win64-release
-        path: ${{ runner.temp }}/artifacts
+        path: ${{ github.workspace }}
 
     - name: Upload artifacts to release
       run: |
-        artifacts="${{ runner.temp }}/artifacts/*"
-        echo "Uploading artifacts $artifacts"
-        gh release upload '${{ github.event.release.tag_name }}' $artifacts
+        shopt -s failglob
+        artifacts=(*)
+        echo "Uploading artifacts ${artifacts[@]}"
+        gh release upload --repo '${{ github.repository }}' '${{ github.event.release.tag_name }}' "${artifacts[@]}"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
