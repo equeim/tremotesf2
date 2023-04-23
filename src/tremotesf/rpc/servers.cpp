@@ -97,6 +97,22 @@ namespace tremotesf {
             }
             return proxyTypeDefault;
         }
+
+        bool isPathUnderThisDirectory(QStringView path, QStringView directory) {
+            // Path is not under parentDirectory
+            if (!path.startsWith(directory)) {
+                return false;
+            }
+            // Path is the same as parentDirectory - that's ok
+            if (path.size() == directory.size()) {
+                return true;
+            }
+            // Path ends with segment that's not actually the last segment of parentDirectory, just prefixed by it
+            if (path[directory.size()] != '/') {
+                return false;
+            }
+            return true;
+        }
     }
 
     QVariant MountedDirectory::toVariant(std::span<const MountedDirectory> dirs) {
@@ -112,7 +128,7 @@ namespace tremotesf {
         std::vector<MountedDirectory> dirs{};
         dirs.reserve(static_cast<size_t>(map.size()));
         for (auto i = map.begin(), end = map.end(); i != end; ++i) {
-            dirs.push_back({normalizePath(i.key()), normalizePath(i.value().toString())});
+            dirs.push_back({.localPath = normalizePath(i.key(), localPathOs), .remotePath = i.value().toString()});
         }
         return dirs;
     }
@@ -176,38 +192,23 @@ namespace tremotesf {
 
     bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
 
-    bool Servers::isUnderCurrentServerMountedDirectory(const QString& path) const {
-        return std::any_of(
-            mCurrentServerMountedDirectories.begin(),
-            mCurrentServerMountedDirectories.end(),
-            [&path](const auto& pair) {
-                const auto& [localDirectory, remoteDirectory] = pair;
-                const auto localDirectoryPathLength = localDirectory.size();
-                return path.startsWith(localDirectory) &&
-                       (path.size() == localDirectoryPathLength || path[localDirectoryPathLength] == '/');
-            }
-        );
-    }
-
-    QString Servers::fromLocalToRemoteDirectory(const QString& localPath) {
+    QString
+    Servers::fromLocalToRemoteDirectory(const QString& localPath, const libtremotesf::ServerSettings* serverSettings) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
-            const auto localDirectoryLength = localDirectory.size();
-            if (localPath.startsWith(localDirectory)) {
-                if (localPath.size() == localDirectoryLength || localPath[localDirectoryLength] == '/') {
-                    return remoteDirectory % localPath.midRef(localDirectoryLength);
-                }
+            if (isPathUnderThisDirectory(localPath, localDirectory)) {
+                const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, serverSettings->data().pathOs);
+                return remoteDirectoryNormalized + localPath.mid(localDirectory.size());
             }
         }
         return {};
     }
 
-    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath) {
+    QString
+    Servers::fromRemoteToLocalDirectory(const QString& remotePath, const libtremotesf::ServerSettings* serverSettings) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
-            const auto remoteDirectoryLength = remoteDirectory.size();
-            if (remotePath.startsWith(remoteDirectory)) {
-                if (remotePath.size() == remoteDirectoryLength || remotePath[remoteDirectoryLength] == '/') {
-                    return localDirectory % remotePath.midRef(remoteDirectoryLength);
-                }
+            const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, serverSettings->data().pathOs);
+            if (isPathUnderThisDirectory(remoteDirectory, remoteDirectoryNormalized)) {
+                return localDirectory + remotePath.mid(remoteDirectoryNormalized.size());
             }
         }
         return {};
@@ -231,13 +232,14 @@ namespace tremotesf {
         mSettings->endGroup();
     }
 
-    QStringList Servers::currentServerLastDownloadDirectories() const {
+    QStringList Servers::currentServerLastDownloadDirectories(const libtremotesf::ServerSettings* serverSettings
+    ) const {
         QStringList directories{};
         mSettings->beginGroup(currentServerName());
-        directories = mSettings->value(lastDownloadDirectoriesKey).toStringList();
-        for (auto& dir : directories) {
-            dir = normalizePath(dir);
-        }
+        directories = createTransforming<QStringList>(
+            mSettings->value(lastDownloadDirectoriesKey).toStringList(),
+            [serverSettings](const QString& dir) { return normalizePath(dir, serverSettings->data().pathOs); }
+        );
         mSettings->endGroup();
         return directories;
     }
@@ -248,10 +250,10 @@ namespace tremotesf {
         mSettings->endGroup();
     }
 
-    QString Servers::currentServerLastDownloadDirectory() const {
+    QString Servers::currentServerLastDownloadDirectory(const libtremotesf::ServerSettings* serverSettings) const {
         QString directory{};
         mSettings->beginGroup(currentServerName());
-        directory = normalizePath(mSettings->value(lastDownloadDirectoryKey).toString());
+        directory = normalizePath(mSettings->value(lastDownloadDirectoryKey).toString(), serverSettings->data().pathOs);
         mSettings->endGroup();
         return directory;
     }

@@ -107,7 +107,7 @@ namespace tremotesf {
 
     QString AddTorrentDialog::initialDownloadDirectory() {
         if (Settings::instance()->rememberDownloadDir()) {
-            auto lastDir = normalizePath(Servers::instance()->currentServerLastDownloadDirectory());
+            auto lastDir = Servers::instance()->currentServerLastDownloadDirectory(mRpc->serverSettings());
             if (!lastDir.isEmpty()) return lastDir;
         }
         return mRpc->serverSettings()->data().downloadDirectory;

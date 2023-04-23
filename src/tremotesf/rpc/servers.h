@@ -59,17 +59,18 @@ namespace tremotesf {
         void setCurrentServer(const QString& name);
 
         bool currentServerHasMountedDirectories() const;
-        bool isUnderCurrentServerMountedDirectory(const QString& path) const;
-        QString fromLocalToRemoteDirectory(const QString& localPath);
-        QString fromRemoteToLocalDirectory(const QString& remotePath);
+        QString
+        fromLocalToRemoteDirectory(const QString& localPath, const libtremotesf::ServerSettings* serverSettings);
+        QString
+        fromRemoteToLocalDirectory(const QString& remotePath, const libtremotesf::ServerSettings* serverSettings);
 
         LastTorrents currentServerLastTorrents() const;
         void saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc);
 
-        QStringList currentServerLastDownloadDirectories() const;
+        QStringList currentServerLastDownloadDirectories(const libtremotesf::ServerSettings* serverSettings) const;
         void setCurrentServerLastDownloadDirectories(const QStringList& directories);
 
-        QString currentServerLastDownloadDirectory() const;
+        QString currentServerLastDownloadDirectory(const libtremotesf::ServerSettings* serverSettings) const;
         void setCurrentServerLastDownloadDirectory(const QString& directory);
 
         void setServer(
