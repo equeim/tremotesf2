@@ -20,9 +20,9 @@ jobs:
 
     - name: Upload source archives to release
       run: |
-        archives="$(.github/workflows/make-source-archive.py all)"
-        echo 'Uploading source archives'
-        gh release upload '${{ github.event.release.tag_name }}' $archives
+        readarray -t archives < <(.github/workflows/make-source-archive.py all)
+        echo "Uploading source archives ${archives[@]}"
+        gh release upload '${{ github.event.release.tag_name }}' "${archives[@]}"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
