@@ -226,7 +226,9 @@ namespace tremotesf {
         LastTorrents torrents{};
         torrents.torrents =
             createTransforming<std::vector<LastTorrents::Torrent>>(rpc->torrents(), [](const auto& torrent) {
-                return LastTorrents::Torrent{torrent->data().hashString, torrent->data().isFinished()};
+                return LastTorrents::Torrent{
+                    .hashString = torrent->data().hashString,
+                    .finished = torrent->data().isFinished()};
             });
         mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();

@@ -109,7 +109,7 @@ namespace tremotesf {
 
     void DownloadDirectoriesModel::update() {
         std::vector<DirectoryItem> directories;
-        directories.push_back({{}, {}, rpc()->torrentsCount()});
+        directories.push_back({.directory = {}, .displayDirectory = {}, .torrents = rpc()->torrentsCount()});
         for (const auto& torrent : rpc()->torrents()) {
             const QString& directory = torrent->data().downloadDirectory;
             auto found = std::find_if(directories.begin(), directories.end(), [&](const auto& item) {
@@ -117,7 +117,9 @@ namespace tremotesf {
             });
             if (found == directories.end()) {
                 directories.push_back(
-                    {directory, toNativeSeparators(directory, rpc()->serverSettings()->data().pathOs), 1}
+                    {.directory = directory,
+                     .displayDirectory = toNativeSeparators(directory, rpc()->serverSettings()->data().pathOs),
+                     .torrents = 1}
                 );
             } else {
                 ++(found->torrents);

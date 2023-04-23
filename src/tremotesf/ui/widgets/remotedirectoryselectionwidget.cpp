@@ -109,7 +109,9 @@ namespace tremotesf {
             std::move(directories),
             [=, this](QString&& dir) {
                 QString display = toNativeSeparators(dir);
-                return DirectorySelectionWidgetViewModel::ComboBoxItem{std::move(dir), std::move(display)};
+                return DirectorySelectionWidgetViewModel::ComboBoxItem{
+                    .path = std::move(dir),
+                    .displayPath = std::move(display)};
             }
         );
     }
