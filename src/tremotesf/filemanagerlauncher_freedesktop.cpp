@@ -22,8 +22,7 @@ namespace tremotesf {
 
         protected:
             void launchFileManagerAndSelectFiles(
-                const std::vector<std::pair<QString, std::vector<QString>>>& directories,
-                const QPointer<QWidget>& parentWidget
+                const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
             ) override {
                 logInfo("FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
                 );
@@ -34,7 +33,7 @@ namespace tremotesf {
                 );
                 interface.setTimeout(desktoputils::defaultDbusTimeout);
                 QStringList uris{};
-                for (const auto& [_, dirFiles] : directories) {
+                for (const auto& [_, dirFiles] : filesToSelect) {
                     for (const QString& filePath : dirFiles) {
                         uris.push_back(QUrl::fromLocalFile(filePath).toString());
                     }
@@ -50,7 +49,7 @@ namespace tremotesf {
                             "failed: {}",
                             pendingReply.error()
                         );
-                        for (const auto& [dirPath, dirFiles] : directories) {
+                        for (const auto& [dirPath, dirFiles] : filesToSelect) {
                             fallbackForDirectory(dirPath, parentWidget);
                         }
                     }

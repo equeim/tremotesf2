@@ -22,30 +22,29 @@ namespace tremotesf {
         void FileManagerLauncher::launchFileManagerAndSelectFiles(
             const std::vector<QString>& files, const QPointer<QWidget>& parentWidget
         ) {
-            std::vector<std::pair<QString, std::vector<QString>>> directories{};
+            std::vector<FilesInDirectory> filesToSelect{};
             for (const QString& filePath : files) {
                 QString dirPath = QFileInfo(filePath).path();
-                const auto found = std::find_if(directories.begin(), directories.end(), [&](const auto& d) {
-                    return d.first == dirPath;
+                const auto found = std::find_if(filesToSelect.begin(), filesToSelect.end(), [&](const auto& d) {
+                    return d.directory == dirPath;
                 });
                 auto& dirFiles = [&]() -> std::vector<QString>& {
-                    if (found != directories.end()) {
-                        return found->second;
+                    if (found != filesToSelect.end()) {
+                        return found->files;
                     }
-                    directories.push_back({std::move(dirPath), {}});
-                    return directories.back().second;
+                    filesToSelect.push_back({.directory = std::move(dirPath), .files = {}});
+                    return filesToSelect.back().files;
                 }();
                 dirFiles.push_back(filePath);
             }
-            launchFileManagerAndSelectFiles(directories, parentWidget);
+            launchFileManagerAndSelectFiles(filesToSelect, parentWidget);
         }
 
         void FileManagerLauncher::launchFileManagerAndSelectFiles(
-            const std::vector<std::pair<QString, std::vector<QString>>>& directories,
-            const QPointer<QWidget>& parentWidget
+            const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
         ) {
-            for (const auto& [dirPath, _] : directories) {
-                fallbackForDirectory(dirPath, parentWidget);
+            for (const auto& [directory, _] : filesToSelect) {
+                fallbackForDirectory(directory, parentWidget);
             }
             emit done();
         }
