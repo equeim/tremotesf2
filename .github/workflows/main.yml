@@ -53,7 +53,9 @@ jobs:
       run: echo "rpm-macro=--define 'toolchain ${{ matrix.compiler }}'" >> "$GITHUB_OUTPUT"
 
     - name: Install build dependencies
-      run: ${{env.INSTALL_PACKAGES}} $(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} -q --srpm --qf '[%{REQUIRES} ]' rpm/tremotesf.spec)
+      run: |
+        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} -q --srpm --qf '[%{REQUIRES}\n]' rpm/tremotesf.spec)
+        ${{env.INSTALL_PACKAGES}} "${dependencies[@]}"
 
     - name: Make source archive
       run: |
