@@ -57,30 +57,4 @@ jobs:
   build-windows-msvc:
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
-      build-with-msvc-clang-toolchain: false
-
-  upload-windows-build:
-    needs: build-windows-msvc
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Download debug build artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: tremotesf-win64-debug
-        path: ${{ github.workspace }}
-
-    - name: Download release build artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: tremotesf-win64-release
-        path: ${{ github.workspace }}
-
-    - name: Upload artifacts to release
-      run: |
-        shopt -s failglob
-        artifacts=(*)
-        echo "Uploading artifacts ${artifacts[@]}"
-        gh release upload --repo '${{ github.repository }}' '${{ github.event.release.tag_name }}' "${artifacts[@]}"
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      build-for-release: ${{ github.event.release.tag_name }}
