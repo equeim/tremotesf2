@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Tremotesf now requires compiler with some C++20 support (concepts, ranges and comparison operators)
+
+### Fixed
+- Fixed crash on launch with some Qt styles
+- Fixed mounted directories feature on Windows when UNC paths (those starting with \\) are used
+
 ## [2.2.0] - 2023-03-28
 ### Added
 - Torrent priority selection in torrent's context menu
