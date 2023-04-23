@@ -6,7 +6,7 @@
 
 ### Fixed
 - Fixed crash on launch with some Qt styles
-- Fixed mounted directories feature on Windows when UNC paths (those starting with \\) are used
+- Fixed mounted directories feature on Windows when UNC paths (those starting with \\\\) are used
 
 ## [2.2.0] - 2023-03-28
 ### Added
