@@ -58,8 +58,7 @@ namespace tremotesf {
             Q_OBJECT
         protected:
             void launchFileManagerAndSelectFiles(
-                const std::vector<std::pair<QString, std::vector<QString>>>& directories,
-                const QPointer<QWidget>& parentWidget
+                const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
             ) override {
                 QtConcurrent::run([=] {
                     try {
@@ -79,7 +78,7 @@ namespace tremotesf {
                         emit done();
                     });
 
-                    for (const auto& [dirPath, dirFiles] : directories) {
+                    for (const auto& [dirPath, dirFiles] : filesToSelect) {
                         const QString nativePath = QDir::toNativeSeparators(dirPath);
                         logInfo(
                             "WindowsFileManagerLauncher: attempting to select {} items in folder {}",

@@ -24,9 +24,14 @@ namespace tremotesf {
 
         protected:
             FileManagerLauncher() = default;
+
+            struct FilesInDirectory {
+                QString directory{};
+                std::vector<QString> files{};
+            };
+
             virtual void launchFileManagerAndSelectFiles(
-                const std::vector<std::pair<QString, std::vector<QString>>>& directories,
-                const QPointer<QWidget>& parentWidget
+                const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
             );
             virtual void fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget);
 
