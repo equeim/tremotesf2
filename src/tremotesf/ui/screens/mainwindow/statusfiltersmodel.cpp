@@ -135,7 +135,7 @@ namespace tremotesf {
 
         StatusFiltersModel::Item
         createItemFromNewItem(std::pair<const TorrentsProxyModel::StatusFilter, int>&& newTracker) override {
-            return StatusFiltersModel::Item{newTracker.first, newTracker.second};
+            return StatusFiltersModel::Item{.filter = newTracker.first, .torrents = newTracker.second};
         }
     };
 

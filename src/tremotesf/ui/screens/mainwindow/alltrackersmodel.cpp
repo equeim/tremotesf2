@@ -96,7 +96,7 @@ namespace tremotesf {
         }
 
         AllTrackersModel::TrackerItem createItemFromNewItem(std::pair<const QString, int>&& newTracker) override {
-            return AllTrackersModel::TrackerItem{newTracker.first, newTracker.second};
+            return AllTrackersModel::TrackerItem{.tracker = newTracker.first, .torrents = newTracker.second};
         }
     };
 

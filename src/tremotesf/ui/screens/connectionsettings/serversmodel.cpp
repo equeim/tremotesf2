@@ -149,37 +149,38 @@ namespace tremotesf {
             row = static_cast<int>(mServers.size());
             beginInsertRows(QModelIndex(), row, row);
             mServers.push_back(Server{
-                name,
-                libtremotesf::ConnectionConfiguration{
-                    address,
-                    port,
-                    apiPath,
+                .name = name,
+                .connectionConfiguration =
+                    libtremotesf::ConnectionConfiguration{
+                        address,
+                        port,
+                        apiPath,
 
-                    proxyType,
-                    proxyHostname,
-                    proxyPort,
-                    proxyUser,
-                    proxyPassword,
+                        proxyType,
+                        proxyHostname,
+                        proxyPort,
+                        proxyUser,
+                        proxyPassword,
 
-                    https,
-                    selfSignedCertificateEnabled,
-                    selfSignedCertificate,
-                    clientCertificateEnabled,
-                    clientCertificate,
+                        https,
+                        selfSignedCertificateEnabled,
+                        selfSignedCertificate,
+                        clientCertificateEnabled,
+                        clientCertificate,
 
-                    authentication,
-                    username,
-                    password,
+                        authentication,
+                        username,
+                        password,
 
-                    updateInterval,
-                    timeout,
+                        updateInterval,
+                        timeout,
 
-                    autoReconnectEnabled,
-                    autoReconnectInterval},
-                mountedDirectories,
-                LastTorrents{},
-                QStringList{},
-                QString{}});
+                        autoReconnectEnabled,
+                        autoReconnectInterval},
+                .mountedDirectories = mountedDirectories,
+                .lastTorrents = {},
+                .lastDownloadDirectories = {},
+                .lastDownloadDirectory = {}});
             endInsertRows();
             if (row == 0) {
                 mCurrentServer = name;
