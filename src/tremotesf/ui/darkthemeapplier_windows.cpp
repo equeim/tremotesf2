@@ -153,11 +153,10 @@ namespace tremotesf {
             const int alpha = source.alpha();
             if (alpha == 255) return source;
             const auto blend = [&](int s, int b) { return (s * alpha / 255 + b * (255 - alpha) / 255); };
-            return QColor(
+            return {
                 blend(source.red(), background.red()),
                 blend(source.green(), background.green()),
-                blend(source.blue(), background.blue())
-            );
+                blend(source.blue(), background.blue())};
         }
 
         double getRelativeLuminance(QColor color) {
