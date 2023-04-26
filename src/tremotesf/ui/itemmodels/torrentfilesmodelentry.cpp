@@ -39,10 +39,8 @@ namespace tremotesf {
         }
     }
 
-    TorrentFilesModelEntry::TorrentFilesModelEntry(
-        int row, TorrentFilesModelDirectory* parentDirectory, const QString& name
-    )
-        : mRow(row), mParentDirectory(parentDirectory), mName(name) {}
+    TorrentFilesModelEntry::TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, QString name)
+        : mRow(row), mParentDirectory(parentDirectory), mName(std::move(name)) {}
 
     int TorrentFilesModelEntry::row() const { return mRow; }
 

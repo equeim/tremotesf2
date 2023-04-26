@@ -18,10 +18,8 @@ namespace tremotesf {
     class DirectorySelectionWidgetViewModel : public QObject {
         Q_OBJECT
     public:
-        explicit DirectorySelectionWidgetViewModel(
-            const QString& path, const QString& displayPath, QObject* parent = nullptr
-        )
-            : QObject(parent), mPath(path), mDisplayPath(displayPath) {}
+        explicit DirectorySelectionWidgetViewModel(QString path, QString displayPath, QObject* parent = nullptr)
+            : QObject(parent), mPath(std::move(path)), mDisplayPath(std::move(displayPath)) {}
 
         [[nodiscard]] QString path() const { return mPath; };
         [[nodiscard]] QString displayPath() const { return mDisplayPath; };
