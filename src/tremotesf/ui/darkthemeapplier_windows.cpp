@@ -115,9 +115,8 @@ namespace tremotesf {
                     const auto attribute = []() -> DWORD {
                         if (isRunningOnWindows10_2004OrGreater()) {
                             return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_SINCE_2004;
-                        } else {
-                            return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;
                         }
+                        return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;
                     }();
                     const bool darkTheme = [&] {
                         switch (Settings::instance()->darkThemeMode()) {
@@ -166,9 +165,8 @@ namespace tremotesf {
             const auto trans = [](double comp) {
                 if (comp <= 0.03928) {
                     return comp / 12.92;
-                } else {
-                    return std::pow(((comp + 0.055) / 1.055), 2.4);
                 }
+                return std::pow(((comp + 0.055) / 1.055), 2.4);
             };
             return 0.2126 * trans(color.redF()) + 0.7152 * trans(color.greenF()) + 0.0722 * trans(color.blueF());
         }
