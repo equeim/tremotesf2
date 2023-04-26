@@ -66,7 +66,7 @@ namespace tremotesf {
     };
 
     TrackersModel::TrackersModel(libtremotesf::Torrent* torrent, QObject* parent)
-        : QAbstractTableModel(parent), mTorrent(nullptr), mTrackers{}, mEtaUpdateTimer(new QTimer(this)) {
+        : QAbstractTableModel(parent), mEtaUpdateTimer(new QTimer(this)) {
         mEtaUpdateTimer->setInterval(1s);
         mEtaUpdateTimer->setSingleShot(false);
         QObject::connect(mEtaUpdateTimer, &QTimer::timeout, this, &TrackersModel::updateEtas);
