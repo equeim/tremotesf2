@@ -34,7 +34,6 @@ namespace tremotesf {
         void onModelReset();
         void showContextMenu(QPoint pos);
 
-    private:
         bool mLocalFile;
         BaseTorrentFilesModel* mModel;
         TorrentFilesProxyModel* mProxyModel;
