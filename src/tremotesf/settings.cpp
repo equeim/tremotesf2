@@ -35,7 +35,7 @@ namespace tremotesf {
     namespace {
         template<typename T>
         T getValue(QSettings* settings, const char* key, T defaultValue) {
-            const T value =
+            T value =
                 settings->value(QLatin1String(key), QVariant::fromValue<T>(defaultValue)).template value<T>();
             if constexpr (std::is_enum_v<T>) {
                 const auto meta = QMetaEnum::fromType<T>();
