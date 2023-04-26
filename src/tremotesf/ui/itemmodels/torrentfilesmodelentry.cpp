@@ -187,12 +187,7 @@ namespace tremotesf {
     }
 
     bool TorrentFilesModelDirectory::isChanged() const {
-        for (auto& child : mChildren) {
-            if (child->isChanged()) {
-                return true;
-            }
-        }
-        return false;
+        return std::any_of(mChildren.begin(), mChildren.end(), [](const auto& child) { return child->isChanged(); });
     }
 
     void TorrentFilesModelDirectory::addChild(std::unique_ptr<TorrentFilesModelEntry>&& child) {
