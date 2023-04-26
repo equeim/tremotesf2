@@ -205,7 +205,6 @@ jobs:
           mingw-w64-clang-x86_64-cmake
           mingw-w64-clang-x86_64-cppwinrt
           mingw-w64-clang-x86_64-fmt
-          mingw-w64-clang-x86_64-libpsl
           mingw-w64-clang-x86_64-openssl
           mingw-w64-clang-x86_64-pkgconf
           mingw-w64-clang-x86_64-qt5-base
