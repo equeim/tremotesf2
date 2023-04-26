@@ -18,7 +18,7 @@ namespace tremotesf {
     class TorrentDownloadDirectoryDirectorySelectionWidget;
     class Rpc;
 
-    class AddTorrentDialog : public QDialog {
+    class AddTorrentDialog final : public QDialog {
         Q_OBJECT
 
     public:

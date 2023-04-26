@@ -12,6 +12,7 @@ namespace tremotesf {
 
     class RemoteDirectorySelectionWidgetViewModel : public DirectorySelectionWidgetViewModel {
         Q_OBJECT
+
     public:
         explicit RemoteDirectorySelectionWidgetViewModel(
             const QString& path, const Rpc* rpc, QObject* parent = nullptr
@@ -50,8 +51,9 @@ namespace tremotesf {
         );
     };
 
-    class TorrentDownloadDirectoryDirectorySelectionWidgetViewModel : public RemoteDirectorySelectionWidgetViewModel {
+    class TorrentDownloadDirectoryDirectorySelectionWidgetViewModel final : public RemoteDirectorySelectionWidgetViewModel {
         Q_OBJECT
+
     public:
         explicit TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(
             const QString& path, const Rpc* rpc, QObject* parent = nullptr
@@ -69,7 +71,7 @@ namespace tremotesf {
         std::vector<ComboBoxItem> mComboBoxItems{createComboBoxItems()};
     };
 
-    class TorrentDownloadDirectoryDirectorySelectionWidget : public RemoteDirectorySelectionWidget {
+    class TorrentDownloadDirectoryDirectorySelectionWidget final : public RemoteDirectorySelectionWidget {
         Q_OBJECT
 
     public:

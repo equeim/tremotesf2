@@ -16,7 +16,7 @@ namespace tremotesf {
     class TorrentFilesModel;
     class TorrentFilesProxyModel;
 
-    class TorrentFilesView : public BaseTreeView {
+    class TorrentFilesView final : public BaseTreeView {
         Q_OBJECT
 
     public:

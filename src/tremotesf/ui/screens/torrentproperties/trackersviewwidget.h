@@ -17,8 +17,9 @@ namespace tremotesf {
     class Rpc;
     class TrackersModel;
 
-    class TrackersViewWidget : public QWidget {
+    class TrackersViewWidget final : public QWidget {
         Q_OBJECT
+
 
     public:
         TrackersViewWidget(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
@@ -30,7 +31,6 @@ namespace tremotesf {
         void showEditDialogs();
         void removeTrackers();
 
-    private:
         libtremotesf::Torrent* mTorrent;
         Rpc* mRpc;
         TrackersModel* mModel;

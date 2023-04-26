@@ -75,7 +75,6 @@ namespace tremotesf {
         void openTorrentsFiles();
         void showTorrentsInFileManager();
 
-    private:
         Rpc* mRpc;
         MainWindowViewModel* mViewModel{};
 

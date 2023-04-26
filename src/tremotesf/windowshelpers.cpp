@@ -41,7 +41,8 @@ namespace tremotesf {
          * because GCC < 12 doesn't support Windows errors at all,
          * and MSVC and GCC >= 12 use FormatMessageA function which may not return UTF-8
          */
-        class Win32Category : public std::error_category {
+        class Win32Category final : public std::error_category {
+
         public:
             const char* name() const noexcept override { return "Win32Category"; }
 

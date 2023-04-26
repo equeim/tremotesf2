@@ -10,7 +10,7 @@
 namespace tremotesf {
     class BaseTorrentFilesModel;
 
-    class TorrentFilesProxyModel : public BaseProxyModel {
+    class TorrentFilesProxyModel final : public BaseProxyModel {
         Q_OBJECT
 
     public:

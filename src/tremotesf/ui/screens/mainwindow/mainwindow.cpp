@@ -78,7 +78,7 @@
 
 namespace tremotesf {
     namespace {
-        class SetLocationDialog : public QDialog {
+        class SetLocationDialog final : public QDialog {
             Q_OBJECT
 
         public:

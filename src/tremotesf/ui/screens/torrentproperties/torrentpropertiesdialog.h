@@ -23,7 +23,7 @@ namespace tremotesf {
     class TorrentFilesModel;
     class TrackersViewWidget;
 
-    class TorrentPropertiesDialog : public QDialog {
+    class TorrentPropertiesDialog final : public QDialog {
         Q_OBJECT
 
     public:
@@ -37,7 +37,6 @@ namespace tremotesf {
         void setupWebSeedersTab();
         void setupLimitsTab();
 
-    private:
         void setTorrent(libtremotesf::Torrent* torrent);
         void onTorrentChanged();
 

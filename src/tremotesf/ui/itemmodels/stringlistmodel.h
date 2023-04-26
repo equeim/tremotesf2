@@ -11,8 +11,9 @@
 #include <QString>
 
 namespace tremotesf {
-    class StringListModel : public QAbstractListModel {
+    class StringListModel final : public QAbstractListModel {
         Q_OBJECT
+
     public:
         explicit inline StringListModel(QString header = {}, QObject* parent = nullptr)
             : QAbstractListModel(parent), mHeader(std::move(header)){};

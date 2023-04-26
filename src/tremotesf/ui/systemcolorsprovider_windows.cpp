@@ -25,6 +25,7 @@ namespace tremotesf {
     namespace {
         class SystemColorsProviderWindows final : public SystemColorsProvider {
             Q_OBJECT
+
         public:
             explicit SystemColorsProviderWindows(QObject* parent = nullptr) : SystemColorsProvider(parent) {
                 logInfo("System dark theme enabled = {}", mDarkThemeEnabled);

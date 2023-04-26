@@ -11,8 +11,9 @@
 #include "torrentsproxymodel.h"
 
 namespace tremotesf {
-    class StatusFiltersModel : public BaseTorrentsFiltersSettingsModel {
+    class StatusFiltersModel final : public BaseTorrentsFiltersSettingsModel {
         Q_OBJECT
+
     public:
         static constexpr auto FilterRole = Qt::UserRole;
 

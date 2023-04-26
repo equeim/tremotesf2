@@ -14,8 +14,9 @@
 namespace tremotesf {
     class Rpc;
 
-    class TorrentFilesModel : public BaseTorrentFilesModel {
+    class TorrentFilesModel final : public BaseTorrentFilesModel {
         Q_OBJECT
+
     public:
         explicit TorrentFilesModel(
             libtremotesf::Torrent* torrent = nullptr, Rpc* rpc = nullptr, QObject* parent = nullptr

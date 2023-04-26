@@ -17,9 +17,11 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 
 namespace tremotesf {
     namespace {
-        class FreedesktopFileManagerLauncher : public impl::FileManagerLauncher {
+        class FreedesktopFileManagerLauncher final : public impl::FileManagerLauncher {
             Q_OBJECT
 
+        public:
+            FreedesktopFileManagerLauncher() = default;
         protected:
             void launchFileManagerAndSelectFiles(
                 const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget

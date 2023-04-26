@@ -10,8 +10,9 @@
 namespace tremotesf {
     class Rpc;
 
-    class ServerStatsDialog : public QDialog {
+    class ServerStatsDialog final : public QDialog {
         Q_OBJECT
+
     public:
         explicit ServerStatsDialog(Rpc* rpc, QWidget* parent = nullptr);
         QSize sizeHint() const override;

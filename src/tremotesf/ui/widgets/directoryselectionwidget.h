@@ -17,6 +17,7 @@ class QPushButton;
 namespace tremotesf {
     class DirectorySelectionWidgetViewModel : public QObject {
         Q_OBJECT
+
     public:
         explicit DirectorySelectionWidgetViewModel(QString path, QString displayPath, QObject* parent = nullptr)
             : QObject(parent), mPath(std::move(path)), mDisplayPath(std::move(displayPath)) {}
@@ -57,6 +58,7 @@ namespace tremotesf {
 
     class DirectorySelectionWidget : public QWidget {
         Q_OBJECT
+
     public:
         explicit DirectorySelectionWidget(const QString& path, QWidget* parent = nullptr);
 

@@ -17,8 +17,9 @@ namespace libtremotesf {
 namespace tremotesf {
     class Rpc;
 
-    class TorrentsModel : public QAbstractTableModel {
+    class TorrentsModel final : public QAbstractTableModel {
         Q_OBJECT
+
     public:
         enum class Column {
             Name,

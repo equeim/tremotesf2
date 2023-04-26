@@ -10,9 +10,11 @@
 namespace tremotesf {
     class IpcServer : public QObject {
         Q_OBJECT
+
     public:
         static IpcServer* createInstance(QObject* parent = nullptr);
 
+    protected:
         inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent){};
 
     signals:

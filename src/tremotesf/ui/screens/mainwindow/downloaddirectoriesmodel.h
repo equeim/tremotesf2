@@ -10,8 +10,9 @@
 #include "basetorrentsfilterssettingsmodel.h"
 
 namespace tremotesf {
-    class DownloadDirectoriesModel : public BaseTorrentsFiltersSettingsModel {
+    class DownloadDirectoriesModel final : public BaseTorrentsFiltersSettingsModel {
         Q_OBJECT
+
     public:
         static constexpr auto DirectoryRole = Qt::UserRole;
 

@@ -10,8 +10,9 @@
 #include "basetorrentsfilterssettingsmodel.h"
 
 namespace tremotesf {
-    class AllTrackersModel : public BaseTorrentsFiltersSettingsModel {
+    class AllTrackersModel final : public BaseTorrentsFiltersSettingsModel {
         Q_OBJECT
+
     public:
         static constexpr auto TrackerRole = Qt::UserRole;
 

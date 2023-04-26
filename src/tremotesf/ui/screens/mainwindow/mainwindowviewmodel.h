@@ -18,8 +18,9 @@ namespace tremotesf {
     class IpcServer;
     class Rpc;
 
-    class MainWindowViewModel : public QObject {
+    class MainWindowViewModel final : public QObject {
         Q_OBJECT
+
     public:
         MainWindowViewModel(
             QStringList&& commandLineFiles,

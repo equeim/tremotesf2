@@ -63,7 +63,7 @@ namespace tremotesf::signalhandler {
                 close(mReadSocket);
             }
 
-            Q_DISABLE_COPY_MOVE(SignalSocketReader)
+
         private:
             void readFromSocket() {
                 logDebug("signalhandler: started read socket thread");

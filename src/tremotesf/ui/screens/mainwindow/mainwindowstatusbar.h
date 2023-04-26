@@ -13,7 +13,7 @@ class KSeparator;
 namespace tremotesf {
     class Rpc;
 
-    class MainWindowStatusBar : public QStatusBar {
+    class MainWindowStatusBar final : public QStatusBar {
         Q_OBJECT
 
     public:
@@ -24,9 +24,7 @@ namespace tremotesf {
         void updateServerLabel();
         void updateStatusLabels();
 
-    private:
         const Rpc* mRpc{};
-
         QLabel* mNoServersErrorImage{};
         QLabel* mServerLabel{};
         KSeparator* mFirstSeparator{};

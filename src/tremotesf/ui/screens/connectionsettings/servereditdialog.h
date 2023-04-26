@@ -20,7 +20,7 @@ namespace tremotesf {
     class MountedDirectoriesWidget;
     class ServersModel;
 
-    class ServerEditDialog : public QDialog {
+    class ServerEditDialog final : public QDialog {
         Q_OBJECT
 
     public:
@@ -35,7 +35,6 @@ namespace tremotesf {
         void setServer();
         void loadCertificateFromFile(QPlainTextEdit* target);
 
-    private:
         ServersModel* mServersModel;
         QString mServerName;
 

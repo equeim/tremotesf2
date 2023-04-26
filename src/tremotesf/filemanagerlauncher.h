@@ -17,6 +17,7 @@ namespace tremotesf {
     namespace impl {
         class FileManagerLauncher : public QObject {
             Q_OBJECT
+
         public:
             static FileManagerLauncher* createInstance();
             void

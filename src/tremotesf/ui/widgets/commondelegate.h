@@ -8,7 +8,7 @@
 #include <QStyledItemDelegate>
 
 namespace tremotesf {
-    class CommonDelegate : public QStyledItemDelegate {
+    class CommonDelegate final : public QStyledItemDelegate {
         Q_OBJECT
 
     public:

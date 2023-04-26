@@ -11,7 +11,7 @@ class QLineEdit;
 class QPlainTextEdit;
 
 namespace tremotesf {
-    class TextInputDialog : public QDialog {
+    class TextInputDialog final : public QDialog {
         Q_OBJECT
 
     public:

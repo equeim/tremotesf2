@@ -15,6 +15,7 @@
 namespace tremotesf {
     class IpcServerDbus final : public IpcServer {
         Q_OBJECT
+
     public:
         static constexpr auto serviceName = "org.equeim.Tremotesf"_l1;
         static constexpr auto objectPath = "/org/equeim/Tremotesf"_l1;
