@@ -23,6 +23,7 @@ namespace tremotesf {
         explicit TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent = nullptr);
         explicit TorrentFilesView(TorrentFilesModel* model, Rpc* rpc, QWidget* parent = nullptr);
         ~TorrentFilesView() override;
+        Q_DISABLE_COPY_MOVE(TorrentFilesView)
 
         static void showFileRenameDialog(
             const QString& fileName, QWidget* parent, const std::function<void(const QString&)>& onAccepted

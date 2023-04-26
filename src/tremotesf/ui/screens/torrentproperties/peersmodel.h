@@ -27,6 +27,7 @@ namespace tremotesf {
 
         explicit PeersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~PeersModel() override;
+        Q_DISABLE_COPY_MOVE(PeersModel)
 
         int columnCount(const QModelIndex& = {}) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

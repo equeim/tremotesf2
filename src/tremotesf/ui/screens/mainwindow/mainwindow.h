@@ -41,6 +41,7 @@ namespace tremotesf {
             QWidget* parent = nullptr
         );
         ~MainWindow() override;
+        Q_DISABLE_COPY_MOVE(MainWindow)
 
         QSize sizeHint() const override;
         void showMinimized(bool minimized);

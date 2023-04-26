@@ -12,10 +12,10 @@ namespace tremotesf {
 
     class TorrentsView final : public BaseTreeView {
         Q_OBJECT
-
     public:
         TorrentsView(TorrentsProxyModel* model, QWidget* parent = nullptr);
         ~TorrentsView() override;
+        Q_DISABLE_COPY_MOVE(TorrentsView)
     };
 }
 

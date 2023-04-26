@@ -25,6 +25,7 @@ namespace tremotesf {
             TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
         );
         ~TorrentsProxyModel() override;
+        Q_DISABLE_COPY_MOVE(TorrentsProxyModel)
 
         QString searchString() const;
         void setSearchString(const QString& string);

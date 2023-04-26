@@ -28,6 +28,7 @@ namespace tremotesf {
 
         explicit TrackersModel(libtremotesf::Torrent* torrent = nullptr, QObject* parent = nullptr);
         ~TrackersModel() override;
+        Q_DISABLE_COPY_MOVE(TrackersModel)
 
         int columnCount(const QModelIndex& = {}) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
