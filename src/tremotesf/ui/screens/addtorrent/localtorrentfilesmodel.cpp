@@ -147,7 +147,7 @@ namespace tremotesf {
     }
 
     LocalTorrentFilesModel::LocalTorrentFilesModel(QObject* parent)
-        : BaseTorrentFilesModel({Column::Name, Column::Size, Column::Priority}, parent), mLoaded(false) {}
+        : BaseTorrentFilesModel({Column::Name, Column::Size, Column::Priority}, parent) {}
 
     void LocalTorrentFilesModel::load(const QString& filePath) {
         beginResetModel();
