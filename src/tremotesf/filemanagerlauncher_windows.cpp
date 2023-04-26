@@ -48,6 +48,7 @@ namespace tremotesf {
         struct ItemIdListList {
             explicit ItemIdListList(size_t capacity) { values.reserve(capacity); }
             ~ItemIdListList() { std::for_each(values.begin(), values.end(), &ILFree); }
+            Q_DISABLE_COPY_MOVE(ItemIdListList)
 
             void add(const QString& nativePath) { values.push_back(createItemIdList(nativePath).release()); }
 

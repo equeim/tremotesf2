@@ -20,10 +20,11 @@ namespace tremotesf {
     class TrackersViewWidget final : public QWidget {
         Q_OBJECT
 
-
     public:
         TrackersViewWidget(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TrackersViewWidget() override;
+        Q_DISABLE_COPY_MOVE(TrackersViewWidget)
+
         void setTorrent(libtremotesf::Torrent* torrent);
 
     private:

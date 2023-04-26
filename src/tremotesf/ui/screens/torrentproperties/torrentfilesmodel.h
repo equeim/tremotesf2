@@ -22,6 +22,7 @@ namespace tremotesf {
             libtremotesf::Torrent* torrent = nullptr, Rpc* rpc = nullptr, QObject* parent = nullptr
         );
         ~TorrentFilesModel() override;
+        Q_DISABLE_COPY_MOVE(TorrentFilesModel)
 
         libtremotesf::Torrent* torrent() const;
         void setTorrent(libtremotesf::Torrent* torrent);

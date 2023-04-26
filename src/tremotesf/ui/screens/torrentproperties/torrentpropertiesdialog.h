@@ -29,6 +29,8 @@ namespace tremotesf {
     public:
         explicit TorrentPropertiesDialog(libtremotesf::Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         ~TorrentPropertiesDialog() override;
+        Q_DISABLE_COPY_MOVE(TorrentPropertiesDialog)
+
         QSize sizeHint() const override;
 
     private:

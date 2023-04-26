@@ -18,7 +18,6 @@ namespace tremotesf {
 
     class TorrentFilesModelEntry {
         Q_GADGET
-
     public:
         enum WantedState { Wanted, Unwanted, MixedWanted };
         Q_ENUM(WantedState)
@@ -32,6 +31,7 @@ namespace tremotesf {
         TorrentFilesModelEntry() = default;
         explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, QString name);
         virtual ~TorrentFilesModelEntry() = default;
+        Q_DISABLE_COPY_MOVE(TorrentFilesModelEntry)
 
         int row() const;
         TorrentFilesModelDirectory* parentDirectory() const;
@@ -65,7 +65,6 @@ namespace tremotesf {
     class TorrentFilesModelFile;
 
     class TorrentFilesModelDirectory final : public TorrentFilesModelEntry {
-
     public:
         TorrentFilesModelDirectory() = default;
         explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
@@ -98,7 +97,6 @@ namespace tremotesf {
     };
 
     class TorrentFilesModelFile final : public TorrentFilesModelEntry {
-
     public:
         explicit TorrentFilesModelFile(
             int row, TorrentFilesModelDirectory* parentDirectory, int id, const QString& name, long long size
