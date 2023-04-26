@@ -325,7 +325,7 @@ namespace tremotesf {
         uploadSpeedSpinBoxLayout->addWidget(uploadSpeedSpinBox);
 
         auto priorityComboBox = new QComboBox(this);
-        for (TorrentData::Priority priority : priorityComboBoxItems) {
+        for (const TorrentData::Priority priority : priorityComboBoxItems) {
             switch (priority) {
             case TorrentData::Priority::High:
                 //: Torrent's loading priority
@@ -357,7 +357,7 @@ namespace tremotesf {
         seedingGroupBoxLayout->addRow(qApp->translate("tremotesf", "Ratio limit mode:"), ratioLimitLayout);
         ratioLimitLayout->setContentsMargins(0, 0, 0, 0);
         auto ratioLimitComboBox = new QComboBox(this);
-        for (TorrentData::RatioLimitMode mode : ratioLimitComboBoxItems) {
+        for (const TorrentData::RatioLimitMode mode : ratioLimitComboBoxItems) {
             switch (mode) {
             case TorrentData::RatioLimitMode::Global:
                 //: Seeding ratio limit mode (global settings/stop at ratio/unlimited)
@@ -398,7 +398,7 @@ namespace tremotesf {
         seedingGroupBoxLayout->addRow(qApp->translate("tremotesf", "Idle seeding mode:"), idleSeedingLimitLayout);
         idleSeedingLimitLayout->setContentsMargins(0, 0, 0, 0);
         auto idleSeedingLimitComboBox = new QComboBox(this);
-        for (TorrentData::IdleSeedingLimitMode mode : idleSeedingLimitComboBoxItems) {
+        for (const TorrentData::IdleSeedingLimitMode mode : idleSeedingLimitComboBoxItems) {
             switch (mode) {
             case TorrentData::IdleSeedingLimitMode::Global:
                 //: Seeding idle limit mode (global settings/stop if idle for/unlimited)

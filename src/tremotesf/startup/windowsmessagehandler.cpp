@@ -36,7 +36,7 @@ namespace tremotesf {
         public:
             void pushEvicting(QString&& message) {
                 {
-                    std::lock_guard lock(mMutex);
+                    const std::lock_guard lock(mMutex);
                     if (mNewMessagesCancelled) return;
                     if (mQueue.size() == maximumSize) {
                         mQueue.pop_front();
@@ -57,7 +57,7 @@ namespace tremotesf {
 
             void cancelNewMessages() {
                 {
-                    std::lock_guard lock(mMutex);
+                    const std::lock_guard lock(mMutex);
                     mNewMessagesCancelled = true;
                 }
                 mCv.notify_one();
@@ -100,7 +100,7 @@ namespace tremotesf {
                     logDebug("FileLogger: finished write thread");
                     mQueue.cancelNewMessages();
                     {
-                        std::lock_guard lock(mMutex);
+                        const std::lock_guard lock(mMutex);
                         mFinishedWriting = true;
                     }
                     mCv.notify_one();
@@ -128,7 +128,7 @@ namespace tremotesf {
                 logDebug("FileLogger: created log file");
 
                 {
-                    std::lock_guard lock(mMutex);
+                    const std::lock_guard lock(mMutex);
                     mStartedWriting = true;
                 }
                 mCv.notify_one();
