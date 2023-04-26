@@ -17,21 +17,24 @@
 
 namespace tremotesf {
     namespace {
-        enum ByteUnit {
-            Byte,
-            KibiByte,
-            MebiByte,
-            GibiByte,
-            TebiByte,
-            PebiByte,
-            ExbiByte,
-            ZebiByte,
-            YobiByte,
+        enum class StringType {
+            Size,
+            Speed
         };
 
         struct ByteUnitStrings {
-            enum Type { Size, Speed };
-            std::array<QString (*)(), 2> strings;
+            QString (*size)();
+            QString (*speed)();
+
+            QString string(StringType type) const {
+                switch (type) {
+                case StringType::Size:
+                    return size();
+                case StringType::Speed:
+                    return speed();
+                }
+                throw std::logic_error("Unknown StringType value");
+            }
         };
 
         // Should be kept in sync with `enum ByteUnit`
@@ -81,19 +84,19 @@ namespace tremotesf {
                             //: Download speed suffix in yobibytes per second
                             [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
         };
+        constexpr size_t maxByteUnit = byteUnits.size() - 1;
 
-        QString formatBytes(long long bytes, ByteUnitStrings::Type stringType) {
+        QString formatBytes(qint64 bytes, StringType stringType) {
             size_t unit = 0;
-            auto bytes_d = static_cast<double>(bytes);
-            while (bytes_d >= 1024.0 && unit <= byteUnits.size()) {
-                bytes_d /= 1024.0;
+            auto bytes_floating = static_cast<double>(bytes);
+            while (bytes_floating >= 1024.0 && unit < maxByteUnit) {
+                bytes_floating /= 1024.0;
                 ++unit;
             }
-
-            if (unit == Byte) {
-                return byteUnits[Byte].strings[stringType]().arg(bytes_d);
+            if (unit == 0) {
+                return byteUnits[0].string(stringType).arg(bytes_floating);
             }
-            return byteUnits[unit].strings[stringType]().arg(bytes_d, 0, 'f', 1);
+            return byteUnits[unit].string(stringType).arg(bytes_floating, 0, 'f', 1);
         }
 
         template<std::invocable OnError>
@@ -107,9 +110,9 @@ namespace tremotesf {
         }
     }
 
-    QString Utils::formatByteSize(long long size) { return formatBytes(size, ByteUnitStrings::Size); }
+    QString Utils::formatByteSize(long long size) { return formatBytes(size, StringType::Size); }
 
-    QString Utils::formatByteSpeed(long long speed) { return formatBytes(speed, ByteUnitStrings::Speed); }
+    QString Utils::formatByteSpeed(long long speed) { return formatBytes(speed, StringType::Speed); }
 
     QString Utils::formatSpeedLimit(int limit) {
         //: Download speed suffix in kibibytes per second
