@@ -7,10 +7,6 @@
 
 #include <QString>
 
-#ifdef Q_OS_UNIX
-#    include <functional>
-#endif
-
 namespace tremotesf {
     class Utils {
     public:
