@@ -4,8 +4,10 @@
 
 #include "commandlineparser.h"
 
+#include <optional>
 #include <span>
 #include <stdexcept>
+#include <string_view>
 
 #include <QFileInfo>
 #include <QUrl>
@@ -14,12 +16,28 @@
 #include <cxxopts.hpp>
 
 #include "libtremotesf/log.h"
+#include "libtremotesf/target_os.h"
 
 namespace tremotesf {
     namespace {
-        inline const char* parseAppName(const char* arg) {
-            const char* sep = strrchr(arg, '/');
-            return sep ? sep + 1 : arg;
+        std::optional<std::string_view> substrAfterChar(std::string_view str, char ch) {
+            const auto index = str.rfind(ch);
+            if (index == std::string_view::npos) {
+                return std::nullopt;
+            }
+            return str.substr(index + 1);
+        }
+
+        std::string_view executableFileName(std::string_view arg0) {
+            if constexpr (isTargetOsWindows) {
+                if (const auto name = substrAfterChar(arg0, '\\'); name) {
+                    return *name;
+                }
+            }
+            if (const auto name = substrAfterChar(arg0, '/'); name) {
+                return *name;
+            }
+            return arg0;
         }
 
         void parsePositionals(std::span<const std::string> torrents, CommandLineArgs& args) {
@@ -48,9 +66,9 @@ namespace tremotesf {
     CommandLineArgs parseCommandLine(int& argc, char**& argv) {
         CommandLineArgs args{};
 
-        const char* appName = parseAppName(argv[0]);
+        const std::string_view appName = executableFileName(argv[0]);
         const auto versionString = fmt::format("{} {}", appName, TREMOTESF_VERSION);
-        cxxopts::Options opts(appName, versionString);
+        cxxopts::Options opts(std::string(appName), versionString);
         std::vector<std::string> torrents;
         opts.add_options(
         )("v,version", "display version information", cxxopts::value<bool>()->default_value("false")
