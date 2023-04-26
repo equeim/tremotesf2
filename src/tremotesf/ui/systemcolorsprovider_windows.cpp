@@ -19,7 +19,7 @@ using namespace winrt::Windows::UI::ViewManagement;
 namespace tremotesf {
 
     namespace {
-        QColor qColor(Color color) { return QColor(color.R, color.G, color.B, color.A); }
+        QColor qColor(Color color) { return {color.R, color.G, color.B, color.A}; }
     }
 
     namespace {
