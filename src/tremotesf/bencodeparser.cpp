@@ -178,8 +178,9 @@ namespace tremotesf::bencode {
                     throwErrorFromIODevice("Failed to peek integer buffer");
                 }
                 Integer integer{};
+
                 const auto result =
-                    std::from_chars(mIntegerBuffer.data(), mIntegerBuffer.data() + integerBufferSize, integer);
+                    std::from_chars(std::to_address(mIntegerBuffer.begin()), std::to_address(mIntegerBuffer.end()), integer);
                 if (result.ec != std::errc{}) {
                     throw Error(
                         Error::Type::Parsing,
@@ -197,7 +198,8 @@ namespace tremotesf::bencode {
                         fmt::format("Terminator doesn't match: expected {}, actual {}", integerTerminator, *result.ptr)
                     );
                 }
-                skip(result.ptr - mIntegerBuffer.data() + 1);
+                const auto terminatorIndex = result.ptr - mIntegerBuffer.data();
+                skip(terminatorIndex + 1);
                 return integer;
             }
 
