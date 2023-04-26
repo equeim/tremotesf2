@@ -12,6 +12,7 @@ class QSystemTrayIcon;
 namespace tremotesf {
     class NotificationsController : public QObject {
         Q_OBJECT
+
     public:
         static NotificationsController* createInstance(QSystemTrayIcon* trayIcon, QObject* parent = nullptr);
 

@@ -8,8 +8,9 @@
 #include "libtremotesf/rpc.h"
 
 namespace tremotesf {
-    class Rpc : public libtremotesf::Rpc {
+    class Rpc final : public libtremotesf::Rpc {
         Q_OBJECT
+
     public:
         explicit Rpc(QObject* parent = nullptr);
         QString statusString() const;

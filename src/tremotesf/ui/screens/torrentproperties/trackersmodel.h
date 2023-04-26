@@ -17,8 +17,9 @@ namespace libtremotesf {
 }
 
 namespace tremotesf {
-    class TrackersModel : public QAbstractTableModel {
+    class TrackersModel final : public QAbstractTableModel {
         Q_OBJECT
+
     public:
         enum class Column { Announce, Status, Error, NextUpdate, Peers, Seeders, Leechers };
         Q_ENUM(Column)

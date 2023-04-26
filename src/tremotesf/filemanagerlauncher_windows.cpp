@@ -54,8 +54,9 @@ namespace tremotesf {
             std::vector<LPITEMIDLIST> values{};
         };
 
-        class WindowsFileManagerLauncher : public impl::FileManagerLauncher {
+        class WindowsFileManagerLauncher final : public impl::FileManagerLauncher {
             Q_OBJECT
+
         protected:
             void launchFileManagerAndSelectFiles(
                 const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget

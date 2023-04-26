@@ -36,8 +36,9 @@ namespace tremotesf {
             inline constexpr DWORD DWMWA_CAPTION_COLOR = 35;
         }
 
-        class TitleBarBackgroundEventFilter : public QObject {
+        class TitleBarBackgroundEventFilter final : public QObject {
             Q_OBJECT
+
         public:
             explicit TitleBarBackgroundEventFilter(
                 SystemColorsProvider* systemColorsProvider, QObject* parent = nullptr

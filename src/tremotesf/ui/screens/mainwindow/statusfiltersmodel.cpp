@@ -108,10 +108,11 @@ namespace tremotesf {
         }
     }
 
-    class StatusFiltersModelUpdater : public ModelListUpdater<
-                                          StatusFiltersModel,
-                                          StatusFiltersModel::Item,
-                                          std::map<TorrentsProxyModel::StatusFilter, int>> {
+    class StatusFiltersModelUpdater final : public ModelListUpdater<
+                                                StatusFiltersModel,
+                                                StatusFiltersModel::Item,
+                                                std::map<TorrentsProxyModel::StatusFilter, int>> {
+
     public:
         inline explicit StatusFiltersModelUpdater(StatusFiltersModel& model) : ModelListUpdater(model) {}
 

@@ -16,6 +16,8 @@ namespace tremotesf {
         typename Item,
         std::ranges::forward_range NewItemsRange = std::vector<Item>>
     class ModelListUpdater : public ItemListUpdater<Item, NewItemsRange> {
+
+
     public:
         inline explicit ModelListUpdater(Model& model) : mModel(model) {}
 

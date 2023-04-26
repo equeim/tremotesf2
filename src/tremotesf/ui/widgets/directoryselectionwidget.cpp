@@ -54,7 +54,7 @@ namespace tremotesf {
     }
 
     namespace {
-        class ComboBoxEventFilter : public QObject {
+        class ComboBoxEventFilter final : public QObject {
             Q_OBJECT
 
         public:

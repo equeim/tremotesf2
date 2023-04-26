@@ -15,8 +15,9 @@
 namespace tremotesf {
     class TorrentFileParser;
 
-    class LocalTorrentFilesModel : public BaseTorrentFilesModel {
+    class LocalTorrentFilesModel final : public BaseTorrentFilesModel {
         Q_OBJECT
+
     public:
         explicit LocalTorrentFilesModel(QObject* parent = nullptr);
 

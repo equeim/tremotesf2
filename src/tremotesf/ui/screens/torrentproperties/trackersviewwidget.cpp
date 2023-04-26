@@ -30,8 +30,9 @@
 
 namespace tremotesf {
     namespace {
-        class EnterEatingTreeView : public BaseTreeView {
+        class EnterEatingTreeView final : public BaseTreeView {
             Q_OBJECT
+
         public:
             explicit EnterEatingTreeView(QWidget* parent = nullptr) : BaseTreeView(parent) {}
 

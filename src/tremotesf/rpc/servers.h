@@ -45,8 +45,9 @@ namespace tremotesf {
         QString lastDownloadDirectory{};
     };
 
-    class Servers : public QObject {
+    class Servers final : public QObject {
         Q_OBJECT
+
     public:
         static Servers* instance();
 

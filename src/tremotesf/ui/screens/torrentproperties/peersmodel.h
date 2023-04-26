@@ -16,8 +16,9 @@ namespace libtremotesf {
 }
 
 namespace tremotesf {
-    class PeersModel : public QAbstractTableModel {
+    class PeersModel final : public QAbstractTableModel {
         Q_OBJECT
+
     public:
         enum class Column { Address, DownloadSpeed, UploadSpeed, ProgressBar, Progress, Flags, Client };
         Q_ENUM(Column)

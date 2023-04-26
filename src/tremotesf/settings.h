@@ -24,8 +24,9 @@ Q_SIGNALS:                                                       \
 #define SETTINGS_PROPERTY_NON_TRIVIAL(type, getter, setter) SETTINGS_PROPERTY_IMPL(type, getter, const type&, setter)
 
 namespace tremotesf {
-    class Settings : public QObject {
+    class Settings final : public QObject {
         Q_OBJECT
+
 
         SETTINGS_PROPERTY_TRIVIAL(bool, connectOnStartup, setConnectOnStartup)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting)

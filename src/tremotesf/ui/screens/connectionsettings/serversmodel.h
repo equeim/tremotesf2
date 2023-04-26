@@ -11,8 +11,9 @@
 #include "tremotesf/rpc/servers.h"
 
 namespace tremotesf {
-    class ServersModel : public QAbstractListModel {
+    class ServersModel final : public QAbstractListModel {
         Q_OBJECT
+
     public:
         explicit ServersModel(QObject* parent = nullptr);
 

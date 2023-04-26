@@ -14,6 +14,7 @@ namespace tremotesf {
 
     class SystemColorsProvider : public QObject {
         Q_OBJECT
+
     public:
         static SystemColorsProvider* createInstance(QObject* parent = nullptr);
 

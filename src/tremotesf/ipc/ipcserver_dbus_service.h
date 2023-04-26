@@ -16,6 +16,7 @@ namespace tremotesf {
 
     class IpcDbusService final : public QObject {
         Q_OBJECT
+
     public:
         static constexpr auto desktopStartupIdField = "desktop-startup-id"_l1;
         static constexpr auto torrentHashField = "torrent-hash"_l1;

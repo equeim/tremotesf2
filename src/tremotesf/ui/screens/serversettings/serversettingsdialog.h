@@ -20,7 +20,7 @@ namespace tremotesf {
     class RemoteDirectorySelectionWidget;
     class Rpc;
 
-    class ServerSettingsDialog : public QDialog {
+    class ServerSettingsDialog final : public QDialog {
         Q_OBJECT
 
     public:

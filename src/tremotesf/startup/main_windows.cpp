@@ -42,8 +42,9 @@ namespace tremotesf {
             std::abort();
         }
 
-        class WindowsStyle : public QProxyStyle {
+        class WindowsStyle final : public QProxyStyle {
             Q_OBJECT
+
         public:
             static thread_local bool drawingMenuItem;
 
@@ -64,7 +65,8 @@ namespace tremotesf {
 
         thread_local bool WindowsStyle::drawingMenuItem = false;
 
-        class SvgIconEngine : public RecoloringSvgIconEngine {
+        class SvgIconEngine final : public RecoloringSvgIconEngine {
+
         public:
             QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override {
                 // QFusionStyle passes QIcon::Active for selected menu items, but KIconEngine expects QIcon::Selected
@@ -75,7 +77,7 @@ namespace tremotesf {
             }
         };
 
-        class SvgIconEnginePlugin : public QIconEnginePlugin {
+        class SvgIconEnginePlugin final : public QIconEnginePlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QIconEngineFactoryInterface" FILE "svgiconengineplugin.json")
 

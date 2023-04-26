@@ -60,7 +60,7 @@ namespace tremotesf {
         }
     }
 
-    class MountedDirectoriesWidget : public QTableWidget {
+    class MountedDirectoriesWidget final : public QTableWidget {
         Q_OBJECT
 
     public:

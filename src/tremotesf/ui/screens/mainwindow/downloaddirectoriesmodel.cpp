@@ -74,10 +74,11 @@ namespace tremotesf {
         }
     }
 
-    class DownloadDirectoriesModelUpdater : public ModelListUpdater<
-                                                DownloadDirectoriesModel,
-                                                DownloadDirectoriesModel::DirectoryItem,
-                                                std::vector<DownloadDirectoriesModel::DirectoryItem>> {
+    class DownloadDirectoriesModelUpdater final : public ModelListUpdater<
+                                                      DownloadDirectoriesModel,
+                                                      DownloadDirectoriesModel::DirectoryItem,
+                                                      std::vector<DownloadDirectoriesModel::DirectoryItem>> {
+
     public:
         inline explicit DownloadDirectoriesModelUpdater(DownloadDirectoriesModel& model) : ModelListUpdater(model) {}
 

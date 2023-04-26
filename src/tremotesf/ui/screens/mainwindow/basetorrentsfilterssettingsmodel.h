@@ -13,6 +13,7 @@ namespace tremotesf {
 
     class BaseTorrentsFiltersSettingsModel : public QAbstractListModel {
         Q_OBJECT
+
     public:
         inline explicit BaseTorrentsFiltersSettingsModel(QObject* parent = nullptr) : QAbstractListModel(parent){};
 

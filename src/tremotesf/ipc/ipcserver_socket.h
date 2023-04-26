@@ -9,6 +9,8 @@
 
 namespace tremotesf {
     class IpcServerSocket final : public IpcServer {
+        Q_OBJECT
+
     public:
         static QString socketName();
         explicit IpcServerSocket(QObject* parent = nullptr);

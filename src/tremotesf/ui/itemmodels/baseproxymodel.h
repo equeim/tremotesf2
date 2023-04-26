@@ -12,6 +12,7 @@
 namespace tremotesf {
     class BaseProxyModel : public QSortFilterProxyModel {
         Q_OBJECT
+
     public:
         explicit BaseProxyModel(
             QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr

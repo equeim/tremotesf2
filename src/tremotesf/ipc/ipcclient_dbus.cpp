@@ -28,7 +28,10 @@ namespace tremotesf {
     }
 
     class IpcClientDbus final : public IpcClient {
+
     public:
+        IpcClientDbus() = default;
+
         [[nodiscard]] bool isConnected() const override { return mInterface.isValid(); }
 
         void activateWindow() override {

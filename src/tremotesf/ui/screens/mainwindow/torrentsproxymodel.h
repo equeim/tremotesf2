@@ -14,8 +14,9 @@ namespace libtremotesf {
 namespace tremotesf {
     class TorrentsModel;
 
-    class TorrentsProxyModel : public BaseProxyModel {
+    class TorrentsProxyModel final : public BaseProxyModel {
         Q_OBJECT
+
     public:
         enum StatusFilter { All, Active, Downloading, Seeding, Paused, Checking, Errored, StatusFilterCount };
         Q_ENUM(StatusFilter)

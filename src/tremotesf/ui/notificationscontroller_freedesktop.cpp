@@ -18,7 +18,8 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 
 namespace tremotesf {
     namespace {
-        class FreedesktopNotificationsController : public NotificationsController {
+        class FreedesktopNotificationsController final : public NotificationsController {
+
         public:
             explicit FreedesktopNotificationsController(QSystemTrayIcon* trayIcon, QObject* parent = nullptr)
                 : NotificationsController(trayIcon, parent) {

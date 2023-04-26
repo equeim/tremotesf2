@@ -14,7 +14,7 @@ namespace tremotesf {
     class ServersModel;
     class BaseProxyModel;
 
-    class ConnectionSettingsDialog : public QDialog {
+    class ConnectionSettingsDialog final : public QDialog {
         Q_OBJECT
 
     public:
@@ -26,7 +26,6 @@ namespace tremotesf {
         void showEditDialogs();
         void removeServers();
 
-    private:
         KMessageWidget* mNoServersWidget;
         ServersModel* mModel;
         BaseProxyModel* mProxyModel;
