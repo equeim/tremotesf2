@@ -23,7 +23,7 @@ namespace tremotesf {
         explicit TorrentsProxyModel(
             TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
         );
-        ~TorrentsProxyModel();
+        ~TorrentsProxyModel() override;
 
         QString searchString() const;
         void setSearchString(const QString& string);
