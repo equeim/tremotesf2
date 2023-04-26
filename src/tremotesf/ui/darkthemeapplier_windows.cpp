@@ -126,9 +126,8 @@ namespace tremotesf {
                             return true;
                         case Settings::DarkThemeMode::Off:
                             return false;
-                        default:
-                            return false;
                         }
+                        throw std::logic_error("Unknown DarkThemeMode value");
                     }();
                     const auto useImmersiveDarkMode = static_cast<BOOL>(darkTheme);
                     try {
@@ -291,9 +290,8 @@ namespace tremotesf {
                     return true;
                 case Settings::DarkThemeMode::Off:
                     return false;
-                default:
-                    return false;
                 }
+                throw std::logic_error("Unknown DarkThemeMode value");
             }();
             const auto accentColors =
                 (SystemColorsProvider::isAccentColorsSupported() && settings->useSystemAccentColor())
