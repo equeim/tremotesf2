@@ -33,7 +33,7 @@ namespace tremotesf {
                     throw bencode::Error(
                         bencode::Error::Type::Parsing,
                         fmt::format(
-                            "Value of dictionary \"{}\" with key \"{}\" is not of {} type",
+                            R"(Value of dictionary "{}" with key "{}" is not of {} type)",
                             dictName,
                             key,
                             bencode::getValueTypeName<Expected>()
@@ -52,7 +52,7 @@ namespace tremotesf {
             }
             throw bencode::Error(
                 bencode::Error::Type::Parsing,
-                fmt::format("Dictionary \"{}\" does not contain value with key \"{}\"", dictName, key)
+                fmt::format(R"(Dictionary "{}" does not contain value with key "{}")", dictName, key)
             );
         }
 

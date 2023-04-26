@@ -69,13 +69,13 @@ namespace tremotesf::desktoputils {
     namespace {
         QRegularExpression urlRegex() {
             constexpr auto protocol = "(?:(?:[a-z]+:)?//)"_l1;
-            constexpr auto host = "(?:(?:[a-z\\x{00a1}-\\x{ffff0}-9][-_]*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)"_l1;
-            constexpr auto domain = "(?:\\.(?:[a-z\\x{00a1}-\\x{ffff0}-9]-*)*[a-z\\x{00a1}-\\x{ffff0}-9]+)*"_l1;
-            constexpr auto tld = "(?:\\.(?:[a-z\\x{00a1}-\\x{ffff}]{2,}))\\.?"_l1;
-            constexpr auto port = "(?::\\d{2,5})?"_l1;
-            constexpr auto path = "(?:[/?#][^\\s\"\\)\']*)?"_l1;
+            constexpr auto host = R"((?:(?:[a-z\x{00a1}-\x{ffff0}-9][-_]*)*[a-z\x{00a1}-\x{ffff0}-9]+))";
+            constexpr auto domain = R"((?:\.(?:[a-z\x{00a1}-\x{ffff0}-9]-*)*[a-z\x{00a1}-\x{ffff0}-9]+)*)";
+            constexpr auto tld = R"((?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,}))\.?)";
+            constexpr auto port = R"((?::\d{2,5})?)";
+            constexpr auto path = R"((?:[/?#][^\s"\)']*)?)";
             const auto regex =
-                QString("(?:"_l1 % protocol % "|www\\.)(?:"_l1 % host % domain % tld % ")"_l1 % port % path);
+                QString("(?:"_l1 % protocol % R"(|www\.)(?:)" % host % domain % tld % ")"_l1 % port % path);
             return QRegularExpression(regex, QRegularExpression::CaseInsensitiveOption);
         }
     }
