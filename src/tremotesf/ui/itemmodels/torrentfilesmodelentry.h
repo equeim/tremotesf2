@@ -30,7 +30,7 @@ namespace tremotesf {
 
         TorrentFilesModelEntry() = default;
         TorrentFilesModelEntry(const TorrentFilesModelEntry& other) = delete;
-        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
+        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, QString name);
         virtual ~TorrentFilesModelEntry() = default;
 
         TorrentFilesModelEntry& operator=(const TorrentFilesModelEntry& other) = delete;

@@ -14,8 +14,8 @@ namespace tremotesf {
     class StringListModel : public QAbstractListModel {
         Q_OBJECT
     public:
-        explicit inline StringListModel(const QString& header = {}, QObject* parent = nullptr)
-            : QAbstractListModel(parent), mHeader(header){};
+        explicit inline StringListModel(QString header = {}, QObject* parent = nullptr)
+            : QAbstractListModel(parent), mHeader(std::move(header)){};
 
         inline QVariant data(const QModelIndex& index, int role) const override {
             return index.isValid() && role == Qt::DisplayRole ? mStringList.at(static_cast<size_t>(index.row()))
