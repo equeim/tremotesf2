@@ -32,8 +32,8 @@ namespace tremotesf {
     }
 
     bool BaseProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {
-        QVariant leftVariant(left.data(sortRole()));
-        QVariant rightVariant(right.data(sortRole()));
+        const QVariant leftVariant = left.data(sortRole());
+        const QVariant rightVariant = right.data(sortRole());
         if (leftVariant.userType() == QMetaType::QString) {
             return (mCollator.compare(leftVariant.toString(), rightVariant.toString()) < 0);
         }

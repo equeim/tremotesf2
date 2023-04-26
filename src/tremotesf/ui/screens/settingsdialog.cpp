@@ -206,7 +206,7 @@ namespace tremotesf {
             settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {
-                if (int index = darkThemeComboBox->currentIndex(); index != -1) {
+                if (const int index = darkThemeComboBox->currentIndex(); index != -1) {
                     settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
                 }
                 if (systemAccentColorCheckBox) {
