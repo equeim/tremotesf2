@@ -111,7 +111,7 @@ namespace tremotesf {
         inline List Value::takeList() { return takeValue<List>(); }
         inline Dictionary Value::takeDictionary() { return takeValue<Dictionary>(); }
 
-        class Error final : public std::runtime_error {
+        class Error : public std::runtime_error {
         public:
             enum class Type { Reading, Parsing };
 
