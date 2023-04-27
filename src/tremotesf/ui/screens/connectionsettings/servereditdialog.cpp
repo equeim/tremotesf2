@@ -7,7 +7,6 @@
 #include <array>
 #include <vector>
 
-#include <QAbstractButton>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -33,6 +32,8 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include "libtremotesf/fileutils.h"
+#include "libtremotesf/log.h"
 #include "libtremotesf/pathutils.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/target_os.h"
@@ -564,9 +565,14 @@ namespace tremotesf {
         fileDialog->setAttribute(Qt::WA_DeleteOnClose);
         fileDialog->setFileMode(QFileDialog::ExistingFile);
         fileDialog->setMimeTypeFilters({"application/x-pem-file"_l1});
+        fileDialog->setOption(QFileDialog::DontUseNativeDialog);
 
         QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
-            target->setPlainText(Utils::readTextFile(fileDialog->selectedFiles().first()));
+            try {
+                target->setPlainText(readFile(fileDialog->selectedFiles().first()));
+            } catch (const QFileError& e) {
+                logWarningWithException(e, "Failed to read certificate from file");
+            }
         });
 
         if constexpr (isTargetOsWindows) {

@@ -15,8 +15,8 @@
 
 #include <KTitleWidget>
 
+#include "libtremotesf/fileutils.h"
 #include "libtremotesf/literals.h"
-#include "tremotesf/utils.h"
 
 namespace tremotesf {
     AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent) {
@@ -56,7 +56,7 @@ namespace tremotesf {
         auto authorsPage = new QWidget(this);
         auto authorsPageLayout = new QVBoxLayout(authorsPage);
         auto authorsWidget = new QTextBrowser(this);
-        authorsWidget->setHtml(Utils::readTextResource(":/authors.html"));
+        authorsWidget->setHtml(readFile(":/authors.html"));
         authorsWidget->setOpenExternalLinks(true);
         authorsPageLayout->addWidget(authorsWidget);
         authorsPageLayout->addStretch();
@@ -64,13 +64,13 @@ namespace tremotesf {
         tabWidget->addTab(authorsPage, qApp->translate("tremotesf", "Authors"));
 
         auto translatorsWidget = new QTextBrowser(this);
-        translatorsWidget->setHtml(Utils::readTextResource(":/translators.html"));
+        translatorsWidget->setHtml(readFile(":/translators.html"));
         translatorsWidget->setOpenExternalLinks(true);
         //: "About" dialog's "Translators" tab title
         tabWidget->addTab(translatorsWidget, qApp->translate("tremotesf", "Translators"));
 
         auto licenseWidget = new QTextBrowser(this);
-        licenseWidget->setHtml(Utils::readTextResource(":/license.html"));
+        licenseWidget->setHtml(readFile(":/license.html"));
         licenseWidget->setOpenExternalLinks(true);
         //: "About" dialog's "License" tab title
         tabWidget->addTab(licenseWidget, qApp->translate("tremotesf", "License"));
