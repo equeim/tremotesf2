@@ -17,7 +17,7 @@
 
 #include <QString>
 
-class QIODevice;
+class QFile;
 
 namespace tremotesf {
     namespace bencode {
@@ -125,7 +125,7 @@ namespace tremotesf {
         };
 
         Value parse(const QString& filePath);
-        Value parse(QIODevice& device);
+        Value parse(QFile& device);
     }
 }
 

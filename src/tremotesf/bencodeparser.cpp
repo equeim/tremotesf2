@@ -79,10 +79,9 @@ namespace tremotesf::bencode {
     template QString Value::takeValue();
 
     namespace {
-        template<bool IsSequential>
         class Parser {
         public:
-            explicit Parser(QIODevice& device) : mDevice{device} {};
+            explicit Parser(QFile& file) : mFile{file} {};
 
             Value parse() { return parseValue(); }
 
@@ -115,7 +114,7 @@ namespace tremotesf::bencode {
 
             template<std::default_initializable Container, std::invocable<Container&> Append>
             Container parseContainer(Append&& append) {
-                const auto containerPos = mDevice.pos();
+                const auto containerPos = mFile.pos();
                 try {
                     skipByte();
                     Container container{};
@@ -139,14 +138,14 @@ namespace tremotesf::bencode {
             }
 
             ByteArray parseByteArray() {
-                const auto byteArrayPos = mDevice.pos();
+                const auto byteArrayPos = mFile.pos();
                 try {
                     const auto size = readIntegerUntilTerminator(byteArraySeparator);
                     if (size < 0) {
                         throw Error(Error::Type::Parsing, fmt::format("Incorrect byte array size {}", size));
                     }
                     ByteArray byteArray(static_cast<size_t>(size), 0);
-                    const auto read = mDevice.read(byteArray.data(), size);
+                    const auto read = mFile.read(byteArray.data(), size);
                     if (read != size) {
                         throwErrorFromIODevice(
                             fmt::format("Failed to read byte array with size {} (read {} bytes)", size, read)
@@ -161,7 +160,7 @@ namespace tremotesf::bencode {
             }
 
             Integer parseInteger() {
-                const auto integerPos = mDevice.pos();
+                const auto integerPos = mFile.pos();
                 try {
                     skipByte();
                     return readIntegerUntilTerminator(terminator);
@@ -173,7 +172,7 @@ namespace tremotesf::bencode {
             }
 
             Integer readIntegerUntilTerminator(char integerTerminator) {
-                const auto peeked = mDevice.peek(mIntegerBuffer.data(), integerBufferSize);
+                const auto peeked = mFile.peek(mIntegerBuffer.data(), integerBufferSize);
                 if (peeked <= 0) {
                     throwErrorFromIODevice("Failed to peek integer buffer");
                 }
@@ -205,7 +204,7 @@ namespace tremotesf::bencode {
 
             char peekByte() {
                 char byte{};
-                if (mDevice.peek(&byte, 1) != 1) {
+                if (mFile.peek(&byte, 1) != 1) {
                     throwErrorFromIODevice("Failed to peek 1 byte");
                 }
                 return byte;
@@ -214,22 +213,22 @@ namespace tremotesf::bencode {
             void skipByte() { return skip(1); }
 
             void skip(qint64 size) {
-                if (mDevice.skip(size) != size) {
+                if (mFile.skip(size) != size) {
                     throwErrorFromIODevice(fmt::format("Failed to skip {} bytes", size));
                 }
             }
 
             void throwErrorFromIODevice(std::string&& message) {
                 Error::Type type{};
-                if (mDevice.atEnd()) {
+                if (mFile.atEnd()) {
                     type = Error::Type::Parsing;
                 } else {
                     type = Error::Type::Reading;
                 }
-                throw Error(type, fmt::format("{}: {}", std::move(message), mDevice.errorString()));
+                throw Error(type, fmt::format("{}: {}", std::move(message), mFile.errorString()));
             }
 
-            QIODevice& mDevice;
+            QFile& mFile;
             std::array<char, integerBufferSize> mIntegerBuffer{};
         };
     }
@@ -242,10 +241,7 @@ namespace tremotesf::bencode {
         return parse(file);
     }
 
-    Value parse(QIODevice& device) {
-        if (device.isSequential()) {
-            return Parser<true>(device).parse();
-        }
-        return Parser<false>(device).parse();
+    Value parse(QFile& device) {
+        return Parser(device).parse();
     }
 }
