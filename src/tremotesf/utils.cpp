@@ -13,14 +13,11 @@
 #include <QFile>
 #include <QLocale>
 
-#include "libtremotesf/log.h"
+#include "libtremotesf/fileutils.h"
 
 namespace tremotesf {
     namespace {
-        enum class StringType {
-            Size,
-            Speed
-        };
+        enum class StringType { Size, Speed };
 
         struct ByteUnitStrings {
             QString (*size)();
@@ -98,16 +95,6 @@ namespace tremotesf {
             }
             return byteUnits[unit].string(stringType).arg(bytes_floating, 0, 'f', 1);
         }
-
-        template<std::invocable OnError>
-        QString readTextFileImpl(const QString& filePath, OnError&& onError) {
-            QFile file(filePath);
-            if (file.open(QIODevice::ReadOnly)) {
-                return file.readAll();
-            }
-            onError();
-            return {};
-        }
     }
 
     QString Utils::formatByteSize(long long size) { return formatBytes(size, StringType::Size); }
@@ -178,15 +165,5 @@ namespace tremotesf {
 
         //: Remaining time string. %L1 is seconds, "10 s"
         return qApp->translate("tremotesf", "%L1 s").arg(seconds);
-    }
-
-    QString Utils::readTextResource(const QString& resourcePath) {
-        return readTextFileImpl(resourcePath, [&] {
-            throw std::runtime_error(fmt::format("Failed to read resource with path '{}'", resourcePath));
-        });
-    }
-
-    QString Utils::readTextFile(const QString& filePath) {
-        return readTextFileImpl(filePath, [&] { logWarning("Failed to read file with path '{}'", filePath); });
     }
 }

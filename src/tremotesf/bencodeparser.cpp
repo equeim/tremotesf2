@@ -13,6 +13,7 @@
 #include <QFile>
 #include <QString>
 
+#include "libtremotesf/fileutils.h"
 #include "libtremotesf/formatters.h"
 
 namespace tremotesf::bencode {
@@ -112,8 +113,8 @@ namespace tremotesf::bencode {
                 return parseContainer<List>([&](List& list) { list.push_back(parseValue()); });
             }
 
-            template<std::default_initializable Container, std::invocable<Container&> Append>
-            Container parseContainer(Append&& append) {
+            template<std::default_initializable Container, std::invocable<Container&> ParseNextElement>
+            Container parseContainer(ParseNextElement&& parseNextElement) {
                 const auto containerPos = mFile.pos();
                 try {
                     skipByte();
@@ -123,7 +124,7 @@ namespace tremotesf::bencode {
                             skipByte();
                             return container;
                         }
-                        append(container);
+                        parseNextElement(container);
                     }
                 } catch (const Error& e) {
                     std::throw_with_nested(Error(
@@ -131,25 +132,25 @@ namespace tremotesf::bencode {
                         fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos)
                     ));
                 }
-                throw Error(
-                    Error::Type::Parsing,
-                    fmt::format("Failed to parse {} at position {}", getValueTypeName<Container>(), containerPos)
-                );
             }
 
             ByteArray parseByteArray() {
                 const auto byteArrayPos = mFile.pos();
                 try {
-                    const auto size = readIntegerUntilTerminator(byteArraySeparator);
+                    Integer size{};
+                    try {
+                        size = readIntegerUntilTerminator(byteArraySeparator);
+                    } catch (const Error& e) {
+                        std::throw_with_nested(Error(e.type(), "Failed to parse byte array size"));
+                    }
                     if (size < 0) {
                         throw Error(Error::Type::Parsing, fmt::format("Incorrect byte array size {}", size));
                     }
                     ByteArray byteArray(static_cast<size_t>(size), 0);
-                    const auto read = mFile.read(byteArray.data(), size);
-                    if (read != size) {
-                        throwErrorFromIODevice(
-                            fmt::format("Failed to read byte array with size {} (read {} bytes)", size, read)
-                        );
+                    try {
+                        readBytes(mFile, byteArray);
+                    } catch (const QFileError&) {
+                        std::throw_with_nested(Error(Error::Type::Reading, "Failed to read byte array data"));
                     }
                     return byteArray;
                 } catch (const Error& e) {
@@ -172,14 +173,17 @@ namespace tremotesf::bencode {
             }
 
             Integer readIntegerUntilTerminator(char integerTerminator) {
-                const auto peeked = mFile.peek(mIntegerBuffer.data(), integerBufferSize);
-                if (peeked <= 0) {
-                    throwErrorFromIODevice("Failed to peek integer buffer");
+                std::span<const char> peeked{};
+                try {
+                    peeked = peekBytes(mFile, mIntegerBuffer);
+                } catch (const QFileError&) {
+                    std::throw_with_nested(Error(Error::Type::Reading, "Failed to read integer buffer"));
                 }
+
                 Integer integer{};
 
                 const auto result =
-                    std::from_chars(std::to_address(mIntegerBuffer.begin()), std::to_address(mIntegerBuffer.end()), integer);
+                    std::from_chars(std::to_address(peeked.begin()), std::to_address(peeked.end()), integer);
                 if (result.ec != std::errc{}) {
                     throw Error(
                         Error::Type::Parsing,
@@ -191,41 +195,48 @@ namespace tremotesf::bencode {
                         )
                     );
                 }
+                if (result.ptr == std::to_address(peeked.end())) {
+                    throw Error(
+                        Error::Type::Parsing,
+                        fmt::format(
+                            "Didn't find integer terminator \"{}\", file is possibly truncated",
+                            integerTerminator
+                        )
+                    );
+                }
                 if (*result.ptr != integerTerminator) {
                     throw Error(
                         Error::Type::Parsing,
-                        fmt::format("Terminator doesn't match: expected {}, actual {}", integerTerminator, *result.ptr)
+                        fmt::format(
+                            "Integer terminator doesn't match: expected \"{}\", actual \"{}\"",
+                            integerTerminator,
+                            *result.ptr
+                        )
                     );
                 }
-                const auto terminatorIndex = result.ptr - mIntegerBuffer.data();
+                const auto terminatorIndex = result.ptr - peeked.data();
                 skip(terminatorIndex + 1);
                 return integer;
             }
 
             char peekByte() {
-                char byte{};
-                if (mFile.peek(&byte, 1) != 1) {
-                    throwErrorFromIODevice("Failed to peek 1 byte");
+                std::array<char, 1> buffer{};
+                try {
+                    [[maybe_unused]] const auto peeked = peekBytes(mFile, buffer);
+                } catch (const QFileError&) {
+                    std::throw_with_nested(Error(Error::Type::Reading, "Failed to peek byte"));
                 }
-                return byte;
+                return buffer[0];
             }
 
             void skipByte() { return skip(1); }
 
             void skip(qint64 size) {
-                if (mFile.skip(size) != size) {
-                    throwErrorFromIODevice(fmt::format("Failed to skip {} bytes", size));
+                try {
+                    skipBytes(mFile, size);
+                } catch (const QFileError&) {
+                    std::throw_with_nested(Error(Error::Type::Reading, fmt::format("Failed to skip {} bytes", size)));
                 }
-            }
-
-            void throwErrorFromIODevice(std::string&& message) {
-                Error::Type type{};
-                if (mFile.atEnd()) {
-                    type = Error::Type::Parsing;
-                } else {
-                    type = Error::Type::Reading;
-                }
-                throw Error(type, fmt::format("{}: {}", std::move(message), mFile.errorString()));
             }
 
             QFile& mFile;
@@ -235,13 +246,13 @@ namespace tremotesf::bencode {
 
     Value parse(const QString& filePath) {
         QFile file(filePath);
-        if (!file.open(QIODevice::ReadOnly)) {
-            throw Error(Error::Type::Reading, fmt::format("Failed to open file {}: {}", filePath, file.errorString()));
+        try {
+            openFile(file, QIODevice::ReadOnly);
+        } catch (const QFileError&) {
+            std::throw_with_nested(Error(Error::Type::Reading, "Failed to open file"));
         }
         return parse(file);
     }
 
-    Value parse(QFile& device) {
-        return Parser(device).parse();
-    }
+    Value parse(QFile& device) { return Parser(device).parse(); }
 }

@@ -19,11 +19,9 @@
 #include <QStandardPaths>
 #include <QString>
 
-#include <guiddef.h>
-#include <winrt/base.h>
-
 #include <windows.h>
 
+#include "libtremotesf/fileutils.h"
 #include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 #include "tremotesf/windowshelpers.h"
@@ -121,8 +119,10 @@ namespace tremotesf {
                 );
                 logDebug("FileLogger: creating log file {}", QDir::toNativeSeparators(filePath));
                 QFile file(filePath);
-                if (!file.open(QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Text | QIODevice::Unbuffered)) {
-                    logWarning("FileLogger: failed to create log file: {}", file.errorString());
+                try {
+                    openFile(file, QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Text | QIODevice::Unbuffered);
+                } catch (const QFileError& e) {
+                    logWarningWithException(e, "FileLogger: failed to create log file");
                     return;
                 }
                 logDebug("FileLogger: created log file");
@@ -143,8 +143,11 @@ namespace tremotesf {
             }
 
             void writeMessageToFile(const QString& message, QFile& file) {
-                file.write(message.toUtf8());
-                file.putChar('\n');
+                try {
+                    writeBytes(file, message.toUtf8());
+                    static constexpr std::array<char, 1> lineTerminator{'\n'};
+                    writeBytes(file, lineTerminator);
+                } catch ([[maybe_unused]] const QFileError& e) {}
             }
 
             MessageQueue mQueue{};
