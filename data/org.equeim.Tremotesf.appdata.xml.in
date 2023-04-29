@@ -50,6 +50,16 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2023-04-30" version="2.3.0">
+      <description>
+        <p>Fixed</p>
+        <ul>
+        <li>Crash on launch with some Qt styles</li>
+        <li>Mounted directories feature not working on Windows with UNC paths</li>
+        <li>Incorrect error message when adding torrent that already exists with some Transmission versions</li>
+        </ul>
+      </description>
+    </release>
     <release date="2023-03-28" version="2.2.0">
       <description>
         <p>Added</p>
