@@ -565,7 +565,6 @@ namespace tremotesf {
         fileDialog->setAttribute(Qt::WA_DeleteOnClose);
         fileDialog->setFileMode(QFileDialog::ExistingFile);
         fileDialog->setMimeTypeFilters({"application/x-pem-file"_l1});
-        fileDialog->setOption(QFileDialog::DontUseNativeDialog);
 
         QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
             try {
