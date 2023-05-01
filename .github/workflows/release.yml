@@ -46,9 +46,9 @@ jobs:
         shopt -s failglob
         cd ..
         files=(tremotesf_*.debian.* tremotesf_*.dsc tremotesf_*.orig.*)
-        archive_filename="$(basename tremotesf_*.dsc .dsc)-debian-source.tar.zst"
+        archive_filename="$(basename tremotesf_*.dsc .dsc)-debian-source.tar.gz"
         echo "Archiving ${files[@]} to $archive_filename"
-        tar --create --file "$archive_filename" "${files[@]}"
+        tar --create --gzip --file "$archive_filename" "${files[@]}"
         echo "Uploading artifact $archive_filename"
         gh release upload --repo '${{ github.repository }}' '${{ github.event.release.tag_name }}' "$archive_filename"
       env:
