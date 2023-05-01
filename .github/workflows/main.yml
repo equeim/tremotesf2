@@ -31,6 +31,9 @@ jobs:
     container: ${{ matrix.container-image }}
 
     steps:
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
     - name: Set packages install command for dnf
       if: startsWith(matrix.container-image, 'fedora') || startsWith(matrix.container-image, 'mageia')
       run: echo 'INSTALL_PACKAGES=dnf -y --setopt=install_weak_deps=False install' >> "$GITHUB_ENV"
@@ -39,7 +42,7 @@ jobs:
       if: startsWith(matrix.container-image, 'opensuse')
       run: echo 'INSTALL_PACKAGES=zypper --non-interactive in --no-recommends' >> "$GITHUB_ENV"
 
-    - name: Set up environment
+    - name: Install Git and rpm-build
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
 
     - name: Checkout
@@ -66,9 +69,6 @@ jobs:
         mkdir -p "$sourcedir"
         .github/workflows/make-source-archive.py --output-directory "$sourcedir" zstd
 
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
-
     - name: Build RPM
       run: rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb rpm/tremotesf.spec
 
@@ -82,7 +82,10 @@ jobs:
     container: ${{ matrix.container-image }}
 
     steps:
-    - name: Set up environment
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Install Git
       run: |
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git
 
@@ -116,13 +119,13 @@ jobs:
 
     runs-on: macos-latest
     steps:
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
-
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Start FreeBSD VM
       run: |
@@ -165,6 +168,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
     - name: Set up Flatpak
       run: |
         sudo add-apt-repository -y ppa:flatpak/stable
@@ -175,9 +181,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
-
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Build Tremotesf
       run: |
@@ -190,6 +193,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -218,9 +224,6 @@ jobs:
       shell: msys2 {0}
       run: |
           cppwinrt -input sdk -output /clang64/include
-
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Build with LLVM MinGW toolchain
       shell: msys2 {0}
