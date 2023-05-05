@@ -147,10 +147,15 @@ namespace tremotesf::bencode {
                         throw Error(Error::Type::Parsing, fmt::format("Incorrect byte array size {}", size));
                     }
                     ByteArray byteArray(static_cast<size_t>(size), 0);
-                    try {
-                        readBytes(mFile, byteArray);
-                    } catch (const QFileError&) {
-                        std::throw_with_nested(Error(Error::Type::Reading, "Failed to read byte array data"));
+                    if (size != 0) {
+                        try {
+                            readBytes(mFile, byteArray);
+                        } catch (const QFileError&) {
+                            std::throw_with_nested(Error(
+                                Error::Type::Reading,
+                                fmt::format("Failed to read byte array data with size {}", size)
+                            ));
+                        }
                     }
                     return byteArray;
                 } catch (const Error& e) {
