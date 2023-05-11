@@ -33,7 +33,7 @@ namespace tremotesf {
           //: Servers list placeholder
           mNoServersWidget(new KMessageWidget(qApp->translate("tremotesf", "No servers"), this)),
           mModel(new ServersModel(this)),
-          mProxyModel(new BaseProxyModel(mModel, Qt::DisplayRole, this)),
+          mProxyModel(new BaseProxyModel(mModel, Qt::DisplayRole, std::nullopt, this)),
           mServersView(new QListView(this)) {
         //: Dialog title
         setWindowTitle(qApp->translate("tremotesf", "Connection Settings"));

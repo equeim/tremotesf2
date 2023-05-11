@@ -15,7 +15,7 @@ namespace tremotesf {
 
     public:
         explicit TorrentFilesProxyModel(
-            BaseTorrentFilesModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
+            BaseTorrentFilesModel* sourceModel, int sortRole, int fallbackColumn, QObject* parent = nullptr
         );
 
     protected:

@@ -180,8 +180,7 @@ namespace tremotesf {
               new MainWindowViewModel(std::move(commandLineFiles), std::move(commandLineUrls), mRpc, ipcServer, this)
           ),
           mTorrentsModel(new TorrentsModel(mRpc, this)),
-          mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, static_cast<int>(TorrentsModel::Role::Sort), this)
-          ),
+          mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, this)),
           mSplitter(new QSplitter(this)),
           mSideBar(new MainWindowSideBar(mRpc, mTorrentsProxyModel)),
           mTorrentsView(new TorrentsView(mTorrentsProxyModel, this)),

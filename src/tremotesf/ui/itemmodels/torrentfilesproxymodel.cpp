@@ -7,8 +7,8 @@
 #include "tremotesf/ui/itemmodels/basetorrentfilesmodel.h"
 
 namespace tremotesf {
-    TorrentFilesProxyModel::TorrentFilesProxyModel(BaseTorrentFilesModel* sourceModel, int sortRole, QObject* parent)
-        : BaseProxyModel(sourceModel, sortRole, parent) {}
+    TorrentFilesProxyModel::TorrentFilesProxyModel(BaseTorrentFilesModel* sourceModel, int sortRole, int fallbackColumn, QObject* parent)
+        : BaseProxyModel(sourceModel, sortRole, fallbackColumn, parent) {}
 
     bool TorrentFilesProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {
         const bool leftIsDirectory = static_cast<TorrentFilesModelEntry*>(left.internalPointer())->isDirectory();

@@ -10,8 +10,13 @@
 #include "torrentsmodel.h"
 
 namespace tremotesf {
-    TorrentsProxyModel::TorrentsProxyModel(TorrentsModel* sourceModel, int sortRole, QObject* parent)
-        : BaseProxyModel(sourceModel, sortRole, parent),
+    TorrentsProxyModel::TorrentsProxyModel(TorrentsModel* sourceModel, QObject* parent)
+        : BaseProxyModel(
+              sourceModel,
+              static_cast<int>(TorrentsModel::Role::Sort),
+              static_cast<int>(TorrentsModel::Column::Name),
+              parent
+          ),
           mStatusFilterEnabled(Settings::instance()->isTorrentsStatusFilterEnabled()),
           mStatusFilter(Settings::instance()->torrentsStatusFilter()),
           mTrackerFilterEnabled(Settings::instance()->isTorrentsTrackerFilterEnabled()),
