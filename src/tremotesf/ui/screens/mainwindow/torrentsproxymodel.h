@@ -21,9 +21,7 @@ namespace tremotesf {
         enum StatusFilter { All, Active, Downloading, Seeding, Paused, Checking, Errored, StatusFilterCount };
         Q_ENUM(StatusFilter)
 
-        explicit TorrentsProxyModel(
-            TorrentsModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
-        );
+        explicit TorrentsProxyModel(TorrentsModel* sourceModel, QObject* parent = nullptr);
         ~TorrentsProxyModel() override;
         Q_DISABLE_COPY_MOVE(TorrentsProxyModel)
 

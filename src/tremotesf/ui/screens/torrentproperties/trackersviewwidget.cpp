@@ -53,7 +53,9 @@ namespace tremotesf {
           mTorrent(torrent),
           mRpc(rpc),
           mModel(new TrackersModel(torrent, this)),
-          mProxyModel(new BaseProxyModel(mModel, TrackersModel::SortRole, this)),
+          mProxyModel(new BaseProxyModel(
+              mModel, TrackersModel::SortRole, static_cast<int>(TrackersModel::Column::Announce), this
+          )),
           mTrackersView(new EnterEatingTreeView(this)) {
         auto layout = new QHBoxLayout(this);
 

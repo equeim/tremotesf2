@@ -32,7 +32,7 @@ namespace tremotesf {
         : BaseTreeView(parent),
           mLocalFile(true),
           mModel(model),
-          mProxyModel(new TorrentFilesProxyModel(mModel, LocalTorrentFilesModel::SortRole, this)),
+          mProxyModel(new TorrentFilesProxyModel(mModel, LocalTorrentFilesModel::SortRole, static_cast<int>(LocalTorrentFilesModel::Column::Name), this)),
           mRpc(rpc) {
         init();
         setItemDelegate(new CommonDelegate(this));
@@ -45,7 +45,7 @@ namespace tremotesf {
         : BaseTreeView(parent),
           mLocalFile(false),
           mModel(model),
-          mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, this)),
+          mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, static_cast<int>(TorrentFilesModel::Column::Name), this)),
           mRpc(rpc) {
         init();
         setItemDelegate(new CommonDelegate(

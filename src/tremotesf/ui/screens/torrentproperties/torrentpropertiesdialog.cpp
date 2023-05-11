@@ -219,7 +219,9 @@ namespace tremotesf {
             lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
 
             totalSizeLabel->setText(Utils::formatByteSize(mTorrent->data().totalSize));
-            locationLabel->setText(toNativeSeparators(mTorrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs));
+            locationLabel->setText(
+                toNativeSeparators(mTorrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs)
+            );
             creatorLabel->setText(mTorrent->data().creator);
             creationDateLabel->setText(mTorrent->data().creationDate.toLocalTime().toString());
             if (mTorrent->data().comment != commentTextEdit->toPlainText()) {
@@ -231,7 +233,8 @@ namespace tremotesf {
 
     void TorrentPropertiesDialog::setupPeersTab() {
         mPeersModel = new PeersModel(mTorrent, this);
-        auto peersProxyModel = new BaseProxyModel(mPeersModel, PeersModel::SortRole, this);
+        auto peersProxyModel =
+            new BaseProxyModel(mPeersModel, PeersModel::SortRole, static_cast<int>(PeersModel::Column::Address), this);
 
         auto peersTab = new QWidget(this);
         auto peersTabLayout = new QVBoxLayout(peersTab);
@@ -252,7 +255,7 @@ namespace tremotesf {
     void TorrentPropertiesDialog::setupWebSeedersTab() {
         //: Web seeders list column title
         mWebSeedersModel = new StringListModel(qApp->translate("tremotesf", "Web seeder"), this);
-        auto webSeedersProxyModel = new BaseProxyModel(mWebSeedersModel, Qt::DisplayRole, this);
+        auto webSeedersProxyModel = new BaseProxyModel(mWebSeedersModel, Qt::DisplayRole, std::nullopt, this);
 
         auto webSeedersTab = new QWidget(this);
         auto webSeedersTabLayout = new QVBoxLayout(webSeedersTab);

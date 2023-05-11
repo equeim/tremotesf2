@@ -5,8 +5,10 @@
 #include "baseproxymodel.h"
 
 namespace tremotesf {
-    BaseProxyModel::BaseProxyModel(QAbstractItemModel* sourceModel, int sortRole, QObject* parent)
-        : QSortFilterProxyModel(parent) {
+    BaseProxyModel::BaseProxyModel(
+        QAbstractItemModel* sourceModel, int sortRole, std::optional<int> fallbackColumn, QObject* parent
+    )
+        : QSortFilterProxyModel(parent), mFallbackColumn(fallbackColumn) {
         setSourceModel(sourceModel);
         QSortFilterProxyModel::setSortRole(sortRole);
         mCollator.setCaseSensitivity(Qt::CaseInsensitive);
@@ -31,12 +33,27 @@ namespace tremotesf {
         emit sortOrderChanged();
     }
 
-    bool BaseProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {
-        const QVariant leftVariant = left.data(sortRole());
-        const QVariant rightVariant = right.data(sortRole());
-        if (leftVariant.userType() == QMetaType::QString) {
-            return (mCollator.compare(leftVariant.toString(), rightVariant.toString()) < 0);
+    bool BaseProxyModel::lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const {
+        std::partial_ordering ord = compare(source_left, source_right);
+        if (ord == std::partial_ordering::equivalent && mFallbackColumn.has_value() && source_left.column() != *mFallbackColumn) {
+            ord = compare(source_left.siblingAtColumn(*mFallbackColumn), source_right.siblingAtColumn(*mFallbackColumn));
         }
-        return QSortFilterProxyModel::lessThan(left, right);
+        return ord == std::partial_ordering::less;
+    }
+
+    std::partial_ordering BaseProxyModel::compare(const QModelIndex& source_left, const QModelIndex& source_right) const {
+        const auto role = sortRole();
+        const QVariant leftData = source_left.data(role);
+        const QVariant rightData = source_right.data(role);
+        if (leftData.userType() == QMetaType::QString && rightData.userType() == QMetaType::QString) {
+            return mCollator.compare(leftData.toString(), rightData.toString()) <=> 0;
+        }
+        if (QSortFilterProxyModel::lessThan(source_left, source_right)) {
+            return std::partial_ordering::less;
+        }
+        if (leftData.userType() == rightData.userType() && leftData == rightData) {
+            return std::partial_ordering::equivalent;
+        }
+        return std::partial_ordering::unordered;
     }
 }

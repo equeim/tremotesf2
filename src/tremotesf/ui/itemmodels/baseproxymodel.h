@@ -5,6 +5,11 @@
 #ifndef TREMOTESF_BASEPROXYMODEL_H
 #define TREMOTESF_BASEPROXYMODEL_H
 
+#ifndef Q_MOC_RUN // compare includes concepts and moc can't handle it :/
+#    include <compare>
+#endif
+#include <optional>
+
 #include <QCollator>
 #include <QModelIndexList>
 #include <QSortFilterProxyModel>
@@ -15,7 +20,10 @@ namespace tremotesf {
 
     public:
         explicit BaseProxyModel(
-            QAbstractItemModel* sourceModel = nullptr, int sortRole = Qt::DisplayRole, QObject* parent = nullptr
+            QAbstractItemModel* sourceModel = nullptr,
+            int sortRole = Qt::DisplayRole,
+            std::optional<int> fallbackColumn = std::nullopt,
+            QObject* parent = nullptr
         );
 
         QModelIndex sourceIndex(const QModelIndex& proxyIndex) const;
@@ -25,10 +33,13 @@ namespace tremotesf {
         void sort(int column = 0, Qt::SortOrder order = Qt::AscendingOrder) override;
 
     protected:
-        bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+        bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
     private:
-        QCollator mCollator;
+        std::partial_ordering compare(const QModelIndex& source_left, const QModelIndex& source_right) const;
+
+        std::optional<int> mFallbackColumn{};
+        QCollator mCollator{};
 
     signals:
         void sortOrderChanged();
