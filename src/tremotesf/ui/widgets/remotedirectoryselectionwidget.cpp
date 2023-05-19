@@ -4,53 +4,60 @@
 
 #include "remotedirectoryselectionwidget.h"
 
-#include "libtremotesf/pathutils.h"
-#include "libtremotesf/serversettings.h"
-#include "libtremotesf/stdutils.h"
-#include "libtremotesf/torrent.h"
+#include <QCoreApplication>
+#include <QFileDialog>
+#include <QHBoxLayout>
+#include <QIcon>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QMessageBox>
+
+#include "libtremotesf/literals.h"
+#include "libtremotesf/target_os.h"
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/rpc/servers.h"
-#include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
-
-#include <QCollator>
-#include <QComboBox>
-#include <QCoreApplication>
-#include <QMessageBox>
-#include <QPushButton>
 
 namespace tremotesf {
     RemoteDirectorySelectionWidgetViewModel::RemoteDirectorySelectionWidgetViewModel(
-        const QString& path, const Rpc* rpc, QObject* parent
+        QString path, const Rpc* rpc, QObject* parent
     )
-        : DirectorySelectionWidgetViewModel({}, {}, parent),
+        : QObject(parent),
           mRpc(rpc),
+          mPath(std::move(path)),
           mMode(
               rpc->isLocal()
                   ? Mode::Local
                   : (Servers::instance()->currentServerHasMountedDirectories() ? Mode::RemoteMounted : Mode::Remote)
-          ) {
-        updatePath(path);
-    }
+          ) {}
 
-    bool RemoteDirectorySelectionWidgetViewModel::enableFileDialog() const { return mMode != Mode::Remote; }
-
-    QString RemoteDirectorySelectionWidgetViewModel::fileDialogDirectory() const {
+    QString RemoteDirectorySelectionWidgetViewModel::fileDialogDirectory() {
         if (mMode == Mode::RemoteMounted) {
             return Servers::instance()->fromRemoteToLocalDirectory(mPath, mRpc->serverSettings());
         }
         return mPath;
     }
 
-    void RemoteDirectorySelectionWidgetViewModel::onFileDialogAccepted(const QString& path) {
+    void RemoteDirectorySelectionWidgetViewModel::updatePathProgrammatically(QString path) {
+        auto displayPath = toNativeSeparators(path);
+        updatePathImpl(std::move(path), std::move(displayPath));
+    }
+
+    void RemoteDirectorySelectionWidgetViewModel::onPathEditedByUser(const QString& text) {
+        auto displayPath = text.trimmed();
+        auto path = normalizePath(displayPath);
+        updatePathImpl(std::move(path), std::move(displayPath));
+    }
+
+    void RemoteDirectorySelectionWidgetViewModel::onFileDialogAccepted(QString path) {
         if (mMode != Mode::RemoteMounted) {
-            DirectorySelectionWidgetViewModel::onFileDialogAccepted(path);
+            updatePathProgrammatically(std::move(path));
             return;
         }
-        const QString remoteDirectory = Servers::instance()->fromLocalToRemoteDirectory(path, mRpc->serverSettings());
+        auto remoteDirectory = Servers::instance()->fromLocalToRemoteDirectory(path, mRpc->serverSettings());
         if (remoteDirectory.isEmpty()) {
             emit showMountedDirectoryError();
         } else {
-            DirectorySelectionWidgetViewModel::onFileDialogAccepted(remoteDirectory);
+            updatePathProgrammatically(std::move(remoteDirectory));
         }
     }
 
@@ -62,13 +69,53 @@ namespace tremotesf {
         return tremotesf::toNativeSeparators(path, mRpc->serverSettings()->data().pathOs);
     }
 
-    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(const QString& path, const Rpc* rpc, QWidget* parent)
-        : RemoteDirectorySelectionWidget(new RemoteDirectorySelectionWidgetViewModel(path, rpc), parent) {}
+    void RemoteDirectorySelectionWidgetViewModel::updatePathImpl(QString path, QString displayPath) {
+        if (path != mPath) {
+            mPath = std::move(path);
+            mDisplayPath = std::move(displayPath);
+            emit pathChanged();
+        }
+    }
 
-    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(
-        RemoteDirectorySelectionWidgetViewModel* viewModel, QWidget* parent
-    )
-        : DirectorySelectionWidget(viewModel, parent) {
+    RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(QWidget* parent) : QWidget(parent) {}
+
+    void RemoteDirectorySelectionWidget::setup(QString path, const Rpc* rpc) {
+        auto layout = new QHBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+
+        mTextField = createTextField();
+        layout->addWidget(mTextField, 1);
+
+        mSelectDirectoryButton = new QPushButton(QIcon::fromTheme("document-open"_l1), QString(), this);
+        layout->addWidget(mSelectDirectoryButton);
+
+        mViewModel = createViewModel(std::move(path), rpc);
+
+        mSelectDirectoryButton->setEnabled(mViewModel->enableFileDialog());
+        if (mViewModel->enableFileDialog()) {
+            QObject::connect(
+                mSelectDirectoryButton,
+                &QPushButton::clicked,
+                this,
+                &RemoteDirectorySelectionWidget::showFileDialog
+            );
+        }
+
+        const auto lineEdit = lineEditFromTextField();
+        const auto updateLineEdit = [=, this]() { lineEdit->setText(mViewModel->displayPath()); };
+        updateLineEdit();
+        QObject::connect(mViewModel, &RemoteDirectorySelectionWidgetViewModel::pathChanged, this, updateLineEdit);
+        QObject::connect(
+            mViewModel,
+            &RemoteDirectorySelectionWidgetViewModel::pathChanged,
+            this,
+            &RemoteDirectorySelectionWidget::pathChanged
+        );
+
+        QObject::connect(lineEdit, &QLineEdit::textEdited, this, [=, this](const auto& text) {
+            mViewModel->onPathEditedByUser(text);
+        });
+
         QObject::connect(
             static_cast<RemoteDirectorySelectionWidgetViewModel*>(mViewModel),
             &RemoteDirectorySelectionWidgetViewModel::showMountedDirectoryError,
@@ -84,70 +131,34 @@ namespace tremotesf {
         );
     }
 
-    std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>
-    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createComboBoxItems() const {
-        QStringList directories = Servers::instance()->currentServerLastDownloadDirectories(mRpc->serverSettings());
-        directories.reserve(directories.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 2);
-        for (const auto& torrent : mRpc->torrents()) {
-            directories.push_back(torrent->data().downloadDirectory);
-        }
-        if (!mPath.isEmpty()) {
-            directories.push_back(mPath);
-        }
-        directories.push_back(mRpc->serverSettings()->data().downloadDirectory);
+    RemoteDirectorySelectionWidgetViewModel*
+    RemoteDirectorySelectionWidget::createViewModel(QString path, const Rpc* rpc) {
+        return new RemoteDirectorySelectionWidgetViewModel(std::move(path), rpc, this);
+    }
 
-        directories.removeDuplicates();
+    QWidget* RemoteDirectorySelectionWidget::createTextField() { return new QLineEdit(this); }
 
-        QCollator collator{};
-        collator.setCaseSensitivity(Qt::CaseInsensitive);
-        collator.setNumericMode(true);
-        std::sort(directories.begin(), directories.end(), [&collator](const auto& first, const auto& second) {
-            return collator.compare(first, second) < 0;
+    QLineEdit* RemoteDirectorySelectionWidget::lineEditFromTextField() { return qobject_cast<QLineEdit*>(mTextField); }
+
+    void RemoteDirectorySelectionWidget::showFileDialog() {
+        auto dialog = new QFileDialog(
+            this,
+            //: Directory chooser dialog title
+            qApp->translate("tremotesf", "Select Directory"),
+            mViewModel->fileDialogDirectory()
+        );
+        dialog->setFileMode(QFileDialog::Directory);
+        dialog->setOptions(QFileDialog::ShowDirsOnly);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+        QObject::connect(dialog, &QFileDialog::accepted, this, [=, this] {
+            mViewModel->onFileDialogAccepted(dialog->selectedFiles().constFirst());
         });
 
-        return createTransforming<std::vector<DirectorySelectionWidgetViewModel::ComboBoxItem>>(
-            std::move(directories),
-            [=, this](QString&& dir) {
-                QString display = toNativeSeparators(dir);
-                return DirectorySelectionWidgetViewModel::ComboBoxItem{
-                    .path = std::move(dir),
-                    .displayPath = std::move(display)};
-            }
-        );
-    }
-
-    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::
-        TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(const QString& path, const Rpc* rpc, QObject* parent)
-        : RemoteDirectorySelectionWidgetViewModel(path, rpc, parent) {}
-
-    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories() {
-        auto paths = createTransforming<QStringList>(mComboBoxItems, [](const auto& item) { return item.path; });
-        if (!paths.contains(mPath)) {
-            paths.push_back(mPath);
+        if constexpr (isTargetOsWindows) {
+            dialog->open();
+        } else {
+            dialog->show();
         }
-        auto servers = Servers::instance();
-        servers->setCurrentServerLastDownloadDirectories(paths);
-        servers->setCurrentServerLastDownloadDirectory(mPath);
-    }
-
-    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updateComboBoxItems() {
-        auto items = createComboBoxItems();
-        if (items != mComboBoxItems) {
-            mComboBoxItems = std::move(items);
-            emit comboBoxItemsChanged();
-        }
-    }
-
-    TorrentDownloadDirectoryDirectorySelectionWidget::TorrentDownloadDirectoryDirectorySelectionWidget(
-        const QString& path, const Rpc* rpc, QWidget* parent
-    )
-        : RemoteDirectorySelectionWidget(
-              new TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(path, rpc), parent
-          ) {}
-
-    void TorrentDownloadDirectoryDirectorySelectionWidget::update(const QString& path) {
-        auto model = static_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel);
-        model->updateComboBoxItems();
-        model->updatePath(path);
     }
 }

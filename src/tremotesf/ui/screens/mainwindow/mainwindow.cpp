@@ -66,7 +66,7 @@
 #include "tremotesf/ui/screens/serverstatsdialog.h"
 #include "tremotesf/ui/screens/settingsdialog.h"
 #include "tremotesf/ui/screens/torrentproperties/torrentpropertiesdialog.h"
-#include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
+#include "tremotesf/ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "tremotesf/ui/widgets/torrentfilesview.h"
 
 #include "torrentsmodel.h"
@@ -84,7 +84,7 @@ namespace tremotesf {
         public:
             explicit SetLocationDialog(const QString& downloadDirectory, Rpc* rpc, QWidget* parent = nullptr)
                 : QDialog(parent),
-                  mDirectoryWidget(new TorrentDownloadDirectoryDirectorySelectionWidget(downloadDirectory, rpc, this)),
+                  mDirectoryWidget(new TorrentDownloadDirectoryDirectorySelectionWidget(this)),
                   mMoveFilesCheckBox(
                       //: Check box label
                       new QCheckBox(qApp->translate("tremotesf", "Move files from current directory"), this)
@@ -99,6 +99,7 @@ namespace tremotesf {
                 label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 layout->addWidget(label);
 
+                mDirectoryWidget->setup(downloadDirectory, rpc);
                 mDirectoryWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 layout->addWidget(mDirectoryWidget);
 
@@ -112,7 +113,7 @@ namespace tremotesf {
                 });
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
 
-                QObject::connect(mDirectoryWidget, &DirectorySelectionWidget::pathChanged, this, [=, this] {
+                QObject::connect(mDirectoryWidget, &RemoteDirectorySelectionWidget::pathChanged, this, [=, this] {
                     dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(!mDirectoryWidget->path().isEmpty());
                 });
 

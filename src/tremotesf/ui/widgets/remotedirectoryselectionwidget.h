@@ -2,89 +2,80 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef TREMOTESF_REMOTEDIRECTORYSELECTIONWIDGET_H
-#define TREMOTESF_REMOTEDIRECTORYSELECTIONWIDGET_H
+#ifndef TREMOTESF_FILESELECTIONWIDGET_H
+#define TREMOTESF_FILESELECTIONWIDGET_H
 
-#include "directoryselectionwidget.h"
+#include <vector>
+#include <QWidget>
+
+#include "libtremotesf/pathutils.h"
+
+class QLineEdit;
+class QPushButton;
 
 namespace tremotesf {
     class Rpc;
 
-    class RemoteDirectorySelectionWidgetViewModel : public DirectorySelectionWidgetViewModel {
+    class RemoteDirectorySelectionWidgetViewModel : public QObject {
         Q_OBJECT
 
     public:
-        explicit RemoteDirectorySelectionWidgetViewModel(
-            const QString& path, const Rpc* rpc, QObject* parent = nullptr
-        );
+        explicit RemoteDirectorySelectionWidgetViewModel(QString path, const Rpc* rpc, QObject* parent = nullptr);
 
-        [[nodiscard]] bool enableFileDialog() const override;
-        [[nodiscard]] QString fileDialogDirectory() const override;
-        void onFileDialogAccepted(const QString& path) override;
+        [[nodiscard]] QString path() const { return mPath; };
+        [[nodiscard]] QString displayPath() const { return mDisplayPath; };
 
-    signals:
-        void showMountedDirectoryError();
+        [[nodiscard]] virtual bool enableFileDialog() const { return mMode != Mode::Remote; }
+        [[nodiscard]] virtual QString fileDialogDirectory();
+
+        void updatePathProgrammatically(QString path);
+        void onPathEditedByUser(const QString& text);
+        void onFileDialogAccepted(QString path);
 
     protected:
-        [[nodiscard]] QString normalizePath(const QString& path) const override;
-        [[nodiscard]] QString toNativeSeparators(const QString& path) const override;
+        [[nodiscard]] QString normalizePath(const QString& path) const;
+        [[nodiscard]] QString toNativeSeparators(const QString& path) const;
+
+        virtual void updatePathImpl(QString path, QString displayPath);
 
         const Rpc* mRpc{};
 
+        QString mPath{};
+        QString mDisplayPath{toNativeSeparators(mPath)};
+
         enum class Mode { Local, RemoteMounted, Remote };
         Mode mMode{};
+
+    signals:
+        void pathChanged();
+        void showMountedDirectoryError();
     };
 
-    class RemoteDirectorySelectionWidget : public DirectorySelectionWidget {
+    class RemoteDirectorySelectionWidget : public QWidget {
         Q_OBJECT
 
     public:
-        explicit RemoteDirectorySelectionWidget(const QString& path, const Rpc* rpc, QWidget* parent = nullptr);
+        explicit RemoteDirectorySelectionWidget(QWidget* parent = nullptr);
 
-        void updatePath(const QString& path) {
-            static_cast<RemoteDirectorySelectionWidgetViewModel*>(mViewModel)->updatePath(path);
-        }
+        virtual void setup(QString path, const Rpc* rpc);
+        [[nodiscard]] QString path() const { return mViewModel->path(); }
+        void updatePath(QString path) { mViewModel->updatePathProgrammatically(std::move(path)); }
 
     protected:
-        explicit RemoteDirectorySelectionWidget(
-            RemoteDirectorySelectionWidgetViewModel* viewModel, QWidget* parent = nullptr
-        );
-    };
+        virtual QWidget* createTextField();
+        virtual QLineEdit* lineEditFromTextField();
+        virtual RemoteDirectorySelectionWidgetViewModel* createViewModel(QString path, const Rpc* rpc);
 
-    class TorrentDownloadDirectoryDirectorySelectionWidgetViewModel final : public RemoteDirectorySelectionWidgetViewModel {
-        Q_OBJECT
-
-    public:
-        explicit TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(
-            const QString& path, const Rpc* rpc, QObject* parent = nullptr
-        );
-
-        [[nodiscard]] bool useComboBox() const override { return true; }
-        [[nodiscard]] std::vector<ComboBoxItem> comboBoxItems() const override { return mComboBoxItems; };
-
-        void saveDirectories();
-        void updateComboBoxItems();
+        RemoteDirectorySelectionWidgetViewModel* mViewModel{};
+        QWidget* mTextField{};
+        QPushButton* mSelectDirectoryButton{};
 
     private:
-        [[nodiscard]] std::vector<ComboBoxItem> createComboBoxItems() const;
+        void showFileDialog();
 
-        std::vector<ComboBoxItem> mComboBoxItems{createComboBoxItems()};
-    };
-
-    class TorrentDownloadDirectoryDirectorySelectionWidget final : public RemoteDirectorySelectionWidget {
-        Q_OBJECT
-
-    public:
-        TorrentDownloadDirectoryDirectorySelectionWidget(
-            const QString& path, const Rpc* rpc, QWidget* parent = nullptr
-        );
-
-        void update(const QString& path);
-
-        void saveDirectories() {
-            static_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel)->saveDirectories();
-        }
+    signals:
+        void pathChanged();
     };
 }
 
-#endif // TREMOTESF_REMOTEDIRECTORYSELECTIONWIDGET_H
+#endif // TREMOTESF_FILESELECTIONWIDGET_H
