@@ -30,7 +30,7 @@
 #include "libtremotesf/serversettings.h"
 #include "libtremotesf/stdutils.h"
 #include "tremotesf/rpc/trpc.h"
-#include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
+#include "tremotesf/ui/widgets/torrentremotedirectoryselectionwidget.h"
 
 namespace tremotesf {
     namespace {
@@ -165,7 +165,8 @@ namespace tremotesf {
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
 
-        mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(QString(), mRpc, this);
+        mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(this);
+        mDownloadDirectoryWidget->setup({}, mRpc);
         downloadingPageLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
         //: Check box label
@@ -188,13 +189,14 @@ namespace tremotesf {
 
         auto incompleteDirectoryWidgetLayout = new QHBoxLayout();
         downloadingPageLayout->addRow(incompleteDirectoryWidgetLayout);
-        mIncompleteDirectoryWidget = new RemoteDirectorySelectionWidget(QString(), mRpc, this);
+        mIncompleteDirectoryWidget = new RemoteDirectorySelectionWidget(this);
+        mIncompleteDirectoryWidget->setup({}, mRpc);
         mIncompleteDirectoryWidget->setEnabled(false);
         QObject::connect(
             mIncompleteDirectoryCheckBox,
             &QCheckBox::toggled,
             mIncompleteDirectoryWidget,
-            &DirectorySelectionWidget::setEnabled
+            &RemoteDirectorySelectionWidget::setEnabled
         );
         //downloadingPageLayout->addRow(mIncompleteDirectoryCheckBox, mIncompleteDirectoryWidget);
         incompleteDirectoryWidgetLayout->addSpacing(28);

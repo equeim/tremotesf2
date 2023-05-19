@@ -34,7 +34,7 @@
 #include "tremotesf/rpc/trpc.h"
 #include "tremotesf/utils.h"
 #include "tremotesf/settings.h"
-#include "tremotesf/ui/widgets/remotedirectoryselectionwidget.h"
+#include "tremotesf/ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "tremotesf/ui/widgets/torrentfilesview.h"
 
 #include "droppedtorrents.h"
@@ -158,7 +158,8 @@ namespace tremotesf {
         }
 
         mDownloadDirectoryWidget =
-            new TorrentDownloadDirectoryDirectorySelectionWidget(initialDownloadDirectory(), mRpc, this);
+            new TorrentDownloadDirectoryDirectorySelectionWidget(this);
+        mDownloadDirectoryWidget->setup(initialDownloadDirectory(), mRpc);
         //: Input field's label
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
 
@@ -177,7 +178,7 @@ namespace tremotesf {
             freeSpaceLabel->hide();
             freeSpaceLabel->clear();
         };
-        QObject::connect(mDownloadDirectoryWidget, &DirectorySelectionWidget::pathChanged, this, [=, this] {
+        QObject::connect(mDownloadDirectoryWidget, &RemoteDirectorySelectionWidget::pathChanged, this, [=, this] {
             getFreeSpace(mDownloadDirectoryWidget->path());
         });
         if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
@@ -269,7 +270,7 @@ namespace tremotesf {
         const auto updateUi = [=, this] {
             const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
             if (enabled) {
-                mDownloadDirectoryWidget->update(initialDownloadDirectory());
+                mDownloadDirectoryWidget->updatePath(initialDownloadDirectory());
             }
 
             for (int i = 0, max = firstFormLayout->count(); i < max; ++i) {
@@ -313,7 +314,7 @@ namespace tremotesf {
         QObject::connect(mRpc, &Rpc::connectedChanged, this, updateUi);
         QObject::connect(
             mDownloadDirectoryWidget,
-            &DirectorySelectionWidget::pathChanged,
+            &RemoteDirectorySelectionWidget::pathChanged,
             this,
             &AddTorrentDialog::canAcceptUpdate
         );

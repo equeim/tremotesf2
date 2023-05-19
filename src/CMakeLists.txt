@@ -108,14 +108,14 @@ add_executable(
     tremotesf/ui/widgets/basetreeview.h
     tremotesf/ui/widgets/commondelegate.cpp
     tremotesf/ui/widgets/commondelegate.h
-    tremotesf/ui/widgets/directoryselectionwidget.cpp
-    tremotesf/ui/widgets/directoryselectionwidget.h
     tremotesf/ui/widgets/remotedirectoryselectionwidget.cpp
     tremotesf/ui/widgets/remotedirectoryselectionwidget.h
     tremotesf/ui/widgets/textinputdialog.cpp
     tremotesf/ui/widgets/textinputdialog.h
     tremotesf/ui/widgets/torrentfilesview.cpp
     tremotesf/ui/widgets/torrentfilesview.h
+    tremotesf/ui/widgets/torrentremotedirectoryselectionwidget.cpp
+    tremotesf/ui/widgets/torrentremotedirectoryselectionwidget.h
     ${QRC_FILES}
 )
 
