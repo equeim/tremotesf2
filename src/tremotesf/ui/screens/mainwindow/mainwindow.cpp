@@ -767,11 +767,15 @@ namespace tremotesf {
 
         auto settings = Settings::instance();
         auto showDialog = [=, this] {
+            auto directory = settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString{};
+            if (directory.isEmpty()) {
+                directory = QDir::homePath();
+            }
             auto fileDialog = new QFileDialog(
                 this,
                 //: File chooser dialog title
                 qApp->translate("tremotesf", "Select Files"),
-                settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString(),
+                directory,
                 //: Torrent file type. Parentheses and text within them must remain unchanged
                 qApp->translate("tremotesf", "Torrent Files (*.torrent)")
             );
