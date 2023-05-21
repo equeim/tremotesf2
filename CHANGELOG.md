@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- "Remember last download directory" and "Remember last torrent open directory" settings are merged into one,
+  and now also remember priority and started/paused state of last added torrent
+
+### Fixed
+- Errors when trying to open certain torrent files
+
 ## [2.3.0] - 2023-04-30
 ### Changed
 - Tremotesf now requires compiler with some C++20 support (concepts, ranges and comparison operators)
