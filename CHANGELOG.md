@@ -2,8 +2,10 @@
 
 ## [Unreleased]
 ### Changed
-- "Remember last download directory" and "Remember last torrent open directory" settings are merged into one,
-  and now also remember priority and started/paused state of last added torrent
+- "Remember last download directory" is replaced with "Remember parameters of last added torrent",
+  which also remembers priority and started/paused state of last added torrent
+- "Remember last torrent open directory" setting is renamed to "Remember location of last opened torrent file"
+- When "Remember last torrent open directory" is unchecked then user's home directory is always used
 
 ### Fixed
 - Errors when trying to open certain torrent files
