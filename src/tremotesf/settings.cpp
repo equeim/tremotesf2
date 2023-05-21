@@ -90,13 +90,16 @@ namespace tremotesf {
         false
     )
 
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberDownloadDir, setRememberDownloadDir, "rememberDownloadDir", true)
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, rememberOpenTorrentDir, setRememberOpenTorrentDir, "rememberOpenTorrentTorrentDir", true
     )
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(
         QString, lastOpenTorrentDirectory, setLastOpenTorrentDirectory, "lastOpenTorrentDirectory", {}
     )
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberAddTorrentParameters, setRememberTorrentAddParameters, "rememberAddTorrentParameters", true)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(libtremotesf::TorrentData::Priority, lastAddTorrentPriority, setLastAddTorrentPriority, "lastAddTorrentPriority", libtremotesf::TorrentData::Priority::Normal)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding, "lastAddTorrentStartAfterAdding", true)
+
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard, "fillTorrentLinkFromClipboard", false
     )
@@ -204,6 +207,7 @@ namespace tremotesf {
             mSettings = new QSettings(this);
         }
         qRegisterMetaTypeStreamOperators<Qt::ToolButtonStyle>();
+        qRegisterMetaTypeStreamOperators<libtremotesf::TorrentData::Priority>();
         qRegisterMetaTypeStreamOperators<TorrentsProxyModel::StatusFilter>();
         qRegisterMetaTypeStreamOperators<Settings::DarkThemeMode>();
     }

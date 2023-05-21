@@ -9,6 +9,7 @@
 
 #include <QObject>
 
+#include "libtremotesf/torrent.h"
 #include "ui/screens/mainwindow/torrentsproxymodel.h"
 
 class QSettings;
@@ -27,7 +28,6 @@ namespace tremotesf {
     class Settings final : public QObject {
         Q_OBJECT
 
-
         SETTINGS_PROPERTY_TRIVIAL(bool, connectOnStartup, setConnectOnStartup)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting)
         SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent)
@@ -41,9 +41,12 @@ namespace tremotesf {
             setNotificationsOnFinishedTorrentsSinceLastConnection
         )
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, rememberDownloadDir, setRememberDownloadDir)
         SETTINGS_PROPERTY_TRIVIAL(bool, rememberOpenTorrentDir, setRememberOpenTorrentDir)
         SETTINGS_PROPERTY_NON_TRIVIAL(QString, lastOpenTorrentDirectory, setLastOpenTorrentDirectory)
+        SETTINGS_PROPERTY_TRIVIAL(bool, rememberAddTorrentParameters, setRememberTorrentAddParameters)
+        SETTINGS_PROPERTY_TRIVIAL(libtremotesf::TorrentData::Priority, lastAddTorrentPriority, setLastAddTorrentPriority)
+        SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding)
+
         SETTINGS_PROPERTY_TRIVIAL(bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard)
 
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled)
