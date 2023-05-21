@@ -78,19 +78,19 @@ namespace tremotesf {
         auto addTorrentsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Adding torrents"), this);
         auto addTorrentsGroupBoxBoxLayout = new QVBoxLayout(addTorrentsGroupBox);
 
-        auto rememberDownloadDirCheckBox = new QCheckBox(
-            //: Check box label
-            qApp->translate("tremotesf", "Remember last download directory"),
-            this
-        );
-        addTorrentsGroupBoxBoxLayout->addWidget(rememberDownloadDirCheckBox);
-
         auto rememberOpenTorrentDirCheckbox = new QCheckBox(
             //: Check box label
             qApp->translate("tremotesf", "Remember last torrent open directory"),
             this
         );
         addTorrentsGroupBoxBoxLayout->addWidget(rememberOpenTorrentDirCheckbox);
+
+        auto rememberAddTorrentParameters = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Remember parameters of last added torrent (download directory, priority, started/paused state)"),
+            this
+        );
+        addTorrentsGroupBoxBoxLayout->addWidget(rememberAddTorrentParameters);
 
         auto fillTorrentLinkFromKeyboardCheckBox = new QCheckBox(
             //: Check box label
@@ -175,8 +175,8 @@ namespace tremotesf {
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
-        rememberDownloadDirCheckBox->setChecked(settings->rememberDownloadDir());
         rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());
+        rememberAddTorrentParameters->setChecked(settings->rememberAddTorrentParameters());
         fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         trayIconCheckBox->setChecked(settings->showTrayIcon());
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
@@ -202,8 +202,8 @@ namespace tremotesf {
             settings->setNotificationsOnFinishedTorrentsSinceLastConnection(
                 finishedSinceLastConnectionCheckBox->isChecked()
             );
-            settings->setRememberDownloadDir(rememberDownloadDirCheckBox->isChecked());
             settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
+            settings->setRememberTorrentAddParameters(rememberAddTorrentParameters->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {
                 if (const int index = darkThemeComboBox->currentIndex(); index != -1) {

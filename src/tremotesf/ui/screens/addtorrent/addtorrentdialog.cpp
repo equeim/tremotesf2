@@ -10,7 +10,6 @@
 #include <QCheckBox>
 #include <QClipboard>
 #include <QComboBox>
-#include <QCollator>
 #include <QDialogButtonBox>
 #include <QFileInfo>
 #include <QFormLayout>
@@ -26,8 +25,6 @@
 #include <KMessageWidget>
 
 #include "libtremotesf/log.h"
-#include "libtremotesf/pathutils.h"
-#include "libtremotesf/serversettings.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
 #include "tremotesf/rpc/servers.h"
@@ -98,15 +95,20 @@ namespace tremotesf {
 
         mDownloadDirectoryWidget->saveDirectories();
 
-        if (mMode == Mode::File) {
-            Settings::instance()->setLastOpenTorrentDirectory(QFileInfo(mUrl).path());
+        const auto settings = Settings::instance();
+        if (settings->rememberOpenTorrentDir() && mMode == Mode::File) {
+            settings->setLastOpenTorrentDirectory(QFileInfo(mUrl).path());
+        }
+        if (settings->rememberAddTorrentParameters()) {
+            settings->setLastAddTorrentPriority(priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()));
+            settings->setLastAddTorrentStartAfterAdding(mStartTorrentCheckBox->isChecked());
         }
 
         QDialog::accept();
     }
 
     QString AddTorrentDialog::initialDownloadDirectory() {
-        if (Settings::instance()->rememberDownloadDir()) {
+        if (Settings::instance()->rememberAddTorrentParameters()) {
             auto lastDir = Servers::instance()->currentServerLastDownloadDirectory(mRpc->serverSettings());
             if (!lastDir.isEmpty()) return lastDir;
         }
@@ -237,9 +239,13 @@ namespace tremotesf {
                 break;
             }
         }
-        mPriorityComboBox->setCurrentIndex(
-            indexOfCasted<int>(priorityComboBoxItems, libtremotesf::TorrentData::Priority::Normal).value()
-        );
+        const auto initialPriority = [&] {
+            if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
+                return settings->lastAddTorrentPriority();
+            }
+            return libtremotesf::TorrentData::Priority::Normal;
+        }();
+        mPriorityComboBox->setCurrentIndex(indexOfCasted<int>(priorityComboBoxItems, initialPriority).value());
 
         QFormLayout* secondFormLayout = nullptr;
         if (mMode == Mode::File) {
@@ -257,7 +263,11 @@ namespace tremotesf {
         }
 
         mStartTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start downloading after adding"), this);
-        mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->data().startAddedTorrents);
+        if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
+            mStartTorrentCheckBox->setChecked(settings->lastAddTorrentStartAfterAdding());
+        } else {
+            mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->data().startAddedTorrents);
+        }
         layout->addWidget(mStartTorrentCheckBox);
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
