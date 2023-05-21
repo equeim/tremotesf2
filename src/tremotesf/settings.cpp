@@ -99,6 +99,7 @@ namespace tremotesf {
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberAddTorrentParameters, setRememberTorrentAddParameters, "rememberAddTorrentParameters", true)
     SETTINGS_PROPERTY_DEF_TRIVIAL(libtremotesf::TorrentData::Priority, lastAddTorrentPriority, setLastAddTorrentPriority, "lastAddTorrentPriority", libtremotesf::TorrentData::Priority::Normal)
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding, "lastAddTorrentStartAfterAdding", true)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, lastAddTorrentDeleteTorrentFile, setLastAddTorrentDeleteTorrentFile, "lastAddTorrentDeleteTorrentFile", false)
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard, "fillTorrentLinkFromClipboard", false

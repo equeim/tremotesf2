@@ -38,14 +38,15 @@ namespace tremotesf {
         QString mUrl;
         Mode mMode;
 
-        LocalTorrentFilesModel* mFilesModel = nullptr;
+        LocalTorrentFilesModel* mFilesModel{};
 
-        QLineEdit* mTorrentLinkLineEdit = nullptr;
-        TorrentDownloadDirectoryDirectorySelectionWidget* mDownloadDirectoryWidget = nullptr;
-        QComboBox* mPriorityComboBox = nullptr;
-        QCheckBox* mStartTorrentCheckBox = nullptr;
+        QLineEdit* mTorrentLinkLineEdit{};
+        TorrentDownloadDirectoryDirectorySelectionWidget* mDownloadDirectoryWidget{};
+        QComboBox* mPriorityComboBox{};
+        QCheckBox* mStartTorrentCheckBox{};
+        QCheckBox* mDeleteTorrentFileCheckBox{};
 
-        QDialogButtonBox* mDialogButtonBox = nullptr;
+        QDialogButtonBox* mDialogButtonBox{};
     };
 }
 
