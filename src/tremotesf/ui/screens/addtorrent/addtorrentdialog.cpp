@@ -24,6 +24,7 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
+#include "libtremotesf/fileutils.h"
 #include "libtremotesf/log.h"
 #include "libtremotesf/stdutils.h"
 #include "libtremotesf/torrent.h"
@@ -102,6 +103,16 @@ namespace tremotesf {
         if (settings->rememberAddTorrentParameters()) {
             settings->setLastAddTorrentPriority(priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()));
             settings->setLastAddTorrentStartAfterAdding(mStartTorrentCheckBox->isChecked());
+            if (mMode == Mode::File) {
+                settings->setLastAddTorrentDeleteTorrentFile(mDeleteTorrentFileCheckBox->isChecked());
+            }
+        }
+        if (mMode == Mode::File && mDeleteTorrentFileCheckBox->isChecked()) {
+            try {
+                deleteFile(mUrl);
+            } catch (const QFileError& e) {
+                logWarningWithException(e, "Failed to delete torrent file");
+            }
         }
 
         QDialog::accept();
@@ -159,8 +170,7 @@ namespace tremotesf {
             QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
         }
 
-        mDownloadDirectoryWidget =
-            new TorrentDownloadDirectoryDirectorySelectionWidget(this);
+        mDownloadDirectoryWidget = new TorrentDownloadDirectoryDirectorySelectionWidget(this);
         mDownloadDirectoryWidget->setup(initialDownloadDirectory(), mRpc);
         //: Input field's label
         firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
@@ -269,6 +279,14 @@ namespace tremotesf {
             mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->data().startAddedTorrents);
         }
         layout->addWidget(mStartTorrentCheckBox);
+
+        if (mMode == Mode::File) {
+            mDeleteTorrentFileCheckBox = new QCheckBox(qApp->translate("tremotesf", "Delete .torrent file"), this);
+            if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
+                mDeleteTorrentFileCheckBox->setChecked(settings->lastAddTorrentDeleteTorrentFile());
+            }
+            layout->addWidget(mDeleteTorrentFileCheckBox);
+        }
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &AddTorrentDialog::accept);
