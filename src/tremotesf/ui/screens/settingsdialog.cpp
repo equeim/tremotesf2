@@ -80,7 +80,7 @@ namespace tremotesf {
 
         auto rememberOpenTorrentDirCheckbox = new QCheckBox(
             //: Check box label
-            qApp->translate("tremotesf", "Remember last torrent open directory"),
+            qApp->translate("tremotesf", "Remember location of last opened torrent file"),
             this
         );
         addTorrentsGroupBoxBoxLayout->addWidget(rememberOpenTorrentDirCheckbox);
