@@ -23,6 +23,15 @@
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(QCborError::Code)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QCborValue)
 
+namespace fmt {
+    template<>
+    struct formatter<QCborParserError> : libtremotesf::SimpleFormatter {
+        fmt::format_context::iterator format(QCborParserError error, fmt::format_context& ctx) FORMAT_CONST {
+            return fmt::format_to(ctx.out(), "{} (error code {})", error.errorString(), static_cast<QCborError::Code>(error.error));
+        }
+    };
+}
+
 namespace tremotesf {
     namespace {
         constexpr QStringView keyFiles = u"files";
@@ -80,11 +89,7 @@ namespace tremotesf {
                     QCborParserError error{};
                     const auto cbor = QCborValue::fromCbor(message, &error);
                     if (error.error != QCborError::NoError) {
-                        logWarning(
-                            "IpcServerSocket: failed to parse CBOR message: {} {}",
-                            error.error,
-                            error.errorString()
-                        );
+                        logWarning("IpcServerSocket: failed to parse CBOR message: {}", error);
                         return;
                     }
                     logInfo("Arguments received: {}", cbor);
