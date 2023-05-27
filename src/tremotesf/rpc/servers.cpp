@@ -4,10 +4,6 @@
 
 #include "servers.h"
 
-#include <algorithm>
-#include <iterator>
-#include <utility>
-
 #include <QCoreApplication>
 #include <QSettings>
 #include <QStringBuilder>
@@ -222,6 +218,9 @@ namespace tremotesf {
     }
 
     void Servers::saveCurrentServerLastTorrents(const libtremotesf::Rpc* rpc) {
+        if (!hasServers()) {
+            return;
+        }
         mSettings->beginGroup(currentServerName());
         LastTorrents torrents{};
         torrents.torrents =
@@ -364,7 +363,9 @@ namespace tremotesf {
     void Servers::saveServers(const std::vector<Server>& servers, const QString& current) {
         const bool hadServers = hasServers();
         mSettings->clear();
-        mSettings->setValue(currentServerKey, current);
+        if (!current.isEmpty()) {
+            mSettings->setValue(currentServerKey, current);
+        }
         for (const Server& server : servers) {
             mSettings->beginGroup(server.name);
 

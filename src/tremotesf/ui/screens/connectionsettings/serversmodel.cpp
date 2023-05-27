@@ -195,10 +195,14 @@ namespace tremotesf {
         beginRemoveRows(QModelIndex(), row, row);
         mServers.erase(mServers.begin() + row);
         endRemoveRows();
-        if (current && !mServers.empty()) {
-            mCurrentServer = mServers.front().name;
-            const QModelIndex modelIndex(index(0, 0));
-            emit dataChanged(modelIndex, modelIndex);
+        if (current) {
+            if (mServers.empty()) {
+                mCurrentServer.clear();
+            } else {
+                mCurrentServer = mServers.front().name;
+                const QModelIndex modelIndex(index(0, 0));
+                emit dataChanged(modelIndex, modelIndex);
+            }
         }
     }
 
