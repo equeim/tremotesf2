@@ -106,8 +106,6 @@ namespace tremotesf {
             const std::vector<MountedDirectory>& mountedDirectories
         );
 
-        void removeServer(const QString& name);
-
         void saveServers(const std::vector<Server>& servers, const QString& current);
 
     private:

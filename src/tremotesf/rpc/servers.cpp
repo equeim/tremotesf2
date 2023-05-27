@@ -361,17 +361,6 @@ namespace tremotesf {
         }
     }
 
-    void Servers::removeServer(const QString& name) {
-        mSettings->remove(name);
-        const QStringList Servers(mSettings->childGroups());
-        if (Servers.isEmpty()) {
-            setCurrentServer(QString());
-            emit hasServersChanged();
-        } else if (name == currentServerName()) {
-            setCurrentServer(Servers.first());
-        }
-    }
-
     void Servers::saveServers(const std::vector<Server>& servers, const QString& current) {
         const bool hadServers = hasServers();
         mSettings->clear();
