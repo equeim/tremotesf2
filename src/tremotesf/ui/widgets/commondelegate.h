@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_COMMONDELEGATE_H
 #define TREMOTESF_COMMONDELEGATE_H
 
+#include <optional>
 #include <QStyledItemDelegate>
 
 namespace tremotesf {
@@ -13,9 +14,18 @@ namespace tremotesf {
 
     public:
         explicit CommonDelegate(
-            int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent = nullptr
-        );
-        inline explicit CommonDelegate(QObject* parent = nullptr) : CommonDelegate(-1, -1, -1, parent) {}
+            std::optional<int> progressBarColumn,
+            std::optional<int> progressRole,
+            std::optional<int> textElideModeRole,
+            QObject* parent = nullptr
+        )
+            : QStyledItemDelegate(parent),
+              mProgressBarColumn(progressBarColumn),
+              mProgressRole(progressRole),
+              mTextElideModeRole(textElideModeRole){};
+
+        explicit CommonDelegate(QObject* parent = nullptr) : QStyledItemDelegate(parent) {}
+
         void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
         bool helpEvent(
@@ -23,9 +33,9 @@ namespace tremotesf {
         ) override;
 
     private:
-        int mProgressBarColumn;
-        int mProgressBarRole;
-        int mTextElideModeRole;
+        std::optional<int> mProgressBarColumn{};
+        std::optional<int> mProgressRole{};
+        std::optional<int> mTextElideModeRole{};
     };
 }
 

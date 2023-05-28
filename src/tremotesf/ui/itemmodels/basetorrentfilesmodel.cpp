@@ -49,6 +49,7 @@ namespace tremotesf {
                 return entry->name();
             case Column::Size:
                 return Utils::formatByteSize(entry->size());
+            case Column::ProgressBar:
             case Column::Progress:
                 return Utils::formatProgress(entry->progress());
             case Column::Priority:
