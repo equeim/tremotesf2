@@ -38,6 +38,7 @@ namespace tremotesf {
                 return Utils::formatByteSpeed(peer.downloadSpeed);
             case Column::UploadSpeed:
                 return Utils::formatByteSpeed(peer.uploadSpeed);
+            case Column::ProgressBar:
             case Column::Progress:
                 return Utils::formatProgress(peer.progress);
             case Column::Flags:

@@ -49,9 +49,9 @@ namespace tremotesf {
           mRpc(rpc) {
         init();
         setItemDelegate(new CommonDelegate(
-            static_cast<int>(TorrentFilesModel::Column::ProgressBar),
+            static_cast<int>(TorrentFilesModel::Column::Progress),
             TorrentFilesModel::SortRole,
-            -1,
+            std::nullopt,
             this
         ));
         if (!header()->restoreState(Settings::instance()->torrentFilesViewHeaderState())) {

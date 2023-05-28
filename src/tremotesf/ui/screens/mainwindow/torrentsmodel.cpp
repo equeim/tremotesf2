@@ -68,6 +68,7 @@ namespace tremotesf {
                 return Utils::formatByteSize(torrent->data().sizeWhenDone);
             case Column::TotalSize:
                 return Utils::formatByteSize(torrent->data().totalSize);
+            case Column::ProgressBar:
             case Column::Progress:
                 if (torrent->data().status == TorrentData::Status::Checking) {
                     return Utils::formatProgress(torrent->data().recheckProgress);

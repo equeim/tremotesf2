@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QFontMetrics>
 #include <QHelpEvent>
+#include <QPainter>
 #include <QStyle>
 #include <QStyleOptionProgressBar>
 #include <QToolTip>
@@ -24,39 +25,49 @@ namespace tremotesf {
 
             return textWidth > textRect.width();
         }
+
+        constexpr int spaceBetweenProgressBarAndText = 6;
     }
 
-    CommonDelegate::CommonDelegate(int progressBarColumn, int progressBarRole, int textElideModeRole, QObject* parent)
-        : QStyledItemDelegate(parent),
-          mProgressBarColumn(progressBarColumn),
-          mProgressBarRole(progressBarRole),
-          mTextElideModeRole(textElideModeRole) {}
-
     void CommonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-        QStyleOptionViewItem opt(option);
-        if (mTextElideModeRole != -1) {
-            opt.textElideMode = index.data(mTextElideModeRole).value<Qt::TextElideMode>();
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+
+        const auto style = opt.widget ? opt.widget->style() : qApp->style();
+
+        if (mTextElideModeRole.has_value()) {
+            opt.textElideMode = index.data(*mTextElideModeRole).value<Qt::TextElideMode>();
         }
 
-        QStyledItemDelegate::paint(painter, opt, index);
+        if (mProgressBarColumn.has_value() && mProgressRole.has_value() && index.column() == mProgressBarColumn) {
+            opt.displayAlignment = Qt::AlignRight | Qt::AlignVCenter;
+            opt.textElideMode = Qt::ElideNone;
+            style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
-        if (mProgressBarColumn == -1 || mProgressBarRole == -1) {
-            return;
-        }
+            const int horizontalMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin);
+            const int verticalMargin = style->pixelMetric(QStyle::PM_FocusFrameVMargin);
+            const int textWidth = opt.fontMetrics.horizontalAdvance(opt.text);
 
-        if (index.column() == mProgressBarColumn) {
-            QStyleOptionProgressBar progressBar;
+            QStyleOptionProgressBar progressBar{};
+            progressBar.rect = opt.rect.marginsRemoved(
+                QMargins(horizontalMargin, verticalMargin, textWidth + spaceBetweenProgressBarAndText, verticalMargin)
+            );
+            if (progressBar.rect.width() > 0) {
+                progressBar.minimum = 0;
+                progressBar.maximum = 100;
+                const auto progress = index.data(*mProgressRole).toDouble();
+                progressBar.progress = static_cast<int>(progress * 100);
+                if (progressBar.progress <= 0) {
+                    progressBar.progress = 1;
+                } else if (progressBar.progress > 100) {
+                    progressBar.progress = 100;
+                }
+                progressBar.state = opt.state | QStyle::State_Horizontal;
 
-            progressBar.rect = opt.rect.marginsRemoved(QMargins(0, 1, 0, 1));
-            progressBar.minimum = 0;
-            progressBar.maximum = 100;
-            progressBar.progress = static_cast<int>(index.data(mProgressBarRole).toDouble() * 100);
-            if (progressBar.progress == 0) {
-                progressBar.progress = 1;
+                style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter, opt.widget);
             }
-            progressBar.state = opt.state | QStyle::State_Horizontal;
-            const auto style = opt.widget ? opt.widget->style() : qApp->style();
-            style->drawControl(QStyle::CE_ProgressBar, &progressBar, painter);
+        } else {
+            style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
         }
     }
 
@@ -101,5 +112,4 @@ namespace tremotesf {
         event->ignore();
         return false;
     }
-
 }
