@@ -1034,11 +1034,13 @@ namespace tremotesf {
                         statusText = qApp->translate("tremotesf", "No torrents matching filters");
                     }
                 }
-            } else {
+            } else if (Servers::instance()->hasServers()) {
                 statusText = mRpc->statusString();
                 if (mRpc->error() != Rpc::Error::NoError) {
                     errorText = mRpc->errorMessage();
                 }
+            } else {
+                statusText = qApp->translate("tremotesf", "No servers");
             }
             status->setText(statusText);
             status->setVisible(!statusText.isEmpty());
