@@ -87,7 +87,7 @@ namespace tremotesf {
 
         auto rememberAddTorrentParameters = new QCheckBox(
             //: Check box label
-            qApp->translate("tremotesf", "Remember parameters of last added torrent (download directory, priority, started/paused state)"),
+            qApp->translate("tremotesf", "Remember parameters of last added torrent"),
             this
         );
         addTorrentsGroupBoxBoxLayout->addWidget(rememberAddTorrentParameters);
