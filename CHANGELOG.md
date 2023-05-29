@@ -1,14 +1,20 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- "Add torrent" dialog now has checkbox to remove torrent file when torrent is added
+
 ### Changed
 - "Remember last download directory" is replaced with "Remember parameters of last added torrent",
-  which also remembers priority and started/paused state of last added torrent
+  which also remembers priority, started/paused state and "Delete .torrent file" checkbox of last added torrent
 - "Remember last torrent open directory" setting is renamed to "Remember location of last opened torrent file"
-- When "Remember last torrent open directory" is unchecked then user's home directory is always used
+- When "Remember last torrent open directory" is unchecked user's home directory is always used
+- When authentication is enabled, `Authorization` header will be sent in advance
+  instead of waiting for 401 response from server (thanks @otaconix)
 
 ### Fixed
-- Errors when trying to open certain torrent files
+- Errors when opening certain torrent files
+- Incorrect error message being displayed when there is no configured servers
 
 ## [2.3.0] - 2023-04-30
 ### Changed
