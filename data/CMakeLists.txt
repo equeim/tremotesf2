@@ -4,7 +4,6 @@
 
 list(
     APPEND QRC_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/authors/authors.qrc"
     "${CMAKE_CURRENT_SOURCE_DIR}/icons/status/status.qrc"
 )
 
