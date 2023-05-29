@@ -5,12 +5,6 @@
 [main]
 host = https://www.transifex.com
 
-[o:equeim:p:tremotesf:r:authors]
-file_filter = data/authors/authors_<lang>.html
-source_file = data/authors/authors.html
-source_lang = en
-type        = HTML
-
 [o:equeim:p:tremotesf:r:desktop]
 file_filter = data/po/<lang>.po
 source_file = data/po/messages.po
