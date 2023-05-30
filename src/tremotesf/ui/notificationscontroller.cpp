@@ -37,7 +37,7 @@ namespace tremotesf {
                 //: Notification title
                 ? qApp->translate("tremotesf", "Torrent finished")
                 //: Notification title, %Ln is number of finished torrents
-                : qApp->translate("tremotesf", "%Ln torrents finished", nullptr, torrentNames.size()),
+                : qApp->translate("tremotesf", "%Ln torrents finished", nullptr, static_cast<int>(torrentNames.size())),
             torrentNames
         );
     }
@@ -48,7 +48,7 @@ namespace tremotesf {
                 //: Notification title
                 ? qApp->translate("tremotesf", "Torrent added")
                 //: Notification title, %Ln is number of added torrents
-                : qApp->translate("tremotesf", "%Ln torrents added", nullptr, torrentNames.size()),
+                : qApp->translate("tremotesf", "%Ln torrents added", nullptr, static_cast<int>(torrentNames.size())),
             torrentNames
         );
     }

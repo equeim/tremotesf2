@@ -30,7 +30,7 @@ namespace tremotesf {
 
             QAction* action = contextMenu.exec(QCursor::pos());
             if (action) {
-                const int column = contextMenu.actions().indexOf(action);
+                const auto column = static_cast<int>(contextMenu.actions().indexOf(action));
                 if (isColumnHidden(column)) {
                     showColumn(column);
                 } else {

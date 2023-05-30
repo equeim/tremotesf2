@@ -327,7 +327,7 @@ namespace tremotesf {
                 if (auto remaining = torrents.size() - count; remaining > 0) {
                     text += "\n \u2022 ";
                     //: Shown when list of items exceeds maximum size. %n is a number of remaining items
-                    text += qApp->translate("tremotesf", "And %n more", nullptr, remaining);
+                    text += qApp->translate("tremotesf", "And %n more", nullptr, static_cast<int>(remaining));
                 }
                 messageWidget->setText(text);
                 messageWidget->animatedShow();
@@ -559,8 +559,14 @@ namespace tremotesf {
         mRemoveTorrentAction->setShortcut(QKeySequence::Delete);
         QObject::connect(mRemoveTorrentAction, &QAction::triggered, this, [=, this] { removeSelectedTorrents(false); });
 
-        const auto removeTorrentWithFilesShortcut =
-            new QShortcut(QKeySequence(static_cast<int>(Qt::SHIFT) | static_cast<int>(Qt::Key_Delete)), this);
+        const auto removeTorrentWithFilesShortcut = new QShortcut(
+#if QT_VERSION_MAJOR >= 6
+            QKeyCombination(Qt::ShiftModifier, Qt::Key_Delete),
+#else
+            QKeySequence(static_cast<int>(Qt::ShiftModifier) | static_cast<int>(Qt::Key_Delete)),
+#endif
+            this
+        );
         QObject::connect(removeTorrentWithFilesShortcut, &QShortcut::activated, this, [=, this] {
             removeSelectedTorrents(true);
         });
@@ -892,7 +898,7 @@ namespace tremotesf {
     void MainWindow::showTorrentsPropertiesDialogs() {
         const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
 
-        for (int i = 0, max = selectedRows.size(); i < max; i++) {
+        for (QModelIndexList::size_type i = 0, max = selectedRows.size(); i < max; i++) {
             libtremotesf::Torrent* torrent =
                 mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
             const int id = torrent->data().id;
@@ -982,19 +988,17 @@ namespace tremotesf {
             label->setAlignment(Qt::AlignHCenter);
             label->setForegroundRole(QPalette::PlaceholderText);
             label->setTextInteractionFlags(Qt::NoTextInteraction);
-            const auto setPalette = [label] {
 #if QT_VERSION_MAJOR < 6
+            const auto setPalette = [label] {
                 auto palette = label->palette();
                 auto brush = QGuiApplication::palette().placeholderText();
                 brush.setStyle(Qt::SolidPattern);
                 palette.setBrush(QPalette::PlaceholderText, brush);
                 label->setPalette(palette);
-#else
-                static_assert(false, "Do we need this?");
-#endif
             };
             setPalette();
             QObject::connect(qApp, &QGuiApplication::paletteChanged, label, setPalette);
+#endif
         };
 
         layout->addStretch();
@@ -1082,7 +1086,11 @@ namespace tremotesf {
         QAction* quitAction =
             mFileMenu->addAction(QIcon::fromTheme("application-exit"_l1), qApp->translate("tremotesf", "&Quit"));
         if constexpr (isTargetOsWindows) {
-            quitAction->setShortcut(QKeySequence("Ctrl+Q"_l1));
+#if QT_VERSION_MAJOR >= 6
+            quitAction->setShortcut(QKeyCombination(Qt::ControlModifier, Qt::Key_Q));
+#else
+            quitAction->setShortcut(QKeySequence(static_cast<int>(Qt::ControlModifier) | static_cast<int>(Qt::Key_Q)));
+#endif
         } else {
             quitAction->setShortcuts(QKeySequence::Quit);
         }
