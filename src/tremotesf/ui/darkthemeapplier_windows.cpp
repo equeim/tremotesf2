@@ -160,7 +160,8 @@ namespace tremotesf {
         }
 
         double getRelativeLuminance(QColor color) {
-            const auto trans = [](double comp) {
+            const auto trans = [](auto compF) {
+                const auto comp = static_cast<double>(compF);
                 if (comp <= 0.03928) {
                     return comp / 12.92;
                 }

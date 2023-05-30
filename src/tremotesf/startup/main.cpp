@@ -91,8 +91,10 @@ int main(int argc, char** argv) {
     //
     // QApplication initialization
     //
+#if QT_VERSION_MAJOR < 6
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
     const QApplication app(argc, argv);
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
@@ -127,7 +129,9 @@ int main(int argc, char** argv) {
     }
 
     QTranslator appTranslator;
-    appTranslator.load(QLocale().name(), ":/translations"_l1);
+    if (!appTranslator.load(QLocale().name(), ":/translations"_l1)) {
+        logWarning("Failed to load Tremotesf translation for {}", QLocale());
+    }
     qApp->installTranslator(&appTranslator);
 
     MainWindow window(std::move(args.files), std::move(args.urls), ipcServer);

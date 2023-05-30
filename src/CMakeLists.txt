@@ -8,7 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(TREMOTESF_COMMON_TARGET_PROPERTIES AUTOMOC ON AUTORCC ON)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Concurrent Network Widgets)
-find_package(KF5WidgetsAddons REQUIRED)
+find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WidgetsAddons REQUIRED)
 find_package(cxxopts REQUIRED)
 find_package(Threads REQUIRED)
 
@@ -119,7 +119,7 @@ add_executable(
     ${QRC_FILES}
 )
 
-target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF5::WidgetsAddons cxxopts::cxxopts Threads::Threads)
+target_link_libraries(tremotesf PRIVATE libtremotesf Qt::Network Qt::Widgets KF${TREMOTESF_QT_VERSION_MAJOR}::WidgetsAddons cxxopts::cxxopts Threads::Threads)
 
 target_include_directories(tremotesf PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 target_compile_definitions(
@@ -133,8 +133,8 @@ target_compile_definitions(
 
 if (TREMOTESF_UNIX_FREEDESKTOP)
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
-    find_package(KF5WindowSystem REQUIRED)
-    target_link_libraries(tremotesf PRIVATE Qt::DBus KF5::WindowSystem)
+    find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WindowSystem REQUIRED)
+    target_link_libraries(tremotesf PRIVATE Qt::DBus KF${TREMOTESF_QT_VERSION_MAJOR}::WindowSystem)
 
     target_compile_definitions(
         tremotesf PRIVATE

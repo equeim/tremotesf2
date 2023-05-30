@@ -58,7 +58,7 @@ namespace tremotesf {
                     nullptr
                 );
                 if (size == 0) return "Unknown error";
-                return QString::fromWCharArray(wstr, static_cast<int>(size)).trimmed().toStdString();
+                return QString::fromWCharArray(wstr, static_cast<QString::size_type>(size)).trimmed().toStdString();
             }
 
             static const Win32Category& instance() {
