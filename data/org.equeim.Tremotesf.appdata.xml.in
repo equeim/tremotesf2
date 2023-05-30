@@ -15,15 +15,19 @@ SPDX-License-Identifier: CC0-1.0
   <summary>Remote GUI for Transmission BitTorrent client</summary>
 
   <description>
-  <p>
-   Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully control your transmission-daemon instance, manage torrents, set Transmission settings, view server statistics.
-  </p>
-  <p>
-   You can add several servers profiles and switch between them (only one can be connected at a time). Tremotesf has support of HTTPS, including self-signed certificates and client certificate authentication. You can set mounted directories for servers and quickly open torrents' files and choose download directory from file dialog.
-  </p>
+    <p>
+      Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully control your transmission-daemon
+      instance, manage torrents, set Transmission settings, view server statistics.
+    </p>
+    <p>
+      You can add several servers profiles and switch between them (only one can be connected at a time).
+      Tremotesf has support of HTTPS, including self-signed certificates and client certificate authentication.
+      You can set mounted directories for servers and quickly open torrents' files and choose download directory
+      from file dialog.
+    </p>
   </description>
 
-  ​<launchable type="desktop-id">org.equeim.Tremotesf.desktop</launchable>
+  <launchable type="desktop-id">org.equeim.Tremotesf.desktop</launchable>
   <provides>
     <binary>tremotesf</binary>
   </provides>
@@ -50,13 +54,35 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2023-05-30" version="2.4.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>"Add torrent" dialog now has checkbox to remove torrent file when torrent is added</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>"Remember last download directory" is replaced with "Remember parameters of last added torrent", which also remembers priority, started/paused state and "Delete .torrent file" checkbox of last added torrent</li>
+          <li>"Remember last torrent open directory" setting is renamed to "Remember location of last opened torrent file"</li>
+          <li>When "Remember last torrent open directory" is unchecked user's home directory is always used</li>
+          <li>When authentication is enabled, `Authorization` header will be sent in advance instead of waiting for 401 response from server (thanks @otaconix)</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Errors when opening certain torrent files</li>
+          <li>Incorrect error message being displayed when there is no configured servers</li>
+        </ul>
+      </description>
+    </release>
     <release date="2023-04-30" version="2.3.0">
       <description>
         <p>Fixed</p>
         <ul>
-        <li>Crash on launch with some Qt styles</li>
-        <li>Mounted directories feature not working on Windows with UNC paths</li>
-        <li>Incorrect error message when adding torrent that already exists with some Transmission versions</li>
+          <li>Crash on launch with some Qt styles</li>
+          <li>Mounted directories feature not working on Windows with UNC paths</li>
+          <li>Incorrect error message when adding torrent that already exists with some Transmission
+            versions
+          </li>
         </ul>
       </description>
     </release>
@@ -64,18 +90,18 @@ SPDX-License-Identifier: CC0-1.0
       <description>
         <p>Added</p>
         <ul>
-        <li>Torrent priority selection in torrent's context menu</li>
+          <li>Torrent priority selection in torrent's context menu</li>
         </ul>
         <p>Changed</p>
         <ul>
-        <li>Torrent status icons are redrawn to be more contrasting</li>
+          <li>Torrent status icons are redrawn to be more contrasting</li>
         </ul>
         <p>Fixed</p>
         <ul>
-        <li>Torrent status icons being pixelated on high DPI displays</li>
-        <li>Torrent priority column being empty</li>
-        <li>Zero number of leechers</li>
-        <li>No icon in task switcher in KDE Plasma Wayland</li>
+          <li>Torrent status icons being pixelated on high DPI displays</li>
+          <li>Torrent priority column being empty</li>
+          <li>Zero number of leechers</li>
+          <li>No icon in task switcher in KDE Plasma Wayland</li>
         </ul>
       </description>
     </release>
@@ -83,19 +109,24 @@ SPDX-License-Identifier: CC0-1.0
       <description>
         <p>Added</p>
         <ul>
-        <li>Trackers list shows number of seeders and leechers for trackers, not just total number peers</li>
+          <li>Trackers list shows number of seeders and leechers for trackers, not just total number peers
+          </li>
         </ul>
         <p>Changed</p>
         <ul>
-        <li>"Seeders" and "leechers" now refer to total number of seeders and leechers reported by trackers,
-          while number of peers that we are currently downloading from / uploading to is displayed separately</li>
-        <li>Tracker's error is displayed in separate column</li>
-        <li>Torrents that have an error but are still being downloaded/uploaded are displayed under both "Status" filters simultaneously</li>
+          <li>"Seeders" and "leechers" now refer to total number of seeders and leechers reported by trackers,
+            while number of peers that we are currently downloading from / uploading to is displayed
+            separately
+          </li>
+          <li>Tracker's error is displayed in separate column</li>
+          <li>Torrents that have an error but are still being downloaded/uploaded are displayed under both
+            "Status" filters simultaneously
+          </li>
         </ul>
         <p>Fixed</p>
         <ul>
-        <li>Fixed issues with lists or torrents/trackers not being updated sometimes</li>
-        <li>Main window placeholder when there is no torrents in list is now displayed correctly</li>
+          <li>Fixed issues with lists or torrents/trackers not being updated sometimes</li>
+          <li>Main window placeholder when there is no torrents in list is now displayed correctly</li>
         </ul>
       </description>
     </release>
@@ -121,5 +152,5 @@ SPDX-License-Identifier: CC0-1.0
     <release date="2018-09-03" version="1.5.3"/>
   </releases>
 
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 </component>

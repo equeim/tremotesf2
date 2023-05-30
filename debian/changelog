@@ -1,3 +1,9 @@
+tremotesf (2.4.0-1) debian; urgency=medium
+
+  * 2.4.0
+
+ -- Alexey Rochev <equeim@gmail.com>  Tue, 30 May 2023 18:00:00 +0300
+
 tremotesf (2.3.0-1) debian; urgency=medium
 
   * 2.3.0
