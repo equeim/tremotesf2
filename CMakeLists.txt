@@ -9,7 +9,7 @@ else()
 endif()
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.26)
 
-project(tremotesf VERSION 2.3.0 LANGUAGES CXX)
+project(tremotesf VERSION 2.4.0 LANGUAGES CXX)
 
 include(CTest)
 include(GNUInstallDirs)

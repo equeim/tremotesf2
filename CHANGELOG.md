@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.4.0] - 2023-05-30
 ### Added
 - "Add torrent" dialog now has checkbox to remove torrent file when torrent is added
 
