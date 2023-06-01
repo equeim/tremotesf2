@@ -1,15 +1,15 @@
 {
   "default-registry": {
     "kind": "builtin",
-    "baseline": "357604e844c2e9d2a82fc21702f0d525071f3dbd"
+    "baseline": "b4ca42fc6d2388aa68fdb9f68ae50f91dbd93250"
   },
   "registries": [
     {
       "kind": "git",
       "repository": "https://github.com/equeim/vcpkg-registry.git",
-      "baseline": "68f239993f8b9ec552e4439fb71c2c48b0b2f71f",
+      "baseline": "9cef32c9699618e26dc7cda9cefc680aca347efe",
       "packages": [
-        "qt5-tools"
+        "kf6ecm", "kf6widgetsaddons", "qttools"
       ]
     }
   ]
