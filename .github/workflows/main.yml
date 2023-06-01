@@ -193,13 +193,16 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
-
-    - name: Checkout
+    - name: Checkout Tremotesf
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
+
+    - name: Checkout msys2-packages
+      uses: actions/checkout@v3
+      with:
+        repository: equeim/msys2-packages
+        path: msys2-packages
 
     - name: Set up MSYS2
       uses: msys2/setup-msys2@v2
@@ -213,24 +216,34 @@ jobs:
           mingw-w64-clang-x86_64-fmt
           mingw-w64-clang-x86_64-openssl
           mingw-w64-clang-x86_64-pkgconf
-          mingw-w64-clang-x86_64-qt5-base
-          mingw-w64-clang-x86_64-qt5-svg
-          mingw-w64-clang-x86_64-qt5-tools
-          mingw-w64-clang-x86_64-qt5-translations
-          mingw-w64-clang-x86_64-kwidgetsaddons-qt5
+          mingw-w64-clang-x86_64-qt6-base
+          mingw-w64-clang-x86_64-qt6-svg
+          mingw-w64-clang-x86_64-qt6-tools
+          mingw-w64-clang-x86_64-qt6-translations
           mingw-w64-clang-x86_64-cxxopts
+
+    - name: Build KF6 dependencies
+      shell: msys2 {0}
+      run: |
+        cd "$GITHUB_WORKSPACE/msys2-packages/mingw-w64-extra-cmake-modules-qt6"
+        makepkg-mingw --cleanbuild --syncdeps --force --noconfirm --install
+        cd "$GITHUB_WORKSPACE/msys2-packages/mingw-w64-kwidgetsaddons-qt6"
+        makepkg-mingw --cleanbuild --syncdeps --force --noconfirm --install
 
     - name: Generate C++/WinRT headers
       shell: msys2 {0}
       run: |
           cppwinrt -input sdk -output /clang64/include
 
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
     - name: Build with LLVM MinGW toolchain
       shell: msys2 {0}
       run: |
           set -e -o pipefail
           echo '::group::Configuring CMake'
-          cmake -S . --preset base
+          cmake -S . --preset base -D TREMOTESF_QT6=ON
           echo '::endgroup'
           echo '::group::Building Debug'
           cmake --build --preset base-debug
