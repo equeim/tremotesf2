@@ -31,9 +31,6 @@ namespace tremotesf {
 
         virtual AccentColors accentColors() const { return {}; };
 
-        static bool isDarkThemeFollowSystemSupported();
-        static bool isAccentColorsSupported();
-
     protected:
         explicit SystemColorsProvider(QObject* parent = nullptr) : QObject{parent} {}
 
