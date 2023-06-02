@@ -74,22 +74,11 @@ namespace tremotesf {
             bool mDarkThemeEnabled{isDarkThemeEnabledImpl()};
             AccentColors mAccentColors{accentColorsImpl()};
         };
-
-        bool canObserveSystemColors() { return isRunningOnWindows10OrGreater(); }
     }
 
     SystemColorsProvider* SystemColorsProvider::createInstance(QObject* parent) {
-        if (canObserveSystemColors()) {
-            logInfo("SystemColorsProvider: running on Windows 10 or newer, observe system colors");
-            return new SystemColorsProviderWindows(parent);
-        }
-        logInfo("SystemColorsProvider: running on Windows older than 10, can't observe system colors");
-        return new SystemColorsProvider(parent);
+        return new SystemColorsProviderWindows(parent);
     }
-
-    bool SystemColorsProvider::isDarkThemeFollowSystemSupported() { return isRunningOnWindows10_1607OrGreater(); }
-
-    bool SystemColorsProvider::isAccentColorsSupported() { return canObserveSystemColors(); }
 
 }
 

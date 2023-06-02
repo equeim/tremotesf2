@@ -315,15 +315,9 @@ namespace tremotesf {
         QObject::connect(settings, &Settings::darkThemeModeChanged, QGuiApplication::instance(), apply);
         QObject::connect(settings, &Settings::useSystemAccentColorChanged, QGuiApplication::instance(), apply);
 
-        if (isRunningOnWindows10_1809OrGreater()) {
-            logInfo("applyDarkThemeToPalette: running on Windows 10 1809 or newer, set title bar color");
-            QGuiApplication::instance()->installEventFilter(
-                new TitleBarBackgroundEventFilter(systemColorsProvider, QGuiApplication::instance())
-            );
-        } else {
-            logInfo("applyDarkThemeToPalette: running on Windows older than Windows 10 1809, can't set title bar color"
-            );
-        }
+        QGuiApplication::instance()->installEventFilter(
+            new TitleBarBackgroundEventFilter(systemColorsProvider, QGuiApplication::instance())
+        );
     }
 
 }
