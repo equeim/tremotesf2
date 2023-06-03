@@ -44,13 +44,6 @@ namespace tremotesf {
                     return defaultValue;
                 }
             }
-            if constexpr (std::same_as<T, Settings::DarkThemeMode>) {
-                if (value == Settings::DarkThemeMode::FollowSystem &&
-                    !SystemColorsProvider::isDarkThemeFollowSystemSupported()) {
-                    logWarning("Settings: {} is not supported", Settings::DarkThemeMode::FollowSystem);
-                    return defaultValue;
-                }
-            }
             return value;
         }
 
@@ -177,22 +170,11 @@ namespace tremotesf {
         {}
     )
 
-    namespace {
-        Settings::DarkThemeMode defaultDarkThemeMode() {
-            if (SystemColorsProvider::isDarkThemeFollowSystemSupported()) {
-                return Settings::DarkThemeMode::FollowSystem;
-            }
-            return Settings::DarkThemeMode::Off;
-        }
-
-        bool defaultUseSystemAccentColor() { return SystemColorsProvider::isAccentColorsSupported(); }
-    }
-
     SETTINGS_PROPERTY_DEF_TRIVIAL(
-        tremotesf::Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode, "darkThemeMode", defaultDarkThemeMode()
+        tremotesf::Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode, "darkThemeMode", Settings::DarkThemeMode::FollowSystem
     )
     SETTINGS_PROPERTY_DEF_TRIVIAL(
-        bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", defaultUseSystemAccentColor()
+        bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", true
     )
 
     Settings::Settings(QObject* parent) : QObject(parent) {

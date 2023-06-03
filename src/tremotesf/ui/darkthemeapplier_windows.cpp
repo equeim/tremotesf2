@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "darkthemeapplier.h"
+#include "darkthemeapplier_windows.h"
 
 #include <algorithm>
 
@@ -284,8 +284,7 @@ namespace tremotesf {
             const bool darkTheme = [&] {
                 switch (settings->darkThemeMode()) {
                 case Settings::DarkThemeMode::FollowSystem:
-                    return SystemColorsProvider::isDarkThemeFollowSystemSupported() &&
-                           systemColorsProvider->isDarkThemeEnabled();
+                    return systemColorsProvider->isDarkThemeEnabled();
                 case Settings::DarkThemeMode::On:
                     return true;
                 case Settings::DarkThemeMode::Off:
@@ -294,7 +293,7 @@ namespace tremotesf {
                 throw std::logic_error("Unknown DarkThemeMode value");
             }();
             const auto accentColors =
-                (SystemColorsProvider::isAccentColorsSupported() && settings->useSystemAccentColor())
+                settings->useSystemAccentColor()
                     ? systemColorsProvider->accentColors()
                     : SystemColorsProvider::AccentColors{};
             applyWindowsPalette(darkTheme, accentColors);

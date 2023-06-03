@@ -19,7 +19,7 @@
 #include "libtremotesf/literals.h"
 #include "libtremotesf/log.h"
 #include "tremotesf/startup/windowsmessagehandler.h"
-#include "tremotesf/ui/darkthemeapplier.h"
+#include "tremotesf/ui/darkthemeapplier_windows.h"
 #include "tremotesf/ui/recoloringsvgiconengine.h"
 #include "tremotesf/ui/systemcolorsprovider.h"
 #include "tremotesf/windowshelpers.h"

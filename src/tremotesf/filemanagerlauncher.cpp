@@ -37,11 +37,11 @@ namespace tremotesf {
                 }();
                 dirFiles.push_back(filePath);
             }
-            launchFileManagerAndSelectFiles(filesToSelect, parentWidget);
+            launchFileManagerAndSelectFiles(std::move(filesToSelect), parentWidget);
         }
 
         void FileManagerLauncher::launchFileManagerAndSelectFiles(
-            const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
+            std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
         ) {
             for (const auto& [directory, _] : filesToSelect) {
                 fallbackForDirectory(directory, parentWidget);

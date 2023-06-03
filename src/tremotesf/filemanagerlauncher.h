@@ -32,9 +32,9 @@ namespace tremotesf {
             };
 
             virtual void launchFileManagerAndSelectFiles(
-                const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
+                std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             );
-            virtual void fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget);
+            void fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget);
 
         signals:
             void done();

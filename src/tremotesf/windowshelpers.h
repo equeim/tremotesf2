@@ -11,9 +11,6 @@
 #include <QString>
 
 namespace tremotesf {
-    bool isRunningOnWindows10OrGreater();
-    bool isRunningOnWindows10_1607OrGreater();
-    bool isRunningOnWindows10_1809OrGreater();
     bool isRunningOnWindows10_2004OrGreater();
     bool isRunningOnWindows11OrGreater();
 
