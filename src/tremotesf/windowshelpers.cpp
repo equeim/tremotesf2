@@ -7,8 +7,8 @@
 #include <system_error>
 
 #include <windows.h>
-#include <VersionHelpers.h>
 
+#include <guiddef.h>
 #include <winrt/base.h>
 
 #include "libtremotesf/formatters.h"
@@ -66,21 +66,6 @@ namespace tremotesf {
                 return category;
             }
         };
-    }
-
-    bool isRunningOnWindows10OrGreater() {
-        static const bool is = IsWindows10OrGreater();
-        return is;
-    }
-
-    bool isRunningOnWindows10_1607OrGreater() {
-        static const bool is = isWindowsVersionOrGreater(10, 0, 14393);
-        return is;
-    }
-
-    bool isRunningOnWindows10_1809OrGreater() {
-        static const bool is = isWindowsVersionOrGreater(10, 0, 17763);
-        return is;
     }
 
     bool isRunningOnWindows10_2004OrGreater() {

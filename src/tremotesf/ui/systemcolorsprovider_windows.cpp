@@ -4,9 +4,7 @@
 
 #include "systemcolorsprovider.h"
 
-// Clang needs this header for winrt/base.h
 #include <guiddef.h>
-
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 
@@ -30,8 +28,8 @@ namespace tremotesf {
             explicit SystemColorsProviderWindows(QObject* parent = nullptr) : SystemColorsProvider(parent) {
                 logInfo("System dark theme enabled = {}", mDarkThemeEnabled);
                 logInfo("System accent colors = {}", mAccentColors);
-                revoker = settings.ColorValuesChanged(winrt::auto_revoke, [=, this](auto...) {
-                    QMetaObject::invokeMethod(this, [=, this] {
+                revoker = settings.ColorValuesChanged(winrt::auto_revoke, [this](auto...) {
+                    QMetaObject::invokeMethod(this, [this] {
                         if (bool newDarkThemeEnabled = isDarkThemeEnabledImpl();
                             newDarkThemeEnabled != mDarkThemeEnabled) {
                             logInfo("System dark theme state changed to {}", newDarkThemeEnabled);
@@ -52,9 +50,6 @@ namespace tremotesf {
 
         private:
             bool isDarkThemeEnabledImpl() {
-                if (!isDarkThemeFollowSystemSupported()) {
-                    return false;
-                }
                 // Apparently this is the way to do it according to Microsoft
                 const auto foreground = settings.GetColorValue(UIColorType::Foreground);
                 return (((5 * foreground.G) + (2 * foreground.R) + foreground.B) > (8 * 128));

@@ -38,11 +38,9 @@ namespace tremotesf {
             auto appearanceGroupBoxLayout = new QFormLayout(appearanceGroupBox);
 
             darkThemeComboBox = new QComboBox(this);
-            if (SystemColorsProvider::isDarkThemeFollowSystemSupported()) {
-                //: Dark theme mode
-                darkThemeComboBox->addItem(qApp->translate("tremotesf", "Follow system"));
-                darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::FollowSystem);
-            }
+            //: Dark theme mode
+            darkThemeComboBox->addItem(qApp->translate("tremotesf", "Follow system"));
+            darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::FollowSystem);
             //: Dark theme mode
             darkThemeComboBox->addItem(qApp->translate("tremotesf", "On"));
             darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::On);
@@ -51,12 +49,10 @@ namespace tremotesf {
             darkThemeComboBoxValues.push_back(Settings::DarkThemeMode::Off);
             appearanceGroupBoxLayout->addRow(qApp->translate("tremotesf", "Dark theme"), darkThemeComboBox);
 
-            if (SystemColorsProvider::isAccentColorsSupported()) {
-                //: Check box label
-                systemAccentColorCheckBox =
-                    new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
-                appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
-            }
+            //: Check box label
+            systemAccentColorCheckBox =
+                new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
+            appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
 
             layout->addWidget(appearanceGroupBox);
         }

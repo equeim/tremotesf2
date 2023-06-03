@@ -24,7 +24,7 @@ namespace tremotesf {
             FreedesktopFileManagerLauncher() = default;
         protected:
             void launchFileManagerAndSelectFiles(
-                const std::vector<FilesInDirectory>& filesToSelect, const QPointer<QWidget>& parentWidget
+                std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             ) override {
                 logInfo("FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
                 );
