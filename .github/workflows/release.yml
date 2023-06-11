@@ -57,4 +57,5 @@ jobs:
   build-windows-msvc:
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
-      build-for-release: ${{ github.event.release.tag_name }}
+      build-with-msvc-clang-toolchain: 'false'
+      release-tag: ${{ github.event.release.tag_name }}

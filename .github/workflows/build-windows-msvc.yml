@@ -7,8 +7,13 @@ name: Build Tremotesf for Windows
 on:
   workflow_call:
     inputs:
-      build-for-release:
-        description: Build for release tag
+      build-with-msvc-clang-toolchain:
+        description: Build with MSVC + Clang toolchain
+        type: string
+        required: true
+
+      release-tag:
+        description: Release tag
         type: string
         required: false
         default: ''
@@ -39,30 +44,23 @@ jobs:
         host-triplet: x64-windows-static
         overlay-triplets-path: ${{ github.workspace }}\src\libtremotesf\vcpkg-windows-overlay-triplets
         binary-cache-path: C:\vcpkg_binary_cache
-        save-cache: ${{ github.event_name != 'pull_request' }}
+        save-cache: ${{ github.event_name != 'pull_request' && inputs.build-with-msvc-clang-toolchain != 'true' }}
 
     # We don't use matrix here because we want for vcpkg to install dependencies only once
 
-    - name: Build Tremotesf with MSVC toolchain
+    - name: Build Tremotesf with ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'MSVC + Clang' || 'MSVC' }} toolchain
       id: build
       uses: equeim/action-cmake-build@v9
       with:
-        cmake-arguments: --preset windows-msvc-vcpkg -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
+        cmake-arguments: --preset ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-vcpkg' || 'windows-msvc-vcpkg' }} -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:/vcpkg_installed
         package: true
 
-    - name: Build Tremotesf with MSVC + Clang toolchain
-      if: inputs.build-for-release == ''
-      uses: equeim/action-cmake-build@v9
-      with:
-        cmake-arguments: --preset windows-msvc-clang-vcpkg -D VCPKG_MANIFEST_INSTALL=OFF -D VCPKG_INSTALLED_DIR=C:\vcpkg_installed
-        output-directories-suffix: -clang
-
     - name: Archive packages
-      if: inputs.build-for-release == ''
+      if: inputs.release-tag == ''
       uses: actions/upload-artifact@v3
       with:
-        name: windows-msvc-packages
-        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
+        name: ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-packages' || 'windows-msvc-packages' }}
+        retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
         path: |
           ${{ steps.build.outputs.build-directory-debug }}\windows-packaging\*.zip
           ${{ steps.build.outputs.build-directory-debug }}\windows-packaging\*.msi
@@ -70,11 +68,11 @@ jobs:
           ${{ steps.build.outputs.build-directory-release }}\windows-packaging\*.msi
 
     - name: Upload packages to release
-      if: inputs.build-for-release != ''
+      if: inputs.release-tag != ''
       run: |
         $packages = Get-ChildItem ${{ steps.build.outputs.build-directory-debug }}\windows-packaging\*.zip, ${{ steps.build.outputs.build-directory-debug }}\windows-packaging\*.msi, ${{ steps.build.outputs.build-directory-release }}\windows-packaging\*.zip, ${{ steps.build.outputs.build-directory-release }}\windows-packaging\*.msi
         echo "Uploading packages $packages"
-        gh release upload '${{ inputs.build-for-release }}' $packages
+        gh release upload '${{ inputs.release-tag }}' $packages
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -83,7 +81,7 @@ jobs:
       if: always()
       with:
         name: windows-msvc-vcpkg-logs
-        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
+        retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
         path: ${{ env.VCPKG_ROOT }}\buildtrees\*\*.log
 
     - name: Archive build logs
@@ -91,7 +89,7 @@ jobs:
       if: always()
       with:
         name: windows-msvc-build-logs
-        retention-days: ${{ github.event_name == 'push' && github.retention_days || 3 }}
+        retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
         path: |
           ${{ github.workspace }}\build-*\*.log
           ${{ github.workspace }}\build-*\**\*.log
