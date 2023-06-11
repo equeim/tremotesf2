@@ -187,7 +187,14 @@ jobs:
         flatpak-builder --user --install-deps-from=flathub build-dir org.equeim.Tremotesf.json
 
   build-windows-msvc:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: ['msvc', 'msvc-clang']
+
     uses: ./.github/workflows/build-windows-msvc.yml
+    with:
+      build-with-msvc-clang-toolchain: ${{ matrix.toolchain == 'msvc-clang' && 'true' || 'false' }}
 
   build-windows-mingw:
     runs-on: windows-latest
