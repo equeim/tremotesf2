@@ -113,7 +113,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        freebsd-version: ['12', '13']
+        freebsd-version: ['12.4', '13.2']
     env:
       FREEBSD_VERSION: ${{ matrix.freebsd-version }}
 
@@ -139,8 +139,6 @@ jobs:
     - name: Install dependencies
       shell: vagrant-freebsd-shell.sh {0}
       run: |
-        # Switch from latest to quarterly repo
-        sudo rm /usr/local/etc/pkg/repos/FreeBSD.conf
         sudo pkg update -f
         sudo pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
 
