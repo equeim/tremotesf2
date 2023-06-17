@@ -32,12 +32,12 @@ Table of Contents
 
 On GNU/Linux and BSD, also:
 - Gettext 0.19.7 or newer
-- Qt D-Bus
+- Qt D-Bus module
 - KWindowSystem
 
 On Windows, also:
 - Windows 11 SDK is needed to build
-- Minimum supported OS version at runtime is Windows 8.1
+- Minimum supported OS version to run Tremotesf is Windows 10 1809 (October 2018 Update)
 
 ### Building
 ```sh
@@ -93,6 +93,7 @@ sudo apt install tremotesf
 
 ### Windows
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
+Minimum supported OS version to run Tremotesf is Windows 10 1809 (October 2018 Update).
 
 Build instructions for MSVC toolchain with vcpkg:
 1. Install Visual Studio with 'Desktop development with C++' workload
