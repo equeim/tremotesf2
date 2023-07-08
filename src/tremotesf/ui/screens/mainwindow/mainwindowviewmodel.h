@@ -8,6 +8,8 @@
 #include <QObject>
 #include <QStringList>
 
+#include "tremotesf/rpc/trpc.h"
+
 class QByteArray;
 class QDragEnterEvent;
 class QDropEvent;
@@ -15,27 +17,21 @@ class QString;
 class QTimer;
 
 namespace tremotesf {
-    class IpcServer;
-    class Rpc;
 
     class MainWindowViewModel final : public QObject {
         Q_OBJECT
 
     public:
-        MainWindowViewModel(
-            QStringList&& commandLineFiles,
-            QStringList&& commandLineUrls,
-            Rpc* rpc,
-            IpcServer* ipcServer,
-            QObject* parent = nullptr
-        );
+        MainWindowViewModel(QStringList&& commandLineFiles, QStringList&& commandLineUrls, QObject* parent = nullptr);
+
+        Rpc* rpc() { return &mRpc; };
 
         static void processDragEnterEvent(QDragEnterEvent* event);
         void processDropEvent(QDropEvent* event);
         void pasteShortcutActivated();
 
     private:
-        Rpc* mRpc{};
+        Rpc mRpc{};
         QStringList mPendingFilesToOpen{};
         QStringList mPendingUrlsToOpen{};
         QTimer* delayedTorrentAddMessageTimer{};

@@ -14,12 +14,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        MainWindow(
-            QStringList&& commandLineFiles,
-            QStringList&& commandLineUrls,
-            IpcServer* ipcServer,
-            QWidget* parent = nullptr
-        );
+        MainWindow(QStringList&& commandLineFiles, QStringList&& commandLineUrls, QWidget* parent = nullptr);
         ~MainWindow() override;
         Q_DISABLE_COPY_MOVE(MainWindow)
 

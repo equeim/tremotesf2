@@ -14,7 +14,6 @@
 #include "libtremotesf/log.h"
 #include "libtremotesf/target_os.h"
 #include "tremotesf/ipc/ipcclient.h"
-#include "tremotesf/ipc/ipcserver.h"
 #include "tremotesf/ui/screens/mainwindow/mainwindow.h"
 #include "commandlineparser.h"
 #include "main_windows.h"
@@ -108,8 +107,6 @@ int main(int argc, char** argv) {
     // End of QApplication initialization
     //
 
-    auto ipcServer = IpcServer::createInstance(qApp);
-
     QTranslator qtTranslator;
     {
         const QString qtTranslationsPath = [] {
@@ -134,7 +131,7 @@ int main(int argc, char** argv) {
     }
     qApp->installTranslator(&appTranslator);
 
-    MainWindow window(std::move(args.files), std::move(args.urls), ipcServer);
+    MainWindow window(std::move(args.files), std::move(args.urls));
     window.showMinimized(args.minimized);
 
     if (signalhandler::isExitRequested()) {
