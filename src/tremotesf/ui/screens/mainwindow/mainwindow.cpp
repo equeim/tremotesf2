@@ -179,25 +179,8 @@ namespace tremotesf {
     public:
         explicit Impl(QStringList&& commandLineFiles, QStringList&& commandLineUrls, MainWindow* window)
             : mWindow(window), mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)} {
-            if (Servers::instance()->hasServers()) {
-                mViewModel.rpc()->setConnectionConfiguration(
-                    Servers::instance()->currentServer().connectionConfiguration
-                );
-            }
-
-            QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this] {
-                if (Servers::instance()->hasServers()) {
-                    mViewModel.rpc()->setConnectionConfiguration(
-                        Servers::instance()->currentServer().connectionConfiguration
-                    );
-                    mViewModel.rpc()->connect();
-                } else {
-                    mViewModel.rpc()->resetConnectionConfiguration();
-                }
-            });
-
             mSplitter.setChildrenCollapsible(false);
-
+            mSplitter.setStretchFactor(1, 1);
             if (!Settings::instance()->isSideBarVisible()) {
                 mSideBar.hide();
             }
@@ -205,7 +188,6 @@ namespace tremotesf {
 
             auto mainWidgetContainer = new QWidget(mWindow);
             mSplitter.addWidget(mainWidgetContainer);
-            mSplitter.setStretchFactor(1, 1);
             auto mainWidgetLayout = new QVBoxLayout(mainWidgetContainer);
             mainWidgetLayout->setContentsMargins(
                 0,
@@ -362,19 +344,10 @@ namespace tremotesf {
                 );
             });
 
-            if (Servers::instance()->hasServers()) {
-                if (Settings::instance()->connectOnStartup()) {
-                    mViewModel.rpc()->connect();
-                }
-            } else {
+            if (mViewModel.performStartupAction() == MainWindowViewModel::StartupActionResult::ShowAddServerDialog) {
                 runAfterDelay([this] {
                     auto dialog = new ServerEditDialog(nullptr, -1, mWindow);
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
-                    QObject::connect(dialog, &ServerEditDialog::accepted, this, [this] {
-                        if (Settings::instance()->connectOnStartup()) {
-                            mViewModel.rpc()->connect();
-                        }
-                    });
                     dialog->open();
                 });
             }

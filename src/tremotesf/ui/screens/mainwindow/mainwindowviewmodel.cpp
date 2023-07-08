@@ -18,6 +18,7 @@
 
 #include "libtremotesf/log.h"
 #include "tremotesf/ipc/ipcserver.h"
+#include "tremotesf/rpc/servers.h"
 #include "tremotesf/ui/screens/addtorrent/droppedtorrents.h"
 #include "tremotesf/ui/notificationscontroller.h"
 #include "tremotesf/settings.h"
@@ -89,6 +90,17 @@ namespace tremotesf {
                     const QStringList urls = std::move(mPendingUrlsToOpen);
                     emit showAddTorrentDialogs(files, urls);
                 }
+            }
+        });
+
+        QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this] {
+            if (Servers::instance()->hasServers()) {
+                mRpc.setConnectionConfiguration(
+                    Servers::instance()->currentServer().connectionConfiguration
+                );
+                mRpc.connect();
+            } else {
+                mRpc.resetConnectionConfiguration();
             }
         });
     }
@@ -163,6 +175,19 @@ namespace tremotesf {
         QObject::connect(controller, &NotificationsController::notificationClicked, this, [this] {
             emit showWindow({});
         });
+    }
+
+    MainWindowViewModel::StartupActionResult MainWindowViewModel::performStartupAction() {
+        if (!Servers::instance()->hasServers()) {
+            return StartupActionResult::ShowAddServerDialog;
+        }
+        mRpc.setConnectionConfiguration(
+            Servers::instance()->currentServer().connectionConfiguration
+        );
+        if (Settings::instance()->connectOnStartup()) {
+            mRpc.connect();
+        }
+        return StartupActionResult::DoNothing;
     }
 
     void MainWindowViewModel::addTorrents(
