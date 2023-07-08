@@ -181,11 +181,8 @@ namespace tremotesf {
         explicit Impl(QStringList&& commandLineFiles, QStringList&& commandLineUrls, MainWindow* window)
             : mWindow(window),
               mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)},
-              mTorrentsModel(new TorrentsModel(mViewModel.rpc(), this)),
-              mTorrentsProxyModel(new TorrentsProxyModel(mTorrentsModel, this)),
               mSplitter(new QSplitter(window)),
-              mSideBar(new MainWindowSideBar(mViewModel.rpc(), mTorrentsProxyModel)),
-              mTorrentsView(new TorrentsView(mTorrentsProxyModel, window)),
+              mSideBar(new MainWindowSideBar(mViewModel.rpc(), &mTorrentsProxyModel)),
               mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme("tremotesf-tray-icon"_l1, window->windowIcon()), this)),
               mNotificationsController(NotificationsController::createInstance(mTrayIcon, this)) {
             if (Servers::instance()->hasServers()) {
@@ -233,14 +230,14 @@ namespace tremotesf {
             auto torrentsViewLayout = new QStackedLayout(torrentsViewContainer);
             torrentsViewLayout->setStackingMode(QStackedLayout::StackAll);
 
-            torrentsViewLayout->addWidget(mTorrentsView);
-            QObject::connect(mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](auto point) {
-                if (mTorrentsView->indexAt(point).isValid()) {
+            torrentsViewLayout->addWidget(&mTorrentsView);
+            QObject::connect(&mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](auto point) {
+                if (mTorrentsView.indexAt(point).isValid()) {
                     mTorrentMenu->popup(QCursor::pos());
                 }
             });
             QObject::connect(
-                mTorrentsView,
+                &mTorrentsView,
                 &TorrentsView::activated,
                 this,
                 &MainWindow::Impl::showTorrentsPropertiesDialogs
@@ -267,7 +264,7 @@ namespace tremotesf {
             updateTorrentActions();
             QObject::connect(mViewModel.rpc(), &Rpc::torrentsUpdated, this, &MainWindow::Impl::updateTorrentActions);
             QObject::connect(
-                mTorrentsView->selectionModel(),
+                mTorrentsView.selectionModel(),
                 &QItemSelectionModel::selectionChanged,
                 this,
                 &MainWindow::Impl::updateTorrentActions
@@ -447,14 +444,13 @@ namespace tremotesf {
         MainWindow* mWindow;
         MainWindowViewModel mViewModel;
 
-        TorrentsModel* mTorrentsModel;
-        TorrentsProxyModel* mTorrentsProxyModel;
+        TorrentsModel mTorrentsModel{mViewModel.rpc()};
+        TorrentsProxyModel mTorrentsProxyModel{&mTorrentsModel};
+        TorrentsView mTorrentsView{&mTorrentsProxyModel};
 
         QSplitter* mSplitter;
 
         MainWindowSideBar* mSideBar;
-
-        TorrentsView* mTorrentsView;
         std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs;
 
         QAction* mConnectAction = nullptr;
@@ -562,8 +558,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Start")
             );
             QObject::connect(mStartTorrentAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->startTorrents(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->startTorrents(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -573,8 +569,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Start &Now")
             );
             QObject::connect(mStartTorrentNowAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->startTorrentsNow(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->startTorrentsNow(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -584,8 +580,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "P&ause")
             );
             QObject::connect(mPauseTorrentAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->pauseTorrents(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->pauseTorrents(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -597,11 +593,11 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Copy &Magnet Link")
             );
             QObject::connect(copyMagnetLinkAction, &QAction::triggered, this, [this] {
-                const auto indexes(mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows()));
+                const auto indexes(mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows()));
                 QStringList links;
                 links.reserve(indexes.size());
                 for (const auto& index : indexes) {
-                    links.push_back(mTorrentsModel->torrentAtIndex(index)->data().magnetLink);
+                    links.push_back(mTorrentsModel.torrentAtIndex(index)->data().magnetLink);
                 }
                 qApp->clipboard()->setText(links.join('\n'));
             });
@@ -636,19 +632,19 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Set &Location")
             );
             QObject::connect(setLocationAction, &QAction::triggered, this, [this] {
-                if (mTorrentsView->selectionModel()->hasSelection()) {
+                if (mTorrentsView.selectionModel()->hasSelection()) {
                     QModelIndexList indexes(
-                        mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                        mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                     );
                     auto dialog = new SetLocationDialog(
-                        mTorrentsModel->torrentAtIndex(indexes.first())->data().downloadDirectory,
+                        mTorrentsModel.torrentAtIndex(indexes.first())->data().downloadDirectory,
                         mViewModel.rpc(),
                         mWindow
                     );
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
                     QObject::connect(dialog, &SetLocationDialog::accepted, this, [indexes, dialog, this] {
                         mViewModel.rpc()->setTorrentsLocation(
-                            mTorrentsModel->idsFromIndexes(indexes),
+                            mTorrentsModel.idsFromIndexes(indexes),
                             dialog->downloadDirectory(),
                             dialog->moveFiles()
                         );
@@ -663,10 +659,10 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Rename")
             );
             QObject::connect(mRenameTorrentAction, &QAction::triggered, this, [this] {
-                const auto indexes = mTorrentsView->selectionModel()->selectedRows();
+                const auto indexes = mTorrentsView.selectionModel()->selectedRows();
                 if (indexes.size() == 1) {
                     const auto torrent =
-                        mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(indexes.first()));
+                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(indexes.first()));
                     const auto id = torrent->data().id;
                     const auto name = torrent->data().name;
                     TorrentFilesView::showFileRenameDialog(name, mWindow, [id, name, this](const auto& newName) {
@@ -704,8 +700,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Check Local Data")
             );
             QObject::connect(checkTorrentAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->checkTorrents(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->checkTorrents(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -715,8 +711,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Reanno&unce")
             );
             QObject::connect(reannounceAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->reannounceTorrents(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->reannounceTorrents(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -733,8 +729,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Move To &Top")
             );
             QObject::connect(moveTorrentToTopAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->moveTorrentsToTop(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->moveTorrentsToTop(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -744,8 +740,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Move &Up")
             );
             QObject::connect(moveTorrentUpAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->moveTorrentsUp(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->moveTorrentsUp(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -755,8 +751,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Move &Down")
             );
             QObject::connect(moveTorrentDownAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->moveTorrentsDown(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->moveTorrentsDown(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -766,8 +762,8 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Move To &Bottom")
             );
             QObject::connect(moveTorrentToBottomAction, &QAction::triggered, this, [this] {
-                mViewModel.rpc()->moveTorrentsToBottom(mTorrentsModel->idsFromIndexes(
-                    mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+                mViewModel.rpc()->moveTorrentsToBottom(mTorrentsModel.idsFromIndexes(
+                    mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
                 ));
             });
 
@@ -779,8 +775,8 @@ namespace tremotesf {
             priorityGroup->setExclusive(true);
             const auto setTorrentsPriority = [this](libtremotesf::TorrentData::Priority priority) {
                 for (const auto& index :
-                     mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())) {
-                    mTorrentsModel->torrentAtIndex(index)->setBandwidthPriority(priority);
+                     mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())) {
+                    mTorrentsModel.torrentAtIndex(index)->setBandwidthPriority(priority);
                 }
             };
             //: Torrent's loading priority
@@ -893,7 +889,7 @@ namespace tremotesf {
         void updateTorrentActions() {
             const auto actions = mTorrentMenu->actions();
 
-            if (!mTorrentsView->selectionModel()->hasSelection()) {
+            if (!mTorrentsView.selectionModel()->hasSelection()) {
                 for (QAction* action : actions) {
                     action->setEnabled(false);
                 }
@@ -907,10 +903,10 @@ namespace tremotesf {
             mNormalPriorityAction->setChecked(false);
             mLowPriorityAction->setChecked(false);
 
-            const QModelIndexList selectedRows = mTorrentsView->selectionModel()->selectedRows();
+            const QModelIndexList selectedRows = mTorrentsView.selectionModel()->selectedRows();
             if (selectedRows.size() == 1) {
                 const auto torrent =
-                    mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.first()));
+                    mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(selectedRows.first()));
                 if (torrent->data().status == libtremotesf::TorrentData::Status::Paused) {
                     mPauseTorrentAction->setEnabled(false);
                 } else {
@@ -937,7 +933,7 @@ namespace tremotesf {
                 bool disableBoth = false;
                 for (const QModelIndex& index : selectedRows) {
                     libtremotesf::Torrent* torrent =
-                        mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
+                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
                     if (mViewModel.rpc()->isTorrentLocalMounted(torrent) &&
                         QFile::exists(mViewModel.rpc()->localTorrentDownloadDirectoryPath(torrent))) {
                         if (!disableOpen && !QFile::exists(mViewModel.rpc()->localTorrentFilesPath(torrent))) {
@@ -962,11 +958,11 @@ namespace tremotesf {
         }
 
         void showTorrentsPropertiesDialogs() {
-            const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
+            const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
 
             for (QModelIndexList::size_type i = 0, max = selectedRows.size(); i < max; i++) {
                 libtremotesf::Torrent* torrent =
-                    mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(selectedRows.at(i)));
+                    mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(selectedRows.at(i)));
                 const int id = torrent->data().id;
                 if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
                     if (i == (max - 1)) {
@@ -987,8 +983,8 @@ namespace tremotesf {
         }
 
         void removeSelectedTorrents(bool deleteFiles) {
-            const auto ids = mTorrentsModel->idsFromIndexes(
-                mTorrentsProxyModel->sourceIndexes(mTorrentsView->selectionModel()->selectedRows())
+            const auto ids = mTorrentsModel.idsFromIndexes(
+                mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
             );
             if (ids.empty()) {
                 return;
@@ -1098,8 +1094,8 @@ namespace tremotesf {
                 QString statusText{};
                 QString errorText{};
                 if (mViewModel.rpc()->isConnected()) {
-                    if (mTorrentsProxyModel->rowCount() == 0) {
-                        if (mTorrentsModel->rowCount() == 0) {
+                    if (mTorrentsProxyModel.rowCount() == 0) {
+                        if (mTorrentsModel.rowCount() == 0) {
                             //: Torrents list placeholder
                             statusText = qApp->translate("tremotesf", "No torrents");
                         } else {
@@ -1124,18 +1120,18 @@ namespace tremotesf {
             updatePlaceholder();
             QObject::connect(mViewModel.rpc(), &Rpc::statusChanged, this, updatePlaceholder);
             QObject::connect(
-                mTorrentsProxyModel,
+                &mTorrentsProxyModel,
                 &TorrentsModel::rowsInserted,
                 this,
                 [updatePlaceholder, this](const QModelIndex&, int first, int last) {
-                    if ((last - first) + 1 == mTorrentsProxyModel->rowCount()) {
+                    if ((last - first) + 1 == mTorrentsProxyModel.rowCount()) {
                         // Model was empty
                         updatePlaceholder();
                     }
                 }
             );
-            QObject::connect(mTorrentsProxyModel, &TorrentsModel::rowsRemoved, this, [updatePlaceholder, this] {
-                if (mTorrentsProxyModel->rowCount() == 0) {
+            QObject::connect(&mTorrentsProxyModel, &TorrentsModel::rowsRemoved, this, [updatePlaceholder, this] {
+                if (mTorrentsProxyModel.rowCount() == 0) {
                     // Model is now empty
                     updatePlaceholder();
                 }
@@ -1175,18 +1171,18 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "Select &All")
             );
             selectAllAction->setShortcut(QKeySequence::SelectAll);
-            QObject::connect(selectAllAction, &QAction::triggered, mTorrentsView, &TorrentsView::selectAll);
+            QObject::connect(selectAllAction, &QAction::triggered, &mTorrentsView, &TorrentsView::selectAll);
 
             QAction* invertSelectionAction = editMenu->addAction(
                 QIcon::fromTheme("edit-select-invert"_l1),
                 qApp->translate("tremotesf", "&Invert Selection")
             );
             QObject::connect(invertSelectionAction, &QAction::triggered, this, [this] {
-                mTorrentsView->selectionModel()->select(
+                mTorrentsView.selectionModel()->select(
                     QItemSelection(
-                        mTorrentsProxyModel->index(0, 0),
+                        mTorrentsProxyModel.index(0, 0),
                         mTorrentsProxyModel
-                            ->index(mTorrentsProxyModel->rowCount() - 1, mTorrentsProxyModel->columnCount() - 1)
+                            .index(mTorrentsProxyModel.rowCount() - 1, mTorrentsProxyModel.columnCount() - 1)
                     ),
                     QItemSelectionModel::Toggle
                 );
@@ -1452,11 +1448,11 @@ namespace tremotesf {
         }
 
         void openTorrentsFiles() {
-            const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
+            const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             for (const QModelIndex& index : selectedRows) {
                 desktoputils::openFile(
                     mViewModel.rpc()->localTorrentFilesPath(
-                        mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index))
+                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index))
                     ),
                     mWindow
                 );
@@ -1465,11 +1461,10 @@ namespace tremotesf {
 
         void showTorrentsInFileManager() {
             std::vector<QString> files{};
-            const QModelIndexList selectedRows(mTorrentsView->selectionModel()->selectedRows());
+            const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             files.reserve(static_cast<size_t>(selectedRows.size()));
             for (const QModelIndex& index : selectedRows) {
-                libtremotesf::Torrent* torrent =
-                    mTorrentsModel->torrentAtIndex(mTorrentsProxyModel->sourceIndex(index));
+                libtremotesf::Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
                 files.push_back(mViewModel.rpc()->localTorrentFilesPath(torrent));
             }
             launchFileManagerAndSelectFiles(files, mWindow);
