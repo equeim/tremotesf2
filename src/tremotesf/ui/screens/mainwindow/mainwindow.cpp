@@ -179,12 +179,7 @@ namespace tremotesf {
         Q_OBJECT
     public:
         explicit Impl(QStringList&& commandLineFiles, QStringList&& commandLineUrls, MainWindow* window)
-            : mWindow(window),
-              mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)},
-              mSplitter(new QSplitter(window)),
-              mSideBar(new MainWindowSideBar(mViewModel.rpc(), &mTorrentsProxyModel)),
-              mTrayIcon(new QSystemTrayIcon(QIcon::fromTheme("tremotesf-tray-icon"_l1, window->windowIcon()), this)),
-              mNotificationsController(NotificationsController::createInstance(mTrayIcon, this)) {
+            : mWindow(window), mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)} {
             if (Servers::instance()->hasServers()) {
                 mViewModel.rpc()->setConnectionConfiguration(
                     Servers::instance()->currentServer().connectionConfiguration
@@ -202,16 +197,16 @@ namespace tremotesf {
                 }
             });
 
-            mSplitter->setChildrenCollapsible(false);
+            mSplitter.setChildrenCollapsible(false);
 
             if (!Settings::instance()->isSideBarVisible()) {
-                mSideBar->hide();
+                mSideBar.hide();
             }
-            mSplitter->addWidget(mSideBar);
+            mSplitter.addWidget(&mSideBar);
 
             auto mainWidgetContainer = new QWidget(mWindow);
-            mSplitter->addWidget(mainWidgetContainer);
-            mSplitter->setStretchFactor(1, 1);
+            mSplitter.addWidget(mainWidgetContainer);
+            mSplitter.setStretchFactor(1, 1);
             auto mainWidgetLayout = new QVBoxLayout(mainWidgetContainer);
             mainWidgetLayout->setContentsMargins(
                 0,
@@ -245,9 +240,9 @@ namespace tremotesf {
 
             setupTorrentsPlaceholder(torrentsViewLayout);
 
-            mSplitter->restoreState(Settings::instance()->splitterState());
+            mSplitter.restoreState(Settings::instance()->splitterState());
 
-            mWindow->setCentralWidget(mSplitter);
+            mWindow->setCentralWidget(&mSplitter);
 
             setupActions();
             setupToolBar();
@@ -288,9 +283,9 @@ namespace tremotesf {
             }
 
             if (!mWindow->restoreState(Settings::instance()->mainWindowState())) {
-                mWindow->addToolBar(Qt::TopToolBarArea, mToolBar);
+                mWindow->addToolBar(Qt::TopToolBarArea, &mToolBar);
             }
-            mToolBarAction->setChecked(!mToolBar->isHidden());
+            mToolBarAction->setChecked(!mToolBar.isHidden());
 
             QObject::connect(&mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::Impl::showWindow);
             QObject::connect(
@@ -425,13 +420,13 @@ namespace tremotesf {
 
             Settings::instance()->setMainWindowGeometry(mWindow->saveGeometry());
             Settings::instance()->setMainWindowState(mWindow->saveState());
-            Settings::instance()->setSplitterState(mSplitter->saveState());
+            Settings::instance()->setSplitterState(mSplitter.saveState());
 
-            mTrayIcon->hide();
+            mTrayIcon.hide();
         }
 
         void onCloseEvent() {
-            if (!(mTrayIcon->isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) {
+            if (!(mTrayIcon.isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) {
                 qApp->quit();
             }
         }
@@ -444,19 +439,28 @@ namespace tremotesf {
         MainWindow* mWindow;
         MainWindowViewModel mViewModel;
 
+        QSplitter mSplitter{};
+
         TorrentsModel mTorrentsModel{mViewModel.rpc()};
         TorrentsProxyModel mTorrentsProxyModel{&mTorrentsModel};
         TorrentsView mTorrentsView{&mTorrentsProxyModel};
 
-        QSplitter* mSplitter;
-
-        MainWindowSideBar* mSideBar;
+        MainWindowSideBar mSideBar{mViewModel.rpc(), &mTorrentsProxyModel};
         std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs;
 
-        QAction* mConnectAction = nullptr;
-        QAction* mDisconnectAction = nullptr;
-        QAction* mAddTorrentFileAction = nullptr;
-        QAction* mAddTorrentLinkAction = nullptr;
+        //: Button / menu item to connect to server
+        QAction mConnectAction{qApp->translate("tremotesf", "&Connect")};
+        //: Button / menu item to disconnect from server
+        QAction mDisconnectAction{qApp->translate("tremotesf", "&Disconnect")};
+        QAction mAddTorrentFileAction{
+            QIcon::fromTheme("list-add"_l1),
+            //: Menu item
+            qApp->translate("tremotesf", "&Add Torrent File...")};
+        QAction mAddTorrentLinkAction{
+            QIcon::fromTheme("insert-link"_l1),
+            //: Menu item
+            qApp->translate("tremotesf", "Add Torrent &Link..."),
+        };
 
         QMenu* mTorrentMenu = nullptr;
         QAction* mStartTorrentAction = nullptr;
@@ -477,45 +481,28 @@ namespace tremotesf {
 
         QMenu* mFileMenu = nullptr;
 
-        QToolBar* mToolBar = nullptr;
+        QToolBar mToolBar{};
         QAction* mToolBarAction = nullptr;
 
-        QSystemTrayIcon* mTrayIcon{};
-        NotificationsController* mNotificationsController{};
+        QSystemTrayIcon mTrayIcon{QIcon::fromTheme("tremotesf-tray-icon"_l1, mWindow->windowIcon())};
+        NotificationsController* mNotificationsController{NotificationsController::createInstance(&mTrayIcon, this)};
 
         void setupActions() {
-            //: Button / menu item to connect to server
-            mConnectAction = new QAction(qApp->translate("tremotesf", "&Connect"), this);
-            QObject::connect(mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);
+            QObject::connect(&mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);
+            QObject::connect(&mDisconnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::disconnect);
 
-            //: Button / menu item to disconnect from server
-            mDisconnectAction = new QAction(qApp->translate("tremotesf", "&Disconnect"), this);
-            QObject::connect(mDisconnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::disconnect);
-
-            const QIcon connectIcon(QIcon::fromTheme("network-connect"_l1));
-            const QIcon disconnectIcon(QIcon::fromTheme("network-disconnect"_l1));
+            const auto connectIcon = QIcon::fromTheme("network-connect"_l1);
+            const auto disconnectIcon = QIcon::fromTheme("network-disconnect"_l1);
             if (connectIcon.name() != disconnectIcon.name()) {
-                mConnectAction->setIcon(connectIcon);
-                mDisconnectAction->setIcon(disconnectIcon);
+                mConnectAction.setIcon(connectIcon);
+                mDisconnectAction.setIcon(disconnectIcon);
             }
 
-            mAddTorrentFileAction = new QAction(
-                QIcon::fromTheme("list-add"_l1),
-                //: Menu item
-                qApp->translate("tremotesf", "&Add Torrent File..."),
-                this
-            );
-            mAddTorrentFileAction->setShortcuts(QKeySequence::Open);
-            QObject::connect(mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::Impl::addTorrentsFiles);
-            mConnectionDependentActions.push_back(mAddTorrentFileAction);
+            mAddTorrentFileAction.setShortcuts(QKeySequence::Open);
+            QObject::connect(&mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::Impl::addTorrentsFiles);
+            mConnectionDependentActions.push_back(&mAddTorrentFileAction);
 
-            mAddTorrentLinkAction = new QAction(
-                QIcon::fromTheme("insert-link"_l1),
-                //: Menu item
-                qApp->translate("tremotesf", "Add Torrent &Link..."),
-                this
-            );
-            QObject::connect(mAddTorrentLinkAction, &QAction::triggered, this, [this] {
+            QObject::connect(&mAddTorrentLinkAction, &QAction::triggered, this, [this] {
                 mWindow->setWindowState(mWindow->windowState() & ~Qt::WindowMinimized);
                 auto showDialog = [this] {
                     auto dialog =
@@ -530,7 +517,7 @@ namespace tremotesf {
                     showDialog();
                 }
             });
-            mConnectionDependentActions.push_back(mAddTorrentLinkAction);
+            mConnectionDependentActions.push_back(&mAddTorrentLinkAction);
 
             //
             // Torrent menu
@@ -816,11 +803,11 @@ namespace tremotesf {
         void updateRpcActions() {
             if (Servers::instance()->hasServers()) {
                 const bool disconnected = mViewModel.rpc()->connectionState() == Rpc::ConnectionState::Disconnected;
-                mConnectAction->setEnabled(disconnected);
-                mDisconnectAction->setEnabled(!disconnected);
+                mConnectAction.setEnabled(disconnected);
+                mDisconnectAction.setEnabled(!disconnected);
             } else {
-                mConnectAction->setEnabled(false);
-                mDisconnectAction->setEnabled(false);
+                mConnectAction.setEnabled(false);
+                mDisconnectAction.setEnabled(false);
             }
 
             const bool connected = mViewModel.rpc()->isConnected();
@@ -1141,11 +1128,11 @@ namespace tremotesf {
         void setupMenuBar() {
             //: Menu bar item
             mFileMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&File"));
-            mFileMenu->addAction(mConnectAction);
-            mFileMenu->addAction(mDisconnectAction);
+            mFileMenu->addAction(&mConnectAction);
+            mFileMenu->addAction(&mDisconnectAction);
             mFileMenu->addSeparator();
-            mFileMenu->addAction(mAddTorrentFileAction);
-            mFileMenu->addAction(mAddTorrentLinkAction);
+            mFileMenu->addAction(&mAddTorrentFileAction);
+            mFileMenu->addAction(&mAddTorrentLinkAction);
             mFileMenu->addSeparator();
 
             QAction* quitAction =
@@ -1188,20 +1175,21 @@ namespace tremotesf {
                 );
             });
 
-            mWindow->menuBar()->addMenu(mTorrentMenu);
+            //: Menu bar item
+            mTorrentMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&Torrent"));
 
             //: Menu bar item
             QMenu* viewMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&View"));
 
             mToolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Toolbar"));
             mToolBarAction->setCheckable(true);
-            QObject::connect(mToolBarAction, &QAction::triggered, mToolBar, &QToolBar::setVisible);
+            QObject::connect(mToolBarAction, &QAction::triggered, &mToolBar, &QToolBar::setVisible);
 
             QAction* sideBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Sidebar"));
             sideBarAction->setCheckable(true);
             sideBarAction->setChecked(Settings::instance()->isSideBarVisible());
             QObject::connect(sideBarAction, &QAction::triggered, this, [this](bool checked) {
-                mSideBar->setVisible(checked);
+                mSideBar.setVisible(checked);
                 Settings::instance()->setSideBarVisible(checked);
             });
 
@@ -1216,9 +1204,9 @@ namespace tremotesf {
             viewMenu->addSeparator();
             QAction* lockToolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Lock Toolbar"));
             lockToolBarAction->setCheckable(true);
-            lockToolBarAction->setChecked(!mToolBar->isMovable());
-            QObject::connect(lockToolBarAction, &QAction::triggered, mToolBar, [this](bool checked) {
-                mToolBar->setMovable(!checked);
+            lockToolBarAction->setChecked(!mToolBar.isMovable());
+            QObject::connect(lockToolBarAction, &QAction::triggered, &mToolBar, [this](bool checked) {
+                mToolBar.setMovable(!checked);
                 Settings::instance()->setToolBarLocked(checked);
             });
 
@@ -1312,23 +1300,22 @@ namespace tremotesf {
         }
 
         void setupToolBar() {
-            mToolBar = new QToolBar(mWindow);
-            mToolBar->setObjectName("toolBar"_l1);
-            mToolBar->setContextMenuPolicy(Qt::CustomContextMenu);
-            mToolBar->setMovable(!Settings::instance()->isToolBarLocked());
-            mWindow->addToolBar(mToolBar);
+            mToolBar.setObjectName("toolBar"_l1);
+            mToolBar.setContextMenuPolicy(Qt::CustomContextMenu);
+            mToolBar.setMovable(!Settings::instance()->isToolBarLocked());
+            mWindow->addToolBar(&mToolBar);
 
-            mToolBar->addAction(mConnectAction);
-            mToolBar->addAction(mDisconnectAction);
-            mToolBar->addSeparator();
-            mToolBar->addAction(mAddTorrentFileAction);
-            mToolBar->addAction(mAddTorrentLinkAction);
-            mToolBar->addSeparator();
-            mToolBar->addAction(mStartTorrentAction);
-            mToolBar->addAction(mPauseTorrentAction);
-            mToolBar->addAction(mRemoveTorrentAction);
+            mToolBar.addAction(&mConnectAction);
+            mToolBar.addAction(&mDisconnectAction);
+            mToolBar.addSeparator();
+            mToolBar.addAction(&mAddTorrentFileAction);
+            mToolBar.addAction(&mAddTorrentLinkAction);
+            mToolBar.addSeparator();
+            mToolBar.addAction(mStartTorrentAction);
+            mToolBar.addAction(mPauseTorrentAction);
+            mToolBar.addAction(mRemoveTorrentAction);
 
-            QObject::connect(mToolBar, &QToolBar::customContextMenuRequested, this, [this] {
+            QObject::connect(&mToolBar, &QToolBar::customContextMenuRequested, this, [this] {
                 QMenu contextMenu;
                 QActionGroup group(this);
 
@@ -1356,16 +1343,13 @@ namespace tremotesf {
         }
 
         void setupTrayIcon() {
-            auto contextMenu = new QMenu(mFileMenu);
-            const QList<QAction*> actions(mFileMenu->actions());
-            for (QAction* action : actions) {
-                contextMenu->addAction(action);
-            }
+            auto contextMenu = new QMenu(mWindow);
+            contextMenu->addActions(mFileMenu->actions());
 
-            mTrayIcon->setContextMenu(contextMenu);
-            mTrayIcon->setToolTip(mViewModel.rpc()->statusString());
+            mTrayIcon.setContextMenu(contextMenu);
+            mTrayIcon.setToolTip(mViewModel.rpc()->statusString());
 
-            QObject::connect(mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
+            QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
                 if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
                     if (mWindow->isHidden() || mWindow->isMinimized()) {
                         showWindow();
@@ -1376,26 +1360,26 @@ namespace tremotesf {
             });
 
             QObject::connect(mViewModel.rpc(), &Rpc::statusChanged, this, [this] {
-                mTrayIcon->setToolTip(mViewModel.rpc()->statusString());
+                mTrayIcon.setToolTip(mViewModel.rpc()->statusString());
             });
 
             QObject::connect(mViewModel.rpc()->serverStats(), &libtremotesf::ServerStats::updated, this, [this] {
-                mTrayIcon->setToolTip(QString("\u25be %1\n\u25b4 %2")
-                                          .arg(
-                                              Utils::formatByteSpeed(mViewModel.rpc()->serverStats()->downloadSpeed()),
-                                              Utils::formatByteSpeed(mViewModel.rpc()->serverStats()->uploadSpeed())
-                                          ));
+                mTrayIcon.setToolTip(QString("\u25be %1\n\u25b4 %2")
+                                         .arg(
+                                             Utils::formatByteSpeed(mViewModel.rpc()->serverStats()->downloadSpeed()),
+                                             Utils::formatByteSpeed(mViewModel.rpc()->serverStats()->uploadSpeed())
+                                         ));
             });
 
             if (Settings::instance()->showTrayIcon()) {
-                mTrayIcon->show();
+                mTrayIcon.show();
             }
 
             QObject::connect(Settings::instance(), &Settings::showTrayIconChanged, this, [this] {
                 if (Settings::instance()->showTrayIcon()) {
-                    mTrayIcon->show();
+                    mTrayIcon.show();
                 } else {
-                    mTrayIcon->hide();
+                    mTrayIcon.hide();
                     showWindow();
                 }
             });
