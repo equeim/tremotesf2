@@ -18,7 +18,6 @@
 
 #include "libtremotesf/log.h"
 #include "tremotesf/ipc/ipcserver.h"
-#include "tremotesf/rpc/trpc.h"
 #include "tremotesf/ui/screens/addtorrent/droppedtorrents.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
@@ -50,9 +49,9 @@ namespace tremotesf {
     }
 
     MainWindowViewModel::MainWindowViewModel(
-        QStringList&& commandLineFiles, QStringList&& commandLineUrls, Rpc* rpc, IpcServer* ipcServer, QObject* parent
+        QStringList&& commandLineFiles, QStringList&& commandLineUrls, QObject* parent
     )
-        : QObject(parent), mRpc(rpc) {
+        : QObject(parent) {
         if (!commandLineFiles.isEmpty() || !commandLineUrls.isEmpty()) {
             QMetaObject::invokeMethod(
                 this,
@@ -61,6 +60,7 @@ namespace tremotesf {
             );
         }
 
+        auto ipcServer = IpcServer::createInstance(this);
         QObject::connect(
             ipcServer,
             &IpcServer::windowActivationRequested,
@@ -75,8 +75,8 @@ namespace tremotesf {
             [=, this](const auto& files, const auto& urls) { addTorrents(files, urls); }
         );
 
-        QObject::connect(rpc, &Rpc::connectedChanged, this, [=, this] {
-            if (rpc->isConnected()) {
+        QObject::connect(&mRpc, &Rpc::connectedChanged, this, [this] {
+            if (mRpc.isConnected()) {
                 if (delayedTorrentAddMessageTimer) {
                     delayedTorrentAddMessageTimer->stop();
                     delayedTorrentAddMessageTimer->deleteLater();
@@ -138,7 +138,7 @@ namespace tremotesf {
         logInfo("MainWindowViewModel: addTorrents() called");
         logInfo("MainWindowViewModel: files = {}", files);
         logInfo("MainWindowViewModel: urls = {}", urls);
-        if (mRpc->isConnected()) {
+        if (mRpc.isConnected()) {
             emit showAddTorrentDialogs(files, urls);
         } else {
             mPendingFilesToOpen.append(files);
