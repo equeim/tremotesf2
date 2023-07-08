@@ -14,6 +14,7 @@ class QByteArray;
 class QDragEnterEvent;
 class QDropEvent;
 class QString;
+class QSystemTrayIcon;
 class QTimer;
 
 namespace tremotesf {
@@ -29,6 +30,8 @@ namespace tremotesf {
         static void processDragEnterEvent(QDragEnterEvent* event);
         void processDropEvent(QDropEvent* event);
         void pasteShortcutActivated();
+
+        void setupNotificationsController(QSystemTrayIcon* trayIcon);
 
     private:
         Rpc mRpc{};
