@@ -446,7 +446,7 @@ namespace tremotesf {
         TorrentsView mTorrentsView{&mTorrentsProxyModel};
 
         MainWindowSideBar mSideBar{mViewModel.rpc(), &mTorrentsProxyModel};
-        std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs;
+        std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs{};
 
         //: Button / menu item to connect to server
         QAction mConnectAction{qApp->translate("tremotesf", "&Connect")};
@@ -462,16 +462,16 @@ namespace tremotesf {
             qApp->translate("tremotesf", "Add Torrent &Link..."),
         };
 
-        QMenu* mTorrentMenu = nullptr;
-        QAction* mStartTorrentAction = nullptr;
-        QAction* mStartTorrentNowAction = nullptr;
-        QAction* mPauseTorrentAction = nullptr;
-        QAction* mRemoveTorrentAction = nullptr;
+        QMenu* mTorrentMenu{};
+        QAction* mStartTorrentAction{};
+        QAction* mStartTorrentNowAction{};
+        QAction* mPauseTorrentAction{};
+        QAction* mRemoveTorrentAction{};
 
-        QAction* mRenameTorrentAction = nullptr;
+        QAction* mRenameTorrentAction{};
 
-        QAction* mOpenTorrentFilesAction = nullptr;
-        QAction* mShowInFileManagerAction = nullptr;
+        QAction* mOpenTorrentFilesAction{};
+        QAction* mShowInFileManagerAction{};
 
         QAction* mHighPriorityAction{};
         QAction* mNormalPriorityAction{};
@@ -479,10 +479,10 @@ namespace tremotesf {
 
         std::vector<QAction*> mConnectionDependentActions;
 
-        QMenu* mFileMenu = nullptr;
+        QMenu* mFileMenu{};
 
         QToolBar mToolBar{};
-        QAction* mToolBarAction = nullptr;
+        QAction* mToolBarAction{};
 
         QSystemTrayIcon mTrayIcon{QIcon::fromTheme("tremotesf-tray-icon"_l1, mWindow->windowIcon())};
         NotificationsController* mNotificationsController{NotificationsController::createInstance(&mTrayIcon, this)};
