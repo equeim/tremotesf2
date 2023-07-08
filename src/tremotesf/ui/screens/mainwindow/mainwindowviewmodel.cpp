@@ -19,6 +19,8 @@
 #include "libtremotesf/log.h"
 #include "tremotesf/ipc/ipcserver.h"
 #include "tremotesf/ui/screens/addtorrent/droppedtorrents.h"
+#include "tremotesf/ui/notificationscontroller.h"
+#include "tremotesf/settings.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
@@ -130,6 +132,37 @@ namespace tremotesf {
         }
         logInfo("MainWindowViewModel: accepting clipboard data");
         addTorrents(dropped.files, dropped.urls);
+    }
+
+    void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
+        const auto controller = NotificationsController::createInstance(trayIcon, this);
+
+        QObject::connect(&mRpc, &Rpc::connectedChanged, this, [controller, this] {
+            if (!mRpc.isConnected()) {
+                if ((mRpc.error() != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
+                    controller->showNotification(
+                        //: Notification title when disconnected from server
+                        qApp->translate("tremotesf", "Disconnected"),
+                        mRpc.statusString()
+                    );
+                }
+            }
+        });
+
+        QObject::connect(&mRpc, &Rpc::addedNotificationRequested, this, [controller](const auto&, const auto& names) {
+            controller->showAddedTorrentsNotification(names);
+        });
+
+        QObject::connect(
+            &mRpc,
+            &Rpc::finishedNotificationRequested,
+            this,
+            [controller](const auto&, const auto& names) { controller->showFinishedTorrentsNotification(names); }
+        );
+
+        QObject::connect(controller, &NotificationsController::notificationClicked, this, [this] {
+            emit showWindow({});
+        });
     }
 
     void MainWindowViewModel::addTorrents(

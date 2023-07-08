@@ -55,7 +55,6 @@
 #include "tremotesf/settings.h"
 #include "tremotesf/utils.h"
 
-#include "tremotesf/ui/notificationscontroller.h"
 #include "tremotesf/ui/screens/aboutdialog.h"
 #include "tremotesf/ui/screens/addtorrent/addtorrentdialog.h"
 #include "tremotesf/ui/screens/connectionsettings/servereditdialog.h"
@@ -272,6 +271,7 @@ namespace tremotesf {
 
             setupMenuBar();
             setupTrayIcon();
+            mViewModel.setupNotificationsController(&mTrayIcon);
 
             if (!mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry())) {
                 const QSize screenSize(qApp->primaryScreen()->size());
@@ -336,43 +336,12 @@ namespace tremotesf {
                 }
             );
 
-            QObject::connect(mViewModel.rpc(), &Rpc::connectedChanged, this, [this] {
-                if (!mViewModel.rpc()->isConnected()) {
-                    if ((mViewModel.rpc()->error() != Rpc::Error::NoError) &&
-                        Settings::instance()->notificationOnDisconnecting()) {
-                        mNotificationsController->showNotification(
-                            //: Notification title when disconnected from server
-                            qApp->translate("tremotesf", "Disconnected"),
-                            mViewModel.rpc()->statusString()
-                        );
-                    }
-                }
-            });
-
             auto pasteShortcut = new QShortcut(QKeySequence::Paste, mWindow);
             QObject::connect(
                 pasteShortcut,
                 &QShortcut::activated,
                 &mViewModel,
                 &MainWindowViewModel::pasteShortcutActivated
-            );
-
-            QObject::connect(
-                mViewModel.rpc(),
-                &Rpc::addedNotificationRequested,
-                this,
-                [this](const auto&, const auto& names) {
-                    mNotificationsController->showAddedTorrentsNotification(names);
-                }
-            );
-
-            QObject::connect(
-                mViewModel.rpc(),
-                &Rpc::finishedNotificationRequested,
-                this,
-                [this](const auto&, const auto& names) {
-                    mNotificationsController->showFinishedTorrentsNotification(names);
-                }
             );
 
             QObject::connect(mViewModel.rpc(), &Rpc::torrentAddDuplicate, this, [this] {
@@ -391,10 +360,6 @@ namespace tremotesf {
                     qApp->translate("tremotesf", "Error adding torrent"),
                     QMessageBox::Close
                 );
-            });
-
-            QObject::connect(mNotificationsController, &NotificationsController::notificationClicked, this, [this] {
-                showWindow();
             });
 
             if (Servers::instance()->hasServers()) {
@@ -485,7 +450,6 @@ namespace tremotesf {
         QAction* mToolBarAction{};
 
         QSystemTrayIcon mTrayIcon{QIcon::fromTheme("tremotesf-tray-icon"_l1, mWindow->windowIcon())};
-        NotificationsController* mNotificationsController{NotificationsController::createInstance(&mTrayIcon, this)};
 
         void setupActions() {
             QObject::connect(&mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);
