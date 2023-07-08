@@ -33,6 +33,9 @@ namespace tremotesf {
 
         void setupNotificationsController(QSystemTrayIcon* trayIcon);
 
+        enum class StartupActionResult { ShowAddServerDialog, DoNothing };
+        StartupActionResult performStartupAction();
+
     private:
         Rpc mRpc{};
         QStringList mPendingFilesToOpen{};
