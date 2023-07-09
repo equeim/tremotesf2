@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 #include <cmath>
+#include <unordered_map>
 
 #include <QAction>
 #include <QActionGroup>
