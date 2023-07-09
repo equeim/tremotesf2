@@ -258,15 +258,7 @@ namespace tremotesf {
 
             mWindow->restoreState(Settings::instance()->mainWindowState());
             mToolBarAction->setChecked(!mToolBar.isHidden());
-
-            if (!mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry())) {
-                const QSize screenSize(qApp->primaryScreen()->size());
-                const QSize windowSize(mWindow->sizeHint());
-                mWindow->move(
-                    (screenSize.width() - windowSize.width()) / 2,
-                    (screenSize.height() - windowSize.height()) / 2
-                );
-            }
+            mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry());
 
             QObject::connect(&mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::Impl::showWindow);
             showAddTorrentDialogsFromIpc(messageWidget);
