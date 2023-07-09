@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_MAINWINDOW_H
 #define TREMOTESF_MAINWINDOW_H
 
+#include <memory>
 #include <QMainWindow>
 
 namespace tremotesf {
