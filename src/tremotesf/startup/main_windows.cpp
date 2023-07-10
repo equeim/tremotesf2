@@ -90,17 +90,25 @@ namespace tremotesf {
         };
     }
 
-    void windowsInitPrelude() {
+    WindowsLogger::WindowsLogger() {
         initWindowsMessageHandler();
         std::set_terminate(onTerminate);
     }
 
-    void windowsInitWinrt() {
+    WindowsLogger::~WindowsLogger() {
+        deinitWindowsMessageHandler();
+    }
+
+    WinrtApartment::WinrtApartment() {
         try {
             winrt::init_apartment(winrt::apartment_type::single_threaded);
         } catch (const winrt::hresult_error& e) {
             logWarning("winrt::init_apartment failed: {}", e);
         }
+    }
+
+    WinrtApartment::~WinrtApartment() {
+        winrt::uninit_apartment();
     }
 
     void windowsInitApplication() {
@@ -115,16 +123,6 @@ namespace tremotesf {
         const auto systemColorsProvider = tremotesf::SystemColorsProvider::createInstance(QApplication::instance());
         tremotesf::applyDarkThemeToPalette(systemColorsProvider);
     }
-
-    void windowsDeinitWinrt() {
-        try {
-            winrt::uninit_apartment();
-        } catch (const winrt::hresult_error& e) {
-            logWarning("winrt::uninit_apartment failed: {}", e);
-        }
-    }
-
-    void windowsDeinitPrelude() { deinitWindowsMessageHandler(); }
 }
 
 Q_IMPORT_PLUGIN(SvgIconEnginePlugin)

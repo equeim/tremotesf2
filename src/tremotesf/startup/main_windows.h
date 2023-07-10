@@ -6,11 +6,19 @@
 #define TREMOTEST_MAIN_WINDOWS_H
 
 namespace tremotesf {
-    void windowsInitPrelude();
-    void windowsInitWinrt();
+    class WindowsLogger final {
+    public:
+        WindowsLogger();
+        ~WindowsLogger();
+    };
+
+    class WinrtApartment final {
+    public:
+        WinrtApartment();
+        ~WinrtApartment();
+    };
+
     void windowsInitApplication();
-    void windowsDeinitWinrt();
-    void windowsDeinitPrelude();
 }
 
 #endif // TREMOTEST_MAIN_WINDOWS_H
