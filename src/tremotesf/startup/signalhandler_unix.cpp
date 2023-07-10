@@ -4,13 +4,13 @@
 
 #include "signalhandler.h"
 
+#include <array>
 #include <atomic>
 #include <csignal>
 #include <limits>
-#include <memory>
+#include <optional>
 #include <string_view>
 #include <thread>
-#include <unordered_map>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -18,12 +18,30 @@
 
 #include <QCoreApplication>
 #include <QScopeGuard>
+#include <QFileInfo>
 
 #include "libtremotesf/log.h"
 #include "tremotesf/unixhelpers.h"
 
-namespace tremotesf::signalhandler {
+using namespace std::string_view_literals;
+
+namespace tremotesf {
     namespace {
+        constexpr std::array expectedSignals{
+            std::pair{SIGINT, "SIGINT"sv},
+            std::pair{SIGTERM, "SIGTERM"sv},
+            std::pair{SIGHUP, "SIGHUP"sv},
+            std::pair{SIGQUIT, "SIGQUIT"sv}};
+
+        std::optional<std::string_view> signalName(int signal) {
+            for (auto [expectedSignal, name] : expectedSignals) {
+                if (signal == expectedSignal) {
+                    return name;
+                }
+            }
+            return std::nullopt;
+        }
+
         int writeSocket{};
 
         // Not using std::atomic<std::optional<int>> because Clang might require linking to libatomic
@@ -46,106 +64,113 @@ namespace tremotesf::signalhandler {
                 break;
             }
         }
+    }
 
-        class SignalSocketReader {
-        public:
-            explicit SignalSocketReader(int readSocket, std::unordered_map<int, std::string_view>&& signalNames)
-                : mReadSocket(readSocket), mSignalNames(std::move(signalNames)) {
-                logDebug("signalhandler: starting read socket thread");
+    QString descriptorPath(int fd) {
+        return QFileInfo(QString::fromStdString(fmt::format("/proc/self/fd/{}", fd))).canonicalFilePath();
+    }
+
+    class SignalHandler::Impl {
+    public:
+        Impl() {
+            logInfo("stdout = {}", descriptorPath(STDOUT_FILENO));
+            logInfo("stderr = {}", descriptorPath(STDERR_FILENO));
+            try {
+                int sockets[2]{};
+                checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, static_cast<int*>(sockets)), "socketpair");
+                writeSocket = sockets[0];
+                const int readSocket = sockets[1];
+
+                struct sigaction action {};
+                action.sa_handler = signalHandler;
+                action.sa_flags |= SA_RESTART;
+                for (auto [signal, _] : expectedSignals) {
+                    checkPosixError(sigaction(signal, &action, nullptr), "sigaction");
+                }
+
+                logDebug("signalhandler: created socket pair and set up signal handlers");
+                try {
+                    logDebug("signalhandler: starting read socket thread");
+                    mThread = std::thread(&Impl::readFromSocket, this, readSocket);
+                } catch (const std::system_error& e) {
+                    logWarningWithException(e, "signalhandler: failed to start thread");
+                }
+            } catch (const std::system_error& e) {
+                logWarningWithException(e, "Failed to setup signal handlers");
+                return;
             }
+        }
 
-            ~SignalSocketReader() {
-                logDebug("signalhandler: closing write socket");
-                close(writeSocket);
-                logDebug("signalhandler: joining read socket thread");
-                mThread.join();
-                logDebug("signalhandler: joined read socket thread, closing read socket");
-                close(mReadSocket);
+        ~Impl() {
+            logDebug("signalhandler: closing write socket");
+            try {
+                checkPosixError(close(writeSocket), "close");
+            } catch (const std::system_error& e) {
+                logWarningWithException(e, "signalhandler: failed to close write socket");
             }
+            logDebug("signalhandler: joining read socket thread");
+            mThread.join();
+            logDebug("signalhandler: joined read socket thread");
+        }
 
-            Q_DISABLE_COPY_MOVE(SignalSocketReader)
+        Q_DISABLE_COPY_MOVE(Impl)
 
-        private:
-            void readFromSocket() {
-                logDebug("signalhandler: started read socket thread");
-                auto finishGuard = QScopeGuard([] { logDebug("signalhandler: finished read socket thread"); });
+    private:
+        void readFromSocket(int readSocket) const {
+            logDebug("signalhandler: started read socket thread");
+            auto finishGuard = QScopeGuard([readSocket] {
+                logDebug("signalhandler: closing read socket");
+                try {
+                    checkPosixError(close(readSocket), "close");
+                } catch (const std::system_error& e) {
+                    logWarningWithException(e, "signalhandler: failed to close read socket");
+                }
+                logDebug("signalhandler: finished read socket thread");
+            });
 
-                while (true) {
-                    char byte{};
-                    try {
-                        const auto bytes = checkPosixError(read(mReadSocket, &byte, 1), "read");
-                        if (bytes == 0) {
-                            // Write socket was closed
-                            return;
-                        }
-                    } catch (const std::system_error& e) {
-                        if (e.code() == std::errc::interrupted) {
-                            logWarning("signalhandler: read interrupted, continue");
-                            continue;
-                        }
-                        logWarningWithException(e, "signalhandler: failed to read from socket, end thread");
+            while (true) {
+                char byte{};
+                try {
+                    const ssize_t bytes = checkPosixError(read(readSocket, &byte, 1), "read");
+                    if (bytes == 0) {
+                        logDebug("signalhandler: write socket was closed, end thread");
                         return;
                     }
-                    break;
-                }
-                if (int signal = receivedSignal; signal != notReceivedSignal) {
-                    const auto found = mSignalNames.find(signal);
-                    if (found != mSignalNames.end()) {
-                        logInfo("signalhandler: received signal {}", found->second);
-                    } else {
-                        logInfo("signalhandler: received signal {}", signal);
+                } catch (const std::system_error& e) {
+                    if (e.code() == std::errc::interrupted) {
+                        logWarning("signalhandler: read interrupted, continue");
+                        continue;
                     }
-                } else {
-                    logWarning("signalhandler: read from socket but signal was not received");
+                    logWarningWithException(e, "signalhandler: failed to read from socket, end thread");
                     return;
                 }
-                const auto app = QCoreApplication::instance();
-                if (app) {
-                    logInfo("signalhandler: post QCoreApplication::quit() to event loop");
-                    QMetaObject::invokeMethod(app, &QCoreApplication::quit, Qt::QueuedConnection);
+                break;
+            }
+            if (int signal = receivedSignal; signal != notReceivedSignal) {
+                if (const auto name = signalName(signal); name.has_value()) {
+                    logInfo("signalhandler: received signal {}", *name);
                 } else {
-                    logWarning("signalhandler: QApplication is not created yet");
+                    logInfo("signalhandler: received signal {}", signal);
                 }
+            } else {
+                logWarning("signalhandler: read from socket but signal was not received");
+                return;
             }
-
-            int mReadSocket{};
-            std::unordered_map<int, std::string_view> mSignalNames{};
-            std::thread mThread{&SignalSocketReader::readFromSocket, this};
-        };
-
-        std::unique_ptr<SignalSocketReader> globalSignalSocketReader{};
-    }
-
-    void initSignalHandler() {
-        std::unordered_map<int, std::string_view> signalNames{
-            {SIGINT, "SIGINT"},
-            {SIGTERM, "SIGTERM"},
-            {SIGHUP, "SIGHUP"},
-            {SIGQUIT, "SIGQUIT"}};
-
-        try {
-            int sockets[2]{};
-            checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, static_cast<int*>(sockets)), "socketpair");
-            writeSocket = sockets[0];
-            const int readSocket = sockets[1];
-
-            struct sigaction action {};
-            action.sa_handler = signalHandler;
-            action.sa_flags |= SA_RESTART;
-            for (const auto& [signal, _] : signalNames) {
-                checkPosixError(sigaction(signal, &action, nullptr), "sigaction");
+            const auto app = QCoreApplication::instance();
+            if (app) {
+                logInfo("signalhandler: post QCoreApplication::quit() to event loop");
+                QMetaObject::invokeMethod(app, &QCoreApplication::quit, Qt::QueuedConnection);
+            } else {
+                logWarning("signalhandler: QApplication is not created yet");
             }
-
-            logDebug("signalhandler: created socket pair and set up signal handlers");
-
-            globalSignalSocketReader = std::make_unique<SignalSocketReader>(readSocket, std::move(signalNames));
-        } catch (const std::system_error& e) {
-            logWarningWithException(e, "Failed to setup signal handlers");
-            return;
         }
-    }
 
-    void deinitSignalHandler() { globalSignalSocketReader.reset(); }
+        std::thread mThread{};
+    };
 
-    bool isExitRequested() { return receivedSignal.load() != notReceivedSignal; }
+    SignalHandler::SignalHandler() : mImpl(std::make_unique<Impl>()) {}
+
+    SignalHandler::~SignalHandler() = default;
+
+    bool SignalHandler::isExitRequested() const { return receivedSignal.load() != notReceivedSignal; }
 }

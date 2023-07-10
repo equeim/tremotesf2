@@ -7,7 +7,6 @@
 #include <QLibraryInfo>
 #include <QLoggingCategory>
 #include <QLocale>
-#include <QScopeGuard>
 #include <QTranslator>
 
 #include "libtremotesf/literals.h"
@@ -54,18 +53,12 @@ int main(int argc, char** argv) {
         logDebug("Debug logging is enabled");
     }
 
-    if constexpr (isTargetOsWindows) {
-        windowsInitPrelude();
-    }
-    const auto preludeScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) {
-            windowsDeinitPrelude();
-        }
-    });
+#ifdef Q_OS_WIN
+    const WindowsLogger logger{};
+#endif
 
     // Setup handler for UNIX signals or Windows console handler
-    signalhandler::initSignalHandler();
-    const auto signalHandlerGuard = QScopeGuard([] { signalhandler::deinitSignalHandler(); });
+    const SignalHandler signalHandler{};
 
     // Send command to another instance
     if (const auto client = IpcClient::createInstance(); client->isConnected()) {
@@ -78,14 +71,9 @@ int main(int argc, char** argv) {
         return EXIT_SUCCESS;
     }
 
-    if constexpr (isTargetOsWindows) {
-        windowsInitWinrt();
-    }
-    const auto winrtScopeGuard = QScopeGuard([] {
-        if constexpr (isTargetOsWindows) {
-            windowsDeinitWinrt();
-        }
-    });
+#ifdef Q_OS_WIN
+    const WinrtApartment apartment{};
+#endif
 
     //
     // QApplication initialization
@@ -134,7 +122,7 @@ int main(int argc, char** argv) {
     MainWindow window(std::move(args.files), std::move(args.urls));
     window.showMinimized(args.minimized);
 
-    if (signalhandler::isExitRequested()) {
+    if (signalHandler.isExitRequested()) {
         return EXIT_SUCCESS;
     }
 
