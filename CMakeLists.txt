@@ -18,7 +18,7 @@ include(GNUInstallDirs)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(src/libtremotesf/cmake/CommonOptions.cmake)
+include(cmake/CommonOptions.cmake)
 
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core)
 

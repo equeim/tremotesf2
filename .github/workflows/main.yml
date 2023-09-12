@@ -130,10 +130,10 @@ jobs:
     - name: Start FreeBSD VM
       run: |
         echo '::group::Starting VM'
-        VAGRANT_CWD="$GITHUB_WORKSPACE/src/libtremotesf/.github/workflows" vagrant up --provider=virtualbox
+        VAGRANT_CWD="$GITHUB_WORKSPACE/.github/workflows" vagrant up --provider=virtualbox
         echo '::endgroup'
         echo '::group::Adding vagrant shell to PATH'
-        echo "$GITHUB_WORKSPACE/src/libtremotesf/.github/workflows" >> "$GITHUB_PATH"
+        echo "$GITHUB_WORKSPACE/.github/workflows" >> "$GITHUB_PATH"
         echo '::endgroup'
 
     - name: Install dependencies

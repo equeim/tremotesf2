@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-[submodule "src/libtremotesf"]
-	path = src/libtremotesf
-	url = https://github.com/equeim/libtremotesf.git
+[submodule "src/3rdparty/cpp-httplib"]
+	path = src/3rdparty/cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib.git
