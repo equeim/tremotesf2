@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:37', 'fedora:38', 'opensuse/tumbleweed:latest', 'mageia:8']
+        container-image: ['fedora:37', 'fedora:38', 'opensuse/tumbleweed:latest']
         compiler: [gcc]
         include:
         - container-image: 'fedora:37'
@@ -35,7 +35,7 @@ jobs:
       uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Set packages install command for dnf
-      if: startsWith(matrix.container-image, 'fedora') || startsWith(matrix.container-image, 'mageia')
+      if: startsWith(matrix.container-image, 'fedora')
       run: echo 'INSTALL_PACKAGES=dnf -y --setopt=install_weak_deps=False install' >> "$GITHUB_ENV"
 
     - name: Set packages install command for zypper
