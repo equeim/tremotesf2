@@ -46,7 +46,7 @@ jobs:
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
@@ -90,7 +90,7 @@ jobs:
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
@@ -123,7 +123,7 @@ jobs:
       uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
@@ -176,7 +176,7 @@ jobs:
         flatpak remote-add --user --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
@@ -199,12 +199,12 @@ jobs:
 
     steps:
     - name: Checkout Tremotesf
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
     - name: Checkout msys2-packages
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: equeim/msys2-packages
         path: msys2-packages
@@ -267,7 +267,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Check REUSE compliance
       run: |
