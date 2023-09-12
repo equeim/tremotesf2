@@ -7,7 +7,7 @@ if (WIN32)
 else()
     cmake_minimum_required(VERSION 3.16)
 endif()
-cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.26)
+cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.27)
 
 project(tremotesf VERSION 2.4.0 LANGUAGES CXX)
 
