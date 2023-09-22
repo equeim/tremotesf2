@@ -56,10 +56,10 @@ add_library(
 
     rpc/addressutils.cpp
     rpc/addressutils.h
+    rpc/mounteddirectoriesutils.cpp
+    rpc/mounteddirectoriesutils.h
     rpc/servers.cpp
     rpc/servers.h
-    rpc/trpc.cpp
-    rpc/trpc.h
     rpc/torrent.cpp
     rpc/torrent.h
     rpc/torrentfile.cpp

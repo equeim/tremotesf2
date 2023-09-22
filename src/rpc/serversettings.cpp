@@ -97,7 +97,7 @@ namespace tremotesf {
 
     bool ServerSettingsData::hasTableMode() const { return (rpcVersion >= 16); }
 
-    ServerSettings::ServerSettings(BaseRpc* rpc, QObject* parent) : QObject(parent), mRpc(rpc), mSaveOnSet(true) {}
+    ServerSettings::ServerSettings(Rpc* rpc, QObject* parent) : QObject(parent), mRpc(rpc), mSaveOnSet(true) {}
 
     void ServerSettings::setDownloadDirectory(const QString& directory) {
         if (directory != mData.downloadDirectory) {

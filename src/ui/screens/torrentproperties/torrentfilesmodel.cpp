@@ -11,9 +11,10 @@
 #include <QtConcurrentRun>
 
 #include "log/log.h"
+#include "rpc/mounteddirectoriesutils.h"
 #include "rpc/torrent.h"
 #include "rpc/serversettings.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 
 namespace tremotesf {
     namespace {
@@ -173,17 +174,17 @@ namespace tremotesf {
 
     QString TorrentFilesModel::localFilePath(const QModelIndex& index) const {
         if (!index.isValid()) {
-            return mRpc->localTorrentDownloadDirectoryPath(mTorrent);
+            return localTorrentDownloadDirectoryPath(mRpc, mTorrent);
         }
         if (mTorrent->data().singleFile) {
-            return mRpc->localTorrentFilesPath(mTorrent);
+            return localTorrentFilesPath(mRpc, mTorrent);
         }
         const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
         QString path(entry->path());
         if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->data().renameIncompleteFiles) {
             path += ".part"_l1;
         }
-        return mRpc->localTorrentDownloadDirectoryPath(mTorrent) % '/' % path;
+        return localTorrentDownloadDirectoryPath(mRpc, mTorrent) % '/' % path;
     }
 
     bool TorrentFilesModel::isWanted(const QModelIndex& index) const {

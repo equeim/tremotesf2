@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QStringList>
 
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 
 class QByteArray;
 class QDragEnterEvent;

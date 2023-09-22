@@ -13,7 +13,7 @@
 #include "rpc/pathutils.h"
 #include "rpc/torrent.h"
 #include "ui/itemmodels/modelutils.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "torrentsproxymodel.h"
 #include "ui/screens/mainwindow/downloaddirectoriesmodel.h"
 

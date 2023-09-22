@@ -13,12 +13,13 @@
 #include <QItemSelectionModel>
 #include <QMenu>
 
+#include "rpc/mounteddirectoriesutils.h"
 #include "rpc/serversettings.h"
 
 #include "desktoputils.h"
 #include "filemanagerlauncher.h"
 #include "settings.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "ui/itemmodels/torrentfilesmodelentry.h"
 #include "ui/itemmodels/torrentfilesproxymodel.h"
 #include "ui/screens/addtorrent/localtorrentfilesmodel.h"
@@ -32,7 +33,9 @@ namespace tremotesf {
         : BaseTreeView(parent),
           mLocalFile(true),
           mModel(model),
-          mProxyModel(new TorrentFilesProxyModel(mModel, LocalTorrentFilesModel::SortRole, static_cast<int>(LocalTorrentFilesModel::Column::Name), this)),
+          mProxyModel(new TorrentFilesProxyModel(
+              mModel, LocalTorrentFilesModel::SortRole, static_cast<int>(LocalTorrentFilesModel::Column::Name), this
+          )),
           mRpc(rpc) {
         init();
         setItemDelegate(new CommonDelegate(this));
@@ -45,7 +48,9 @@ namespace tremotesf {
         : BaseTreeView(parent),
           mLocalFile(false),
           mModel(model),
-          mProxyModel(new TorrentFilesProxyModel(mModel, TorrentFilesModel::SortRole, static_cast<int>(TorrentFilesModel::Column::Name), this)),
+          mProxyModel(new TorrentFilesProxyModel(
+              mModel, TorrentFilesModel::SortRole, static_cast<int>(TorrentFilesModel::Column::Name), this
+          )),
           mRpc(rpc) {
         init();
         setItemDelegate(new CommonDelegate(
@@ -62,7 +67,7 @@ namespace tremotesf {
             const QModelIndex sourceIndex(mProxyModel->sourceIndex(index));
             auto entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->sourceIndex(index).internalPointer());
             if (!entry->isDirectory() &&
-                mRpc->isTorrentLocalMounted(static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
+                isTorrentLocalMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
                 entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
                 desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
             }
@@ -138,7 +143,7 @@ namespace tremotesf {
             if (show) {
                 bool enableShowInFileManager = true;
                 Torrent* torrent = static_cast<const TorrentFilesModel*>(mModel)->torrent();
-                if (mRpc->isTorrentLocalMounted(torrent)) {
+                if (isTorrentLocalMounted(mRpc, torrent)) {
                     for (const QModelIndex& index : sourceIndexes) {
                         if (!QFileInfo::exists(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index))) {
                             enableShowInFileManager = false;

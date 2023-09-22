@@ -33,7 +33,7 @@
 #include "ui/itemmodels/stringlistmodel.h"
 #include "ui/widgets/torrentfilesview.h"
 #include "ui/widgets/commondelegate.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "desktoputils.h"
 #include "settings.h"
 #include "utils.h"

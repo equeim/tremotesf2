@@ -16,7 +16,7 @@
 #include <KMessageWidget>
 
 #include "rpc/serverstats.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "utils.h"
 
 namespace tremotesf {

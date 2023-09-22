@@ -19,10 +19,11 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 namespace tremotesf {
     namespace {
         class FreedesktopNotificationsController final : public NotificationsController {
-
         public:
-            explicit FreedesktopNotificationsController(QSystemTrayIcon* trayIcon, QObject* parent = nullptr)
-                : NotificationsController(trayIcon, parent) {
+            explicit FreedesktopNotificationsController(
+                QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent = nullptr
+            )
+                : NotificationsController(trayIcon, rpc, parent) {
                 mInterface.setTimeout(desktoputils::defaultDbusTimeout);
                 QObject::connect(&mInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, [this] {
                     logInfo("FreedesktopNotificationsController: notification clicked");
@@ -30,6 +31,7 @@ namespace tremotesf {
                 });
             }
 
+        protected:
             void showNotification(const QString& title, const QString& message) override {
                 logInfo(
                     "FreedesktopNotificationsController: executing org.freedesktop.Notifications.Notify() D-Bus call"
@@ -78,7 +80,8 @@ namespace tremotesf {
         };
     }
 
-    NotificationsController* NotificationsController::createInstance(QSystemTrayIcon* trayIcon, QObject* parent) {
-        return new FreedesktopNotificationsController(trayIcon, parent);
+    NotificationsController*
+    NotificationsController::createInstance(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent) {
+        return new FreedesktopNotificationsController(trayIcon, rpc, parent);
     }
 }

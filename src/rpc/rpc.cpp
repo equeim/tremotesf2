@@ -42,7 +42,45 @@ namespace tremotesf {
 
     using namespace impl;
 
-    BaseRpc::BaseRpc(QObject* parent)
+    QString Rpc::Status::toString() const {
+        switch (connectionState) {
+        case ConnectionState::Disconnected:
+            switch (error) {
+            case Error::NoError:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Disconnected");
+            case Error::TimedOut:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Timed out");
+            case Error::ConnectionError:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Connection error");
+            case Error::AuthenticationError:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Authentication error");
+            case Error::ParseError:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Parse error");
+            case Error::ServerIsTooNew:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Server is too new");
+            case Error::ServerIsTooOld:
+                //: Server connection status
+                return qApp->translate("tremotesf", "Server is too old");
+            }
+            break;
+        case ConnectionState::Connecting:
+            //: Server connection status
+            return qApp->translate("tremotesf", "Connecting...");
+        case ConnectionState::Connected:
+            //: Server connection status
+            return qApp->translate("tremotesf", "Connected");
+        }
+
+        return {};
+    }
+
+    Rpc::Rpc(QObject* parent)
         : QObject(parent),
           mRequestRouter(new RequestRouter(this)),
           mUpdateTimer(new QTimer(this)),
@@ -72,15 +110,15 @@ namespace tremotesf {
         );
     }
 
-    BaseRpc::~BaseRpc() = default;
+    Rpc::~Rpc() = default;
 
-    ServerSettings* BaseRpc::serverSettings() const { return mServerSettings; }
+    ServerSettings* Rpc::serverSettings() const { return mServerSettings; }
 
-    ServerStats* BaseRpc::serverStats() const { return mServerStats; }
+    ServerStats* Rpc::serverStats() const { return mServerStats; }
 
-    const std::vector<std::unique_ptr<Torrent>>& BaseRpc::torrents() const { return mTorrents; }
+    const std::vector<std::unique_ptr<Torrent>>& Rpc::torrents() const { return mTorrents; }
 
-    Torrent* BaseRpc::torrentByHash(const QString& hash) const {
+    Torrent* Rpc::torrentByHash(const QString& hash) const {
         for (const std::unique_ptr<Torrent>& torrent : mTorrents) {
             if (torrent->data().hashString == hash) {
                 return torrent.get();
@@ -89,7 +127,7 @@ namespace tremotesf {
         return nullptr;
     }
 
-    Torrent* BaseRpc::torrentById(int id) const {
+    Torrent* Rpc::torrentById(int id) const {
         const auto end(mTorrents.end());
         const auto found(std::find_if(mTorrents.begin(), mTorrents.end(), [id](const auto& torrent) {
             return torrent->data().id == id;
@@ -97,25 +135,25 @@ namespace tremotesf {
         return (found == end) ? nullptr : found->get();
     }
 
-    bool BaseRpc::isConnected() const { return (mStatus.connectionState == ConnectionState::Connected); }
+    bool Rpc::isConnected() const { return (mStatus.connectionState == ConnectionState::Connected); }
 
-    const BaseRpc::Status& BaseRpc::status() const { return mStatus; }
+    const Rpc::Status& Rpc::status() const { return mStatus; }
 
-    BaseRpc::ConnectionState BaseRpc::connectionState() const { return mStatus.connectionState; }
+    Rpc::ConnectionState Rpc::connectionState() const { return mStatus.connectionState; }
 
-    BaseRpc::Error BaseRpc::error() const { return mStatus.error; }
+    Rpc::Error Rpc::error() const { return mStatus.error; }
 
-    const QString& BaseRpc::errorMessage() const { return mStatus.errorMessage; }
+    const QString& Rpc::errorMessage() const { return mStatus.errorMessage; }
 
-    const QString& BaseRpc::detailedErrorMessage() const { return mStatus.detailedErrorMessage; }
+    const QString& Rpc::detailedErrorMessage() const { return mStatus.detailedErrorMessage; }
 
-    bool BaseRpc::isLocal() const { return mServerIsLocal.value_or(false); }
+    bool Rpc::isLocal() const { return mServerIsLocal.value_or(false); }
 
-    int BaseRpc::torrentsCount() const { return static_cast<int>(mTorrents.size()); }
+    int Rpc::torrentsCount() const { return static_cast<int>(mTorrents.size()); }
 
-    bool BaseRpc::isUpdateDisabled() const { return mUpdateDisabled; }
+    bool Rpc::isUpdateDisabled() const { return mUpdateDisabled; }
 
-    void BaseRpc::setUpdateDisabled(bool disabled) {
+    void Rpc::setUpdateDisabled(bool disabled) {
         if (disabled != mUpdateDisabled) {
             mUpdateDisabled = disabled;
             if (isConnected()) {
@@ -132,7 +170,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::setConnectionConfiguration(const ConnectionConfiguration& configuration) {
+    void Rpc::setConnectionConfiguration(const ConnectionConfiguration& configuration) {
         disconnect();
 
         RequestRouter::RequestsConfiguration requestsConfig{};
@@ -217,26 +255,26 @@ namespace tremotesf {
         mAutoReconnectTimer->stop();
     }
 
-    void BaseRpc::resetConnectionConfiguration() {
+    void Rpc::resetConnectionConfiguration() {
         disconnect();
         mRequestRouter->resetConfiguration();
         mAutoReconnectEnabled = false;
         mAutoReconnectTimer->stop();
     }
 
-    void BaseRpc::connect() {
+    void Rpc::connect() {
         if (connectionState() == ConnectionState::Disconnected && mRequestRouter->configuration().has_value()) {
             setStatus(Status{.connectionState = ConnectionState::Connecting});
             getServerSettings();
         }
     }
 
-    void BaseRpc::disconnect() {
+    void Rpc::disconnect() {
         setStatus(Status{.connectionState = ConnectionState::Disconnected});
         mAutoReconnectTimer->stop();
     }
 
-    void BaseRpc::addTorrentFile(
+    void Rpc::addTorrentFile(
         const QString& filePath,
         const QString& downloadDirectory,
         const std::vector<int>& unwantedFiles,
@@ -269,7 +307,7 @@ namespace tremotesf {
         );
     }
 
-    void BaseRpc::addTorrentFile(
+    void Rpc::addTorrentFile(
         std::shared_ptr<QFile> file,
         const QString& downloadDirectory,
         const std::vector<int>& unwantedFiles,
@@ -334,7 +372,7 @@ namespace tremotesf {
         watcher->setFuture(future);
     }
 
-    void BaseRpc::addTorrentLink(
+    void Rpc::addTorrentLink(
         const QString& link, const QString& downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
     ) {
         if (isConnected()) {
@@ -358,7 +396,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::startTorrents(std::span<const int> ids) {
+    void Rpc::startTorrents(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-start"_l1,
@@ -373,7 +411,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::startTorrentsNow(std::span<const int> ids) {
+    void Rpc::startTorrentsNow(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-start-now"_l1,
@@ -388,7 +426,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::pauseTorrents(std::span<const int> ids) {
+    void Rpc::pauseTorrents(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-stop"_l1,
@@ -403,7 +441,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::removeTorrents(std::span<const int> ids, bool deleteFiles) {
+    void Rpc::removeTorrents(std::span<const int> ids, bool deleteFiles) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-remove"_l1,
@@ -418,7 +456,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::checkTorrents(std::span<const int> ids) {
+    void Rpc::checkTorrents(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-verify"_l1,
@@ -433,7 +471,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::moveTorrentsToTop(std::span<const int> ids) {
+    void Rpc::moveTorrentsToTop(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "queue-move-top"_l1,
@@ -448,7 +486,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::moveTorrentsUp(std::span<const int> ids) {
+    void Rpc::moveTorrentsUp(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "queue-move-up"_l1,
@@ -463,7 +501,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::moveTorrentsDown(std::span<const int> ids) {
+    void Rpc::moveTorrentsDown(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "queue-move-down"_l1,
@@ -478,7 +516,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::moveTorrentsToBottom(std::span<const int> ids) {
+    void Rpc::moveTorrentsToBottom(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "queue-move-bottom"_l1,
@@ -493,7 +531,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::reannounceTorrents(std::span<const int> ids) {
+    void Rpc::reannounceTorrents(std::span<const int> ids) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-reannounce"_l1,
@@ -503,17 +541,17 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::setSessionProperty(const QString& property, const QJsonValue& value) {
+    void Rpc::setSessionProperty(const QString& property, const QJsonValue& value) {
         setSessionProperties({{property, value}});
     }
 
-    void BaseRpc::setSessionProperties(const QJsonObject& properties) {
+    void Rpc::setSessionProperties(const QJsonObject& properties) {
         if (isConnected()) {
             mRequestRouter->postRequest("session-set"_l1, properties, RequestRouter::RequestType::Independent);
         }
     }
 
-    void BaseRpc::setTorrentProperty(int id, const QString& property, const QJsonValue& value, bool updateIfSuccessful) {
+    void Rpc::setTorrentProperty(int id, const QString& property, const QJsonValue& value, bool updateIfSuccessful) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-set"_l1,
@@ -528,7 +566,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::setTorrentsLocation(std::span<const int> ids, const QString& location, bool moveFiles) {
+    void Rpc::setTorrentsLocation(std::span<const int> ids, const QString& location, bool moveFiles) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-set-location"_l1,
@@ -543,7 +581,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::getTorrentsFiles(std::span<const int> ids, bool asDataUpdate) {
+    void Rpc::getTorrentsFiles(std::span<const int> ids, bool asDataUpdate) {
         mRequestRouter->postRequest(
             "torrent-get"_l1,
             {{"fields"_l1, QJsonArray{"id"_l1, "files"_l1, "fileStats"_l1}}, {"ids"_l1, toJsonArray(ids)}},
@@ -569,7 +607,7 @@ namespace tremotesf {
         );
     }
 
-    void BaseRpc::getTorrentsPeers(std::span<const int> ids, bool asDataUpdate) {
+    void Rpc::getTorrentsPeers(std::span<const int> ids, bool asDataUpdate) {
         mRequestRouter->postRequest(
             "torrent-get"_l1,
             {{"fields"_l1, QJsonArray{"id"_l1, "peers"_l1}}, {"ids"_l1, toJsonArray(ids)}},
@@ -595,7 +633,7 @@ namespace tremotesf {
         );
     }
 
-    void BaseRpc::renameTorrentFile(int torrentId, const QString& filePath, const QString& newName) {
+    void Rpc::renameTorrentFile(int torrentId, const QString& filePath, const QString& newName) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "torrent-rename-path"_l1,
@@ -617,7 +655,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::getDownloadDirFreeSpace() {
+    void Rpc::getDownloadDirFreeSpace() {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "download-dir-free-space"_l1,
@@ -639,7 +677,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::getFreeSpaceForPath(const QString& path) {
+    void Rpc::getFreeSpaceForPath(const QString& path) {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "free-space"_l1,
@@ -656,7 +694,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::updateData() {
+    void Rpc::updateData() {
         if (connectionState() != ConnectionState::Disconnected && !mUpdating) {
             logDebug("Updating data");
             mUpdateTimer->stop();
@@ -675,7 +713,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::shutdownServer() {
+    void Rpc::shutdownServer() {
         if (isConnected()) {
             mRequestRouter->postRequest(
                 "session-close"_l1,
@@ -691,7 +729,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::setStatus(Status&& status) {
+    void Rpc::setStatus(Status&& status) {
         if (status == mStatus) {
             return;
         }
@@ -721,7 +759,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount) {
+    void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount) {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected: {
             logInfo("Disconnected");
@@ -756,7 +794,7 @@ namespace tremotesf {
     }
 
     void
-    BaseRpc::emitSignalsOnConnectionStateChanged(BaseRpc::ConnectionState oldConnectionState, size_t removedTorrentsCount) {
+    Rpc::emitSignalsOnConnectionStateChanged(Rpc::ConnectionState oldConnectionState, size_t removedTorrentsCount) {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected: {
             emit connectionStateChanged();
@@ -778,7 +816,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::getServerSettings() {
+    void Rpc::getServerSettings() {
         mRequestRouter->postRequest(
             "session-get"_l1,
             QByteArrayLiteral("{\"method\":\"session-get\"}"),
@@ -813,9 +851,8 @@ namespace tremotesf {
     };
 
     class TorrentsListUpdater final : public ItemListUpdater<std::unique_ptr<Torrent>, std::vector<NewTorrent>> {
-
     public:
-        inline explicit TorrentsListUpdater(BaseRpc& rpc) : mRpc(rpc) {}
+        inline explicit TorrentsListUpdater(Rpc& rpc) : mRpc(rpc) {}
 
         const std::vector<std::optional<TorrentData::UpdateKey>>* keys{};
         std::vector<std::pair<int, int>> removedIndexRanges{};
@@ -898,10 +935,10 @@ namespace tremotesf {
         };
 
     private:
-        BaseRpc& mRpc;
+        Rpc& mRpc;
     };
 
-    void BaseRpc::getTorrents() {
+    void Rpc::getTorrents() {
         const QByteArray* requestData{};
         const bool tableMode = mServerSettings->data().hasTableMode();
         if (tableMode) {
@@ -986,7 +1023,7 @@ namespace tremotesf {
         );
     }
 
-    void BaseRpc::checkTorrentsSingleFile(std::span<const int> torrentIds) {
+    void Rpc::checkTorrentsSingleFile(std::span<const int> torrentIds) {
         mRequestRouter->postRequest(
             "torrent-get"_l1,
             {{"fields"_l1, QJsonArray{"id"_l1, "priorities"_l1}}, {"ids"_l1, toJsonArray(torrentIds)}},
@@ -1010,7 +1047,7 @@ namespace tremotesf {
         );
     }
 
-    void BaseRpc::getServerStats() {
+    void Rpc::getServerStats() {
         mRequestRouter->postRequest(
             "session-stats"_l1,
             QByteArrayLiteral("{\"method\":\"session-stats\"}"),
@@ -1024,11 +1061,11 @@ namespace tremotesf {
         );
     }
 
-    bool BaseRpc::checkIfUpdateCompleted() { return !mRequestRouter->hasPendingDataUpdateRequests(); }
+    bool Rpc::checkIfUpdateCompleted() { return !mRequestRouter->hasPendingDataUpdateRequests(); }
 
-    bool BaseRpc::checkIfConnectionCompleted() { return checkIfUpdateCompleted() && mServerIsLocal.has_value(); }
+    bool Rpc::checkIfConnectionCompleted() { return checkIfUpdateCompleted() && mServerIsLocal.has_value(); }
 
-    void BaseRpc::maybeFinishUpdateOrConnection() {
+    void Rpc::maybeFinishUpdateOrConnection() {
         const bool connecting = connectionState() == ConnectionState::Connecting;
         if (!mUpdating && !connecting) return;
         if (mUpdating) {
@@ -1051,7 +1088,7 @@ namespace tremotesf {
         }
     }
 
-    void BaseRpc::checkIfServerIsLocal() {
+    void Rpc::checkIfServerIsLocal() {
         logInfo("checkIfServerIsLocal() called");
         if (mServerSettings->data().hasSessionIdFile() && !mRequestRouter->sessionId().isEmpty() &&
             isTransmissionSessionIdFileExists(mRequestRouter->sessionId())) {

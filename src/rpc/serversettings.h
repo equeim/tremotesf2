@@ -14,7 +14,7 @@
 class QJsonObject;
 
 namespace tremotesf {
-    class BaseRpc;
+    class Rpc;
 
     struct ServerSettingsData {
         Q_GADGET
@@ -94,7 +94,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        explicit ServerSettings(BaseRpc* rpc = nullptr, QObject* parent = nullptr);
+        explicit ServerSettings(Rpc* rpc = nullptr, QObject* parent = nullptr);
 
         void setDownloadDirectory(const QString& directory);
         void setStartAddedTorrents(bool start);
@@ -147,7 +147,7 @@ namespace tremotesf {
         [[nodiscard]] const ServerSettingsData& data() const { return mData; };
 
     private:
-        BaseRpc* mRpc;
+        Rpc* mRpc;
         ServerSettingsData mData;
         bool mSaveOnSet;
 

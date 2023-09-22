@@ -29,7 +29,7 @@
 #include "stdutils.h"
 #include "rpc/torrent.h"
 #include "rpc/servers.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "utils.h"
 #include "settings.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"

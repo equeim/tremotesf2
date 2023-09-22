@@ -215,7 +215,7 @@ namespace tremotesf {
         return lastTorrents;
     }
 
-    void Servers::saveCurrentServerLastTorrents(const BaseRpc* rpc) {
+    void Servers::saveCurrentServerLastTorrents(const Rpc* rpc) {
         if (!hasServers()) {
             return;
         }
