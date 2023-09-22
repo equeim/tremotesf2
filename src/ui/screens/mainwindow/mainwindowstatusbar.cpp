@@ -13,7 +13,7 @@
 
 #include "rpc/serverstats.h"
 #include "rpc/servers.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "utils.h"
 
 namespace tremotesf {
@@ -136,7 +136,7 @@ namespace tremotesf {
     }
 
     void MainWindowStatusBar::updateStatusLabels() {
-        mStatusLabel->setText(mRpc->statusString());
+        mStatusLabel->setText(mRpc->status().toString());
         if (mRpc->error() != RpcError::NoError) {
             setToolTip(mRpc->errorMessage());
         } else {

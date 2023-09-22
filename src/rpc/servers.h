@@ -66,7 +66,7 @@ namespace tremotesf {
         fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings);
 
         LastTorrents currentServerLastTorrents() const;
-        void saveCurrentServerLastTorrents(const BaseRpc* rpc);
+        void saveCurrentServerLastTorrents(const Rpc* rpc);
 
         QStringList currentServerLastDownloadDirectories(const ServerSettings* serverSettings) const;
         void setCurrentServerLastDownloadDirectories(const QStringList& directories);

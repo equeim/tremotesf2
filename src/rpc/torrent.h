@@ -21,7 +21,7 @@
 class QJsonObject;
 
 namespace tremotesf {
-    class BaseRpc;
+    class Rpc;
 
     struct TorrentData {
         Q_GADGET
@@ -50,11 +50,11 @@ namespace tremotesf {
         enum class IdleSeedingLimitMode { Global, Single, Unlimited };
         Q_ENUM(IdleSeedingLimitMode)
 
-        [[nodiscard]] bool update(const QJsonObject& object, bool firstTime, const BaseRpc* rpc);
+        [[nodiscard]] bool update(const QJsonObject& object, bool firstTime, const Rpc* rpc);
 
         enum class UpdateKey;
         [[nodiscard]] bool
-        update(std::span<const std::optional<UpdateKey>> keys, const QJsonArray& values, bool firstTime, const BaseRpc* rpc);
+        update(std::span<const std::optional<UpdateKey>> keys, const QJsonArray& values, bool firstTime, const Rpc* rpc);
 
         int id{};
         QString hashString{};
@@ -127,7 +127,7 @@ namespace tremotesf {
 
     private:
         void updateProperty(
-            TorrentData::UpdateKey key, const QJsonValue& value, bool& changed, bool firstTime, const BaseRpc* rpc
+            TorrentData::UpdateKey key, const QJsonValue& value, bool& changed, bool firstTime, const Rpc* rpc
         );
     };
 
@@ -135,12 +135,12 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        explicit Torrent(int id, const QJsonObject& object, BaseRpc* rpc, QObject* parent = nullptr);
+        explicit Torrent(int id, const QJsonObject& object, Rpc* rpc, QObject* parent = nullptr);
         explicit Torrent(
             int id,
             std::span<const std::optional<TorrentData::UpdateKey>> keys,
             const QJsonArray& values,
-            BaseRpc* rpc,
+            Rpc* rpc,
             QObject* parent = nullptr
         );
         // For testing only
@@ -192,7 +192,7 @@ namespace tremotesf {
         void checkSingleFile(const QJsonObject& torrentMap);
 
     private:
-        BaseRpc* mRpc{};
+        Rpc* mRpc{};
 
         TorrentData mData{};
 

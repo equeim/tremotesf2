@@ -77,15 +77,15 @@ namespace tremotesf {
     };
     Q_ENUM_NS(RpcError)
 
-    class BaseRpc : public QObject {
+    class Rpc : public QObject {
         Q_OBJECT
     public:
         using ConnectionState = RpcConnectionState;
         using Error = RpcError;
 
-        explicit BaseRpc(QObject* parent = nullptr);
-        ~BaseRpc() override;
-        Q_DISABLE_COPY_MOVE(BaseRpc)
+        explicit Rpc(QObject* parent = nullptr);
+        ~Rpc() override;
+        Q_DISABLE_COPY_MOVE(Rpc)
 
         ServerSettings* serverSettings() const;
         ServerStats* serverStats() const;
@@ -101,6 +101,8 @@ namespace tremotesf {
             QString detailedErrorMessage{};
 
             bool operator==(const Status& other) const = default;
+
+            QString toString() const;
         };
 
         bool isConnected() const;

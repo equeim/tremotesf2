@@ -12,7 +12,7 @@
 
 #include "stdutils.h"
 #include "rpc/torrent.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "desktoputils.h"
 #include "utils.h"
 

@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QStyle>
 
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "ui/itemmodels/modelutils.h"
 #include "desktoputils.h"
 #include "torrentsproxymodel.h"

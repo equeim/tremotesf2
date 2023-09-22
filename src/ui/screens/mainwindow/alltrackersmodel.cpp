@@ -11,7 +11,7 @@
 
 #include "rpc/torrent.h"
 #include "rpc/tracker.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "ui/itemmodels/modelutils.h"
 #include "torrentsproxymodel.h"
 

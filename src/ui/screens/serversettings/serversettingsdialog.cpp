@@ -29,7 +29,7 @@
 
 #include "rpc/serversettings.h"
 #include "stdutils.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 
 namespace tremotesf {

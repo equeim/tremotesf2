@@ -24,7 +24,7 @@
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/widgets/basetreeview.h"
 #include "ui/widgets/textinputdialog.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "settings.h"
 #include "trackersmodel.h"
 

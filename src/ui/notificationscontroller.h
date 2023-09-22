@@ -10,23 +10,26 @@
 class QSystemTrayIcon;
 
 namespace tremotesf {
+    class Rpc;
+
     class NotificationsController : public QObject {
         Q_OBJECT
 
     public:
-        static NotificationsController* createInstance(QSystemTrayIcon* trayIcon, QObject* parent = nullptr);
-
-        void showFinishedTorrentsNotification(const QStringList& torrentNames);
-        void showAddedTorrentsNotification(const QStringList& torrentNames);
-
-        virtual void showNotification(const QString& title, const QString& message);
+        static NotificationsController*
+        createInstance(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent = nullptr);
 
     protected:
-        explicit NotificationsController(QSystemTrayIcon* trayIcon, QObject* parent = nullptr);
+        explicit NotificationsController(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent = nullptr);
 
+        virtual void showNotification(const QString& title, const QString& message);
         void fallbackToSystemTrayIcon(const QString& title, const QString& message);
 
     private:
+        void onConnected(const Rpc* rpc);
+        void onDisconnected(const Rpc* rpc);
+        void showFinishedTorrentsNotification(const QStringList& torrentNames);
+        void showAddedTorrentsNotification(const QStringList& torrentNames);
         void showTorrentsNotification(const QString& title, const QStringList& torrentNames);
 
         QSystemTrayIcon* mTrayIcon{};

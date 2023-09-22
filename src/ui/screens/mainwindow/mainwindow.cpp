@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mainwindow.h"
+#include "rpc/mounteddirectoriesutils.h"
 
 #include <algorithm>
 #include <functional>
@@ -785,11 +786,10 @@ namespace tremotesf {
                 bool disableOpen = false;
                 bool disableBoth = false;
                 for (const QModelIndex& index : selectedRows) {
-                    Torrent* torrent =
-                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
-                    if (mViewModel.rpc()->isTorrentLocalMounted(torrent) &&
-                        QFile::exists(mViewModel.rpc()->localTorrentDownloadDirectoryPath(torrent))) {
-                        if (!disableOpen && !QFile::exists(mViewModel.rpc()->localTorrentFilesPath(torrent))) {
+                    Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
+                    if (isTorrentLocalMounted(mViewModel.rpc(), torrent) &&
+                        QFile::exists(localTorrentDownloadDirectoryPath(mViewModel.rpc(), torrent))) {
+                        if (!disableOpen && !QFile::exists(localTorrentFilesPath(mViewModel.rpc(), torrent))) {
                             disableOpen = true;
                         }
                     } else {
@@ -814,8 +814,7 @@ namespace tremotesf {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
 
             for (QModelIndexList::size_type i = 0, max = selectedRows.size(); i < max; i++) {
-                Torrent* torrent =
-                    mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(selectedRows.at(i)));
+                Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(selectedRows.at(i)));
                 const int id = torrent->data().id;
                 if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
                     if (i == (max - 1)) {
@@ -957,7 +956,7 @@ namespace tremotesf {
                         }
                     }
                 } else if (Servers::instance()->hasServers()) {
-                    statusText = mViewModel.rpc()->statusString();
+                    statusText = mViewModel.rpc()->status().toString();
                     if (mViewModel.rpc()->error() != Rpc::Error::NoError) {
                         errorText = mViewModel.rpc()->errorMessage();
                     }
@@ -1212,7 +1211,7 @@ namespace tremotesf {
             contextMenu->addActions(mFileMenu->actions());
 
             mTrayIcon.setContextMenu(contextMenu);
-            mTrayIcon.setToolTip(mViewModel.rpc()->statusString());
+            mTrayIcon.setToolTip(mViewModel.rpc()->status().toString());
 
             QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
                 if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
@@ -1225,7 +1224,7 @@ namespace tremotesf {
             });
 
             QObject::connect(mViewModel.rpc(), &Rpc::statusChanged, this, [this] {
-                mTrayIcon.setToolTip(mViewModel.rpc()->statusString());
+                mTrayIcon.setToolTip(mViewModel.rpc()->status().toString());
             });
 
             QObject::connect(mViewModel.rpc()->serverStats(), &ServerStats::updated, this, [this] {
@@ -1300,7 +1299,8 @@ namespace tremotesf {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             for (const QModelIndex& index : selectedRows) {
                 desktoputils::openFile(
-                    mViewModel.rpc()->localTorrentFilesPath(
+                    localTorrentFilesPath(
+                        mViewModel.rpc(),
                         mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index))
                     ),
                     mWindow
@@ -1314,7 +1314,7 @@ namespace tremotesf {
             files.reserve(static_cast<size_t>(selectedRows.size()));
             for (const QModelIndex& index : selectedRows) {
                 Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
-                files.push_back(mViewModel.rpc()->localTorrentFilesPath(torrent));
+                files.push_back(localTorrentFilesPath(mViewModel.rpc(), torrent));
             }
             launchFileManagerAndSelectFiles(files, mWindow);
         }

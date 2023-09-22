@@ -16,7 +16,7 @@
 #include <QVBoxLayout>
 #include <QShortcut>
 
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "ui/widgets/commondelegate.h"
 #include "alltrackersmodel.h"
 #include "downloaddirectoriesmodel.h"

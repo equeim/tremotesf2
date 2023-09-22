@@ -6,7 +6,7 @@
 
 #include <QTimer>
 
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 
 namespace tremotesf {
     Rpc* BaseTorrentsFiltersSettingsModel::rpc() const { return mRpc; }

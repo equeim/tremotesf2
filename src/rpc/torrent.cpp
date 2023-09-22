@@ -230,7 +230,7 @@ namespace tremotesf {
 
     int TorrentData::priorityToInt(Priority value) { return priorityMapper.toJsonConstant(value); }
 
-    bool TorrentData::update(const QJsonObject& object, bool firstTime, const BaseRpc* rpc) {
+    bool TorrentData::update(const QJsonObject& object, bool firstTime, const Rpc* rpc) {
         bool changed = false;
         for (auto i = object.begin(), end = object.end(); i != end; ++i) {
             const auto key = mapUpdateKey(i.key());
@@ -245,7 +245,7 @@ namespace tremotesf {
         std::span<const std::optional<TorrentData::UpdateKey>> keys,
         const QJsonArray& values,
         bool firstTime,
-        const BaseRpc* rpc
+        const Rpc* rpc
     ) {
         bool changed = false;
         const auto count = std::min(keys.size(), static_cast<size_t>(values.size()));
@@ -263,7 +263,7 @@ namespace tremotesf {
         const QJsonValue& value,
         bool& changed,
         bool firstTime,
-        const BaseRpc* rpc
+        const Rpc* rpc
     ) {
         const auto key = static_cast<UpdateKey>(intKey);
         switch (static_cast<UpdateKey>(key)) {
@@ -408,7 +408,7 @@ namespace tremotesf {
         throw std::logic_error(fmt::format("Can't update key {}", static_cast<int>(intKey)));
     }
 
-    Torrent::Torrent(int id, const QJsonObject& object, BaseRpc* rpc, QObject* parent) : QObject(parent), mRpc(rpc) {
+    Torrent::Torrent(int id, const QJsonObject& object, Rpc* rpc, QObject* parent) : QObject(parent), mRpc(rpc) {
         mData.id = id;
         [[maybe_unused]] const bool changed = mData.update(object, true, rpc);
     }
@@ -417,7 +417,7 @@ namespace tremotesf {
         int id,
         std::span<const std::optional<TorrentData::UpdateKey>> keys,
         const QJsonArray& values,
-        BaseRpc* rpc,
+        Rpc* rpc,
         QObject* parent
     )
         : QObject(parent), mRpc(rpc) {

@@ -14,7 +14,7 @@
 
 #include "literals.h"
 #include "target_os.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "rpc/servers.h"
 
 namespace tremotesf {

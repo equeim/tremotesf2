@@ -95,13 +95,15 @@ namespace tremotesf {
 
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this] {
             if (Servers::instance()->hasServers()) {
-                mRpc.setConnectionConfiguration(
-                    Servers::instance()->currentServer().connectionConfiguration
-                );
+                mRpc.setConnectionConfiguration(Servers::instance()->currentServer().connectionConfiguration);
                 mRpc.connect();
             } else {
                 mRpc.resetConnectionConfiguration();
             }
+        });
+
+        QObject::connect(&mRpc, &Rpc::aboutToDisconnect, this, [this] {
+            Servers::instance()->saveCurrentServerLastTorrents(&mRpc);
         });
     }
 
@@ -147,31 +149,7 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
-        const auto controller = NotificationsController::createInstance(trayIcon, this);
-
-        QObject::connect(&mRpc, &Rpc::connectedChanged, this, [controller, this] {
-            if (!mRpc.isConnected()) {
-                if ((mRpc.error() != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
-                    controller->showNotification(
-                        //: Notification title when disconnected from server
-                        qApp->translate("tremotesf", "Disconnected"),
-                        mRpc.statusString()
-                    );
-                }
-            }
-        });
-
-        QObject::connect(&mRpc, &Rpc::addedNotificationRequested, this, [controller](const auto&, const auto& names) {
-            controller->showAddedTorrentsNotification(names);
-        });
-
-        QObject::connect(
-            &mRpc,
-            &Rpc::finishedNotificationRequested,
-            this,
-            [controller](const auto&, const auto& names) { controller->showFinishedTorrentsNotification(names); }
-        );
-
+        const auto controller = NotificationsController::createInstance(trayIcon, &mRpc, this);
         QObject::connect(controller, &NotificationsController::notificationClicked, this, [this] {
             emit showWindow({});
         });
@@ -181,9 +159,7 @@ namespace tremotesf {
         if (!Servers::instance()->hasServers()) {
             return StartupActionResult::ShowAddServerDialog;
         }
-        mRpc.setConnectionConfiguration(
-            Servers::instance()->currentServer().connectionConfiguration
-        );
+        mRpc.setConnectionConfiguration(Servers::instance()->currentServer().connectionConfiguration);
         if (Settings::instance()->connectOnStartup()) {
             mRpc.connect();
         }

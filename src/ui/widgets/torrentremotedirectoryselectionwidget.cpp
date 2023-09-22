@@ -5,7 +5,7 @@
 #include "torrentremotedirectoryselectionwidget.h"
 
 #include "stdutils.h"
-#include "rpc/trpc.h"
+#include "rpc/rpc.h"
 #include "rpc/servers.h"
 
 #include <QAbstractItemView>
