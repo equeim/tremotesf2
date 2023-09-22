@@ -136,24 +136,17 @@ namespace tremotesf {
                 }
             }
             if (show) {
-                bool disableOpen = false;
-                bool disableBoth = false;
-
+                bool enableShowInFileManager = true;
                 Torrent* torrent = static_cast<const TorrentFilesModel*>(mModel)->torrent();
                 if (mRpc->isTorrentLocalMounted(torrent)) {
-                    if (sourceIndexes.size() == 1 && !sourceIndexes.first().parent().internalPointer()) {
-                        disableOpen = true;
-                    } else {
-                        for (const QModelIndex& index : sourceIndexes) {
-                            if (!QFileInfo::exists(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index)
-                                )) {
-                                disableBoth = true;
-                                break;
-                            }
+                    for (const QModelIndex& index : sourceIndexes) {
+                        if (!QFileInfo::exists(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index))) {
+                            enableShowInFileManager = false;
+                            break;
                         }
                     }
                 } else {
-                    disableBoth = true;
+                    enableShowInFileManager = false;
                 }
 
                 QAction* openAction = contextMenu.addAction(
@@ -161,8 +154,7 @@ namespace tremotesf {
                     //: Context menu item
                     qApp->translate("tremotesf", "&Open")
                 );
-                openAction->setEnabled(!disableBoth && !disableOpen);
-                QObject::connect(openAction, &QAction::triggered, this, [=, this] {
+                QObject::connect(openAction, &QAction::triggered, this, [sourceIndexes, this] {
                     for (const QModelIndex& index : sourceIndexes) {
                         desktoputils::openFile(
                             static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index),
@@ -176,8 +168,8 @@ namespace tremotesf {
                     //: Context menu item
                     qApp->translate("tremotesf", "Show In &File Manager")
                 );
-                showInFileManagerAction->setEnabled(!disableBoth);
-                QObject::connect(showInFileManagerAction, &QAction::triggered, this, [=, this] {
+                showInFileManagerAction->setEnabled(enableShowInFileManager);
+                QObject::connect(showInFileManagerAction, &QAction::triggered, this, [sourceIndexes, this] {
                     std::vector<QString> files{};
                     files.reserve(static_cast<size_t>(sourceIndexes.size()));
                     for (const QModelIndex& index : sourceIndexes) {
