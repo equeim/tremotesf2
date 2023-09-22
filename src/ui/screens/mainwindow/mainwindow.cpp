@@ -1041,8 +1041,7 @@ namespace tremotesf {
                 );
             });
 
-            //: Menu bar item
-            mTorrentMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&Torrent"));
+            mWindow->menuBar()->addMenu(mTorrentMenu);
 
             //: Menu bar item
             QMenu* viewMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&View"));
