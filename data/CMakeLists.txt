@@ -38,6 +38,8 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
     add_custom_target(appdata ALL DEPENDS "${appdata_path}")
     install(FILES "${appdata_path}" DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo")
 elseif (WIN32)
+    message(STATUS "Building for Windows, deploying icon themes")
+
     set(TREMOTESF_BUNDLED_ICONS_DIR "icons")
     set(TREMOTESF_BUNDLED_ICONS_DIR ${TREMOTESF_BUNDLED_ICONS_DIR} PARENT_SCOPE)
 
@@ -46,81 +48,76 @@ elseif (WIN32)
 
     install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}")
 
-    if (WIN32)
-        message(STATUS "Building for Windows, deploying icon themes")
+    include(FetchContent)
+    cmake_policy(SET CMP0135 NEW)
+    set(FETCHCONTENT_QUIET OFF)
 
-        include(FetchContent)
+    FetchContent_Declare(
+        hicolor_icon_theme
+        URL "https://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.17.tar.xz"
+        URL_HASH SHA256=317484352271d18cbbcfac3868eab798d67fff1b8402e740baa6ff41d588a9d8
+    )
+    FetchContent_Populate(hicolor_icon_theme)
+    install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/hicolor")
 
-        cmake_policy(SET CMP0135 NEW)
-        set(FETCHCONTENT_QUIET OFF)
+    FetchContent_Declare(
+        breeze_icons
+        URL "https://download.kde.org/stable/frameworks/5.110/breeze-icons-5.110.0.zip"
+        URL_HASH SHA256=78996f7a379826bbc932a19044b873ab96be4a18adf216ccba79cb12ddb5c65e
+    )
+    FetchContent_Populate(breeze_icons)
 
-        FetchContent_Declare(
-            hicolor_icon_theme
-            URL "https://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.17.tar.xz"
-            URL_HASH SHA256=317484352271d18cbbcfac3868eab798d67fff1b8402e740baa6ff41d588a9d8
-        )
-        FetchContent_Populate(hicolor_icon_theme)
-        install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/hicolor")
+    # Keep in sync with QIcon::fromTheme() calls in source code
+    set(bundled_icon_theme_files
+        index.theme
+        application-exit.svg
+        applications-utilities.svg
+        configure.svg
+        dialog-cancel.svg
+        dialog-error.svg
+        document-open.svg
+        document-preview.svg
+        document-properties.svg
+        download.svg
+        edit-copy.svg
+        edit-delete.svg
+        edit-delete.svg
+        edit-rename.svg
+        edit-select-all.svg
+        edit-select-invert.svg
+        folder-download.svg
+        go-bottom.svg
+        go-down.svg
+        go-jump.svg
+        go-top.svg
+        go-up.svg
+        help-about.svg
+        insert-link.svg
+        list-add.svg
+        list-remove.svg
+        mark-location.svg
+        media-playback-pause.svg
+        media-playback-start.svg
+        network-connect.svg
+        network-disconnect.svg
+        network-server.svg
+        network-server.svg
+        preferences-system.svg
+        preferences-system-network.svg
+        preferences-system-time.svg
+        system-shutdown.svg
+        view-refresh.svg
+        view-refresh.svg
+        view-statistics.svg
+        window-close.svg
+    )
 
-        FetchContent_Declare(
-            breeze_icons
-            URL "https://download.kde.org/stable/frameworks/5.104/breeze-icons-5.104.0.zip"
-            URL_HASH SHA256=b4ea76a5737ca48abd61e0cee2c54cceb8bf3d3bd6f5d15f1f740c5c7432e60c
-        )
-        FetchContent_Populate(breeze_icons)
+    list(JOIN bundled_icon_theme_files "|" bundled_icon_theme_files_regex)
+    string(REPLACE "." "\\." bundled_icon_theme_files_regex "${bundled_icon_theme_files_regex}")
+    string(PREPEND bundled_icon_theme_files_regex "^.*\\/(")
+    string(APPEND bundled_icon_theme_files_regex ")$")
 
-        # Keep in sync with QIcon::fromTheme() calls in source code
-        set(bundled_icon_theme_files
-            index.theme
-            application-exit.svg
-            applications-utilities.svg
-            configure.svg
-            dialog-cancel.svg
-            dialog-error.svg
-            document-open.svg
-            document-preview.svg
-            document-properties.svg
-            download.svg
-            edit-copy.svg
-            edit-delete.svg
-            edit-delete.svg
-            edit-rename.svg
-            edit-select-all.svg
-            edit-select-invert.svg
-            folder-download.svg
-            go-bottom.svg
-            go-down.svg
-            go-jump.svg
-            go-top.svg
-            go-up.svg
-            help-about.svg
-            insert-link.svg
-            list-add.svg
-            list-remove.svg
-            mark-location.svg
-            media-playback-pause.svg
-            media-playback-start.svg
-            network-connect.svg
-            network-disconnect.svg
-            network-server.svg
-            network-server.svg
-            preferences-system.svg
-            preferences-system-network.svg
-            preferences-system-time.svg
-            system-shutdown.svg
-            view-refresh.svg
-            view-refresh.svg
-            view-statistics.svg
-            window-close.svg
-        )
-
-        list(JOIN bundled_icon_theme_files "|" bundled_icon_theme_files_regex)
-        string(REPLACE "." "\\." bundled_icon_theme_files_regex "${bundled_icon_theme_files_regex}")
-        string(PREPEND bundled_icon_theme_files_regex "^.*\\/(")
-        string(APPEND bundled_icon_theme_files_regex ")$")
-
-        install(DIRECTORY "${breeze_icons_SOURCE_DIR}/icons/" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/breeze" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
-    endif()
+    install(DIRECTORY "${breeze_icons_SOURCE_DIR}/icons/" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/breeze" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
 endif()
 
 set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)
