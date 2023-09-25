@@ -48,8 +48,7 @@ namespace tremotesf {
             bool eventFilter(QObject* watched, QEvent* event) override {
                 switch (event->type()) {
                 case QEvent::WinIdChange: {
-                    QWindow* window = nullptr;
-                    window = qobject_cast<QWindow*>(watched);
+                    auto window = qobject_cast<QWindow*>(watched);
                     if (!window) {
                         if (auto widget = qobject_cast<QWidget*>(watched); widget) {
                             window = widget->windowHandle();
@@ -83,9 +82,9 @@ namespace tremotesf {
                         mSystemColorsProvider,
                         &SystemColorsProvider::darkThemeEnabledChanged,
                         window,
-                        [=] { applyDarkThemeToTitleBar(window); }
+                        [this, window] { applyDarkThemeToTitleBar(window); }
                     );
-                    QObject::connect(Settings::instance(), &Settings::darkThemeModeChanged, window, [=] {
+                    QObject::connect(Settings::instance(), &Settings::darkThemeModeChanged, window, [this, window] {
                         applyDarkThemeToTitleBar(window);
                     });
                     window->setProperty(signalAddedProperty, true);

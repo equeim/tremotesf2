@@ -7,7 +7,6 @@
 #include <QCborArray>
 #include <QCborMap>
 #include <QCborParserError>
-#include <QCborValue>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QTimer>
@@ -42,7 +41,7 @@ namespace tremotesf {
             if (!value.isArray()) return strings;
             const auto array = value.toArray();
             strings.reserve(static_cast<QStringList::size_type>(array.size()));
-            for (const QCborValue& v : array) {
+            for (const auto& v : array) {
                 if (v.isString()) {
                     strings.push_back(v.toString());
                 }
@@ -60,7 +59,7 @@ namespace tremotesf {
             if (server->serverError() == QAbstractSocket::AddressInUseError) {
                 // We already tried to connect to it, removing
                 logWarning("Removing dead socket");
-                if (server->removeServer(name)) {
+                if (QLocalServer::removeServer(name)) {
                     if (!server->listen(name)) {
                         logWarning("Failed to create socket: {}", server->errorString());
                     }
@@ -76,11 +75,11 @@ namespace tremotesf {
             return;
         }
 
-        QObject::connect(server, &QLocalServer::newConnection, this, [=]() {
+        QObject::connect(server, &QLocalServer::newConnection, this, [this, server]() {
             QLocalSocket* socket = server->nextPendingConnection();
             QObject::connect(socket, &QLocalSocket::disconnected, socket, &QLocalSocket::deleteLater);
             QTimer::singleShot(30000, socket, &QLocalSocket::disconnectFromServer);
-            QObject::connect(socket, &QLocalSocket::readyRead, this, [=, this]() {
+            QObject::connect(socket, &QLocalSocket::readyRead, this, [this, socket]() {
                 const QByteArray message(socket->readAll());
                 if (message.size() == 1 && message.front() == activateWindowMessage) {
                     logInfo("IpcServerSocket: window activation requested");
