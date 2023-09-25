@@ -11,11 +11,12 @@
 #include <guiddef.h>
 #include <winrt/base.h>
 
-#include "log/formatters.h"
+#include "log/log.h"
 
 namespace tremotesf {
     namespace {
         bool isWindowsVersionOrGreater(DWORD major, DWORD minor, DWORD build) {
+            logDebug("isWindowsVersionOrGreater() called with: major = {}, minor = {}, build = {}", major, minor, build);
             OSVERSIONINFOEXW info{};
             info.dwOSVersionInfoSize = sizeof(info);
             info.dwMajorVersion = major;
@@ -30,8 +31,10 @@ namespace tremotesf {
                 VER_BUILDNUMBER,
                 VER_GREATER_EQUAL
             );
-            return VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) !=
+            const auto ret = VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) !=
                    FALSE;
+            logDebug("isWindowsVersionOrGreater: returning {}", ret);
+            return ret;
         }
 
         /**
