@@ -166,12 +166,17 @@ add_library(
 
 target_link_libraries(tremotesf_objects PUBLIC cxxopts::cxxopts Threads::Threads fmt::fmt Qt::Core Qt::Network Qt::Widgets KF${TREMOTESF_QT_VERSION_MAJOR}::WidgetsAddons)
 target_include_directories(tremotesf_objects PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
+
+# We need these as CMake variables for configure_file() call below
+set(TREMOTESF_APP_NAME "Tremotesf")
+set(TREMOTESF_EXECUTABLE_NAME "tremotesf")
+
 target_compile_definitions(
     tremotesf_objects
     PUBLIC
-    TREMOTESF_EXECUTABLE_NAME="tremotesf"
+    TREMOTESF_EXECUTABLE_NAME="TREMOTESF_EXECUTABLE_NAME"
     TREMOTESF_APP_ID="org.equeim.Tremotesf"
-    TREMOTESF_APP_NAME="Tremotesf"
+    TREMOTESF_APP_NAME="${TREMOTESF_APP_NAME}"
     TREMOTESF_VERSION="${PROJECT_VERSION}"
     TREMOTESF_QT_TRANSLATIONS_FILENAME="${TREMOTESF_QT_TRANSLATIONS_FILENAME}"
 )
@@ -257,31 +262,7 @@ elseif (WIN32)
         ui/recoloringsvgiconengine.cpp
         ui/recoloringsvgiconengine.h
         ui/systemcolorsprovider_windows.cpp
-        tremotesf.rc
     )
-    set(
-        rc_definitions
-        TREMOTESF_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
-        TREMOTESF_VERSION_MINOR=${PROJECT_VERSION_MINOR}
-        TREMOTESF_VERSION_PATCH=${PROJECT_VERSION_PATCH}
-    )
-    set_source_files_properties(
-        tremotesf.rc
-        PROPERTIES COMPILE_DEFINITIONS "${rc_definitions}"
-    )
-    if (MSVC)
-        target_sources(
-            tremotesf_objects PRIVATE
-            tremotesf.manifest
-        )
-    else()
-        target_sources(
-            tremotesf_objects PRIVATE
-            tremotesf.manifest.rc
-        )
-    endif()
-
-    set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf.ico" PARENT_SCOPE)
     target_compile_definitions(tremotesf_objects
         PUBLIC
         TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
@@ -289,6 +270,7 @@ elseif (WIN32)
         TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
         QT_STATICPLUGIN
     )
+    set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf.ico" PARENT_SCOPE)
 else()
     target_compile_definitions(
         tremotesf_objects
@@ -314,6 +296,13 @@ endif()
 add_executable(tremotesf startup/main.cpp)
 target_link_libraries(tremotesf tremotesf_objects)
 if (WIN32)
+    configure_file(tremotesf.rc.in tremotesf.rc @ONLY)
+    target_sources(tremotesf PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.rc")
+    if (MSVC)
+        target_sources(tremotesf PRIVATE tremotesf.manifest)
+    else()
+        target_sources(tremotesf PRIVATE tremotesf.manifest.rc)
+    endif()
     set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
     qt_import_plugins(
         tremotesf
