@@ -1202,8 +1202,9 @@ namespace tremotesf {
 
                 QAction* action = contextMenu.exec(QCursor::pos());
                 if (action) {
-                    mWindow->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action))
-                    );
+                    const auto style = static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action));
+                    mWindow->setToolButtonStyle(style);
+                    Settings::instance()->setToolButtonStyle(style);
                 }
             });
         }
