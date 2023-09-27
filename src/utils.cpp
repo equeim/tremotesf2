@@ -93,6 +93,7 @@ namespace tremotesf {
             if (unit == 0) {
                 return byteUnits[0].string(stringType).arg(bytes_floating);
             }
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
             return byteUnits[unit].string(stringType).arg(bytes_floating, 0, 'f', 1);
         }
     }

@@ -10,27 +10,25 @@
 class QTextDocument;
 class QWidget;
 
-namespace tremotesf {
-    namespace desktoputils {
-        constexpr int defaultDbusTimeout = 2000; // 2 seconds
+namespace tremotesf::desktoputils {
+    constexpr int defaultDbusTimeout = 2000; // 2 seconds
 
-        enum StatusIcon {
-            ActiveIcon,
-            CheckingIcon,
-            DownloadingIcon,
-            ErroredIcon,
-            PausedIcon,
-            QueuedIcon,
-            SeedingIcon,
-            StalledDownloadingIcon,
-            StalledSeedingIcon
-        };
-        QString statusIconPath(StatusIcon icon);
+    enum StatusIcon {
+        ActiveIcon,
+        CheckingIcon,
+        DownloadingIcon,
+        ErroredIcon,
+        PausedIcon,
+        QueuedIcon,
+        SeedingIcon,
+        StalledDownloadingIcon,
+        StalledSeedingIcon
+    };
+    QString statusIconPath(StatusIcon icon);
 
-        void openFile(const QString& filePath, QWidget* parent = nullptr);
+    void openFile(const QString& filePath, QWidget* parent = nullptr);
 
-        void findLinksAndAddAnchors(QTextDocument* document);
-    }
+    void findLinksAndAddAnchors(QTextDocument* document);
 }
 
 #endif // TREMOTESF_DESKTOPUTILS_H

@@ -158,6 +158,7 @@ namespace tremotesf {
             mPortSpinBox->setValue(9091);
             mApiPathLineEdit->setText("/transmission/rpc"_l1);
             mProxyTypeComboBox->setCurrentIndex(
+                // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(proxyTypeComboBoxValues, ConnectionConfiguration::ProxyType::Default).value()
             );
             mHttpsGroupBox->setChecked(false);
@@ -178,6 +179,7 @@ namespace tremotesf {
             mApiPathLineEdit->setText(server.connectionConfiguration.apiPath);
 
             mProxyTypeComboBox->setCurrentIndex(
+                // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(proxyTypeComboBoxValues, server.connectionConfiguration.proxyType).value()
             );
             mProxyHostnameLineEdit->setText(server.connectionConfiguration.proxyHostname);
@@ -477,7 +479,8 @@ namespace tremotesf {
         mountedDirectories.reserve(static_cast<size_t>(mMountedDirectoriesWidget->rowCount()));
         for (int i = 0, max = mMountedDirectoriesWidget->rowCount(); i < max; ++i) {
             const auto localItem = mMountedDirectoriesWidget->item(i, 0);
-            const QString localDirectory = localItem ? normalizePath(localItem->text().trimmed(), localPathOs) : QString{};
+            const QString localDirectory =
+                localItem ? normalizePath(localItem->text().trimmed(), localPathOs) : QString{};
             const auto remoteItem = mMountedDirectoriesWidget->item(i, 1);
             const QString remoteDirectory = remoteItem ? remoteItem->text().trimmed() : QString{};
             if (!localDirectory.isEmpty() && !remoteDirectory.isEmpty()) {

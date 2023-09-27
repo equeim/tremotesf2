@@ -41,7 +41,10 @@ namespace tremotesf {
         }
 
         void FileManagerLauncher::launchFileManagerAndSelectFiles(
-            std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
+            // NOLINTNEXTLINE(performance-unnecessary-value-param)
+            std::vector<FilesInDirectory> filesToSelect,
+            // NOLINTNEXTLINE(performance-unnecessary-value-param)
+            QPointer<QWidget> parentWidget
         ) {
             for (const auto& [directory, _] : filesToSelect) {
                 fallbackForDirectory(directory, parentWidget);

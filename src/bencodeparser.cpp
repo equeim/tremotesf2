@@ -213,7 +213,7 @@ namespace tremotesf::bencode {
                     throw Error(
                         Error::Type::Parsing,
                         fmt::format(
-                            "Integer terminator doesn't match: expected \"{}\", actual \"{}\"",
+                            R"(Integer terminator doesn't match: expected "{}", actual "{}")",
                             integerTerminator,
                             *result.ptr
                         )

@@ -254,6 +254,7 @@ namespace tremotesf::impl {
         if (!mSessionId.isEmpty()) {
             request.setRawHeader(sessionIdHeader, mSessionId);
         }
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
         if (mConfiguration->authentication) {
             request.setRawHeader(authorizationHeader, mAuthorizationHeaderValue);
         }

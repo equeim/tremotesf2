@@ -66,6 +66,7 @@ namespace tremotesf {
     CommandLineArgs parseCommandLine(int& argc, char**& argv) {
         CommandLineArgs args{};
 
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         const std::string_view appName = executableFileName(argv[0]);
         const auto versionString = fmt::format("{} {}", appName, TREMOTESF_VERSION);
         cxxopts::Options opts(std::string(appName), versionString);

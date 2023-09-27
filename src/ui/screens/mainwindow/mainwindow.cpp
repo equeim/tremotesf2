@@ -283,6 +283,8 @@ namespace tremotesf {
             }
         }
 
+        Q_DISABLE_COPY_MOVE(Impl)
+
         ~Impl() override {
             mViewModel.rpc()->disconnect();
 

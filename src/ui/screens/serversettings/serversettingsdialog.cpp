@@ -114,11 +114,9 @@ namespace tremotesf {
         settings->setAlternativeSpeedLimitsBeginTime(mLimitScheduleBeginTimeEdit->time());
         settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time());
 
-        settings->setAlternativeSpeedLimitsDays(
-            static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(
-                mLimitScheduleDaysComboBox->currentData().toInt()
-            )
-        );
+        settings->setAlternativeSpeedLimitsDays(static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(
+            mLimitScheduleDaysComboBox->currentData().toInt()
+        ));
 
         settings->setPeerPort(mPeerPortSpinBox->value());
         settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
@@ -597,8 +595,8 @@ namespace tremotesf {
 
         const auto days = settings->data().alternativeSpeedLimitsDays;
         for (int i = 0, max = mLimitScheduleDaysComboBox->count(); i < max; i++) {
-            if (mLimitScheduleDaysComboBox->itemData(i)
-                    .value<ServerSettingsData::AlternativeSpeedLimitsDays>() == days) {
+            if (mLimitScheduleDaysComboBox->itemData(i).value<ServerSettingsData::AlternativeSpeedLimitsDays>() ==
+                days) {
                 mLimitScheduleDaysComboBox->setCurrentIndex(i);
                 break;
             }
@@ -608,6 +606,7 @@ namespace tremotesf {
         mRandomPortCheckBox->setChecked(settings->data().randomPortEnabled);
         mPortForwardingCheckBox->setChecked(settings->data().portForwardingEnabled);
         mEncryptionComboBox->setCurrentIndex(
+            // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
             indexOfCasted<int>(encryptionModeComboBoxItems, settings->data().encryptionMode).value()
         );
         mUtpCheckBox->setChecked(settings->data().utpEnabled);

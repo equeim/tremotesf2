@@ -1096,7 +1096,11 @@ namespace tremotesf {
             logInfo("checkIfServerIsLocal: server is running locally: true");
             return;
         }
-        const auto host = mRequestRouter->configuration()->serverUrl.host();
+        const auto configuration = mRequestRouter->configuration();
+        if (!configuration.has_value()) {
+            return;
+        }
+        const auto host = configuration->serverUrl.host();
         if (auto localIp = isLocalIpAddress(host); localIp.has_value()) {
             mServerIsLocal = *localIp;
             logInfo("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
