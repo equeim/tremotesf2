@@ -92,7 +92,7 @@ namespace tremotesf {
     }
 
     void NotificationsController::onDisconnected(const Rpc* rpc) {
-        const auto status = rpc->status();
+        const auto& status = rpc->status();
         if ((status.error != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
             showNotification(
                 //: Notification title when disconnected from server

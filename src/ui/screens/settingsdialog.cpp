@@ -50,8 +50,7 @@ namespace tremotesf {
             appearanceGroupBoxLayout->addRow(qApp->translate("tremotesf", "Dark theme"), darkThemeComboBox);
 
             //: Check box label
-            systemAccentColorCheckBox =
-                new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
+            systemAccentColorCheckBox = new QCheckBox(qApp->translate("tremotesf", "Use system accent color"), this);
             appearanceGroupBoxLayout->addRow(systemAccentColorCheckBox);
 
             layout->addWidget(appearanceGroupBox);
@@ -180,6 +179,7 @@ namespace tremotesf {
 
         if constexpr (isTargetOsWindows) {
             darkThemeComboBox->setCurrentIndex(
+                // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(darkThemeComboBoxValues, settings->darkThemeMode()).value()
             );
             if (systemAccentColorCheckBox) {
