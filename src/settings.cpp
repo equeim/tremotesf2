@@ -202,4 +202,6 @@ namespace tremotesf {
         qRegisterMetaTypeStreamOperators<Settings::DarkThemeMode>();
 #endif
     }
+
+    void Settings::sync() { mSettings->sync(); }
 }

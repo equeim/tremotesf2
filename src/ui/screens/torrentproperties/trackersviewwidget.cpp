@@ -139,13 +139,13 @@ namespace tremotesf {
         });
     }
 
-    TrackersViewWidget::~TrackersViewWidget() {
-        Settings::instance()->setTrackersViewHeaderState(mTrackersView->header()->saveState());
-    }
-
     void TrackersViewWidget::setTorrent(Torrent* torrent) {
         mTorrent = torrent;
         mModel->setTorrent(torrent);
+    }
+
+    void TrackersViewWidget::saveState() {
+        Settings::instance()->setTrackersViewHeaderState(mTrackersView->header()->saveState());
     }
 
     void TrackersViewWidget::addTrackers() {

@@ -60,10 +60,8 @@ namespace tremotesf {
         void setCurrentServer(const QString& name);
 
         bool currentServerHasMountedDirectories() const;
-        QString
-        fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings);
-        QString
-        fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings);
+        QString fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings);
+        QString fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings);
 
         LastTorrents currentServerLastTorrents() const;
         void saveCurrentServerLastTorrents(const Rpc* rpc);
@@ -107,6 +105,8 @@ namespace tremotesf {
         );
 
         void saveServers(const std::vector<Server>& servers, const QString& current);
+
+        void sync();
 
     private:
         explicit Servers(QObject* parent = nullptr);

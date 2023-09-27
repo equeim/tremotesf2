@@ -89,6 +89,7 @@ namespace tremotesf {
 
     public:
         static Settings* instance();
+        void sync();
 
     private:
         explicit Settings(QObject* parent = nullptr);

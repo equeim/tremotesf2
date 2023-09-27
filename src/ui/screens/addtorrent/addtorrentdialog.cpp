@@ -25,13 +25,14 @@
 #include <KMessageWidget>
 
 #include "fileutils.h"
-#include "log/log.h"
+#include "settings.h"
 #include "stdutils.h"
+#include "utils.h"
+#include "log/log.h"
 #include "rpc/torrent.h"
 #include "rpc/servers.h"
 #include "rpc/rpc.h"
-#include "utils.h"
-#include "settings.h"
+#include "ui/savewindowstatedispatcher.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
@@ -41,9 +42,7 @@
 namespace tremotesf {
     namespace {
         constexpr std::array priorityComboBoxItems{
-            TorrentData::Priority::High,
-            TorrentData::Priority::Normal,
-            TorrentData::Priority::Low};
+            TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low};
 
         TorrentData::Priority priorityFromComboBoxIndex(int index) {
             if (index == -1) {
@@ -64,6 +63,12 @@ namespace tremotesf {
         if (mFilesModel) {
             mFilesModel->load(url);
         }
+
+        SaveWindowStateDispatcher::registerHandler(this, [this] {
+            if (mTorrentFilesView) {
+                mTorrentFilesView->saveState();
+            }
+        });
     }
 
     QSize AddTorrentDialog::sizeHint() const {
@@ -225,10 +230,9 @@ namespace tremotesf {
         getFreeSpace(mDownloadDirectoryWidget->path());
         firstFormLayout->addRow(nullptr, freeSpaceLabel);
 
-        TorrentFilesView* torrentFilesView = nullptr;
         if (mMode == Mode::File) {
-            torrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
-            layout->addWidget(torrentFilesView, 1);
+            mTorrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
+            layout->addWidget(mTorrentFilesView, 1);
         }
 
         mPriorityComboBox = new QComboBox(this);
@@ -305,8 +309,8 @@ namespace tremotesf {
                 firstFormLayout->itemAt(i)->widget()->setEnabled(enabled);
             }
 
-            if (torrentFilesView) {
-                torrentFilesView->setEnabled(enabled);
+            if (mTorrentFilesView) {
+                mTorrentFilesView->setEnabled(enabled);
             }
 
             if (secondFormLayout) {

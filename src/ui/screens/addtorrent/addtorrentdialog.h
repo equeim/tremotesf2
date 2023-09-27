@@ -16,6 +16,7 @@ class QLineEdit;
 namespace tremotesf {
     class LocalTorrentFilesModel;
     class TorrentDownloadDirectoryDirectorySelectionWidget;
+    class TorrentFilesView;
     class Rpc;
 
     class AddTorrentDialog final : public QDialog {
@@ -42,6 +43,7 @@ namespace tremotesf {
 
         QLineEdit* mTorrentLinkLineEdit{};
         TorrentDownloadDirectoryDirectorySelectionWidget* mDownloadDirectoryWidget{};
+        TorrentFilesView* mTorrentFilesView{};
         QComboBox* mPriorityComboBox{};
         QCheckBox* mStartTorrentCheckBox{};
         QCheckBox* mDeleteTorrentFileCheckBox{};

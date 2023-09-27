@@ -45,5 +45,6 @@ namespace tremotesf {
         }
     }
 
-    TorrentsView::~TorrentsView() { Settings::instance()->setTorrentsViewHeaderState(header()->saveState()); }
+    void TorrentsView::saveState() { Settings::instance()->setTorrentsViewHeaderState(header()->saveState()); }
+
 }

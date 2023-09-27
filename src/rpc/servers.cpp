@@ -186,8 +186,7 @@ namespace tremotesf {
 
     bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
 
-    QString
-    Servers::fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings) {
+    QString Servers::fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
             if (isPathUnderThisDirectory(localPath, localDirectory)) {
                 const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, serverSettings->data().pathOs);
@@ -197,8 +196,7 @@ namespace tremotesf {
         return {};
     }
 
-    QString
-    Servers::fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings) {
+    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
             const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, serverSettings->data().pathOs);
             if (isPathUnderThisDirectory(remoteDirectory, remoteDirectoryNormalized)) {
@@ -231,8 +229,7 @@ namespace tremotesf {
         mSettings->endGroup();
     }
 
-    QStringList Servers::currentServerLastDownloadDirectories(const ServerSettings* serverSettings
-    ) const {
+    QStringList Servers::currentServerLastDownloadDirectories(const ServerSettings* serverSettings) const {
         QStringList directories{};
         mSettings->beginGroup(currentServerName());
         directories = createTransforming<QStringList>(
@@ -492,4 +489,6 @@ namespace tremotesf {
         mCurrentServerMountedDirectories = MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey));
         mSettings->endGroup();
     }
+
+    void Servers::sync() { mSettings->sync(); }
 }
