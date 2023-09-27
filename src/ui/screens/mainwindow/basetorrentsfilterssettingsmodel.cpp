@@ -12,9 +12,9 @@ namespace tremotesf {
     Rpc* BaseTorrentsFiltersSettingsModel::rpc() const { return mRpc; }
 
     void BaseTorrentsFiltersSettingsModel::setRpc(Rpc* rpc) {
-        if (rpc != mRpc) {
-            if (mRpc) {
-                QObject::disconnect(mRpc, nullptr, this, nullptr);
+        if (rpc != mRpc.data()) {
+            if (const auto oldRpc = mRpc.data(); oldRpc) {
+                QObject::disconnect(oldRpc, nullptr, this, nullptr);
             }
             mRpc = rpc;
             if (rpc) {

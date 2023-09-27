@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <QDialog>
+#include <QPointer>
 
 class QTabWidget;
 class KMessageWidget;
@@ -42,7 +43,7 @@ namespace tremotesf {
         void setTorrent(Torrent* torrent);
         void onTorrentChanged();
 
-        Torrent* mTorrent;
+        QPointer<Torrent> mTorrent;
         Rpc* const mRpc;
 
         KMessageWidget* mMessageWidget;
