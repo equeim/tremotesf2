@@ -55,6 +55,7 @@ namespace tremotesf {
         PeersModel* mPeersModel;
         StringListModel* mWebSeedersModel;
 
+        bool mUpdatingLimits{};
         std::function<void()> mUpdateLimitsTab;
     };
 }
