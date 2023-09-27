@@ -22,10 +22,10 @@ namespace tremotesf {
 
     public:
         TrackersViewWidget(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
-        ~TrackersViewWidget() override;
         Q_DISABLE_COPY_MOVE(TrackersViewWidget)
 
         void setTorrent(Torrent* torrent);
+        void saveState();
 
     private:
         void addTrackers();

@@ -74,14 +74,6 @@ namespace tremotesf {
         });
     }
 
-    TorrentFilesView::~TorrentFilesView() {
-        if (mLocalFile) {
-            Settings::instance()->setLocalTorrentFilesViewHeaderState(header()->saveState());
-        } else {
-            Settings::instance()->setTorrentFilesViewHeaderState(header()->saveState());
-        }
-    }
-
     void TorrentFilesView::showFileRenameDialog(
         const QString& fileName, QWidget* parent, const std::function<void(const QString&)>& onAccepted
     ) {
@@ -98,6 +90,14 @@ namespace tremotesf {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(dialog, &QDialog::accepted, parent, [=] { onAccepted(dialog->text()); });
         dialog->show();
+    }
+
+    void TorrentFilesView::saveState() {
+        if (mLocalFile) {
+            Settings::instance()->setLocalTorrentFilesViewHeaderState(header()->saveState());
+        } else {
+            Settings::instance()->setTorrentFilesViewHeaderState(header()->saveState());
+        }
     }
 
     void TorrentFilesView::init() {

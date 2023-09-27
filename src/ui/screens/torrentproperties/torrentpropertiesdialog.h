@@ -22,6 +22,7 @@ namespace tremotesf {
     class Rpc;
     class StringListModel;
     class TorrentFilesModel;
+    class TorrentFilesView;
     class TrackersViewWidget;
 
     class TorrentPropertiesDialog final : public QDialog {
@@ -29,7 +30,6 @@ namespace tremotesf {
 
     public:
         explicit TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
-        ~TorrentPropertiesDialog() override;
         Q_DISABLE_COPY_MOVE(TorrentPropertiesDialog)
 
         QSize sizeHint() const override;
@@ -43,6 +43,8 @@ namespace tremotesf {
         void setTorrent(Torrent* torrent);
         void onTorrentChanged();
 
+        void saveState();
+
         QPointer<Torrent> mTorrent;
         Rpc* const mRpc;
 
@@ -51,6 +53,7 @@ namespace tremotesf {
 
         std::function<void()> mUpdateDetailsTab;
         TorrentFilesModel* mFilesModel;
+        TorrentFilesView* mFilesView;
         TrackersViewWidget* mTrackersViewWidget;
         BaseTreeView* mPeersView;
         PeersModel* mPeersModel;

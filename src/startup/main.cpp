@@ -9,14 +9,15 @@
 #include <QLocale>
 #include <QTranslator>
 
-#include "literals.h"
-#include "log/log.h"
-#include "target_os.h"
-#include "ipc/ipcclient.h"
-#include "ui/screens/mainwindow/mainwindow.h"
 #include "commandlineparser.h"
+#include "literals.h"
 #include "main_windows.h"
 #include "signalhandler.h"
+#include "target_os.h"
+#include "ipc/ipcclient.h"
+#include "log/log.h"
+#include "ui/savewindowstatedispatcher.h"
+#include "ui/screens/mainwindow/mainwindow.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
@@ -118,6 +119,8 @@ int main(int argc, char** argv) {
         logWarning("Failed to load Tremotesf translation for {}", QLocale());
     }
     qApp->installTranslator(&appTranslator);
+
+    const SaveWindowStateDispatcher saveStateDispatcher{};
 
     MainWindow window(std::move(args.files), std::move(args.urls));
     window.showMinimized(args.minimized);

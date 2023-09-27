@@ -83,8 +83,11 @@ add_library(
     startup/commandlineparser.cpp
     startup/commandlineparser.h
     startup/signalhandler.h
+
     ui/notificationscontroller.cpp
     ui/notificationscontroller.h
+    ui/savewindowstatedispatcher.cpp
+    ui/savewindowstatedispatcher.h
     ui/systemcolorsprovider.h
     ui/itemmodels/baseproxymodel.cpp
     ui/itemmodels/baseproxymodel.h
@@ -332,11 +335,11 @@ if (BUILD_TESTING)
         message(STATUS "Did not found cpp-httplib 0.14, trying 0.13")
         find_package(httplib 0.13 QUIET)
     endif()
-        if (NOT httplib_FOUND)
+    if (NOT httplib_FOUND)
         message(STATUS "Did not found cpp-httplib 0.13, trying 0.12")
         find_package(httplib 0.12 QUIET)
     endif()
-        if (NOT httplib_FOUND)
+    if (NOT httplib_FOUND)
         message(STATUS "Did not found cpp-httplib 0.12, trying 0.11")
         find_package(httplib 0.11 QUIET)
     endif()
@@ -350,12 +353,12 @@ if (BUILD_TESTING)
         set(HTTPLIB_REQUIRE_OPENSSL ON)
         add_subdirectory(3rdparty/cpp-httplib EXCLUDE_FROM_ALL)
     else()
-        if (httplib_VERSION)
+        if(httplib_VERSION)
             message(STATUS "Using system cpp-httplib ${httplib_VERSION}")
         else()
             message(STATUS "Using system cpp-httplib")
         endif()
-    endif()
+    endif ()
 
     add_executable(requestrouter_test rpc/requestrouter_test.cpp)
     target_compile_definitions(requestrouter_test PRIVATE TEST_DATA_PATH="${CMAKE_CURRENT_SOURCE_DIR}/rpc/test-data" CPPHTTPLIB_OPENSSL_SUPPORT)

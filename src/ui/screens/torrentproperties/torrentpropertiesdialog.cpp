@@ -8,11 +8,11 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QGroupBox>
+#include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -26,20 +26,24 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
-#include "rpc/pathutils.h"
+#include "desktoputils.h"
+#include "peersmodel.h"
+#include "settings.h"
 #include "stdutils.h"
+#include "torrentfilesmodel.h"
+#include "trackersviewwidget.h"
+#include "utils.h"
+#include "log/log.h"
+#include "rpc/pathutils.h"
+#include "rpc/rpc.h"
 #include "rpc/torrent.h"
+#include "ui/savewindowstatedispatcher.h"
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/itemmodels/stringlistmodel.h"
 #include "ui/widgets/torrentfilesview.h"
 #include "ui/widgets/commondelegate.h"
-#include "rpc/rpc.h"
-#include "desktoputils.h"
-#include "settings.h"
-#include "utils.h"
-#include "peersmodel.h"
-#include "torrentfilesmodel.h"
-#include "trackersviewwidget.h"
+
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
 
 namespace tremotesf {
     namespace {
@@ -64,6 +68,7 @@ namespace tremotesf {
           mMessageWidget(new KMessageWidget(this)),
           mTabWidget(new QTabWidget(this)),
           mFilesModel(new TorrentFilesModel(mTorrent, mRpc, this)),
+          mFilesView(new TorrentFilesView(mFilesModel, mRpc, this)),
           mTrackersViewWidget(new TrackersViewWidget(mTorrent, mRpc, this)),
           mPeersView(nullptr),
           mPeersModel(nullptr),
@@ -77,7 +82,7 @@ namespace tremotesf {
 
         setupDetailsTab();
         //: Torrent properties dialog tab
-        mTabWidget->addTab(new TorrentFilesView(mFilesModel, mRpc), qApp->translate("tremotesf", "Files"));
+        mTabWidget->addTab(mFilesView, qApp->translate("tremotesf", "Files"));
         //: Torrent properties dialog tab
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));
         setupPeersTab();
@@ -101,11 +106,8 @@ namespace tremotesf {
 
         setMinimumSize(minimumSizeHint());
         restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
-    }
 
-    TorrentPropertiesDialog::~TorrentPropertiesDialog() {
-        Settings::instance()->setPeersViewHeaderState(mPeersView->header()->saveState());
-        Settings::instance()->setTorrentPropertiesDialogGeometry(saveGeometry());
+        SaveWindowStateDispatcher::registerHandler(this, [this] { saveState(); });
     }
 
     QSize TorrentPropertiesDialog::sizeHint() const { return minimumSizeHint(); }
@@ -626,5 +628,13 @@ namespace tremotesf {
         mFilesModel->setTorrent(mTorrent);
         mTrackersViewWidget->setTorrent(mTorrent);
         mPeersModel->setTorrent(mTorrent);
+    }
+
+    void TorrentPropertiesDialog::saveState() {
+        logDebug("Saving TorrentPropertiesDialog state, window geometry is {}", geometry());
+        Settings::instance()->setTorrentPropertiesDialogGeometry(saveGeometry());
+        Settings::instance()->setPeersViewHeaderState(mPeersView->header()->saveState());
+        mFilesView->saveState();
+        mTrackersViewWidget->saveState();
     }
 }

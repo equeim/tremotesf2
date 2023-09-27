@@ -57,6 +57,7 @@
 #include "settings.h"
 #include "utils.h"
 
+#include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/aboutdialog.h"
 #include "ui/screens/addtorrent/addtorrentdialog.h"
 #include "ui/screens/connectionsettings/servereditdialog.h"
@@ -74,6 +75,8 @@
 #include "mainwindowstatusbar.h"
 #include "torrentsview.h"
 #include "mainwindowviewmodel.h"
+
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
 
 namespace tremotesf {
     namespace {
@@ -281,19 +284,16 @@ namespace tremotesf {
                     dialog->open();
                 });
             }
+
+            QObject::connect(qApp, &QCoreApplication::aboutToQuit, this, [this] {
+                mViewModel.rpc()->disconnect();
+                mTrayIcon.hide();
+            });
+
+            SaveWindowStateDispatcher::registerHandler(mWindow, [this] { saveState(); });
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
-
-        ~Impl() override {
-            mViewModel.rpc()->disconnect();
-
-            Settings::instance()->setMainWindowGeometry(mWindow->saveGeometry());
-            Settings::instance()->setMainWindowState(mWindow->saveState());
-            Settings::instance()->setSplitterState(mSplitter.saveState());
-
-            mTrayIcon.hide();
-        }
 
         void onCloseEvent() {
             if (!(mTrayIcon.isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) {
@@ -304,6 +304,14 @@ namespace tremotesf {
         void onDragEnterEvent(QDragEnterEvent* event) { MainWindowViewModel::processDragEnterEvent(event); }
 
         void onDropEvent(QDropEvent* event) { mViewModel.processDropEvent(event); }
+
+        void saveState() {
+            logDebug("Saving MainWindow state, window geometry is {}", mWindow->geometry());
+            Settings::instance()->setMainWindowGeometry(mWindow->saveGeometry());
+            Settings::instance()->setMainWindowState(mWindow->saveState());
+            Settings::instance()->setSplitterState(mSplitter.saveState());
+            mTorrentsView.saveState();
+        }
 
     private:
         MainWindow* mWindow;
@@ -1015,7 +1023,7 @@ namespace tremotesf {
             } else {
                 quitAction->setShortcuts(QKeySequence::Quit);
             }
-            QObject::connect(quitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
+            QObject::connect(quitAction, &QAction::triggered, this, &QCoreApplication::quit);
 
             //: Menu bar item
             QMenu* editMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
