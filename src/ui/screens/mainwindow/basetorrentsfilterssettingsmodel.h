@@ -6,6 +6,7 @@
 #define TREMOTESF_BASETORRENTSFILTERSSETTINGSMODEL_H
 
 #include <QAbstractListModel>
+#include <QPointer>
 
 namespace tremotesf {
     class Rpc;
@@ -34,8 +35,8 @@ namespace tremotesf {
     private:
         void updateImpl();
 
-        Rpc* mRpc = nullptr;
-        TorrentsProxyModel* mTorrentsProxyModel = nullptr;
+        QPointer<Rpc> mRpc{};
+        TorrentsProxyModel* mTorrentsProxyModel{};
         bool mPopulated = false;
 
     signals:

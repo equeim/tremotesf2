@@ -12,9 +12,7 @@
 #include "utils.h"
 
 namespace tremotesf {
-    PeersModel::PeersModel(Torrent* torrent, QObject* parent) : QAbstractTableModel(parent) {
-        setTorrent(torrent);
-    }
+    PeersModel::PeersModel(Torrent* torrent, QObject* parent) : QAbstractTableModel(parent) { setTorrent(torrent); }
 
     PeersModel::~PeersModel() {
         if (mTorrent) {
@@ -119,8 +117,8 @@ namespace tremotesf {
 
     void PeersModel::setTorrent(Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) {
-                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            if (const auto oldTorrent = mTorrent.data(); oldTorrent) {
+                QObject::disconnect(oldTorrent, nullptr, this, nullptr);
             }
 
             mTorrent = torrent;

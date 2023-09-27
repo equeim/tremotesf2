@@ -8,6 +8,8 @@
 #include <span>
 #include <vector>
 
+#include <QPointer>
+
 #include "ui/itemmodels/basetorrentfilesmodel.h"
 #include "rpc/torrent.h"
 
@@ -18,9 +20,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        explicit TorrentFilesModel(
-            Torrent* torrent = nullptr, Rpc* rpc = nullptr, QObject* parent = nullptr
-        );
+        explicit TorrentFilesModel(Torrent* torrent = nullptr, Rpc* rpc = nullptr, QObject* parent = nullptr);
         ~TorrentFilesModel() override;
         Q_DISABLE_COPY_MOVE(TorrentFilesModel)
 
@@ -33,8 +33,7 @@ namespace tremotesf {
         void setFileWanted(const QModelIndex& index, bool wanted) override;
         void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
         void setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority) override;
-        void
-        setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) override;
+        void setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) override;
 
         void renameFile(const QModelIndex& index, const QString& newName) override;
         void fileRenamed(const QString& path, const QString& newName);
@@ -50,7 +49,7 @@ namespace tremotesf {
 
         void setLoaded(bool loaded);
 
-        Torrent* mTorrent{};
+        QPointer<Torrent> mTorrent{};
         Rpc* mRpc{};
         std::vector<TorrentFilesModelFile*> mFiles{};
         bool mCreatingTree{};

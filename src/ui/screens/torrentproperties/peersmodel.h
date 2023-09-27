@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <QAbstractTableModel>
+#include <QPointer>
 
 #include "rpc/peer.h"
 
@@ -46,7 +47,7 @@ namespace tremotesf {
         );
 
         std::vector<Peer> mPeers{};
-        Torrent* mTorrent{};
+        QPointer<Torrent> mTorrent{};
     };
 }
 

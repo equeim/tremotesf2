@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <QAbstractTableModel>
+#include <QPointer>
 
 class QTimer;
 
@@ -52,7 +53,7 @@ namespace tremotesf {
         void update();
         void updateEtas();
 
-        Torrent* mTorrent{};
+        QPointer<Torrent> mTorrent{};
 
         std::vector<TrackerItem> mTrackers;
 

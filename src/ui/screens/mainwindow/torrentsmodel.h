@@ -5,10 +5,10 @@
 #ifndef TREMOTESF_TORRENTSMODEL_H
 #define TREMOTESF_TORRENTSMODEL_H
 
-#include <memory>
 #include <vector>
 
 #include <QAbstractTableModel>
+#include <QPointer>
 
 namespace tremotesf {
     class Torrent;
@@ -69,7 +69,7 @@ namespace tremotesf {
         std::vector<int> idsFromIndexes(const QModelIndexList& indexes) const;
 
     private:
-        Rpc* mRpc;
+        QPointer<Rpc> mRpc;
     };
 }
 

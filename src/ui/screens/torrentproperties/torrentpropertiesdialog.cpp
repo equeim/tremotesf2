@@ -583,8 +583,8 @@ namespace tremotesf {
 
     void TorrentPropertiesDialog::setTorrent(Torrent* torrent) {
         if (torrent != mTorrent) {
-            if (mTorrent) {
-                QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            if (const auto oldTorrent = mTorrent.data(); oldTorrent) {
+                QObject::disconnect(oldTorrent, nullptr, this, nullptr);
             }
             mTorrent = torrent;
             onTorrentChanged();

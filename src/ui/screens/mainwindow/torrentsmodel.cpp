@@ -353,8 +353,8 @@ namespace tremotesf {
 
     void TorrentsModel::setRpc(Rpc* rpc) {
         if (rpc != mRpc) {
-            if (mRpc) {
-                QObject::disconnect(mRpc, nullptr, this, nullptr);
+            if (const auto oldRpc = mRpc.data(); oldRpc) {
+                QObject::disconnect(oldRpc, nullptr, this, nullptr);
             }
             mRpc = rpc;
             if (rpc) {
