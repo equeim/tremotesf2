@@ -460,85 +460,124 @@ namespace tremotesf {
         resizer->addWidgetsFromLayout(seedingGroupBoxLayout);
         resizer->addWidgetsFromLayout(peersGroupBoxLayout);
 
+        QObject::connect(globalLimitsCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+            if (!mUpdatingLimits && mTorrent) {
+                mTorrent->setHonorSessionLimits(checked);
+            }
+        });
+        QObject::connect(downloadSpeedCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+            if (!mUpdatingLimits && mTorrent) {
+                mTorrent->setDownloadSpeedLimited(checked);
+            }
+        });
+        QObject::connect(
+            downloadSpeedSpinBox,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,
+            [this](int limit) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setDownloadSpeedLimit(limit);
+                }
+            }
+        );
+        QObject::connect(uploadSpeedCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+            if (!mUpdatingLimits && mTorrent) {
+                mTorrent->setUploadSpeedLimited(checked);
+            }
+        });
+        QObject::connect(
+            uploadSpeedSpinBox,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,
+            [this](int limit) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setUploadSpeedLimit(limit);
+                }
+            }
+        );
+        QObject::connect(
+            priorityComboBox,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            [this](int index) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setBandwidthPriority(priorityComboBoxItems[index]);
+                }
+            }
+        );
+        QObject::connect(
+            ratioLimitComboBox,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            [this](int index) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setRatioLimitMode(ratioLimitComboBoxItems[index]);
+                }
+            }
+        );
+        QObject::connect(
+            ratioLimitSpinBox,
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this,
+            [this](double limit) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setRatioLimit(limit);
+                }
+            }
+        );
+        QObject::connect(
+            idleSeedingLimitComboBox,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            [this](int index) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems[index]);
+                }
+            }
+        );
+        QObject::connect(
+            idleSeedingLimitSpinBox,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,
+            [this](int limit) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setIdleSeedingLimit(limit);
+                }
+            }
+        );
+        QObject::connect(
+            peersLimitsSpinBox,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,
+            [this](int limit) {
+                if (!mUpdatingLimits && mTorrent) {
+                    mTorrent->setPeersLimit(limit);
+                }
+            }
+        );
+
         mUpdateLimitsTab = [=, this] {
+            mUpdatingLimits = true;
+
             globalLimitsCheckBox->setChecked(mTorrent->data().honorSessionLimits);
-            QObject::connect(globalLimitsCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setHonorSessionLimits);
-
             downloadSpeedCheckBox->setChecked(mTorrent->data().downloadSpeedLimited);
-            QObject::connect(downloadSpeedCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setDownloadSpeedLimited);
-
             downloadSpeedSpinBox->setValue(mTorrent->data().downloadSpeedLimit);
-            QObject::connect(
-                downloadSpeedSpinBox,
-                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                mTorrent,
-                &Torrent::setDownloadSpeedLimit
-            );
-
             uploadSpeedCheckBox->setChecked(mTorrent->data().uploadSpeedLimited);
-            QObject::connect(uploadSpeedCheckBox, &QCheckBox::toggled, mTorrent, &Torrent::setUploadSpeedLimited);
-
             uploadSpeedSpinBox->setValue(mTorrent->data().uploadSpeedLimit);
-            QObject::connect(
-                uploadSpeedSpinBox,
-                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                mTorrent,
-                &Torrent::setUploadSpeedLimit
-            );
-
             priorityComboBox->setCurrentIndex(
                 indexOfCasted<int>(priorityComboBoxItems, mTorrent->data().bandwidthPriority).value()
             );
-            QObject::connect(
-                priorityComboBox,
-                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                mTorrent,
-                [=, this](int index) { mTorrent->setBandwidthPriority(priorityComboBoxItems[index]); }
-            );
-
             ratioLimitComboBox->setCurrentIndex(
                 indexOfCasted<int>(ratioLimitComboBoxItems, mTorrent->data().ratioLimitMode).value()
             );
-            QObject::connect(
-                ratioLimitComboBox,
-                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                mTorrent,
-                [=, this](int index) { mTorrent->setRatioLimitMode(ratioLimitComboBoxItems[index]); }
-            );
-
             ratioLimitSpinBox->setValue(mTorrent->data().ratioLimit);
-            QObject::connect(
-                ratioLimitSpinBox,
-                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-                mTorrent,
-                &Torrent::setRatioLimit
-            );
-
             idleSeedingLimitComboBox->setCurrentIndex(
                 indexOfCasted<int>(idleSeedingLimitComboBoxItems, mTorrent->data().idleSeedingLimitMode).value()
             );
-            QObject::connect(
-                idleSeedingLimitComboBox,
-                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                mTorrent,
-                [=, this](int index) { mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems[index]); }
-            );
-
             idleSeedingLimitSpinBox->setValue(mTorrent->data().idleSeedingLimit);
-            QObject::connect(
-                idleSeedingLimitSpinBox,
-                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                mTorrent,
-                &Torrent::setIdleSeedingLimit
-            );
-
             peersLimitsSpinBox->setValue(mTorrent->data().peersLimit);
-            QObject::connect(
-                peersLimitsSpinBox,
-                static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                mTorrent,
-                &Torrent::setPeersLimit
-            );
+
+            mUpdatingLimits = false;
         };
     }
 
