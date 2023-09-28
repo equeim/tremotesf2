@@ -191,9 +191,13 @@ namespace tremotesf {
         } else {
             mSettings = new QSettings(this);
         }
+        qRegisterMetaType<Qt::ToolButtonStyle>();
+        qRegisterMetaType<TorrentData::Priority>();
+        qRegisterMetaType<TorrentsProxyModel::StatusFilter>();
+        qRegisterMetaType<Settings::DarkThemeMode>();
 #if QT_VERSION_MAJOR < 6
         qRegisterMetaTypeStreamOperators<Qt::ToolButtonStyle>();
-        qRegisterMetaTypeStreamOperators<tremotesf::TorrentData::Priority>();
+        qRegisterMetaTypeStreamOperators<TorrentData::Priority>();
         qRegisterMetaTypeStreamOperators<TorrentsProxyModel::StatusFilter>();
         qRegisterMetaTypeStreamOperators<Settings::DarkThemeMode>();
 #endif
