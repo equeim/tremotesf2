@@ -4,6 +4,7 @@
 
 #include "torrentsview.h"
 
+#include <set>
 #include <QHeaderView>
 
 #include "ui/widgets/commondelegate.h"
@@ -24,24 +25,38 @@ namespace tremotesf {
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setRootIsDecorated(false);
 
-        if (!header()->restoreState(Settings::instance()->torrentsViewHeaderState())) {
-            const auto hiddenColumns = {
-                TorrentsModel::Column::TotalSize,
-                TorrentsModel::Column::Priority,
-                TorrentsModel::Column::QueuePosition,
-                TorrentsModel::Column::AddedDate,
-                TorrentsModel::Column::DownloadSpeedLimit,
-                TorrentsModel::Column::UploadSpeedLimit,
-                TorrentsModel::Column::TotalDownloaded,
-                TorrentsModel::Column::TotalUploaded,
-                TorrentsModel::Column::LeftUntilDone,
-                TorrentsModel::Column::DownloadDirectory,
-                TorrentsModel::Column::CompletedSize,
-                TorrentsModel::Column::ActivityDate};
-            for (auto column : hiddenColumns) {
-                hideColumn(static_cast<int>(column));
+        const auto header = this->header();
+        if (!header->restoreState(Settings::instance()->torrentsViewHeaderState())) {
+            using C = TorrentsModel::Column;
+            const std::set defaultColumns{
+                C::Name,
+                C::TotalSize,
+                C::ProgressBar,
+                C::Status,
+                C::Seeders,
+                C::Leechers,
+                C::PeersSendingToUs,
+                C::PeersGettingFromUs,
+                C::DownloadSpeed,
+                C::UploadSpeed,
+                C::Eta,
+                C::Ratio,
+                C::AddedDate,
+            };
+            for (int i = 0, max = header->count(); i < max; ++i) {
+                if (!defaultColumns.contains(static_cast<C>(i))) {
+                    header->hideSection(i);
+                }
             }
-            sortByColumn(static_cast<int>(TorrentsModel::Column::Name), Qt::AscendingOrder);
+            header->moveSection(
+                header->visualIndex(static_cast<int>(C::AddedDate)),
+                header->visualIndex(static_cast<int>(C::Status)) + 1
+            );
+            header->moveSection(
+                header->visualIndex(static_cast<int>(C::Eta)),
+                header->visualIndex(static_cast<int>(C::AddedDate)) + 1
+            );
+            sortByColumn(static_cast<int>(TorrentsModel::Column::AddedDate), Qt::DescendingOrder);
         }
     }
 
