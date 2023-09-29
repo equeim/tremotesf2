@@ -213,7 +213,10 @@ namespace tremotesf {
 #endif
             this
         );
-        QObject::connect(searchShortcut, &QShortcut::activated, this, [searchLineEdit] { searchLineEdit->setFocus(); });
+        QObject::connect(searchShortcut, &QShortcut::activated, this, [searchLineEdit] {
+            searchLineEdit->selectAll();
+            searchLineEdit->setFocus();
+        });
 
         QFont checkBoxFont(QApplication::font());
         checkBoxFont.setBold(true);
