@@ -185,7 +185,6 @@ namespace tremotesf {
         explicit Impl(QStringList&& commandLineFiles, QStringList&& commandLineUrls, MainWindow* window)
             : mWindow(window), mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)} {
             mSplitter.setChildrenCollapsible(false);
-            mSplitter.setStretchFactor(1, 1);
             if (!Settings::instance()->isSideBarVisible()) {
                 mSideBar.hide();
             }
@@ -193,6 +192,7 @@ namespace tremotesf {
 
             auto mainWidgetContainer = new QWidget(mWindow);
             mSplitter.addWidget(mainWidgetContainer);
+            mSplitter.setStretchFactor(1, 1);
             auto mainWidgetLayout = new QVBoxLayout(mainWidgetContainer);
             mainWidgetLayout->setContentsMargins(
                 0,
