@@ -7,7 +7,7 @@
 ### Changed
 - Windows builds use Qt 6
 - Progress bar columns in torrent/file lists are now displayed with percents text
-- Default columns and sort order in torrents list are changed according to my personal taste
+- Default columns and sort order in torrents list are changed according to my personal taste: default sorting is now by added date, from new to old
 - When search field is focused via shortcut its contents are now selected
 - When Tremotesf is launched for the first time it now place itself in the middle of the screen, letting OS decide
 
