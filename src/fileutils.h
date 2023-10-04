@@ -37,6 +37,7 @@ namespace tremotesf {
     [[nodiscard]] QByteArray readFile(const QString& path);
 
     void deleteFile(const QString& path);
+    void moveFileToTrash(const QString& path);
 
     namespace impl {
         [[nodiscard]] QString readFileAsBase64String(QFile& file);

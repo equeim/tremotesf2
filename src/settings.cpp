@@ -35,8 +35,7 @@ namespace tremotesf {
     namespace {
         template<typename T>
         T getValue(QSettings* settings, const char* key, T defaultValue) {
-            T value =
-                settings->value(QLatin1String(key), QVariant::fromValue<T>(defaultValue)).template value<T>();
+            T value = settings->value(QLatin1String(key), QVariant::fromValue<T>(defaultValue)).template value<T>();
             if constexpr (std::is_enum_v<T>) {
                 const auto meta = QMetaEnum::fromType<T>();
                 if (!meta.valueToKey(static_cast<int>(value))) {
@@ -89,12 +88,33 @@ namespace tremotesf {
     SETTINGS_PROPERTY_DEF_NON_TRIVIAL(
         QString, lastOpenTorrentDirectory, setLastOpenTorrentDirectory, "lastOpenTorrentDirectory", {}
     )
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, rememberAddTorrentParameters, setRememberTorrentAddParameters, "rememberAddTorrentParameters", true)
     SETTINGS_PROPERTY_DEF_TRIVIAL(
-        TorrentData::Priority, lastAddTorrentPriority, setLastAddTorrentPriority, "lastAddTorrentPriority",
-        TorrentData::Priority::Normal)
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding, "lastAddTorrentStartAfterAdding", true)
-    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, lastAddTorrentDeleteTorrentFile, setLastAddTorrentDeleteTorrentFile, "lastAddTorrentDeleteTorrentFile", false)
+        bool, rememberAddTorrentParameters, setRememberTorrentAddParameters, "rememberAddTorrentParameters", true
+    )
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        TorrentData::Priority,
+        lastAddTorrentPriority,
+        setLastAddTorrentPriority,
+        "lastAddTorrentPriority",
+        TorrentData::Priority::Normal
+    )
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding, "lastAddTorrentStartAfterAdding", true
+    )
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool,
+        lastAddTorrentDeleteTorrentFile,
+        setLastAddTorrentDeleteTorrentFile,
+        "lastAddTorrentDeleteTorrentFile",
+        false
+    )
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool,
+        lastAddTorrentMoveTorrentFileToTrash,
+        setLastAddTorrentMoveTorrentFileToTrash,
+        "lastAddTorrentMoveTorrentFileToTrash",
+        true
+    )
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard, "fillTorrentLinkFromClipboard", false
@@ -175,9 +195,7 @@ namespace tremotesf {
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode, "darkThemeMode", Settings::DarkThemeMode::FollowSystem
     )
-    SETTINGS_PROPERTY_DEF_TRIVIAL(
-        bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", true
-    )
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", true)
 
     Settings::Settings(QObject* parent) : QObject(parent) {
         if constexpr (isTargetOsWindows) {

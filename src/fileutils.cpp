@@ -210,9 +210,28 @@ namespace tremotesf {
     }
 
     void deleteFile(const QString& path) {
+        logInfo("Deleting file {}", path);
         QFile file(path);
-        if (!file.remove()) {
+        if (file.remove()) {
+            logInfo("Succesfully deleted file");
+        } else {
             throw QFileError(fmt::format("Failed to delete {}: {}", fileDescription(file), errorDescription(file)));
+        }
+    }
+
+    void moveFileToTrash(const QString& path) {
+        logInfo("Moving file {} to trash", path);
+        QFile file(path);
+        if (file.moveToTrash()) {
+            if (const auto newPath = file.fileName(); !newPath.isEmpty()) {
+                logInfo("Successfully moved file to trash, new path is {}", newPath);
+            } else {
+                logInfo("Successfully moved file to trash");
+            }
+        } else {
+            throw QFileError(
+                fmt::format("Failed to move {} to trash: {}", fileDescription(file), errorDescription(file))
+            );
         }
     }
 

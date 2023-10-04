@@ -10,6 +10,7 @@
 class QCheckBox;
 class QComboBox;
 class QDialogButtonBox;
+class QGroupBox;
 class QLabel;
 class QLineEdit;
 
@@ -46,7 +47,8 @@ namespace tremotesf {
         TorrentFilesView* mTorrentFilesView{};
         QComboBox* mPriorityComboBox{};
         QCheckBox* mStartTorrentCheckBox{};
-        QCheckBox* mDeleteTorrentFileCheckBox{};
+        QGroupBox* mDeleteTorrentFileGroupBox{};
+        QCheckBox* mMoveTorrentFileToTrashCheckBox{};
 
         QDialogButtonBox* mDialogButtonBox{};
     };
