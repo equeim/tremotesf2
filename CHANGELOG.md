@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Added
 - Qt 6 support (with unreleased KF6 libraries)
+- Option to move torrent file to trash instead of deleting it.
+  It is enabled by default, and fallbacks to deletion if move failed for any reason.
 
 ### Changed
 - Windows builds use Qt 6

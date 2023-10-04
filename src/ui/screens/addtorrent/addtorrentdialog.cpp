@@ -13,6 +13,7 @@
 #include <QDialogButtonBox>
 #include <QFileInfo>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QGuiApplication>
 #include <QLabel>
 #include <QLineEdit>
@@ -109,12 +110,22 @@ namespace tremotesf {
             settings->setLastAddTorrentPriority(priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()));
             settings->setLastAddTorrentStartAfterAdding(mStartTorrentCheckBox->isChecked());
             if (mMode == Mode::File) {
-                settings->setLastAddTorrentDeleteTorrentFile(mDeleteTorrentFileCheckBox->isChecked());
+                settings->setLastAddTorrentDeleteTorrentFile(mDeleteTorrentFileGroupBox->isChecked());
+                settings->setLastAddTorrentMoveTorrentFileToTrash(mMoveTorrentFileToTrashCheckBox->isChecked());
             }
         }
-        if (mMode == Mode::File && mDeleteTorrentFileCheckBox->isChecked()) {
+        if (mMode == Mode::File && mDeleteTorrentFileGroupBox->isChecked()) {
             try {
-                deleteFile(mUrl);
+                if (mMoveTorrentFileToTrashCheckBox->isChecked()) {
+                    try {
+                        moveFileToTrash(mUrl);
+                    } catch (const QFileError& e) {
+                        logWarningWithException(e, "Failed to move torrent file to trash");
+                        deleteFile(mUrl);
+                    }
+                } else {
+                    deleteFile(mUrl);
+                }
             } catch (const QFileError& e) {
                 logWarningWithException(e, "Failed to delete torrent file");
             }
@@ -285,11 +296,19 @@ namespace tremotesf {
         layout->addWidget(mStartTorrentCheckBox);
 
         if (mMode == Mode::File) {
-            mDeleteTorrentFileCheckBox = new QCheckBox(qApp->translate("tremotesf", "Delete .torrent file"), this);
+            mDeleteTorrentFileGroupBox = new QGroupBox(qApp->translate("tremotesf", "Delete .torrent file"), this);
+            layout->addWidget(mDeleteTorrentFileGroupBox);
+            mDeleteTorrentFileGroupBox->setCheckable(true);
+            const auto groupBoxLayout = new QVBoxLayout(mDeleteTorrentFileGroupBox);
+            mMoveTorrentFileToTrashCheckBox =
+                new QCheckBox(qApp->translate("tremotesf", "Move .torrent file to trash"), this);
+            groupBoxLayout->addWidget(mMoveTorrentFileToTrashCheckBox);
             if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
-                mDeleteTorrentFileCheckBox->setChecked(settings->lastAddTorrentDeleteTorrentFile());
+                mDeleteTorrentFileGroupBox->setChecked(settings->lastAddTorrentDeleteTorrentFile());
+                mMoveTorrentFileToTrashCheckBox->setChecked(settings->lastAddTorrentMoveTorrentFileToTrash());
+            } else {
+                mMoveTorrentFileToTrashCheckBox->setChecked(true);
             }
-            layout->addWidget(mDeleteTorrentFileCheckBox);
         }
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);

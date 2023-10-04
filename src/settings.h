@@ -47,13 +47,12 @@ namespace tremotesf {
         SETTINGS_PROPERTY_TRIVIAL(TorrentData::Priority, lastAddTorrentPriority, setLastAddTorrentPriority)
         SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding)
         SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentDeleteTorrentFile, setLastAddTorrentDeleteTorrentFile)
+        SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentMoveTorrentFileToTrash, setLastAddTorrentMoveTorrentFileToTrash)
 
         SETTINGS_PROPERTY_TRIVIAL(bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard)
 
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled)
-        SETTINGS_PROPERTY_TRIVIAL(
-            TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter
-        )
+        SETTINGS_PROPERTY_TRIVIAL(TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter)
 
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsTrackerFilterEnabled, setTorrentsTrackerFilterEnabled)
         SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsTrackerFilter, setTorrentsTrackerFilter)
