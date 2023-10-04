@@ -7,13 +7,13 @@
 _dir="$(realpath $(dirname $0))"
 cd "$_dir"
 
-lupdate-qt5 ../src/tremotesf -no-obsolete -ts en.ts \
-                                              es.ts \
-                                              fr.ts \
-                                              it_IT.ts \
-                                              nl_BE.ts \
-                                              nl.ts \
-                                              pl.ts \
-                                              ru.ts \
-                                              zh_CN.ts \
-                                              source.ts
+lupdate-qt5 ../src -no-obsolete -ts en.ts \
+                                    es.ts \
+                                    fr.ts \
+                                    it_IT.ts \
+                                    nl_BE.ts \
+                                    nl.ts \
+                                    pl.ts \
+                                    ru.ts \
+                                    zh_CN.ts \
+                                    source.ts
