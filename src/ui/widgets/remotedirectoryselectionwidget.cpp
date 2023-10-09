@@ -88,6 +88,7 @@ namespace tremotesf {
 
         mSelectDirectoryButton = new QPushButton(QIcon::fromTheme("document-open"_l1), QString(), this);
         layout->addWidget(mSelectDirectoryButton);
+        mSelectDirectoryButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
         mViewModel = createViewModel(std::move(path), rpc);
 
