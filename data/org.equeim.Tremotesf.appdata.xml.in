@@ -54,6 +54,26 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2023-10-15" version="2.5.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>Option to move torrent file to trash instead of deleting it (enabled by default)</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>Progress bar columns in torrent/file lists are now displayed with percent text</li>
+          <li>Default columns and sort order in torrents list are changed. Default sorting is now by added date, from new to old</li>
+          <li>When search field is focused via shortcut its contents are now selected</li>
+          <li>When Tremotesf is launched for the first time it now doesn't place itself in the middle of the screen, letting OS decide</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>"Open" action on torrent's root file directory</li>
+          <li>Unnecessary RPC requests when torrent's limits are edited</li>
+        </ul>
+      </description>
+    </release>
     <release date="2023-05-30" version="2.4.0">
       <description>
         <p>Added</p>

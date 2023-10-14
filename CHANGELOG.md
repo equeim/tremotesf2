@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.5.0] - 2023-10-15
 ### Added
 - Qt 6 support (with unreleased KF6 libraries)
 - Option to move torrent file to trash instead of deleting it.
@@ -8,10 +8,10 @@
 
 ### Changed
 - Windows builds use Qt 6
-- Progress bar columns in torrent/file lists are now displayed with percents text
+- Progress bar columns in torrent/file lists are now displayed with percent text
 - Default columns and sort order in torrents list are changed according to my personal taste: default sorting is now by added date, from new to old
 - When search field is focused via shortcut its contents are now selected
-- When Tremotesf is launched for the first time it now place itself in the middle of the screen, letting OS decide
+- When Tremotesf is launched for the first time it now doesn't place itself in the middle of the screen, letting OS decide
 
 ### Removed
 - Windows 8.1 and Windows 10 versions prior to 1809 (October 2018 Update) are not supported anymore
