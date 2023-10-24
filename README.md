@@ -57,8 +57,8 @@ You can invoke CMake in a different way if you want.
 - Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ```sh
-wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_11/ /"
+wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_12/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_12/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
@@ -86,8 +86,8 @@ sudo zypper in tremotesf
 - Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
 
 ```sh
-wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_22.04/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_22.04/ /"
+wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_23.10/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_23.10/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
