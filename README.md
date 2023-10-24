@@ -10,6 +10,7 @@ Table of Contents
          * [Dependencies](#dependencies)
          * [Building](#building)
          * [GNU/Linux](#gnulinux)
+         * [FreeBSD](#freebsd)
          * [Windows](#windows)
       * [Translations](#translations)
       * [Screenshots](#screenshots)
@@ -90,6 +91,9 @@ sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equ
 sudo apt update
 sudo apt install tremotesf
 ```
+
+### FreeBSD
+Tremotesf is [available in FreeBSD ports](https://www.freshports.org/net-p2p/tremotesf/).
 
 ### Windows
 Windows builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
