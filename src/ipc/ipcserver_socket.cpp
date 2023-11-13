@@ -26,7 +26,12 @@ namespace fmt {
     template<>
     struct formatter<QCborParserError> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(QCborParserError error, fmt::format_context& ctx) FORMAT_CONST {
-            return fmt::format_to(ctx.out(), "{} (error code {})", error.errorString(), static_cast<QCborError::Code>(error.error));
+            return fmt::format_to(
+                ctx.out(),
+                "{} (error code {})",
+                error.errorString(),
+                static_cast<QCborError::Code>(error.error)
+            );
         }
     };
 }
@@ -83,7 +88,7 @@ namespace tremotesf {
                 const QByteArray message(socket->readAll());
                 if (message.size() == 1 && message.front() == activateWindowMessage) {
                     logInfo("IpcServerSocket: window activation requested");
-                    emit windowActivationRequested({}, {});
+                    emit windowActivationRequested({}, {}, {});
                 } else {
                     QCborParserError error{};
                     const auto cbor = QCborValue::fromCbor(message, &error);

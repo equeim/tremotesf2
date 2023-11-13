@@ -45,7 +45,7 @@ namespace tremotesf {
         void addTorrents(const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay = false);
 
     signals:
-        void showWindow(const QByteArray& newStartupNotificationId);
+        void showWindow(const QByteArray& newStartupNotificationId, const QByteArray& newXdgActivationToken);
         void showAddTorrentDialogs(const QStringList& files, const QStringList& urls);
         void showDelayedTorrentAddMessage(const QStringList& torrents);
     };

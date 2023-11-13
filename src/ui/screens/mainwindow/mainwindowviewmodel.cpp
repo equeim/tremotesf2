@@ -68,7 +68,9 @@ namespace tremotesf {
             ipcServer,
             &IpcServer::windowActivationRequested,
             this,
-            [=, this](const auto&, const auto& startupNoficationId) { emit showWindow(startupNoficationId); }
+            [=, this](const auto&, const auto& startupNoficationId, const auto& xdgActivationToken) {
+                emit showWindow(startupNoficationId, xdgActivationToken);
+            }
         );
 
         QObject::connect(
@@ -151,7 +153,7 @@ namespace tremotesf {
     void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
         const auto controller = NotificationsController::createInstance(trayIcon, &mRpc, this);
         QObject::connect(controller, &NotificationsController::notificationClicked, this, [this] {
-            emit showWindow({});
+            emit showWindow({}, {});
         });
     }
 
