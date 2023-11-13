@@ -66,15 +66,9 @@ namespace tremotesf {
         }
     }
 
-    QString descriptorPath(int fd) {
-        return QFileInfo(QString::fromStdString(fmt::format("/proc/self/fd/{}", fd))).canonicalFilePath();
-    }
-
     class SignalHandler::Impl {
     public:
         Impl() {
-            logInfo("stdout = {}", descriptorPath(STDOUT_FILENO));
-            logInfo("stderr = {}", descriptorPath(STDERR_FILENO));
             try {
                 int sockets[2]{};
                 checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, static_cast<int*>(sockets)), "socketpair");
