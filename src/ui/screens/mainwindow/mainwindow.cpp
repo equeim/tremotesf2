@@ -44,6 +44,9 @@
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
 #    include <KStartupInfo>
+#    include <KWindowSystem>
+#    include <kwindowsystem_version.h>
+#    include "unixhelpers.h"
 #endif
 
 #include "log/log.h"
@@ -265,7 +268,12 @@ namespace tremotesf {
             mToolBarAction->setChecked(!mToolBar.isHidden());
             mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry());
 
-            QObject::connect(&mViewModel, &MainWindowViewModel::showWindow, this, &MainWindow::Impl::showWindow);
+            QObject::connect(
+                &mViewModel,
+                &MainWindowViewModel::showWindow,
+                this,
+                &MainWindow::Impl::showWindowsAndActivateMainOrDialog
+            );
             showAddTorrentDialogsFromIpc(messageWidget);
             showAddTorrentErrors();
 
@@ -312,6 +320,8 @@ namespace tremotesf {
             Settings::instance()->setSplitterState(mSplitter.saveState());
             mTorrentsView.saveState();
         }
+
+        void activateMainWindow() { activateWindow(mWindow, {}, {}); }
 
     private:
         MainWindow* mWindow;
@@ -1227,9 +1237,9 @@ namespace tremotesf {
             QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
                 if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
                     if (mWindow->isHidden() || mWindow->isMinimized()) {
-                        showWindow();
+                        showWindowsAndActivateMainOrDialog();
                     } else {
-                        hideWindow();
+                        hideWindows();
                     }
                 }
             });
@@ -1255,17 +1265,15 @@ namespace tremotesf {
                     mTrayIcon.show();
                 } else {
                     mTrayIcon.hide();
-                    showWindow();
+                    showWindowsAndActivateMainOrDialog();
                 }
             });
         }
 
-        void showWindow([[maybe_unused]] const QByteArray& newStartupNotificationId = {}) {
-#ifdef TREMOTESF_UNIX_FREEDESKTOP
-            if (!newStartupNotificationId.isEmpty()) {
-                KStartupInfo::appStarted(newStartupNotificationId);
-            }
-#endif
+        void showWindowsAndActivateMainOrDialog(
+            [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
+            [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
+        ) {
             showAndRaiseWindow(mWindow, false);
             QWidget* lastDialog = nullptr;
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
@@ -1283,10 +1291,74 @@ namespace tremotesf {
             if (!widgetToActivate) {
                 widgetToActivate = mWindow;
             }
+            activateWindow(widgetToActivate, newStartupNotificationId, newXdgActivationToken);
+        }
+
+        void activateWindow(
+            QWidget* widgetToActivate,
+            [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
+            [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
+        ) {
+            logInfo("Activating window {}", *widgetToActivate);
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
+            switch (KWindowSystem::platform()) {
+            case KWindowSystem::Platform::X11:
+                logInfo("Windowing system is X11");
+                activeWindowOnX11(widgetToActivate, newStartupNotificationId);
+                break;
+            case KWindowSystem::Platform::Wayland:
+                logInfo("Windowing system is Wayland");
+                activeWindowOnWayland(widgetToActivate, newXdgActivationToken);
+                break;
+            default:
+                logWarning("Unknown windowing system");
+                widgetToActivate->activateWindow();
+                break;
+            }
+#else
+            widgetToActivate->activateWindow();
+#endif
+        }
+
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
+        void activeWindowOnX11(QWidget* widgetToActivate, const QByteArray& newStartupNotificationId) {
+            if (!newStartupNotificationId.isEmpty()) {
+                logInfo("Removing startup notification with id '{}'", newStartupNotificationId);
+                KStartupInfo::setNewStartupId(widgetToActivate->windowHandle(), newStartupNotificationId);
+                KStartupInfo::appStarted(newStartupNotificationId);
+            }
             widgetToActivate->activateWindow();
         }
 
-        void hideWindow() {
+        void activeWindowOnWayland(QWidget* widgetToActivate, const QByteArray& newXdgActivationToken) {
+            // Qt supports xdg-activation since 6.3
+#    if KWINDOWSYSTEM_VERSION >= QT_VERSION_CHECK(5, 89, 0)
+#        if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+            if (!newXdgActivationToken.isEmpty()) {
+                logInfo("Updating xdg-activation token with new value '{}'", newXdgActivationToken);
+                // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
+                // It we be read and unset in QWidget::activateWindow() call below
+                qputenv(xdgActivationTokenEnvVariable, newXdgActivationToken);
+            }
+            widgetToActivate->activateWindow();
+#        else
+            if (!newXdgActivationToken.isEmpty()) {
+                logInfo("Updating xdg-activation token with new value '{}'", newXdgActivationToken);
+                KWindowSystem::setCurrentXdgActivationToken(newXdgActivationToken);
+            }
+            if (const auto handle = widgetToActivate->windowHandle(); handle) {
+                KWindowSystem::activateWindow(handle);
+            } else {
+                logWarning("This window's QWidget::windowHandle() is null");
+            }
+#        endif
+#    else
+            logWarning("Window activation on Wayland is not supported because KWindowSystem version is too low");
+#    endif
+        }
+#endif
+
+        void hideWindows() {
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
             // so that we don't operate on deleted QWidgets
             for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
@@ -1340,7 +1412,7 @@ namespace tremotesf {
                         messageWidget->animatedHide();
                     }
                     const bool wasHidden = mWindow->isHidden();
-                    showWindow();
+                    showWindowsAndActivateMainOrDialog();
                     if (wasHidden) {
                         runAfterDelay([files, urls, this] {
                             showAddTorrentFileDialogs(files);
@@ -1417,6 +1489,7 @@ namespace tremotesf {
     void MainWindow::showMinimized(bool minimized) {
         if (!(minimized && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
+            mImpl->activateMainWindow();
         }
     }
 

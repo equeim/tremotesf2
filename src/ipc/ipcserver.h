@@ -18,7 +18,9 @@ namespace tremotesf {
         inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent){};
 
     signals:
-        void windowActivationRequested(const QString& torrentHash, const QByteArray& startupNoficationId);
+        void windowActivationRequested(
+            const QString& torrentHash, const QByteArray& startupNotificationId, const QByteArray& xdgActivationToken
+        );
         void torrentsAddingRequested(
             const QStringList& files, const QStringList& urls, const QByteArray& startupNoficationId
         );

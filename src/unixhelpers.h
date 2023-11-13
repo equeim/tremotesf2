@@ -27,6 +27,8 @@ namespace tremotesf {
         }
         return result;
     }
+
+    inline constexpr auto xdgActivationTokenEnvVariable = "XDG_ACTIVATION_TOKEN";
 }
 
 #endif // TREMOTESF_UNIXHELPERS_H

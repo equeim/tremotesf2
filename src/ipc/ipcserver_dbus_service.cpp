@@ -28,7 +28,7 @@ namespace tremotesf {
                 logWarning("Failed to register D-Bus object: {}", connection.lastError());
             }
         } else {
-            logWarning("Failed toregister D-Bus service", connection.lastError());
+            logWarning("Failed to register D-Bus service", connection.lastError());
         }
     }
 
@@ -39,7 +39,8 @@ namespace tremotesf {
         logInfo("Window activation requested, platform_data = {}", platform_data);
         emit mIpcServer->windowActivationRequested(
             platform_data.value(torrentHashField).toString(),
-            platform_data.value(desktopStartupIdField).toByteArray()
+            platform_data.value(desktopStartupIdField).toByteArray(),
+            platform_data.value(xdgActivationTokenField).toByteArray()
         );
     }
 
