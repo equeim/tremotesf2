@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Add support of xdg-activation protocol on Wayland with Qt < 6.3
+
 ## [2.5.0] - 2023-10-15
 ### Added
 - Qt 6 support (with unreleased KF6 libraries)
