@@ -110,6 +110,9 @@ jobs:
         dpkg-buildpackage
 
   build-freebsd:
+    # https://github.com/actions/runner-images/issues/8730
+    if: false
+
     strategy:
       fail-fast: false
       matrix:
