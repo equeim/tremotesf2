@@ -155,7 +155,7 @@ namespace tremotesf {
             return {widgets.begin(), widgets.end()};
         }
 
-        void showAndRaiseWindow(QWidget* window, bool activate = true) {
+        void showAndRaiseWindow(QWidget* window) {
             if (window->isHidden()) {
                 window->show();
             }
@@ -163,22 +163,6 @@ namespace tremotesf {
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
             }
             window->raise();
-            if (activate) {
-                window->activateWindow();
-            }
-        }
-
-        template<std::derived_from<QDialog> Dialog, typename CreateDialogFunction>
-            requires std::is_invocable_r_v<Dialog*, CreateDialogFunction>
-        void showSingleInstanceDialog(QWidget* mainWindow, CreateDialogFunction&& createDialog) {
-            auto existingDialog = mainWindow->findChild<Dialog*>({}, Qt::FindDirectChildrenOnly);
-            if (existingDialog) {
-                showAndRaiseWindow(existingDialog);
-            } else {
-                auto dialog = createDialog();
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                dialog->show();
-            }
         }
     }
 
@@ -747,7 +731,7 @@ namespace tremotesf {
                 auto dialog = new AddTorrentDialog(mViewModel.rpc(), filePath, AddTorrentDialog::Mode::File, mWindow);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 dialog->show();
-                dialog->activateWindow();
+                activateWindow(dialog);
             }
         }
 
@@ -756,7 +740,7 @@ namespace tremotesf {
                 auto dialog = new AddTorrentDialog(mViewModel.rpc(), url, AddTorrentDialog::Mode::Url, mWindow);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 dialog->show();
-                dialog->activateWindow();
+                activateWindow(dialog);
             }
         }
 
@@ -840,6 +824,7 @@ namespace tremotesf {
                     if (i == (max - 1)) {
                         TorrentPropertiesDialog* dialog = mTorrentsDialogs[id];
                         showAndRaiseWindow(dialog);
+                        activateWindow(dialog);
                     }
                 } else {
                     auto dialog = new TorrentPropertiesDialog(torrent, mViewModel.rpc(), mWindow);
@@ -1010,6 +995,20 @@ namespace tremotesf {
             });
         }
 
+        template<std::derived_from<QDialog> Dialog, typename CreateDialogFunction>
+            requires std::is_invocable_r_v<Dialog*, CreateDialogFunction>
+        void showSingleInstanceDialog(CreateDialogFunction createDialog) {
+            auto existingDialog = mWindow->findChild<Dialog*>({}, Qt::FindDirectChildrenOnly);
+            if (existingDialog) {
+                showAndRaiseWindow(existingDialog);
+                activateWindow(existingDialog);
+            } else {
+                auto dialog = createDialog();
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                dialog->show();
+            }
+        }
+
         void setupMenuBar() {
             //: Menu bar item
             mFileMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&File"));
@@ -1103,7 +1102,7 @@ namespace tremotesf {
             );
             settingsAction->setShortcut(QKeySequence::Preferences);
             QObject::connect(settingsAction, &QAction::triggered, this, [this] {
-                showSingleInstanceDialog<SettingsDialog>(mWindow, [this] { return new SettingsDialog(mWindow); });
+                showSingleInstanceDialog<SettingsDialog>([this] { return new SettingsDialog(mWindow); });
             });
 
             QAction* serversAction = toolsMenu->addAction(
@@ -1111,7 +1110,7 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Connection Settings")
             );
             QObject::connect(serversAction, &QAction::triggered, this, [this] {
-                showSingleInstanceDialog<ConnectionSettingsDialog>(mWindow, [this] {
+                showSingleInstanceDialog<ConnectionSettingsDialog>([this] {
                     return new ConnectionSettingsDialog(mWindow);
                 });
             });
@@ -1124,7 +1123,7 @@ namespace tremotesf {
                 this
             );
             QObject::connect(serverSettingsAction, &QAction::triggered, this, [this] {
-                showSingleInstanceDialog<ServerSettingsDialog>(mWindow, [this] {
+                showSingleInstanceDialog<ServerSettingsDialog>([this] {
                     return new ServerSettingsDialog(mViewModel.rpc(), mWindow);
                 });
             });
@@ -1137,7 +1136,7 @@ namespace tremotesf {
                 this
             );
             QObject::connect(serverStatsAction, &QAction::triggered, this, [this] {
-                showSingleInstanceDialog<ServerStatsDialog>(mWindow, [this] {
+                showSingleInstanceDialog<ServerStatsDialog>([this] {
                     return new ServerStatsDialog(mViewModel.rpc(), mWindow);
                 });
             });
@@ -1179,7 +1178,7 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&About")
             );
             QObject::connect(aboutAction, &QAction::triggered, this, [this] {
-                showSingleInstanceDialog<AboutDialog>(mWindow, [this] { return new AboutDialog(mWindow); });
+                showSingleInstanceDialog<AboutDialog>([this] { return new AboutDialog(mWindow); });
             });
         }
 
@@ -1274,13 +1273,13 @@ namespace tremotesf {
             [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
             [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
         ) {
-            showAndRaiseWindow(mWindow, false);
+            showAndRaiseWindow(mWindow);
             QWidget* lastDialog = nullptr;
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
             // so that we don't operate on deleted QWidgets
             for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
                 if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
-                    showAndRaiseWindow(widget, false);
+                    showAndRaiseWindow(widget);
                     lastDialog = widget;
                 }
             }
