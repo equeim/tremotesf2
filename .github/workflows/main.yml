@@ -19,12 +19,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:37', 'fedora:38', 'opensuse/tumbleweed:latest']
+        container-image: ['fedora:38', 'fedora:39', 'opensuse/tumbleweed:latest']
         compiler: [gcc]
         include:
-        - container-image: 'fedora:37'
-          compiler: clang
         - container-image: 'fedora:38'
+          compiler: clang
+        - container-image: 'fedora:39'
           compiler: clang
 
     runs-on: ubuntu-latest
