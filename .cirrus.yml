@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2015-2023 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
+build_freebsd_task:
+  freebsd_instance:
+    image_family: freebsd-13-2
+
+  only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_BASE_BRANCH == 'master' || $CIRRUS_BASE_BRANCH =~ 'feature/.*'
+
+  packages_cache:
+    folder: /var/cache/pkg
+
+  install_dependencies_script: |
+    set -e -o pipefail
+    sudo pkg update -f
+    sudo pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
+
+  cmake_build_script: |
+    set -e -o pipefail
+    echo 'Configuring CMake'
+    cmake -S . --preset base
+    echo 'Building Debug'
+    cmake --build --preset base-debug
+    echo 'Testing Debug'
+    ctest --preset base-debug
+    echo 'Building Release'
+    cmake --build --preset base-release
+    echo 'Testing Release'
+    ctest --preset base-release
