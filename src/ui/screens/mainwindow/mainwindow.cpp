@@ -786,32 +786,18 @@ namespace tremotesf {
                 mRenameTorrentAction->setEnabled(false);
             }
 
-            if (mViewModel.rpc()->isLocal() || Servers::instance()->currentServerHasMountedDirectories()) {
-                bool disableOpen = false;
-                bool disableBoth = false;
+            bool localOrMounted = true;
+            if (!mViewModel.rpc()->isLocal()) {
                 for (const QModelIndex& index : selectedRows) {
                     Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
-                    if (isTorrentLocalMounted(mViewModel.rpc(), torrent) &&
-                        QFile::exists(localTorrentDownloadDirectoryPath(mViewModel.rpc(), torrent))) {
-                        if (!disableOpen && !QFile::exists(localTorrentFilesPath(mViewModel.rpc(), torrent))) {
-                            disableOpen = true;
-                        }
-                    } else {
-                        disableBoth = true;
+                    if (!isServerLocalOrTorrentIsMounted(mViewModel.rpc(), torrent)) {
+                        localOrMounted = false;
                         break;
                     }
                 }
-
-                if (disableBoth) {
-                    mOpenTorrentFilesAction->setEnabled(false);
-                    mShowInFileManagerAction->setEnabled(false);
-                } else if (disableOpen) {
-                    mOpenTorrentFilesAction->setEnabled(false);
-                }
-            } else {
-                mOpenTorrentFilesAction->setEnabled(false);
-                mShowInFileManagerAction->setEnabled(false);
             }
+            mOpenTorrentFilesAction->setEnabled(localOrMounted);
+            mShowInFileManagerAction->setEnabled(localOrMounted);
         }
 
         void showTorrentsPropertiesDialogs() {
@@ -1381,7 +1367,7 @@ namespace tremotesf {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             for (const QModelIndex& index : selectedRows) {
                 desktoputils::openFile(
-                    localTorrentFilesPath(
+                    localTorrentRootFilePath(
                         mViewModel.rpc(),
                         mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index))
                     ),
@@ -1396,7 +1382,7 @@ namespace tremotesf {
             files.reserve(static_cast<size_t>(selectedRows.size()));
             for (const QModelIndex& index : selectedRows) {
                 Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
-                files.push_back(localTorrentFilesPath(mViewModel.rpc(), torrent));
+                files.push_back(localTorrentRootFilePath(mViewModel.rpc(), torrent));
             }
             launchFileManagerAndSelectFiles(files, mWindow);
         }
