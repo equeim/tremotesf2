@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QWidget>
 
 #include <guiddef.h>
 #include <winrt/Windows.Foundation.h>
@@ -34,20 +35,23 @@ namespace tremotesf {
             }
 
         private:
-            winrt::fire_and_forget selectFiles(std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget) {
+            winrt::fire_and_forget
+            selectFiles(std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget) {
                 for (auto&& [dirPath, dirFiles] : filesToSelect) {
                     co_await selectFilesInFolder(std::move(dirPath), std::move(dirFiles), parentWidget);
                 }
                 emit done();
             }
 
-            winrt::Windows::Foundation::IAsyncAction selectFilesInFolder(QString dirPath, std::vector<QString> dirFiles, QPointer<QWidget> parentWidget) {
+            winrt::Windows::Foundation::IAsyncAction
+            selectFilesInFolder(QString dirPath, std::vector<QString> dirFiles, QPointer<QWidget> parentWidget) {
                 auto options = FolderLauncherOptions();
                 for (const QString& filePath : dirFiles) {
                     const auto nativeFilePath = winrt::hstring(QDir::toNativeSeparators(filePath).toStdWString());
                     if (QFileInfo(filePath).isDir()) {
                         try {
-                            options.ItemsToSelect().Append(co_await StorageFolder::GetFolderFromPathAsync(nativeFilePath));
+                            options.ItemsToSelect().Append(co_await StorageFolder::GetFolderFromPathAsync(nativeFilePath
+                            ));
                         } catch (const winrt::hresult_error& e) {
                             logWarningWithException(
                                 e,
