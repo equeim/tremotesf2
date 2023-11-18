@@ -4,6 +4,8 @@
 
 #include "desktoputils.h"
 
+#include <optional>
+
 #include <QApplication>
 #include <QDesktopServices>
 #include <QDir>
@@ -48,10 +50,7 @@ namespace tremotesf::desktoputils {
     }
 
     void openFile(const QString& filePath, QWidget* parent) {
-        const auto url = QUrl::fromLocalFile(filePath);
-        logInfo("Executing QDesktopServices::openUrl() for {}", url);
-        if (!QDesktopServices::openUrl(url)) {
-            logWarning("QDesktopServices::openUrl() failed for {}", url);
+        const auto showDialogOnError = [&](std::optional<QString> error) {
             auto dialog = new QMessageBox(
                 QMessageBox::Warning,
                 //: Dialog title
@@ -61,8 +60,24 @@ namespace tremotesf::desktoputils {
                 QMessageBox::Close,
                 parent
             );
+            if (error.has_value()) {
+                dialog->setText(dialog->text() % "\n\n"_l1 % *error);
+            }
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
+        };
+
+        if (!QFile::exists(filePath)) {
+            logWarning("Can't open file {}, it does not exist", filePath);
+            showDialogOnError(qApp->translate("tremotesf", "This file/directory does not exist"));
+            return;
+        }
+
+        const auto url = QUrl::fromLocalFile(filePath);
+        logInfo("Executing QDesktopServices::openUrl() for {}", url);
+        if (!QDesktopServices::openUrl(url)) {
+            logWarning("QDesktopServices::openUrl() failed for {}", url);
+            showDialogOnError({});
         }
     }
 
