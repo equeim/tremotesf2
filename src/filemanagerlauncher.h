@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_FILEMANAGERLAUNCHER_H
 #define TREMOTESF_FILEMANAGERLAUNCHER_H
 
+#include <optional>
 #include <utility>
 #include <vector>
 #include <QObject>
@@ -34,7 +35,9 @@ namespace tremotesf {
             virtual void launchFileManagerAndSelectFiles(
                 std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             );
-            void fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget);
+            void fallbackForDirectory(const QString& dirPath, QWidget* parentWidget);
+
+            void showErrorDialog(const QString& dirPath, const std::optional<QString>& error, QWidget* parentWidget);
 
         signals:
             void done();

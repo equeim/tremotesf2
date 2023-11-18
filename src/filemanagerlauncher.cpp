@@ -10,9 +10,11 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QStringBuilder>
 #include <QUrl>
 
 #include "log/log.h"
+#include "literals.h"
 #include "target_os.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
@@ -23,8 +25,20 @@ namespace tremotesf {
             const std::vector<QString>& files, const QPointer<QWidget>& parentWidget
         ) {
             std::vector<FilesInDirectory> filesToSelect{};
+            std::vector<QString> nonExistentDirectories{};
             for (const QString& filePath : files) {
                 QString dirPath = QFileInfo(filePath).path();
+
+                if (std::find(nonExistentDirectories.begin(), nonExistentDirectories.end(), dirPath) !=
+                    nonExistentDirectories.end()) {
+                    continue;
+                }
+                if (!QFileInfo::exists(dirPath)) {
+                    logWarning("FileManagerLauncher: directory {} does not exist", dirPath);
+                    nonExistentDirectories.push_back(dirPath);
+                    continue;
+                }
+
                 const auto found = std::find_if(filesToSelect.begin(), filesToSelect.end(), [&](const auto& d) {
                     return d.directory == dirPath;
                 });
@@ -37,7 +51,17 @@ namespace tremotesf {
                 }();
                 dirFiles.push_back(filePath);
             }
-            launchFileManagerAndSelectFiles(std::move(filesToSelect), parentWidget);
+            if (!nonExistentDirectories.empty()) {
+                const auto error = qApp->translate("tremotesf", "This directory does not exist");
+                for (const auto& dirPath : nonExistentDirectories) {
+                    showErrorDialog(dirPath, error, parentWidget);
+                }
+            }
+            if (!filesToSelect.empty()) {
+                launchFileManagerAndSelectFiles(std::move(filesToSelect), parentWidget);
+            } else {
+                emit done();
+            }
         }
 
         void FileManagerLauncher::launchFileManagerAndSelectFiles(
@@ -52,23 +76,32 @@ namespace tremotesf {
             emit done();
         }
 
-        void FileManagerLauncher::fallbackForDirectory(const QString& dirPath, const QPointer<QWidget>& parentWidget) {
+        void FileManagerLauncher::fallbackForDirectory(const QString& dirPath, QWidget* parentWidget) {
             const auto url = QUrl::fromLocalFile(dirPath);
             logInfo("FileManagerLauncher: executing QDesktopServices::openUrl() for {}", url);
             if (!QDesktopServices::openUrl(url)) {
                 logWarning("FileManagerLauncher: QDesktopServices::openUrl() failed for {}", url);
-                auto dialog = new QMessageBox(
-                    QMessageBox::Warning,
-                    //: Dialog title
-                    qApp->translate("tremotesf", "Error"),
-                    //: Directory opening error, %1 is a file path
-                    qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(dirPath)),
-                    QMessageBox::Close,
-                    parentWidget
-                );
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                dialog->show();
+                showErrorDialog(dirPath, {}, parentWidget);
             }
+        }
+
+        void FileManagerLauncher::showErrorDialog(
+            const QString& dirPath, const std::optional<QString>& error, QWidget* parentWidget
+        ) {
+            auto dialog = new QMessageBox(
+                QMessageBox::Warning,
+                //: Dialog title
+                qApp->translate("tremotesf", "Error"),
+                //: Directory opening error, %1 is a file path
+                qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(dirPath)),
+                QMessageBox::Close,
+                parentWidget
+            );
+            if (error.has_value()) {
+                dialog->setText(dialog->text() % "\n\n"_l1 % *error);
+            }
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->show();
         }
     }
 
