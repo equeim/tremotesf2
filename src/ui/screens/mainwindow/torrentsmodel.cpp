@@ -14,7 +14,7 @@
 #include "rpc/torrent.h"
 #include "rpc/rpc.h"
 #include "desktoputils.h"
-#include "utils.h"
+#include "formatutils.h"
 
 namespace tremotesf {
     TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent) : QAbstractTableModel(parent), mRpc(nullptr) {
@@ -62,15 +62,15 @@ namespace tremotesf {
             case Column::Name:
                 return torrent->data().name;
             case Column::SizeWhenDone:
-                return Utils::formatByteSize(torrent->data().sizeWhenDone);
+                return formatutils::formatByteSize(torrent->data().sizeWhenDone);
             case Column::TotalSize:
-                return Utils::formatByteSize(torrent->data().totalSize);
+                return formatutils::formatByteSize(torrent->data().totalSize);
             case Column::ProgressBar:
             case Column::Progress:
                 if (torrent->data().status == TorrentData::Status::Checking) {
-                    return Utils::formatProgress(torrent->data().recheckProgress);
+                    return formatutils::formatProgress(torrent->data().recheckProgress);
                 }
-                return Utils::formatProgress(torrent->data().percentDone);
+                return formatutils::formatProgress(torrent->data().percentDone);
             case Column::Status: {
                 switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
@@ -144,37 +144,37 @@ namespace tremotesf {
             case Column::PeersGettingFromUs:
                 return torrent->data().peersGettingFromUsCount;
             case Column::DownloadSpeed:
-                return Utils::formatByteSpeed(torrent->data().downloadSpeed);
+                return formatutils::formatByteSpeed(torrent->data().downloadSpeed);
             case Column::UploadSpeed:
-                return Utils::formatByteSpeed(torrent->data().uploadSpeed);
+                return formatutils::formatByteSpeed(torrent->data().uploadSpeed);
             case Column::Eta:
-                return Utils::formatEta(torrent->data().eta);
+                return formatutils::formatEta(torrent->data().eta);
             case Column::Ratio:
-                return Utils::formatRatio(torrent->data().ratio);
+                return formatutils::formatRatio(torrent->data().ratio);
             case Column::AddedDate:
                 return torrent->data().addedDate.toLocalTime();
             case Column::DoneDate:
                 return torrent->data().doneDate.toLocalTime();
             case Column::DownloadSpeedLimit:
                 if (torrent->data().downloadSpeedLimited) {
-                    return Utils::formatSpeedLimit(torrent->data().downloadSpeedLimit);
+                    return formatutils::formatSpeedLimit(torrent->data().downloadSpeedLimit);
                 }
                 break;
             case Column::UploadSpeedLimit:
                 if (torrent->data().uploadSpeedLimited) {
-                    return Utils::formatSpeedLimit(torrent->data().uploadSpeedLimit);
+                    return formatutils::formatSpeedLimit(torrent->data().uploadSpeedLimit);
                 }
                 break;
             case Column::TotalDownloaded:
-                return Utils::formatByteSize(torrent->data().totalDownloaded);
+                return formatutils::formatByteSize(torrent->data().totalDownloaded);
             case Column::TotalUploaded:
-                return Utils::formatByteSize(torrent->data().totalUploaded);
+                return formatutils::formatByteSize(torrent->data().totalUploaded);
             case Column::LeftUntilDone:
-                return Utils::formatByteSize(torrent->data().leftUntilDone);
+                return formatutils::formatByteSize(torrent->data().leftUntilDone);
             case Column::DownloadDirectory:
                 return torrent->data().downloadDirectory;
             case Column::CompletedSize:
-                return Utils::formatByteSize(torrent->data().completedSize);
+                return formatutils::formatByteSize(torrent->data().completedSize);
             case Column::ActivityDate:
                 return torrent->data().activityDate.toLocalTime();
             default:

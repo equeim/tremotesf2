@@ -32,7 +32,7 @@
 #include "stdutils.h"
 #include "torrentfilesmodel.h"
 #include "trackersviewwidget.h"
-#include "utils.h"
+#include "formatutils.h"
 #include "log/log.h"
 #include "rpc/pathutils.h"
 #include "rpc/rpc.h"
@@ -197,16 +197,16 @@ namespace tremotesf {
             //: Torrent's completion size, e.g. 100 MiB of 200 MiB (50%). %1 is completed size, %2 is size, %3 is progress in percents
             completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
                                         .arg(
-                                            Utils::formatByteSize(mTorrent->data().completedSize),
-                                            Utils::formatByteSize(mTorrent->data().sizeWhenDone),
-                                            Utils::formatProgress(mTorrent->data().percentDone)
+                                            formatutils::formatByteSize(mTorrent->data().completedSize),
+                                            formatutils::formatByteSize(mTorrent->data().sizeWhenDone),
+                                            formatutils::formatProgress(mTorrent->data().percentDone)
                                         ));
-            downloadedLabel->setText(Utils::formatByteSize(mTorrent->data().totalDownloaded));
-            uploadedLabel->setText(Utils::formatByteSize(mTorrent->data().totalUploaded));
-            ratioLabel->setText(Utils::formatRatio(mTorrent->data().ratio));
-            downloadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->data().downloadSpeed));
-            uploadSpeedLabel->setText(Utils::formatByteSpeed(mTorrent->data().uploadSpeed));
-            etaLabel->setText(Utils::formatEta(mTorrent->data().eta));
+            downloadedLabel->setText(formatutils::formatByteSize(mTorrent->data().totalDownloaded));
+            uploadedLabel->setText(formatutils::formatByteSize(mTorrent->data().totalUploaded));
+            ratioLabel->setText(formatutils::formatRatio(mTorrent->data().ratio));
+            downloadSpeedLabel->setText(formatutils::formatByteSpeed(mTorrent->data().downloadSpeed));
+            uploadSpeedLabel->setText(formatutils::formatByteSpeed(mTorrent->data().uploadSpeed));
+            etaLabel->setText(formatutils::formatEta(mTorrent->data().eta));
 
             const QLocale locale{};
             seedersLabel->setText(locale.toString(mTorrent->data().totalSeedersFromTrackersCount));
@@ -217,7 +217,7 @@ namespace tremotesf {
 
             lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
 
-            totalSizeLabel->setText(Utils::formatByteSize(mTorrent->data().totalSize));
+            totalSizeLabel->setText(formatutils::formatByteSize(mTorrent->data().totalSize));
             locationLabel->setText(
                 toNativeSeparators(mTorrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs)
             );

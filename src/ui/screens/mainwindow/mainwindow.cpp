@@ -58,7 +58,7 @@
 #include "filemanagerlauncher.h"
 #include "desktoputils.h"
 #include "settings.h"
-#include "utils.h"
+#include "formatutils.h"
 
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/aboutdialog.h"
@@ -1234,11 +1234,13 @@ namespace tremotesf {
             });
 
             QObject::connect(mViewModel.rpc()->serverStats(), &ServerStats::updated, this, [this] {
-                mTrayIcon.setToolTip(QString("\u25be %1\n\u25b4 %2")
-                                         .arg(
-                                             Utils::formatByteSpeed(mViewModel.rpc()->serverStats()->downloadSpeed()),
-                                             Utils::formatByteSpeed(mViewModel.rpc()->serverStats()->uploadSpeed())
-                                         ));
+                mTrayIcon.setToolTip(
+                    QString("\u25be %1\n\u25b4 %2")
+                        .arg(
+                            formatutils::formatByteSpeed(mViewModel.rpc()->serverStats()->downloadSpeed()),
+                            formatutils::formatByteSpeed(mViewModel.rpc()->serverStats()->uploadSpeed())
+                        )
+                );
             });
 
             if (Settings::instance()->showTrayIcon()) {

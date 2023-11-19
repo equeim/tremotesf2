@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "utils.h"
+#include "formatutils.h"
 
 #include <array>
 #include <cmath>
@@ -15,7 +15,7 @@
 
 #include "fileutils.h"
 
-namespace tremotesf {
+namespace tremotesf::formatutils {
     namespace {
         enum class StringType { Size, Speed };
 
@@ -98,16 +98,16 @@ namespace tremotesf {
         }
     }
 
-    QString Utils::formatByteSize(long long size) { return formatBytes(size, StringType::Size); }
+    QString formatByteSize(long long size) { return formatBytes(size, StringType::Size); }
 
-    QString Utils::formatByteSpeed(long long speed) { return formatBytes(speed, StringType::Speed); }
+    QString formatByteSpeed(long long speed) { return formatBytes(speed, StringType::Speed); }
 
-    QString Utils::formatSpeedLimit(int limit) {
+    QString formatSpeedLimit(int limit) {
         //: Download speed suffix in kibibytes per second
         return qApp->translate("tremotesf", "%L1 KiB/s").arg(limit);
     }
 
-    QString Utils::formatProgress(double progress) {
+    QString formatProgress(double progress) {
         if (qFuzzyCompare(progress, 1.0)) {
             //: Progress in percents. %L1 must remain unchanged, % after it is a percent character
             return qApp->translate("tremotesf", "%L1%").arg(100);
@@ -116,7 +116,7 @@ namespace tremotesf {
         return qApp->translate("tremotesf", "%L1%").arg(std::trunc(progress * 1000.0) / 10.0, 0, 'f', 1);
     }
 
-    QString Utils::formatRatio(double ratio) {
+    QString formatRatio(double ratio) {
         if (ratio < 0) {
             return {};
         }
@@ -130,14 +130,14 @@ namespace tremotesf {
         return QLocale().toString(ratio, 'f', precision);
     }
 
-    QString Utils::formatRatio(long long downloaded, long long uploaded) {
+    QString formatRatio(long long downloaded, long long uploaded) {
         if (downloaded == 0) {
             return formatRatio(0);
         }
         return formatRatio(static_cast<double>(uploaded) / static_cast<double>(downloaded));
     }
 
-    QString Utils::formatEta(int seconds) {
+    QString formatEta(int seconds) {
         if (seconds < 0) {
             return "\u221E";
         }
