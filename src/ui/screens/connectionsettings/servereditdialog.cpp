@@ -39,7 +39,7 @@
 #include "target_os.h"
 #include "ui/widgets/commondelegate.h"
 #include "rpc/servers.h"
-#include "utils.h"
+#include "formatutils.h"
 #include "serversmodel.h"
 
 namespace tremotesf {

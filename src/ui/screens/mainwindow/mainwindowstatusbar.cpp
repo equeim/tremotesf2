@@ -14,7 +14,7 @@
 #include "rpc/serverstats.h"
 #include "rpc/servers.h"
 #include "rpc/rpc.h"
-#include "utils.h"
+#include "formatutils.h"
 
 namespace tremotesf {
     MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
@@ -84,8 +84,8 @@ namespace tremotesf {
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateStatusLabels);
 
         QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=, this] {
-            mDownloadSpeedLabel->setText(Utils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
-            mUploadSpeedLabel->setText(Utils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
+            mDownloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
+            mUploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
         });
     }
 

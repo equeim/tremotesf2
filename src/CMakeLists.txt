@@ -40,8 +40,8 @@ add_library(
     filemanagerlauncher.h
     settings.cpp
     settings.h
-    utils.cpp
-    utils.h
+        formatutils.cpp
+        formatutils.h
     literals.h
 
     ipc/ipcclient.h

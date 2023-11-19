@@ -28,7 +28,7 @@
 #include "fileutils.h"
 #include "settings.h"
 #include "stdutils.h"
-#include "utils.h"
+#include "formatutils.h"
 #include "log/log.h"
 #include "rpc/torrent.h"
 #include "rpc/servers.h"
@@ -219,7 +219,7 @@ namespace tremotesf {
                         if (success) {
                             freeSpaceLabel->setText(
                                 //: %1 is a amount of free space in a directory, e.g. 1 GiB
-                                qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes))
+                                qApp->translate("tremotesf", "Free space: %1").arg(formatutils::formatByteSize(bytes))
                             );
                         } else {
                             freeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
@@ -232,7 +232,7 @@ namespace tremotesf {
             QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=, this](auto bytes) {
                 if (mDownloadDirectoryWidget->path() == mRpc->serverSettings()->data().downloadDirectory) {
                     freeSpaceLabel->setText(
-                        qApp->translate("tremotesf", "Free space: %1").arg(Utils::formatByteSize(bytes))
+                        qApp->translate("tremotesf", "Free space: %1").arg(formatutils::formatByteSize(bytes))
                     );
                     freeSpaceLabel->show();
                 }

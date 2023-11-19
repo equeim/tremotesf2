@@ -11,7 +11,7 @@
 #include <QTimer>
 
 #include "ui/itemmodels/modelutils.h"
-#include "utils.h"
+#include "formatutils.h"
 
 #include "stdutils.h"
 #include "rpc/torrent.h"
@@ -89,7 +89,7 @@ namespace tremotesf {
                 return tracker.tracker.errorMessage();
             case Column::NextUpdate:
                 if (tracker.nextUpdateEta.has_value()) {
-                    return Utils::formatEta(static_cast<int>(tracker.nextUpdateEta->count()));
+                    return formatutils::formatEta(static_cast<int>(tracker.nextUpdateEta->count()));
                 }
                 break;
             case Column::Peers:
