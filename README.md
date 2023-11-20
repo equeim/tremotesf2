@@ -54,7 +54,7 @@ You can invoke CMake in a different way if you want.
 
 - Arch Linux - [AUR](https://aur.archlinux.org/packages/tremotesf)
 
-- Debian - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+- Debian - [Official repository](https://packages.debian.org/sid/tremotesf), or [my own OBS repository](https://build.opensuse.org/package/show/home:equeim:tremotesf/Tremotesf)
 
 ```sh
 wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_12/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
@@ -77,13 +77,13 @@ sudo dnf copr enable equeim/tremotesf
 sudo dnf install tremotesf
 ```
 
-- openSUSE Tumbleweed - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+- openSUSE Tumbleweed - [OBS](https://build.opensuse.org/package/show/home:equeim:tremotesf/Tremotesf)
 ```sh
 sudo zypper ar https://download.opensuse.org/repositories/home:/equeim:/tremotesf/openSUSE_Tumbleweed/home:equeim:tremotesf.repo
 sudo zypper in tremotesf
 ```
 
-- Ubuntu - [OBS](https://build.opensuse.org/project/show/home:equeim:tremotesf)
+- Ubuntu - [OBS](https://build.opensuse.org/package/show/home:equeim:tremotesf/Tremotesf)
 
 ```sh
 wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_23.10/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
