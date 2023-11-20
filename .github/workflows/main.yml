@@ -85,25 +85,35 @@ jobs:
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
 
-    - name: Install Git
+    - name: Install dependencies needed to make source archive
       run: |
-        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git python3 cmake
 
-    - name: Checkout
+    - name: Check out sources
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-
-    - name: Install build dependencies
-      run: |
-        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes build-dep .
 
     - name: Make source archive
       run: |
         # Git complains if we don't do that
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
         .github/workflows/make-source-archive.py --output-directory .. --debian gzip
+
+    - name: Check out Debian sources
+      uses: actions/checkout@v4
+      with:
+        repository: equeim/tremotesf-debian
+        path: tremotesf-debian
+
+    - name: Remove everything except debian/ directory
+      run: |
+        mv tremotesf-debian/debian debian
+        rm -rf tremotesf-debian
+
+    - name: Install build dependencies
+      run: |
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes build-dep .
 
     - name: Build DEB
       run: |
