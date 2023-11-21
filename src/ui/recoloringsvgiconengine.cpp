@@ -6,6 +6,8 @@
 // SPDX-FileCopyrightText: 2010 Michael Pyne <mpyne@kde.org>
 // SPDX-License-Identifier: LGPL-2.0-only
 
+// clang-format off
+
 #include "recoloringsvgiconengine.h"
 
 #include <QApplication>
@@ -31,7 +33,6 @@ namespace {
 
 QString STYLESHEET_TEMPLATE()
 {
-    /* clang-format off */
     return QStringLiteral(".ColorScheme-Text {\
 color:%1;\
 }\
@@ -53,7 +54,6 @@ color:%6;\
 .ColorScheme-NegativeText{\
 color:%7;\
 }");
-    /* clang-format on */
 }
 
 enum FileType { OtherFile, SvgFile, CompressedSvgFile };
@@ -177,7 +177,7 @@ bool RecoloringSvgIconEnginePrivate::tryLoad(QSvgRenderer *renderer, QIcon::Mode
             renderer->load(svgFile);
             return true;
         }
-        const auto pal = QGuiApplication::palette();
+        const auto pal = QApplication::palette("QMenu");
         const QString styleSheet = STYLESHEET_TEMPLATE().arg(
             actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name(),
             actualMode == QIcon::Selected ? pal.highlight().color().name() : pal.window().color().name(),
