@@ -1,26 +1,54 @@
 {
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
-  "name": "tremotesf",
-  "version": "0",
-  "supports": "windows",
-  "dependencies": [
-    {
-        "name": "qtbase",
-        "default-features": false,
-        "features": ["brotli", "concurrent", "gui", "network", "openssl", "pcre2", "png", "testlib", "thread", "widgets"]
-    },
-    {
-        "name": "qttools",
-        "default-features": false,
-        "features": ["linguist"]
-    },
-    "qttranslations",
-    "qtsvg",
-    "fmt",
-    "openssl",
-    "kf6widgetsaddons",
-    "pkgconf",
-    "cxxopts",
-    "cpp-httplib"
-  ]
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "tremotesf",
+    "version": "0",
+    "supports": "windows,osx",
+    "dependencies": [
+        {
+            "name": "qtbase",
+            "host": true,
+            "default-features": false,
+            "features": [
+                "network"
+            ]
+        },
+        {
+            "name": "qtbase",
+            "default-features": false,
+            "features": [
+                "brotli",
+                "concurrent",
+                "gui",
+                "network",
+                "openssl",
+                "pcre2",
+                "png",
+                "testlib",
+                "thread",
+                "widgets"
+            ]
+        },
+        {
+            "name": "qttools",
+            "host": true,
+            "default-features": false,
+            "features": [
+                "linguist"
+            ]
+        },
+        {
+            "name": "qttranslations",
+            "host": true
+        },
+        "qtsvg",
+        "fmt",
+        "openssl",
+        "kf6widgetsaddons",
+        "cxxopts",
+        "cpp-httplib",
+        {
+            "name": "pkgconf",
+            "platform": "windows"
+        }
+    ]
 }

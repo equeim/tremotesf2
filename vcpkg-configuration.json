@@ -7,7 +7,7 @@
     {
       "kind": "git",
       "repository": "https://github.com/equeim/vcpkg-registry.git",
-      "baseline": "5bc6482756d0677103028e78634a125b589222ac",
+      "baseline": "59be03f7c3934f0ce2a2b8e854bcb4c2e5fd0102",
       "packages": [
         "kf6ecm", "kf6widgetsaddons", "qttools"
       ]

@@ -12,12 +12,15 @@
 #include "commandlineparser.h"
 #include "literals.h"
 #include "main_windows.h"
+#include "recoloringsvgiconengineplugin.h"
 #include "signalhandler.h"
 #include "target_os.h"
 #include "ipc/ipcclient.h"
 #include "log/log.h"
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/mainwindow/mainwindow.h"
+
+#include <QStringBuilder>
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
@@ -89,6 +92,11 @@ int main(int argc, char** argv) {
     if constexpr (isTargetOsWindows) {
         windowsInitApplication();
     }
+#if defined(TREMOTESF_BUNDLED_ICONS_DIR) && defined(TREMOTESF_BUNDLED_ICON_THEME)
+    QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % '/' % TREMOTESF_BUNDLED_ICONS_DIR ""_l1});
+    QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_l1);
+    QApplication::setStyle(new RecoloringSvgIconStyle(qApp));
+#endif
 
     QGuiApplication::setDesktopFileName(TREMOTESF_APP_ID ""_l1);
     QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_l1));
@@ -98,15 +106,14 @@ int main(int argc, char** argv) {
 
     QTranslator qtTranslator;
     {
-        const QString qtTranslationsPath = [] {
-            if constexpr (isTargetOsWindows) {
-                return QString::fromStdString(
-                    fmt::format("{}/{}", QCoreApplication::applicationDirPath(), TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR)
-                );
-            } else {
-                return QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-            }
-        }();
+        const QString qtTranslationsPath =
+#ifdef TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR
+            QString::fromStdString(
+                fmt::format("{}/{}", QCoreApplication::applicationDirPath(), TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR)
+            );
+#else
+            QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#endif
         if (qtTranslator.load(QLocale(), TREMOTESF_QT_TRANSLATIONS_FILENAME ""_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {

@@ -9,6 +9,10 @@ else()
 endif()
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.27)
 
+if (APPLE)
+    include(cmake/MacOSInitialSetup.cmake)
+endif ()
+
 project(tremotesf VERSION 2.5.0 LANGUAGES CXX)
 
 option(TREMOTESF_QT6 "Build with Qt 6" OFF)
