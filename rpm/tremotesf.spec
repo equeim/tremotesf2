@@ -41,28 +41,24 @@ BuildRequires: openssl-devel
 
 %if %{defined fedora}
 BuildRequires: cmake(httplib)
-%endif
-
-%if %{defined suse_version}
-BuildRequires: appstream-glib
-# OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
-BuildRequires: hicolor-icon-theme
-%else
-    %if %{defined mageia}
-BuildRequires: appstream-util
-    %else
 BuildRequires: libappstream-glib
-    %endif
-%endif
-
-%if %{defined fedora} && "%{toolchain}" == "clang"
+%if  "%{toolchain}" == "clang"
 BuildRequires: clang
 %else
 BuildRequires: gcc-c++
 %endif
+%endif
 
-%if %{undefined _metainfodir}
-    %global _metainfodir %{_datadir}/metainfo
+%if %{defined suse_version}
+BuildRequires: pkgconfig(cpp-httplib)
+BuildRequires: appstream-glib
+# OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
+BuildRequires: hicolor-icon-theme
+%global _metainfodir %{_datadir}/metainfo
+%endif
+
+%if %{defined mageia}
+BuildRequires: appstream-util
 %endif
 
 %description
