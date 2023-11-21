@@ -209,6 +209,7 @@ namespace tremotesf {
         } else {
             mSettings = new QSettings(this);
         }
+        mSettings->setFallbacksEnabled(false);
         qRegisterMetaType<Qt::ToolButtonStyle>();
         qRegisterMetaType<TorrentData::Priority>();
         qRegisterMetaType<TorrentsProxyModel::StatusFilter>();
