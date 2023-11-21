@@ -1005,6 +1005,17 @@ namespace tremotesf {
             mFileMenu->addAction(&mAddTorrentLinkAction);
             mFileMenu->addSeparator();
 
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                auto closeWindowAction = mFileMenu->addAction(qApp->translate("tremotesf", "&Close Window"));
+                closeWindowAction->setShortcuts(QKeySequence::Close);
+                QObject::connect(closeWindowAction, &QAction::triggered, this, [] {
+                    auto window = QApplication::activeWindow();
+                    if (window) {
+                        window->close();
+                    }
+                });
+            }
+
             QAction* quitAction =
                 mFileMenu->addAction(QIcon::fromTheme("application-exit"_l1), qApp->translate("tremotesf", "&Quit"));
             if constexpr (isTargetOsWindows) {
