@@ -1018,6 +1018,7 @@ namespace tremotesf {
             } else {
                 quitAction->setShortcuts(QKeySequence::Quit);
             }
+            quitAction->setMenuRole(QAction::QuitRole);
             QObject::connect(quitAction, &QAction::triggered, this, &QCoreApplication::quit);
 
             //: Menu bar item
@@ -1087,6 +1088,7 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Options")
             );
             settingsAction->setShortcut(QKeySequence::Preferences);
+            settingsAction->setMenuRole(QAction::PreferencesRole);
             QObject::connect(settingsAction, &QAction::triggered, this, [this] {
                 showSingleInstanceDialog<SettingsDialog>([this] { return new SettingsDialog(mWindow); });
             });
@@ -1095,6 +1097,7 @@ namespace tremotesf {
                 QIcon::fromTheme("network-server"_l1),
                 qApp->translate("tremotesf", "&Connection Settings")
             );
+            serversAction->setMenuRole(QAction::NoRole);
             QObject::connect(serversAction, &QAction::triggered, this, [this] {
                 showSingleInstanceDialog<ConnectionSettingsDialog>([this] {
                     return new ConnectionSettingsDialog(mWindow);
@@ -1108,6 +1111,7 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Server Options"),
                 this
             );
+            serverSettingsAction->setMenuRole(QAction::NoRole);
             QObject::connect(serverSettingsAction, &QAction::triggered, this, [this] {
                 showSingleInstanceDialog<ServerSettingsDialog>([this] {
                     return new ServerSettingsDialog(mViewModel.rpc(), mWindow);
@@ -1163,6 +1167,7 @@ namespace tremotesf {
                 //: Menu item opening "About" dialog
                 qApp->translate("tremotesf", "&About")
             );
+            aboutAction->setMenuRole(QAction::AboutRole);
             QObject::connect(aboutAction, &QAction::triggered, this, [this] {
                 showSingleInstanceDialog<AboutDialog>([this] { return new AboutDialog(mWindow); });
             });
