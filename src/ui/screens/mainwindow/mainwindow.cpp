@@ -30,6 +30,7 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QPointer>
+#include <QProxyStyle>
 #include <QPushButton>
 #include <QShortcut>
 #include <QScreen>
@@ -1483,6 +1484,12 @@ namespace tremotesf {
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
         setAcceptDrops(true);
+        if constexpr (targetOs == TargetOs::UnixMacOS) {
+            const auto proxyStyle = qobject_cast<QProxyStyle*>(qApp->style());
+            if (proxyStyle && proxyStyle->baseStyle()->objectName().compare("macos"_l1, Qt::CaseInsensitive) == 0) {
+                setUnifiedTitleAndToolBarOnMac(true);
+            }
+        }
     }
 
     MainWindow::~MainWindow() = default;
