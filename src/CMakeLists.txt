@@ -12,14 +12,14 @@ find_package(fmt 7.0 REQUIRED)
 find_package(cxxopts REQUIRED)
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network Widgets)
 find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WidgetsAddons REQUIRED)
+find_package(PkgConfig REQUIRED)
 
-if (WIN32)
+if (WIN32 OR APPLE)
     set(registrable_domain_qt ON)
-else()
+else ()
     set(registrable_domain_qt OFF)
-    find_package(PkgConfig REQUIRED)
     pkg_check_modules(libpsl REQUIRED IMPORTED_TARGET libpsl)
-endif()
+endif ()
 
 list(APPEND QRC_FILES resources.qrc)
 
@@ -40,8 +40,8 @@ add_library(
     filemanagerlauncher.h
     settings.cpp
     settings.h
-        formatutils.cpp
-        formatutils.h
+    formatutils.cpp
+    formatutils.h
     literals.h
 
     ipc/ipcclient.h
@@ -185,64 +185,71 @@ target_compile_definitions(
 )
 if (registrable_domain_qt)
     target_compile_definitions(tremotesf_objects PUBLIC TREMOTESF_REGISTRABLE_DOMAIN_QT)
-else()
+else ()
     target_link_libraries(tremotesf_objects PUBLIC PkgConfig::libpsl)
-endif()
+endif ()
 
-if (TREMOTESF_UNIX_FREEDESKTOP)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
-    find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WindowSystem REQUIRED)
-    target_link_libraries(tremotesf_objects PUBLIC Qt::DBus KF${TREMOTESF_QT_VERSION_MAJOR}::WindowSystem)
-
-    target_compile_definitions(
-        tremotesf_objects
-        PUBLIC
-        TREMOTESF_BUNDLED_ICONS_DIR=""
-        TREMOTESF_BUNDLED_ICON_THEME=""
-        TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR=""
-    )
-
-    qt_add_dbus_adaptor(
-        dbus_generated
-        ipc/org.freedesktop.Application.xml
-        ipc/ipcserver_dbus_service.h
-        tremotesf::IpcDbusService
-        tremotesf_dbus_generated/ipc/org.freedesktop.Application.adaptor
-        OrgFreedesktopApplicationAdaptor
-    )
-    qt_add_dbus_interface(
-        dbus_generated
-        ipc/org.freedesktop.Application.xml
-        tremotesf_dbus_generated/ipc/org.freedesktop.Application
-    )
-    qt_add_dbus_interface(
-        dbus_generated
-        org.freedesktop.Notifications.xml
-        tremotesf_dbus_generated/org.freedesktop.Notifications
-    )
-    qt_add_dbus_interface(
-        dbus_generated
-        org.freedesktop.FileManager1.xml
-        tremotesf_dbus_generated/org.freedesktop.FileManager1
-    )
-
+if (UNIX)
     target_sources(
         tremotesf_objects
         PRIVATE
-        filemanagerlauncher_freedesktop.cpp
         unixhelpers.cpp
         unixhelpers.h
-        ipc/ipcclient_dbus.cpp
-        ipc/ipcserver_dbus_service.cpp
-        ipc/ipcserver_dbus_service.h
-        ipc/ipcserver_dbus.cpp
-        ipc/ipcserver_dbus.h
         startup/signalhandler_unix.cpp
-        ui/notificationscontroller_freedesktop.cpp
-        ${dbus_generated}
     )
+    if (TREMOTESF_UNIX_FREEDESKTOP)
+        find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
+        find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WindowSystem REQUIRED)
+        target_link_libraries(tremotesf_objects PUBLIC Qt::DBus KF${TREMOTESF_QT_VERSION_MAJOR}::WindowSystem)
+
+        qt_add_dbus_adaptor(
+            dbus_generated
+            ipc/org.freedesktop.Application.xml
+            ipc/ipcserver_dbus_service.h
+            tremotesf::IpcDbusService
+            tremotesf_dbus_generated/ipc/org.freedesktop.Application.adaptor
+            OrgFreedesktopApplicationAdaptor
+        )
+        qt_add_dbus_interface(
+            dbus_generated
+            ipc/org.freedesktop.Application.xml
+            tremotesf_dbus_generated/ipc/org.freedesktop.Application
+        )
+        qt_add_dbus_interface(
+            dbus_generated
+            org.freedesktop.Notifications.xml
+            tremotesf_dbus_generated/org.freedesktop.Notifications
+        )
+        qt_add_dbus_interface(
+            dbus_generated
+            org.freedesktop.FileManager1.xml
+            tremotesf_dbus_generated/org.freedesktop.FileManager1
+        )
+
+        target_sources(
+            tremotesf_objects
+            PRIVATE
+            filemanagerlauncher_freedesktop.cpp
+            ipc/ipcclient_dbus.cpp
+            ipc/ipcserver_dbus_service.cpp
+            ipc/ipcserver_dbus_service.h
+            ipc/ipcserver_dbus.cpp
+            ipc/ipcserver_dbus.h
+            ui/notificationscontroller_freedesktop.cpp
+            ${dbus_generated}
+        )
+    else ()
+        target_sources(
+            tremotesf_objects
+            PRIVATE
+            filemanagerlauncher_fallback.cpp
+            ipc/ipcclient_socket.cpp
+            ipc/ipcserver_socket.cpp
+            ipc/ipcserver_socket.h
+            ui/notificationscontroller_fallback.cpp
+        )
+    endif ()
 elseif (WIN32)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
     find_library(Dwmapi Dwmapi REQUIRED)
     target_link_libraries(tremotesf_objects PUBLIC Qt::Svg "${Dwmapi}")
     target_sources(
@@ -254,64 +261,76 @@ elseif (WIN32)
         ipc/ipcclient_socket.cpp
         ipc/ipcserver_socket.cpp
         ipc/ipcserver_socket.h
-        startup/main_windows.cpp
-        startup/main_windows.h
         startup/signalhandler_windows.cpp
         startup/windowsmessagehandler.cpp
         startup/windowsmessagehandler.h
         ui/darkthemeapplier_windows.h
         ui/darkthemeapplier_windows.cpp
         ui/notificationscontroller_fallback.cpp
-        ui/recoloringsvgiconengine.cpp
-        ui/recoloringsvgiconengine.h
         ui/systemcolorsprovider_windows.cpp
     )
-    target_compile_definitions(tremotesf_objects
+    set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf.ico" PARENT_SCOPE)
+else ()
+    message(FATAL_ERROR "Unsupported target platform ${CMAKE_SYSTEM_NAME}")
+endif ()
+
+add_executable(tremotesf startup/main.cpp)
+target_link_libraries(tremotesf tremotesf_objects)
+
+# Executable configuration on Windows
+if (WIN32)
+    configure_file(tremotesf.rc.in tremotesf.rc @ONLY)
+    target_sources(
+        tremotesf
+        PRIVATE
+        startup/main_windows.cpp
+        startup/main_windows.h
+        "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.rc"
+    )
+    if (MSVC)
+        target_sources(tremotesf PRIVATE tremotesf.manifest)
+    else ()
+        target_sources(tremotesf PRIVATE tremotesf.manifest.rc)
+    endif ()
+    set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
+endif ()
+
+# Executable installation
+if (WIN32 OR APPLE)
+    install(TARGETS tremotesf DESTINATION ".")
+    if (MSVC)
+        install(FILES $<TARGET_PDB_FILE:tremotesf> DESTINATION "." OPTIONAL)
+    endif ()
+else ()
+    install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif ()
+
+# Icons bundling
+if (WIN32 OR APPLE)
+    target_sources(
+        tremotesf
+        PRIVATE
+        ui/recoloringsvgiconengine.cpp
+        ui/recoloringsvgiconengine.h
+        startup/recoloringsvgiconengineplugin.cpp
+        startup/recoloringsvgiconengineplugin.h
+    )
+    target_compile_definitions(
+        tremotesf
         PUBLIC
         TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
         TREMOTESF_BUNDLED_ICON_THEME="${TREMOTESF_BUNDLED_ICON_THEME}"
         TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
         QT_STATICPLUGIN
     )
-    set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf.ico" PARENT_SCOPE)
-else()
-    target_compile_definitions(
-        tremotesf_objects
-        PUBLIC
-        TREMOTESF_BUNDLED_ICONS_DIR=""
-        TREMOTESF_BUNDLED_ICON_THEME=""
-        TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR=""
-    )
-    target_sources(
-        tremotesf_objects
-        PRIVATE
-        filemanagerlauncher_fallback.cpp
-        unixhelpers.cpp
-        unixhelpers.h
-        ipc/ipcclient_socket.cpp
-        ipc/ipcserver_socket.cpp
-        ipc/ipcserver_socket.h
-        startup/signalhandler_unix.cpp
-        ui/notificationscontroller_fallback.cpp
-    )
-endif()
-
-add_executable(tremotesf startup/main.cpp)
-target_link_libraries(tremotesf tremotesf_objects)
-if (WIN32)
-    configure_file(tremotesf.rc.in tremotesf.rc @ONLY)
-    target_sources(tremotesf PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.rc")
-    if (MSVC)
-        target_sources(tremotesf PRIVATE tremotesf.manifest)
-    else()
-        target_sources(tremotesf PRIVATE tremotesf.manifest.rc)
-    endif()
-    set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
-    qt_import_plugins(
-        tremotesf
-        EXCLUDE_BY_TYPE bearer iconengines imageformats styles
-    )
-endif()
+    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
+    target_link_libraries(tremotesf_objects PUBLIC Qt::Svg)
+    set(exclude_plugins bearer iconengines imageformats)
+    if (WIN32)
+        list(APPEND exclude_plugins styles)
+    endif ()
+    qt_import_plugins(tremotesf EXCLUDE_BY_TYPE ${exclude_plugins})
+endif ()
 
 if (BUILD_TESTING)
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Test)
@@ -347,7 +366,6 @@ if (BUILD_TESTING)
         list(GET httplib_supported_versions -1 oldest_supported_version)
         set(module "cpp-httplib >= ${oldest_supported_version}")
         message(STATUS "Trying ${module} using pkg-config")
-        find_package(PkgConfig REQUIRED)
         pkg_check_modules(httplib IMPORTED_TARGET "${module}" QUIET)
         if (httplib_FOUND)
             message(STATUS "Found cpp-httplib ${httplib_VERSION} using pkg-config")
@@ -370,9 +388,9 @@ if (BUILD_TESTING)
     target_link_libraries(requestrouter_test tremotesf_objects Qt::Test)
     if (TARGET PkgConfig::httplib)
         target_link_libraries(requestrouter_test PkgConfig::httplib)
-    else()
+    else ()
         target_link_libraries(requestrouter_test httplib::httplib)
-    endif()
+    endif ()
 
     add_executable(pathutils_test rpc/pathutils_test.cpp)
     add_test(NAME pathutils_test COMMAND pathutils_test)
@@ -381,15 +399,6 @@ if (BUILD_TESTING)
     add_executable(tracker_test rpc/tracker_test.cpp)
     add_test(NAME tracker_test COMMAND tracker_test)
     target_link_libraries(tracker_test tremotesf_objects Qt::Test)
-endif()
-
-if (WIN32)
-    install(TARGETS tremotesf DESTINATION ".")
-    if (MSVC)
-        install(FILES $<TARGET_PDB_FILE:tremotesf> DESTINATION "." OPTIONAL)
-    endif()
-else()
-    install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
-endif()
+endif ()
 
 set_common_options_on_targets()

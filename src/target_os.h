@@ -8,25 +8,23 @@
 #include <QtGlobal>
 
 namespace tremotesf {
-    enum class TargetOs { UnixFreedesktop, UnixAndroid, UnixOther, Windows, Other };
+    enum class TargetOs { UnixFreedesktop, UnixAndroid, UnixMacOS, UnixOther, Windows, Other };
 
     inline constexpr TargetOs targetOs =
-#ifdef Q_OS_UNIX
-#    ifdef TREMOTESF_UNIX_FREEDESKTOP
+#if defined(Q_OS_UNIX)
+#    if defined(TREMOTESF_UNIX_FREEDESKTOP)
         TargetOs::UnixFreedesktop;
-#    else
-#        ifdef Q_OS_ANDROID
+#    elif defined(Q_OS_ANDROID)
         TargetOs::UnixAndroid;
-#        else
-        TargetOs::UnixOther;
-#        endif
-#    endif
-#else
-#    ifdef Q_OS_WIN
-        TargetOs::Windows;
+#    elif defined(Q_OS_MACOS)
+        TargetOs::UnixMacOS;
 #    else
-        TargetOs::Other;
+        TargetOs::UnixOther;
 #    endif
+#elif defined(Q_OS_WIN)
+        TargetOs::Windows;
+#else
+        TargetOs::Other;
 #endif
 
     inline constexpr bool isTargetOsWindows{targetOs == TargetOs::Windows};

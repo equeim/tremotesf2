@@ -12,13 +12,27 @@
         "deprecated": true
       },
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo"
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON"
       }
+    },
+    {
+      "name": "base-vcpkg",
+      "displayName": "Base vcpkg",
+      "inherits": "base",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
+        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-buildtrees-after-build;--clean-packages-after-build",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-overlay-triplets"
+      },
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "windows-msvc-vcpkg",
       "displayName": "Windows with MSVC toolchain and vcpkg",
-      "inherits": "base",
+      "inherits": "base-vcpkg",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -30,12 +44,8 @@
       },
       "cacheVariables": {
         "TREMOTESF_QT6": "ON",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
-        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
-        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-windows-overlay-triplets",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static",
-        "VCPKG_HOST_TRIPLET": "x64-windows-static",
-        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-buildtrees-after-build;--clean-packages-after-build"
+        "VCPKG_HOST_TRIPLET": "x64-windows-static"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "vendor": {
@@ -52,6 +62,38 @@
       "inherits": "windows-msvc-vcpkg",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang-cl.exe"
+      }
+    },
+    {
+      "name": "base-macos-vcpkg",
+      "displayName": "Base macOS with vcpkg",
+      "inherits": "base-vcpkg",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "TREMOTESF_QT6": "ON"
+      }
+    },
+    {
+      "name": "macos-arm64-vcpkg",
+      "displayName": "macOS arm64 with vcpkg",
+      "inherits": "base-macos-vcpkg",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-release",
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
+      }
+    },
+    {
+      "name": "macos-x64-vcpkg",
+      "displayName": "macOS x86_64 with vcpkg",
+      "inherits": "base-macos-vcpkg",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-osx-release",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64"
       }
     }
   ],
@@ -109,89 +151,154 @@
       "displayName": "RelWithDebInfo",
       "configurePreset": "windows-msvc-clang-vcpkg",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "macos-arm64-vcpkg-debug",
+      "displayName": "Debug",
+      "configurePreset": "macos-arm64-vcpkg",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-arm64-vcpkg-release",
+      "displayName": "Release",
+      "configurePreset": "macos-arm64-vcpkg",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-arm64-vcpkg-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "macos-arm64-vcpkg",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "macos-x64-vcpkg-debug",
+      "displayName": "Debug",
+      "configurePreset": "macos-x64-vcpkg",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-x64-vcpkg-release",
+      "displayName": "Release",
+      "configurePreset": "macos-x64-vcpkg",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-x64-vcpkg-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "macos-x64-vcpkg",
+      "configuration": "RelWithDebInfo"
     }
   ],
   "testPresets": [
     {
+      "name": "base",
+      "displayName": "Base",
+      "hidden": true
+    },
+    {
       "name": "base-debug",
       "displayName": "Debug",
+      "inherits": "base",
       "configurePreset": "base",
-      "configuration": "Debug",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "Debug"
     },
     {
       "name": "base-release",
       "displayName": "Release",
+      "inherits": "base",
       "configurePreset": "base",
-      "configuration": "Release",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "Release"
     },
     {
       "name": "base-relwithdebinfo",
       "displayName": "RelWithDebInfo",
+      "inherits": "base",
       "configurePreset": "base",
-      "configuration": "RelWithDebInfo",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "windows-msvc-vcpkg-debug",
       "displayName": "Debug",
+      "inherits": "base",
       "configurePreset": "windows-msvc-vcpkg",
-      "configuration": "Debug",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "Debug"
     },
     {
       "name": "windows-msvc-vcpkg-release",
       "displayName": "Release",
+      "inherits": "base",
       "configurePreset": "windows-msvc-vcpkg",
-      "configuration": "Release",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "Release"
     },
     {
       "name": "windows-msvc-vcpkg-relwithdebinfo",
       "displayName": "RelWithDebInfo",
+      "inherits": "base",
       "configurePreset": "windows-msvc-vcpkg",
-      "configuration": "RelWithDebInfo",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "windows-msvc-clang-vcpkg-debug",
       "displayName": "Debug",
+      "inherits": "base",
       "configurePreset": "windows-msvc-clang-vcpkg",
-      "configuration": "Debug",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "Debug"
     },
     {
       "name": "windows-msvc-clang-vcpkg-release",
       "displayName": "Release",
+      "inherits": "base",
       "configurePreset": "windows-msvc-clang-vcpkg",
-      "configuration": "Release",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "Release"
     },
     {
       "name": "windows-msvc-clang-vcpkg-relwithdebinfo",
       "displayName": "RelWithDebInfo",
+      "inherits": "base",
       "configurePreset": "windows-msvc-clang-vcpkg",
-      "configuration": "RelWithDebInfo",
-      "output": {
-        "outputOnFailure": true
-      }
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "macos-arm64-vcpkg-debug",
+      "displayName": "Debug",
+      "inherits": "base",
+      "configurePreset": "macos-arm64-vcpkg",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-arm64-vcpkg-release",
+      "displayName": "Release",
+      "inherits": "base",
+      "configurePreset": "macos-arm64-vcpkg",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-arm64-vcpkg-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "inherits": "base",
+      "configurePreset": "macos-arm64-vcpkg",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "macos-x64-vcpkg-debug",
+      "displayName": "Debug",
+      "inherits": "base",
+      "configurePreset": "macos-x64-vcpkg",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-x64-vcpkg-release",
+      "displayName": "Release",
+      "inherits": "base",
+      "configurePreset": "macos-x64-vcpkg",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-x64-vcpkg-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "inherits": "base",
+      "configurePreset": "macos-x64-vcpkg",
+      "configuration": "RelWithDebInfo"
     }
   ]
 }

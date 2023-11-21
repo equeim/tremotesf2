@@ -10,17 +10,11 @@
 #include <winrt/base.h>
 
 #include <QApplication>
-#include <QIcon>
-#include <QIconEnginePlugin>
-#include <QProxyStyle>
-#include <QStringBuilder>
-#include <QStyle>
 
 #include "literals.h"
 #include "log/log.h"
 #include "startup/windowsmessagehandler.h"
 #include "ui/darkthemeapplier_windows.h"
-#include "ui/recoloringsvgiconengine.h"
 #include "ui/systemcolorsprovider.h"
 #include "windowshelpers.h"
 
@@ -41,53 +35,6 @@ namespace tremotesf {
             }
             std::abort();
         }
-
-        class WindowsStyle final : public QProxyStyle {
-            Q_OBJECT
-
-        public:
-            static thread_local bool drawingMenuItem;
-
-            explicit WindowsStyle(QObject* parent = nullptr) : QProxyStyle("fusion"_l1) { setParent(parent); }
-
-            void drawControl(
-                ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = nullptr
-            ) const override {
-                if (element == CE_MenuItem) {
-                    drawingMenuItem = true;
-                }
-                QProxyStyle::drawControl(element, option, painter, widget);
-                if (element == CE_MenuItem) {
-                    drawingMenuItem = false;
-                }
-            }
-        };
-
-        thread_local bool WindowsStyle::drawingMenuItem = false;
-
-        class SvgIconEngine final : public RecoloringSvgIconEngine {
-
-        public:
-            QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override {
-                // QFusionStyle passes QIcon::Active for selected menu items, but KIconEngine expects QIcon::Selected
-                if (WindowsStyle::drawingMenuItem && mode == QIcon::Active) {
-                    mode = QIcon::Selected;
-                }
-                return RecoloringSvgIconEngine::pixmap(size, mode, state);
-            }
-        };
-
-        class SvgIconEnginePlugin final : public QIconEnginePlugin {
-            Q_OBJECT
-            Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QIconEngineFactoryInterface" FILE "svgiconengineplugin.json")
-
-        public:
-            QIconEngine* create(const QString& file) override {
-                SvgIconEngine* engine = new SvgIconEngine;
-                if (!file.isNull()) engine->addFile(file, QSize(), QIcon::Normal, QIcon::Off);
-                return engine;
-            }
-        };
     }
 
     WindowsLogger::WindowsLogger() {
@@ -95,9 +42,7 @@ namespace tremotesf {
         std::set_terminate(onTerminate);
     }
 
-    WindowsLogger::~WindowsLogger() {
-        deinitWindowsMessageHandler();
-    }
+    WindowsLogger::~WindowsLogger() { deinitWindowsMessageHandler(); }
 
     WinrtApartment::WinrtApartment() {
         try {
@@ -107,9 +52,7 @@ namespace tremotesf {
         }
     }
 
-    WinrtApartment::~WinrtApartment() {
-        winrt::uninit_apartment();
-    }
+    WinrtApartment::~WinrtApartment() { winrt::uninit_apartment(); }
 
     void windowsInitApplication() {
         try {
@@ -117,14 +60,9 @@ namespace tremotesf {
         } catch (const std::system_error& e) {
             logWarning(e);
         }
-        QApplication::setStyle(new WindowsStyle(QApplication::instance()));
-        QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % '/' % TREMOTESF_BUNDLED_ICONS_DIR ""_l1});
-        QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_l1);
         const auto systemColorsProvider = SystemColorsProvider::createInstance(QApplication::instance());
         applyDarkThemeToPalette(systemColorsProvider);
     }
 }
-
-Q_IMPORT_PLUGIN(SvgIconEnginePlugin)
 
 #include "main_windows.moc"
