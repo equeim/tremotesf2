@@ -344,7 +344,7 @@ namespace tremotesf {
         QAction* mRenameTorrentAction{};
 
         QAction* mOpenTorrentFilesAction{};
-        QAction* mShowInFileManagerAction{};
+        QAction* mOpenTorrentDownloadDirectoryAction{};
 
         QAction* mHighPriorityAction{};
         QAction* mNormalPriorityAction{};
@@ -539,13 +539,13 @@ namespace tremotesf {
             );
             QObject::connect(mOpenTorrentFilesAction, &QAction::triggered, this, &MainWindow::Impl::openTorrentsFiles);
 
-            mShowInFileManagerAction = mTorrentMenu->addAction(
+            mOpenTorrentDownloadDirectoryAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("go-jump"_l1),
                 //: Torrent's context menu item
-                qApp->translate("tremotesf", "Show In &File Manager")
+                qApp->translate("tremotesf", "Open &Download Directory")
             );
             QObject::connect(
-                mShowInFileManagerAction,
+                mOpenTorrentDownloadDirectoryAction,
                 &QAction::triggered,
                 this,
                 &MainWindow::Impl::showTorrentsInFileManager
@@ -798,7 +798,7 @@ namespace tremotesf {
                 }
             }
             mOpenTorrentFilesAction->setEnabled(localOrMounted);
-            mShowInFileManagerAction->setEnabled(localOrMounted);
+            mOpenTorrentDownloadDirectoryAction->setEnabled(localOrMounted);
         }
 
         void showTorrentsPropertiesDialogs() {
