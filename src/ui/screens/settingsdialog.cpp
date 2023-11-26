@@ -6,6 +6,7 @@
 
 #include "settingsdialog.h"
 
+#include <array>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -22,6 +23,21 @@
 #include "ui/systemcolorsprovider.h"
 
 namespace tremotesf {
+    namespace {
+        constexpr std::array torrentDoubleClickActionComboBoxValues{
+            Settings::TorrentDoubleClickAction::OpenPropertiesDialog,
+            Settings::TorrentDoubleClickAction::OpenTorrentFile,
+            Settings::TorrentDoubleClickAction::OpenDownloadDirectory
+        };
+
+        Settings::TorrentDoubleClickAction torrentDoubleClickActionFromComboBoxIndex(int index) {
+            if (index == -1) {
+                return Settings::TorrentDoubleClickAction::OpenPropertiesDialog;
+            }
+            return torrentDoubleClickActionComboBoxValues.at(static_cast<size_t>(index));
+        }
+    }
+
     SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
         //: Dialog title
         setWindowTitle(qApp->translate("tremotesf", "Options"));
@@ -36,6 +52,7 @@ namespace tremotesf {
             //: Options section
             auto appearanceGroupBox = new QGroupBox(qApp->translate("tremotesf", "Appearance"), this);
             auto appearanceGroupBoxLayout = new QFormLayout(appearanceGroupBox);
+            appearanceGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
             darkThemeComboBox = new QComboBox(this);
             //: Dark theme mode
@@ -103,6 +120,33 @@ namespace tremotesf {
         layout->addWidget(addTorrentsGroupBox);
 
         //: Options section
+        auto otherBehaviourGroupBox = new QGroupBox(qApp->translate("tremotesf", "Other behaviour"), this);
+        layout->addWidget(otherBehaviourGroupBox);
+        auto otherBehaviourGroupBoxLayout = new QFormLayout(otherBehaviourGroupBox);
+        otherBehaviourGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+
+        auto torrentDoubleClickActionComboBox = new QComboBox(this);
+        for (const auto action : torrentDoubleClickActionComboBoxValues) {
+            switch (action) {
+            case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
+                torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open properties dialog"));
+                break;
+            case Settings::TorrentDoubleClickAction::OpenTorrentFile:
+                torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open torrent's file"));
+                break;
+            case Settings::TorrentDoubleClickAction::OpenDownloadDirectory:
+                torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open download directory"));
+                break;
+            default:
+                break;
+            }
+        }
+        otherBehaviourGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "What to do when torrent in the list is double clicked:"),
+            torrentDoubleClickActionComboBox
+        );
+
+        //: Options section
         auto notificationsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Notifications"), this);
         auto notificationsGroupBoxLayout = new QVBoxLayout(notificationsGroupBox);
         notificationsGroupBoxLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -167,12 +211,16 @@ namespace tremotesf {
 
         auto settings = Settings::instance();
         connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
+        rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());
+        rememberAddTorrentParameters->setChecked(settings->rememberAddTorrentParameters());
+        torrentDoubleClickActionComboBox->setCurrentIndex(
+            // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+            indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->torrentDoubleClickAction()).value()
+        );
+        fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
-        rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());
-        rememberAddTorrentParameters->setChecked(settings->rememberAddTorrentParameters());
-        fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         trayIconCheckBox->setChecked(settings->showTrayIcon());
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
         finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
@@ -190,6 +238,12 @@ namespace tremotesf {
         QObject::connect(this, &SettingsDialog::accepted, this, [=] {
             auto settings = Settings::instance();
             settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
+            settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
+            settings->setRememberTorrentAddParameters(rememberAddTorrentParameters->isChecked());
+            settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
+            settings->setTorrentDoubleClickAction(
+                torrentDoubleClickActionFromComboBoxIndex(torrentDoubleClickActionComboBox->currentIndex())
+            );
             settings->setNotificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());
             settings->setNotificationOnAddingTorrent(notificationOnAddingTorrentCheckBox->isChecked());
             settings->setNotificationOfFinishedTorrents(notificationOfFinishedTorrentsCheckBox->isChecked());
@@ -198,9 +252,6 @@ namespace tremotesf {
             settings->setNotificationsOnFinishedTorrentsSinceLastConnection(
                 finishedSinceLastConnectionCheckBox->isChecked()
             );
-            settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
-            settings->setRememberTorrentAddParameters(rememberAddTorrentParameters->isChecked());
-            settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             if constexpr (isTargetOsWindows) {
                 if (const int index = darkThemeComboBox->currentIndex(); index != -1) {
                     settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);

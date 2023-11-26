@@ -13,11 +13,11 @@
 
 #include "log/log.h"
 #include "target_os.h"
-#include "ui/systemcolorsprovider.h"
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::ToolButtonStyle)
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentsProxyModel::StatusFilter)
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::Settings::DarkThemeMode)
+SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::Settings::TorrentDoubleClickAction)
 
 #define SETTINGS_PROPERTY_DEF_IMPL(type, getter, setterType, setter, key, defaultValue)    \
     type Settings::getter() const { return getValue<type>(mSettings, key, defaultValue); } \
@@ -196,6 +196,13 @@ namespace tremotesf {
         Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode, "darkThemeMode", Settings::DarkThemeMode::FollowSystem
     )
     SETTINGS_PROPERTY_DEF_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor, "useSystemAccentColor", true)
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        Settings::TorrentDoubleClickAction,
+        torrentDoubleClickAction,
+        setTorrentDoubleClickAction,
+        "torrentDoubleClickAction",
+        Settings::TorrentDoubleClickAction::OpenPropertiesDialog
+    )
 
     Settings::Settings(QObject* parent) : QObject(parent) {
         if constexpr (isTargetOsWindows) {
@@ -214,11 +221,13 @@ namespace tremotesf {
         qRegisterMetaType<TorrentData::Priority>();
         qRegisterMetaType<TorrentsProxyModel::StatusFilter>();
         qRegisterMetaType<Settings::DarkThemeMode>();
+        qRegisterMetaType<Settings::TorrentDoubleClickAction>();
 #if QT_VERSION_MAJOR < 6
         qRegisterMetaTypeStreamOperators<Qt::ToolButtonStyle>();
         qRegisterMetaTypeStreamOperators<TorrentData::Priority>();
         qRegisterMetaTypeStreamOperators<TorrentsProxyModel::StatusFilter>();
         qRegisterMetaTypeStreamOperators<Settings::DarkThemeMode>();
+        qRegisterMetaTypeStreamOperators<Settings::TorrentDoubleClickAction>();
 #endif
     }
 
