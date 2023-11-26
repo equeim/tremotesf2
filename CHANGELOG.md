@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 ### Added
-- Add support of xdg-activation protocol on Wayland with Qt < 6.3
+- Support of xdg-activation protocol on Wayland with Qt < 6.3
+- Option to open torrent's file or download directory on double click
 
 ### Changed
 - "Open" and "Show in file manager" actions now show error dialog if file/directory does not exist,

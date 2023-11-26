@@ -83,8 +83,16 @@ namespace tremotesf {
         enum class DarkThemeMode { FollowSystem, On, Off };
         Q_ENUM(DarkThemeMode)
 
+        enum class TorrentDoubleClickAction {
+            OpenPropertiesDialog,
+            OpenTorrentFile,
+            OpenDownloadDirectory
+        };
+        Q_ENUM(TorrentDoubleClickAction)
+
         SETTINGS_PROPERTY_TRIVIAL(Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode)
         SETTINGS_PROPERTY_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor)
+        SETTINGS_PROPERTY_TRIVIAL(Settings::TorrentDoubleClickAction, torrentDoubleClickAction, setTorrentDoubleClickAction)
 
     public:
         static Settings* instance();

@@ -209,7 +209,7 @@ namespace tremotesf {
                 &mTorrentsView,
                 &TorrentsView::activated,
                 this,
-                &MainWindow::Impl::showTorrentsPropertiesDialogs
+                &MainWindow::Impl::performTorrentDoubleClickAction
             );
 
             setupTorrentsPlaceholder(torrentsViewLayout);
@@ -328,7 +328,8 @@ namespace tremotesf {
         QAction mAddTorrentFileAction{
             QIcon::fromTheme("list-add"_l1),
             //: Menu item
-            qApp->translate("tremotesf", "&Add Torrent File...")};
+            qApp->translate("tremotesf", "&Add Torrent File...")
+        };
         QAction mAddTorrentLinkAction{
             QIcon::fromTheme("insert-link"_l1),
             //: Menu item
@@ -799,6 +800,22 @@ namespace tremotesf {
             }
             mOpenTorrentFilesAction->setEnabled(localOrMounted);
             mOpenTorrentDownloadDirectoryAction->setEnabled(localOrMounted);
+        }
+
+        void performTorrentDoubleClickAction() {
+            switch (Settings::instance()->torrentDoubleClickAction()) {
+            case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
+                showTorrentsPropertiesDialogs();
+                break;
+            case Settings::TorrentDoubleClickAction::OpenTorrentFile:
+                openTorrentsFiles();
+                break;
+            case Settings::TorrentDoubleClickAction::OpenDownloadDirectory:
+                showTorrentsInFileManager();
+                break;
+            default:
+                break;
+            }
         }
 
         void showTorrentsPropertiesDialogs() {
