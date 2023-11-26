@@ -7,6 +7,7 @@
 ### Changed
 - "Open" and "Show in file manager" actions now show error dialog if file/directory does not exist,
   instead if being inaccessible
+- "Show in file manager" actions has been renamed to "Open download directory"
 
 ## [2.5.0] - 2023-10-15
 ### Added

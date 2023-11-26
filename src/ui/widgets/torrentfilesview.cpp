@@ -158,13 +158,13 @@ namespace tremotesf {
                     }
                 });
 
-                QAction* showInFileManagerAction = contextMenu.addAction(
+                QAction* openDownloadDirectoryAction = contextMenu.addAction(
                     QIcon::fromTheme("go-jump"_l1),
                     //: Context menu item
-                    qApp->translate("tremotesf", "Show In &File Manager")
+                    qApp->translate("tremotesf", "Open &Download Directory")
                 );
-                showInFileManagerAction->setEnabled(localOrMounted);
-                QObject::connect(showInFileManagerAction, &QAction::triggered, this, [sourceIndexes, this] {
+                openDownloadDirectoryAction->setEnabled(localOrMounted);
+                QObject::connect(openDownloadDirectoryAction, &QAction::triggered, this, [sourceIndexes, this] {
                     std::vector<QString> files{};
                     files.reserve(static_cast<size_t>(sourceIndexes.size()));
                     for (const QModelIndex& index : sourceIndexes) {
