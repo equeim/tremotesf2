@@ -119,66 +119,6 @@ jobs:
       run: |
         dpkg-buildpackage
 
-  build-freebsd:
-    # https://github.com/actions/runner-images/issues/8730
-    if: false
-
-    strategy:
-      fail-fast: false
-      matrix:
-        freebsd-version: ['12.4', '13.2']
-    env:
-      FREEBSD_VERSION: ${{ matrix.freebsd-version }}
-
-    runs-on: macos-latest
-    steps:
-    - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
-
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-
-    - name: Start FreeBSD VM
-      id: start-vm
-      continue-on-error: true
-      run: |
-        echo '::group::Starting VM'
-        VAGRANT_CWD="$GITHUB_WORKSPACE/.github/workflows" vagrant up --provider=virtualbox
-        echo '::endgroup'
-        echo '::group::Adding vagrant shell to PATH'
-        echo "$GITHUB_WORKSPACE/.github/workflows" >> "$GITHUB_PATH"
-        echo '::endgroup'
-
-    - name: Install dependencies
-      if: steps.start-vm.outcome == 'success'
-      shell: vagrant-freebsd-shell.sh {0}
-      run: |
-        sudo pkg update -f
-        sudo pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
-
-    - name: Build for FreeBSD
-      if: steps.start-vm.outcome == 'success'
-      shell: vagrant-freebsd-shell.sh {0}
-      run: |
-        set -e -o pipefail
-        echo '::group::Configuring CMake'
-        cmake -S . --preset base
-        echo '::endgroup'
-        echo '::group::Building Debug'
-        cmake --build --preset base-debug
-        echo '::endgroup'
-        echo '::group::Testing Debug'
-        ctest --preset base-debug
-        echo '::endgroup'
-        echo '::group::Building Release'
-        cmake --build --preset base-release
-        echo '::endgroup'
-        echo '::group::Testing Release'
-        ctest --preset base-release
-        echo '::endgroup'
-
   build-flatpak:
     runs-on: ubuntu-latest
 
