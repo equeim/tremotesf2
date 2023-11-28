@@ -162,6 +162,7 @@ namespace tremotesf {
         downloadingPageItem->setIcon(QIcon::fromTheme("folder-download"_l1));
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
+        downloadingPageLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mDownloadDirectoryWidget = new RemoteDirectorySelectionWidget(this);
         mDownloadDirectoryWidget->setup({}, mRpc);

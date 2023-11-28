@@ -124,6 +124,7 @@ namespace tremotesf {
         //: Torrent's details tab section
         auto activityGroupBox = new QGroupBox(qApp->translate("tremotesf", "Activity"), this);
         auto activityGroupBoxLayout = new QFormLayout(activityGroupBox);
+        activityGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
         auto completedLabel = new QLabel(this);
         //: Torrent's completed size
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Completed:"), completedLabel);
@@ -167,6 +168,7 @@ namespace tremotesf {
         //: Torrent's details tab section
         auto infoGroupBox = new QGroupBox(qApp->translate("tremotesf", "Information"), this);
         auto infoGroupBoxLayout = new QFormLayout(infoGroupBox);
+        infoGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
         auto totalSizeLabel = new QLabel(this);
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Total size:"), totalSizeLabel);
         auto locationLabel = new QLabel(this);

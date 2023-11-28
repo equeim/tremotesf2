@@ -155,6 +155,7 @@ namespace tremotesf {
         auto firstFormWidget = new QWidget(this);
         firstFormWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         auto firstFormLayout = new QFormLayout(firstFormWidget);
+        firstFormLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
         firstFormLayout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(firstFormWidget);
 
@@ -268,6 +269,7 @@ namespace tremotesf {
         QFormLayout* secondFormLayout = nullptr;
         if (mMode == Mode::File) {
             secondFormLayout = new QFormLayout();
+            secondFormLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
             //: Combo box label
             secondFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
             layout->addLayout(secondFormLayout);

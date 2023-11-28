@@ -275,6 +275,7 @@ namespace tremotesf {
 
         auto proxyGroupBox = new QGroupBox(qApp->translate("tremotesf", "Proxy"), this);
         mProxyLayout = new QFormLayout(proxyGroupBox);
+        mProxyLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mProxyTypeComboBox = new QComboBox(this);
         mProxyTypeComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -384,6 +385,7 @@ namespace tremotesf {
         mAuthenticationGroupBox = new QGroupBox(qApp->translate("tremotesf", "Authentication"), this);
         mAuthenticationGroupBox->setCheckable(true);
         auto authenticationGroupBoxLayout = new QFormLayout(mAuthenticationGroupBox);
+        authenticationGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
         mUsernameLineEdit = new QLineEdit(this);
         authenticationGroupBoxLayout->addRow(qApp->translate("tremotesf", "Username:"), mUsernameLineEdit);
         mPasswordLineEdit = new QLineEdit(this);
