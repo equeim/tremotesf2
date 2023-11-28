@@ -282,8 +282,6 @@ namespace tremotesf {
                 mViewModel.rpc()->disconnect();
                 mTrayIcon.hide();
             });
-
-            SaveWindowStateDispatcher::registerHandler(mWindow, [this] { saveState(); });
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
@@ -358,6 +356,8 @@ namespace tremotesf {
         QAction* mToolBarAction{};
 
         QSystemTrayIcon mTrayIcon{QIcon::fromTheme("tremotesf-tray-icon"_l1, mWindow->windowIcon())};
+
+        SaveWindowStateHandler mSaveStateHandler{mWindow, [this] { saveState(); }};
 
         void setupActions() {
             QObject::connect(&mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);

@@ -6,6 +6,7 @@
 #define TREMOTESF_SAVEWINDOWSTATEDISPATCHER_H
 
 #include <functional>
+#include <QCoreApplication>
 #include <QObject>
 
 class QWidget;
@@ -16,9 +17,38 @@ namespace tremotesf {
     public:
         SaveWindowStateDispatcher();
 
-        static void registerHandler(QWidget* window, std::function<void()> saveState);
+    private:
+        void onAboutToQuit();
     };
 
+#if QT_VERSION_MAJOR >= 6
+    class ApplicationQuitEventFilter : public QObject {
+        Q_OBJECT
+    public:
+        inline explicit ApplicationQuitEventFilter(QObject* parent = nullptr) : QObject(parent) {
+            qApp->installEventFilter(this);
+        };
+        inline ~ApplicationQuitEventFilter() override { qApp->removeEventFilter(this); }
+        bool eventFilter(QObject* watched, QEvent* event) override;
+        bool isQuittingApplication{};
+    };
+#endif
+
+    class SaveWindowStateHandler : public QObject {
+        Q_OBJECT
+    public:
+        explicit SaveWindowStateHandler(QWidget* window, std::function<void()> saveState, QObject* parent = nullptr);
+        ~SaveWindowStateHandler() override;
+        Q_DISABLE_COPY_MOVE(SaveWindowStateHandler)
+        bool eventFilter(QObject* watched, QEvent* event) override;
+
+    private:
+        QWidget* mWindow{};
+        std::function<void()> mSaveState{};
+#if QT_VERSION_MAJOR >= 6
+        ApplicationQuitEventFilter mApplicationEventFilter{};
+#endif
+    };
 }
 
 #endif //TREMOTESF_SAVEWINDOWSTATEDISPATCHER_H

@@ -33,7 +33,6 @@
 #include "rpc/torrent.h"
 #include "rpc/servers.h"
 #include "rpc/rpc.h"
-#include "ui/savewindowstatedispatcher.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
@@ -64,12 +63,6 @@ namespace tremotesf {
         if (mFilesModel) {
             mFilesModel->load(url);
         }
-
-        SaveWindowStateDispatcher::registerHandler(this, [this] {
-            if (mTorrentFilesView) {
-                mTorrentFilesView->saveState();
-            }
-        });
     }
 
     QSize AddTorrentDialog::sizeHint() const {
@@ -405,5 +398,11 @@ namespace tremotesf {
             can = false;
         }
         mDialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(can);
+    }
+
+    void AddTorrentDialog::saveState() {
+        if (mTorrentFilesView) {
+            mTorrentFilesView->saveState();
+        }
     }
 }
