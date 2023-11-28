@@ -295,20 +295,46 @@ namespace tremotesf {
             });
 
 #ifdef Q_OS_MACOS
-            // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
-            // applicationStateChanged signal is emitted with ApplicationActive
-            // We need to show our window manually in this case
             QObject::connect(qApp, &QGuiApplication::applicationStateChanged, this, [this](Qt::ApplicationState state) {
                 logDebug("Application state is {}", state);
-                if (state == Qt::ApplicationActive && mWindow->isHidden()) {
-                    logInfo("Application is activated by the system, showing window");
-                    showWindowsAndActivateMainOrDialog();
+                if (state == Qt::ApplicationActive) {
+                    // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
+                    // applicationStateChanged signal is emitted with ApplicationActive
+                    // We need to show our window manually in this case
+                    if (mWindow->isHidden()) {
+                        logInfo("Application is activated by the system, showing windows");
+                        showWindowsAndActivateMainOrDialog();
+                    }
+                } else {
+                    // On macOS application can be hidden without mWindow becoming hidden
+                    // In this case applicationStateChanged is emitted with ApplicationInactive
+                    // while isNSAppHidden returns true,
+                    // and need to update show/hide tray icon action
+                    if (isNSAppHidden() && !mWindow->isHidden()) {
+                        logInfo("Application is hidden by the system, hiding windows");
+                        hideWindows();
+                    }
                 }
             });
 #endif
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
+
+#ifdef Q_OS_MACOS
+        void updateShowHideAction() {
+            QObject::disconnect(&mShowHideAppAction, &QAction::triggered, nullptr, nullptr);
+            if (mWindow->isHidden() || mWindow->isMinimized()) {
+                mShowHideAppAction.setText(qApp->translate("tremotesf", "&Show Tremotesf"));
+                QObject::connect(&mShowHideAppAction, &QAction::triggered, this, [this] {
+                    showWindowsAndActivateMainOrDialog();
+                });
+            } else {
+                mShowHideAppAction.setText(qApp->translate("tremotesf", "&Hide Tremotesf"));
+                QObject::connect(&mShowHideAppAction, &QAction::triggered, this, [this] { hideWindows(); });
+            }
+        }
+#endif
 
         /**
          * @return true if event should be ignored, false otherwise
@@ -358,6 +384,9 @@ namespace tremotesf {
         MainWindowSideBar mSideBar{mViewModel.rpc(), &mTorrentsProxyModel};
         std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs{};
 
+#ifdef Q_OS_MACOS
+        QAction mShowHideAppAction{};
+#endif
         //: Button / menu item to connect to server
         QAction mConnectAction{qApp->translate("tremotesf", "&Connect")};
         //: Button / menu item to disconnect from server
@@ -403,6 +432,10 @@ namespace tremotesf {
 #endif
 
         void setupActions() {
+#ifdef Q_OS_MACOS
+            updateShowHideAction();
+#endif
+
             QObject::connect(&mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);
             QObject::connect(&mDisconnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::disconnect);
 
@@ -711,6 +744,26 @@ namespace tremotesf {
             );
             mLowPriorityAction->setCheckable(true);
             priorityGroup->addAction(mLowPriorityAction);
+        }
+
+        QAction* createQuitAction() {
+            const auto action = new QAction(
+                QIcon::fromTheme("application-exit"_l1),
+                //: Menu item
+                qApp->translate("tremotesf", "&Quit"),
+                this
+            );
+            if constexpr (isTargetOsWindows) {
+#if QT_VERSION_MAJOR >= 6
+                action->setShortcut(QKeyCombination(Qt::ControlModifier, Qt::Key_Q));
+#else
+                action->setShortcut(QKeySequence(static_cast<int>(Qt::ControlModifier) | static_cast<int>(Qt::Key_Q)));
+#endif
+            } else {
+                action->setShortcuts(QKeySequence::Quit);
+            }
+            QObject::connect(action, &QAction::triggered, this, &QCoreApplication::quit);
+            return action;
         }
 
         void updateRpcActions() {
@@ -1071,22 +1124,9 @@ namespace tremotesf {
                     }
                 });
             }
-
-            QAction* quitAction =
-                mFileMenu->addAction(QIcon::fromTheme("application-exit"_l1), qApp->translate("tremotesf", "&Quit"));
-            if constexpr (isTargetOsWindows) {
-#if QT_VERSION_MAJOR >= 6
-                quitAction->setShortcut(QKeyCombination(Qt::ControlModifier, Qt::Key_Q));
-#else
-                quitAction->setShortcut(
-                    QKeySequence(static_cast<int>(Qt::ControlModifier) | static_cast<int>(Qt::Key_Q))
-                );
-#endif
-            } else {
-                quitAction->setShortcuts(QKeySequence::Quit);
-            }
+            const auto quitAction = createQuitAction();
             quitAction->setMenuRole(QAction::QuitRole);
-            QObject::connect(quitAction, &QAction::triggered, this, &QCoreApplication::quit);
+            mFileMenu->addAction(quitAction);
 
             //: Menu bar item
             QMenu* editMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
@@ -1286,11 +1326,11 @@ namespace tremotesf {
 
         void setupTrayIcon() {
             auto contextMenu = new QMenu(mWindow);
-            contextMenu->addActions(mFileMenu->actions());
 
-            mTrayIcon.setContextMenu(contextMenu);
-            mTrayIcon.setToolTip(mViewModel.rpc()->status().toString());
-
+#ifdef Q_OS_MACOS
+            contextMenu->addAction(&mShowHideAppAction);
+            contextMenu->addSeparator();
+#else
             QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
                 if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
                     if (mWindow->isHidden() || mWindow->isMinimized()) {
@@ -1300,6 +1340,18 @@ namespace tremotesf {
                     }
                 }
             });
+#endif
+
+            contextMenu->addAction(&mConnectAction);
+            contextMenu->addAction(&mDisconnectAction);
+            contextMenu->addSeparator();
+            contextMenu->addAction(&mAddTorrentFileAction);
+            contextMenu->addAction(&mAddTorrentLinkAction);
+            contextMenu->addSeparator();
+            contextMenu->addAction(createQuitAction());
+
+            mTrayIcon.setContextMenu(contextMenu);
+            mTrayIcon.setToolTip(mViewModel.rpc()->status().toString());
 
             QObject::connect(mViewModel.rpc(), &Rpc::statusChanged, this, [this] {
                 mTrayIcon.setToolTip(mViewModel.rpc()->status().toString());
@@ -1334,6 +1386,14 @@ namespace tremotesf {
             [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
         ) {
             logInfo("Showing windows");
+#ifdef Q_OS_MACOS
+            if (isNSAppHidden()) {
+                logDebug("NSApp is hidden, unhiding it");
+                unhideNSApp();
+            } else {
+                logDebug("NSApp is not hidden");
+            }
+#endif
             showAndRaiseWindow(mWindow);
             QWidget* lastDialog = nullptr;
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
@@ -1568,6 +1628,25 @@ namespace tremotesf {
             mImpl->activateMainWindow();
         }
     }
+
+#ifdef Q_OS_MACOS
+    bool MainWindow::event(QEvent* event) {
+        if (event->type() == QEvent::WindowStateChange) {
+            mImpl->updateShowHideAction();
+        }
+        return QMainWindow::event(event);
+    }
+
+    void MainWindow::showEvent(QShowEvent* event) {
+        mImpl->updateShowHideAction();
+        QMainWindow::showEvent(event);
+    }
+
+    void MainWindow::hideEvent(QHideEvent* event) {
+        mImpl->updateShowHideAction();
+        QMainWindow::hideEvent(event);
+    }
+#endif
 
     void MainWindow::closeEvent(QCloseEvent* event) {
         if (mImpl->onCloseEvent()) {
