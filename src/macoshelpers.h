@@ -5,10 +5,14 @@
 #ifndef TREMOTESF_MACOSHELPERS_H
 #define TREMOTESF_MACOSHELPERS_H
 
+class QStyle;
+
 namespace tremotesf {
     void hideNSApp();
     void unhideNSApp();
     bool isNSAppHidden();
+    bool isThisMacOSStyle(QStyle* style);
+    bool isUsingMacOSStyle();
 }
 
-#endif //TREMOTESF_MACOSHELPERS_H
+#endif // TREMOTESF_MACOSHELPERS_H

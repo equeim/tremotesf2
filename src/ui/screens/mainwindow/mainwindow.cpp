@@ -1611,11 +1611,11 @@ namespace tremotesf {
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
         setAcceptDrops(true);
-        if constexpr (targetOs == TargetOs::UnixMacOS) {
-            if (desktoputils::isUsingMacOSStyle()) {
-                setUnifiedTitleAndToolBarOnMac(true);
-            }
+#ifdef Q_OS_MACOS
+        if (isUsingMacOSStyle()) {
+            setUnifiedTitleAndToolBarOnMac(true);
         }
+#endif
     }
 
     MainWindow::~MainWindow() = default;

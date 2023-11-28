@@ -33,6 +33,8 @@ namespace tremotesf {
         ) override;
 
     private:
+        QStyle* styleForProgressBar(QStyle* style) const;
+
         std::optional<int> mProgressBarColumn{};
         std::optional<int> mProgressRole{};
         std::optional<int> mTextElideModeRole{};
