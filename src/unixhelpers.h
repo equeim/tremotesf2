@@ -28,7 +28,9 @@ namespace tremotesf {
         return result;
     }
 
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
     inline constexpr auto xdgActivationTokenEnvVariable = "XDG_ACTIVATION_TOKEN";
+#endif
 }
 
 #endif // TREMOTESF_UNIXHELPERS_H
