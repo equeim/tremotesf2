@@ -33,7 +33,6 @@
 #include <QProxyStyle>
 #include <QPushButton>
 #include <QShortcut>
-#include <QScreen>
 #include <QSplitter>
 #include <QStackedLayout>
 #include <QSystemTrayIcon>
