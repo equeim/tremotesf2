@@ -8,4 +8,8 @@
 
 namespace tremotesf {
     void hideNSApp() { [NSApp hide:nullptr]; }
+
+    void unhideNSApp() { [NSApp unhide:nullptr]; }
+
+    bool isNSAppHidden() { return [NSApp isHidden]; }
 }

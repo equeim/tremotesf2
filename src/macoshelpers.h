@@ -7,6 +7,8 @@
 
 namespace tremotesf {
     void hideNSApp();
+    void unhideNSApp();
+    bool isNSAppHidden();
 }
 
 #endif //TREMOTESF_MACOSHELPERS_H
