@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 
+#include "desktoputils.h"
 #include "literals.h"
 #include "target_os.h"
 #include "rpc/rpc.h"
@@ -89,6 +90,13 @@ namespace tremotesf {
         mSelectDirectoryButton = new QPushButton(QIcon::fromTheme("document-open"_l1), QString(), this);
         layout->addWidget(mSelectDirectoryButton);
         mSelectDirectoryButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        if constexpr (targetOs == TargetOs::UnixMacOS) {
+            if (desktoputils::isUsingMacOSStyle()) {
+                // Button becomes ugly if we don't set these specific values
+                mSelectDirectoryButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+                mSelectDirectoryButton->setMaximumSize(32, 32);
+            }
+        }
 
         mViewModel = createViewModel(std::move(path), rpc);
 

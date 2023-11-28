@@ -29,6 +29,10 @@ namespace tremotesf::desktoputils {
     void openFile(const QString& filePath, QWidget* parent = nullptr);
 
     void findLinksAndAddAnchors(QTextDocument* document);
+
+#ifdef Q_OS_MACOS
+    bool isUsingMacOSStyle();
+#endif
 }
 
 #endif // TREMOTESF_DESKTOPUTILS_H
