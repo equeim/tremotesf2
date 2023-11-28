@@ -79,6 +79,10 @@
 #include "torrentsview.h"
 #include "mainwindowviewmodel.h"
 
+#ifdef Q_OS_MACOS
+#    include "macoshelpers.h"
+#endif
+
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
 
 namespace tremotesf {
@@ -1415,6 +1419,11 @@ namespace tremotesf {
             }
             logDebug("Hiding {}", *mWindow);
             mWindow->hide();
+#ifdef Q_OS_MACOS
+            // We need this so that system menu bar switches to previous app
+            logDebug("Hiding NSApp");
+            hideNSApp();
+#endif
         }
 
         void runAfterDelay(const std::function<void()>& function) {

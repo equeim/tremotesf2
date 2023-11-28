@@ -248,6 +248,15 @@ if (UNIX)
             ipc/ipcserver_socket.h
             ui/notificationscontroller_fallback.cpp
         )
+
+        if (APPLE)
+            target_sources(
+                tremotesf_objects
+                PRIVATE
+                macoshelpers.h
+                macoshelpers.mm
+            )
+        endif ()
     endif ()
 elseif (WIN32)
     find_library(Dwmapi Dwmapi REQUIRED)
