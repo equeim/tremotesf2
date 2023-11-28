@@ -37,7 +37,6 @@
 #include "rpc/pathutils.h"
 #include "rpc/rpc.h"
 #include "rpc/torrent.h"
-#include "ui/savewindowstatedispatcher.h"
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/itemmodels/stringlistmodel.h"
 #include "ui/widgets/torrentfilesview.h"
@@ -106,8 +105,6 @@ namespace tremotesf {
 
         setMinimumSize(minimumSizeHint());
         restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
-
-        SaveWindowStateDispatcher::registerHandler(this, [this] { saveState(); });
     }
 
     QSize TorrentPropertiesDialog::sizeHint() const { return minimumSizeHint(); }

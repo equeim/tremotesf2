@@ -6,6 +6,7 @@
 #define TREMOTESF_ADDTORRENTDIALOG_H
 
 #include <QDialog>
+#include "ui/savewindowstatedispatcher.h"
 
 class QCheckBox;
 class QComboBox;
@@ -35,6 +36,7 @@ namespace tremotesf {
         QString initialDownloadDirectory();
         void setupUi();
         void canAcceptUpdate();
+        void saveState();
 
         Rpc* mRpc;
         QString mUrl;
@@ -51,6 +53,8 @@ namespace tremotesf {
         QCheckBox* mMoveTorrentFileToTrashCheckBox{};
 
         QDialogButtonBox* mDialogButtonBox{};
+
+        SaveWindowStateHandler mSaveStateHandler{this, [this] { saveState(); }};
     };
 }
 

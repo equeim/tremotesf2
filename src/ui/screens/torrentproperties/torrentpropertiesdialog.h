@@ -9,6 +9,8 @@
 #include <QDialog>
 #include <QPointer>
 
+#include "ui/savewindowstatedispatcher.h"
+
 class QTabWidget;
 class KMessageWidget;
 
@@ -61,6 +63,8 @@ namespace tremotesf {
 
         bool mUpdatingLimits{};
         std::function<void()> mUpdateLimitsTab;
+
+        SaveWindowStateHandler mSaveStateHandler{this, [this] { saveState(); }};
     };
 }
 
