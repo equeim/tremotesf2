@@ -286,10 +286,25 @@ namespace tremotesf {
 
         Q_DISABLE_COPY_MOVE(Impl)
 
-        void onCloseEvent() {
-            if (!(mTrayIcon.isVisible() && QSystemTrayIcon::isSystemTrayAvailable())) {
-                qApp->quit();
+        /**
+         * @return true if event should be ignored, false otherwise
+         */
+        bool onCloseEvent() {
+#if QT_VERSION_MAJOR >= 6
+            if (mAppQuitEventFilter.isQuittingApplication) {
+                logDebug("Received close event on main window while quitting app, just close window");
+                return false;
             }
+#endif
+            // Do stuff at the next event loop iteration since we are in the middle of event handling
+            if (mTrayIcon.isVisible() && QSystemTrayIcon::isSystemTrayAvailable()) {
+                logInfo("Closed main window but tray icon is active, hide windows without quitting app");
+                QMetaObject::invokeMethod(this, &MainWindow::Impl::hideWindows, Qt::QueuedConnection);
+                return true;
+            }
+            logInfo("Closed main window when tray icon is not active, quitting app");
+            QMetaObject::invokeMethod(qApp, &QCoreApplication::quit, Qt::QueuedConnection);
+            return false;
         }
 
         void onDragEnterEvent(QDragEnterEvent* event) { MainWindowViewModel::processDragEnterEvent(event); }
@@ -358,6 +373,9 @@ namespace tremotesf {
         QSystemTrayIcon mTrayIcon{QIcon::fromTheme("tremotesf-tray-icon"_l1, mWindow->windowIcon())};
 
         SaveWindowStateHandler mSaveStateHandler{mWindow, [this] { saveState(); }};
+#if QT_VERSION_MAJOR >= 6
+        ApplicationQuitEventFilter mAppQuitEventFilter{};
+#endif
 
         void setupActions() {
             QObject::connect(&mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);
@@ -1294,6 +1312,7 @@ namespace tremotesf {
             [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
             [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
         ) {
+            logInfo("Showing windows");
             showAndRaiseWindow(mWindow);
             QWidget* lastDialog = nullptr;
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
@@ -1382,6 +1401,7 @@ namespace tremotesf {
 #endif
 
         void hideWindows() {
+            logInfo("Hiding windows");
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
             // so that we don't operate on deleted QWidgets
             for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
@@ -1523,8 +1543,11 @@ namespace tremotesf {
     }
 
     void MainWindow::closeEvent(QCloseEvent* event) {
-        QMainWindow::closeEvent(event);
-        mImpl->onCloseEvent();
+        if (mImpl->onCloseEvent()) {
+            event->ignore();
+        } else {
+            QMainWindow::closeEvent(event);
+        }
     }
 
     void MainWindow::dragEnterEvent(QDragEnterEvent* event) { mImpl->onDragEnterEvent(event); }
