@@ -80,8 +80,13 @@ namespace tremotesf {
         layout->addWidget(mMessageWidget);
 
         setupDetailsTab();
-        //: Torrent properties dialog tab
-        mTabWidget->addTab(mFilesView, qApp->translate("tremotesf", "Files"));
+        {
+            const auto filesTab = new QWidget(this);
+            const auto filesTabLayout = new QVBoxLayout(filesTab);
+            filesTabLayout->addWidget(mFilesView);
+            //: Torrent properties dialog tab
+            mTabWidget->addTab(filesTab, qApp->translate("tremotesf", "Files"));
+        }
         //: Torrent properties dialog tab
         mTabWidget->addTab(mTrackersViewWidget, qApp->translate("tremotesf", "Trackers"));
         setupPeersTab();

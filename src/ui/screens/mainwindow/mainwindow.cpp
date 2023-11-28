@@ -187,12 +187,7 @@ namespace tremotesf {
             mSplitter.addWidget(mainWidgetContainer);
             mSplitter.setStretchFactor(1, 1);
             auto mainWidgetLayout = new QVBoxLayout(mainWidgetContainer);
-            mainWidgetLayout->setContentsMargins(
-                0,
-                mainWidgetLayout->contentsMargins().top(),
-                0,
-                mainWidgetLayout->contentsMargins().bottom()
-            );
+            mainWidgetLayout->setContentsMargins(0, 0, 0, 0);
 
             auto messageWidget = new KMessageWidget(mWindow);
             messageWidget->setWordWrap(true);
