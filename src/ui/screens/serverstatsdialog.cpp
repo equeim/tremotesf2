@@ -36,6 +36,7 @@ namespace tremotesf {
         //: Server stats section for current Transmission launch
         auto currentSessionGroupBox = new QGroupBox(qApp->translate("tremotesf", "Current session"), this);
         auto currentSessionGroupBoxLayout = new QFormLayout(currentSessionGroupBox);
+        currentSessionGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         auto sessionDownloadedLabel = new QLabel(this);
         //: Downloaded bytes
@@ -54,6 +55,7 @@ namespace tremotesf {
         //: Server stats section for all Transmission launches (accumulated)
         auto totalGroupBox = new QGroupBox(qApp->translate("tremotesf", "Total"), this);
         auto totalGroupBoxLayout = new QFormLayout(totalGroupBox);
+        totalGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         auto totalDownloadedLabel = new QLabel(this);
         //: Downloaded bytes
