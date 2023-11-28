@@ -1529,8 +1529,7 @@ namespace tremotesf {
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
         setAcceptDrops(true);
         if constexpr (targetOs == TargetOs::UnixMacOS) {
-            const auto proxyStyle = qobject_cast<QProxyStyle*>(qApp->style());
-            if (proxyStyle && proxyStyle->baseStyle()->objectName().compare("macos"_l1, Qt::CaseInsensitive) == 0) {
+            if (desktoputils::isUsingMacOSStyle()) {
                 setUnifiedTitleAndToolBarOnMac(true);
             }
         }

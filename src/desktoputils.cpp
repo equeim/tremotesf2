@@ -10,6 +10,7 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QMessageBox>
+#include <QProxyStyle>
 #include <QRegularExpression>
 #include <QStringBuilder>
 #include <QTextCursor>
@@ -112,4 +113,21 @@ namespace tremotesf::desktoputils {
             cursor.setCharFormat(format);
         }
     }
+
+#ifdef Q_OS_MACOS
+    bool isUsingMacOSStyle() {
+        QStyle* style = qApp->style();
+        while (style) {
+            if (const auto proxyStyle = qobject_cast<QProxyStyle*>(style); proxyStyle) {
+                style = proxyStyle->baseStyle();
+                if (style == proxyStyle) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return style && style->objectName().compare("macos"_l1, Qt::CaseInsensitive) == 0;
+    }
+#endif
 }
