@@ -84,6 +84,7 @@
 #endif
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
+SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::ApplicationState)
 
 namespace tremotesf {
     namespace {
@@ -292,6 +293,19 @@ namespace tremotesf {
                 mViewModel.rpc()->disconnect();
                 mTrayIcon.hide();
             });
+
+#ifdef Q_OS_MACOS
+            // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
+            // applicationStateChanged signal is emitted with ApplicationActive
+            // We need to show our window manually in this case
+            QObject::connect(qApp, &QGuiApplication::applicationStateChanged, this, [this](Qt::ApplicationState state) {
+                logDebug("Application state is {}", state);
+                if (state == Qt::ApplicationActive && mWindow->isHidden()) {
+                    logInfo("Application is activated by the system, showing window");
+                    showWindowsAndActivateMainOrDialog();
+                }
+            });
+#endif
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
