@@ -1342,11 +1342,11 @@ namespace tremotesf {
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
             switch (KWindowSystem::platform()) {
             case KWindowSystem::Platform::X11:
-                logInfo("Windowing system is X11");
+                logDebug("Windowing system is X11");
                 activeWindowOnX11(widgetToActivate, newStartupNotificationId);
                 break;
             case KWindowSystem::Platform::Wayland:
-                logInfo("Windowing system is Wayland");
+                logDebug("Windowing system is Wayland");
                 activeWindowOnWayland(widgetToActivate, newXdgActivationToken);
                 break;
             default:
