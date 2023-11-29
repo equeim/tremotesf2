@@ -131,7 +131,8 @@ namespace tremotesf {
         return createTransforming<QVariantList>(torrents, [](const LastTorrents::Torrent& torrent) {
             return QVariantMap{
                 {lastTorrentsHashStringKey, torrent.hashString},
-                {lastTorrentsFinishedKey, torrent.finished}};
+                {lastTorrentsFinishedKey, torrent.finished}
+            };
         });
     }
 
@@ -140,11 +141,12 @@ namespace tremotesf {
         if (var.isValid() && var.type() == QVariant::List) {
             lastTorrents.saved = true;
             lastTorrents.torrents =
-                createTransforming<std::vector<LastTorrents::Torrent>>(var.toList(), [](QVariant&& torrentVar) {
+                createTransforming<std::vector<LastTorrents::Torrent>>(var.toList(), [](const QVariant& torrentVar) {
                     const QVariantMap map = torrentVar.toMap();
                     return LastTorrents::Torrent{
                         map[lastTorrentsHashStringKey].toString(),
-                        map[lastTorrentsFinishedKey].toBool()};
+                        map[lastTorrentsFinishedKey].toBool()
+                    };
                 });
         }
         return lastTorrents;
@@ -223,7 +225,8 @@ namespace tremotesf {
             createTransforming<std::vector<LastTorrents::Torrent>>(rpc->torrents(), [](const auto& torrent) {
                 return LastTorrents::Torrent{
                     .hashString = torrent->data().hashString,
-                    .finished = torrent->data().isFinished()};
+                    .finished = torrent->data().isFinished()
+                };
             });
         mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();
@@ -476,11 +479,13 @@ namespace tremotesf {
                 mSettings->value(timeoutKey, 30).toInt(),
 
                 mSettings->value(autoReconnectEnabledKey, false).toBool(),
-                mSettings->value(autoReconnectIntervalKey, 30).toInt()},
+                mSettings->value(autoReconnectIntervalKey, 30).toInt()
+            },
             MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
             LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
             mSettings->value(lastDownloadDirectoriesKey).toStringList(),
-            mSettings->value(lastDownloadDirectoryKey).toString()};
+            mSettings->value(lastDownloadDirectoryKey).toString()
+        };
         mSettings->endGroup();
         return server;
     }

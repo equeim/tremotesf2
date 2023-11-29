@@ -114,7 +114,7 @@ namespace tremotesf::bencode {
             }
 
             template<std::default_initializable Container, std::invocable<Container&> ParseNextElement>
-            Container parseContainer(ParseNextElement&& parseNextElement) {
+            Container parseContainer(ParseNextElement parseNextElement) {
                 const auto containerPos = mFile.pos();
                 try {
                     skipByte();

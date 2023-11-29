@@ -49,7 +49,8 @@ namespace tremotesf {
         constexpr std::array proxyTypeComboBoxValues{
             ConnectionConfiguration::ProxyType::Default,
             ConnectionConfiguration::ProxyType::Http,
-            ConnectionConfiguration::ProxyType::Socks5};
+            ConnectionConfiguration::ProxyType::Socks5
+        };
 
         ConnectionConfiguration::ProxyType proxyTypeFromComboBoxIndex(int index) {
             if (index == -1) {
@@ -71,7 +72,8 @@ namespace tremotesf {
             setHorizontalHeaderLabels({//: Column title in the list of mounted directories
                                        qApp->translate("tremotesf", "Local directory"),
                                        //: Column title in the list of mounted directories
-                                       qApp->translate("tremotesf", "Remote directory")});
+                                       qApp->translate("tremotesf", "Remote directory")
+            });
             horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
             horizontalHeader()->setSectionsClickable(false);
             verticalHeader()->setVisible(false);
@@ -142,6 +144,8 @@ namespace tremotesf {
                 if (state() != EditingState) {
                     edit(currentIndex());
                 }
+                break;
+            default:
                 break;
             }
         }

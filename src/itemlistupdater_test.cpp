@@ -14,6 +14,8 @@
 #include "log/log.h"
 #include "itemlistupdater.h"
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
+
 struct Item {
     int id;
     QString data;
@@ -64,6 +66,7 @@ protected:
 
     void onRemovedItems(size_t first, size_t last) override { removedIndexRanges.emplace_back(first, last); }
 
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
     bool updateItem(Item& item, Item&& newItem) override {
         if (item != newItem) {
             item = newItem;

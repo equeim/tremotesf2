@@ -84,14 +84,15 @@ namespace tremotesf::impl {
         static QByteArray makeRequestData(const QString& method, const QJsonObject& arguments);
 
     private:
-        void postRequest(QNetworkRequest request, NetworkRequestMetadata&& metadata);
+        void postRequest(QNetworkRequest request, const NetworkRequestMetadata& metadata);
 
-        bool retryRequest(const QNetworkRequest& request, NetworkRequestMetadata&& metadata);
+        bool retryRequest(const QNetworkRequest& request, NetworkRequestMetadata metadata);
 
-        void onRequestFinished(QNetworkReply* reply, QList<QSslError>&& sslErrors);
-        void onRequestSuccess(QNetworkReply* reply, RpcRequestMetadata&& metadata);
-        void onRequestError(QNetworkReply* reply, QList<QSslError>&& sslErrors, NetworkRequestMetadata&& metadata);
-        static QString makeDetailedErrorMessage(QNetworkReply* reply, QList<QSslError>&& sslErrors);
+        void onRequestFinished(QNetworkReply* reply, const QList<QSslError>& sslErrors);
+        void onRequestSuccess(QNetworkReply* reply, const RpcRequestMetadata& metadata);
+        void
+        onRequestError(QNetworkReply* reply, const QList<QSslError>& sslErrors, const NetworkRequestMetadata& metadata);
+        static QString makeDetailedErrorMessage(QNetworkReply* reply, const QList<QSslError>& sslErrors);
 
         QNetworkAccessManager* mNetwork{};
         QThreadPool* mThreadPool{};

@@ -43,6 +43,8 @@ namespace tremotesf {
                 case Qt::Key_Enter:
                 case Qt::Key_Return:
                     event->accept();
+                default:
+                    break;
                 }
             }
         };

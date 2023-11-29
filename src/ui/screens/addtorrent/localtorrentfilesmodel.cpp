@@ -61,7 +61,7 @@ namespace tremotesf {
             std::vector<TorrentFilesModelFile*> files;
         };
 
-        CreateTreeResult createTree(bencode::Value&& bencodeParseResult) {
+        CreateTreeResult createTree(bencode::Value bencodeParseResult) {
             auto rootMap = bencodeParseResult.maybeTakeDictionary();
             if (!rootMap) {
                 throw bencode::Error(bencode::Error::Type::Parsing, "Root element is not a dictionary");

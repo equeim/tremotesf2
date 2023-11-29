@@ -58,7 +58,9 @@ namespace tremotesf {
         if (!commandLineFiles.isEmpty() || !commandLineUrls.isEmpty()) {
             QMetaObject::invokeMethod(
                 this,
-                [=, this] { addTorrents(commandLineFiles, commandLineUrls, true); },
+                [commandLineFiles = std::move(commandLineFiles), commandLineUrls = std::move(commandLineUrls), this] {
+                    addTorrents(commandLineFiles, commandLineUrls, true);
+                },
                 Qt::QueuedConnection
             );
         }

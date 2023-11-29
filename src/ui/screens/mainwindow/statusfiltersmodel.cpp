@@ -71,6 +71,8 @@ namespace tremotesf {
                 break;
             }
             break;
+        default:
+            break;
         }
         return {};
     }
@@ -112,7 +114,6 @@ namespace tremotesf {
                                                 StatusFiltersModel,
                                                 StatusFiltersModel::Item,
                                                 std::map<TorrentsProxyModel::StatusFilter, int>> {
-
     public:
         inline explicit StatusFiltersModelUpdater(StatusFiltersModel& model) : ModelListUpdater(model) {}
 
@@ -124,7 +125,9 @@ namespace tremotesf {
         }
 
         bool updateItem(
-            StatusFiltersModel::Item& item, std::pair<const TorrentsProxyModel::StatusFilter, int>&& newItem
+            StatusFiltersModel::Item& item,
+            // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
+            std::pair<const TorrentsProxyModel::StatusFilter, int>&& newItem
         ) override {
             const auto& [filter, torrents] = newItem;
             if (item.torrents != torrents) {
@@ -134,8 +137,10 @@ namespace tremotesf {
             return false;
         }
 
-        StatusFiltersModel::Item
-        createItemFromNewItem(std::pair<const TorrentsProxyModel::StatusFilter, int>&& newTracker) override {
+        StatusFiltersModel::Item createItemFromNewItem(
+            // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
+            std::pair<const TorrentsProxyModel::StatusFilter, int>&& newTracker
+        ) override {
             return StatusFiltersModel::Item{.filter = newTracker.first, .torrents = newTracker.second};
         }
     };
@@ -148,7 +153,8 @@ namespace tremotesf {
             {TorrentsProxyModel::Seeding, 0},
             {TorrentsProxyModel::Paused, 0},
             {TorrentsProxyModel::Checking, 0},
-            {TorrentsProxyModel::Errored, 0}};
+            {TorrentsProxyModel::Errored, 0}
+        };
 
         const auto processFilter = [&](Torrent* torrent, TorrentsProxyModel::StatusFilter filter) {
             if (TorrentsProxyModel::statusFilterAcceptsTorrent(torrent, filter)) {

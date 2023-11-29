@@ -204,28 +204,33 @@ namespace tremotesf {
             EnumMapping(TorrentData::Status::QueuedForDownloading, 3),
             EnumMapping(TorrentData::Status::Downloading, 4),
             EnumMapping(TorrentData::Status::QueuedForSeeding, 5),
-            EnumMapping(TorrentData::Status::Seeding, 6)});
+            EnumMapping(TorrentData::Status::Seeding, 6)
+        });
 
         constexpr auto errorMapper = EnumMapper(std::array{
             EnumMapping(TorrentData::Error::None, 0),
             EnumMapping(TorrentData::Error::TrackerWarning, 1),
             EnumMapping(TorrentData::Error::TrackerError, 2),
-            EnumMapping(TorrentData::Error::LocalError, 3)});
+            EnumMapping(TorrentData::Error::LocalError, 3)
+        });
 
         constexpr auto priorityMapper = EnumMapper(std::array{
             EnumMapping(TorrentData::Priority::Low, -1),
             EnumMapping(TorrentData::Priority::Normal, 0),
-            EnumMapping(TorrentData::Priority::High, 1)});
+            EnumMapping(TorrentData::Priority::High, 1)
+        });
 
         constexpr auto ratioLimitModeMapper = EnumMapper(std::array{
             EnumMapping(TorrentData::RatioLimitMode::Global, 0),
             EnumMapping(TorrentData::RatioLimitMode::Single, 1),
-            EnumMapping(TorrentData::RatioLimitMode::Unlimited, 2)});
+            EnumMapping(TorrentData::RatioLimitMode::Unlimited, 2)
+        });
 
         constexpr auto idleSeedingLimitModeMapper = EnumMapper(std::array{
             EnumMapping(TorrentData::IdleSeedingLimitMode::Global, 0),
             EnumMapping(TorrentData::IdleSeedingLimitMode::Single, 1),
-            EnumMapping(TorrentData::IdleSeedingLimitMode::Unlimited, 2)});
+            EnumMapping(TorrentData::IdleSeedingLimitMode::Unlimited, 2)
+        });
     }
 
     int TorrentData::priorityToInt(Priority value) { return priorityMapper.toJsonConstant(value); }
@@ -259,11 +264,7 @@ namespace tremotesf {
     }
 
     void TorrentData::updateProperty(
-        TorrentData::UpdateKey intKey,
-        const QJsonValue& value,
-        bool& changed,
-        bool firstTime,
-        const Rpc* rpc
+        TorrentData::UpdateKey intKey, const QJsonValue& value, bool& changed, bool firstTime, const Rpc* rpc
     ) {
         const auto key = static_cast<UpdateKey>(intKey);
         switch (static_cast<UpdateKey>(key)) {
@@ -637,7 +638,6 @@ namespace tremotesf {
         using NewPeer = std::pair<QJsonObject, QString>;
 
         class PeersListUpdater final : public ItemListUpdater<Peer, std::vector<NewPeer>> {
-
         public:
             PeersListUpdater() = default;
 
@@ -661,6 +661,7 @@ namespace tremotesf {
                 removedIndexRanges.emplace_back(static_cast<int>(first), static_cast<int>(last));
             }
 
+            // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
             bool updateItem(Peer& peer, NewPeer&& newPeer) override {
                 const auto& [json, address] = newPeer;
                 return peer.update(json);
@@ -670,6 +671,7 @@ namespace tremotesf {
                 changedIndexRanges.emplace_back(static_cast<int>(first), static_cast<int>(last));
             }
 
+            // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
             Peer createItemFromNewItem(NewPeer&& newPeer) override {
                 auto& [json, address] = newPeer;
                 return Peer(std::move(address), json);

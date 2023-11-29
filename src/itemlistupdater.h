@@ -72,7 +72,7 @@ namespace tremotesf {
         virtual ~ItemListUpdater() = default;
         Q_DISABLE_COPY_MOVE(ItemListUpdater)
 
-        virtual void update(std::vector<Item>& items, NewItemsRange&& newItems) {
+        void update(std::vector<Item>& items, NewItemsRange newItems) {
             if (!items.empty()) {
                 auto removedBatchProcessor = ItemBatchProcessor([&](size_t first, size_t last) {
                     onAboutToRemoveItems(first, last);
@@ -155,6 +155,7 @@ namespace tremotesf {
          * Default implementation simply returns false
          * (with default implementation of findNewItemForItem() Item and NewItem will be always equal)
          */
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
         inline virtual bool updateItem([[maybe_unused]] Item& item, [[maybe_unused]] NewItem&& newItem) {
             return false;
         };

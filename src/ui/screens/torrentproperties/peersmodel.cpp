@@ -68,6 +68,8 @@ namespace tremotesf {
             default:
                 return data(index, Qt::DisplayRole);
             }
+        default:
+            break;
         }
         return {};
     }

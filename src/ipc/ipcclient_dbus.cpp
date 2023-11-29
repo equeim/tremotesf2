@@ -19,7 +19,7 @@ namespace tremotesf {
     namespace {
         constexpr auto desktopStartupIdEnvVariable = "DESKTOP_STARTUP_ID";
 
-        inline bool waitForReply(QDBusPendingReply<>&& pending) {
+        inline bool waitForReply(QDBusPendingReply<> pending) {
             pending.waitForFinished();
             const auto reply(pending.reply());
             if (reply.type() != QDBusMessage::ReplyMessage) {
@@ -77,7 +77,8 @@ namespace tremotesf {
         }
 
         OrgFreedesktopApplicationInterface mInterface{
-            IpcServerDbus::serviceName, IpcServerDbus::objectPath, QDBusConnection::sessionBus()};
+            IpcServerDbus::serviceName, IpcServerDbus::objectPath, QDBusConnection::sessionBus()
+        };
     };
 
     std::unique_ptr<IpcClient> IpcClient::createInstance() { return std::make_unique<IpcClientDbus>(); }
