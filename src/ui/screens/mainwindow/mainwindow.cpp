@@ -393,15 +393,13 @@ namespace tremotesf {
             mConnectionDependentActions.push_back(&mAddTorrentFileAction);
 
             QObject::connect(&mAddTorrentLinkAction, &QAction::triggered, this, [this] {
-                mWindow->setWindowState(mWindow->windowState() & ~Qt::WindowMinimized);
                 auto showDialog = [this] {
-                    auto dialog =
-                        new AddTorrentDialog(mViewModel.rpc(), QString(), AddTorrentDialog::Mode::Url, mWindow);
+                    auto dialog = new AddTorrentDialog(mViewModel.rpc(), QString(), AddTorrentDialog::Mode::Url);
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
                     dialog->show();
                 };
                 if (mWindow->isHidden()) {
-                    mWindow->show();
+                    showWindowsAndActivateMainOrDialog();
                     runAfterDelay(showDialog);
                 } else {
                     showDialog();
@@ -707,8 +705,6 @@ namespace tremotesf {
         }
 
         void addTorrentsFiles() {
-            mWindow->setWindowState(mWindow->windowState() & ~Qt::WindowMinimized);
-
             auto showDialog = [this] {
                 auto settings = Settings::instance();
                 auto directory = settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString{};
@@ -738,7 +734,7 @@ namespace tremotesf {
             };
 
             if (mWindow->isHidden()) {
-                mWindow->show();
+                showWindowsAndActivateMainOrDialog();
                 runAfterDelay(showDialog);
             } else {
                 showDialog();
