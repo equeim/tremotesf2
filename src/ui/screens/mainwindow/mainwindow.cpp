@@ -161,7 +161,7 @@ namespace tremotesf {
                 window->show();
             }
             if (window->isMinimized()) {
-                window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
+                window->setWindowState(window->windowState().setFlag(Qt::WindowMinimized, false));
             }
             window->raise();
         }
