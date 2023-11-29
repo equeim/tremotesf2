@@ -29,6 +29,8 @@ using namespace std::string_literals;
 using namespace tremotesf;
 using namespace tremotesf::impl;
 
+// NOLINTBEGIN(bugprone-unchecked-optional-access, cppcoreguidelines-avoid-do-while)
+
 namespace {
     constexpr auto testApiPath = "/"_l1;
     constexpr auto testTimeout = 5s;
@@ -514,7 +516,8 @@ namespace {
             const bool ok = QTest::qWaitFor(
                 [&] { return !std::holds_alternative<std::monostate>(responseOrError); },
                 static_cast<int>(
-                    duration_cast<milliseconds>(testTimeout * (mRouter.configuration().value().retryAttempts + 1) + 1s).count()
+                    duration_cast<milliseconds>(testTimeout * (mRouter.configuration().value().retryAttempts + 1) + 1s)
+                        .count()
                 )
             );
             if (!ok) {

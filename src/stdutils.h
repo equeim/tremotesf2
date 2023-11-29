@@ -17,8 +17,8 @@ namespace tremotesf {
     namespace impl {
         template<typename T>
         concept HasReserveFunction = std::ranges::range<T> && requires(T container, std::ranges::range_size_t<T> size) {
-                                                                  container.reserve(size);
-                                                              };
+            container.reserve(size);
+        };
 
         template<typename T>
         concept HasPushBackFunction =
@@ -62,6 +62,7 @@ namespace tremotesf {
         std::ranges::forward_range FromRange,
         std::invocable<impl::MaybeMovableRangeReference<FromRange>> Transform>
         requires(impl::HasPushBackFunction<NewContainer> || impl::HasInsertFunction<NewContainer>)
+    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
     inline NewContainer createTransforming(FromRange&& from, Transform&& transform) {
         NewContainer container{};
         if constexpr (std::ranges::sized_range<FromRange> && impl::HasReserveFunction<NewContainer>) {

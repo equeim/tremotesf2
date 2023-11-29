@@ -213,7 +213,7 @@ namespace tremotesf::impl {
         NetworkRequestMetadata metadata{};
         metadata.postData = data;
         metadata.rpcMetadata = {method, type, std::move(onResponse)};
-        postRequest(request, std::move(metadata));
+        postRequest(request, metadata);
     }
 
     bool RequestRouter::hasPendingDataUpdateRequests() const {
@@ -250,7 +250,7 @@ namespace tremotesf::impl {
             .toJson(QJsonDocument::Compact);
     }
 
-    void RequestRouter::postRequest(QNetworkRequest request, NetworkRequestMetadata&& metadata) {
+    void RequestRouter::postRequest(QNetworkRequest request, const NetworkRequestMetadata& metadata) {
         if (!mSessionId.isEmpty()) {
             request.setRawHeader(sessionIdHeader, mSessionId);
         }
@@ -274,11 +274,11 @@ namespace tremotesf::impl {
         });
 
         QObject::connect(reply, &QNetworkReply::finished, this, [=, this]() mutable {
-            onRequestFinished(reply, std::move(*sslErrors));
+            onRequestFinished(reply, *sslErrors);
         });
     }
 
-    bool RequestRouter::retryRequest(const QNetworkRequest& request, NetworkRequestMetadata&& metadata) {
+    bool RequestRouter::retryRequest(const QNetworkRequest& request, NetworkRequestMetadata metadata) {
         if (!mConfiguration.has_value()) {
             logWarning("Not retrying request, requests configuration is not set");
             return false;
@@ -288,24 +288,24 @@ namespace tremotesf::impl {
             return false;
         }
         logWarning("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
-        postRequest(request, std::move(metadata));
+        postRequest(request, metadata);
         return true;
     }
 
-    void RequestRouter::onRequestFinished(QNetworkReply* reply, QList<QSslError>&& sslErrors) {
+    void RequestRouter::onRequestFinished(QNetworkReply* reply, const QList<QSslError>& sslErrors) {
         if (mPendingNetworkRequests.erase(reply) == 0) {
             // Request was cancelled
             return;
         }
-        auto metadata = reply->property(metadataProperty).value<NetworkRequestMetadata>();
+        const auto metadata = reply->property(metadataProperty).value<NetworkRequestMetadata>();
         if (reply->error() == QNetworkReply::NoError) {
-            onRequestSuccess(reply, std::move(metadata.rpcMetadata));
+            onRequestSuccess(reply, metadata.rpcMetadata);
         } else {
-            onRequestError(reply, std::move(sslErrors), std::move(metadata));
+            onRequestError(reply, sslErrors, metadata);
         }
     }
 
-    void RequestRouter::onRequestSuccess(QNetworkReply* reply, RpcRequestMetadata&& metadata) {
+    void RequestRouter::onRequestSuccess(QNetworkReply* reply, const RpcRequestMetadata& metadata) {
         logDebug(
             "HTTP request for method '{}' succeeded, HTTP status code: {} {}",
             metadata.method,
@@ -354,7 +354,7 @@ namespace tremotesf::impl {
     }
 
     void RequestRouter::onRequestError(
-        QNetworkReply* reply, QList<QSslError>&& sslErrors, NetworkRequestMetadata&& metadata
+        QNetworkReply* reply, const QList<QSslError>& sslErrors, const NetworkRequestMetadata& metadata
     ) {
         if (reply->error() == QNetworkReply::ContentConflictError && reply->hasRawHeader(sessionIdHeader)) {
             QByteArray newSessionId = reply->rawHeader(sessionIdHeader);
@@ -367,12 +367,12 @@ namespace tremotesf::impl {
                 logDebug("Session id is {}, retrying '{}' request", newSessionId, metadata.rpcMetadata.method);
                 mSessionId = std::move(newSessionId);
                 // Retry without incrementing retryAttempts
-                postRequest(reply->request(), std::move(metadata));
+                postRequest(reply->request(), metadata);
                 return;
             }
         }
 
-        const QString detailedErrorMessage = makeDetailedErrorMessage(reply, std::move(sslErrors));
+        const QString detailedErrorMessage = makeDetailedErrorMessage(reply, sslErrors);
         logWarning("HTTP request for method '{}' failed:\n{}", metadata.rpcMetadata.method, detailedErrorMessage);
         switch (reply->error()) {
         case QNetworkReply::AuthenticationRequiredError:
@@ -382,19 +382,19 @@ namespace tremotesf::impl {
         case QNetworkReply::OperationCanceledError:
         case QNetworkReply::TimeoutError:
             logWarning("Timed out");
-            if (!retryRequest(reply->request(), std::move(metadata))) {
+            if (!retryRequest(reply->request(), metadata)) {
                 emit requestFailed(RpcError::TimedOut, reply->errorString(), detailedErrorMessage);
             }
             break;
         default: {
-            if (!retryRequest(reply->request(), std::move(metadata))) {
+            if (!retryRequest(reply->request(), metadata)) {
                 emit requestFailed(RpcError::ConnectionError, reply->errorString(), detailedErrorMessage);
             }
         }
         }
     }
 
-    QString RequestRouter::makeDetailedErrorMessage(QNetworkReply* reply, QList<QSslError>&& sslErrors) {
+    QString RequestRouter::makeDetailedErrorMessage(QNetworkReply* reply, const QList<QSslError>& sslErrors) {
         auto detailedErrorMessage = QString::fromStdString(fmt::format("{}: {}", reply->error(), reply->errorString()));
         if (reply->url() == reply->request().url()) {
             detailedErrorMessage += QString::fromStdString(fmt::format("\nURL: {}", reply->url().toString()));

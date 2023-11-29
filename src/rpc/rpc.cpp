@@ -878,6 +878,7 @@ namespace tremotesf {
             emit mRpc.onRemovedTorrents(first, last);
         }
 
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
         bool updateItem(std::unique_ptr<Torrent>& torrent, NewTorrent&& newTorrent) override {
             const bool wasFinished = torrent->data().isFinished();
             const bool wasPaused = (torrent->data().status == TorrentData::Status::Paused);
@@ -911,6 +912,7 @@ namespace tremotesf {
             emit mRpc.onChangedTorrents(first, last);
         }
 
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
         std::unique_ptr<Torrent> createItemFromNewItem(NewTorrent&& newTorrent) override {
             std::unique_ptr<Torrent> torrent{};
             if (keys) {

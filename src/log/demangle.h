@@ -14,7 +14,7 @@ namespace tremotesf {
     }
 
     template<typename T>
-    std::string typeName(T&& t) {
+    std::string typeName(const T& t) {
         return impl::demangleTypeName(typeid(t).name());
     }
 }

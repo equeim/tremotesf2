@@ -255,6 +255,8 @@ namespace tremotesf {
                 return Qt::ElideMiddle;
             }
             return Qt::ElideRight;
+        default:
+            break;
         }
         return {};
     }

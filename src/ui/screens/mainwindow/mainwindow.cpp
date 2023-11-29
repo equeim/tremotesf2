@@ -152,7 +152,7 @@ namespace tremotesf {
 
         constexpr auto kdePlatformFileDialogClassName = "KDEPlatformFileDialog";
 
-        [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(QWidgetList&& widgets) {
+        [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(const QWidgetList& widgets) {
             return {widgets.begin(), widgets.end()};
         }
 
