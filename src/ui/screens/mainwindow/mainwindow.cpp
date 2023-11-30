@@ -1375,6 +1375,7 @@ namespace tremotesf {
             }
 #        endif
 #    else
+#        warning "Window activation on Wayland is not supported because KWindowSystem version is too low"
             logWarning("Window activation on Wayland is not supported because KWindowSystem version is too low");
 #    endif
         }
