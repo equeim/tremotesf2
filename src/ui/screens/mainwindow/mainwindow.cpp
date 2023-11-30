@@ -328,8 +328,7 @@ namespace tremotesf {
         QAction mAddTorrentFileAction{
             QIcon::fromTheme("list-add"_l1),
             //: Menu item
-            qApp->translate("tremotesf", "&Add Torrent File...")
-        };
+            qApp->translate("tremotesf", "&Add Torrent File...")};
         QAction mAddTorrentLinkAction{
             QIcon::fromTheme("insert-link"_l1),
             //: Menu item
@@ -1103,7 +1102,7 @@ namespace tremotesf {
             viewMenu->addSeparator();
             QAction* lockToolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Lock Toolbar"));
             lockToolBarAction->setCheckable(true);
-            lockToolBarAction->setChecked(!mToolBar.isMovable());
+            lockToolBarAction->setChecked(Settings::instance()->isToolBarLocked());
             QObject::connect(lockToolBarAction, &QAction::triggered, &mToolBar, [this](bool checked) {
                 mToolBar.setMovable(!checked);
                 Settings::instance()->setToolBarLocked(checked);
