@@ -10,6 +10,9 @@
   instead if being inaccessible
 - "Show in file manager" actions has been renamed to "Open download directory"
 
+### Fixed
+- Initial state of "Lock toolbar" menu action
+
 ## [2.5.0] - 2023-10-15
 ### Added
 - Qt 6 support (with unreleased KF6 libraries)
