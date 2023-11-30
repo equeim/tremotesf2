@@ -136,5 +136,7 @@ int main(int argc, char** argv) {
         return EXIT_SUCCESS;
     }
 
-    return QCoreApplication::exec();
+    const int exitStatus = QCoreApplication::exec();
+    logDebug("Returning from main with exit status {}", exitStatus);
+    return exitStatus;
 }
