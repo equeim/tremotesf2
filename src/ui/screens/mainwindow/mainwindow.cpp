@@ -1350,7 +1350,9 @@ namespace tremotesf {
             widgetToActivate->activateWindow();
         }
 
-        void activeWindowOnWayland(QWidget* widgetToActivate, const QByteArray& newXdgActivationToken) {
+        void activeWindowOnWayland(
+            [[maybe_unused]] QWidget* widgetToActivate, [[maybe_unused]] const QByteArray& newXdgActivationToken
+        ) {
             // Qt supports xdg-activation since 6.3
 #    if KWINDOWSYSTEM_VERSION >= QT_VERSION_CHECK(5, 89, 0)
 #        if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
