@@ -156,6 +156,12 @@ namespace tremotesf {
         }
 
         void showAndRaiseWindow(QWidget* window) {
+            logDebug(
+                "Showing {}, it is hidden = {}, minimized = {}",
+                *window,
+                window->isHidden(),
+                window->isMinimized()
+            );
             if (window->isHidden()) {
                 window->show();
             }
@@ -1408,9 +1414,11 @@ namespace tremotesf {
             // so that we don't operate on deleted QWidgets
             for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
                 if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
+                    logDebug("Hiding {}", *widget);
                     widget->hide();
                 }
             }
+            logDebug("Hiding {}", *mWindow);
             mWindow->hide();
         }
 
