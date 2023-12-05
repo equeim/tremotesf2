@@ -4,13 +4,16 @@
 
 #include "mainwindowstatusbar.h"
 
+#include <QActionGroup>
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
+#include <QMenu>
 
 #include <KSeparator>
 
+#include "log/log.h"
 #include "rpc/serverstats.h"
 #include "rpc/servers.h"
 #include "rpc/rpc.h"
@@ -19,6 +22,9 @@
 namespace tremotesf {
     MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
         setSizeGripEnabled(false);
+
+        setContextMenuPolicy(Qt::CustomContextMenu);
+        QObject::connect(this, &QWidget::customContextMenuRequested, this, &MainWindowStatusBar::showContextMenu);
 
         auto container = new QWidget(this);
         addPermanentWidget(container, 1);
@@ -138,9 +144,48 @@ namespace tremotesf {
     void MainWindowStatusBar::updateStatusLabels() {
         mStatusLabel->setText(mRpc->status().toString());
         if (mRpc->error() != RpcError::NoError) {
-            setToolTip(mRpc->errorMessage());
+            mStatusLabel->setToolTip(mRpc->errorMessage());
         } else {
-            setToolTip({});
+            mStatusLabel->setToolTip({});
         }
+    }
+
+    void MainWindowStatusBar::showContextMenu() {
+        auto* const menu = new QMenu(this);
+        auto* const group = new QActionGroup(menu);
+        group->setExclusive(true);
+        menu->setAttribute(Qt::WA_DeleteOnClose, true);
+        const auto servers = Servers::instance()->servers();
+        const auto currentServerName = Servers::instance()->currentServerName();
+        for (const auto& server : servers) {
+            auto* const action = menu->addAction(server.name);
+            action->setCheckable(true);
+            group->addAction(action);
+            if (server.name == currentServerName) {
+                action->setChecked(true);
+            }
+        }
+        menu->addSeparator();
+        auto* const connectionSettingsAction = menu->addAction(
+            QIcon::fromTheme("network-server"_l1),
+            qApp->translate("tremotesf", "&Connection Settings")
+        );
+        QObject::connect(menu, &QMenu::triggered, this, [this, connectionSettingsAction](QAction* action) {
+            if (action == connectionSettingsAction) {
+                emit showConnectionSettingsDialog();
+            } else {
+                const auto selectedName = action->text();
+                const auto servers = Servers::instance()->servers();
+                const auto found = std::find_if(servers.begin(), servers.end(), [&](const auto& server) {
+                    return server.name == selectedName;
+                });
+                if (found != servers.end()) {
+                    Servers::instance()->setCurrentServer(selectedName);
+                } else {
+                    logWarning("Selected server {} which no longer exists", selectedName);
+                }
+            }
+        });
+        menu->popup(QCursor::pos());
     }
 }

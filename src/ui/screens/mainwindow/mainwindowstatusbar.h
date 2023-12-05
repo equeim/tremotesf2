@@ -23,6 +23,7 @@ namespace tremotesf {
         void updateLayout();
         void updateServerLabel();
         void updateStatusLabels();
+        void showContextMenu();
 
         const Rpc* mRpc{};
         QLabel* mNoServersErrorImage{};
@@ -35,6 +36,9 @@ namespace tremotesf {
         KSeparator* mThirdSeparator{};
         QLabel* mUploadSpeedImage{};
         QLabel* mUploadSpeedLabel{};
+
+    signals:
+        void showConnectionSettingsDialog();
     };
 }
 
