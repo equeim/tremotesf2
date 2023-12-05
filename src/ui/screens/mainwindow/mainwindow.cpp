@@ -218,10 +218,16 @@ namespace tremotesf {
 
             mWindow->setCentralWidget(&mSplitter);
 
-            mWindow->setStatusBar(new MainWindowStatusBar(mViewModel.rpc()));
+            auto* const statusBar = new MainWindowStatusBar(mViewModel.rpc());
+            mWindow->setStatusBar(statusBar);
             if (!Settings::instance()->isStatusBarVisible()) {
-                mWindow->statusBar()->hide();
+                statusBar->hide();
             }
+            QObject::connect(statusBar, &MainWindowStatusBar::showConnectionSettingsDialog, this, [this] {
+                showSingleInstanceDialog<ConnectionSettingsDialog>([this] {
+                    return new ConnectionSettingsDialog(mWindow);
+                });
+            });
 
             setupActions();
 
@@ -341,7 +347,8 @@ namespace tremotesf {
         QAction mAddTorrentFileAction{
             QIcon::fromTheme("list-add"_l1),
             //: Menu item
-            qApp->translate("tremotesf", "&Add Torrent File...")};
+            qApp->translate("tremotesf", "&Add Torrent File...")
+        };
         QAction mAddTorrentLinkAction{
             QIcon::fromTheme("insert-link"_l1),
             //: Menu item
