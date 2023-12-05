@@ -10,8 +10,8 @@
 #include <QIcon>
 #include <QLabel>
 #include <QMenu>
-
-#include <KSeparator>
+#include <QPainter>
+#include <QStyleOption>
 
 #include "log/log.h"
 #include "rpc/serverstats.h"
@@ -30,7 +30,8 @@ namespace tremotesf {
         addPermanentWidget(container, 1);
 
         auto layout = new QHBoxLayout(container);
-        layout->setContentsMargins(8, 4, 8, 4);
+        // Top/bottom margins are set on mServerLabel below so that they don't affect separators
+        layout->setContentsMargins(8, 0, 8, 0);
 
         mNoServersErrorImage = new QLabel(this);
         mNoServersErrorImage->setPixmap(QIcon::fromTheme("dialog-error"_l1).pixmap(16, 16));
@@ -38,15 +39,16 @@ namespace tremotesf {
         layout->addWidget(mNoServersErrorImage);
 
         mServerLabel = new QLabel(this);
+        mServerLabel->setContentsMargins(0, 5, 0, 5);
         layout->addWidget(mServerLabel);
 
-        mFirstSeparator = new KSeparator(Qt::Vertical, this);
+        mFirstSeparator = new StatusBarSeparator(this);
         layout->addWidget(mFirstSeparator);
 
         mStatusLabel = new QLabel(this);
         layout->addWidget(mStatusLabel);
 
-        mSecondSeparator = new KSeparator(Qt::Vertical, this);
+        mSecondSeparator = new StatusBarSeparator(this);
         layout->addWidget(mSecondSeparator);
 
         mDownloadSpeedImage = new QLabel(this);
@@ -57,7 +59,7 @@ namespace tremotesf {
         mDownloadSpeedLabel = new QLabel(this);
         layout->addWidget(mDownloadSpeedLabel);
 
-        mThirdSeparator = new KSeparator(Qt::Vertical, this);
+        mThirdSeparator = new StatusBarSeparator(this);
         layout->addWidget(mThirdSeparator);
 
         mUploadSpeedImage = new QLabel(this);
@@ -187,5 +189,25 @@ namespace tremotesf {
             }
         });
         menu->popup(QCursor::pos());
+    }
+
+    StatusBarSeparator::StatusBarSeparator(QWidget* parent) : QWidget(parent) {
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    }
+
+    QSize StatusBarSeparator::sizeHint() const {
+        QStyleOption opt{};
+        opt.initFrom(this);
+        opt.state.setFlag(QStyle::State_Horizontal);
+        const int extent = style()->pixelMetric(QStyle::PM_ToolBarSeparatorExtent, &opt, this);
+        return {extent, extent};
+    }
+
+    void StatusBarSeparator::paintEvent(QPaintEvent*) {
+        QPainter p(this);
+        QStyleOption opt{};
+        opt.initFrom(this);
+        opt.state.setFlag(QStyle::State_Horizontal);
+        style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator, &opt, &p, this);
     }
 }
