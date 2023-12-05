@@ -21,11 +21,14 @@ jobs:
       matrix:
         container-image: ['fedora:38', 'fedora:39', 'opensuse/tumbleweed:latest']
         compiler: [gcc]
+        qt-version: [5]
         include:
         - container-image: 'fedora:38'
           compiler: clang
         - container-image: 'fedora:39'
           compiler: clang
+        - container-image: 'opensuse/tumbleweed:latest'
+          qt-version: 6
 
     runs-on: ubuntu-latest
     container: ${{ matrix.container-image }}
@@ -40,7 +43,7 @@ jobs:
 
     - name: Set packages install command for zypper
       if: startsWith(matrix.container-image, 'opensuse')
-      run: echo 'INSTALL_PACKAGES=zypper --non-interactive in --no-recommends' >> "$GITHUB_ENV"
+      run: echo 'INSTALL_PACKAGES=zypper --non-interactive --gpg-auto-import-keys in --no-recommends' >> "$GITHUB_ENV"
 
     - name: Install Git and rpm-build
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
@@ -53,11 +56,17 @@ jobs:
     - name: Set Fedora compiler RPM macro
       id: fedora-compiler
       if: startsWith(matrix.container-image, 'fedora')
-      run: echo "rpm-macro=--define 'toolchain ${{ matrix.compiler }}'" >> "$GITHUB_OUTPUT"
+      run: |
+        echo "rpm-macro=--define 'toolchain ${{ matrix.compiler }}'" >> "$GITHUB_OUTPUT"
+
+    - name: Add KF6 repository
+      if: startsWith(matrix.container-image, 'opensuse') && matrix.qt-version == 6
+      run: |
+        zypper ar https://download.opensuse.org/repositories/KDE:/Unstable:/Frameworks/openSUSE_Factory/KDE:Unstable:Frameworks.repo
 
     - name: Install build dependencies
       run: |
-        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} -q --srpm --qf '[%{REQUIRES}\n]' rpm/tremotesf.spec)
+        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} ${{ matrix.qt-version == 6 && '--define "with_qt6 1"' || '' }} -q --srpm --qf '[%{REQUIRES}\n]' rpm/tremotesf.spec)
         ${{env.INSTALL_PACKAGES}} "${dependencies[@]}"
 
     - name: Make source archive
@@ -70,7 +79,8 @@ jobs:
         .github/workflows/make-source-archive.py --output-directory "$sourcedir" zstd
 
     - name: Build RPM
-      run: rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb rpm/tremotesf.spec
+      run: |
+        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} --${{ matrix.qt-version == 6 && 'with' || 'without' }} qt6 -bb rpm/tremotesf.spec
 
   build-deb:
     strategy:

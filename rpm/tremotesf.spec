@@ -4,6 +4,9 @@
 
 %global app_id org.equeim.Tremotesf
 
+%bcond qt6 0
+%global qt_version %[%{with qt6} ? 6 : 5]
+
 Name:       tremotesf
 Version:    2.5.0
 Release:    1%{!?suse_version:%{?dist}}
@@ -24,17 +27,17 @@ BuildRequires: desktop-file-utils
 BuildRequires: gettext
 BuildRequires: make
 BuildRequires: zstd
-BuildRequires: cmake(Qt5)
-BuildRequires: cmake(Qt5Concurrent)
-BuildRequires: cmake(Qt5Core)
-BuildRequires: cmake(Qt5DBus)
-BuildRequires: cmake(Qt5LinguistTools)
-BuildRequires: cmake(Qt5Network)
-BuildRequires: cmake(Qt5Test)
-BuildRequires: cmake(Qt5Widgets)
+BuildRequires: cmake(Qt%{qt_version})
+BuildRequires: cmake(Qt%{qt_version}Concurrent)
+BuildRequires: cmake(Qt%{qt_version}Core)
+BuildRequires: cmake(Qt%{qt_version}DBus)
+BuildRequires: cmake(Qt%{qt_version}LinguistTools)
+BuildRequires: cmake(Qt%{qt_version}Network)
+BuildRequires: cmake(Qt%{qt_version}Test)
+BuildRequires: cmake(Qt%{qt_version}Widgets)
 BuildRequires: cmake(fmt)
-BuildRequires: cmake(KF5WidgetsAddons)
-BuildRequires: cmake(KF5WindowSystem)
+BuildRequires: cmake(KF%{qt_version}WidgetsAddons)
+BuildRequires: cmake(KF%{qt_version}WindowSystem)
 BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
 BuildRequires: openssl-devel
@@ -70,7 +73,7 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %build
-%cmake
+%cmake -D TREMOTESF_QT6=%[%{with qt6} ? "ON" : "OFF"]
 %cmake_build
 
 %check
