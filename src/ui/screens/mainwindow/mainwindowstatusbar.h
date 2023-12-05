@@ -8,10 +8,11 @@
 #include <QStatusBar>
 
 class QLabel;
-class KSeparator;
 
 namespace tremotesf {
     class Rpc;
+
+    class StatusBarSeparator;
 
     class MainWindowStatusBar final : public QStatusBar {
         Q_OBJECT
@@ -28,17 +29,27 @@ namespace tremotesf {
         const Rpc* mRpc{};
         QLabel* mNoServersErrorImage{};
         QLabel* mServerLabel{};
-        KSeparator* mFirstSeparator{};
+        StatusBarSeparator* mFirstSeparator{};
         QLabel* mStatusLabel{};
-        KSeparator* mSecondSeparator{};
+        StatusBarSeparator* mSecondSeparator{};
         QLabel* mDownloadSpeedImage{};
         QLabel* mDownloadSpeedLabel{};
-        KSeparator* mThirdSeparator{};
+        StatusBarSeparator* mThirdSeparator{};
         QLabel* mUploadSpeedImage{};
         QLabel* mUploadSpeedLabel{};
 
     signals:
         void showConnectionSettingsDialog();
+    };
+
+    class StatusBarSeparator final : public QWidget {
+        Q_OBJECT
+    public:
+        explicit StatusBarSeparator(QWidget* parent = nullptr);
+        QSize sizeHint() const override;
+
+    protected:
+        void paintEvent(QPaintEvent* event) override;
     };
 }
 
