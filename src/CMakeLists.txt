@@ -242,19 +242,24 @@ if (UNIX)
         target_sources(
             tremotesf_objects
             PRIVATE
-            filemanagerlauncher_fallback.cpp
             ipc/ipcclient_socket.cpp
             ipc/ipcserver_socket.cpp
             ipc/ipcserver_socket.h
             ui/notificationscontroller_fallback.cpp
         )
-
         if (APPLE)
             target_sources(
                 tremotesf_objects
                 PRIVATE
                 macoshelpers.h
                 macoshelpers.mm
+                filemanagerlauncher_macos.mm
+            )
+        else ()
+            target_sources(
+                tremotesf_objects
+                PRIVATE
+                filemanagerlauncher_fallback.cpp
             )
         endif ()
     endif ()
