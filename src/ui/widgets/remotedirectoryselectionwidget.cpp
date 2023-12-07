@@ -17,10 +17,7 @@
 #include "target_os.h"
 #include "rpc/rpc.h"
 #include "rpc/servers.h"
-
-#ifdef Q_OS_MACOS
-#    include "macoshelpers.h"
-#endif
+#include "ui/stylehelpers.h"
 
 namespace tremotesf {
     RemoteDirectorySelectionWidgetViewModel::RemoteDirectorySelectionWidgetViewModel(
@@ -94,13 +91,13 @@ namespace tremotesf {
         mSelectDirectoryButton = new QPushButton(QIcon::fromTheme("document-open"_l1), QString(), this);
         layout->addWidget(mSelectDirectoryButton);
         mSelectDirectoryButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-#ifdef Q_OS_MACOS
-        if (isUsingMacOSStyle()) {
-            // Button becomes ugly if we don't set these specific values
-            mSelectDirectoryButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-            mSelectDirectoryButton->setMaximumSize(32, 32);
+        if constexpr (targetOs == TargetOs::UnixMacOS) {
+            if (determineStyle() == KnownStyle::macOS) {
+                // Button becomes ugly if we don't set these specific values
+                mSelectDirectoryButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+                mSelectDirectoryButton->setMaximumSize(32, 32);
+            }
         }
-#endif
 
         mViewModel = createViewModel(std::move(path), rpc);
 
