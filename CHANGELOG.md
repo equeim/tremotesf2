@@ -10,9 +10,11 @@
 - "Open" and "Show in file manager" actions now show error dialog if file/directory does not exist,
   instead if being inaccessible
 - "Show in file manager" actions has been renamed to "Open download directory"
+- Progress bar's text is now drawn according to Qt style (though Breeze style still draws text next to the progress bar, not inside of it)
 
 ### Fixed
 - Initial state of "Lock toolbar" menu action
+- Progress bar being drawn in incorrect column in torrent's files list
 
 ## [2.5.0] - 2023-10-15
 ### Added
