@@ -4,7 +4,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mainwindow.h"
-#include "rpc/mounteddirectoriesutils.h"
 
 #include <algorithm>
 #include <functional>
@@ -51,16 +50,12 @@
 
 #include "log/log.h"
 #include "rpc/serverstats.h"
-#include "target_os.h"
+#include "rpc/mounteddirectoriesutils.h"
 #include "rpc/torrent.h"
-
 #include "rpc/servers.h"
-#include "filemanagerlauncher.h"
-#include "desktoputils.h"
-#include "settings.h"
-#include "formatutils.h"
 
 #include "ui/savewindowstatedispatcher.h"
+#include "ui/stylehelpers.h"
 #include "ui/screens/aboutdialog.h"
 #include "ui/screens/addtorrent/addtorrentdialog.h"
 #include "ui/screens/connectionsettings/servereditdialog.h"
@@ -72,12 +67,17 @@
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
-#include "torrentsmodel.h"
-#include "torrentsproxymodel.h"
+#include "desktoputils.h"
+#include "filemanagerlauncher.h"
+#include "formatutils.h"
 #include "mainwindowsidebar.h"
 #include "mainwindowstatusbar.h"
-#include "torrentsview.h"
 #include "mainwindowviewmodel.h"
+#include "settings.h"
+#include "target_os.h"
+#include "torrentsmodel.h"
+#include "torrentsproxymodel.h"
+#include "torrentsview.h"
 
 #ifdef Q_OS_MACOS
 #    include "macoshelpers.h"
@@ -1611,11 +1611,11 @@ namespace tremotesf {
         setContextMenuPolicy(Qt::NoContextMenu);
         setToolButtonStyle(Settings::instance()->toolButtonStyle());
         setAcceptDrops(true);
-#ifdef Q_OS_MACOS
-        if (isUsingMacOSStyle()) {
-            setUnifiedTitleAndToolBarOnMac(true);
+        if constexpr (targetOs == TargetOs::UnixMacOS) {
+            if (determineStyle() == KnownStyle::macOS) {
+                setUnifiedTitleAndToolBarOnMac(true);
+            }
         }
-#endif
     }
 
     MainWindow::~MainWindow() = default;

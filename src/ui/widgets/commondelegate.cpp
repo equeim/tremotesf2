@@ -4,23 +4,44 @@
 
 #include "commondelegate.h"
 
+#include <stdexcept>
+#include <utility>
+
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QFontMetrics>
 #include <QHelpEvent>
 #include <QPainter>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QStyleOptionProgressBar>
 #include <QToolTip>
 
-#ifdef Q_OS_MACOS
-#    include <stdexcept>
-#    include <QStyleFactory>
-#    include "macoshelpers.h"
-#endif
+#include "ui/stylehelpers.h"
+#include "target_os.h"
 
 namespace tremotesf {
     namespace {
+        std::pair<QStyle*, std::optional<KnownStyle>> styleForProgressBar(QStyle* style) {
+            const auto knownStyle = determineStyle(style);
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                // CE_ProgressBar is broken with macOS style
+                // https://bugreports.qt.io/browse/QTBUG-107851
+                if (knownStyle == KnownStyle::macOS) {
+                    static QStyle* const fusionStyle = [] {
+                        const auto s = QStyleFactory::create("fusion");
+                        if (!s) {
+                            throw std::runtime_error("Failed to create Fusion style");
+                        }
+                        s->setParent(qApp);
+                        return s;
+                    }();
+                    return {fusionStyle, std::nullopt};
+                }
+            }
+            return {style, knownStyle};
+        }
+
         bool isTextElided(const QString& text, const QStyleOptionViewItem& option) {
             const QFontMetrics metrics(option.font);
             const int textWidth = metrics.horizontalAdvance(text);
@@ -31,22 +52,6 @@ namespace tremotesf {
 
             return textWidth > textRect.width();
         }
-
-        constexpr int spaceBetweenProgressBarAndText = 6;
-
-#ifdef Q_OS_MACOS
-        QStyle* fusionStyle() {
-            static QStyle* const style = [] {
-                const auto s = QStyleFactory::create("fusion");
-                if (!s) {
-                    throw std::runtime_error("Failed to create Fusion style");
-                }
-                s->setParent(qApp);
-                return s;
-            }();
-            return style;
-        }
-#endif
     }
 
     void CommonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
@@ -55,44 +60,56 @@ namespace tremotesf {
 
         const auto style = opt.widget ? opt.widget->style() : QApplication::style();
 
-        if (mTextElideModeRole.has_value()) {
-            opt.textElideMode = index.data(*mTextElideModeRole).value<Qt::TextElideMode>();
-        }
-
-        if (mProgressBarColumn.has_value() && mProgressRole.has_value() && index.column() == mProgressBarColumn) {
-            opt.displayAlignment = Qt::AlignRight | Qt::AlignVCenter;
-            opt.textElideMode = Qt::ElideNone;
-            style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
-            const int horizontalMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin);
-            const int verticalMargin = style->pixelMetric(QStyle::PM_FocusFrameVMargin);
-            const int textWidth = opt.fontMetrics.horizontalAdvance(opt.text) + horizontalMargin;
-
-            QStyleOptionProgressBar progressBar{};
-            progressBar.rect = opt.rect.marginsRemoved(
-                QMargins(horizontalMargin, verticalMargin, textWidth + spaceBetweenProgressBarAndText, verticalMargin)
-            );
-            if (progressBar.rect.width() > 0) {
-                progressBar.minimum = 0;
-                progressBar.maximum = 100;
-                const auto progress = index.data(*mProgressRole).toDouble();
-                progressBar.progress = static_cast<int>(progress * 100);
-                if (progressBar.progress < 0) {
-                    progressBar.progress = 0;
-                } else if (progressBar.progress > 100) {
-                    progressBar.progress = 100;
-                }
-                progressBar.state = opt.state | QStyle::State_Horizontal;
-                progressBar.palette = opt.palette;
-                // Sometimes this is out of sync
-                if (opt.widget && opt.widget->isActiveWindow()) {
-                    progressBar.palette.setCurrentColorGroup(QPalette::Active);
-                }
-                styleForProgressBar(style)->drawControl(QStyle::CE_ProgressBar, &progressBar, painter, opt.widget);
+        if (!(mProgressBarColumn.has_value() && mProgressRole.has_value() && index.column() == mProgressBarColumn)) {
+            if (mTextElideModeRole.has_value()) {
+                opt.textElideMode = index.data(*mTextElideModeRole).value<Qt::TextElideMode>();
             }
-        } else {
+            // Not progress bar
             style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+            return;
         }
+
+        // Progress bar
+
+        // Draw background
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
+
+        const int horizontalMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin);
+        const int verticalMargin = style->pixelMetric(QStyle::PM_FocusFrameVMargin);
+
+        QStyleOptionProgressBar progressBar{};
+        progressBar.rect =
+            opt.rect.marginsRemoved(QMargins(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin));
+        progressBar.minimum = 0;
+        progressBar.maximum = 100;
+        const auto progress = index.data(*mProgressRole).toDouble();
+        progressBar.progress = static_cast<int>(progress * 100);
+        if (progressBar.progress < 0) {
+            progressBar.progress = 0;
+        } else if (progressBar.progress > 100) {
+            progressBar.progress = 100;
+        }
+        progressBar.state = opt.state | QStyle::State_Horizontal;
+        progressBar.text = opt.text;
+        progressBar.textVisible = true;
+        progressBar.palette = opt.palette;
+        // Sometimes this is out of sync
+        if (opt.widget && opt.widget->isActiveWindow()) {
+            progressBar.palette.setCurrentColorGroup(QPalette::Active);
+        }
+        const auto [progressBarStyle, knownStyle] = styleForProgressBar(style);
+        if (knownStyle == KnownStyle::Breeze) {
+            // Breeze style incorrectly uses WindowText color for text
+            if (progressBar.state.testFlag(QStyle::State_Selected)) {
+                progressBar.palette.setColor(
+                    QPalette::WindowText,
+                    progressBar.palette.color(QPalette::HighlightedText)
+                );
+            } else {
+                progressBar.palette.setColor(QPalette::WindowText, progressBar.palette.color(QPalette::Text));
+            }
+        }
+        progressBarStyle->drawControl(QStyle::CE_ProgressBar, &progressBar, painter, opt.widget);
     }
 
     bool CommonDelegate::helpEvent(
@@ -135,16 +152,5 @@ namespace tremotesf {
 
         event->ignore();
         return false;
-    }
-
-    QStyle* CommonDelegate::styleForProgressBar(QStyle* style) const {
-#ifdef Q_OS_MACOS
-        // CE_ProgressBar is broken with macOS style
-        // https://bugreports.qt.io/browse/QTBUG-107851
-        if (isThisMacOSStyle(style)) {
-            return fusionStyle();
-        }
-#endif
-        return style;
     }
 }

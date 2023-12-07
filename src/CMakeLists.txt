@@ -88,6 +88,8 @@ add_library(
     ui/notificationscontroller.h
     ui/savewindowstatedispatcher.cpp
     ui/savewindowstatedispatcher.h
+    ui/stylehelpers.cpp
+    ui/stylehelpers.h
     ui/systemcolorsprovider.h
     ui/itemmodels/baseproxymodel.cpp
     ui/itemmodels/baseproxymodel.h
