@@ -48,7 +48,7 @@ namespace tremotesf {
         QComboBox* darkThemeComboBox{};
         std::vector<Settings::DarkThemeMode> darkThemeComboBoxValues{};
         QCheckBox* systemAccentColorCheckBox{};
-        if constexpr (isTargetOsWindows) {
+        if constexpr (targetOs == TargetOs::Windows) {
             //: Options section
             auto appearanceGroupBox = new QGroupBox(qApp->translate("tremotesf", "Appearance"), this);
             auto appearanceGroupBoxLayout = new QFormLayout(appearanceGroupBox);
@@ -225,7 +225,7 @@ namespace tremotesf {
         addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
         finishedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnFinishedTorrentsSinceLastConnection());
 
-        if constexpr (isTargetOsWindows) {
+        if constexpr (targetOs == TargetOs::Windows) {
             darkThemeComboBox->setCurrentIndex(
                 // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(darkThemeComboBoxValues, settings->darkThemeMode()).value()
@@ -252,7 +252,7 @@ namespace tremotesf {
             settings->setNotificationsOnFinishedTorrentsSinceLastConnection(
                 finishedSinceLastConnectionCheckBox->isChecked()
             );
-            if constexpr (isTargetOsWindows) {
+            if constexpr (targetOs == TargetOs::Windows) {
                 if (const int index = darkThemeComboBox->currentIndex(); index != -1) {
                     settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
                 }

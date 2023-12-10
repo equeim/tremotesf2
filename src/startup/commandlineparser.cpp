@@ -29,7 +29,7 @@ namespace tremotesf {
         }
 
         std::string_view executableFileName(std::string_view arg0) {
-            if constexpr (isTargetOsWindows) {
+            if constexpr (targetOs == TargetOs::Windows) {
                 if (const auto name = substrAfterChar(arg0, '\\'); name) {
                     return *name;
                 }

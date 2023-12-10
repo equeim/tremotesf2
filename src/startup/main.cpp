@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     const QApplication app(argc, argv);
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
-    if constexpr (isTargetOsWindows) {
+    if constexpr (targetOs == TargetOs::Windows) {
         windowsInitApplication();
     }
 #if defined(TREMOTESF_BUNDLED_ICONS_DIR) && defined(TREMOTESF_BUNDLED_ICON_THEME)
