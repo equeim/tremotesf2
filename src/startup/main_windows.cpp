@@ -11,7 +11,6 @@
 
 #include <QApplication>
 
-#include "literals.h"
 #include "log/log.h"
 #include "startup/windowsmessagehandler.h"
 #include "ui/darkthemeapplier_windows.h"
@@ -64,5 +63,3 @@ namespace tremotesf {
         applyDarkThemeToPalette(systemColorsProvider);
     }
 }
-
-#include "main_windows.moc"
