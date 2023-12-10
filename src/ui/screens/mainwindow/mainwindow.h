@@ -23,11 +23,9 @@ namespace tremotesf {
         void showMinimized(bool minimized);
 
     protected:
-#ifdef Q_OS_MACOS
         bool event(QEvent* event) override;
         void showEvent(QShowEvent* event) override;
         void hideEvent(QHideEvent* event) override;
-#endif
         void closeEvent(QCloseEvent* event) override;
         void dragEnterEvent(QDragEnterEvent* event) override;
         void dropEvent(QDropEvent* event) override;
