@@ -38,7 +38,6 @@ function(set_common_options_on_targets)
         -Wall
         -Wextra
         -Wpedantic
-        -Werror=non-virtual-dtor
         -Wcast-align
         -Woverloaded-virtual
         -Wconversion
@@ -46,6 +45,8 @@ function(set_common_options_on_targets)
         -Wdouble-promotion
         -Wformat=2
         -Werror=format
+        -Werror=non-virtual-dtor
+        -Werror=return-type
     )
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         list(APPEND gcc_style_warnings -Wlogical-op-parentheses -Wno-gnu-zero-variadic-macro-arguments)
