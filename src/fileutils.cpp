@@ -278,18 +278,15 @@ namespace tremotesf {
         }
 
         bool isTransmissionSessionIdFileExists(const QByteArray& sessionId) {
-            if constexpr (targetOs != TargetOs::UnixAndroid) {
-                const auto file = QStandardPaths::locate(sessionIdFileLocation, sessionIdFilePrefix % sessionId);
-                if (!file.isEmpty()) {
-                    logInfo(
-                        "isSessionIdFileExists: found transmission-daemon session id file {}",
-                        QDir::toNativeSeparators(file)
-                    );
-                    return true;
-                }
-                logInfo("isSessionIdFileExists: did not find transmission-daemon session id file");
+            const auto file = QStandardPaths::locate(sessionIdFileLocation, sessionIdFilePrefix % sessionId);
+            if (!file.isEmpty()) {
+                logInfo(
+                    "isSessionIdFileExists: found transmission-daemon session id file {}",
+                    QDir::toNativeSeparators(file)
+                );
+                return true;
             }
-            return false;
+            logInfo("isSessionIdFileExists: did not find transmission-daemon session id file");
         }
     }
 }
