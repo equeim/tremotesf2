@@ -70,6 +70,7 @@
 #include "desktoputils.h"
 #include "filemanagerlauncher.h"
 #include "formatutils.h"
+#include "macoshelpers.h"
 #include "mainwindowsidebar.h"
 #include "mainwindowstatusbar.h"
 #include "mainwindowviewmodel.h"
@@ -78,10 +79,6 @@
 #include "torrentsmodel.h"
 #include "torrentsproxymodel.h"
 #include "torrentsview.h"
-
-#ifdef Q_OS_MACOS
-#    include "macoshelpers.h"
-#endif
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::ApplicationState)
@@ -294,37 +291,41 @@ namespace tremotesf {
                 mTrayIcon.hide();
             });
 
-#ifdef Q_OS_MACOS
-            QObject::connect(qApp, &QGuiApplication::applicationStateChanged, this, [this](Qt::ApplicationState state) {
-                logDebug("Application state is {}", state);
-                if (state == Qt::ApplicationActive) {
-                    // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
-                    // applicationStateChanged signal is emitted with ApplicationActive
-                    // We need to show our window manually in this case
-                    if (mWindow->isHidden()) {
-                        logInfo("Application is activated by the system, showing windows");
-                        showWindowsAndActivateMainOrDialog();
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                QObject::connect(
+                    qApp,
+                    &QGuiApplication::applicationStateChanged,
+                    this,
+                    [this](Qt::ApplicationState state) {
+                        logDebug("Application state is {}", state);
+                        if (state == Qt::ApplicationActive) {
+                            // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
+                            // applicationStateChanged signal is emitted with ApplicationActive
+                            // We need to show our window manually in this case
+                            if (mWindow->isHidden()) {
+                                logInfo("Application is activated by the system, showing windows");
+                                showWindowsAndActivateMainOrDialog();
+                            }
+                        } else {
+                            // On macOS application can be hidden without mWindow becoming hidden
+                            // In this case applicationStateChanged is emitted with ApplicationInactive
+                            // while isNSAppHidden returns true,
+                            // and need to update show/hide tray icon action
+                            if (isNSAppHidden() && !mWindow->isHidden()) {
+                                logInfo("Application is hidden by the system, hiding windows");
+                                hideWindows();
+                            }
+                        }
                     }
-                } else {
-                    // On macOS application can be hidden without mWindow becoming hidden
-                    // In this case applicationStateChanged is emitted with ApplicationInactive
-                    // while isNSAppHidden returns true,
-                    // and need to update show/hide tray icon action
-                    if (isNSAppHidden() && !mWindow->isHidden()) {
-                        logInfo("Application is hidden by the system, hiding windows");
-                        hideWindows();
-                    }
-                }
-            });
-#endif
+                );
+            }
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
 
-#ifdef Q_OS_MACOS
         void updateShowHideAction() {
             QObject::disconnect(&mShowHideAppAction, &QAction::triggered, nullptr, nullptr);
-            if (mWindow->isHidden() || mWindow->isMinimized()) {
+            if (shouldShowWindows()) {
                 mShowHideAppAction.setText(qApp->translate("tremotesf", "&Show Tremotesf"));
                 QObject::connect(&mShowHideAppAction, &QAction::triggered, this, [this] {
                     showWindowsAndActivateMainOrDialog();
@@ -334,7 +335,6 @@ namespace tremotesf {
                 QObject::connect(&mShowHideAppAction, &QAction::triggered, this, [this] { hideWindows(); });
             }
         }
-#endif
 
         /**
          * @return true if event should be ignored, false otherwise
@@ -384,9 +384,7 @@ namespace tremotesf {
         MainWindowSideBar mSideBar{mViewModel.rpc(), &mTorrentsProxyModel};
         std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs{};
 
-#ifdef Q_OS_MACOS
         QAction mShowHideAppAction{};
-#endif
         //: Button / menu item to connect to server
         QAction mConnectAction{qApp->translate("tremotesf", "&Connect")};
         //: Button / menu item to disconnect from server
@@ -432,9 +430,7 @@ namespace tremotesf {
 #endif
 
         void setupActions() {
-#ifdef Q_OS_MACOS
             updateShowHideAction();
-#endif
 
             QObject::connect(&mConnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::connect);
             QObject::connect(&mDisconnectAction, &QAction::triggered, mViewModel.rpc(), &Rpc::disconnect);
@@ -1327,20 +1323,19 @@ namespace tremotesf {
         void setupTrayIcon() {
             auto contextMenu = new QMenu(mWindow);
 
-#ifdef Q_OS_MACOS
             contextMenu->addAction(&mShowHideAppAction);
             contextMenu->addSeparator();
-#else
-            QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
-                if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
-                    if (mWindow->isHidden() || mWindow->isMinimized()) {
-                        showWindowsAndActivateMainOrDialog();
-                    } else {
-                        hideWindows();
+            if constexpr (targetOs != TargetOs::UnixMacOS) {
+                QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
+                    if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+                        if (shouldShowWindows()) {
+                            showWindowsAndActivateMainOrDialog();
+                        } else {
+                            hideWindows();
+                        }
                     }
-                }
-            });
-#endif
+                });
+            }
 
             contextMenu->addAction(&mConnectAction);
             contextMenu->addAction(&mDisconnectAction);
@@ -1381,19 +1376,21 @@ namespace tremotesf {
             });
         }
 
+        bool shouldShowWindows() const { return mWindow->isHidden() || mWindow->isMinimized(); }
+
         void showWindowsAndActivateMainOrDialog(
             [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
             [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
         ) {
             logInfo("Showing windows");
-#ifdef Q_OS_MACOS
-            if (isNSAppHidden()) {
-                logDebug("NSApp is hidden, unhiding it");
-                unhideNSApp();
-            } else {
-                logDebug("NSApp is not hidden");
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                if (isNSAppHidden()) {
+                    logDebug("NSApp is hidden, unhiding it");
+                    unhideNSApp();
+                } else {
+                    logDebug("NSApp is not hidden");
+                }
             }
-#endif
             showAndRaiseWindow(mWindow);
             QWidget* lastDialog = nullptr;
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
@@ -1490,11 +1487,11 @@ namespace tremotesf {
             }
             logDebug("Hiding {}", *mWindow);
             mWindow->hide();
-#ifdef Q_OS_MACOS
-            // We need this so that system menu bar switches to previous app
-            logDebug("Hiding NSApp");
-            hideNSApp();
-#endif
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                // We need this so that system menu bar switches to previous app
+                logDebug("Hiding NSApp");
+                hideNSApp();
+            }
         }
 
         void runAfterDelay(const std::function<void()>& function) {
@@ -1626,7 +1623,6 @@ namespace tremotesf {
         }
     }
 
-#ifdef Q_OS_MACOS
     bool MainWindow::event(QEvent* event) {
         if (event->type() == QEvent::WindowStateChange) {
             mImpl->updateShowHideAction();
@@ -1643,7 +1639,6 @@ namespace tremotesf {
         mImpl->updateShowHideAction();
         QMainWindow::hideEvent(event);
     }
-#endif
 
     void MainWindow::closeEvent(QCloseEvent* event) {
         if (mImpl->onCloseEvent()) {
