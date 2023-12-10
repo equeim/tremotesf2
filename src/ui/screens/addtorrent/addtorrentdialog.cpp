@@ -42,7 +42,8 @@
 namespace tremotesf {
     namespace {
         constexpr std::array priorityComboBoxItems{
-            TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low};
+            TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low
+        };
 
         TorrentData::Priority priorityFromComboBoxIndex(int index) {
             if (index == -1) {

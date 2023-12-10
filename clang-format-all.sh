@@ -4,4 +4,4 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-exec find src/tremotesf \( -name '*.cpp' -or -name '*.h' \) -not -name 'recoloringsvgiconengine.*' -exec clang-format --verbose -i {} +
+exec find src -path src/3rdparty -prune -or \( \( -name '*.cpp' -or -name '*.h' \) -and -not -name 'recoloringsvgiconengine.*' \) -exec clang-format --verbose -i {} +

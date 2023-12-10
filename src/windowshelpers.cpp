@@ -16,7 +16,12 @@
 namespace tremotesf {
     namespace {
         bool isWindowsVersionOrGreater(DWORD major, DWORD minor, DWORD build) {
-            logDebug("isWindowsVersionOrGreater() called with: major = {}, minor = {}, build = {}", major, minor, build);
+            logDebug(
+                "isWindowsVersionOrGreater() called with: major = {}, minor = {}, build = {}",
+                major,
+                minor,
+                build
+            );
             OSVERSIONINFOEXW info{};
             info.dwOSVersionInfoSize = sizeof(info);
             info.dwMajorVersion = major;
@@ -31,8 +36,9 @@ namespace tremotesf {
                 VER_BUILDNUMBER,
                 VER_GREATER_EQUAL
             );
-            const auto ret = VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) !=
-                   FALSE;
+            const auto ret =
+                VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) !=
+                FALSE;
             logDebug("isWindowsVersionOrGreater: returning {}", ret);
             return ret;
         }
@@ -45,7 +51,6 @@ namespace tremotesf {
          * and MSVC and GCC >= 12 use FormatMessageA function which may not return UTF-8
          */
         class Win32Category final : public std::error_category {
-
         public:
             const char* name() const noexcept override { return "Win32Category"; }
 

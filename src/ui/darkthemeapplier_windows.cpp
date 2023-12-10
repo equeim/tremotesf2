@@ -155,7 +155,8 @@ namespace tremotesf {
             return {
                 blend(source.red(), background.red()),
                 blend(source.green(), background.green()),
-                blend(source.blue(), background.blue())};
+                blend(source.blue(), background.blue())
+            };
         }
 
         double getRelativeLuminance(QColor color) {
@@ -291,10 +292,8 @@ namespace tremotesf {
                 }
                 throw std::logic_error("Unknown DarkThemeMode value");
             }();
-            const auto accentColors =
-                settings->useSystemAccentColor()
-                    ? systemColorsProvider->accentColors()
-                    : SystemColorsProvider::AccentColors{};
+            const auto accentColors = settings->useSystemAccentColor() ? systemColorsProvider->accentColors()
+                                                                       : SystemColorsProvider::AccentColors{};
             applyWindowsPalette(darkTheme, accentColors);
         };
         apply();

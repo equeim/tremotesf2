@@ -86,7 +86,8 @@ namespace tremotesf {
         constexpr auto encryptionModeMapper = EnumMapper(std::array{
             EnumMapping(ServerSettingsData::EncryptionMode::Allowed, "tolerated"_l1),
             EnumMapping(ServerSettingsData::EncryptionMode::Preferred, "preferred"_l1),
-            EnumMapping(ServerSettingsData::EncryptionMode::Required, "required"_l1)});
+            EnumMapping(ServerSettingsData::EncryptionMode::Required, "required"_l1)
+        });
     }
 
     bool ServerSettingsData::canRenameFiles() const { return (rpcVersion >= 15); }

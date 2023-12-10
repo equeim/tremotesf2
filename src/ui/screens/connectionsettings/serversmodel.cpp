@@ -176,11 +176,13 @@ namespace tremotesf {
                         timeout,
 
                         autoReconnectEnabled,
-                        autoReconnectInterval},
+                        autoReconnectInterval
+                    },
                 .mountedDirectories = mountedDirectories,
                 .lastTorrents = {},
                 .lastDownloadDirectories = {},
-                .lastDownloadDirectory = {}});
+                .lastDownloadDirectory = {}
+            });
             endInsertRows();
             if (row == 0) {
                 mCurrentServer = name;

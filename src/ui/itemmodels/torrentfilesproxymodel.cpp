@@ -7,7 +7,9 @@
 #include "ui/itemmodels/basetorrentfilesmodel.h"
 
 namespace tremotesf {
-    TorrentFilesProxyModel::TorrentFilesProxyModel(BaseTorrentFilesModel* sourceModel, int sortRole, int fallbackColumn, QObject* parent)
+    TorrentFilesProxyModel::TorrentFilesProxyModel(
+        BaseTorrentFilesModel* sourceModel, int sortRole, int fallbackColumn, QObject* parent
+    )
         : BaseProxyModel(sourceModel, sortRole, fallbackColumn, parent) {}
 
     bool TorrentFilesProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {

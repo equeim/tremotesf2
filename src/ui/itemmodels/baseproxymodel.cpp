@@ -35,13 +35,16 @@ namespace tremotesf {
 
     bool BaseProxyModel::lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const {
         std::partial_ordering ord = compare(source_left, source_right);
-        if (ord == std::partial_ordering::equivalent && mFallbackColumn.has_value() && source_left.column() != *mFallbackColumn) {
-            ord = compare(source_left.siblingAtColumn(*mFallbackColumn), source_right.siblingAtColumn(*mFallbackColumn));
+        if (ord == std::partial_ordering::equivalent && mFallbackColumn.has_value() &&
+            source_left.column() != *mFallbackColumn) {
+            ord =
+                compare(source_left.siblingAtColumn(*mFallbackColumn), source_right.siblingAtColumn(*mFallbackColumn));
         }
         return ord == std::partial_ordering::less;
     }
 
-    std::partial_ordering BaseProxyModel::compare(const QModelIndex& source_left, const QModelIndex& source_right) const {
+    std::partial_ordering
+    BaseProxyModel::compare(const QModelIndex& source_left, const QModelIndex& source_right) const {
         const auto role = sortRole();
         const QVariant leftData = source_left.data(role);
         const QVariant rightData = source_right.data(role);

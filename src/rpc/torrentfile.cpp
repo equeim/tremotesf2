@@ -17,7 +17,8 @@ namespace tremotesf {
         constexpr auto priorityMapper = EnumMapper(std::array{
             EnumMapping(TorrentFile::Priority::Low, -1),
             EnumMapping(TorrentFile::Priority::Normal, 0),
-            EnumMapping(TorrentFile::Priority::High, 1)});
+            EnumMapping(TorrentFile::Priority::High, 1)
+        });
     }
 
     TorrentFile::TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap)

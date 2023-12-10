@@ -47,17 +47,20 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
 namespace tremotesf {
     namespace {
         constexpr TorrentData::Priority priorityComboBoxItems[] = {
-            TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low};
+            TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low
+        };
 
         constexpr TorrentData::RatioLimitMode ratioLimitComboBoxItems[] = {
             TorrentData::RatioLimitMode::Global,
             TorrentData::RatioLimitMode::Unlimited,
-            TorrentData::RatioLimitMode::Single};
+            TorrentData::RatioLimitMode::Single
+        };
 
         constexpr TorrentData::IdleSeedingLimitMode idleSeedingLimitComboBoxItems[] = {
             TorrentData::IdleSeedingLimitMode::Global,
             TorrentData::IdleSeedingLimitMode::Unlimited,
-            TorrentData::IdleSeedingLimitMode::Single};
+            TorrentData::IdleSeedingLimitMode::Single
+        };
     }
 
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)

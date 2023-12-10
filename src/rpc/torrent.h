@@ -53,8 +53,9 @@ namespace tremotesf {
         [[nodiscard]] bool update(const QJsonObject& object, bool firstTime, const Rpc* rpc);
 
         enum class UpdateKey;
-        [[nodiscard]] bool
-        update(std::span<const std::optional<UpdateKey>> keys, const QJsonArray& values, bool firstTime, const Rpc* rpc);
+        [[nodiscard]] bool update(
+            std::span<const std::optional<UpdateKey>> keys, const QJsonArray& values, bool firstTime, const Rpc* rpc
+        );
 
         int id{};
         QString hashString{};

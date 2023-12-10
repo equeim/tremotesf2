@@ -14,7 +14,6 @@
 
 namespace tremotesf {
     class IpcClientSocket final : public IpcClient {
-
     public:
         IpcClientSocket() {
             mSocket.connectToServer(IpcServerSocket::socketName());
