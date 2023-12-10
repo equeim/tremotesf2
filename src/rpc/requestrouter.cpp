@@ -168,7 +168,7 @@ namespace tremotesf::impl {
                 mAuthorizationHeaderValue = QByteArray("Basic ").append(base64Credentials);
             }
             if (https) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
+#if QT_VERSION_MAJOR >= 6
                 logDebug(" - Available TLS backends: {}", QSslSocket::availableBackends());
                 logDebug(" - Active TLS backend: {}", QSslSocket::activeBackend());
                 logDebug(" - Supported TLS protocols: {}", QSslSocket::supportedProtocols());
