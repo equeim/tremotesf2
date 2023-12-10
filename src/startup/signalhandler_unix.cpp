@@ -31,7 +31,8 @@ namespace tremotesf {
             std::pair{SIGINT, "SIGINT"sv},
             std::pair{SIGTERM, "SIGTERM"sv},
             std::pair{SIGHUP, "SIGHUP"sv},
-            std::pair{SIGQUIT, "SIGQUIT"sv}};
+            std::pair{SIGQUIT, "SIGQUIT"sv}
+        };
 
         std::optional<std::string_view> signalName(int signal) {
             for (auto [expectedSignal, name] : expectedSignals) {

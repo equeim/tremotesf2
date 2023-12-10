@@ -53,7 +53,8 @@ namespace tremotesf {
                     QString display = toNativeSeparators(dir);
                     return TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::ComboBoxItem{
                         .path = std::move(dir),
-                        .displayPath = std::move(display)};
+                        .displayPath = std::move(display)
+                    };
                 }
             );
         return ret;

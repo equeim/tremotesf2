@@ -76,7 +76,8 @@ namespace tremotesf {
 
         private:
             OrgFreedesktopNotificationsInterface mInterface{
-                "org.freedesktop.Notifications"_l1, "/org/freedesktop/Notifications"_l1, QDBusConnection::sessionBus()};
+                "org.freedesktop.Notifications"_l1, "/org/freedesktop/Notifications"_l1, QDBusConnection::sessionBus()
+            };
         };
     }
 

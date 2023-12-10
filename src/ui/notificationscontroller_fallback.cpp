@@ -5,7 +5,8 @@
 #include "notificationscontroller.h"
 
 namespace tremotesf {
-    NotificationsController* NotificationsController::createInstance(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent) {
+    NotificationsController*
+    NotificationsController::createInstance(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent) {
         return new NotificationsController(trayIcon, rpc, parent);
     }
 }

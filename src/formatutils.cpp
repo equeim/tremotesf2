@@ -39,47 +39,56 @@ namespace tremotesf::formatutils {
             ByteUnitStrings{//: Size suffix in bytes
                             [] { return qApp->translate("tremotesf", "%L1 B"); },
                             //: Download speed suffix in bytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 B/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 B/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in kibibytes
                             [] { return qApp->translate("tremotesf", "%L1 KiB"); },
                             //: Download speed suffix in kibibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 KiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 KiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in mebibytes
                             [] { return qApp->translate("tremotesf", "%L1 MiB"); },
                             //: Download speed suffix in mebibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 MiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 MiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in gibibytes
                             [] { return qApp->translate("tremotesf", "%L1 GiB"); },
                             //: Download speed suffix in gibibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 GiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 GiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in tebibytes
                             [] { return qApp->translate("tremotesf", "%L1 TiB"); },
                             //: Download speed suffix in tebibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 TiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 TiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in pebibytes
                             [] { return qApp->translate("tremotesf", "%L1 PiB"); },
                             //: Download speed suffix in pebibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 PiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 PiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in exbibytes
                             [] { return qApp->translate("tremotesf", "%L1 EiB"); },
                             //: Download speed suffix in exbibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 EiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 EiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in zebibytes
                             [] { return qApp->translate("tremotesf", "%L1 ZiB"); },
                             //: Download speed suffix in zebibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 ZiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 ZiB/s"); }
+            },
             //: IEC 80000 binary prefixes, i.e. KiB = 1024 bytes
             ByteUnitStrings{//: Size suffix in yobibytes
                             [] { return qApp->translate("tremotesf", "%L1 YiB"); },
                             //: Download speed suffix in yobibytes per second
-                            [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }},
+                            [] { return qApp->translate("tremotesf", "%L1 YiB/s"); }
+            },
         };
         constexpr size_t maxByteUnit = byteUnits.size() - 1;
 

@@ -115,15 +115,15 @@ namespace fmt {
     };
 }
 
-#define SPECIALIZE_FORMATTER_FOR_QDEBUG(Class)                                   \
-    namespace fmt {                                                              \
-        template<>                                                               \
+#define SPECIALIZE_FORMATTER_FOR_QDEBUG(Class)                                \
+    namespace fmt {                                                           \
+        template<>                                                            \
         struct formatter<Class> : tremotesf::impl::QDebugFormatter<Class> {}; \
     }
 
-#define SPECIALIZE_FORMATTER_FOR_Q_ENUM(Enum)                                 \
-    namespace fmt {                                                           \
-        template<>                                                            \
+#define SPECIALIZE_FORMATTER_FOR_Q_ENUM(Enum)                              \
+    namespace fmt {                                                        \
+        template<>                                                         \
         struct formatter<Enum> : tremotesf::impl::QEnumFormatter<Enum> {}; \
     }
 

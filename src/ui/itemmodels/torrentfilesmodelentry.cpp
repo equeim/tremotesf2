@@ -9,8 +9,7 @@
 #include "literals.h"
 
 namespace tremotesf {
-    TorrentFilesModelEntry::Priority
-    TorrentFilesModelEntry::fromFilePriority(TorrentFile::Priority priority) {
+    TorrentFilesModelEntry::Priority TorrentFilesModelEntry::fromFilePriority(TorrentFile::Priority priority) {
         switch (priority) {
         case TorrentFile::Priority::Low:
             return LowPriority;
@@ -23,8 +22,7 @@ namespace tremotesf {
         }
     }
 
-    TorrentFile::Priority TorrentFilesModelEntry::toFilePriority(TorrentFilesModelEntry::Priority priority
-    ) {
+    TorrentFile::Priority TorrentFilesModelEntry::toFilePriority(TorrentFilesModelEntry::Priority priority) {
         switch (priority) {
         case LowPriority:
             return TorrentFile::Priority::Low;

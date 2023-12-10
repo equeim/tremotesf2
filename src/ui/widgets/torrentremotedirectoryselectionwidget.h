@@ -10,7 +10,8 @@
 namespace tremotesf {
     class Rpc;
 
-    class TorrentDownloadDirectoryDirectorySelectionWidgetViewModel final : public RemoteDirectorySelectionWidgetViewModel {
+    class TorrentDownloadDirectoryDirectorySelectionWidgetViewModel final
+        : public RemoteDirectorySelectionWidgetViewModel {
         Q_OBJECT
 
     public:

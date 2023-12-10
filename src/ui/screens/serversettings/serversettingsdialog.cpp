@@ -37,7 +37,8 @@ namespace tremotesf {
         constexpr std::array encryptionModeComboBoxItems{
             ServerSettingsData::EncryptionMode::Allowed,
             ServerSettingsData::EncryptionMode::Preferred,
-            ServerSettingsData::EncryptionMode::Required};
+            ServerSettingsData::EncryptionMode::Required
+        };
 
         ServerSettingsData::EncryptionMode encryptionModeFromComboBoxItem(int index) {
             if (index == -1) {
