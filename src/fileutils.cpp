@@ -261,7 +261,7 @@ namespace tremotesf {
 
         namespace {
             constexpr auto sessionIdFileLocation = [] {
-                if constexpr (isTargetOsWindows) {
+                if constexpr (targetOs == TargetOs::Windows) {
                     return QStandardPaths::GenericDataLocation;
                 } else {
                     return QStandardPaths::TempLocation;
@@ -269,7 +269,7 @@ namespace tremotesf {
             }();
 
             constexpr QLatin1String sessionIdFilePrefix = [] {
-                if constexpr (isTargetOsWindows) {
+                if constexpr (targetOs == TargetOs::Windows) {
                     return "Transmission/tr_session_id_"_l1;
                 } else {
                     return "tr_session_id_"_l1;

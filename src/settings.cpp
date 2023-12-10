@@ -205,7 +205,7 @@ namespace tremotesf {
     )
 
     Settings::Settings(QObject* parent) : QObject(parent) {
-        if constexpr (isTargetOsWindows) {
+        if constexpr (targetOs == TargetOs::Windows) {
             mSettings = new QSettings(
                 QSettings::IniFormat,
                 QSettings::UserScope,

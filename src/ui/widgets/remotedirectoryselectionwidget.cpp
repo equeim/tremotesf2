@@ -165,7 +165,7 @@ namespace tremotesf {
             mViewModel->onFileDialogAccepted(dialog->selectedFiles().constFirst());
         });
 
-        if constexpr (isTargetOsWindows) {
+        if constexpr (targetOs == TargetOs::Windows) {
             dialog->open();
         } else {
             dialog->show();

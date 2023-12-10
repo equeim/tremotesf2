@@ -581,7 +581,7 @@ namespace tremotesf {
             }
         });
 
-        if constexpr (isTargetOsWindows) {
+        if constexpr (targetOs == TargetOs::Windows) {
             fileDialog->open();
         } else {
             fileDialog->show();

@@ -16,7 +16,7 @@
 namespace tremotesf {
     namespace {
         constexpr QSettings::Format settingsFormat = [] {
-            if constexpr (isTargetOsWindows) {
+            if constexpr (targetOs == TargetOs::Windows) {
                 return QSettings::IniFormat;
             } else {
                 return QSettings::NativeFormat;

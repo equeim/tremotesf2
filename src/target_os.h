@@ -21,8 +21,6 @@ namespace tremotesf {
     // We shouldn't even get here since we will fail at CMake configuration step
 #    error "Unsupported target platform"
 #endif
-
-    inline constexpr bool isTargetOsWindows{targetOs == TargetOs::Windows};
 }
 
 #endif // TREMOTESF_TARGET_OS_H

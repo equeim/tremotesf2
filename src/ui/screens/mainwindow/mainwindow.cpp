@@ -749,7 +749,7 @@ namespace tremotesf {
                 qApp->translate("tremotesf", "&Quit"),
                 this
             );
-            if constexpr (isTargetOsWindows) {
+            if constexpr (targetOs == TargetOs::Windows) {
 #if QT_VERSION_MAJOR >= 6
                 action->setShortcut(QKeyCombination(Qt::ControlModifier, Qt::Key_Q));
 #else
@@ -800,7 +800,7 @@ namespace tremotesf {
                     showAddTorrentFileDialogs(fileDialog->selectedFiles());
                 });
 
-                if constexpr (isTargetOsWindows) {
+                if constexpr (targetOs == TargetOs::Windows) {
                     fileDialog->open();
                 } else {
                     fileDialog->show();
