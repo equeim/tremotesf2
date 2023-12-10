@@ -287,6 +287,7 @@ namespace tremotesf {
                 return true;
             }
             logInfo("isSessionIdFileExists: did not find transmission-daemon session id file");
+            return false;
         }
     }
 }
