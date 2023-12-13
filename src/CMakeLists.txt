@@ -290,7 +290,7 @@ else ()
 endif ()
 
 add_executable(tremotesf startup/main.cpp)
-target_link_libraries(tremotesf tremotesf_objects)
+target_link_libraries(tremotesf PRIVATE tremotesf_objects)
 
 # Executable configuration on Windows
 if (WIN32)
@@ -320,7 +320,7 @@ else ()
     install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif ()
 
-# Icons bundling
+# Icons and Qt translations bundling
 if (WIN32 OR APPLE)
     target_sources(
         tremotesf
@@ -339,7 +339,7 @@ if (WIN32 OR APPLE)
         QT_STATICPLUGIN
     )
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
-    target_link_libraries(tremotesf_objects PUBLIC Qt::Svg)
+    target_link_libraries(tremotesf PUBLIC Qt::Svg)
     set(exclude_plugins bearer iconengines imageformats)
     if (WIN32)
         list(APPEND exclude_plugins styles)
