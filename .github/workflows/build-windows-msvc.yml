@@ -51,13 +51,13 @@ jobs:
         name: ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-packages' || 'windows-msvc-packages' }}
         retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
         path: |
-          ${{ steps.build.outputs.build-directory }}\windows-packaging\*.zip
-          ${{ steps.build.outputs.build-directory }}\windows-packaging\*.msi
+          ${{ steps.build.outputs.build-directory }}\packaging\windows\*.zip
+          ${{ steps.build.outputs.build-directory }}\packaging\windows\*.msi
 
     - name: Upload packages to release
       if: inputs.release-tag != ''
       run: |
-        $packages = Get-ChildItem ${{ steps.build.outputs.build-directory }}\windows-packaging\*.zip, ${{ steps.build.outputs.build-directory }}\windows-packaging\*.msi
+        $packages = Get-ChildItem ${{ steps.build.outputs.build-directory }}\packaging\windows\*.zip, ${{ steps.build.outputs.build-directory }}\packaging\windows\*.msi
         echo "Uploading packages $packages"
         gh release upload '${{ inputs.release-tag }}' $packages
       env:
