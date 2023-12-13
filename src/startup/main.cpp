@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 #else
             QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 #endif
-        if (qtTranslator.load(QLocale(), TREMOTESF_QT_TRANSLATIONS_FILENAME ""_l1, "_"_l1, qtTranslationsPath)) {
+        if (qtTranslator.load(QLocale(), "qt"_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
             logWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
