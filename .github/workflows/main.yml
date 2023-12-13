@@ -66,7 +66,7 @@ jobs:
 
     - name: Install build dependencies
       run: |
-        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} ${{ matrix.qt-version == 6 && '--define "with_qt6 1"' || '' }} -q --srpm --qf '[%{REQUIRES}\n]' rpm/tremotesf.spec)
+        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} ${{ matrix.qt-version == 6 && '--define "with_qt6 1"' || '' }} -q --srpm --qf '[%{REQUIRES}\n]' packaging/rpm/tremotesf.spec)
         ${{env.INSTALL_PACKAGES}} "${dependencies[@]}"
 
     - name: Make source archive
@@ -80,7 +80,7 @@ jobs:
 
     - name: Build RPM
       run: |
-        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} --${{ matrix.qt-version == 6 && 'with' || 'without' }} qt6 -bb rpm/tremotesf.spec
+        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} --${{ matrix.qt-version == 6 && 'with' || 'without' }} qt6 -bb packaging/rpm/tremotesf.spec
 
   build-deb:
     strategy:
