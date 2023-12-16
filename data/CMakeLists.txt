@@ -10,7 +10,7 @@ list(
 if (TREMOTESF_UNIX_FREEDESKTOP)
     find_package(Gettext 0.19.7 REQUIRED)
 
-    install(DIRECTORY "icons/hicolor" DESTINATION "${CMAKE_INSTALL_DATADIR}/icons")
+    install(DIRECTORY "icons/hicolor" DESTINATION "${CMAKE_INSTALL_DATADIR}/icons" PATTERN ".DS_Store" EXCLUDE)
 
     set(po_dir "${CMAKE_CURRENT_SOURCE_DIR}/po")
 
@@ -43,7 +43,7 @@ elseif (WIN32 OR APPLE)
     set(TREMOTESF_BUNDLED_ICON_THEME "breeze")
     set(TREMOTESF_BUNDLED_ICON_THEME ${TREMOTESF_BUNDLED_ICON_THEME} PARENT_SCOPE)
 
-    install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons")
+    install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons" PATTERN ".DS_Store" EXCLUDE)
 
     include(FetchContent)
     cmake_policy(SET CMP0135 NEW)
