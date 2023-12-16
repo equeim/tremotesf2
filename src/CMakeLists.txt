@@ -27,22 +27,26 @@ add_library(
     tremotesf_objects
     OBJECT
 
-    fileutils.cpp
-    fileutils.h
-    itemlistupdater.h
-    stdutils.h
-    target_os.h
     bencodeparser.cpp
     bencodeparser.h
     desktoputils.cpp
     desktoputils.h
     filemanagerlauncher.cpp
     filemanagerlauncher.h
-    settings.cpp
-    settings.h
+    fileutils.cpp
+    fileutils.h
     formatutils.cpp
     formatutils.h
+    itemlistupdater.h
     literals.h
+    settings.cpp
+    settings.h
+    stdutils.h
+    target_os.h
+
+    unixhelpers.h
+    windowshelpers.h
+    macoshelpers.h
 
     ipc/ipcclient.h
     ipc/ipcserver.h
@@ -195,7 +199,6 @@ if (UNIX)
         tremotesf_objects
         PRIVATE
         unixhelpers.cpp
-        unixhelpers.h
         startup/signalhandler_unix.cpp
     )
     if (TREMOTESF_UNIX_FREEDESKTOP)
@@ -252,7 +255,6 @@ if (UNIX)
             target_sources(
                 tremotesf_objects
                 PRIVATE
-                macoshelpers.h
                 macoshelpers.mm
                 filemanagerlauncher_macos.mm
             )
@@ -272,7 +274,6 @@ elseif (WIN32)
         PRIVATE
         filemanagerlauncher_windows.cpp
         windowshelpers.cpp
-        windowshelpers.h
         ipc/ipcclient_socket.cpp
         ipc/ipcserver_socket.cpp
         ipc/ipcserver_socket.h
