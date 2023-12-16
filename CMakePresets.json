@@ -88,7 +88,7 @@
       }
     },
     {
-      "name": "macos-x64-vcpkg",
+      "name": "macos-x86_64-vcpkg",
       "displayName": "macOS x86_64 with vcpkg",
       "inherits": "base-macos-vcpkg",
       "cacheVariables": {
@@ -171,21 +171,21 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "macos-x64-vcpkg-debug",
+      "name": "macos-x86_64-vcpkg-debug",
       "displayName": "Debug",
-      "configurePreset": "macos-x64-vcpkg",
+      "configurePreset": "macos-x86_64-vcpkg",
       "configuration": "Debug"
     },
     {
-      "name": "macos-x64-vcpkg-release",
+      "name": "macos-x86_64-vcpkg-release",
       "displayName": "Release",
-      "configurePreset": "macos-x64-vcpkg",
+      "configurePreset": "macos-x86_64-vcpkg",
       "configuration": "Release"
     },
     {
-      "name": "macos-x64-vcpkg-relwithdebinfo",
+      "name": "macos-x86_64-vcpkg-relwithdebinfo",
       "displayName": "RelWithDebInfo",
-      "configurePreset": "macos-x64-vcpkg",
+      "configurePreset": "macos-x86_64-vcpkg",
       "configuration": "RelWithDebInfo"
     }
   ],
@@ -280,24 +280,24 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "macos-x64-vcpkg-debug",
+      "name": "macos-x86_64-vcpkg-debug",
       "displayName": "Debug",
       "inherits": "base",
-      "configurePreset": "macos-x64-vcpkg",
+      "configurePreset": "macos-x86_64-vcpkg",
       "configuration": "Debug"
     },
     {
-      "name": "macos-x64-vcpkg-release",
+      "name": "macos-x86_64-vcpkg-release",
       "displayName": "Release",
       "inherits": "base",
-      "configurePreset": "macos-x64-vcpkg",
+      "configurePreset": "macos-x86_64-vcpkg",
       "configuration": "Release"
     },
     {
-      "name": "macos-x64-vcpkg-relwithdebinfo",
+      "name": "macos-x86_64-vcpkg-relwithdebinfo",
       "displayName": "RelWithDebInfo",
       "inherits": "base",
-      "configurePreset": "macos-x64-vcpkg",
+      "configurePreset": "macos-x86_64-vcpkg",
       "configuration": "RelWithDebInfo"
     }
   ]

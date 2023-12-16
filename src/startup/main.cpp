@@ -10,6 +10,7 @@
 #include <QTranslator>
 
 #include "commandlineparser.h"
+#include "fileutils.h"
 #include "literals.h"
 #include "main_windows.h"
 #include "recoloringsvgiconengineplugin.h"
@@ -19,8 +20,6 @@
 #include "log/log.h"
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/mainwindow/mainwindow.h"
-
-#include <QStringBuilder>
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
@@ -92,8 +91,8 @@ int main(int argc, char** argv) {
     if constexpr (targetOs == TargetOs::Windows) {
         windowsInitApplication();
     }
-#if defined(TREMOTESF_BUNDLED_ICONS_DIR) && defined(TREMOTESF_BUNDLED_ICON_THEME)
-    QIcon::setThemeSearchPaths({QCoreApplication::applicationDirPath() % '/' % TREMOTESF_BUNDLED_ICONS_DIR ""_l1});
+#if defined(TREMOTESF_BUNDLED_ICON_THEME)
+    QIcon::setThemeSearchPaths({resolveExternalBundledResourcesPath("icons"_l1)});
     QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_l1);
     QApplication::setStyle(new RecoloringSvgIconStyle(qApp));
 #endif
@@ -107,14 +106,12 @@ int main(int argc, char** argv) {
     QTranslator qtTranslator;
     {
         const QString qtTranslationsPath =
-#ifdef TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR
-            QString::fromStdString(
-                fmt::format("{}/{}", QCoreApplication::applicationDirPath(), TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR)
-            );
+#ifdef TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
+            resolveExternalBundledResourcesPath("qt-translations"_l1);
 #else
             QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 #endif
-        if (qtTranslator.load(QLocale(), "qt"_l1, "_"_l1, qtTranslationsPath)) {
+        if (qtTranslator.load(QLocale{}, "qt"_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
             logWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
@@ -122,10 +119,11 @@ int main(int argc, char** argv) {
     }
 
     QTranslator appTranslator;
-    if (!appTranslator.load(QLocale().name(), ":/translations"_l1)) {
-        logWarning("Failed to load Tremotesf translation for {}", QLocale());
+    if (appTranslator.load(QLocale{}, {}, {}, ":/translations/"_l1)) {
+        qApp->installTranslator(&appTranslator);
+    } else {
+        logWarning("Failed to load Tremotesf translation for {}", QLocale{});
     }
-    qApp->installTranslator(&appTranslator);
 
     const SaveWindowStateDispatcher saveStateDispatcher{};
 

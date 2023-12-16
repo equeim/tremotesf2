@@ -4,11 +4,8 @@
 
 #include "macoshelpers.h"
 
+#include <stdexcept>
 #include <AppKit/NSApplication.h>
-#include <QApplication>
-#include <QStyle>
-#include <QProxyStyle>
-#include "literals.h"
 
 namespace tremotesf {
     void hideNSApp() { [NSApp hide:nullptr]; }
@@ -16,4 +13,13 @@ namespace tremotesf {
     void unhideNSApp() { [NSApp unhide:nullptr]; }
 
     bool isNSAppHidden() { return [NSApp isHidden]; }
+
+    QString bundleResourcesPath() {
+        auto* const bundle = [NSBundle mainBundle];
+        if (!bundle) {
+            throw std::runtime_error("[NSBundle mainBundle] returned null");
+        }
+        auto* const resourcePath = [bundle resourcePath];
+        return QString::fromNSString(resourcePath);
+    }
 }

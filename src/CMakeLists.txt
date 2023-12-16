@@ -311,13 +311,16 @@ if (WIN32)
 endif ()
 
 # Executable installation
-if (WIN32 OR APPLE)
-    install(TARGETS tremotesf DESTINATION ".")
-    if (MSVC)
-        install(FILES $<TARGET_PDB_FILE:tremotesf> DESTINATION "." OPTIONAL)
-    endif ()
+if (WIN32)
+    set(bindir ".")
+elseif (APPLE)
+    set(bindir "${TREMOTESF_MACOS_BUNDLE_NAME}.app/Contents/MacOS")
 else ()
-    install(TARGETS tremotesf DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    set(bindir "${CMAKE_INSTALL_BINDIR}")
+endif ()
+install(TARGETS tremotesf DESTINATION "${bindir}")
+if (WIN32 AND MSVC)
+    install(FILES $<TARGET_PDB_FILE:tremotesf> DESTINATION "${bindir}" OPTIONAL)
 endif ()
 
 # Icons and Qt translations bundling
@@ -333,9 +336,8 @@ if (WIN32 OR APPLE)
     target_compile_definitions(
         tremotesf
         PUBLIC
-        TREMOTESF_BUNDLED_ICONS_DIR="${TREMOTESF_BUNDLED_ICONS_DIR}"
         TREMOTESF_BUNDLED_ICON_THEME="${TREMOTESF_BUNDLED_ICON_THEME}"
-        TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR="${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
+        TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
         QT_STATICPLUGIN
     )
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)

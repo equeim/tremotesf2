@@ -4,4 +4,6 @@
 
 if (WIN32)
     add_subdirectory("windows")
+elseif (APPLE)
+    add_subdirectory("macos")
 endif()
