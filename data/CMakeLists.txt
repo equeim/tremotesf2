@@ -51,8 +51,8 @@ elseif (WIN32 OR APPLE)
 
     FetchContent_Declare(
         hicolor_icon_theme
-        URL "https://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.17.tar.xz"
-        URL_HASH SHA256=317484352271d18cbbcfac3868eab798d67fff1b8402e740baa6ff41d588a9d8
+        URL "https://gitlab.freedesktop.org/xdg/default-icon-theme/-/archive/0.17/default-icon-theme-0.17.tar.gz"
+        URL_HASH SHA256=3d3a762121c2e78e37ab98221ad48e4596a716abf3bf4475f13e372328f86cd1
     )
     FetchContent_Populate(hicolor_icon_theme)
     install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
