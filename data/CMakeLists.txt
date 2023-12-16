@@ -40,13 +40,10 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
 elseif (WIN32 OR APPLE)
     message(STATUS "Building for Windows or macOS, deploying icon themes")
 
-    set(TREMOTESF_BUNDLED_ICONS_DIR "icons")
-    set(TREMOTESF_BUNDLED_ICONS_DIR ${TREMOTESF_BUNDLED_ICONS_DIR} PARENT_SCOPE)
-
     set(TREMOTESF_BUNDLED_ICON_THEME "breeze")
     set(TREMOTESF_BUNDLED_ICON_THEME ${TREMOTESF_BUNDLED_ICON_THEME} PARENT_SCOPE)
 
-    install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}")
+    install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons")
 
     include(FetchContent)
     cmake_policy(SET CMP0135 NEW)
@@ -58,7 +55,7 @@ elseif (WIN32 OR APPLE)
         URL_HASH SHA256=317484352271d18cbbcfac3868eab798d67fff1b8402e740baa6ff41d588a9d8
     )
     FetchContent_Populate(hicolor_icon_theme)
-    install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/hicolor")
+    install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
 
     FetchContent_Declare(
         breeze_icons
@@ -117,7 +114,11 @@ elseif (WIN32 OR APPLE)
     string(PREPEND bundled_icon_theme_files_regex "^.*\\/(")
     string(APPEND bundled_icon_theme_files_regex ")$")
 
-    install(DIRECTORY "${breeze_icons_SOURCE_DIR}/icons/" DESTINATION "${TREMOTESF_BUNDLED_ICONS_DIR}/breeze" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
+    install(DIRECTORY "${breeze_icons_SOURCE_DIR}/icons/" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/breeze" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
 endif()
+
+if (APPLE)
+    install(FILES icons/macos/tremotesf.icns DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}")
+endif ()
 
 set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)

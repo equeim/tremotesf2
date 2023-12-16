@@ -29,6 +29,13 @@ include(cmake/CommonOptions.cmake)
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core)
 
 set(QRC_FILES "")
+if (APPLE)
+    set(TREMOTESF_MACOS_BUNDLE_NAME "Tremotesf")
+    set(TREMOTESF_EXTERNAL_RESOURCES_PATH "${TREMOTESF_MACOS_BUNDLE_NAME}.app/Contents/Resources")
+elseif (WIN32)
+    set(TREMOTESF_EXTERNAL_RESOURCES_PATH ".")
+endif ()
+
 add_subdirectory("data")
 add_subdirectory("translations")
 add_subdirectory("src")

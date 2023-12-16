@@ -7,12 +7,14 @@
 #include <span>
 #include <stdexcept>
 
+#include <QCoreApplication>
 #include <QFile>
 #include <QDir>
 #include <QStandardPaths>
 #include <QStringBuilder>
 
 #include "literals.h"
+#include "macoshelpers.h"
 #include "target_os.h"
 #include "log/log.h"
 
@@ -233,6 +235,17 @@ namespace tremotesf {
                 fmt::format("Failed to move {} to trash: {}", fileDescription(file), errorDescription(file))
             );
         }
+    }
+
+    QString resolveExternalBundledResourcesPath(QLatin1String path) {
+        const QString root = [&] {
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                return bundleResourcesPath();
+            } else {
+                return QCoreApplication::applicationDirPath();
+            }
+        }();
+        return root % '/' % path;
     }
 
     namespace impl {

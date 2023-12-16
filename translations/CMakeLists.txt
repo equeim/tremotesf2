@@ -23,8 +23,7 @@ set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)
 
 if (WIN32 OR APPLE)
     message(STATUS "Building for Windows or macOS, deploying Qt translations")
-    set(TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR "qt-translations")
-    set(TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR ${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR} PARENT_SCOPE)
+
     if (DEFINED VCPKG_TARGET_TRIPLET)
         # vcpkg
         set(relative_qt_translations_dir "translations/Qt6")
@@ -38,7 +37,7 @@ if (WIN32 OR APPLE)
         find_file(qt_translations_dir "${relative_qt_translations_dir}" REQUIRED)
     endif ()
     message(STATUS "Deploying Qt translations from ${qt_translations_dir}")
-    install(DIRECTORY "${qt_translations_dir}/" DESTINATION "${TREMOTESF_BUNDLED_QT_TRANSLATIONS_DIR}"
+    install(DIRECTORY "${qt_translations_dir}/" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/qt-translations"
         FILES_MATCHING PATTERN "qt_*.qm" PATTERN "qtbase_*.qm" PATTERN "qtmultimedia_*.qm"
         PATTERN "qt_help*" EXCLUDE)
 endif ()

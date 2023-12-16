@@ -73,3 +73,8 @@ jobs:
     with:
       build-with-msvc-clang-toolchain: 'false'
       release-tag: ${{ github.event.release.tag_name }}
+
+  build-macos:
+    uses: ./.github/workflows/build-macos.yml
+    with:
+      release-tag: ${{ github.event.release.tag_name }}
