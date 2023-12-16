@@ -12,4 +12,5 @@ Exec=tremotesf %U
 StartupNotify=true
 StartupWMClass=tremotesf
 X-GNOME-SingleWindow=true
+SingleMainWindow=true
 MimeType=application/x-bittorrent;x-scheme-handler/magnet;
