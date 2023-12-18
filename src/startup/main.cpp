@@ -2,12 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <chrono>
+#include <utility>
+
 #include <QApplication>
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QLoggingCategory>
 #include <QLocale>
+#include <QTimer>
 #include <QTranslator>
+
+#include <fmt/ranges.h>
 
 #include "commandlineparser.h"
 #include "fileutils.h"
@@ -21,9 +27,70 @@
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/mainwindow/mainwindow.h"
 
+#ifdef Q_OS_MACOS
+#    include "ipc/fileopeneventhandler.h"
+#endif
+
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
+using namespace std::chrono_literals;
 using namespace tremotesf;
+
+namespace {
+#ifdef Q_OS_MACOS
+    std::pair<QStringList, QStringList> receiveFileOpenEvents(int& argc, char** argv) {
+        std::pair<QStringList, QStringList> filesAndUrls{};
+        logInfo("Waiting for file open events");
+        const QGuiApplication app(argc, argv);
+        const FileOpenEventHandler handler{};
+        QObject::connect(
+            &handler,
+            &FileOpenEventHandler::filesOpeningRequested,
+            &app,
+            [&](const auto& files, const auto& urls) {
+                filesAndUrls = {files, urls};
+                QCoreApplication::quit();
+            }
+        );
+        QTimer::singleShot(500ms, &app, [] {
+            logInfo("Did not receive file open events");
+            QCoreApplication::quit();
+        });
+        QCoreApplication::exec();
+        return filesAndUrls;
+    }
+#endif
+
+    bool shouldExitBecauseAnotherInstanceIsRunning(
+        [[maybe_unused]] int& argc, [[maybe_unused]] char** argv, const CommandLineArgs& args
+    ) {
+        const auto client = IpcClient::createInstance();
+        if (!client->isConnected()) {
+            return false;
+        }
+        logInfo("Only one instance of Tremotesf can be run at the same time");
+        const auto activateOtherInstance = [&client](const QStringList& files, const QStringList& urls) {
+            if (files.isEmpty() && urls.isEmpty()) {
+                logInfo("Activating other instance");
+                client->activateWindow();
+            } else {
+                logInfo("Activating other instance and requesting torrent adding");
+                logInfo("files = {}", files);
+                logInfo("urls = {}", urls);
+                client->addTorrents(files, urls);
+            }
+        };
+#ifdef Q_OS_MACOS
+        if (args.files.isEmpty() && args.urls.isEmpty()) {
+            const auto [files, urls] = receiveFileOpenEvents(argc, argv);
+            activateOtherInstance(files, urls);
+            return true;
+        }
+#endif
+        activateOtherInstance(args.files, args.urls);
+        return true;
+    }
+}
 
 int main(int argc, char** argv) {
     // This does not need QApplication instance, and we need it in windowsInitPrelude()
@@ -63,14 +130,7 @@ int main(int argc, char** argv) {
     // Setup handler for UNIX signals or Windows console handler
     const SignalHandler signalHandler{};
 
-    // Send command to another instance
-    if (const auto client = IpcClient::createInstance(); client->isConnected()) {
-        logInfo("Only one instance of Tremotesf can be run at the same time");
-        if (args.files.isEmpty() && args.urls.isEmpty()) {
-            client->activateWindow();
-        } else {
-            client->addTorrents(args.files, args.urls);
-        }
+    if (shouldExitBecauseAnotherInstanceIsRunning(argc, argv, args)) {
         return EXIT_SUCCESS;
     }
 
