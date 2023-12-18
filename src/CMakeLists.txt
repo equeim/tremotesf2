@@ -257,6 +257,8 @@ if (UNIX)
                 PRIVATE
                 macoshelpers.mm
                 filemanagerlauncher_macos.mm
+                ipc/fileopeneventhandler.h
+                ipc/fileopeneventhandler.cpp
             )
         else ()
             target_sources(
@@ -389,7 +391,7 @@ if (BUILD_TESTING)
             message(STATUS "Found cpp-httplib ${httplib_VERSION} using pkg-config")
             if (httplib_VERSION VERSION_GREATER_EQUAL httplib_next_unsupported_version)
                 message(WARNING "cpp-httplib version ${httplib_VERSION} is not supported. Compilation or tests may fail")
-            endif()
+            endif ()
         else ()
             message(STATUS "Did not found cpp-httplib using pkg-config")
         endif ()
