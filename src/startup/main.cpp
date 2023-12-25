@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
     const SaveWindowStateDispatcher saveStateDispatcher{};
 
     MainWindow window(std::move(args.files), std::move(args.urls));
-    window.showMinimized(args.minimized);
+    window.initialShow(args.minimized);
 
     if (signalHandler.isExitRequested()) {
         return EXIT_SUCCESS;

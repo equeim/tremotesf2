@@ -20,7 +20,7 @@ namespace tremotesf {
         Q_DISABLE_COPY_MOVE(MainWindow)
 
         QSize sizeHint() const override;
-        void showMinimized(bool minimized);
+        void initialShow(bool minimized);
 
     protected:
         bool event(QEvent* event) override;

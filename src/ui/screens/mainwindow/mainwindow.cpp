@@ -376,7 +376,13 @@ namespace tremotesf {
             mTorrentsView.saveState();
         }
 
-        void activateMainWindow() { activateWindow(mWindow, {}, {}); }
+#if defined(TREMOTESF_UNIX_FREEDESKTOP)
+        void activateMainWindowOnWayland() {
+            if (KWindowSystem::isPlatformWayland()) {
+                activeWindowOnWayland(mWindow, {});
+            }
+        }
+#endif
 
     private:
         MainWindow* mWindow;
@@ -1623,10 +1629,14 @@ namespace tremotesf {
 
     QSize MainWindow::sizeHint() const { return minimumSizeHint().expandedTo(QSize(896, 640)); }
 
-    void MainWindow::showMinimized(bool minimized) {
+    void MainWindow::initialShow(bool minimized) {
         if (!(minimized && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
-            mImpl->activateMainWindow();
+#if defined(TREMOTESF_UNIX_FREEDESKTOP)
+            // On Wayland we need to explicitly activate our window to consume XDG_ACTIVATION_TOKEN environment variable
+            // possible set by whoever launched us, both in Qt 6 and Qt 5 (KWindowSystem) paths
+            mImpl->activateMainWindowOnWayland();
+#endif
         }
     }
 
