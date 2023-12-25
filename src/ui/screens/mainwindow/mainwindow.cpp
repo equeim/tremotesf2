@@ -259,7 +259,6 @@ namespace tremotesf {
 
             mWindow->restoreState(Settings::instance()->mainWindowState());
             mToolBarAction->setChecked(!mToolBar.isHidden());
-            mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry());
 
             QObject::connect(
                 &mViewModel,
@@ -319,6 +318,14 @@ namespace tremotesf {
                     }
                 );
             }
+
+            // restoreGeometry() may call MainWindow::event() but we are still in MainWindow constructor
+            // Call it on the next event loop iteration
+            QMetaObject::invokeMethod(
+                this,
+                [this] { mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry()); },
+                Qt::QueuedConnection
+            );
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
