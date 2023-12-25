@@ -88,7 +88,7 @@ namespace tremotesf {
                 const QByteArray message(socket->readAll());
                 if (message.size() == 1 && message.front() == activateWindowMessage) {
                     logInfo("IpcServerSocket: window activation requested");
-                    emit windowActivationRequested({}, {}, {});
+                    emit windowActivationRequested({}, {});
                 } else {
                     QCborParserError error{};
                     const auto cbor = QCborValue::fromCbor(message, &error);
