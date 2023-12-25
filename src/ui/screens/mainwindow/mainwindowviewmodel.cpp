@@ -63,7 +63,7 @@ namespace tremotesf {
             QMetaObject::invokeMethod(
                 this,
                 [commandLineFiles = std::move(commandLineFiles), commandLineUrls = std::move(commandLineUrls), this] {
-                    addTorrents(commandLineFiles, commandLineUrls, true);
+                    addTorrents(commandLineFiles, commandLineUrls, {}, true);
                 },
                 Qt::QueuedConnection
             );
@@ -74,16 +74,16 @@ namespace tremotesf {
             ipcServer,
             &IpcServer::windowActivationRequested,
             this,
-            [=, this](const auto&, const auto& startupNoficationId, const auto& xdgActivationToken) {
-                emit showWindow(startupNoficationId, xdgActivationToken);
-            }
+            [=, this](const auto&, const auto& activationToken) { emit showWindow(activationToken); }
         );
 
         QObject::connect(
             ipcServer,
             &IpcServer::torrentsAddingRequested,
             this,
-            [=, this](const auto& files, const auto& urls) { addTorrents(files, urls); }
+            [=, this](const auto& files, const auto& urls, const auto& activationToken) {
+                addTorrents(files, urls, activationToken);
+            }
         );
 
 #ifdef Q_OS_MACOS
@@ -106,7 +106,7 @@ namespace tremotesf {
                 if ((!mPendingFilesToOpen.empty() || !mPendingUrlsToOpen.empty())) {
                     const QStringList files = std::move(mPendingFilesToOpen);
                     const QStringList urls = std::move(mPendingUrlsToOpen);
-                    emit showAddTorrentDialogs(files, urls);
+                    emit showAddTorrentDialogs(files, urls, {});
                 }
             }
         });
@@ -169,7 +169,7 @@ namespace tremotesf {
     void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
         const auto controller = NotificationsController::createInstance(trayIcon, &mRpc, this);
         QObject::connect(controller, &NotificationsController::notificationClicked, this, [this] {
-            emit showWindow({}, {});
+            emit showWindow({});
         });
     }
 
@@ -185,13 +185,16 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::addTorrents(
-        const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay
+        const QStringList& files,
+        const QStringList& urls,
+        const WindowActivationToken& activationToken,
+        bool showDelayedMessageWithDelay
     ) {
         logInfo("MainWindowViewModel: addTorrents() called");
         logInfo("MainWindowViewModel: files = {}", files);
         logInfo("MainWindowViewModel: urls = {}", urls);
         if (mRpc.isConnected()) {
-            emit showAddTorrentDialogs(files, urls);
+            emit showAddTorrentDialogs(files, urls, activationToken);
         } else {
             mPendingFilesToOpen.append(files);
             mPendingUrlsToOpen.append(urls);

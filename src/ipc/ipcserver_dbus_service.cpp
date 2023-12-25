@@ -16,6 +16,21 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantMap)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantList)
 
 namespace tremotesf {
+    namespace {
+        WindowActivationToken platformDataToWindowActivationToken(const QVariantMap& platformData) {
+            WindowActivationToken token{};
+            if (const auto startupId = platformData.value(IpcDbusService::desktopStartupIdField).toByteArray();
+                !startupId.isEmpty()) {
+                token.x11StartupNotificationId = startupId;
+            }
+            if (const auto activationToken = platformData.value(IpcDbusService::xdgActivationTokenField).toByteArray();
+                !activationToken.isEmpty()) {
+                token.waylandXdfActivationToken = activationToken;
+            }
+            return token;
+        }
+    }
+
     IpcDbusService::IpcDbusService(IpcServerDbus* ipcServer, QObject* parent) : QObject(parent), mIpcServer(ipcServer) {
         new OrgFreedesktopApplicationAdaptor(this);
 
@@ -39,8 +54,7 @@ namespace tremotesf {
         logInfo("Window activation requested, platform_data = {}", platform_data);
         emit mIpcServer->windowActivationRequested(
             platform_data.value(torrentHashField).toString(),
-            platform_data.value(desktopStartupIdField).toByteArray(),
-            platform_data.value(xdgActivationTokenField).toByteArray()
+            platformDataToWindowActivationToken(platform_data)
         );
     }
 
@@ -57,7 +71,7 @@ namespace tremotesf {
                 }
             }
         }
-        emit mIpcServer->torrentsAddingRequested(files, urls, platform_data.value(desktopStartupIdField).toByteArray());
+        emit mIpcServer->torrentsAddingRequested(files, urls, platformDataToWindowActivationToken(platform_data));
     }
 
     void IpcDbusService::ActivateAction(
