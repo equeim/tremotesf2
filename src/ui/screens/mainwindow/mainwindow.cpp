@@ -833,7 +833,6 @@ namespace tremotesf {
                 auto dialog = new AddTorrentDialog(mViewModel.rpc(), filePath, AddTorrentDialog::Mode::File, mWindow);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 dialog->show();
-                activateWindow(dialog);
             }
         }
 
@@ -842,7 +841,6 @@ namespace tremotesf {
                 auto dialog = new AddTorrentDialog(mViewModel.rpc(), url, AddTorrentDialog::Mode::Url, mWindow);
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 dialog->show();
-                activateWindow(dialog);
             }
         }
 
