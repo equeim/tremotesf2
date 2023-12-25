@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QStringList>
 
+#include "ipc/ipcserver.h"
 #include "rpc/rpc.h"
 
 class QByteArray;
@@ -42,11 +43,18 @@ namespace tremotesf {
         QStringList mPendingUrlsToOpen{};
         QTimer* delayedTorrentAddMessageTimer{};
 
-        void addTorrents(const QStringList& files, const QStringList& urls, bool showDelayedMessageWithDelay = false);
+        void addTorrents(
+            const QStringList& files,
+            const QStringList& urls,
+            const WindowActivationToken& activationToken = {},
+            bool showDelayedMessageWithDelay = false
+        );
 
     signals:
-        void showWindow(const QByteArray& newStartupNotificationId, const QByteArray& newXdgActivationToken);
-        void showAddTorrentDialogs(const QStringList& files, const QStringList& urls);
+        void showWindow(const WindowActivationToken& activationToken);
+        void showAddTorrentDialogs(
+            const QStringList& files, const QStringList& urls, const WindowActivationToken& activationToken
+        );
         void showDelayedTorrentAddMessage(const QStringList& torrents);
     };
 }

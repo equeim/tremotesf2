@@ -1389,10 +1389,7 @@ namespace tremotesf {
 
         bool shouldShowWindows() const { return mWindow->isHidden() || mWindow->isMinimized(); }
 
-        void showWindowsAndActivateMainOrDialog(
-            [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
-            [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
-        ) {
+        void showWindowsAndActivateMainOrDialog([[maybe_unused]] const WindowActivationToken& activationToken = {}) {
             logInfo("Showing windows");
             if constexpr (targetOs == TargetOs::UnixMacOS) {
                 if (isNSAppHidden()) {
@@ -1412,31 +1409,28 @@ namespace tremotesf {
                     lastDialog = widget;
                 }
             }
-            QWidget* widgetToActivate = qApp->activeModalWidget();
-            if (!widgetToActivate) {
-                widgetToActivate = lastDialog;
+            QWidget* dialogToActivate = qApp->activeModalWidget();
+            if (!dialogToActivate) {
+                dialogToActivate = lastDialog;
             }
-            if (!widgetToActivate) {
-                widgetToActivate = mWindow;
+            activateWindow(mWindow, activationToken);
+            if (dialogToActivate) {
+                activateWindow(dialogToActivate);
             }
-            activateWindow(widgetToActivate, newStartupNotificationId, newXdgActivationToken);
         }
 
-        void activateWindow(
-            QWidget* widgetToActivate,
-            [[maybe_unused]] const QByteArray& newStartupNotificationId = {},
-            [[maybe_unused]] const QByteArray& newXdgActivationToken = {}
-        ) {
+        void
+        activateWindow(QWidget* widgetToActivate, [[maybe_unused]] const WindowActivationToken& activationToken = {}) {
             logInfo("Activating window {}", *widgetToActivate);
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
             switch (KWindowSystem::platform()) {
             case KWindowSystem::Platform::X11:
                 logDebug("Windowing system is X11");
-                activeWindowOnX11(widgetToActivate, newStartupNotificationId);
+                activeWindowOnX11(widgetToActivate, activationToken.x11StartupNotificationId);
                 break;
             case KWindowSystem::Platform::Wayland:
                 logDebug("Windowing system is Wayland");
-                activeWindowOnWayland(widgetToActivate, newXdgActivationToken);
+                activeWindowOnWayland(widgetToActivate, activationToken.waylandXdfActivationToken);
                 break;
             default:
                 logWarning("Unknown windowing system");
@@ -1449,30 +1443,31 @@ namespace tremotesf {
         }
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-        void activeWindowOnX11(QWidget* widgetToActivate, const QByteArray& newStartupNotificationId) {
-            if (!newStartupNotificationId.isEmpty()) {
-                logInfo("Removing startup notification with id '{}'", newStartupNotificationId);
-                KStartupInfo::setNewStartupId(widgetToActivate->windowHandle(), newStartupNotificationId);
-                KStartupInfo::appStarted(newStartupNotificationId);
+        void activeWindowOnX11(QWidget* widgetToActivate, const std::optional<QByteArray>& newStartupNotificationId) {
+            if (newStartupNotificationId.has_value()) {
+                logInfo("Removing startup notification with id '{}'", *newStartupNotificationId);
+                KStartupInfo::setNewStartupId(widgetToActivate->windowHandle(), *newStartupNotificationId);
+                KStartupInfo::appStarted(*newStartupNotificationId);
             }
             widgetToActivate->activateWindow();
         }
 
         void activeWindowOnWayland(
-            [[maybe_unused]] QWidget* widgetToActivate, [[maybe_unused]] const QByteArray& newXdgActivationToken
+            [[maybe_unused]] QWidget* widgetToActivate,
+            [[maybe_unused]] const std::optional<QByteArray>& newXdgActivationToken
         ) {
 #    if QT_VERSION_MAJOR >= 6
-            if (!newXdgActivationToken.isEmpty()) {
-                logInfo("Updating xdg-activation token with new value '{}'", newXdgActivationToken);
+            if (newXdgActivationToken.has_value()) {
+                logInfo("Updating xdg-activation token with new value '{}'", *newXdgActivationToken);
                 // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
                 // It we be read and unset in QWidget::activateWindow() call below
-                qputenv(xdgActivationTokenEnvVariable, newXdgActivationToken);
+                qputenv(xdgActivationTokenEnvVariable, *newXdgActivationToken);
             }
             widgetToActivate->activateWindow();
 #    elif KWINDOWSYSTEM_VERSION >= QT_VERSION_CHECK(5, 89, 0)
-            if (!newXdgActivationToken.isEmpty()) {
-                logInfo("Updating xdg-activation token with new value '{}'", newXdgActivationToken);
-                KWindowSystem::setCurrentXdgActivationToken(newXdgActivationToken);
+            if (newXdgActivationToken.has_value()) {
+                logInfo("Updating xdg-activation token with new value '{}'", *newXdgActivationToken);
+                KWindowSystem::setCurrentXdgActivationToken(*newXdgActivationToken);
             }
             if (const auto handle = widgetToActivate->windowHandle(); handle) {
                 KWindowSystem::activateWindow(handle);
@@ -1543,12 +1538,12 @@ namespace tremotesf {
                 &mViewModel,
                 &MainWindowViewModel::showAddTorrentDialogs,
                 this,
-                [messageWidget, this](const auto& files, const auto& urls) {
+                [messageWidget, this](const auto& files, const auto& urls, const auto& activationToken) {
                     if (messageWidget->isVisible()) {
                         messageWidget->animatedHide();
                     }
                     const bool wasHidden = mWindow->isHidden();
-                    showWindowsAndActivateMainOrDialog();
+                    showWindowsAndActivateMainOrDialog(activationToken);
                     if (wasHidden) {
                         runAfterDelay([files, urls, this] {
                             showAddTorrentFileDialogs(files);
