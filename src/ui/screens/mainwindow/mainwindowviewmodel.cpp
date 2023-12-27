@@ -63,7 +63,7 @@ namespace tremotesf {
             QMetaObject::invokeMethod(
                 this,
                 [commandLineFiles = std::move(commandLineFiles), commandLineUrls = std::move(commandLineUrls), this] {
-                    addTorrents(commandLineFiles, commandLineUrls, {}, true);
+                    addTorrents(commandLineFiles, commandLineUrls, {});
                 },
                 Qt::QueuedConnection
             );
@@ -99,6 +99,7 @@ namespace tremotesf {
         QObject::connect(&mRpc, &Rpc::connectedChanged, this, [this] {
             if (mRpc.isConnected()) {
                 if (delayedTorrentAddMessageTimer) {
+                    logInfo("Cancelling showing delayed torrent adding message");
                     delayedTorrentAddMessageTimer->stop();
                     delayedTorrentAddMessageTimer->deleteLater();
                     delayedTorrentAddMessageTimer = nullptr;
@@ -185,22 +186,22 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::addTorrents(
-        const QStringList& files,
-        const QStringList& urls,
-        const WindowActivationToken& activationToken,
-        bool showDelayedMessageWithDelay
+        const QStringList& files, const QStringList& urls, const WindowActivationToken& activationToken
     ) {
         logInfo("MainWindowViewModel: addTorrents() called");
         logInfo("MainWindowViewModel: files = {}", files);
         logInfo("MainWindowViewModel: urls = {}", urls);
-        if (mRpc.isConnected()) {
+        const auto connectionState = mRpc.connectionState();
+        if (connectionState == RpcConnectionState::Connected) {
             emit showAddTorrentDialogs(files, urls, activationToken);
         } else {
             mPendingFilesToOpen.append(files);
             mPendingUrlsToOpen.append(urls);
-            logInfo("Delaying opening torrents until connected to server");
+            logInfo("Postponing opening torrents until connected to server");
             emit showWindow(activationToken);
-            if (showDelayedMessageWithDelay) {
+            // If we are connecting then wait a bit before showing message
+            if (connectionState == RpcConnectionState::Connecting) {
+                logInfo("We are already connecting, wait a bit before showing message");
                 if (delayedTorrentAddMessageTimer) {
                     delayedTorrentAddMessageTimer->stop();
                     delayedTorrentAddMessageTimer->deleteLater();
@@ -209,6 +210,7 @@ namespace tremotesf {
                 delayedTorrentAddMessageTimer->setInterval(initialDelayedTorrentAddMessageDelay);
                 delayedTorrentAddMessageTimer->setSingleShot(true);
                 QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=, this] {
+                    logInfo("Showing delayed torrent adding message");
                     delayedTorrentAddMessageTimer = nullptr;
                     emit showDelayedTorrentAddMessage(files + urls);
                 });
@@ -220,6 +222,7 @@ namespace tremotesf {
                 );
                 delayedTorrentAddMessageTimer->start();
             } else {
+                logInfo("Showing delayed torrent adding message");
                 emit showDelayedTorrentAddMessage(files + urls);
             }
         }
