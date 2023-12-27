@@ -199,6 +199,7 @@ namespace tremotesf {
             mPendingFilesToOpen.append(files);
             mPendingUrlsToOpen.append(urls);
             logInfo("Delaying opening torrents until connected to server");
+            emit showWindow(activationToken);
             if (showDelayedMessageWithDelay) {
                 if (delayedTorrentAddMessageTimer) {
                     delayedTorrentAddMessageTimer->stop();
