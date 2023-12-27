@@ -158,7 +158,7 @@ namespace tremotesf {
         }
 
         void showAndRaiseWindow(QWidget* window) {
-            logDebug(
+            logInfo(
                 "Showing {}, it is hidden = {}, minimized = {}",
                 *window,
                 window->isHidden(),
@@ -1388,7 +1388,7 @@ namespace tremotesf {
             logInfo("Showing windows");
             if constexpr (targetOs == TargetOs::UnixMacOS) {
                 if (isNSAppHidden()) {
-                    logDebug("NSApp is hidden, unhiding it");
+                    logInfo("NSApp is hidden, unhiding it");
                     unhideNSApp();
                 } else {
                     logDebug("NSApp is not hidden");
