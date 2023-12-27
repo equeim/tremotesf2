@@ -209,7 +209,7 @@ namespace tremotesf {
                 delayedTorrentAddMessageTimer->setSingleShot(true);
                 QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=, this] {
                     delayedTorrentAddMessageTimer = nullptr;
-                    emit showDelayedTorrentAddMessage(files + urls);
+                    emit showDelayedTorrentAddMessage(files + urls, activationToken);
                 });
                 QObject::connect(
                     delayedTorrentAddMessageTimer,
@@ -219,7 +219,7 @@ namespace tremotesf {
                 );
                 delayedTorrentAddMessageTimer->start();
             } else {
-                emit showDelayedTorrentAddMessage(files + urls);
+                emit showDelayedTorrentAddMessage(files + urls, activationToken);
             }
         }
     }
