@@ -1538,7 +1538,7 @@ namespace tremotesf {
                 &mViewModel,
                 &MainWindowViewModel::showDelayedTorrentAddMessage,
                 this,
-                [messageWidget](const QStringList& torrents) {
+                [this, messageWidget](const QStringList& torrents) {
                     logDebug("MainWindow: showing delayed torrent add message");
                     messageWidget->setMessageType(KMessageWidget::Information);
                     //: Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents
