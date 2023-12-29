@@ -19,6 +19,7 @@
 #include "log/log.h"
 #include "ipc/ipcserver.h"
 #include "rpc/servers.h"
+#include "ui/screens/addtorrent/addtorrenthelpers.h"
 #include "ui/screens/addtorrent/droppedtorrents.h"
 #include "ui/notificationscontroller.h"
 #include "settings.h"
@@ -183,6 +184,32 @@ namespace tremotesf {
             mRpc.connect();
         }
         return StartupActionResult::DoNothing;
+    }
+
+    void MainWindowViewModel::addTorrentFilesWithoutDialog(const QStringList& files) {
+        const auto parameters = getAddTorrentParameters(&mRpc);
+        for (const auto& filePath : files) {
+            mRpc.addTorrentFile(
+                filePath,
+                parameters.downloadDirectory,
+                {},
+                {},
+                {},
+                {},
+                parameters.priority,
+                parameters.startAfterAdding
+            );
+            if (parameters.deleteTorrentFile) {
+                deleteTorrentFile(filePath, parameters.moveTorrentFileToTrash);
+            }
+        }
+    }
+
+    void MainWindowViewModel::addTorrentLinksWithoutDialog(const QStringList& urls) {
+        const auto parameters = getAddTorrentParameters(&mRpc);
+        for (const auto& url : urls) {
+            mRpc.addTorrentLink(url, parameters.downloadDirectory, parameters.priority, parameters.startAfterAdding);
+        }
     }
 
     void MainWindowViewModel::addTorrents(

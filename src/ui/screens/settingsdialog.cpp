@@ -7,6 +7,7 @@
 #include "settingsdialog.h"
 
 #include <array>
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -16,11 +17,19 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QPushButton>
+#include <QScrollArea>
+
+#include <KMessageWidget>
 
 #include "stdutils.h"
 #include "target_os.h"
 #include "settings.h"
+#include "rpc/rpc.h"
 #include "ui/systemcolorsprovider.h"
+#include "ui/screens/addtorrent/addtorrentdialog.h"
+#include "ui/screens/addtorrent/addtorrenthelpers.h"
+#include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 
 namespace tremotesf {
     namespace {
@@ -38,12 +47,21 @@ namespace tremotesf {
         }
     }
 
-    SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
+    SettingsDialog::SettingsDialog(Rpc* rpc, QWidget* parent) : QDialog(parent) {
         //: Dialog title
         setWindowTitle(qApp->translate("tremotesf", "Options"));
 
-        auto layout = new QVBoxLayout(this);
+        auto rootLayout = new QVBoxLayout(this);
+        auto scrollArea = new QScrollArea(this);
+        scrollArea->setFrameShape(QFrame::NoFrame);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollArea->setWidgetResizable(true);
+        rootLayout->addWidget(scrollArea);
+        auto widget = new QWidget(this);
+        auto layout = new QVBoxLayout(widget);
+        layout->setContentsMargins(0, 0, 0, 0);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+        scrollArea->setWidget(widget);
 
         QComboBox* darkThemeComboBox{};
         std::vector<Settings::DarkThemeMode> darkThemeComboBoxValues{};
@@ -88,41 +106,70 @@ namespace tremotesf {
 
         //: Options section
         auto addTorrentsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Adding torrents"), this);
-        auto addTorrentsGroupBoxBoxLayout = new QVBoxLayout(addTorrentsGroupBox);
+        auto addTorrentsGroupBoxLayout = new QVBoxLayout(addTorrentsGroupBox);
 
         auto rememberOpenTorrentDirCheckbox = new QCheckBox(
             //: Check box label
             qApp->translate("tremotesf", "Remember location of last opened torrent file"),
             this
         );
-        addTorrentsGroupBoxBoxLayout->addWidget(rememberOpenTorrentDirCheckbox);
+        addTorrentsGroupBoxLayout->addWidget(rememberOpenTorrentDirCheckbox);
 
-        auto rememberAddTorrentParameters = new QCheckBox(
+        auto rememberAddTorrentParametersCheckBox = new QCheckBox(
             //: Check box label
             qApp->translate("tremotesf", "Remember parameters of last added torrent"),
             this
         );
-        addTorrentsGroupBoxBoxLayout->addWidget(rememberAddTorrentParameters);
+        addTorrentsGroupBoxLayout->addWidget(rememberAddTorrentParametersCheckBox);
 
-        auto fillTorrentLinkFromKeyboardCheckBox = new QCheckBox(
-            //: Check box label
-            qApp->translate("tremotesf", "Automatically fill link from clipboard when adding torrent link"),
+        auto addTorrentParametersDisconnectedMessage = new KMessageWidget(
+            //: Server connection status
+            qApp->translate("tremotesf", "Disconnected"),
             this
         );
-        addTorrentsGroupBoxBoxLayout->addWidget(fillTorrentLinkFromKeyboardCheckBox);
-        auto pasteTipLabel = new QLabel(
-            //: %1 is a key binding, e.g. "Ctrl + C"
-            qApp->translate("tremotesf", "Tip: you can also press %1 in main window to add torrents from clipboard")
-                .arg(QKeySequence(QKeySequence::Paste).toString(QKeySequence::NativeText))
+        addTorrentParametersDisconnectedMessage->setMessageType(KMessageWidget::Warning);
+        addTorrentParametersDisconnectedMessage->setCloseButtonVisible(false);
+        addTorrentsGroupBoxLayout->addWidget(addTorrentParametersDisconnectedMessage);
+
+        auto addTorrentParametersGroupBox = new QGroupBox(qApp->translate("tremotesf", "Add torrent parameters"), this);
+        auto addTorrentParametersGroupBoxLayout = new QFormLayout(addTorrentParametersGroupBox);
+        addTorrentParametersGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+        const auto addTorrentParametersWidgets = AddTorrentDialog::createAddTorrentParametersWidgets(
+            AddTorrentDialog::Mode::File,
+            addTorrentParametersGroupBoxLayout,
+            rpc
         );
-        addTorrentsGroupBoxBoxLayout->addWidget(pasteTipLabel);
+        auto addTorrentParametersResetButton = new QPushButton(qApp->translate("tremotesf", "Reset"), this);
+        addTorrentParametersGroupBoxLayout->addRow(addTorrentParametersResetButton);
+
+        addTorrentsGroupBoxLayout->addWidget(addTorrentParametersGroupBox);
 
         auto showMainWindowWhenAddingTorrentsCheckBox = new QCheckBox(
             //: Check box label
             qApp->translate("tremotesf", "Show main window when adding torrents"),
             this
         );
-        addTorrentsGroupBoxBoxLayout->addWidget(showMainWindowWhenAddingTorrentsCheckBox);
+        addTorrentsGroupBoxLayout->addWidget(showMainWindowWhenAddingTorrentsCheckBox);
+
+        auto showDialogWhenAddingTorrentsCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Show dialog when adding torrents"),
+            this
+        );
+        addTorrentsGroupBoxLayout->addWidget(showDialogWhenAddingTorrentsCheckBox);
+
+        auto fillTorrentLinkFromKeyboardCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Automatically fill link from clipboard when adding torrent link"),
+            this
+        );
+        addTorrentsGroupBoxLayout->addWidget(fillTorrentLinkFromKeyboardCheckBox);
+        auto pasteTipLabel = new QLabel(
+            //: %1 is a key binding, e.g. "Ctrl + C"
+            qApp->translate("tremotesf", "Tip: you can also press %1 in main window to add torrents from clipboard")
+                .arg(QKeySequence(QKeySequence::Paste).toString(QKeySequence::NativeText))
+        );
+        addTorrentsGroupBoxLayout->addWidget(pasteTipLabel);
 
         layout->addWidget(addTorrentsGroupBox);
 
@@ -212,20 +259,41 @@ namespace tremotesf {
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
-        layout->addWidget(dialogButtonBox);
+        rootLayout->addWidget(dialogButtonBox);
 
         setMinimumSize(minimumSizeHint());
 
         auto settings = Settings::instance();
         connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
         rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());
-        rememberAddTorrentParameters->setChecked(settings->rememberAddTorrentParameters());
+        rememberAddTorrentParametersCheckBox->setChecked(settings->rememberAddTorrentParameters());
+        addTorrentParametersDisconnectedMessage->setVisible(!rpc->isConnected());
+        addTorrentParametersGroupBox->setEnabled(rpc->isConnected());
+        QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
+            const bool connected = rpc->isConnected();
+            if (connected) {
+                addTorrentParametersDisconnectedMessage->animatedHide();
+            } else {
+                addTorrentParametersDisconnectedMessage->animatedShow();
+            }
+            addTorrentParametersGroupBox->setEnabled(connected);
+            if (connected) {
+                // Update parameters which initial values depend on server state
+                const auto parameters = getAddTorrentParameters(rpc);
+                addTorrentParametersWidgets.downloadDirectoryWidget->updatePath(parameters.downloadDirectory);
+                addTorrentParametersWidgets.startTorrentCheckBox->setChecked(parameters.startAfterAdding);
+            }
+        });
+        QObject::connect(addTorrentParametersResetButton, &QPushButton::clicked, this, [=] {
+            addTorrentParametersWidgets.reset(rpc);
+        });
         torrentDoubleClickActionComboBox->setCurrentIndex(
             // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
             indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->torrentDoubleClickAction()).value()
         );
-        fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         showMainWindowWhenAddingTorrentsCheckBox->setChecked(settings->showMainWindowWhenAddingTorrent());
+        showDialogWhenAddingTorrentsCheckBox->setChecked(settings->showAddTorrentDialog());
+        fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
@@ -247,9 +315,11 @@ namespace tremotesf {
             auto settings = Settings::instance();
             settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
             settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
-            settings->setRememberTorrentAddParameters(rememberAddTorrentParameters->isChecked());
-            settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
+            settings->setRememberTorrentAddParameters(rememberAddTorrentParametersCheckBox->isChecked());
+            addTorrentParametersWidgets.saveToSettings();
             settings->setShowMainWindowWhenAddingTorrent(showMainWindowWhenAddingTorrentsCheckBox->isChecked());
+            settings->setShowAddTorrentDialog(showDialogWhenAddingTorrentsCheckBox->isChecked());
+            settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             settings->setTorrentDoubleClickAction(
                 torrentDoubleClickActionFromComboBoxIndex(torrentDoubleClickActionComboBox->currentIndex())
             );

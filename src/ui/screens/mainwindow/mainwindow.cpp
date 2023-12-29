@@ -460,7 +460,7 @@ namespace tremotesf {
             }
 
             mAddTorrentFileAction.setShortcuts(QKeySequence::Open);
-            QObject::connect(&mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::Impl::addTorrentsFiles);
+            QObject::connect(&mAddTorrentFileAction, &QAction::triggered, this, &MainWindow::Impl::openTorrentFiles);
             mConnectionDependentActions.push_back(&mAddTorrentFileAction);
 
             QObject::connect(&mAddTorrentLinkAction, &QAction::triggered, this, [this] {
@@ -788,7 +788,7 @@ namespace tremotesf {
             }
         }
 
-        void addTorrentsFiles() {
+        void openTorrentFiles() {
             auto* const settings = Settings::instance();
             if (settings->showMainWindowWhenAddingTorrent() && shouldShowWindows()) {
                 showWindowsAndActivateMainOrDialog();
@@ -809,7 +809,7 @@ namespace tremotesf {
             fileDialog->setFileMode(QFileDialog::ExistingFiles);
 
             QObject::connect(fileDialog, &QFileDialog::accepted, this, [fileDialog, this] {
-                showAddTorrentFileDialogs(fileDialog->selectedFiles());
+                addTorrentFiles(fileDialog->selectedFiles());
             });
 
             if constexpr (targetOs == TargetOs::Windows) {
@@ -819,39 +819,52 @@ namespace tremotesf {
             }
         }
 
-        void
-        showAddTorrentFileDialogs(const QStringList& files, std::optional<QByteArray>& activateFirstDialogWithToken) {
-            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
-            for (const QString& filePath : files) {
-                auto* const dialog = new AddTorrentDialog(
-                    mViewModel.rpc(),
-                    filePath,
-                    AddTorrentDialog::Mode::File,
-                    setParent ? mWindow : nullptr
-                );
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                dialog->show();
-                if (activateFirstDialogWithToken.has_value()) {
-                    activateWindow(dialog, *activateFirstDialogWithToken);
-                    activateFirstDialogWithToken.reset();
+        void addTorrentFiles(const QStringList& files, std::optional<QByteArray>& activateFirstDialogWithToken) {
+            auto* const settings = Settings::instance();
+            if (settings->showAddTorrentDialog()) {
+                const bool setParent = settings->showMainWindowWhenAddingTorrent();
+                for (const QString& filePath : files) {
+                    auto* const dialog = showAddTorrentFileDialog(filePath, setParent);
+                    if (activateFirstDialogWithToken.has_value()) {
+                        activateWindow(dialog, *activateFirstDialogWithToken);
+                        activateFirstDialogWithToken.reset();
+                    }
                 }
+            } else {
+                mViewModel.addTorrentFilesWithoutDialog(files);
             }
         }
 
-        void showAddTorrentFileDialogs(const QStringList& files) {
+        void addTorrentFiles(const QStringList& files) {
             std::optional<QByteArray> windowActivationToken{};
-            showAddTorrentFileDialogs(files, windowActivationToken);
+            addTorrentFiles(files, windowActivationToken);
         }
 
-        void
-        showAddTorrentLinkDialogs(const QStringList& urls, std::optional<QByteArray>& activateFirstDialogWithToken) {
-            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
-            for (const QString& url : urls) {
-                auto* const dialog = showAddTorrentLinkDialog(url, setParent);
-                if (activateFirstDialogWithToken.has_value()) {
-                    activateWindow(dialog, *activateFirstDialogWithToken);
-                    activateFirstDialogWithToken.reset();
+        QDialog* showAddTorrentFileDialog(const QString& filePath, bool setParent) {
+            auto* const dialog = new AddTorrentDialog(
+                mViewModel.rpc(),
+                filePath,
+                AddTorrentDialog::Mode::File,
+                setParent ? mWindow : nullptr
+            );
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->show();
+            return dialog;
+        }
+
+        void addTorrentLinks(const QStringList& urls, std::optional<QByteArray>& activateFirstDialogWithToken) {
+            auto* const settings = Settings::instance();
+            if (settings->showAddTorrentDialog()) {
+                const bool setParent = settings->showMainWindowWhenAddingTorrent();
+                for (const QString& url : urls) {
+                    auto* const dialog = showAddTorrentLinkDialog(url, setParent);
+                    if (activateFirstDialogWithToken.has_value()) {
+                        activateWindow(dialog, *activateFirstDialogWithToken);
+                        activateFirstDialogWithToken.reset();
+                    }
                 }
+            } else {
+                mViewModel.addTorrentLinksWithoutDialog(urls);
             }
         }
 
@@ -1225,7 +1238,9 @@ namespace tremotesf {
             settingsAction->setShortcut(QKeySequence::Preferences);
             settingsAction->setMenuRole(QAction::PreferencesRole);
             QObject::connect(settingsAction, &QAction::triggered, this, [this] {
-                showSingleInstanceDialog<SettingsDialog>([this] { return new SettingsDialog(mWindow); });
+                showSingleInstanceDialog<SettingsDialog>([this] {
+                    return new SettingsDialog(mViewModel.rpc(), mWindow);
+                });
             });
 
             QAction* serversAction = toolsMenu->addAction(
@@ -1562,8 +1577,8 @@ namespace tremotesf {
                         showWindowsAndActivateMainOrDialog(windowActivationToken);
                         windowActivationToken.reset();
                     }
-                    showAddTorrentFileDialogs(files, windowActivationToken);
-                    showAddTorrentLinkDialogs(urls, windowActivationToken);
+                    addTorrentFiles(files, windowActivationToken);
+                    addTorrentLinks(urls, windowActivationToken);
                 }
             );
 
@@ -1571,7 +1586,7 @@ namespace tremotesf {
                 &mViewModel,
                 &MainWindowViewModel::showDelayedTorrentAddMessage,
                 this,
-                [this, messageWidget](const QStringList& torrents) {
+                [messageWidget](const QStringList& torrents) {
                     logDebug("MainWindow: showing delayed torrent add message");
                     messageWidget->setMessageType(KMessageWidget::Information);
                     //: Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents
