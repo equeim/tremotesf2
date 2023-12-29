@@ -44,13 +44,15 @@ namespace tremotesf {
         QTimer* delayedTorrentAddMessageTimer{};
 
         void addTorrents(
-            const QStringList& files, const QStringList& urls, const WindowActivationToken& activationToken = {}
+            const QStringList& files,
+            const QStringList& urls,
+            const std::optional<QByteArray>& windowActivationToken = {}
         );
 
     signals:
-        void showWindow(const WindowActivationToken& activationToken);
+        void showWindow(const std::optional<QByteArray>& windowActivationToken);
         void showAddTorrentDialogs(
-            const QStringList& files, const QStringList& urls, const WindowActivationToken& activationToken
+            const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
         );
         void showDelayedTorrentAddMessage(const QStringList& torrents);
     };

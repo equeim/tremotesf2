@@ -186,19 +186,19 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::addTorrents(
-        const QStringList& files, const QStringList& urls, const WindowActivationToken& activationToken
+        const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
     ) {
         logInfo("MainWindowViewModel: addTorrents() called");
         logInfo("MainWindowViewModel: files = {}", files);
         logInfo("MainWindowViewModel: urls = {}", urls);
         const auto connectionState = mRpc.connectionState();
         if (connectionState == RpcConnectionState::Connected) {
-            emit showAddTorrentDialogs(files, urls, activationToken);
+            emit showAddTorrentDialogs(files, urls, windowActivationToken);
         } else {
             mPendingFilesToOpen.append(files);
             mPendingUrlsToOpen.append(urls);
             logInfo("Postponing opening torrents until connected to server");
-            emit showWindow(activationToken);
+            emit showWindow(windowActivationToken);
             // If we are connecting then wait a bit before showing message
             if (connectionState == RpcConnectionState::Connecting) {
                 logInfo("We are already connecting, wait a bit before showing message");

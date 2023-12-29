@@ -5,6 +5,7 @@
 #include "ipcserver_dbus_service.h"
 
 #include <QUrl>
+#include <KWindowSystem>
 
 #include "log/log.h"
 #include "tremotesf_dbus_generated/ipc/org.freedesktop.Application.adaptor.h"
@@ -17,17 +18,26 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariantList)
 
 namespace tremotesf {
     namespace {
-        WindowActivationToken platformDataToWindowActivationToken(const QVariantMap& platformData) {
-            WindowActivationToken token{};
-            if (const auto startupId = platformData.value(IpcDbusService::desktopStartupIdField).toByteArray();
-                !startupId.isEmpty()) {
-                token.x11StartupNotificationId = startupId;
+        std::optional<QByteArray> platformDataToWindowActivationToken(const QVariantMap& platformData) {
+            QLatin1String key{};
+            switch (KWindowSystem::platform()) {
+            case KWindowSystem::Platform::X11: {
+                key = IpcDbusService::desktopStartupIdField;
+                break;
             }
-            if (const auto activationToken = platformData.value(IpcDbusService::xdgActivationTokenField).toByteArray();
-                !activationToken.isEmpty()) {
-                token.waylandXdfActivationToken = activationToken;
+            case KWindowSystem::Platform::Wayland: {
+                key = IpcDbusService::xdgActivationTokenField;
+                break;
             }
-            return token;
+            default:
+                logWarning("Unknown windowing system");
+                return {};
+            }
+            auto token = platformData.value(key).toByteArray();
+            if (token.isEmpty()) {
+                return {};
+            }
+            return std::move(token);
         }
     }
 
