@@ -114,6 +114,8 @@ add_library(
     ui/screens/settingsdialog.h
     ui/screens/addtorrent/addtorrentdialog.cpp
     ui/screens/addtorrent/addtorrentdialog.h
+    ui/screens/addtorrent/addtorrenthelpers.cpp
+    ui/screens/addtorrent/addtorrenthelpers.h
     ui/screens/addtorrent/droppedtorrents.cpp
     ui/screens/addtorrent/droppedtorrents.h
     ui/screens/addtorrent/localtorrentfilesmodel.cpp

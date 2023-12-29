@@ -6,6 +6,7 @@
 #include "addtorrentdialog.h"
 
 #include <array>
+#include <stdexcept>
 
 #include <QCheckBox>
 #include <QClipboard>
@@ -22,16 +23,14 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-#include <KColumnResizer>
 #include <KMessageWidget>
 
-#include "fileutils.h"
+#include "addtorrenthelpers.h"
 #include "settings.h"
 #include "stdutils.h"
 #include "formatutils.h"
 #include "log/log.h"
 #include "rpc/torrent.h"
-#include "rpc/servers.h"
 #include "rpc/rpc.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
@@ -50,6 +49,16 @@ namespace tremotesf {
                 return TorrentData::Priority::Normal;
             }
             return priorityComboBoxItems.at(static_cast<size_t>(index));
+        }
+
+        int rowForWidget(QFormLayout* layout, QWidget* widget) {
+            int row{};
+            QFormLayout::ItemRole role{};
+            layout->getWidgetPosition(widget, &row, &role);
+            if (row == -1) {
+                throw std::logic_error(fmt::format("Did not find widget {} in layout {}", *widget, *layout));
+            }
+            return row;
         }
     }
 
@@ -77,63 +86,96 @@ namespace tremotesf {
         if (mMode == Mode::File) {
             mRpc->addTorrentFile(
                 mUrl,
-                mDownloadDirectoryWidget->path(),
+                mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
                 mFilesModel->unwantedFiles(),
                 mFilesModel->highPriorityFiles(),
                 mFilesModel->lowPriorityFiles(),
                 mFilesModel->renamedFiles(),
-                priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()),
-                mStartTorrentCheckBox->isChecked()
+                priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
+                mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
             );
         } else {
             mRpc->addTorrentLink(
                 mTorrentLinkLineEdit->text(),
-                mDownloadDirectoryWidget->path(),
-                priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()),
-                mStartTorrentCheckBox->isChecked()
+                mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
+                priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
+                mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
             );
         }
-
-        mDownloadDirectoryWidget->saveDirectories();
 
         const auto settings = Settings::instance();
         if (settings->rememberOpenTorrentDir() && mMode == Mode::File) {
             settings->setLastOpenTorrentDirectory(QFileInfo(mUrl).path());
         }
         if (settings->rememberAddTorrentParameters()) {
-            settings->setLastAddTorrentPriority(priorityFromComboBoxIndex(mPriorityComboBox->currentIndex()));
-            settings->setLastAddTorrentStartAfterAdding(mStartTorrentCheckBox->isChecked());
-            if (mMode == Mode::File) {
-                settings->setLastAddTorrentDeleteTorrentFile(mDeleteTorrentFileGroupBox->isChecked());
-                settings->setLastAddTorrentMoveTorrentFileToTrash(mMoveTorrentFileToTrashCheckBox->isChecked());
-            }
+            mAddTorrentParametersWidgets.saveToSettings();
         }
-        if (mMode == Mode::File && mDeleteTorrentFileGroupBox->isChecked()) {
-            try {
-                if (mMoveTorrentFileToTrashCheckBox->isChecked()) {
-                    try {
-                        moveFileToTrash(mUrl);
-                    } catch (const QFileError& e) {
-                        logWarningWithException(e, "Failed to move torrent file to trash");
-                        deleteFile(mUrl);
-                    }
-                } else {
-                    deleteFile(mUrl);
-                }
-            } catch (const QFileError& e) {
-                logWarningWithException(e, "Failed to delete torrent file");
-            }
+        if (mMode == Mode::File && mAddTorrentParametersWidgets.deleteTorrentFileGroupBox->isChecked()) {
+            deleteTorrentFile(mUrl, mAddTorrentParametersWidgets.moveTorrentFileToTrashCheckBox->isChecked());
         }
 
         QDialog::accept();
     }
 
-    QString AddTorrentDialog::initialDownloadDirectory() {
-        if (Settings::instance()->rememberAddTorrentParameters()) {
-            auto lastDir = Servers::instance()->currentServerLastDownloadDirectory(mRpc->serverSettings());
-            if (!lastDir.isEmpty()) return lastDir;
+    AddTorrentDialog::AddTorrentParametersWidgets
+    AddTorrentDialog::createAddTorrentParametersWidgets(Mode mode, QFormLayout* layout, Rpc* rpc) {
+        const auto parameters = getAddTorrentParameters(rpc);
+
+        auto* const downloadDirectoryWidget = new TorrentDownloadDirectoryDirectorySelectionWidget{};
+        downloadDirectoryWidget->setup(parameters.downloadDirectory, rpc);
+        //: Input field's label
+        layout->addRow(qApp->translate("tremotesf", "Download directory:"), downloadDirectoryWidget);
+
+        auto* const priorityComboBox = new QComboBox{};
+        priorityComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        for (const auto priority : priorityComboBoxItems) {
+            switch (priority) {
+            case TorrentData::Priority::High:
+                //: Torrent's loading priority
+                priorityComboBox->addItem(qApp->translate("tremotesf", "High"));
+                break;
+            case TorrentData::Priority::Normal:
+                //: Torrent's loading priority
+                priorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
+                break;
+            case TorrentData::Priority::Low:
+                //: Torrent's loading priority
+                priorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
+                break;
+            }
         }
-        return mRpc->serverSettings()->data().downloadDirectory;
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+        priorityComboBox->setCurrentIndex(indexOfCasted<int>(priorityComboBoxItems, parameters.priority).value());
+        //: Combo box label
+        layout->addRow(qApp->translate("tremotesf", "Torrent priority:"), priorityComboBox);
+
+        auto* const startTorrentCheckBox =
+            new QCheckBox(qApp->translate("tremotesf", "Start downloading after adding"));
+        startTorrentCheckBox->setChecked(parameters.startAfterAdding);
+        layout->addRow(startTorrentCheckBox);
+
+        QGroupBox* deleteTorrentFileGroupBox{};
+        QCheckBox* moveTorrentFileToTrashCheckBox{};
+        if (mode == Mode::File) {
+            deleteTorrentFileGroupBox = new QGroupBox(qApp->translate("tremotesf", "Delete .torrent file"));
+            layout->addWidget(deleteTorrentFileGroupBox);
+            deleteTorrentFileGroupBox->setCheckable(true);
+            const auto groupBoxLayout = new QVBoxLayout(deleteTorrentFileGroupBox);
+            moveTorrentFileToTrashCheckBox = new QCheckBox(qApp->translate("tremotesf", "Move .torrent file to trash"));
+            groupBoxLayout->addWidget(moveTorrentFileToTrashCheckBox);
+
+            deleteTorrentFileGroupBox->setChecked(parameters.deleteTorrentFile);
+            moveTorrentFileToTrashCheckBox->setChecked(parameters.moveTorrentFileToTrash);
+            layout->addRow(deleteTorrentFileGroupBox);
+        }
+
+        return {
+            .downloadDirectoryWidget = downloadDirectoryWidget,
+            .priorityComboBox = priorityComboBox,
+            .startTorrentCheckBox = startTorrentCheckBox,
+            .deleteTorrentFileGroupBox = deleteTorrentFileGroupBox,
+            .moveTorrentFileToTrashCheckBox = moveTorrentFileToTrashCheckBox
+        };
     }
 
     void AddTorrentDialog::setupUi() {
@@ -145,29 +187,22 @@ namespace tremotesf {
             setWindowTitle(qApp->translate("tremotesf", "Add Torrent Link"));
         }
 
-        auto layout = new QVBoxLayout(this);
+        auto layout = new QFormLayout(this);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
         auto messageWidget = new KMessageWidget(this);
         messageWidget->setCloseButtonVisible(false);
         messageWidget->hide();
-        layout->addWidget(messageWidget);
-
-        auto firstFormWidget = new QWidget(this);
-        firstFormWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        auto firstFormLayout = new QFormLayout(firstFormWidget);
-        firstFormLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-        firstFormLayout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(firstFormWidget);
+        layout->addRow(messageWidget);
 
         mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
         if (mMode == Mode::File) {
             mTorrentLinkLineEdit->setReadOnly(true);
             //: Input field's label
-            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
+            layout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
         } else {
             //: Input field's label
-            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
+            layout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
             if (mUrl.isEmpty() && Settings::instance()->fillTorrentLinkFromClipboard()) {
                 const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
                 if (!dropped.urls.isEmpty()) {
@@ -181,10 +216,7 @@ namespace tremotesf {
             QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
         }
 
-        mDownloadDirectoryWidget = new TorrentDownloadDirectoryDirectorySelectionWidget(this);
-        mDownloadDirectoryWidget->setup(initialDownloadDirectory(), mRpc);
-        //: Input field's label
-        firstFormLayout->addRow(qApp->translate("tremotesf", "Download directory:"), mDownloadDirectoryWidget);
+        mAddTorrentParametersWidgets = createAddTorrentParametersWidgets(mMode, layout, mRpc);
 
         auto freeSpaceLabel = new QLabel(this);
         auto getFreeSpace = [=, this](const QString& directory) {
@@ -201,16 +233,19 @@ namespace tremotesf {
             freeSpaceLabel->hide();
             freeSpaceLabel->clear();
         };
-        QObject::connect(mDownloadDirectoryWidget, &RemoteDirectorySelectionWidget::pathChanged, this, [=, this] {
-            getFreeSpace(mDownloadDirectoryWidget->path());
-        });
+        QObject::connect(
+            mAddTorrentParametersWidgets.downloadDirectoryWidget,
+            &RemoteDirectorySelectionWidget::pathChanged,
+            this,
+            [=, this] { getFreeSpace(mAddTorrentParametersWidgets.downloadDirectoryWidget->path()); }
+        );
         if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
             QObject::connect(
                 mRpc,
                 &Rpc::gotFreeSpaceForPath,
                 this,
                 [=, this](const QString& path, bool success, long long bytes) {
-                    if (path == mDownloadDirectoryWidget->path()) {
+                    if (path == mAddTorrentParametersWidgets.downloadDirectoryWidget->path()) {
                         if (success) {
                             freeSpaceLabel->setText(
                                 //: %1 is a amount of free space in a directory, e.g. 1 GiB
@@ -225,7 +260,8 @@ namespace tremotesf {
             );
         } else {
             QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=, this](auto bytes) {
-                if (mDownloadDirectoryWidget->path() == mRpc->serverSettings()->data().downloadDirectory) {
+                if (mAddTorrentParametersWidgets.downloadDirectoryWidget->path() ==
+                    mRpc->serverSettings()->data().downloadDirectory) {
                     freeSpaceLabel->setText(
                         qApp->translate("tremotesf", "Free space: %1").arg(formatutils::formatByteSize(bytes))
                     );
@@ -233,78 +269,16 @@ namespace tremotesf {
                 }
             });
         }
-        getFreeSpace(mDownloadDirectoryWidget->path());
-        firstFormLayout->addRow(nullptr, freeSpaceLabel);
+        getFreeSpace(mAddTorrentParametersWidgets.downloadDirectoryWidget->path());
+        layout->insertRow(
+            rowForWidget(layout, mAddTorrentParametersWidgets.downloadDirectoryWidget) + 1,
+            nullptr,
+            freeSpaceLabel
+        );
 
         if (mMode == Mode::File) {
             mTorrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
-            layout->addWidget(mTorrentFilesView, 1);
-        }
-
-        mPriorityComboBox = new QComboBox(this);
-        mPriorityComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        for (const auto priority : priorityComboBoxItems) {
-            switch (priority) {
-            case TorrentData::Priority::High:
-                //: Torrent's loading priority
-                mPriorityComboBox->addItem(qApp->translate("tremotesf", "High"));
-                break;
-            case TorrentData::Priority::Normal:
-                //: Torrent's loading priority
-                mPriorityComboBox->addItem(qApp->translate("tremotesf", "Normal"));
-                break;
-            case TorrentData::Priority::Low:
-                //: Torrent's loading priority
-                mPriorityComboBox->addItem(qApp->translate("tremotesf", "Low"));
-                break;
-            }
-        }
-        const auto initialPriority = [&] {
-            if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
-                return settings->lastAddTorrentPriority();
-            }
-            return TorrentData::Priority::Normal;
-        }();
-        mPriorityComboBox->setCurrentIndex(indexOfCasted<int>(priorityComboBoxItems, initialPriority).value());
-
-        QFormLayout* secondFormLayout = nullptr;
-        if (mMode == Mode::File) {
-            secondFormLayout = new QFormLayout();
-            secondFormLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-            //: Combo box label
-            secondFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
-            layout->addLayout(secondFormLayout);
-
-            auto resizer = new KColumnResizer(this);
-            resizer->addWidgetsFromLayout(firstFormLayout);
-            resizer->addWidgetsFromLayout(secondFormLayout);
-        } else {
-            //: Combo box label
-            firstFormLayout->addRow(qApp->translate("tremotesf", "Torrent priority:"), mPriorityComboBox);
-        }
-
-        mStartTorrentCheckBox = new QCheckBox(qApp->translate("tremotesf", "Start downloading after adding"), this);
-        if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
-            mStartTorrentCheckBox->setChecked(settings->lastAddTorrentStartAfterAdding());
-        } else {
-            mStartTorrentCheckBox->setChecked(mRpc->serverSettings()->data().startAddedTorrents);
-        }
-        layout->addWidget(mStartTorrentCheckBox);
-
-        if (mMode == Mode::File) {
-            mDeleteTorrentFileGroupBox = new QGroupBox(qApp->translate("tremotesf", "Delete .torrent file"), this);
-            layout->addWidget(mDeleteTorrentFileGroupBox);
-            mDeleteTorrentFileGroupBox->setCheckable(true);
-            const auto groupBoxLayout = new QVBoxLayout(mDeleteTorrentFileGroupBox);
-            mMoveTorrentFileToTrashCheckBox =
-                new QCheckBox(qApp->translate("tremotesf", "Move .torrent file to trash"), this);
-            groupBoxLayout->addWidget(mMoveTorrentFileToTrashCheckBox);
-            if (const auto settings = Settings::instance(); settings->rememberAddTorrentParameters()) {
-                mDeleteTorrentFileGroupBox->setChecked(settings->lastAddTorrentDeleteTorrentFile());
-                mMoveTorrentFileToTrashCheckBox->setChecked(settings->lastAddTorrentMoveTorrentFileToTrash());
-            } else {
-                mMoveTorrentFileToTrashCheckBox->setChecked(true);
-            }
+            layout->insertRow(rowForWidget(layout, freeSpaceLabel) + 1, mTorrentFilesView);
         }
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -317,24 +291,17 @@ namespace tremotesf {
         const auto updateUi = [=, this] {
             const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
             if (enabled) {
-                mDownloadDirectoryWidget->updatePath(initialDownloadDirectory());
+                // Update parameters which initial values depend on server state
+                const auto parameters = getAddTorrentParameters(mRpc);
+                mAddTorrentParametersWidgets.downloadDirectoryWidget->updatePath(parameters.downloadDirectory);
+                mAddTorrentParametersWidgets.startTorrentCheckBox->setChecked(parameters.startAfterAdding);
             }
 
-            for (int i = 0, max = firstFormLayout->count(); i < max; ++i) {
-                firstFormLayout->itemAt(i)->widget()->setEnabled(enabled);
+            for (int i = 1, max = layout->count(); i < max; ++i) {
+                layout->itemAt(i)->widget()->setEnabled(enabled);
             }
 
-            if (mTorrentFilesView) {
-                mTorrentFilesView->setEnabled(enabled);
-            }
-
-            if (secondFormLayout) {
-                for (int i = 0, max = secondFormLayout->count(); i < max; ++i) {
-                    secondFormLayout->itemAt(i)->widget()->setEnabled(enabled);
-                }
-            }
-
-            mStartTorrentCheckBox->setEnabled(enabled);
+            mAddTorrentParametersWidgets.startTorrentCheckBox->setEnabled(enabled);
 
             if (enabled) {
                 if (messageWidget->isShowAnimationRunning()) {
@@ -360,7 +327,7 @@ namespace tremotesf {
 
         QObject::connect(mRpc, &Rpc::connectedChanged, this, updateUi);
         QObject::connect(
-            mDownloadDirectoryWidget,
+            mAddTorrentParametersWidgets.downloadDirectoryWidget,
             &RemoteDirectorySelectionWidget::pathChanged,
             this,
             &AddTorrentDialog::canAcceptUpdate
@@ -397,7 +364,7 @@ namespace tremotesf {
         if (mMode == Mode::Url && mTorrentLinkLineEdit->text().isEmpty()) {
             can = false;
         }
-        if (mDownloadDirectoryWidget->path().isEmpty()) {
+        if (mAddTorrentParametersWidgets.downloadDirectoryWidget->path().isEmpty()) {
             can = false;
         }
         mDialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(can);
@@ -408,4 +375,29 @@ namespace tremotesf {
             mTorrentFilesView->saveState();
         }
     }
+
+    void AddTorrentDialog::AddTorrentParametersWidgets::reset(Rpc* rpc) const {
+        const auto initialParameters = getInitialAddTorrentParameters(rpc);
+        downloadDirectoryWidget->updatePath(initialParameters.downloadDirectory);
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+        priorityComboBox->setCurrentIndex(indexOfCasted<int>(priorityComboBoxItems, initialParameters.priority).value()
+        );
+        startTorrentCheckBox->setChecked(initialParameters.startAfterAdding);
+        if (deleteTorrentFileGroupBox) {
+            deleteTorrentFileGroupBox->setChecked(initialParameters.deleteTorrentFile);
+            moveTorrentFileToTrashCheckBox->setChecked(initialParameters.moveTorrentFileToTrash);
+        }
+    }
+
+    void AddTorrentDialog::AddTorrentParametersWidgets::saveToSettings() const {
+        downloadDirectoryWidget->saveDirectories();
+        auto* const settings = Settings::instance();
+        settings->setLastAddTorrentPriority(priorityFromComboBoxIndex(priorityComboBox->currentIndex()));
+        settings->setLastAddTorrentStartAfterAdding(startTorrentCheckBox->isChecked());
+        if (deleteTorrentFileGroupBox) {
+            settings->setLastAddTorrentDeleteTorrentFile(deleteTorrentFileGroupBox->isChecked());
+            settings->setLastAddTorrentMoveTorrentFileToTrash(moveTorrentFileToTrashCheckBox->isChecked());
+        }
+    }
+
 }

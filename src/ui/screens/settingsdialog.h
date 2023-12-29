@@ -10,11 +10,13 @@
 class QCheckBox;
 
 namespace tremotesf {
+    class Rpc;
+
     class SettingsDialog final : public QDialog {
         Q_OBJECT
 
     public:
-        explicit SettingsDialog(QWidget* parent = nullptr);
+        explicit SettingsDialog(Rpc* rpc, QWidget* parent = nullptr);
     };
 }
 

@@ -37,6 +37,9 @@ namespace tremotesf {
         enum class StartupActionResult { ShowAddServerDialog, DoNothing };
         StartupActionResult performStartupAction();
 
+        void addTorrentFilesWithoutDialog(const QStringList& files);
+        void addTorrentLinksWithoutDialog(const QStringList& urls);
+
     private:
         Rpc mRpc{};
         QStringList mPendingFilesToOpen{};

@@ -16,6 +16,9 @@
 
 namespace tremotesf {
     void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories() {
+        if (mPath.isEmpty()) {
+            return;
+        }
         auto paths = createTransforming<QStringList>(mComboBoxItems, [](const auto& item) { return item.path; });
         if (!paths.contains(mPath)) {
             paths.push_back(mPath);

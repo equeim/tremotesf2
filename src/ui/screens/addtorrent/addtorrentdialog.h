@@ -11,6 +11,7 @@
 class QCheckBox;
 class QComboBox;
 class QDialogButtonBox;
+class QFormLayout;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
@@ -32,8 +33,20 @@ namespace tremotesf {
         QSize sizeHint() const override;
         void accept() override;
 
+        struct AddTorrentParametersWidgets {
+            TorrentDownloadDirectoryDirectorySelectionWidget* downloadDirectoryWidget;
+            QComboBox* priorityComboBox;
+            QCheckBox* startTorrentCheckBox;
+            QGroupBox* deleteTorrentFileGroupBox;
+            QCheckBox* moveTorrentFileToTrashCheckBox;
+
+            void reset(Rpc* rpc) const;
+            void saveToSettings() const;
+        };
+
+        static AddTorrentParametersWidgets createAddTorrentParametersWidgets(Mode mode, QFormLayout* layout, Rpc* rpc);
+
     private:
-        QString initialDownloadDirectory();
         void setupUi();
         void canAcceptUpdate();
         void saveState();
@@ -45,12 +58,8 @@ namespace tremotesf {
         LocalTorrentFilesModel* mFilesModel{};
 
         QLineEdit* mTorrentLinkLineEdit{};
-        TorrentDownloadDirectoryDirectorySelectionWidget* mDownloadDirectoryWidget{};
         TorrentFilesView* mTorrentFilesView{};
-        QComboBox* mPriorityComboBox{};
-        QCheckBox* mStartTorrentCheckBox{};
-        QGroupBox* mDeleteTorrentFileGroupBox{};
-        QCheckBox* mMoveTorrentFileToTrashCheckBox{};
+        AddTorrentParametersWidgets mAddTorrentParametersWidgets{};
 
         QDialogButtonBox* mDialogButtonBox{};
 

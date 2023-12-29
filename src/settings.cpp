@@ -128,6 +128,8 @@ namespace tremotesf {
         true
     )
 
+    SETTINGS_PROPERTY_DEF_TRIVIAL(bool, showAddTorrentDialog, setShowAddTorrentDialog, "showAddTorrentDialog", true)
+
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled, "torrentsStatusFilterEnabled", true
     )
