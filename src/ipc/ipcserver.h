@@ -9,13 +9,6 @@
 #include <QObject>
 
 namespace tremotesf {
-    struct WindowActivationToken {
-#ifdef TREMOTESF_UNIX_FREEDESKTOP
-        std::optional<QByteArray> x11StartupNotificationId{};
-        std::optional<QByteArray> waylandXdfActivationToken{};
-#endif
-    };
-
     class IpcServer : public QObject {
         Q_OBJECT
 
@@ -26,9 +19,11 @@ namespace tremotesf {
         inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent){};
 
     signals:
-        void windowActivationRequested(const QString& torrentHash, const WindowActivationToken& token);
         void
-        torrentsAddingRequested(const QStringList& files, const QStringList& urls, const WindowActivationToken& token);
+        windowActivationRequested(const QString& torrentHash, const std::optional<QByteArray>& windowActivationToken);
+        void torrentsAddingRequested(
+            const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
+        );
     };
 }
 

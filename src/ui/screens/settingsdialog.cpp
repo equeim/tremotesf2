@@ -117,6 +117,13 @@ namespace tremotesf {
         );
         addTorrentsGroupBoxBoxLayout->addWidget(pasteTipLabel);
 
+        auto showMainWindowWhenAddingTorrentsCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Show main window when adding torrents"),
+            this
+        );
+        addTorrentsGroupBoxBoxLayout->addWidget(showMainWindowWhenAddingTorrentsCheckBox);
+
         layout->addWidget(addTorrentsGroupBox);
 
         //: Options section
@@ -218,6 +225,7 @@ namespace tremotesf {
             indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->torrentDoubleClickAction()).value()
         );
         fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
+        showMainWindowWhenAddingTorrentsCheckBox->setChecked(settings->showMainWindowWhenAddingTorrent());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
@@ -241,6 +249,7 @@ namespace tremotesf {
             settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
             settings->setRememberTorrentAddParameters(rememberAddTorrentParameters->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
+            settings->setShowMainWindowWhenAddingTorrent(showMainWindowWhenAddingTorrentsCheckBox->isChecked());
             settings->setTorrentDoubleClickAction(
                 torrentDoubleClickActionFromComboBoxIndex(torrentDoubleClickActionComboBox->currentIndex())
             );

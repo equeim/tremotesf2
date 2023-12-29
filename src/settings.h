@@ -51,6 +51,8 @@ namespace tremotesf {
 
         SETTINGS_PROPERTY_TRIVIAL(bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard)
 
+        SETTINGS_PROPERTY_TRIVIAL(bool, showMainWindowWhenAddingTorrent, setShowMainWindowWhenAddingTorrent)
+
         SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled)
         SETTINGS_PROPERTY_TRIVIAL(TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter)
 

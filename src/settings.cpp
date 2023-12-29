@@ -121,6 +121,14 @@ namespace tremotesf {
     )
 
     SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool,
+        showMainWindowWhenAddingTorrent,
+        setShowMainWindowWhenAddingTorrent,
+        "showMainWindowWhenAddingTorrent",
+        true
+    )
+
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled, "torrentsStatusFilterEnabled", true
     )
     SETTINGS_PROPERTY_DEF_TRIVIAL(

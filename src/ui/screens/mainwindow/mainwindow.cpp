@@ -464,7 +464,7 @@ namespace tremotesf {
             mConnectionDependentActions.push_back(&mAddTorrentFileAction);
 
             QObject::connect(&mAddTorrentLinkAction, &QAction::triggered, this, [this] {
-                if (mWindow->isHidden()) {
+                if (Settings::instance()->showMainWindowWhenAddingTorrent() && shouldShowWindows()) {
                     showWindowsAndActivateMainOrDialog();
                 }
                 showAddTorrentLinkDialog();
@@ -789,16 +789,16 @@ namespace tremotesf {
         }
 
         void addTorrentsFiles() {
-            if (mWindow->isHidden()) {
+            auto* const settings = Settings::instance();
+            if (settings->showMainWindowWhenAddingTorrent() && shouldShowWindows()) {
                 showWindowsAndActivateMainOrDialog();
             }
-            auto* const settings = Settings::instance();
             auto directory = settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString{};
             if (directory.isEmpty()) {
                 directory = QDir::homePath();
             }
             auto* const fileDialog = new QFileDialog(
-                mWindow,
+                settings->showMainWindowWhenAddingTorrent() ? mWindow : nullptr,
                 //: File chooser dialog title
                 qApp->translate("tremotesf", "Select Files"),
                 directory,
@@ -819,24 +819,50 @@ namespace tremotesf {
             }
         }
 
-        void showAddTorrentFileDialogs(const QStringList& files) {
+        void
+        showAddTorrentFileDialogs(const QStringList& files, std::optional<QByteArray>& activateFirstDialogWithToken) {
+            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
             for (const QString& filePath : files) {
-                auto dialog = new AddTorrentDialog(mViewModel.rpc(), filePath, AddTorrentDialog::Mode::File, mWindow);
+                auto* const dialog = new AddTorrentDialog(
+                    mViewModel.rpc(),
+                    filePath,
+                    AddTorrentDialog::Mode::File,
+                    setParent ? mWindow : nullptr
+                );
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
                 dialog->show();
+                if (activateFirstDialogWithToken.has_value()) {
+                    activateWindow(dialog, *activateFirstDialogWithToken);
+                    activateFirstDialogWithToken.reset();
+                }
             }
         }
 
-        void showAddTorrentLinkDialogs(const QStringList& urls) {
+        void showAddTorrentFileDialogs(const QStringList& files) {
+            std::optional<QByteArray> windowActivationToken{};
+            showAddTorrentFileDialogs(files, windowActivationToken);
+        }
+
+        void
+        showAddTorrentLinkDialogs(const QStringList& urls, std::optional<QByteArray>& activateFirstDialogWithToken) {
+            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
             for (const QString& url : urls) {
-                showAddTorrentLinkDialog(url);
+                auto* const dialog = showAddTorrentLinkDialog(url, setParent);
+                if (activateFirstDialogWithToken.has_value()) {
+                    activateWindow(dialog, *activateFirstDialogWithToken);
+                    activateFirstDialogWithToken.reset();
+                }
             }
         }
 
-        void showAddTorrentLinkDialog(const QString& url = {}) {
-            auto dialog = new AddTorrentDialog(mViewModel.rpc(), url, AddTorrentDialog::Mode::Url, mWindow);
+        QDialog* showAddTorrentLinkDialog(
+            const QString& url = {}, bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent()
+        ) {
+            auto* const dialog =
+                new AddTorrentDialog(mViewModel.rpc(), url, AddTorrentDialog::Mode::Url, setParent ? mWindow : nullptr);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
+            return dialog;
         }
 
         void updateTorrentActions() {
@@ -1384,7 +1410,9 @@ namespace tremotesf {
 
         bool shouldShowWindows() const { return mWindow->isHidden() || mWindow->isMinimized(); }
 
-        void showWindowsAndActivateMainOrDialog([[maybe_unused]] const WindowActivationToken& activationToken = {}) {
+        void showWindowsAndActivateMainOrDialog(
+            [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
+        ) {
             logInfo("Showing windows");
             if constexpr (targetOs == TargetOs::UnixMacOS) {
                 if (isNSAppHidden()) {
@@ -1408,24 +1436,25 @@ namespace tremotesf {
             if (!dialogToActivate) {
                 dialogToActivate = lastDialog;
             }
-            activateWindow(mWindow, activationToken);
+            activateWindow(mWindow, windowActivationToken);
             if (dialogToActivate) {
                 activateWindow(dialogToActivate);
             }
         }
 
-        void
-        activateWindow(QWidget* widgetToActivate, [[maybe_unused]] const WindowActivationToken& activationToken = {}) {
+        void activateWindow(
+            QWidget* widgetToActivate, [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
+        ) {
             logInfo("Activating window {}", *widgetToActivate);
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
             switch (KWindowSystem::platform()) {
             case KWindowSystem::Platform::X11:
                 logDebug("Windowing system is X11");
-                activeWindowOnX11(widgetToActivate, activationToken.x11StartupNotificationId);
+                activeWindowOnX11(widgetToActivate, windowActivationToken);
                 break;
             case KWindowSystem::Platform::Wayland:
                 logDebug("Windowing system is Wayland");
-                activeWindowOnWayland(widgetToActivate, activationToken.waylandXdfActivationToken);
+                activeWindowOnWayland(widgetToActivate, windowActivationToken);
                 break;
             default:
                 logWarning("Unknown windowing system");
@@ -1524,13 +1553,17 @@ namespace tremotesf {
                 &mViewModel,
                 &MainWindowViewModel::showAddTorrentDialogs,
                 this,
-                [messageWidget, this](const auto& files, const auto& urls, const auto& activationToken) {
+                [messageWidget, this](const auto& files, const auto& urls, auto windowActivationToken) {
                     if (messageWidget->isVisible()) {
                         messageWidget->animatedHide();
                     }
-                    showWindowsAndActivateMainOrDialog(activationToken);
-                    showAddTorrentFileDialogs(files);
-                    showAddTorrentLinkDialogs(urls);
+                    if (Settings::instance()->showMainWindowWhenAddingTorrent() &&
+                        (shouldShowWindows() || windowActivationToken.has_value())) {
+                        showWindowsAndActivateMainOrDialog(windowActivationToken);
+                        windowActivationToken.reset();
+                    }
+                    showAddTorrentFileDialogs(files, windowActivationToken);
+                    showAddTorrentLinkDialogs(urls, windowActivationToken);
                 }
             );
 
@@ -1562,21 +1595,30 @@ namespace tremotesf {
         }
 
         void showAddTorrentErrors() {
-            QObject::connect(mViewModel.rpc(), &Rpc::torrentAddDuplicate, this, [this] {
-                QMessageBox::warning(
-                    mWindow,
+            const auto showError = [this](const QString& title, const QString& text) {
+                QWidget* parent{};
+                if (Settings::instance()->showMainWindowWhenAddingTorrent()) {
+                    parent = mWindow;
+                    showWindowsAndActivateMainOrDialog();
+                }
+                auto* const dialog = new QMessageBox(QMessageBox::Warning, title, text, QMessageBox::Close, parent);
+                dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+                dialog->setModal(false);
+                dialog->show();
+                activateWindow(dialog);
+            };
+
+            QObject::connect(mViewModel.rpc(), &Rpc::torrentAddDuplicate, this, [=] {
+                showError(
                     qApp->translate("tremotesf", "Error adding torrent"),
-                    qApp->translate("tremotesf", "This torrent is already added"),
-                    QMessageBox::Close
+                    qApp->translate("tremotesf", "This torrent is already added")
                 );
             });
 
-            QObject::connect(mViewModel.rpc(), &Rpc::torrentAddError, this, [this] {
-                QMessageBox::warning(
-                    mWindow,
+            QObject::connect(mViewModel.rpc(), &Rpc::torrentAddError, this, [=] {
+                showError(
                     qApp->translate("tremotesf", "Error adding torrent"),
-                    qApp->translate("tremotesf", "Error adding torrent"),
-                    QMessageBox::Close
+                    qApp->translate("tremotesf", "Error adding torrent")
                 );
             });
         }
