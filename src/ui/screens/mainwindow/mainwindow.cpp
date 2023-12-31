@@ -1482,31 +1482,31 @@ namespace tremotesf {
         }
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-        void activeWindowOnX11(QWidget* widgetToActivate, const std::optional<QByteArray>& newStartupNotificationId) {
-            if (newStartupNotificationId.has_value()) {
-                logInfo("Removing startup notification with id '{}'", *newStartupNotificationId);
-                KStartupInfo::setNewStartupId(widgetToActivate->windowHandle(), *newStartupNotificationId);
-                KStartupInfo::appStarted(*newStartupNotificationId);
+        void activeWindowOnX11(QWidget* widgetToActivate, const std::optional<QByteArray>& startupNotificationId) {
+            if (startupNotificationId.has_value()) {
+                logInfo("Removing startup notification with id {}", *startupNotificationId);
+                KStartupInfo::setNewStartupId(widgetToActivate->windowHandle(), *startupNotificationId);
+                KStartupInfo::appStarted(*startupNotificationId);
             }
             widgetToActivate->activateWindow();
         }
 
         void activeWindowOnWayland(
             [[maybe_unused]] QWidget* widgetToActivate,
-            [[maybe_unused]] const std::optional<QByteArray>& newXdgActivationToken
+            [[maybe_unused]] const std::optional<QByteArray>& xdgActivationToken
         ) {
 #    if QT_VERSION_MAJOR >= 6
-            if (newXdgActivationToken.has_value()) {
-                logInfo("Updating xdg-activation token with new value '{}'", *newXdgActivationToken);
+            if (xdgActivationToken.has_value()) {
+                logInfo("Activating window with token {}", *xdgActivationToken);
                 // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
                 // It we be read and unset in QWidget::activateWindow() call below
-                qputenv(xdgActivationTokenEnvVariable, *newXdgActivationToken);
+                qputenv(xdgActivationTokenEnvVariable, *xdgActivationToken);
             }
             widgetToActivate->activateWindow();
 #    elif KWINDOWSYSTEM_VERSION >= QT_VERSION_CHECK(5, 89, 0)
-            if (newXdgActivationToken.has_value()) {
-                logInfo("Updating xdg-activation token with new value '{}'", *newXdgActivationToken);
-                KWindowSystem::setCurrentXdgActivationToken(*newXdgActivationToken);
+            if (xdgActivationToken.has_value()) {
+                logInfo("Activating window with token {}", *xdgActivationToken);
+                KWindowSystem::setCurrentXdgActivationToken(*xdgActivationToken);
             }
             if (const auto handle = widgetToActivate->windowHandle(); handle) {
                 KWindowSystem::activateWindow(handle);
