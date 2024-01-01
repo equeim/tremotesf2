@@ -144,12 +144,17 @@ namespace tremotesf {
 
         addTorrentsGroupBoxLayout->addWidget(addTorrentParametersGroupBox);
 
-        auto showMainWindowWhenAddingTorrentsCheckBox = new QCheckBox(
-            //: Check box label
-            qApp->translate("tremotesf", "Show main window when adding torrents"),
-            this
-        );
-        addTorrentsGroupBoxLayout->addWidget(showMainWindowWhenAddingTorrentsCheckBox);
+        QCheckBox* showMainWindowWhenAddingTorrentsCheckBox{};
+        // Disabling this option does not work on macOS since the app is always activated when files are opened,
+        // which causes us to show main window
+        if constexpr (targetOs != TargetOs::UnixMacOS) {
+            showMainWindowWhenAddingTorrentsCheckBox = new QCheckBox(
+                //: Check box label
+                qApp->translate("tremotesf", "Show main window when adding torrents"),
+                this
+            );
+            addTorrentsGroupBoxLayout->addWidget(showMainWindowWhenAddingTorrentsCheckBox);
+        }
 
         auto showDialogWhenAddingTorrentsCheckBox = new QCheckBox(
             //: Check box label
@@ -291,7 +296,9 @@ namespace tremotesf {
             // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
             indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->torrentDoubleClickAction()).value()
         );
-        showMainWindowWhenAddingTorrentsCheckBox->setChecked(settings->showMainWindowWhenAddingTorrent());
+        if (showMainWindowWhenAddingTorrentsCheckBox) {
+            showMainWindowWhenAddingTorrentsCheckBox->setChecked(settings->showMainWindowWhenAddingTorrent());
+        }
         showDialogWhenAddingTorrentsCheckBox->setChecked(settings->showAddTorrentDialog());
         fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
@@ -317,7 +324,9 @@ namespace tremotesf {
             settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
             settings->setRememberTorrentAddParameters(rememberAddTorrentParametersCheckBox->isChecked());
             addTorrentParametersWidgets.saveToSettings();
-            settings->setShowMainWindowWhenAddingTorrent(showMainWindowWhenAddingTorrentsCheckBox->isChecked());
+            if (showMainWindowWhenAddingTorrentsCheckBox) {
+                settings->setShowMainWindowWhenAddingTorrent(showMainWindowWhenAddingTorrentsCheckBox->isChecked());
+            }
             settings->setShowAddTorrentDialog(showDialogWhenAddingTorrentsCheckBox->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
             settings->setTorrentDoubleClickAction(
