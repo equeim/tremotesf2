@@ -9,6 +9,20 @@
 #    include <winrt/base.h>
 #endif
 
+namespace tremotesf {
+    Q_LOGGING_CATEGORY(tremotesfLoggingCategory, tremotesfLoggingCategoryName, QtInfoMsg)
+
+    void overrideDebugLogs(bool enable) {
+        constexpr auto loggingRulesEnvVariable = "QT_LOGGING_RULES";
+        QByteArray rules = qgetenv(loggingRulesEnvVariable);
+        if (!rules.isEmpty()) {
+            rules += ";";
+        }
+        rules += fmt::format("{}.debug={}", tremotesfLoggingCategoryName, enable).c_str();
+        qputenv(loggingRulesEnvVariable, rules);
+    }
+}
+
 namespace tremotesf::impl {
     void QMessageLoggerDelegate::log(const QString& string) const {
         // We use internal qt_message_output() function here because there are only two methods
