@@ -113,13 +113,9 @@ int main(int argc, char** argv) {
     }
 
     if (args.enableDebugLogs.has_value()) {
-        // Override QT_LOGGING_RULES env variable if command line option was specified
-        QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, *args.enableDebugLogs);
-    } else {
-        // Disable by default but let QT_LOGGING_RULES override us
-        QLoggingCategory::setFilterRules("default.debug=false"_l1);
+        overrideDebugLogs(*args.enableDebugLogs);
     }
-    if (QLoggingCategory::defaultCategory()->isDebugEnabled()) {
+    if (tremotesfLoggingCategory().isDebugEnabled()) {
         logDebug("Debug logging is enabled");
     }
 

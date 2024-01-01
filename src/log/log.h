@@ -8,8 +8,10 @@
 #include <concepts>
 #include <type_traits>
 
+#include <QLoggingCategory>
 #include <QMessageLogger>
 #include <QString>
+
 #include <fmt/core.h>
 
 #ifdef Q_OS_WIN
@@ -36,6 +38,11 @@
 #endif
 
 namespace tremotesf {
+    constexpr auto tremotesfLoggingCategoryName = "tremotesf";
+    Q_DECLARE_LOGGING_CATEGORY(tremotesfLoggingCategory)
+
+    void overrideDebugLogs(bool enable);
+
     namespace impl {
         template<typename T>
         concept IsException = std::derived_from<std::remove_reference_t<T>, std::exception>
@@ -56,7 +63,7 @@ namespace tremotesf {
             constexpr explicit QMessageLoggerDelegate(
                 QtMsgType type, const char* fileName, int lineNumber, const char* functionName
             )
-                : type(type), context(fileName, lineNumber, functionName, "default") {}
+                : type(type), context(fileName, lineNumber, functionName, tremotesfLoggingCategoryName) {}
 
             /**
              * Actual log function
