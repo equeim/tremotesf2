@@ -7,6 +7,8 @@
 
 #include "ipcserver.h"
 
+class QLocalServer;
+
 namespace tremotesf {
     class IpcServerSocket final : public IpcServer {
         Q_OBJECT
@@ -18,6 +20,9 @@ namespace tremotesf {
         static constexpr char activateWindowMessage = '\0';
 
         static QByteArray createAddTorrentsMessage(const QStringList& files, const QStringList& urls);
+
+    private:
+        void listenToConnections(QLocalServer* server);
     };
 }
 
