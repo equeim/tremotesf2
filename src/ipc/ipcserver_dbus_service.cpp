@@ -37,7 +37,7 @@ namespace tremotesf {
             if (token.isEmpty()) {
                 return {};
             }
-            return std::move(token);
+            return token;
         }
     }
 
