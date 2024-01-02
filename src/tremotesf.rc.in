@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2015-2023 Alexey Rochev
+// SPDX-FileCopyrightText: 2015-2024 Alexey Rochev
 //
 // SPDX-License-Identifier: CC0-1.0
 
@@ -37,7 +37,7 @@ BEGIN
             VALUE "FileDescription",  "Tremotesf - Remote GUI for transmission-daemon"
             VALUE "FileVersion",      "@PROJECT_VERSION@"
             VALUE "InternalName",     "@TREMOTESF_EXECUTABLE_NAME@"
-            VALUE "LegalCopyright",   "Copyright 2015-2023 Alexey Rochev"
+            VALUE "LegalCopyright",   "Copyright 2015-2024 Alexey Rochev"
             VALUE "OriginalFilename", "@TREMOTESF_EXECUTABLE_NAME@.exe"
             VALUE "ProductName",      "@TREMOTESF_APP_NAME@"
             VALUE "ProductVersion",   "@PROJECT_VERSION@"

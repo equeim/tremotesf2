@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2015-2023 Alexey Rochev
+// SPDX-FileCopyrightText: 2015-2024 Alexey Rochev
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -38,7 +38,7 @@ namespace tremotesf {
             //: "About" dialog text
             qApp->translate(
                 "tremotesf",
-                "<p>&#169; 2015-2023 Alexey Rochev &lt;<a "
+                "<p>&#169; 2015-2024 Alexey Rochev &lt;<a "
                 "href=\"mailto:equeim@gmail.com\">equeim@gmail.com</a>&gt;</p>\n"
                 "<p>Source code: <a "
                 "href=\"https://github.com/equeim/tremotesf2\">https://github.com/equeim/tremotesf2</a></p>\n"
