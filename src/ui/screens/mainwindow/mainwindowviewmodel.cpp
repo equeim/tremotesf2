@@ -24,10 +24,6 @@
 #include "ui/notificationscontroller.h"
 #include "settings.h"
 
-#ifdef Q_OS_MACOS
-#    include "ipc/fileopeneventhandler.h"
-#endif
-
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::DropAction)
@@ -86,16 +82,6 @@ namespace tremotesf {
                 addTorrents(files, urls, activationToken);
             }
         );
-
-#ifdef Q_OS_MACOS
-        const auto* const handler = new FileOpenEventHandler(this);
-        QObject::connect(
-            handler,
-            &FileOpenEventHandler::filesOpeningRequested,
-            this,
-            [=, this](const auto& files, const auto& urls) { addTorrents(files, urls); }
-        );
-#endif
 
         QObject::connect(&mRpc, &Rpc::connectedChanged, this, [this] {
             if (mRpc.isConnected()) {

@@ -11,12 +11,17 @@
 #include <QLocalSocket>
 #include <QTimer>
 
+#include "fileopeneventhandler.h"
 #include "literals.h"
 #include "log/log.h"
 
 #ifdef Q_OS_WIN
 #    include <windows.h>
 #    include "windowshelpers.h"
+#endif
+
+#ifdef Q_OS_MACOS
+#    include "ipc/fileopeneventhandler.h"
 #endif
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(QCborError::Code)
@@ -56,7 +61,7 @@ namespace tremotesf {
     }
 
     IpcServerSocket::IpcServerSocket(QObject* parent) : IpcServer(parent) {
-        auto server = new QLocalServer(this);
+        auto* const server = new QLocalServer(this);
 
         const QString name(socketName());
 
@@ -76,10 +81,45 @@ namespace tremotesf {
             }
         }
 
-        if (!server->isListening()) {
-            return;
+        if (server->isListening()) {
+            listenToConnections(server);
         }
 
+#ifdef Q_OS_MACOS
+        const auto* const handler = new FileOpenEventHandler(this);
+        QObject::connect(
+            handler,
+            &FileOpenEventHandler::filesOpeningRequested,
+            this,
+            [this](const QStringList& files, const QStringList& urls) { emit torrentsAddingRequested(files, urls, {}); }
+        );
+#endif
+    }
+
+    QString IpcServerSocket::socketName() {
+        QString name("tremotesf"_l1);
+#ifdef Q_OS_WIN
+        try {
+            DWORD sessionId{};
+            checkWin32Bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId), "ProcessIdToSessionId");
+            name += '-';
+            name += QString::number(sessionId);
+        } catch (const std::system_error& e) {
+            logWarningWithException(e, "IpcServerSocket: failed to append session id to socket name");
+        }
+#endif
+        return name;
+    }
+
+    IpcServer* IpcServer::createInstance(QObject* parent) { return new IpcServerSocket(parent); }
+
+    QByteArray IpcServerSocket::createAddTorrentsMessage(const QStringList& files, const QStringList& urls) {
+        return QCborMap{{keyFiles, QCborArray::fromStringList(files)}, {keyUrls, QCborArray::fromStringList(urls)}}
+            .toCborValue()
+            .toCbor();
+    }
+
+    void IpcServerSocket::listenToConnections(QLocalServer* server) {
         QObject::connect(server, &QLocalServer::newConnection, this, [this, server]() {
             QLocalSocket* socket = server->nextPendingConnection();
             QObject::connect(socket, &QLocalSocket::disconnected, socket, &QLocalSocket::deleteLater);
@@ -104,28 +144,5 @@ namespace tremotesf {
                 }
             });
         });
-    }
-
-    QString IpcServerSocket::socketName() {
-        QString name("tremotesf"_l1);
-#ifdef Q_OS_WIN
-        try {
-            DWORD sessionId{};
-            checkWin32Bool(ProcessIdToSessionId(GetCurrentProcessId(), &sessionId), "ProcessIdToSessionId");
-            name += '-';
-            name += QString::number(sessionId);
-        } catch (const std::system_error& e) {
-            logWarningWithException(e, "IpcServerSocket: failed to append session id to socket name");
-        }
-#endif
-        return name;
-    }
-
-    IpcServer* IpcServer::createInstance(QObject* parent) { return new IpcServerSocket(parent); }
-
-    QByteArray IpcServerSocket::createAddTorrentsMessage(const QStringList& files, const QStringList& urls) {
-        return QCborMap{{keyFiles, QCborArray::fromStringList(files)}, {keyUrls, QCborArray::fromStringList(urls)}}
-            .toCborValue()
-            .toCbor();
     }
 }
