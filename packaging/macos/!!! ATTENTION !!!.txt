@@ -1,0 +1,6 @@
+After installing this app to Applications you need to run following command in the terminal:
+
+xattr -dr com.apple.quarantine /Applications/Tremotesf.app
+
+The reason why this command is needed is that this app is unsigned and macOS will prevent it from running.
+This command tells macOS to allow this app to run.

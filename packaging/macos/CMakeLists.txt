@@ -5,6 +5,8 @@
 configure_file("Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" DESTINATION "${TREMOTESF_MACOS_BUNDLE_NAME}.app/Contents")
 
+install(FILES "!!! ATTENTION !!!.txt" DESTINATION ".")
+
 include("../CPackCommon.cmake")
 
 set(CPACK_GENERATOR DragNDrop)
