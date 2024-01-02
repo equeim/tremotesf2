@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-SPDX-FileCopyrightText: 2015-2023 Alexey Rochev
+SPDX-FileCopyrightText: 2015-2024 Alexey Rochev
 
 SPDX-License-Identifier: CC0-1.0
 -->
@@ -28,7 +28,7 @@ SPDX-License-Identifier: CC0-1.0
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>NSHumanReadableCopyright</key>
-    <string>2015-2023 Alexey Rochev</string>
+    <string>2015-2024 Alexey Rochev</string>
     <key>LSMinimumSystemVersion</key>
     <string>${TREMOTESF_MACOS_DEPLOYMENT_TARGET}</string>
     <key>CFBundleDocumentTypes</key>
