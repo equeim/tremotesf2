@@ -8,8 +8,6 @@
 #include <vector>
 #include <QObject>
 
-class QFileOpenEvent;
-
 namespace tremotesf {
     class FileOpenEventHandler : public QObject {
         Q_OBJECT
