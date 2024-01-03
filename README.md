@@ -12,6 +12,7 @@ Table of Contents
          * [GNU/Linux](#gnulinux)
          * [FreeBSD](#freebsd)
          * [Windows](#windows)
+         * [macOS](#macos)
       * [Translations](#translations)
       * [Screenshots](#screenshots)
 
@@ -39,6 +40,10 @@ On GNU/Linux and BSD, also:
 On Windows, also:
 - Windows 11 SDK is needed to build
 - Minimum supported OS version to run Tremotesf is Windows 10 1809 (October 2018 Update)
+
+On macOS, also:
+- Latest Xcode and macOS SDK versions supported by Qt (see [here](https://doc.qt.io/qt-6/macos.html))
+- Minimum supported OS version to run Tremotesf is macOS 12
 
 ### Building
 ```sh
@@ -113,6 +118,27 @@ cmake -S path\to\sources -B path\to\build\directory --preset <windows-debug or w
 # Initial compilation of dependencies will take a while
 cmake --build path\to\build\directory
 cmake --install path\to\build\directory --prefix path\to\install\directory
+# Next command creates ZIP archive and MSI installer
+cmake --build path\to\build\directory --target package
+```
+
+### macOS
+macOS builds are available at [releases](https://github.com/equeim/tremotesf2/releases) page.
+Minimum supported OS version to run Tremotesf is macOS 12.
+
+Build instructions with vcpkg:
+1. Install Xcode
+2. Install CMake
+3. Install and setup [vcpkg](https://github.com/microsoft/vcpkg#quick-start-windows), and make sure that you have 15 GB of free space on disk where vcpkg is located
+4. Set VCPKG_ROOT environment variable to the location of vcpkg installation
+5. Launch terminal, execute:
+```sh
+cmake -S path/to/sources -B path/to/build/directory --preset <macos-arm64-vcpkg or macos-x86_64-vcpkg>
+# Initial compilation of dependencies will take a while
+cmake --build path/to/build/directory
+cmake --install path/to/build/directory --prefix path/to/install/directory
+# Next command creates DMG image
+cmake --build path/to/build/directory --target package
 ```
 
 ## Translations
