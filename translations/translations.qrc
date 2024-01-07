@@ -6,6 +6,7 @@ SPDX-License-Identifier: CC0-1.0
 
 <RCC>
     <qresource prefix="/">
+        <file>translations/de.qm</file>
         <file>translations/en.qm</file>
         <file>translations/es.qm</file>
         <file>translations/fr.qm</file>
@@ -14,6 +15,7 @@ SPDX-License-Identifier: CC0-1.0
         <file>translations/nl.qm</file>
         <file>translations/pl.qm</file>
         <file>translations/ru.qm</file>
+        <file>translations/tr.qm</file>
         <file>translations/zh_CN.qm</file>
     </qresource>
 </RCC>
