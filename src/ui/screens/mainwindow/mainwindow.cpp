@@ -819,25 +819,23 @@ namespace tremotesf {
             }
         }
 
-        void addTorrentFiles(const QStringList& files, std::optional<QByteArray>& activateFirstDialogWithToken) {
+        void addTorrentFiles(
+            const QStringList& files, bool activateWindows = false, std::optional<QByteArray> windowActivationToken = {}
+        ) {
             auto* const settings = Settings::instance();
             if (settings->showAddTorrentDialog()) {
                 const bool setParent = settings->showMainWindowWhenAddingTorrent();
                 for (const QString& filePath : files) {
                     auto* const dialog = showAddTorrentFileDialog(filePath, setParent);
-                    if (activateFirstDialogWithToken.has_value()) {
-                        activateWindow(dialog, *activateFirstDialogWithToken);
-                        activateFirstDialogWithToken.reset();
+                    if (activateWindows) {
+                        activateWindow(dialog, windowActivationToken);
+                        // Can use token only once
+                        windowActivationToken.reset();
                     }
                 }
             } else {
                 mViewModel.addTorrentFilesWithoutDialog(files);
             }
-        }
-
-        void addTorrentFiles(const QStringList& files) {
-            std::optional<QByteArray> windowActivationToken{};
-            addTorrentFiles(files, windowActivationToken);
         }
 
         QDialog* showAddTorrentFileDialog(const QString& filePath, bool setParent) {
@@ -852,15 +850,18 @@ namespace tremotesf {
             return dialog;
         }
 
-        void addTorrentLinks(const QStringList& urls, std::optional<QByteArray>& activateFirstDialogWithToken) {
+        void addTorrentLinks(
+            const QStringList& urls, bool activateWindows = false, std::optional<QByteArray> windowActivationToken = {}
+        ) {
             auto* const settings = Settings::instance();
             if (settings->showAddTorrentDialog()) {
                 const bool setParent = settings->showMainWindowWhenAddingTorrent();
                 for (const QString& url : urls) {
                     auto* const dialog = showAddTorrentLinkDialog(url, setParent);
-                    if (activateFirstDialogWithToken.has_value()) {
-                        activateWindow(dialog, *activateFirstDialogWithToken);
-                        activateFirstDialogWithToken.reset();
+                    if (activateWindows) {
+                        activateWindow(dialog, windowActivationToken);
+                        // Can use token only once
+                        windowActivationToken.reset();
                     }
                 }
             } else {
@@ -1568,7 +1569,11 @@ namespace tremotesf {
                 &mViewModel,
                 &MainWindowViewModel::showAddTorrentDialogs,
                 this,
-                [messageWidget, this](const auto& files, const auto& urls, auto windowActivationToken) {
+                [messageWidget, this](
+                    const QStringList& files,
+                    const QStringList& urls,
+                    std::optional<QByteArray> windowActivationToken
+                ) {
                     if (messageWidget->isVisible()) {
                         messageWidget->animatedHide();
                     }
@@ -1577,8 +1582,13 @@ namespace tremotesf {
                         showWindowsAndActivateMainOrDialog(windowActivationToken);
                         windowActivationToken.reset();
                     }
-                    addTorrentFiles(files, windowActivationToken);
-                    addTorrentLinks(urls, windowActivationToken);
+                    if (!files.isEmpty()) {
+                        addTorrentFiles(files, true, windowActivationToken);
+                        windowActivationToken.reset();
+                    }
+                    if (!urls.isEmpty()) {
+                        addTorrentLinks(urls, true, windowActivationToken);
+                    }
                 }
             );
 
