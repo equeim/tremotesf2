@@ -35,8 +35,8 @@
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/fmtlib/fmt/releases/download/10.1.1/fmt-10.1.1.zip",
-                    "sha256" : "b84e58a310c9b50196cda48d5678d5fa0849bca19e5fdba6b684f0ee93ed9d1b"
+                    "url" : "https://github.com/fmtlib/fmt/releases/download/10.2.1/fmt-10.2.1.zip",
+                    "sha256" : "312151a2d13c8327f5c9c586ac6cf7cddc1658e8f53edae0ec56509c8fa516c9"
                 }
             ]
         },
@@ -70,8 +70,8 @@
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.14.1.tar.gz",
-                    "sha256" : "2d4fb5544da643e5d0a82585555d8b7502b4137eb321a4abbb075e21d2f00e96"
+                    "url" : "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.14.3.tar.gz",
+                    "sha256" : "dcf6486d9030937636d8a4f820ca9531808fd7edb283893dddbaa05f99357e63"
                 }
             ]
         },
