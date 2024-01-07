@@ -399,7 +399,7 @@ namespace tremotesf {
         TorrentsView mTorrentsView{&mTorrentsProxyModel};
 
         MainWindowSideBar mSideBar{mViewModel.rpc(), &mTorrentsProxyModel};
-        std::unordered_map<int, TorrentPropertiesDialog*> mTorrentsDialogs{};
+        std::unordered_map<QString, TorrentPropertiesDialog*> mTorrentsDialogs{};
 
         QAction mShowHideAppAction{};
         //: Button / menu item to connect to server
@@ -953,24 +953,20 @@ namespace tremotesf {
 
         void showTorrentsPropertiesDialogs() {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
-
-            for (QModelIndexList::size_type i = 0, max = selectedRows.size(); i < max; i++) {
-                Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(selectedRows.at(i)));
-                const int id = torrent->data().id;
-                if (mTorrentsDialogs.find(id) != mTorrentsDialogs.end()) {
-                    if (i == (max - 1)) {
-                        TorrentPropertiesDialog* dialog = mTorrentsDialogs[id];
-                        showAndRaiseWindow(dialog);
-                        activateWindow(dialog);
-                    }
+            for (const auto& index : selectedRows) {
+                auto* const torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
+                const auto hashString = torrent->data().hashString;
+                const auto existingDialog = mTorrentsDialogs.find(hashString);
+                if (existingDialog != mTorrentsDialogs.end()) {
+                    showAndRaiseWindow(existingDialog->second);
+                    activateWindow(existingDialog->second);
                 } else {
                     auto dialog = new TorrentPropertiesDialog(torrent, mViewModel.rpc(), mWindow);
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
-                    mTorrentsDialogs.insert({id, dialog});
-                    QObject::connect(dialog, &TorrentPropertiesDialog::finished, this, [id, this] {
-                        mTorrentsDialogs.erase(mTorrentsDialogs.find(id));
+                    mTorrentsDialogs.emplace(hashString, dialog);
+                    QObject::connect(dialog, &TorrentPropertiesDialog::finished, this, [hashString, this] {
+                        mTorrentsDialogs.erase(hashString);
                     });
-
                     dialog->show();
                 }
             }
