@@ -8,7 +8,7 @@
 %global qt_version %[%{with qt6} ? 6 : 5]
 
 Name:       tremotesf
-Version:    2.5.0
+Version:    2.6.0
 Release:    1%{!?suse_version:%{?dist}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
@@ -91,6 +91,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %{_metainfodir}/%{app_id}.appdata.xml
 
 %changelog
+* Mon Jan 08 2024 Alexey Rochev <equeim@gmail.com> - 2.6.0-1
+- tremotesf-2.6.0
+
 * Sun Oct 15 2023 Alexey Rochev <equeim@gmail.com> - 2.5.0-1
 - tremotesf-2.5.0
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.6.0] - 2024-01-08
 ### Added
 - macOS support
 - Option to open torrent's file or download directory on double click

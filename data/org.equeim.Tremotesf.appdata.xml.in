@@ -54,6 +54,30 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-01-08" version="2.6.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>Option to open torrent's file or download directory on double click</li>
+          <li>Option to not activate main window when adding torrents (except on macOS where application is always activated)</li>
+          <li>Option to not show "Add Torrent" dialog when adding torrents</li>
+          <li>Right click on status bar opens menu to quickly connect to different server</li>
+          <li>Support of xdg-activation protocol on Wayland</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>"Open" and "Show in file manager" actions now show error dialog if file/directory does not exist,
+            instead if being inaccessible</li>
+          <li>"Show in file manager" actions has been renamed to "Open download directory"</li>
+          <li>Progress bar's text is now drawn according to Qt style (though Breeze style still draws text next to the progress bar, not inside of it)</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Initial state of "Lock toolbar" menu action</li>
+          <li>Progress bar being drawn in incorrect column in torrent's files list</li>
+        </ul>
+      </description>
+    </release>
     <release date="2023-10-15" version="2.5.0">
       <description>
         <p>Added</p>
