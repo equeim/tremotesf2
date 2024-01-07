@@ -5,6 +5,7 @@
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS LinguistTools)
 # Make sure to also change translations.qrc
 qt_add_translation(qm_files
+    de.ts
     en.ts
     es.ts
     fr.ts
@@ -13,6 +14,7 @@ qt_add_translation(qm_files
     nl.ts
     pl.ts
     ru.ts
+    tr.ts
     zh_CN.ts
 )
 add_custom_target(translations ALL DEPENDS ${qm_files})
