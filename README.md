@@ -35,7 +35,7 @@ Table of Contents
 On GNU/Linux and BSD, also:
 - Gettext 0.19.7 or newer
 - Qt D-Bus module
-- KWindowSystem
+- KWindowSystem (with Qt5/KF5 kwayland-integration is also needed as runtime dependency)
 
 On Windows, also:
 - Windows 11 SDK is needed to build

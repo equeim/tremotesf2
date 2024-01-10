@@ -42,6 +42,12 @@ BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
 BuildRequires: openssl-devel
 
+%if %{without qt6}
+# Wayland plugin for KWindowSystem, needed at runtime for window activation to work on Wayland
+# In KF6 it's not a plugin anymore so we need only for KF5
+Requires: kwayland-integration
+%endif
+
 %if %{defined fedora}
 BuildRequires: cmake(httplib)
 BuildRequires: libappstream-glib

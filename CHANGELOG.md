@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Clarified dependency on kwayland-integration
+
 ## [2.6.0] - 2024-01-08
 ### Added
 - macOS support
