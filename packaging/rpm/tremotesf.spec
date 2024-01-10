@@ -9,7 +9,7 @@
 
 Name:       tremotesf
 Version:    2.6.0
-Release:    1%{!?suse_version:%{?dist}}
+Release:    2%{!?suse_version:%{?dist}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
 Group:      Productivity/Networking/Other
