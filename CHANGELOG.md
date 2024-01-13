@@ -11,7 +11,7 @@
 - Option to not activate main window when adding torrents (except on macOS where application is always activated)
 - Option to not show "Add Torrent" dialog when adding torrents
 - Right click on status bar opens menu to quickly connect to different server
-- Support of xdg-activation protocol on Wayland
+- Support of xdg-activation protocol on Wayland (kwayland-integration is required as a runtime dependency)
 
 ### Changed
 - "Open" and "Show in file manager" actions now show error dialog if file/directory does not exist,
