@@ -300,7 +300,9 @@ target_link_libraries(tremotesf PRIVATE tremotesf_objects)
 
 # Executable configuration on Windows
 if (WIN32)
+    include("${CMAKE_SOURCE_DIR}/cmake/WindowsMinimumVersion.cmake")
     configure_file(tremotesf.rc.in tremotesf.rc @ONLY)
+    configure_file(tremotesf.manifest.in tremotesf.manifest @ONLY)
     target_sources(
         tremotesf
         PRIVATE
@@ -309,7 +311,7 @@ if (WIN32)
         "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.rc"
     )
     if (MSVC)
-        target_sources(tremotesf PRIVATE tremotesf.manifest)
+        target_sources(tremotesf PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.manifest")
     else ()
         target_sources(tremotesf PRIVATE tremotesf.manifest.rc)
     endif ()
