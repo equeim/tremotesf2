@@ -119,8 +119,9 @@ function(set_common_options_on_targets)
     )
 
     if (WIN32)
+        include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WindowsMinimumVersion.cmake")
         # Minimum supported version, 0x0A00 = Windows 10
-        list(APPEND common_compile_definitions WINVER=0x0A00 _WIN32_WINNT=0x0A00)
+        list(APPEND common_compile_definitions "WINVER=${TREMOTESF_WINDOWS_WINVER_MACRO}" "_WIN32_WINNT=${TREMOTESF_WINDOWS_WINVER_MACRO}")
         # Disable implicit ANSI codepage counterparts to Win32 functions dealing with strings
         list(APPEND common_compile_definitions UNICODE)
         # Slim down <windows.h>, can be undefined locally
