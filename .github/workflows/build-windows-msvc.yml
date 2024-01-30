@@ -46,7 +46,7 @@ jobs:
 
     - name: Archive packages
       if: inputs.release-tag == ''
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-packages' || 'windows-msvc-packages' }}
         retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
@@ -64,7 +64,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Archive vcpkg logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-vcpkg-logs' || 'windows-msvc-vcpkg-logs' }}
