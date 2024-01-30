@@ -272,7 +272,8 @@ if (UNIX)
     endif ()
 elseif (WIN32)
     find_library(Dwmapi Dwmapi REQUIRED)
-    target_link_libraries(tremotesf_objects PUBLIC Qt::Svg "${Dwmapi}")
+    find_library(RuntimeObject RuntimeObject REQUIRED)
+    target_link_libraries(tremotesf_objects PUBLIC Qt::Svg "${Dwmapi}" "${RuntimeObject}")
     target_sources(
         tremotesf_objects
         PRIVATE
