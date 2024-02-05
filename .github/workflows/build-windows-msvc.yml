@@ -31,6 +31,11 @@ jobs:
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1
 
+    - name: Upgrade LLVM
+      if: inputs.build-with-msvc-clang-toolchain == 'true'
+      run: |
+        choco upgrade llvm
+
     - name: Set up vcpkg
       uses: equeim/action-setup-vcpkg@v6
       with:
