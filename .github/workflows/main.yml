@@ -157,7 +157,7 @@ jobs:
       matrix:
         toolchain:
         - msvc
-        #- msvc-clang
+        - msvc-clang
 
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
