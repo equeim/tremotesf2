@@ -54,6 +54,16 @@ cmake --install /path/to/build/directory --config Debug --prefix /path/to/instal
 This example uses base-multi preset in CMakePresets.json and Ninja Multi-Config generator.
 You can invoke CMake in a different way if you want.
 
+CMake configuration options:
+
+`TREMOTESF_QT6` - boolean, determines whether Qt 6 or Qt 5 will be used.
+
+`TREMOTESF_WITH_HTTPLIB` - determines how cpp-httplib test dependency is searched. Possible values:
+  - auto: CMake find_package call, otherwise pkg-config, otherwise bundled copy is used.
+  - system: CMake find_package call, otherwise pkg-config, otherwise fatal error.
+  - bundled: bundled copy is used.
+  - none: cpp-httplib is not used at all and tests that require it are disabled.
+
 ### GNU/Linux
 - Flatpak - [Flathub](https://flathub.org/apps/details/org.equeim.Tremotesf)
 

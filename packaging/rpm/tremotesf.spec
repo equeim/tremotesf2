@@ -56,6 +56,7 @@ BuildRequires: clang
 %else
 BuildRequires: gcc-c++
 %endif
+%global tremotesf_with_httplib system
 %endif
 
 %if %{defined suse_version}
@@ -64,10 +65,12 @@ BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
 %global _metainfodir %{_datadir}/metainfo
+%global tremotesf_with_httplib system
 %endif
 
 %if %{defined mageia}
 BuildRequires: appstream-util
+%global tremotesf_with_httplib bundled
 %endif
 
 %description
@@ -79,7 +82,7 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %build
-%cmake -D TREMOTESF_QT6=%[%{with qt6} ? "ON" : "OFF"]
+%cmake -D TREMOTESF_QT6=%[%{with qt6} ? "ON" : "OFF"] -D TREMOTESF_WITH_HTTPLIB=%{tremotesf_with_httplib}
 %cmake_build
 
 %check
