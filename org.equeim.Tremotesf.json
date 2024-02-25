@@ -53,8 +53,8 @@
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.1.1.tar.gz",
-                    "sha256" : "523175f792eb0ff04f9e653c90746c12655f10cb70f1d5e6d6d9491420298a08"
+                    "url" : "https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.2.1.tar.gz",
+                    "sha256" : "841f49f2e045b9c6365997c2a8fbf76e6f215042dda4511a5bb04bc5ebc7f88a"
                 }
             ]
         },
@@ -70,8 +70,8 @@
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.14.3.tar.gz",
-                    "sha256" : "dcf6486d9030937636d8a4f820ca9531808fd7edb283893dddbaa05f99357e63"
+                    "url" : "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.15.3.tar.gz",
+                    "sha256" : "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e"
                 }
             ]
         },
