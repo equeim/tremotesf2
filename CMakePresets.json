@@ -22,7 +22,7 @@
       "inherits": "base",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo",
+        "TREMOTESF_WITH_HTTPLIB": "system",
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
         "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-buildtrees-after-build;--clean-packages-after-build",
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-overlay-triplets"

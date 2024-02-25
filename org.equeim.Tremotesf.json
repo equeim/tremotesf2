@@ -81,7 +81,8 @@
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON"
+                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
+                "-DTREMOTESF_WITH_HTTPLIB=system"
             ],
             "run-tests": true,
             "sources": [

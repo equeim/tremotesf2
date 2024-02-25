@@ -1,6 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Added TREMOTESF_WITH_HTTPLIB CMake option to control how cpp-httplib test dependency is searched. Possible values:
+  - auto: CMake find_package call, otherwise pkg-config, otherwise bundled copy is used.
+  - system: CMake find_package call, otherwise pkg-config, otherwise fatal error.
+  - bundled: bundled copy is used.
+  - none: cpp-httplib is not used at all and tests that require it are disabled.
 ### Fixed
 - Clarified dependency on kwayland-integration
 
