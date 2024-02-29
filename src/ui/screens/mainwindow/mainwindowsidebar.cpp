@@ -29,8 +29,13 @@ namespace tremotesf {
             Q_OBJECT
 
         public:
-            explicit BaseListView(TorrentsProxyModel* torrentsProxyModel, QWidget* parent = nullptr)
-                : QListView(parent), mTorrentsProxyModel(torrentsProxyModel) {
+            explicit BaseListView(
+                TorrentsProxyModel* torrentsProxyModel,
+                BaseTorrentsFiltersSettingsModel* model,
+                QWidget* parent = nullptr
+            )
+                : QListView(parent), mTorrentsProxyModel(torrentsProxyModel), mModel(model) {
+                mModel->setParent(this);
                 setFrameShape(QFrame::NoFrame);
                 setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
                 setIconSize(QSize(16, 16));
@@ -63,11 +68,22 @@ namespace tremotesf {
             }
 
         protected:
-            void init(BaseTorrentsFiltersSettingsModel* model, TorrentsProxyModel* torrentsProxyModel, Rpc* rpc) {
-                setModel(model);
+            void init(Rpc* rpc, std::optional<int> sortByRole = {}) {
+                QAbstractItemModel* actualModel{};
+                if (sortByRole.has_value()) {
+                    mProxyModel = new QSortFilterProxyModel(this);
+                    mProxyModel->setSourceModel(mModel);
+                    mProxyModel->setSortRole(*sortByRole);
+                    mProxyModel->sort(0);
+                    actualModel = mProxyModel;
+                } else {
+                    actualModel = mModel;
+                }
 
-                QObject::connect(model, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [=, this] {
-                    if (model->isPopulated()) {
+                setModel(actualModel);
+
+                QObject::connect(mModel, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [this] {
+                    if (mModel->isPopulated()) {
                         updateCurrentIndex();
                     }
                 });
@@ -76,44 +92,49 @@ namespace tremotesf {
                     selectionModel(),
                     &QItemSelectionModel::currentChanged,
                     this,
-                    [=, this](const QModelIndex& current) {
-                        if (model->isPopulated()) {
+                    [this](const QModelIndex& current) {
+                        if (mModel->isPopulated()) {
                             setTorrentsModelFilterFromIndex(current);
                         }
                     }
                 );
 
                 QObject::connect(
-                    model,
+                    actualModel,
                     &BaseTorrentsFiltersSettingsModel::rowsInserted,
                     this,
                     &BaseListView::updateGeometry
                 );
                 QObject::connect(
-                    model,
+                    actualModel,
                     &BaseTorrentsFiltersSettingsModel::rowsRemoved,
                     this,
                     &BaseListView::updateGeometry
                 );
 
-                model->setTorrentsProxyModel(torrentsProxyModel);
-                model->setRpc(rpc);
+                mModel->setTorrentsProxyModel(mTorrentsProxyModel);
+                mModel->setRpc(rpc);
 
-                if (model->isPopulated()) {
+                if (mModel->isPopulated()) {
                     updateCurrentIndex();
                 }
             }
 
             void updateCurrentIndex() {
-                setCurrentIndex(
-                    static_cast<BaseTorrentsFiltersSettingsModel*>(model())->indexForTorrentsProxyModelFilter()
-                );
+                const auto index = mModel->indexForTorrentsProxyModelFilter();
+                if (mProxyModel) {
+                    setCurrentIndex(mProxyModel->mapFromSource(index));
+                } else {
+                    setCurrentIndex(index);
+                }
             }
 
             virtual void setTorrentsModelFilterFromIndex(const QModelIndex& index) = 0;
             virtual void setTorrentsModelFilterEnabled(bool enabled) = 0;
 
             TorrentsProxyModel* mTorrentsProxyModel;
+            BaseTorrentsFiltersSettingsModel* mModel;
+            QSortFilterProxyModel* mProxyModel{};
         };
 
         class StatusFiltersListView final : public BaseListView {
@@ -121,8 +142,8 @@ namespace tremotesf {
 
         public:
             StatusFiltersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(torrentsModel, parent) {
-                init(new StatusFiltersModel(this), torrentsModel, rpc);
+                : BaseListView(torrentsModel, new StatusFiltersModel(), parent) {
+                init(rpc);
                 QObject::connect(torrentsModel, &TorrentsProxyModel::statusFilterChanged, this, [=, this] {
                     updateCurrentIndex();
                 });
@@ -145,8 +166,8 @@ namespace tremotesf {
 
         public:
             TrackersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(torrentsModel, parent) {
-                init(new AllTrackersModel(this), torrentsModel, rpc);
+                : BaseListView(torrentsModel, new AllTrackersModel(), parent) {
+                init(rpc, AllTrackersModel::TrackerRole);
                 QObject::connect(torrentsModel, &TorrentsProxyModel::trackerFilterChanged, this, [=, this] {
                     updateCurrentIndex();
                 });
@@ -167,8 +188,8 @@ namespace tremotesf {
 
         public:
             DirectoriesListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(torrentsModel, parent) {
-                init(new DownloadDirectoriesModel(this), torrentsModel, rpc);
+                : BaseListView(torrentsModel, new DownloadDirectoriesModel(), parent) {
+                init(rpc, DownloadDirectoriesModel::DirectoryRole);
                 QObject::connect(torrentsModel, &TorrentsProxyModel::downloadDirectoryFilterChanged, this, [=, this] {
                     updateCurrentIndex();
                 });
