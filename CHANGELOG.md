@@ -9,6 +9,7 @@
   - none: cpp-httplib is not used at all and tests that require it are disabled.
 ### Fixed
 - Clarified dependency on kwayland-integration
+- Sorting of directories and trackers in side panel
 
 ## [2.6.0] - 2024-01-08
 ### Added
