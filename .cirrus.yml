@@ -21,7 +21,7 @@ build_freebsd_task:
   cmake_build_script: |
     set -e -o pipefail
     echo 'Configuring CMake'
-    cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=system
+    cmake -S . --preset base -D TREMOTESF_QT6=OFF -D TREMOTESF_WITH_HTTPLIB=system
     echo 'Building Debug'
     cmake --build --preset base-debug
     echo 'Testing Debug'
