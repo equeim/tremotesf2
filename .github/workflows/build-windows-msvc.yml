@@ -33,8 +33,9 @@ jobs:
 
     - name: Upgrade LLVM
       if: inputs.build-with-msvc-clang-toolchain == 'true'
+      # Remove explicit version after https://gitlab.kitware.com/cmake/cmake/-/issues/25753 is fixed
       run: |
-        choco upgrade llvm
+        choco upgrade llvm --version 17.0.6
 
     - name: Set up vcpkg
       uses: equeim/action-setup-vcpkg@v6
