@@ -62,7 +62,7 @@ jobs:
     - name: Add KF6 repository
       if: startsWith(matrix.container-image, 'opensuse') && matrix.qt-version == 6
       run: |
-        zypper ar https://download.opensuse.org/repositories/KDE:/Unstable:/Frameworks/openSUSE_Factory/KDE:Unstable:Frameworks.repo
+        zypper ar https://download.opensuse.org/repositories/KDE:/Frameworks/openSUSE_Tumbleweed/KDE:Frameworks.repo
 
     - name: Install build dependencies
       run: |
