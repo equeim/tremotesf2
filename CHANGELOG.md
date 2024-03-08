@@ -7,6 +7,11 @@
   - system: CMake find_package call, otherwise pkg-config, otherwise fatal error.
   - bundled: bundled copy is used.
   - none: cpp-httplib is not used at all and tests that require it are disabled.
+
+### Changed
+- Qt 6 is now used by default instead of Qt 5. You can override it with TREMOTESF_QT6=OFF CMake option
+- Flatpak build uses Qt 6
+
 ### Fixed
 - Clarified dependency on kwayland-integration
 - Sorting of directories and trackers in side panel
