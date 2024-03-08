@@ -16,12 +16,12 @@ build_freebsd_task:
   install_dependencies_script: |
     set -e -o pipefail
     sudo pkg update -f
-    sudo pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt5-buildtools qt5-qmake qt5-core qt5-network qt5-concurrent qt5-testlib qt5-widgets qt5-dbus kf5-kwidgetsaddons kf5-kwindowsystem gettext-tools cxxopts
+    sudo pkg install -y cmake ninja pkgconf libpsl libfmt cpp-httplib qt6-base qt6-tools kf6-kwidgetsaddons kf6-kwindowsystem gettext-tools cxxopts
 
   cmake_build_script: |
     set -e -o pipefail
     echo 'Configuring CMake'
-    cmake -S . --preset base -D TREMOTESF_QT6=OFF -D TREMOTESF_WITH_HTTPLIB=system
+    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB=system
     echo 'Building Debug'
     cmake --build --preset base-debug
     echo 'Testing Debug'
