@@ -59,62 +59,13 @@ elseif (WIN32 OR APPLE)
 
     FetchContent_Declare(
         breeze_icons
-        URL "https://download.kde.org/stable/frameworks/5.110/breeze-icons-5.110.0.zip"
-        URL_HASH SHA256=78996f7a379826bbc932a19044b873ab96be4a18adf216ccba79cb12ddb5c65e
+        URL "https://download.kde.org/stable/frameworks/6.0/breeze-icons-6.0.0.tar.xz"
+        URL_HASH SHA256=473e9851e4f84a64f1e808d58fd8760219a1b08feaf4b514a1399c8e5c889dc4
     )
     FetchContent_Populate(breeze_icons)
-
-    # Keep in sync with QIcon::fromTheme() calls in source code
-    set(bundled_icon_theme_files
-        index.theme
-        application-exit.svg
-        applications-utilities.svg
-        configure.svg
-        dialog-cancel.svg
-        dialog-error.svg
-        document-open.svg
-        document-preview.svg
-        document-properties.svg
-        download.svg
-        edit-copy.svg
-        edit-delete.svg
-        edit-delete.svg
-        edit-rename.svg
-        edit-select-all.svg
-        edit-select-invert.svg
-        folder-download.svg
-        go-bottom.svg
-        go-down.svg
-        go-jump.svg
-        go-top.svg
-        go-up.svg
-        help-about.svg
-        insert-link.svg
-        list-add.svg
-        list-remove.svg
-        mark-location.svg
-        media-playback-pause.svg
-        media-playback-start.svg
-        network-connect.svg
-        network-disconnect.svg
-        network-server.svg
-        network-server.svg
-        preferences-system.svg
-        preferences-system-network.svg
-        preferences-system-time.svg
-        system-shutdown.svg
-        view-refresh.svg
-        view-refresh.svg
-        view-statistics.svg
-        window-close.svg
-    )
-
-    list(JOIN bundled_icon_theme_files "|" bundled_icon_theme_files_regex)
-    string(REPLACE "." "\\." bundled_icon_theme_files_regex "${bundled_icon_theme_files_regex}")
-    string(PREPEND bundled_icon_theme_files_regex "^.*\\/(")
-    string(APPEND bundled_icon_theme_files_regex ")$")
-
-    install(DIRECTORY "${breeze_icons_SOURCE_DIR}/icons/" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/breeze" FILES_MATCHING REGEX "${bundled_icon_theme_files_regex}")
+    install(CODE "set(breeze_icons_SOURCE_DIR \"${breeze_icons_SOURCE_DIR}\")")
+    install(CODE "set(TREMOTESF_EXTERNAL_RESOURCES_PATH \"${TREMOTESF_EXTERNAL_RESOURCES_PATH}\")")
+    install(SCRIPT InstallBreezeIcons.cmake)
 endif()
 
 if (APPLE)
