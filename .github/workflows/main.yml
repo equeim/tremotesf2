@@ -172,12 +172,6 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Checkout msys2-packages
-      uses: actions/checkout@v4
-      with:
-        repository: equeim/msys2-packages
-        path: msys2-packages
-
     - name: Set up MSYS2
       uses: msys2/setup-msys2@v2
       with:
@@ -195,14 +189,7 @@ jobs:
           mingw-w64-clang-x86_64-qt6-tools
           mingw-w64-clang-x86_64-qt6-translations
           mingw-w64-clang-x86_64-cxxopts
-
-    - name: Build KF6 dependencies
-      shell: msys2 {0}
-      run: |
-        cd "$GITHUB_WORKSPACE/msys2-packages/mingw-w64-extra-cmake-modules-qt6"
-        makepkg-mingw --cleanbuild --syncdeps --force --noconfirm --install
-        cd "$GITHUB_WORKSPACE/msys2-packages/mingw-w64-kwidgetsaddons-qt6"
-        makepkg-mingw --cleanbuild --syncdeps --force --noconfirm --install
+          mingw-w64-clang-x86_64-kwidgetsaddons
 
     - name: Generate C++/WinRT headers
       shell: msys2 {0}
