@@ -43,7 +43,7 @@ jobs:
 
     - name: Set packages install command for zypper
       if: startsWith(matrix.container-image, 'opensuse')
-      run: echo 'INSTALL_PACKAGES=zypper --non-interactive --gpg-auto-import-keys in --no-recommends' >> "$GITHUB_ENV"
+      run: echo 'INSTALL_PACKAGES=zypper --non-interactive in --no-recommends' >> "$GITHUB_ENV"
 
     - name: Install Git and rpm-build
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
@@ -58,11 +58,6 @@ jobs:
       if: startsWith(matrix.container-image, 'fedora')
       run: |
         echo "rpm-macro=--define 'toolchain ${{ matrix.compiler }}'" >> "$GITHUB_OUTPUT"
-
-    - name: Add KF6 repository
-      if: startsWith(matrix.container-image, 'opensuse') && matrix.qt-version == 6
-      run: |
-        zypper ar https://download.opensuse.org/repositories/KDE:/Frameworks/openSUSE_Tumbleweed/KDE:Frameworks.repo
 
     - name: Install build dependencies
       run: |
