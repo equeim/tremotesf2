@@ -204,7 +204,7 @@ jobs:
       run: |
           set -e -o pipefail
           echo '::group::Configuring CMake'
-          cmake -S . --preset base -D TREMOTESF_QT6=ON
+          cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB=bundled
           echo '::endgroup'
           echo '::group::Building Debug'
           cmake --build --preset base-debug
