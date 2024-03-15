@@ -44,8 +44,12 @@ BuildRequires: openssl-devel
 
 %if %{without qt6}
 # Wayland plugin for KWindowSystem, needed at runtime for window activation to work on Wayland
-# In KF6 it's not a plugin anymore so we need only for KF5
+# In KF6 it's either part of main KWindowSystem package (Fedora) or pulled as a hard dependency (openSUSE)
+%if %{defined suse_version}
+Requires: kwayland-integration6
+%else
 Requires: kwayland-integration
+%endif
 %endif
 
 %if %{defined fedora}
