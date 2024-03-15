@@ -4,7 +4,7 @@
 
 %global app_id org.equeim.Tremotesf
 
-%if %{defined suse_version}
+%if %{defined suse_version} || 0%{?fedora} >= 40
 %global qt_version 6
 %else
 %global qt_version 5
