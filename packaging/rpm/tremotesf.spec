@@ -45,23 +45,16 @@ BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
 BuildRequires: openssl-devel
 
-%if %{qt_version} == 5
-# Wayland plugin for KWindowSystem, needed at runtime for window activation to work on Wayland
-# In KF6 it's either part of main KWindowSystem package (Fedora) or pulled as a hard dependency (openSUSE)
-%if %{defined suse_version}
-Requires: kwayland-integration6
-%else
-Requires: kwayland-integration
-%endif
-%endif
-
 %if %{defined fedora}
 BuildRequires: cmake(httplib)
 BuildRequires: libappstream-glib
-%if  "%{toolchain}" == "clang"
+%if "%{toolchain}" == "clang"
 BuildRequires: clang
 %else
 BuildRequires: gcc-c++
+%endif
+%if %{qt_version} == 5
+Requires: kwayland-integration
 %endif
 %global tremotesf_with_httplib system
 %endif
@@ -77,6 +70,9 @@ BuildRequires: hicolor-icon-theme
 
 %if %{defined mageia}
 BuildRequires: appstream-util
+%if %{qt_version} == 5
+Requires: kwayland-integration
+%endif
 %global tremotesf_with_httplib bundled
 %endif
 
