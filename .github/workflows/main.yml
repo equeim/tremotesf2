@@ -40,7 +40,7 @@ jobs:
 
     - name: Set packages install command for zypper
       if: startsWith(matrix.container-image, 'opensuse')
-      run: echo 'INSTALL_PACKAGES=zypper --non-interactive in --no-recommends' >> "$GITHUB_ENV"
+      run: echo 'INSTALL_PACKAGES=zypper --non-interactive in --no-recommends --details' >> "$GITHUB_ENV"
 
     - name: Install Git and rpm-build
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
