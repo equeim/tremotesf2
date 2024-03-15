@@ -21,14 +21,11 @@ jobs:
       matrix:
         container-image: ['fedora:38', 'fedora:39', 'opensuse/tumbleweed:latest']
         compiler: [gcc]
-        qt-version: [5]
         include:
         - container-image: 'fedora:38'
           compiler: clang
         - container-image: 'fedora:39'
           compiler: clang
-        - container-image: 'opensuse/tumbleweed:latest'
-          qt-version: 6
 
     runs-on: ubuntu-latest
     container: ${{ matrix.container-image }}
@@ -61,7 +58,7 @@ jobs:
 
     - name: Install build dependencies
       run: |
-        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} ${{ matrix.qt-version == 6 && '--define "with_qt6 1"' || '' }} -q --srpm --qf '[%{REQUIRES}\n]' packaging/rpm/tremotesf.spec)
+        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} -q --srpm --qf '[%{REQUIRES}\n]' packaging/rpm/tremotesf.spec)
         ${{env.INSTALL_PACKAGES}} "${dependencies[@]}"
 
     - name: Make source archive
@@ -75,7 +72,7 @@ jobs:
 
     - name: Build RPM
       run: |
-        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} --${{ matrix.qt-version == 6 && 'with' || 'without' }} qt6 -bb packaging/rpm/tremotesf.spec
+        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb packaging/rpm/tremotesf.spec
 
   build-deb:
     strategy:

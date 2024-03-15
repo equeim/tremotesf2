@@ -4,8 +4,11 @@
 
 %global app_id org.equeim.Tremotesf
 
-%bcond qt6 0
-%global qt_version %[%{with qt6} ? 6 : 5]
+%if %{defined suse_version}
+%global qt_version 6
+%else
+%global qt_version 5
+%endif
 
 Name:       tremotesf
 Version:    2.6.0
@@ -42,7 +45,7 @@ BuildRequires: cmake(cxxopts)
 BuildRequires: pkgconfig(libpsl)
 BuildRequires: openssl-devel
 
-%if %{without qt6}
+%if %{qt_version} == 5
 # Wayland plugin for KWindowSystem, needed at runtime for window activation to work on Wayland
 # In KF6 it's either part of main KWindowSystem package (Fedora) or pulled as a hard dependency (openSUSE)
 %if %{defined suse_version}
@@ -86,7 +89,7 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %build
-%cmake -D TREMOTESF_QT6=%[%{with qt6} ? "ON" : "OFF"] -D TREMOTESF_WITH_HTTPLIB=%{tremotesf_with_httplib}
+%cmake -D TREMOTESF_QT6=%[%{qt_version} == 6 ? "ON" : "OFF"] -D TREMOTESF_WITH_HTTPLIB=%{tremotesf_with_httplib}
 %cmake_build
 
 %check
