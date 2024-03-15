@@ -11,6 +11,7 @@
 ### Changed
 - Qt 6 is now used by default instead of Qt 5. You can override it with TREMOTESF_QT6=OFF CMake option
 - Flatpak build uses Qt 6
+- openSUSE build uses Qt 6
 
 ### Fixed
 - Clarified dependency on kwayland-integration
