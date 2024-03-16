@@ -19,7 +19,6 @@ namespace tremotesf {
 
     public:
         explicit ConnectionSettingsDialog(QWidget* parent = nullptr);
-        QSize sizeHint() const override;
         void accept() override;
 
     private:

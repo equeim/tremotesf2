@@ -73,13 +73,12 @@ namespace tremotesf {
         if (mFilesModel) {
             mFilesModel->load(url);
         }
-    }
 
-    QSize AddTorrentDialog::sizeHint() const {
+        QSize size(448, 0);
         if (mMode == Mode::File) {
-            return minimumSizeHint().expandedTo(QSize(448, 512));
+            size.setHeight(512);
         }
-        return minimumSizeHint().expandedTo(QSize(448, 0));
+        resize(sizeHint().expandedTo(size));
     }
 
     void AddTorrentDialog::accept() {

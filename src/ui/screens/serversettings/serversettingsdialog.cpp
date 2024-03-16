@@ -53,6 +53,7 @@ namespace tremotesf {
         setWindowTitle(qApp->translate("tremotesf", "Server Options"));
 
         setupUi();
+        resize(sizeHint().expandedTo(QSize(700, 550)));
 
         const auto onConnectedChanged = [this] {
             if (mRpc->isConnected()) {
@@ -79,8 +80,6 @@ namespace tremotesf {
 
         loadSettings();
     }
-
-    QSize ServerSettingsDialog::sizeHint() const { return minimumSizeHint().expandedTo(QSize(700, 550)); }
 
     void ServerSettingsDialog::accept() {
         ServerSettings* settings = mRpc->serverSettings();

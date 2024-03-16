@@ -30,7 +30,6 @@ namespace tremotesf {
 
         explicit AddTorrentDialog(Rpc* rpc, const QString& url, Mode mode, QWidget* parent = nullptr);
 
-        QSize sizeHint() const override;
         void accept() override;
 
         struct AddTorrentParametersWidgets {

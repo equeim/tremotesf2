@@ -136,9 +136,9 @@ namespace tremotesf {
                         reject();
                     }
                 });
-            }
 
-            [[nodiscard]] QSize sizeHint() const override { return QDialog::sizeHint().expandedTo(QSize(320, 0)); }
+                resize(sizeHint().expandedTo(QSize(320, 0)));
+            }
 
             [[nodiscard]] QString downloadDirectory() const { return mDirectoryWidget->path(); }
 
@@ -325,7 +325,12 @@ namespace tremotesf {
             // Call it on the next event loop iteration
             QMetaObject::invokeMethod(
                 this,
-                [this] { mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry()); },
+                [this] {
+                    if (!mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry())) {
+                        mWindow->resize(mWindow->sizeHint().expandedTo(QSize(896, 640)));
+                    }
+                    mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry());
+                },
                 Qt::QueuedConnection
             );
         }
@@ -1658,8 +1663,6 @@ namespace tremotesf {
     }
 
     MainWindow::~MainWindow() = default;
-
-    QSize MainWindow::sizeHint() const { return minimumSizeHint().expandedTo(QSize(896, 640)); }
 
     void MainWindow::initialShow(bool minimized) {
         if (!(minimized && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {

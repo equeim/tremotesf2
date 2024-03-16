@@ -154,6 +154,7 @@ namespace tremotesf {
     ServerEditDialog::ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent)
         : QDialog(parent), mServersModel(serversModel) {
         setupUi();
+        resize(sizeHint().expandedTo(QSize(384, 512)));
 
         if (row == -1) {
             //: Dialog title
@@ -214,8 +215,6 @@ namespace tremotesf {
 
         setProxyFieldsVisible();
     }
-
-    QSize ServerEditDialog::sizeHint() const { return QDialog::sizeHint().expandedTo(QSize(384, 512)); }
 
     void ServerEditDialog::accept() {
         if (mServersModel) {

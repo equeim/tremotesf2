@@ -13,7 +13,6 @@ namespace tremotesf {
 
     public:
         explicit AboutDialog(QWidget* parent = nullptr);
-        QSize sizeHint() const override;
     };
 }
 

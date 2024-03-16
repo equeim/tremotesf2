@@ -25,7 +25,6 @@ namespace tremotesf {
 
     public:
         explicit ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent = nullptr);
-        QSize sizeHint() const override;
         void accept() override;
 
     private:

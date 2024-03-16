@@ -15,7 +15,6 @@ namespace tremotesf {
 
     public:
         explicit ServerStatsDialog(Rpc* rpc, QWidget* parent = nullptr);
-        QSize sizeHint() const override;
     };
 }
 
