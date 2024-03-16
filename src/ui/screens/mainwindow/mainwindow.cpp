@@ -281,7 +281,7 @@ namespace tremotesf {
                     [this] {
                         auto* const dialog = new ServerEditDialog(nullptr, -1, mWindow);
                         dialog->setAttribute(Qt::WA_DeleteOnClose);
-                        dialog->open();
+                        dialog->show();
                     },
                     Qt::QueuedConnection
                 );
