@@ -266,8 +266,6 @@ namespace tremotesf {
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
         rootLayout->addWidget(dialogButtonBox);
 
-        setMinimumSize(minimumSizeHint());
-
         auto settings = Settings::instance();
         connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
         rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());

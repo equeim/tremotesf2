@@ -286,8 +286,6 @@ namespace tremotesf {
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &AddTorrentDialog::reject);
         layout->addWidget(mDialogButtonBox);
 
-        setMinimumSize(minimumSizeHint());
-
         const auto updateUi = [=, this] {
             const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
             if (enabled) {
