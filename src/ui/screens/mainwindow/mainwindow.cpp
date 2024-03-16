@@ -233,15 +233,6 @@ namespace tremotesf {
 
             setupActions();
 
-            updateRpcActions();
-            QObject::connect(mViewModel.rpc(), &Rpc::connectionStateChanged, this, &MainWindow::Impl::updateRpcActions);
-            QObject::connect(
-                Servers::instance(),
-                &Servers::hasServersChanged,
-                this,
-                &MainWindow::Impl::updateRpcActions
-            );
-
             updateTorrentActions();
             QObject::connect(mViewModel.rpc(), &Rpc::torrentsUpdated, this, &MainWindow::Impl::updateTorrentActions);
             QObject::connect(
@@ -256,6 +247,15 @@ namespace tremotesf {
 
             setupTrayIcon();
             mViewModel.setupNotificationsController(&mTrayIcon);
+
+            updateRpcActions();
+            QObject::connect(mViewModel.rpc(), &Rpc::connectionStateChanged, this, &MainWindow::Impl::updateRpcActions);
+            QObject::connect(
+                Servers::instance(),
+                &Servers::hasServersChanged,
+                this,
+                &MainWindow::Impl::updateRpcActions
+            );
 
             mWindow->restoreState(Settings::instance()->mainWindowState());
             mToolBarAction->setChecked(!mToolBar.isHidden());
