@@ -461,8 +461,6 @@ namespace tremotesf {
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &ServerEditDialog::accept);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &ServerEditDialog::reject);
         topLayout->addWidget(mDialogButtonBox);
-
-        setMinimumSize(minimumSizeHint());
     }
 
     void ServerEditDialog::setProxyFieldsVisible() {

@@ -111,7 +111,6 @@ namespace tremotesf {
 
         onTorrentChanged();
 
-        setMinimumSize(minimumSizeHint());
         restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
     }
 

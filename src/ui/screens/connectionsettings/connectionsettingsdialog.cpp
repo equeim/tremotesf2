@@ -129,8 +129,6 @@ namespace tremotesf {
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ConnectionSettingsDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ConnectionSettingsDialog::reject);
         layout->addWidget(dialogButtonBox, 2, 0, 1, 2);
-
-        setMinimumSize(minimumSizeHint());
     }
 
     QSize ConnectionSettingsDialog::sizeHint() const { return minimumSizeHint().expandedTo(QSize(384, 320)); }
