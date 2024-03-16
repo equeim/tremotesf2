@@ -278,12 +278,14 @@ namespace tremotesf {
         if (mMode == Mode::File) {
             mTorrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
             layout->insertRow(rowForWidget(layout, freeSpaceLabel) + 1, mTorrentFilesView);
+        } else {
+            layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
         }
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &AddTorrentDialog::accept);
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &AddTorrentDialog::reject);
-        layout->addWidget(mDialogButtonBox);
+        layout->addRow(mDialogButtonBox);
 
         const auto updateUi = [=, this] {
             const bool enabled = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
@@ -295,7 +297,10 @@ namespace tremotesf {
             }
 
             for (int i = 1, max = layout->count(); i < max; ++i) {
-                layout->itemAt(i)->widget()->setEnabled(enabled);
+                auto* const widget = layout->itemAt(i)->widget();
+                if (widget) {
+                    widget->setEnabled(enabled);
+                }
             }
 
             mAddTorrentParametersWidgets.startTorrentCheckBox->setEnabled(enabled);
