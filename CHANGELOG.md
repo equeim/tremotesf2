@@ -16,6 +16,7 @@
 ### Fixed
 - Clarified dependency on kwayland-integration
 - Sorting of directories and trackers in side panel
+- Menu items that should disabled on first start not being disabled
 
 ## [2.6.0] - 2024-01-08
 ### Added
