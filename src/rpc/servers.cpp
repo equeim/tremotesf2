@@ -181,9 +181,11 @@ namespace tremotesf {
     }
 
     void Servers::setCurrentServer(const QString& name) {
-        mSettings->setValue(currentServerKey, name);
-        updateMountedDirectories();
-        emit currentServerChanged();
+        if (mSettings->value(currentServerKey) != name) {
+            mSettings->setValue(currentServerKey, name);
+            updateMountedDirectories();
+            emit currentServerChanged();
+        }
     }
 
     bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
@@ -415,19 +417,19 @@ namespace tremotesf {
           mSettings(new QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), fileName, this)) {
         mSettings->setFallbacksEnabled(false);
         if (hasServers()) {
-            bool setFirst = true;
+            bool foundCurrent = false;
             const QString current(currentServerName());
             if (!current.isEmpty()) {
                 const QStringList groups(mSettings->childGroups());
                 for (const QString& group : groups) {
                     if (group == current) {
-                        setFirst = false;
+                        foundCurrent = true;
                         break;
                     }
                 }
             }
-            if (setFirst) {
-                setCurrentServer(mSettings->childGroups().constFirst());
+            if (!foundCurrent) {
+                mSettings->setValue(currentServerKey, mSettings->childGroups().constFirst());
             }
         } else {
             mSettings->remove(currentServerKey);
