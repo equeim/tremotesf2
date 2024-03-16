@@ -34,8 +34,6 @@ namespace tremotesf {
         explicit TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
         Q_DISABLE_COPY_MOVE(TorrentPropertiesDialog)
 
-        QSize sizeHint() const override;
-
     private:
         void setupDetailsTab();
         void setupPeersTab();

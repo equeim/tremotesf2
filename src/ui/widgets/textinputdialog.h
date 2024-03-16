@@ -23,7 +23,6 @@ namespace tremotesf {
             bool multiline,
             QWidget* parent = nullptr
         );
-        QSize sizeHint() const override;
         QString text() const;
 
     private:

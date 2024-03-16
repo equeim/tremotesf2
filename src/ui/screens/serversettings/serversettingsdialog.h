@@ -25,7 +25,6 @@ namespace tremotesf {
 
     public:
         explicit ServerSettingsDialog(const Rpc* rpc, QWidget* parent = nullptr);
-        QSize sizeHint() const override;
         void accept() override;
 
     private:
