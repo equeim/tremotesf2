@@ -185,13 +185,28 @@ namespace tremotesf {
     }
 }
 
-#define QMLD(type) \
-    tremotesf::impl::QMessageLoggerDelegate(type, QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC)
-#define logDebug(...)                QMLD(QtDebugMsg).log(__VA_ARGS__)
-#define logDebugWithException(...)   QMLD(QtDebugMsg).logWithException(__VA_ARGS__)
-#define logInfo(...)                 QMLD(QtInfoMsg).log(__VA_ARGS__)
-#define logInfoWithException(...)    QMLD(QtInfoMsg).logWithException(__VA_ARGS__)
-#define logWarning(...)              QMLD(QtWarningMsg).log(__VA_ARGS__)
-#define logWarningWithException(...) QMLD(QtWarningMsg).logWithException(__VA_ARGS__)
+#define TREMOTESF_IMPL_CREATE_LOGGER_DELEGATE(msgType) \
+    tremotesf::impl::QMessageLoggerDelegate(msgType, QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC)
+
+#define TREMOTESF_IMPL_LOG(msgType, ...)                                     \
+    do {                                                                     \
+        if (tremotesf::tremotesfLoggingCategory().isEnabled(msgType)) {      \
+            TREMOTESF_IMPL_CREATE_LOGGER_DELEGATE(msgType).log(__VA_ARGS__); \
+        }                                                                    \
+    } while (0)
+
+#define TREMOTESF_IMPL_LOG_WITH_EXCEPTION(msgType, ...)                                   \
+    do {                                                                                  \
+        if (tremotesf::tremotesfLoggingCategory().isEnabled(msgType)) {                   \
+            TREMOTESF_IMPL_CREATE_LOGGER_DELEGATE(msgType).logWithException(__VA_ARGS__); \
+        }                                                                                 \
+    } while (0)
+
+#define logDebug(...)                TREMOTESF_IMPL_LOG(QtDebugMsg, __VA_ARGS__)
+#define logDebugWithException(...)   TREMOTESF_IMPL_LOG_WITH_EXCEPTION(QtDebugMsg, __VA_ARGS__)
+#define logInfo(...)                 TREMOTESF_IMPL_LOG(QtInfoMsg, __VA_ARGS__)
+#define logInfoWithException(...)    TREMOTESF_IMPL_LOG_WITH_EXCEPTION(QtInfoMsg, __VA_ARGS__)
+#define logWarning(...)              TREMOTESF_IMPL_LOG(QtWarningMsg, __VA_ARGS__)
+#define logWarningWithException(...) TREMOTESF_IMPL_LOG_WITH_EXCEPTION(QtWarningMsg, __VA_ARGS__)
 
 #endif // TREMOTESF_LOG_LOG_H
