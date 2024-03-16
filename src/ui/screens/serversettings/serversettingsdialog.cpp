@@ -142,6 +142,7 @@ namespace tremotesf {
         //
 
         auto layout = new QVBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
 
         //: Message that appears when disconnected from server
         mDisconnectedMessageWidget = new KMessageWidget(qApp->translate("tremotesf", "Disconnected"), this);
@@ -558,7 +559,7 @@ namespace tremotesf {
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ServerSettingsDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ServerSettingsDialog::reject);
-        layout->addWidget(dialogButtonBox);
+        pageWidget->setPageFooter(dialogButtonBox);
 
         setMinimumSize(minimumSizeHint());
     }
