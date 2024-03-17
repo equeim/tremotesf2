@@ -625,7 +625,7 @@ namespace tremotesf {
             mOpenTorrentDownloadDirectoryAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("go-jump"_l1),
                 //: Torrent's context menu item
-                qApp->translate("tremotesf", "Open &Download Directory")
+                qApp->translate("tremotesf", "Op&en Download Directory")
             );
             QObject::connect(
                 mOpenTorrentDownloadDirectoryAction,
