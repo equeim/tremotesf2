@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.6.1] - 2024-03-17
 ### Added
 - Added TREMOTESF_WITH_HTTPLIB CMake option to control how cpp-httplib test dependency is searched. Possible values:
   - auto: CMake find_package call, otherwise pkg-config, otherwise bundled copy is used.
