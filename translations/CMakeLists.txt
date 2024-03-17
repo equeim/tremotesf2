@@ -15,6 +15,7 @@ set(
     de.ts
     en.ts
     es.ts
+    es_ES.ts
     fr.ts
     it_IT.ts
     nl_BE.ts
