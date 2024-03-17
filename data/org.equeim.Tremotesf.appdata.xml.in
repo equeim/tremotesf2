@@ -54,6 +54,21 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-03-17" version="2.6.1">
+      <description>
+        <p>Changed</p>
+        <ul>
+          <li>Qt 6 is now used by default</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Sorting of directories and trackers in side panel</li>
+          <li>Menu items that should disabled on first start not being disabled</li>
+          <li>Selecting of current server via status bar context menu being broken in some cases</li>
+          <li>Debug logs being printed when they are disabled</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-01-08" version="2.6.0">
       <description>
         <p>Added</p>
