@@ -53,18 +53,14 @@ namespace tremotesf {
         //: "About" dialog's "About" tab title
         tabWidget->addTab(aboutPage, qApp->translate("tremotesf", "About"));
 
-        auto authorsPage = new QWidget(this);
-        auto authorsPageLayout = new QVBoxLayout(authorsPage);
         auto authorsWidget = new QTextBrowser(this);
         authorsWidget->setHtml(
             QString(readFile(":/authors.html"))
                 .arg(qApp->translate("tremotesf", "Maintainer"), qApp->translate("tremotesf", "Contributor"))
         );
         authorsWidget->setOpenExternalLinks(true);
-        authorsPageLayout->addWidget(authorsWidget);
-        authorsPageLayout->addStretch();
         //: "About" dialog's "Authors" tab title
-        tabWidget->addTab(authorsPage, qApp->translate("tremotesf", "Authors"));
+        tabWidget->addTab(authorsWidget, qApp->translate("tremotesf", "Authors"));
 
         auto translatorsWidget = new QTextBrowser(this);
         translatorsWidget->setHtml(readFile(":/translators.html"));
