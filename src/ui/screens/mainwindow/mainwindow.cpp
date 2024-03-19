@@ -1503,7 +1503,7 @@ namespace tremotesf {
                 qputenv(xdgActivationTokenEnvVariable, *xdgActivationToken);
             }
             widgetToActivate->activateWindow();
-#    elif KWINDOWSYSTEM_VERSION >= QT_VERSION_CHECK(5, 89, 0)
+#    else
             if (xdgActivationToken.has_value()) {
                 logInfo("Activating window with token {}", *xdgActivationToken);
                 KWindowSystem::setCurrentXdgActivationToken(*xdgActivationToken);
@@ -1513,9 +1513,6 @@ namespace tremotesf {
             } else {
                 logWarning("This window's QWidget::windowHandle() is null");
             }
-#    else
-#        warning "Window activation on Wayland is not supported because KWindowSystem version is too low"
-            logWarning("Window activation on Wayland is not supported because KWindowSystem version is too low");
 #    endif
         }
 #endif
