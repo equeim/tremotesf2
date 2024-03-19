@@ -11,7 +11,14 @@ find_package(Threads REQUIRED)
 find_package(fmt 7.0 REQUIRED)
 find_package(cxxopts REQUIRED)
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network Widgets)
-find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WidgetsAddons REQUIRED)
+
+if (TREMOTESF_QT6)
+    set(minimum_kf_version 5.245)
+else()
+    set(minimum_kf_version 5.92)
+endif()
+find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WidgetsAddons ${minimum_kf_version} REQUIRED)
+
 find_package(PkgConfig REQUIRED)
 
 if (WIN32 OR APPLE)
@@ -205,7 +212,7 @@ if (UNIX)
     )
     if (TREMOTESF_UNIX_FREEDESKTOP)
         find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
-        find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WindowSystem REQUIRED)
+        find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WindowSystem ${minimum_kf_version} REQUIRED)
         target_link_libraries(tremotesf_objects PUBLIC Qt::DBus KF${TREMOTESF_QT_VERSION_MAJOR}::WindowSystem)
 
         qt_add_dbus_adaptor(
