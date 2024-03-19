@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Removed Debian 11 support - minimum baseline now corresponds to Ubuntu 22.04
+- Minimum CMake version is 3.22
+- Minimum fmt version is 8.0
+- Minimum KF5 version is 5.92
+
 ## [2.6.1] - 2024-03-17
 ### Added
 - Added TREMOTESF_WITH_HTTPLIB CMake option to control how cpp-httplib test dependency is searched. Possible values:
