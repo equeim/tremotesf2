@@ -19,12 +19,6 @@
 #endif
 
 #include <fmt/core.h>
-#if FMT_VERSION < 80000
-#    include <fmt/format.h>
-#    define FORMAT_CONST
-#else
-#    define FORMAT_CONST const
-#endif
 
 namespace tremotesf {
     struct SimpleFormatter {
@@ -34,37 +28,37 @@ namespace tremotesf {
 
 template<>
 struct fmt::formatter<QString> : formatter<string_view> {
-    format_context::iterator format(const QString& string, format_context& ctx) FORMAT_CONST;
+    format_context::iterator format(const QString& string, format_context& ctx) const;
 };
 
 class QStringView;
 template<>
 struct fmt::formatter<QStringView> : formatter<string_view> {
-    format_context::iterator format(const QStringView& string, format_context& ctx) FORMAT_CONST;
+    format_context::iterator format(const QStringView& string, format_context& ctx) const;
 };
 
 class QLatin1String;
 template<>
 struct fmt::formatter<QLatin1String> : formatter<string_view> {
-    format_context::iterator format(const QLatin1String& string, format_context& ctx) FORMAT_CONST;
+    format_context::iterator format(const QLatin1String& string, format_context& ctx) const;
 };
 
 class QByteArray;
 template<>
 struct fmt::formatter<QByteArray> : formatter<string_view> {
-    format_context::iterator format(const QByteArray& array, format_context& ctx) FORMAT_CONST;
+    format_context::iterator format(const QByteArray& array, format_context& ctx) const;
 };
 
 #if QT_VERSION_MAJOR >= 6
 template<>
 struct fmt::formatter<QUtf8StringView> : formatter<string_view> {
-    format_context::iterator format(const QUtf8StringView& string, format_context& ctx) FORMAT_CONST;
+    format_context::iterator format(const QUtf8StringView& string, format_context& ctx) const;
 };
 
 class QAnyStringView;
 template<>
 struct fmt::formatter<QAnyStringView> : formatter<QString> {
-    format_context::iterator format(const QAnyStringView& string, format_context& ctx) FORMAT_CONST;
+    format_context::iterator format(const QAnyStringView& string, format_context& ctx) const;
 };
 #endif
 
@@ -76,7 +70,7 @@ namespace tremotesf::impl {
 
     template<QDebugPrintable T>
     struct QDebugFormatter : SimpleFormatter {
-        fmt::format_context::iterator format(const T& t, fmt::format_context& ctx) FORMAT_CONST {
+        fmt::format_context::iterator format(const T& t, fmt::format_context& ctx) const {
             QString buffer{};
             QDebug stream(&buffer);
             stream.nospace() << t;
@@ -90,7 +84,7 @@ namespace tremotesf::impl {
     template<typename T>
         requires std::is_enum_v<T>
     struct QEnumFormatter : SimpleFormatter {
-        fmt::format_context::iterator format(T t, fmt::format_context& ctx) FORMAT_CONST {
+        fmt::format_context::iterator format(T t, fmt::format_context& ctx) const {
             const auto meta = QMetaEnum::fromType<T>();
             using UnderlyingType = std::underlying_type_t<T>;
             const auto underlying = static_cast<UnderlyingType>(t);
@@ -106,7 +100,7 @@ namespace tremotesf::impl {
 namespace fmt {
     template<std::derived_from<QObject> T>
     struct formatter<T> : tremotesf::SimpleFormatter {
-        format_context::iterator format(const T& object, format_context& ctx) FORMAT_CONST {
+        format_context::iterator format(const T& object, format_context& ctx) const {
             QString buffer{};
             QDebug stream(&buffer);
             stream.nospace() << &object;
@@ -130,7 +124,7 @@ namespace fmt {
 namespace fmt {
     template<>
     struct formatter<std::exception> : tremotesf::SimpleFormatter {
-        format_context::iterator format(const std::exception& e, format_context& ctx) FORMAT_CONST;
+        format_context::iterator format(const std::exception& e, format_context& ctx) const;
     };
 
     template<std::derived_from<std::exception> T>
@@ -139,7 +133,7 @@ namespace fmt {
 
     template<>
     struct formatter<std::system_error> : tremotesf::SimpleFormatter {
-        format_context::iterator format(const std::system_error& e, format_context& ctx) FORMAT_CONST;
+        format_context::iterator format(const std::system_error& e, format_context& ctx) const;
     };
 
     template<std::derived_from<std::system_error> T>
@@ -155,12 +149,12 @@ namespace winrt {
 namespace fmt {
     template<>
     struct formatter<winrt::hstring> : formatter<QString> {
-        format_context::iterator format(const winrt::hstring& str, format_context& ctx) FORMAT_CONST;
+        format_context::iterator format(const winrt::hstring& str, format_context& ctx) const;
     };
 
     template<>
     struct formatter<winrt::hresult_error> : tremotesf::SimpleFormatter {
-        format_context::iterator format(const winrt::hresult_error& e, format_context& ctx) FORMAT_CONST;
+        format_context::iterator format(const winrt::hresult_error& e, format_context& ctx) const;
     };
 }
 #endif

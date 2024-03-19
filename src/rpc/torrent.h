@@ -225,7 +225,7 @@ SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::IdleSeedingLimitMode)
 namespace fmt {
     template<>
     struct formatter<tremotesf::Torrent> : tremotesf::SimpleFormatter {
-        format_context::iterator format(const tremotesf::Torrent& torrent, format_context& ctx) FORMAT_CONST;
+        format_context::iterator format(const tremotesf::Torrent& torrent, format_context& ctx) const;
     };
 }
 

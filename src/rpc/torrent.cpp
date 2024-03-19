@@ -710,7 +710,7 @@ namespace tremotesf {
 
 namespace fmt {
     format_context::iterator
-    formatter<tremotesf::Torrent>::format(const tremotesf::Torrent& torrent, format_context& ctx) FORMAT_CONST {
+    formatter<tremotesf::Torrent>::format(const tremotesf::Torrent& torrent, format_context& ctx) const {
         return fmt::format_to(ctx.out(), "Torrent(id={}, name={})", torrent.data().id, torrent.data().name);
     }
 }

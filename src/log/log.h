@@ -21,12 +21,6 @@
 
 #include "formatters.h"
 
-#if FMT_VERSION < 80000
-#    define FORMAT_STRING fmt::string_view
-#else
-#    define FORMAT_STRING fmt::format_string<Args...>
-#endif
-
 #if __has_cpp_attribute(gnu::always_inline)
 #    define ALWAYS_INLINE [[gnu::always_inline]] inline
 #elif __has_cpp_attribute(msvc::forceinline)
@@ -102,7 +96,7 @@ namespace tremotesf {
 
             template<typename... Args>
                 requires(sizeof...(Args) != 0)
-            ALWAYS_INLINE void log(FORMAT_STRING fmt, Args&&... args) const {
+            ALWAYS_INLINE void log(fmt::format_string<Args...> fmt, Args&&... args) const {
                 log(fmt::format(fmt, std::forward<Args>(args)...));
             }
 
@@ -123,7 +117,7 @@ namespace tremotesf {
 
             template<IsException E, typename... Args>
                 requires(sizeof...(Args) != 0)
-            ALWAYS_INLINE void logWithException(const E& e, FORMAT_STRING fmt, Args&&... args) const {
+            ALWAYS_INLINE void logWithException(const E& e, fmt::format_string<Args...> fmt, Args&&... args) const {
                 log(fmt, std::forward<Args>(args)...);
                 logExceptionRecursively<true>(e);
             }
@@ -180,7 +174,7 @@ namespace tremotesf {
 
     template<typename... Args>
         requires(sizeof...(Args) != 0)
-    void printlnStdout(FORMAT_STRING fmt, Args&&... args) {
+    void printlnStdout(fmt::format_string<Args...> fmt, Args&&... args) {
         fmt::print(stdout, impl::printlnFormatString, fmt::format(fmt, std::forward<Args>(args)...));
     }
 }

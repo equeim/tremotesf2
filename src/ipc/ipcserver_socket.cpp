@@ -30,7 +30,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QCborValue)
 namespace fmt {
     template<>
     struct formatter<QCborParserError> : tremotesf::SimpleFormatter {
-        fmt::format_context::iterator format(QCborParserError error, fmt::format_context& ctx) FORMAT_CONST {
+        fmt::format_context::iterator format(QCborParserError error, fmt::format_context& ctx) const {
             return fmt::format_to(
                 ctx.out(),
                 "{} (error code {})",
