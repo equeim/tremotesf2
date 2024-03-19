@@ -36,9 +36,7 @@ private slots:
         printlnStdout("foo");
         printlnStdout("{}", "foo");
         printlnStdout(FMT_STRING("{}"), "foo");
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), "foo");
-#endif
     }
 
     void stdoutStdString() {
@@ -46,9 +44,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#endif
     }
 
     void stdoutStdStringView() {
@@ -56,9 +52,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#endif
     }
 
     void stdoutQString() {
@@ -66,9 +60,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#endif
     }
 
     void stdoutQStringView() {
@@ -77,9 +69,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#endif
     }
 
     void stdoutQLatin1String() {
@@ -87,9 +77,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#endif
     }
 
 #if QT_VERSION_MAJOR >= 6
@@ -98,9 +86,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#    if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#    endif
     }
 
     void stdoutQAnyStringView() {
@@ -108,9 +94,7 @@ private slots:
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
-#    if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), str);
-#    endif
     }
 #endif
 
@@ -119,9 +103,7 @@ private slots:
         printlnStdout(value);
         printlnStdout("{}", value);
         printlnStdout(FMT_STRING("{}"), value);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), value);
-#endif
     }
 
     void stdoutQStringList() {
@@ -129,9 +111,7 @@ private slots:
         printlnStdout(list);
         printlnStdout("{}", list);
         printlnStdout(FMT_STRING("{}"), list);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), list);
-#endif
     }
 
     void stdoutTorrent() {
@@ -139,18 +119,14 @@ private slots:
         printlnStdout(value);
         printlnStdout("{}", value);
         printlnStdout(FMT_STRING("{}"), value);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), value);
-#endif
     }
 
     void stdoutThis() {
         printlnStdout(*this);
         printlnStdout("{}", *this);
         printlnStdout(FMT_STRING("{}"), *this);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), *this);
-#endif
     }
 
     void stdoutQObject() {
@@ -158,18 +134,14 @@ private slots:
         printlnStdout(value);
         printlnStdout("{}", value);
         printlnStdout(FMT_STRING("{}"), value);
-#if FMT_VERSION >= 80000
         printlnStdout(fmt::runtime("{}"), value);
-#endif
     }
 
     void infoStringLiteral() {
         logInfo("foo");
         logInfo("{}", "foo");
         logInfo(FMT_STRING("{}"), "foo");
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), "foo");
-#endif
     }
 
     void infoStdString() {
@@ -177,9 +149,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#endif
     }
 
     void infoStdStringView() {
@@ -187,9 +157,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#endif
     }
 
     void infoQString() {
@@ -197,9 +165,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#endif
     }
 
     void infoQStringView() {
@@ -208,9 +174,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#endif
     }
 
     void infoQLatin1String() {
@@ -218,9 +182,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#endif
     }
 
 #if QT_VERSION_MAJOR >= 6
@@ -229,9 +191,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#    if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#    endif
     }
 
     void infoQAnyStringView() {
@@ -239,9 +199,7 @@ private slots:
         logInfo(str);
         logInfo("{}", str);
         logInfo(FMT_STRING("{}"), str);
-#    if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), str);
-#    endif
     }
 #endif
 
@@ -250,9 +208,7 @@ private slots:
         logInfo(value);
         logInfo("{}", value);
         logInfo(FMT_STRING("{}"), value);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), value);
-#endif
     }
 
     void infoQStringList() {
@@ -260,9 +216,7 @@ private slots:
         logInfo(list);
         logInfo("{}", list);
         logInfo(FMT_STRING("{}"), list);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), list);
-#endif
     }
 
     void infoTorrent() {
@@ -270,18 +224,14 @@ private slots:
         logInfo(value);
         logInfo("{}", value);
         logInfo(FMT_STRING("{}"), value);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), value);
-#endif
     }
 
     void infoThis() {
         logInfo(*this);
         logInfo("{}", *this);
         logInfo(FMT_STRING("{}"), *this);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), *this);
-#endif
     }
 
     void infoQObject() {
@@ -289,9 +239,7 @@ private slots:
         logInfo(value);
         logInfo("{}", value);
         logInfo(FMT_STRING("{}"), value);
-#if FMT_VERSION >= 80000
         logInfo(fmt::runtime("{}"), value);
-#endif
     }
 
     void warningStdException() {

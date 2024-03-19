@@ -27,7 +27,7 @@ struct Item {
 namespace fmt {
     template<>
     struct formatter<Item> : tremotesf::SimpleFormatter {
-        format_context::iterator format(const Item& item, format_context& ctx) FORMAT_CONST {
+        format_context::iterator format(const Item& item, format_context& ctx) const {
             return fmt::format_to(ctx.out(), "Item(id={}, data={})", item.id, item.data);
         }
     };

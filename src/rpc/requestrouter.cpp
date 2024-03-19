@@ -29,7 +29,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QSslError)
 namespace fmt {
     template<>
     struct formatter<QSsl::SslProtocol> : tremotesf::SimpleFormatter {
-        fmt::format_context::iterator format(QSsl::SslProtocol protocol, fmt::format_context& ctx) FORMAT_CONST {
+        fmt::format_context::iterator format(QSsl::SslProtocol protocol, fmt::format_context& ctx) const {
             const auto str = [&]() -> std::optional<std::string_view> {
                 switch (protocol) {
                 case QSsl::TlsV1_0:

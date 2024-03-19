@@ -15,7 +15,7 @@
 namespace fmt {
     template<>
     struct formatter<QFile::FileError> : tremotesf::SimpleFormatter {
-        format_context::iterator format(QFile::FileError e, format_context& ctx) FORMAT_CONST;
+        format_context::iterator format(QFile::FileError e, format_context& ctx) const;
     };
 }
 

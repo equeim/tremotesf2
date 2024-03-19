@@ -19,7 +19,7 @@
 #include "log/log.h"
 
 namespace fmt {
-    format_context::iterator formatter<QFile::FileError>::format(QFile::FileError e, format_context& ctx) FORMAT_CONST {
+    format_context::iterator formatter<QFile::FileError>::format(QFile::FileError e, format_context& ctx) const {
         const std::string_view string = [e] {
             using namespace std::string_view_literals;
             switch (e) {
