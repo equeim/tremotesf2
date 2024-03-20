@@ -27,6 +27,11 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Use latest Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
       - name: Set up vcpkg
         uses: equeim/action-setup-vcpkg@v6
         with:
