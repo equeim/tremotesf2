@@ -40,7 +40,7 @@ namespace {
 #ifdef Q_OS_MACOS
     std::pair<QStringList, QStringList> receiveFileOpenEvents(int& argc, char** argv) {
         std::pair<QStringList, QStringList> filesAndUrls{};
-        logInfo("Waiting for file open events");
+        info().log("Waiting for file open events");
         const QGuiApplication app(argc, argv);
         const FileOpenEventHandler handler{};
         QObject::connect(
@@ -53,7 +53,7 @@ namespace {
             }
         );
         QTimer::singleShot(500ms, &app, [] {
-            logInfo("Did not receive file open events");
+            info().log("Did not receive file open events");
             QCoreApplication::quit();
         });
         QCoreApplication::exec();
@@ -68,15 +68,15 @@ namespace {
         if (!client->isConnected()) {
             return false;
         }
-        logInfo("Only one instance of Tremotesf can be run at the same time");
+        info().log("Only one instance of Tremotesf can be run at the same time");
         const auto activateOtherInstance = [&client](const QStringList& files, const QStringList& urls) {
             if (files.isEmpty() && urls.isEmpty()) {
-                logInfo("Activating other instance");
+                info().log("Activating other instance");
                 client->activateWindow();
             } else {
-                logInfo("Activating other instance and requesting torrent adding");
-                logInfo("files = {}", files);
-                logInfo("urls = {}", urls);
+                info().log("Activating other instance and requesting torrent adding");
+                info().log("files = {}", files);
+                info().log("urls = {}", urls);
                 client->addTorrents(files, urls);
             }
         };
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
             return EXIT_SUCCESS;
         }
     } catch (const std::runtime_error& e) {
-        logWarning("Failed to parse command line arguments: {}", e.what());
+        warning().log("Failed to parse command line arguments: {}", e.what());
         return EXIT_FAILURE;
     }
 
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
         overrideDebugLogs(*args.enableDebugLogs);
     }
     if (tremotesfLoggingCategory().isDebugEnabled()) {
-        logDebug("Debug logging is enabled");
+        debug().log("Debug logging is enabled");
     }
 
 #ifdef Q_OS_WIN
@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
         if (qtTranslator.load(QLocale{}, "qt"_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);
         } else {
-            logWarning("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
+            warning().log("Failed to load Qt translation for {} from {}", QLocale(), qtTranslationsPath);
         }
     }
 
@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
     if (appTranslator.load(QLocale{}, {}, {}, ":/translations/"_l1)) {
         qApp->installTranslator(&appTranslator);
     } else {
-        logWarning("Failed to load Tremotesf translation for {}", QLocale{});
+        warning().log("Failed to load Tremotesf translation for {}", QLocale{});
     }
 
     const SaveWindowStateDispatcher saveStateDispatcher{};
@@ -191,6 +191,6 @@ int main(int argc, char** argv) {
     }
 
     const int exitStatus = QCoreApplication::exec();
-    logDebug("Returning from main with exit status {}", exitStatus);
+    debug().log("Returning from main with exit status {}", exitStatus);
     return exitStatus;
 }

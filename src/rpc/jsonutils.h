@@ -44,13 +44,13 @@ namespace tremotesf::impl {
             const auto jsonValue = [&] {
                 if constexpr (std::same_as<JsonConstantT, int>) {
                     if (!value.isDouble()) {
-                        logWarning("JSON field with key {} and value {} is not a number", key, value);
+                        warning().log("JSON field with key {} and value {} is not a number", key, value);
                         return std::optional<int>{};
                     }
                     return std::optional(value.toInt());
                 } else if constexpr (std::same_as<JsonConstantT, QLatin1String>) {
                     if (!value.isString()) {
-                        logWarning("JSON field with key {} and value {} is not a string", key, value);
+                        warning().log("JSON field with key {} and value {} is not a string", key, value);
                         return std::optional<QString>{};
                     }
                     return std::optional(value.toString());
@@ -63,7 +63,7 @@ namespace tremotesf::impl {
                 return mapping.jsonValue == jsonValue;
             });
             if (found == mappings.end()) {
-                logWarning("JSON field with key {} has unknown value {}", key, value);
+                warning().log("JSON field with key {} has unknown value {}", key, value);
                 return {};
             }
             return found->enumValue;

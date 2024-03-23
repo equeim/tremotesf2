@@ -30,7 +30,7 @@ namespace tremotesf {
                 break;
             }
             default:
-                logWarning("Unknown windowing system");
+                warning().log("Unknown windowing system");
                 return {};
             }
             auto token = platformData.value(key).toByteArray();
@@ -46,14 +46,14 @@ namespace tremotesf {
 
         auto connection(QDBusConnection::sessionBus());
         if (connection.registerService(IpcServerDbus::serviceName)) {
-            logInfo("Registered D-Bus service");
+            info().log("Registered D-Bus service");
             if (connection.registerObject(IpcServerDbus::objectPath, this)) {
-                logInfo("Registered D-Bus object");
+                info().log("Registered D-Bus object");
             } else {
-                logWarning("Failed to register D-Bus object: {}", connection.lastError());
+                warning().log("Failed to register D-Bus object: {}", connection.lastError());
             }
         } else {
-            logWarning("Failed to register D-Bus service", connection.lastError());
+            warning().log("Failed to register D-Bus service", connection.lastError());
         }
     }
 
@@ -61,7 +61,7 @@ namespace tremotesf {
      * org.freedesktop.Application methods
      */
     void IpcDbusService::Activate(const QVariantMap& platform_data) {
-        logInfo("Window activation requested, platform_data = {}", platform_data);
+        info().log("Window activation requested, platform_data = {}", platform_data);
         emit mIpcServer->windowActivationRequested(
             platform_data.value(torrentHashField).toString(),
             platformDataToWindowActivationToken(platform_data)
@@ -69,7 +69,7 @@ namespace tremotesf {
     }
 
     void IpcDbusService::Open(const QStringList& uris, const QVariantMap& platform_data) {
-        logInfo("Torrents adding requested, uris = {}, platform_data = {}", uris, platform_data);
+        info().log("Torrents adding requested, uris = {}, platform_data = {}", uris, platform_data);
         QStringList files;
         QStringList urls;
         for (const QUrl& url : QUrl::fromStringList(uris)) {
@@ -87,7 +87,7 @@ namespace tremotesf {
     void IpcDbusService::ActivateAction(
         const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data
     ) {
-        logInfo(
+        info().log(
             "Action activated, action_name = {}, parameter = {}, platform_data = {}",
             action_name,
             parameter,

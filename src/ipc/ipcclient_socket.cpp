@@ -23,12 +23,12 @@ namespace tremotesf {
         bool isConnected() const override { return mSocket.state() == QLocalSocket::ConnectedState; }
 
         void activateWindow() override {
-            logInfo("Requesting window activation");
+            info().log("Requesting window activation");
             sendMessage(IpcServerSocket::activateWindowMessage);
         }
 
         void addTorrents(const QStringList& files, const QStringList& urls) override {
-            logInfo("Requesting torrents adding");
+            info().log("Requesting torrents adding");
             sendMessage(IpcServerSocket::createAddTorrentsMessage(files, urls));
         }
 
@@ -36,7 +36,7 @@ namespace tremotesf {
         void sendMessage(const QByteArray& message) {
             const qint64 written = mSocket.write(message);
             if (written != message.size()) {
-                logWarning("Failed to write to socket ({} bytes written): {}", written, mSocket.errorString());
+                warning().log("Failed to write to socket ({} bytes written): {}", written, mSocket.errorString());
             }
             waitForBytesWritten();
         }
@@ -44,14 +44,14 @@ namespace tremotesf {
         void sendMessage(char message) {
             const bool written = mSocket.putChar(message);
             if (!written) {
-                logWarning("Failed to write to socket: {}", mSocket.errorString());
+                warning().log("Failed to write to socket: {}", mSocket.errorString());
             }
             waitForBytesWritten();
         }
 
         void waitForBytesWritten() {
             if (!mSocket.waitForBytesWritten()) {
-                logWarning("Timed out when waiting for bytes written");
+                warning().log("Timed out when waiting for bytes written");
             }
         }
 

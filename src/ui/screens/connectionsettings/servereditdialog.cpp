@@ -574,7 +574,7 @@ namespace tremotesf {
             try {
                 target->setPlainText(readFile(fileDialog->selectedFiles().first()));
             } catch (const QFileError& e) {
-                logWarningWithException(e, "Failed to read certificate from file");
+                warning().logWithException(e, "Failed to read certificate from file");
             }
         });
 

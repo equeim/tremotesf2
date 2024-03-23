@@ -25,11 +25,11 @@ namespace tremotesf {
                 try {
                     std::rethrow_exception(exception_ptr);
                 } catch (const std::exception& e) {
-                    logWarningWithException(e, "Unhandled exception");
+                    warning().logWithException(e, "Unhandled exception");
                 } catch (const winrt::hresult_error& e) {
-                    logWarningWithException(e, "Unhandled exception");
+                    warning().logWithException(e, "Unhandled exception");
                 } catch (...) {
-                    logWarning("Unhandled exception of unknown type");
+                    warning().log("Unhandled exception of unknown type");
                 }
             }
             std::abort();
@@ -47,7 +47,7 @@ namespace tremotesf {
         try {
             winrt::init_apartment(winrt::apartment_type::single_threaded);
         } catch (const winrt::hresult_error& e) {
-            logWarning("winrt::init_apartment failed: {}", e);
+            warning().log("winrt::init_apartment failed: {}", e);
         }
     }
 
@@ -57,7 +57,7 @@ namespace tremotesf {
         try {
             checkWin32Bool(AllowSetForegroundWindow(ASFW_ANY), "AllowSetForegroundWindow");
         } catch (const std::system_error& e) {
-            logWarning(e);
+            warning().log(e);
         }
         const auto systemColorsProvider = SystemColorsProvider::createInstance(QApplication::instance());
         applyDarkThemeToPalette(systemColorsProvider);

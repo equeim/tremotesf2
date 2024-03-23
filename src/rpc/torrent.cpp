@@ -179,7 +179,7 @@ namespace tremotesf {
             }();
             const auto foundKey = mapping.find(stringKey);
             if (foundKey == mapping.end()) {
-                logWarning("Unknown torrent field '{}'", stringKey);
+                warning().log("Unknown torrent field '{}'", stringKey);
                 return {};
             }
             return static_cast<TorrentData::UpdateKey>(foundKey->second);
@@ -614,7 +614,7 @@ namespace tremotesf {
                         changed.push_back(static_cast<int>(i));
                     }
                 } else {
-                    logWarning("fileStats and files arrays have different sizes for torrent {}", *this);
+                    warning().log("fileStats and files arrays have different sizes for torrent {}", *this);
                 }
             } else {
                 if (static_cast<size_t>(fileStats.size()) == mFiles.size()) {
@@ -625,7 +625,7 @@ namespace tremotesf {
                         }
                     }
                 } else {
-                    logWarning("fileStats array has different size than in previous update for torrent {}", *this);
+                    warning().log("fileStats array has different size than in previous update for torrent {}", *this);
                 }
             }
         }

@@ -89,7 +89,7 @@ namespace tremotesf {
           mServerStats(new ServerStats(this)) {
         mAutoReconnectTimer->setSingleShot(true);
         QObject::connect(mAutoReconnectTimer, &QTimer::timeout, this, [=, this] {
-            logInfo("Auto reconnection");
+            info().log("Auto reconnection");
             connect();
         });
 
@@ -103,7 +103,7 @@ namespace tremotesf {
             [=, this](RpcError error, const QString& errorMessage, const QString& detailedErrorMessage) {
                 setStatus({RpcConnectionState::Disconnected, error, errorMessage, detailedErrorMessage});
                 if (mAutoReconnectEnabled && !mUpdateDisabled) {
-                    logInfo("Auto reconnecting in {} seconds", mAutoReconnectTimer->interval() / 1000);
+                    info().log("Auto reconnecting in {} seconds", mAutoReconnectTimer->interval() / 1000);
                     mAutoReconnectTimer->start();
                 }
             }
@@ -181,31 +181,31 @@ namespace tremotesf {
         }
         requestsConfig.serverUrl.setHost(configuration.address);
         if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
-            logWarning("Error setting URL hostname: {}", error);
+            warning().log("Error setting URL hostname: {}", error);
         }
         requestsConfig.serverUrl.setPort(configuration.port);
         if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
-            logWarning("Error setting URL port: {}", error);
+            warning().log("Error setting URL port: {}", error);
         }
         if (auto i = configuration.apiPath.indexOf('?'); i != -1) {
             requestsConfig.serverUrl.setPath(configuration.apiPath.mid(0, i));
             if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
-                logWarning("Error setting URL path: {}", error);
+                warning().log("Error setting URL path: {}", error);
             }
             if ((i + 1) < configuration.apiPath.size()) {
                 requestsConfig.serverUrl.setQuery(configuration.apiPath.mid(i + 1));
                 if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
-                    logWarning("Error setting URL query: {}", error);
+                    warning().log("Error setting URL query: {}", error);
                 }
             }
         } else {
             requestsConfig.serverUrl.setPath(configuration.apiPath);
             if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
-                logWarning("Error setting URL path: {}", error);
+                warning().log("Error setting URL path: {}", error);
             }
         }
         if (!requestsConfig.serverUrl.isValid()) {
-            logWarning("URL {} is invalid", requestsConfig.serverUrl);
+            warning().log("URL {} is invalid", requestsConfig.serverUrl);
         }
 
         switch (configuration.proxyType) {
@@ -291,7 +291,7 @@ namespace tremotesf {
         try {
             openFile(*file, QIODevice::ReadOnly);
         } catch (const QFileError& e) {
-            logWarningWithException(e, "addTorrentFile: failed to open torrent file");
+            warning().logWithException(e, "addTorrentFile: failed to open torrent file");
             emit torrentAddError();
             return;
         }
@@ -333,7 +333,7 @@ namespace tremotesf {
                      {"paused"_l1, !start}}
                 );
             } catch (const QFileError& e) {
-                logWarningWithException(e, "addTorrentFile: failed to read torrent file");
+                warning().logWithException(e, "addTorrentFile: failed to read torrent file");
                 emit torrentAddError();
                 return std::nullopt;
             }
@@ -696,7 +696,7 @@ namespace tremotesf {
 
     void Rpc::updateData() {
         if (connectionState() != ConnectionState::Disconnected && !mUpdating) {
-            logDebug("Updating data");
+            debug().log("Updating data");
             mUpdateTimer->stop();
             mUpdating = true;
             if (isConnected()) {
@@ -705,7 +705,7 @@ namespace tremotesf {
             getTorrents();
             getServerStats();
         } else {
-            logWarning(
+            warning().log(
                 "updateData: called in incorrect state, connectionState = {}, updating = {}",
                 connectionState(),
                 mUpdating
@@ -721,7 +721,7 @@ namespace tremotesf {
                 RequestRouter::RequestType::Independent,
                 [=, this](const RequestRouter::Response& response) {
                     if (response.success) {
-                        logInfo("Successfully sent shutdown request, disconnecting");
+                        info().log("Successfully sent shutdown request, disconnecting");
                         disconnect();
                     }
                 }
@@ -762,7 +762,7 @@ namespace tremotesf {
     void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount) {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected: {
-            logInfo("Disconnected");
+            info().log("Disconnected");
 
             mRequestRouter->cancelPendingRequestsAndClearSessionId();
 
@@ -784,10 +784,10 @@ namespace tremotesf {
             break;
         }
         case ConnectionState::Connecting:
-            logInfo("Connecting");
+            info().log("Connecting");
             break;
         case ConnectionState::Connected: {
-            logInfo("Connected");
+            info().log("Connected");
             break;
         }
         }
@@ -1072,7 +1072,7 @@ namespace tremotesf {
         if (!mUpdating && !connecting) return;
         if (mUpdating) {
             if (checkIfUpdateCompleted()) {
-                logDebug("Finished updating data");
+                debug().log("Finished updating data");
                 mUpdating = false;
             } else {
                 return;
@@ -1091,11 +1091,11 @@ namespace tremotesf {
     }
 
     void Rpc::checkIfServerIsLocal() {
-        logInfo("checkIfServerIsLocal() called");
+        info().log("checkIfServerIsLocal() called");
         if (mServerSettings->data().hasSessionIdFile() && !mRequestRouter->sessionId().isEmpty() &&
             isTransmissionSessionIdFileExists(mRequestRouter->sessionId())) {
             mServerIsLocal = true;
-            logInfo("checkIfServerIsLocal: server is running locally: true");
+            info().log("checkIfServerIsLocal: server is running locally: true");
             return;
         }
         const auto configuration = mRequestRouter->configuration();
@@ -1105,24 +1105,24 @@ namespace tremotesf {
         const auto host = configuration->serverUrl.host();
         if (auto localIp = isLocalIpAddress(host); localIp.has_value()) {
             mServerIsLocal = *localIp;
-            logInfo("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
+            info().log("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
             return;
         }
-        logInfo("checkIfServerIsLocal: resolving IP address for host name {}", host);
-        mPendingHostInfoLookupId = QHostInfo::lookupHost(host, this, [=, this](const QHostInfo& info) {
-            logInfo("checkIfServerIsLocal: resolved IP address for host name {}", host);
-            const auto addresses = info.addresses();
+        info().log("checkIfServerIsLocal: resolving IP address for host name {}", host);
+        mPendingHostInfoLookupId = QHostInfo::lookupHost(host, this, [=, this](const QHostInfo& hostInfo) {
+            info().log("checkIfServerIsLocal: resolved IP address for host name {}", host);
+            const auto addresses = hostInfo.addresses();
             if (!addresses.isEmpty()) {
-                logInfo("checkIfServerIsLocal: IP addresses:");
+                info().log("checkIfServerIsLocal: IP addresses:");
                 for (const auto& address : addresses) {
-                    logInfo("checkIfServerIsLocal: - {}", address);
+                    info().log("checkIfServerIsLocal: - {}", address);
                 }
-                logInfo("checkIfServerIsLocal: checking first address");
+                info().log("checkIfServerIsLocal: checking first address");
                 mServerIsLocal = isLocalIpAddress(addresses.first());
             } else {
                 mServerIsLocal = false;
             }
-            logInfo("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
+            info().log("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
             mPendingHostInfoLookupId = std::nullopt;
             maybeFinishUpdateOrConnection();
         });

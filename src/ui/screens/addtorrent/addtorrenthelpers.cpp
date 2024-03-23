@@ -44,14 +44,14 @@ namespace tremotesf {
                 try {
                     moveFileToTrash(filePath);
                 } catch (const QFileError& e) {
-                    logWarningWithException(e, "Failed to move torrent file to trash");
+                    warning().logWithException(e, "Failed to move torrent file to trash");
                     deleteFile(filePath);
                 }
             } else {
                 deleteFile(filePath);
             }
         } catch (const QFileError& e) {
-            logWarningWithException(e, "Failed to delete torrent file");
+            warning().logWithException(e, "Failed to delete torrent file");
         }
     }
 }

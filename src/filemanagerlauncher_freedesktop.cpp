@@ -28,7 +28,7 @@ namespace tremotesf {
             void launchFileManagerAndSelectFiles(
                 std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             ) override {
-                logInfo("FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
+                info().log("FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
                 );
                 OrgFreedesktopFileManager1Interface interface(
                     "org.freedesktop.FileManager1"_l1,
@@ -45,10 +45,10 @@ namespace tremotesf {
                 const auto pendingReply = interface.ShowItems(uris, {});
                 const auto onFinished = [=, this] {
                     if (!pendingReply.isError()) {
-                        logInfo("FreedesktopFileManagerLauncher: executed org.freedesktop.FileManager1.ShowItems() "
+                        info().log("FreedesktopFileManagerLauncher: executed org.freedesktop.FileManager1.ShowItems() "
                                 "D-Bus call");
                     } else {
-                        logWarning(
+                        warning().log(
                             "FreedesktopFileManagerLauncher: org.freedesktop.FileManager1.ShowItems() D-Bus call "
                             "failed: {}",
                             pendingReply.error()

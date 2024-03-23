@@ -35,17 +35,17 @@ namespace tremotesf {
     }
 
     void SaveWindowStateDispatcher::onAboutToQuit() {
-        logDebug("Received aboutToQuit signal");
+        debug().log("Received aboutToQuit signal");
         for (QWidget* window : QApplication::topLevelWidgets()) {
             if (window->property(windowHasSaveStateHandlerProperty).toBool()) {
-                logDebug("Sending save state event to window {}", *window);
+                debug().log("Sending save state event to window {}", *window);
                 QEvent event(saveStateOnQuitEventType());
                 QCoreApplication::sendEvent(window, &event);
             }
         }
         // On Windows our process might be terminated immediately after returning from this function
         // and QSettings destructors won't be called, so sync them immediately
-        logDebug("Syncing settings");
+        debug().log("Syncing settings");
         Settings::instance()->sync();
         Servers::instance()->sync();
     }
@@ -81,22 +81,22 @@ namespace tremotesf {
         switch (event->type()) {
         case QEvent::WindowDeactivate:
         case QEvent::Hide:
-            logDebug("Received {} event for {}", event->type(), *window);
+            debug().log("Received {} event for {}", event->type(), *window);
 #if QT_VERSION_MAJOR >= 6
             if (mApplicationEventFilter.isQuittingApplication) {
-                logDebug("Already quitting application, ignore");
+                debug().log("Already quitting application, ignore");
                 break;
             }
 #endif
             if (event->type() == QEvent::WindowDeactivate && window->isHidden()) {
-                logDebug("Window is hidden, ignore");
+                debug().log("Window is hidden, ignore");
                 break;
             }
             mSaveState();
             break;
         default:
             if (event->type() == saveStateOnQuitEventType()) {
-                logDebug("Received save state event for {}", *window);
+                debug().log("Received save state event for {}", *window);
                 mSaveState();
             }
             break;

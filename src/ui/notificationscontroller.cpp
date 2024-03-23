@@ -20,7 +20,7 @@ namespace tremotesf {
     NotificationsController::NotificationsController(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent)
         : QObject(parent), mTrayIcon(trayIcon) {
         QObject::connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, [this] {
-            logInfo("NotificationsController: notification clicked");
+            info().log("NotificationsController: notification clicked");
             emit notificationClicked();
         });
 
@@ -47,10 +47,10 @@ namespace tremotesf {
 
     void NotificationsController::fallbackToSystemTrayIcon(const QString& title, const QString& message) {
         if (mTrayIcon->isVisible()) {
-            logInfo("NotificationsController: executing QSystemTrayIcon::showMessage()");
+            info().log("NotificationsController: executing QSystemTrayIcon::showMessage()");
             mTrayIcon->showMessage(title, message, QSystemTrayIcon::Information, 0);
         } else {
-            logWarning("NotificationsController: system tray icon is not visible, don't show notification");
+            warning().log("NotificationsController: system tray icon is not visible, don't show notification");
         }
     }
 
