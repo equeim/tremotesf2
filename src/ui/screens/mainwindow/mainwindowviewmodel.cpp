@@ -86,7 +86,7 @@ namespace tremotesf {
         QObject::connect(&mRpc, &Rpc::connectedChanged, this, [this] {
             if (mRpc.isConnected()) {
                 if (delayedTorrentAddMessageTimer) {
-                    logInfo("Cancelling showing delayed torrent adding message");
+                    info().log("Cancelling showing delayed torrent adding message");
                     delayedTorrentAddMessageTimer->stop();
                     delayedTorrentAddMessageTimer->deleteLater();
                     delayedTorrentAddMessageTimer = nullptr;
@@ -114,14 +114,14 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::processDragEnterEvent(QDragEnterEvent* event) {
-        logDebug("MainWindowViewModel: processing QDragEnterEvent");
-        logDebug("MainWindowViewModel: event: {}", formatDropEvent(event));
+        debug().log("MainWindowViewModel: processing QDragEnterEvent");
+        debug().log("MainWindowViewModel: event: {}", formatDropEvent(event));
         const auto dropped = DroppedTorrents(event->mimeData());
         if (dropped.isEmpty()) {
-            logDebug("MainWindowViewModel: not accepting QDragEnterEvent");
+            debug().log("MainWindowViewModel: not accepting QDragEnterEvent");
             return;
         }
-        logInfo("MainWindowViewModel: accepting QDragEnterEvent");
+        info().log("MainWindowViewModel: accepting QDragEnterEvent");
         if (event->possibleActions().testFlag(Qt::CopyAction)) {
             event->setDropAction(Qt::CopyAction);
             event->accept();
@@ -131,26 +131,26 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::processDropEvent(QDropEvent* event) {
-        logDebug("MainWindowViewModel: processing QDropEvent");
-        logDebug("MainWindowViewModel: event: {}", formatDropEvent(event));
+        debug().log("MainWindowViewModel: processing QDropEvent");
+        debug().log("MainWindowViewModel: event: {}", formatDropEvent(event));
         const auto dropped = DroppedTorrents(event->mimeData());
         if (dropped.isEmpty()) {
-            logWarning("Dropped torrents are empty");
+            warning().log("Dropped torrents are empty");
             return;
         }
-        logInfo("MainWindowViewModel: accepting QDropEvent");
+        info().log("MainWindowViewModel: accepting QDropEvent");
         event->acceptProposedAction();
         addTorrents(dropped.files, dropped.urls);
     }
 
     void MainWindowViewModel::pasteShortcutActivated() {
-        logDebug("MainWindowViewModel: pasteShortcutActivated() called");
+        debug().log("MainWindowViewModel: pasteShortcutActivated() called");
         const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
         if (dropped.isEmpty()) {
-            logDebug("MainWindowViewModel: ignoring clipboard data");
+            debug().log("MainWindowViewModel: ignoring clipboard data");
             return;
         }
-        logInfo("MainWindowViewModel: accepting clipboard data");
+        info().log("MainWindowViewModel: accepting clipboard data");
         addTorrents(dropped.files, dropped.urls);
     }
 
@@ -201,20 +201,20 @@ namespace tremotesf {
     void MainWindowViewModel::addTorrents(
         const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
     ) {
-        logInfo("MainWindowViewModel: addTorrents() called");
-        logInfo("MainWindowViewModel: files = {}", files);
-        logInfo("MainWindowViewModel: urls = {}", urls);
+        info().log("MainWindowViewModel: addTorrents() called");
+        info().log("MainWindowViewModel: files = {}", files);
+        info().log("MainWindowViewModel: urls = {}", urls);
         const auto connectionState = mRpc.connectionState();
         if (connectionState == RpcConnectionState::Connected) {
             emit showAddTorrentDialogs(files, urls, windowActivationToken);
         } else {
             mPendingFilesToOpen.append(files);
             mPendingUrlsToOpen.append(urls);
-            logInfo("Postponing opening torrents until connected to server");
+            info().log("Postponing opening torrents until connected to server");
             emit showWindow(windowActivationToken);
             // If we are connecting then wait a bit before showing message
             if (connectionState == RpcConnectionState::Connecting) {
-                logInfo("We are already connecting, wait a bit before showing message");
+                info().log("We are already connecting, wait a bit before showing message");
                 if (delayedTorrentAddMessageTimer) {
                     delayedTorrentAddMessageTimer->stop();
                     delayedTorrentAddMessageTimer->deleteLater();
@@ -223,7 +223,7 @@ namespace tremotesf {
                 delayedTorrentAddMessageTimer->setInterval(initialDelayedTorrentAddMessageDelay);
                 delayedTorrentAddMessageTimer->setSingleShot(true);
                 QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=, this] {
-                    logInfo("Showing delayed torrent adding message");
+                    info().log("Showing delayed torrent adding message");
                     delayedTorrentAddMessageTimer = nullptr;
                     emit showDelayedTorrentAddMessage(files + urls);
                 });
@@ -235,7 +235,7 @@ namespace tremotesf {
                 );
                 delayedTorrentAddMessageTimer->start();
             } else {
-                logInfo("Showing delayed torrent adding message");
+                info().log("Showing delayed torrent adding message");
                 emit showDelayedTorrentAddMessage(files + urls);
             }
         }

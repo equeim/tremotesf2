@@ -46,11 +46,11 @@ namespace {
     public:
         template<typename... Args>
         explicit TestHttpServer(Args&&... args) : mServer(std::forward<Args>(args)...) {
-            logInfo("Server is valid = {}", mServer.is_valid());
+            info().log("Server is valid = {}", mServer.is_valid());
             mServer.set_keep_alive_max_count(1);
             mServer.set_keep_alive_timeout(1);
             port = mServer.bind_to_any_port(host.toStdString());
-            logInfo("Bound to port {}", port);
+            info().log("Bound to port {}", port);
             mServer.Post(testApiPath.data(), [=, this](const httplib::Request& req, httplib::Response& res) {
                 httplib::Server::Handler handler{};
                 {
@@ -65,9 +65,9 @@ namespace {
             });
 
             mListenFuture = std::async([=, this] {
-                logInfo("Starting listening on address {} and port {}", host, port);
+                info().log("Starting listening on address {} and port {}", host, port);
                 const bool ok = mServer.listen_after_bind();
-                logInfo("Stopped listening, ok = {}", ok);
+                info().log("Stopped listening, ok = {}", ok);
             });
         }
 
@@ -78,10 +78,10 @@ namespace {
                 if (mListenFuture.wait_for(10ms) == std::future_status::ready) break;
             }
             if (mServer.is_running()) {
-                logInfo("Stopping server");
+                info().log("Stopping server");
                 mServer.stop();
             } else {
-                logWarning("Server has already stopped");
+                warning().log("Server has already stopped");
             }
             mListenFuture.wait();
         }
@@ -186,7 +186,7 @@ namespace {
             const auto error = waitForError("foo"_l1, QByteArray{}, RequestRouter::RequestType::Independent);
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::TimedOut);
-            logInfo("Returning");
+            info().log("Returning");
         }
 
         void checkTcpConnectionRefusedIsHandled() {

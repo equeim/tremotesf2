@@ -23,7 +23,7 @@ namespace tremotesf {
             pending.waitForFinished();
             const auto reply(pending.reply());
             if (reply.type() != QDBusMessage::ReplyMessage) {
-                logWarning("D-Bus method call failed: {}", reply.errorMessage());
+                warning().log("D-Bus method call failed: {}", reply.errorMessage());
                 return false;
             }
             return true;
@@ -37,14 +37,14 @@ namespace tremotesf {
         [[nodiscard]] bool isConnected() const override { return mInterface.isValid(); }
 
         void activateWindow() override {
-            logInfo("Requesting window activation");
+            info().log("Requesting window activation");
             if (mInterface.isValid()) {
                 waitForReply(mInterface.Activate(getPlatformData()));
             }
         }
 
         void addTorrents(const QStringList& files, const QStringList& urls) override {
-            logInfo("Requesting torrents adding");
+            info().log("Requesting torrents adding");
             if (mInterface.isValid()) {
                 QStringList uris;
                 uris.reserve(files.size() + urls.size());
@@ -61,17 +61,17 @@ namespace tremotesf {
             QVariantMap data{};
             if (qEnvironmentVariableIsSet(desktopStartupIdEnvVariable)) {
                 const auto startupId = qgetenv(desktopStartupIdEnvVariable);
-                logInfo("{} is '{}'", desktopStartupIdEnvVariable, startupId);
+                info().log("{} is '{}'", desktopStartupIdEnvVariable, startupId);
                 data.insert(IpcDbusService::desktopStartupIdField, startupId);
             } else {
-                logInfo("{} is not set", desktopStartupIdEnvVariable);
+                info().log("{} is not set", desktopStartupIdEnvVariable);
             }
             if (qEnvironmentVariableIsSet(xdgActivationTokenEnvVariable)) {
                 const auto activationToken = qgetenv(xdgActivationTokenEnvVariable);
-                logInfo("{} is '{}'", xdgActivationTokenEnvVariable, activationToken);
+                info().log("{} is '{}'", xdgActivationTokenEnvVariable, activationToken);
                 data.insert(IpcDbusService::xdgActivationTokenField, qgetenv(xdgActivationTokenEnvVariable));
             } else {
-                logInfo("{} is not set", xdgActivationTokenEnvVariable);
+                info().log("{} is not set", xdgActivationTokenEnvVariable);
             }
             return data;
         }

@@ -26,14 +26,14 @@ namespace tremotesf {
                 : NotificationsController(trayIcon, rpc, parent) {
                 mInterface.setTimeout(desktoputils::defaultDbusTimeout);
                 QObject::connect(&mInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, [this] {
-                    logInfo("FreedesktopNotificationsController: notification clicked");
+                    info().log("FreedesktopNotificationsController: notification clicked");
                     emit notificationClicked();
                 });
             }
 
         protected:
             void showNotification(const QString& title, const QString& message) override {
-                logInfo(
+                info().log(
                     "FreedesktopNotificationsController: executing org.freedesktop.Notifications.Notify() D-Bus call"
                 );
                 const auto call = new QDBusPendingCallWatcher(
@@ -53,10 +53,10 @@ namespace tremotesf {
                 );
                 const auto onFinished = [=, this] {
                     if (!call->isError()) {
-                        logInfo("FreedesktopNotificationsController: executed org.freedesktop.Notifications.Notify() "
+                        info().log("FreedesktopNotificationsController: executed org.freedesktop.Notifications.Notify() "
                                 "D-Bus call");
                     } else {
-                        logWarning(
+                        warning().log(
                             "FreedesktopNotificationsController: org.freedesktop.Notifications.Notify() D-Bus call "
                             "failed: {}",
                             call->error()

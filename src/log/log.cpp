@@ -21,10 +21,8 @@ namespace tremotesf {
         rules += fmt::format("{}.debug={}", tremotesfLoggingCategoryName, enable).c_str();
         qputenv(loggingRulesEnvVariable, rules);
     }
-}
 
-namespace tremotesf::impl {
-    void QMessageLoggerDelegate::log(const QString& string) const {
+    void Logger::logImpl(const QString& string) const {
         // We use internal qt_message_output() function here because there are only two methods
         // to output string to QMessageLogger and they have overheads that are unneccessary
         // when we are doing formatting on our own:
@@ -33,40 +31,27 @@ namespace tremotesf::impl {
         qt_message_output(type, context, string);
     }
 
-    template<IsException E, bool PrintCausedBy>
-    void QMessageLoggerDelegate::logExceptionRecursivelyImpl(const E& e) const {
-        if constexpr (PrintCausedBy) {
-            log(" |- Caused by: {}", e);
-        } else {
-            log(singleArgumentFormatString, e);
-        }
+    template<impl::IsException E>
+    void Logger::logExceptionRecursively(const E& e) const {
+        logImpl(impl::convertToQString(fmt::format(" |- Caused by: {}", e)));
         try {
             std::rethrow_if_nested(e);
         } catch (const std::exception& nested) {
-            logExceptionRecursively<true>(nested);
+            logExceptionRecursively(nested);
         }
 #ifdef Q_OS_WIN
         catch (const winrt::hresult_error& nested) {
-            logExceptionRecursively<true>(nested);
+            logExceptionRecursively(nested);
         }
 #endif
         catch (...) {
-            log(QStringLiteral(" |- Caused by: unknown exception"));
+            logImpl(QStringLiteral(" |- Caused by: unknown exception"));
         }
     }
 
-    template void
-    QMessageLoggerDelegate::logExceptionRecursivelyImpl<std::exception, true>(const std::exception&) const;
-    template void
-    QMessageLoggerDelegate::logExceptionRecursivelyImpl<std::exception, false>(const std::exception&) const;
-    template void
-    QMessageLoggerDelegate::logExceptionRecursivelyImpl<std::system_error, true>(const std::system_error&) const;
-    template void
-    QMessageLoggerDelegate::logExceptionRecursivelyImpl<std::system_error, false>(const std::system_error&) const;
+    template void Logger::logExceptionRecursively<std::exception>(const std::exception&) const;
+    template void Logger::logExceptionRecursively<std::system_error>(const std::system_error&) const;
 #ifdef Q_OS_WIN
-    template void
-    QMessageLoggerDelegate::logExceptionRecursivelyImpl<winrt::hresult_error, true>(const winrt::hresult_error&) const;
-    template void
-    QMessageLoggerDelegate::logExceptionRecursivelyImpl<winrt::hresult_error, false>(const winrt::hresult_error&) const;
+    template void Logger::logExceptionRecursively<winrt::hresult_error>(const winrt::hresult_error&) const;
 #endif
 }

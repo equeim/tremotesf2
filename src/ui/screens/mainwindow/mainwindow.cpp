@@ -156,7 +156,7 @@ namespace tremotesf {
         }
 
         void showAndRaiseWindow(QWidget* window) {
-            logInfo(
+            info().log(
                 "Showing {}, it is hidden = {}, minimized = {}",
                 *window,
                 window->isHidden(),
@@ -298,13 +298,13 @@ namespace tremotesf {
                     &QGuiApplication::applicationStateChanged,
                     this,
                     [this](Qt::ApplicationState state) {
-                        logDebug("Application state is {}", state);
+                        debug().log("Application state is {}", state);
                         if (state == Qt::ApplicationActive) {
                             // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
                             // applicationStateChanged signal is emitted with ApplicationActive
                             // We need to show our window manually in this case
                             if (mWindow->isHidden()) {
-                                logInfo("Application is activated by the system, showing windows");
+                                info().log("Application is activated by the system, showing windows");
                                 showWindowsAndActivateMainOrDialog();
                             }
                         } else {
@@ -313,7 +313,7 @@ namespace tremotesf {
                             // while isNSAppHidden returns true,
                             // and need to update show/hide tray icon action
                             if (isNSAppHidden() && !mWindow->isHidden()) {
-                                logInfo("Application is hidden by the system, hiding windows");
+                                info().log("Application is hidden by the system, hiding windows");
                                 hideWindows();
                             }
                         }
@@ -356,17 +356,17 @@ namespace tremotesf {
         bool onCloseEvent() {
 #if QT_VERSION_MAJOR >= 6
             if (mAppQuitEventFilter.isQuittingApplication) {
-                logDebug("Received close event on main window while quitting app, just close window");
+                debug().log("Received close event on main window while quitting app, just close window");
                 return false;
             }
 #endif
             // Do stuff at the next event loop iteration since we are in the middle of event handling
             if (mTrayIcon.isVisible() && QSystemTrayIcon::isSystemTrayAvailable()) {
-                logInfo("Closed main window but tray icon is active, hide windows without quitting app");
+                info().log("Closed main window but tray icon is active, hide windows without quitting app");
                 QMetaObject::invokeMethod(this, &MainWindow::Impl::hideWindows, Qt::QueuedConnection);
                 return true;
             }
-            logInfo("Closed main window when tray icon is not active, quitting app");
+            info().log("Closed main window when tray icon is not active, quitting app");
             QMetaObject::invokeMethod(qApp, &QCoreApplication::quit, Qt::QueuedConnection);
             return false;
         }
@@ -376,7 +376,7 @@ namespace tremotesf {
         void onDropEvent(QDropEvent* event) { mViewModel.processDropEvent(event); }
 
         void saveState() {
-            logDebug("Saving MainWindow state, window geometry is {}", mWindow->geometry());
+            debug().log("Saving MainWindow state, window geometry is {}", mWindow->geometry());
             Settings::instance()->setMainWindowGeometry(mWindow->saveGeometry());
             Settings::instance()->setMainWindowState(mWindow->saveState());
             Settings::instance()->setSplitterState(mSplitter.saveState());
@@ -1428,13 +1428,13 @@ namespace tremotesf {
         void showWindowsAndActivateMainOrDialog(
             [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
         ) {
-            logInfo("Showing windows");
+            info().log("Showing windows");
             if constexpr (targetOs == TargetOs::UnixMacOS) {
                 if (isNSAppHidden()) {
-                    logInfo("NSApp is hidden, unhiding it");
+                    info().log("NSApp is hidden, unhiding it");
                     unhideNSApp();
                 } else {
-                    logDebug("NSApp is not hidden");
+                    debug().log("NSApp is not hidden");
                 }
             }
             showAndRaiseWindow(mWindow);
@@ -1460,19 +1460,19 @@ namespace tremotesf {
         void activateWindow(
             QWidget* widgetToActivate, [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
         ) {
-            logInfo("Activating window {}", *widgetToActivate);
+            info().log("Activating window {}", *widgetToActivate);
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
             switch (KWindowSystem::platform()) {
             case KWindowSystem::Platform::X11:
-                logDebug("Windowing system is X11");
+                debug().log("Windowing system is X11");
                 activeWindowOnX11(widgetToActivate, windowActivationToken);
                 break;
             case KWindowSystem::Platform::Wayland:
-                logDebug("Windowing system is Wayland");
+                debug().log("Windowing system is Wayland");
                 activeWindowOnWayland(widgetToActivate, windowActivationToken);
                 break;
             default:
-                logWarning("Unknown windowing system");
+                warning().log("Unknown windowing system");
                 widgetToActivate->activateWindow();
                 break;
             }
@@ -1484,7 +1484,7 @@ namespace tremotesf {
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
         void activeWindowOnX11(QWidget* widgetToActivate, const std::optional<QByteArray>& startupNotificationId) {
             if (startupNotificationId.has_value()) {
-                logInfo("Removing startup notification with id {}", *startupNotificationId);
+                info().log("Removing startup notification with id {}", *startupNotificationId);
                 KStartupInfo::setNewStartupId(widgetToActivate->windowHandle(), *startupNotificationId);
                 KStartupInfo::appStarted(*startupNotificationId);
             }
@@ -1497,7 +1497,7 @@ namespace tremotesf {
         ) {
 #    if QT_VERSION_MAJOR >= 6
             if (xdgActivationToken.has_value()) {
-                logInfo("Activating window with token {}", *xdgActivationToken);
+                info().log("Activating window with token {}", *xdgActivationToken);
                 // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
                 // It we be read and unset in QWidget::activateWindow() call below
                 qputenv(xdgActivationTokenEnvVariable, *xdgActivationToken);
@@ -1505,33 +1505,33 @@ namespace tremotesf {
             widgetToActivate->activateWindow();
 #    else
             if (xdgActivationToken.has_value()) {
-                logInfo("Activating window with token {}", *xdgActivationToken);
+                info().log("Activating window with token {}", *xdgActivationToken);
                 KWindowSystem::setCurrentXdgActivationToken(*xdgActivationToken);
             }
             if (const auto handle = widgetToActivate->windowHandle(); handle) {
                 KWindowSystem::activateWindow(handle);
             } else {
-                logWarning("This window's QWidget::windowHandle() is null");
+                warning().log("This window's QWidget::windowHandle() is null");
             }
 #    endif
         }
 #endif
 
         void hideWindows() {
-            logInfo("Hiding windows");
+            info().log("Hiding windows");
             // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
             // so that we don't operate on deleted QWidgets
             for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
                 if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
-                    logDebug("Hiding {}", *widget);
+                    debug().log("Hiding {}", *widget);
                     widget->hide();
                 }
             }
-            logDebug("Hiding {}", *mWindow);
+            debug().log("Hiding {}", *mWindow);
             mWindow->hide();
             if constexpr (targetOs == TargetOs::UnixMacOS) {
                 // We need this so that system menu bar switches to previous app
-                logDebug("Hiding NSApp");
+                debug().log("Hiding NSApp");
                 hideNSApp();
             }
         }
@@ -1593,7 +1593,7 @@ namespace tremotesf {
                 &MainWindowViewModel::showDelayedTorrentAddMessage,
                 this,
                 [messageWidget](const QStringList& torrents) {
-                    logDebug("MainWindow: showing delayed torrent add message");
+                    debug().log("MainWindow: showing delayed torrent add message");
                     messageWidget->setMessageType(KMessageWidget::Information);
                     //: Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents
                     QString text = qApp->translate("tremotesf", "Torrents will be added after connection to server:");

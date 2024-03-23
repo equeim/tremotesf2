@@ -34,7 +34,7 @@ namespace tremotesf {
                     continue;
                 }
                 if (!QFileInfo::exists(dirPath)) {
-                    logWarning("FileManagerLauncher: directory {} does not exist", dirPath);
+                    warning().log("FileManagerLauncher: directory {} does not exist", dirPath);
                     nonExistentDirectories.push_back(dirPath);
                     continue;
                 }
@@ -78,9 +78,9 @@ namespace tremotesf {
 
         void FileManagerLauncher::fallbackForDirectory(const QString& dirPath, QWidget* parentWidget) {
             const auto url = QUrl::fromLocalFile(dirPath);
-            logInfo("FileManagerLauncher: executing QDesktopServices::openUrl() for {}", url);
+            info().log("FileManagerLauncher: executing QDesktopServices::openUrl() for {}", url);
             if (!QDesktopServices::openUrl(url)) {
-                logWarning("FileManagerLauncher: QDesktopServices::openUrl() failed for {}", url);
+                warning().log("FileManagerLauncher: QDesktopServices::openUrl() failed for {}", url);
                 showErrorDialog(dirPath, {}, parentWidget);
             }
         }

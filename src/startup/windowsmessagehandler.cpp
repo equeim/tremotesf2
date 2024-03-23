@@ -77,25 +77,25 @@ namespace tremotesf {
             // We are not doing this in destructor because we need
             // thread to be able to call logMessage() while we are joining it
             void finishWriting() {
-                logInfo("FileLogger: finishing logging");
-                logDebug("FileLogger: wait until thread started writing or finished with error");
+                info().log("FileLogger: finishing logging");
+                debug().log("FileLogger: wait until thread started writing or finished with error");
                 {
                     std::unique_lock lock(mMutex);
                     mCv.wait(lock, [&] { return mStartedWriting || mFinishedWriting; });
                 }
-                logDebug("FileLogger: cancelling new messages");
+                debug().log("FileLogger: cancelling new messages");
                 mQueue.cancelNewMessages();
-                logDebug("FileLogger: joining write thread");
+                debug().log("FileLogger: joining write thread");
                 mWriteThread.join();
-                logDebug("FileLogger: joined write thread");
+                debug().log("FileLogger: joined write thread");
             }
 
         private:
             void writeMessagesToFile() {
-                logDebug("FileLogger: started write thread");
+                debug().log("FileLogger: started write thread");
 
                 auto finishGuard = QScopeGuard([this] {
-                    logDebug("FileLogger: finished write thread");
+                    debug().log("FileLogger: finished write thread");
                     mQueue.cancelNewMessages();
                     {
                         const std::lock_guard lock(mMutex);
@@ -105,27 +105,27 @@ namespace tremotesf {
                 });
 
                 const auto dirPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-                logDebug("FileLogger: creating logs directory {}", QDir::toNativeSeparators(dirPath));
+                debug().log("FileLogger: creating logs directory {}", QDir::toNativeSeparators(dirPath));
                 try {
                     fs::create_directories(fs::path(getCWString(dirPath)));
                 } catch (const fs::filesystem_error& e) {
-                    logWarningWithException(e, "FileLogger: failed to create logs directory");
+                    warning().logWithException(e, "FileLogger: failed to create logs directory");
                     return;
                 }
-                logDebug("FileLogger: created logs directory");
+                debug().log("FileLogger: created logs directory");
 
                 auto filePath = QString::fromStdString(
                     fmt::format("{}/{}.log", dirPath, QDateTime::currentDateTime().toString(u"yyyy-MM-dd_hh-mm-ss.zzz"))
                 );
-                logDebug("FileLogger: creating log file {}", QDir::toNativeSeparators(filePath));
+                debug().log("FileLogger: creating log file {}", QDir::toNativeSeparators(filePath));
                 QFile file(filePath);
                 try {
                     openFile(file, QIODevice::WriteOnly | QIODevice::NewOnly | QIODevice::Text | QIODevice::Unbuffered);
                 } catch (const QFileError& e) {
-                    logWarningWithException(e, "FileLogger: failed to create log file");
+                    warning().logWithException(e, "FileLogger: failed to create log file");
                     return;
                 }
-                logDebug("FileLogger: created log file");
+                debug().log("FileLogger: created log file");
 
                 {
                     const std::lock_guard lock(mMutex);
@@ -212,7 +212,7 @@ namespace tremotesf {
         );
 #ifdef NDEBUG
         globalFileLogger = std::make_unique<FileLogger>();
-        logDebug("FileLogger: created, starting write thread");
+        debug().log("FileLogger: created, starting write thread");
 #endif
     }
 

@@ -83,44 +83,44 @@ namespace tremotesf {
                     checkPosixError(sigaction(signal, &action, nullptr), "sigaction");
                 }
 
-                logDebug("signalhandler: created socket pair and set up signal handlers");
+                debug().log("signalhandler: created socket pair and set up signal handlers");
                 try {
-                    logDebug("signalhandler: starting read socket thread");
+                    debug().log("signalhandler: starting read socket thread");
                     mThread = std::thread(&Impl::readFromSocket, this, readSocket);
                 } catch (const std::system_error& e) {
-                    logWarningWithException(e, "signalhandler: failed to start thread");
+                    warning().logWithException(e, "signalhandler: failed to start thread");
                 }
             } catch (const std::system_error& e) {
-                logWarningWithException(e, "Failed to setup signal handlers");
+                warning().logWithException(e, "Failed to setup signal handlers");
                 return;
             }
         }
 
         ~Impl() {
-            logDebug("signalhandler: closing write socket");
+            debug().log("signalhandler: closing write socket");
             try {
                 checkPosixError(close(writeSocket), "close");
             } catch (const std::system_error& e) {
-                logWarningWithException(e, "signalhandler: failed to close write socket");
+                warning().logWithException(e, "signalhandler: failed to close write socket");
             }
-            logDebug("signalhandler: joining read socket thread");
+            debug().log("signalhandler: joining read socket thread");
             mThread.join();
-            logDebug("signalhandler: joined read socket thread");
+            debug().log("signalhandler: joined read socket thread");
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
 
     private:
         void readFromSocket(int readSocket) const {
-            logDebug("signalhandler: started read socket thread");
+            debug().log("signalhandler: started read socket thread");
             auto finishGuard = QScopeGuard([readSocket] {
-                logDebug("signalhandler: closing read socket");
+                debug().log("signalhandler: closing read socket");
                 try {
                     checkPosixError(close(readSocket), "close");
                 } catch (const std::system_error& e) {
-                    logWarningWithException(e, "signalhandler: failed to close read socket");
+                    warning().logWithException(e, "signalhandler: failed to close read socket");
                 }
-                logDebug("signalhandler: finished read socket thread");
+                debug().log("signalhandler: finished read socket thread");
             });
 
             while (true) {
@@ -128,35 +128,35 @@ namespace tremotesf {
                 try {
                     const ssize_t bytes = checkPosixError(read(readSocket, &byte, 1), "read");
                     if (bytes == 0) {
-                        logDebug("signalhandler: write socket was closed, end thread");
+                        debug().log("signalhandler: write socket was closed, end thread");
                         return;
                     }
                 } catch (const std::system_error& e) {
                     if (e.code() == std::errc::interrupted) {
-                        logWarning("signalhandler: read interrupted, continue");
+                        warning().log("signalhandler: read interrupted, continue");
                         continue;
                     }
-                    logWarningWithException(e, "signalhandler: failed to read from socket, end thread");
+                    warning().logWithException(e, "signalhandler: failed to read from socket, end thread");
                     return;
                 }
                 break;
             }
             if (int signal = receivedSignal; signal != notReceivedSignal) {
                 if (const auto name = signalName(signal); name.has_value()) {
-                    logInfo("signalhandler: received signal {}", *name);
+                    info().log("signalhandler: received signal {}", *name);
                 } else {
-                    logInfo("signalhandler: received signal {}", signal);
+                    info().log("signalhandler: received signal {}", signal);
                 }
             } else {
-                logWarning("signalhandler: read from socket but signal was not received");
+                warning().log("signalhandler: read from socket but signal was not received");
                 return;
             }
             const auto app = QCoreApplication::instance();
             if (app) {
-                logInfo("signalhandler: post QCoreApplication::quit() to event loop");
+                info().log("signalhandler: post QCoreApplication::quit() to event loop");
                 QMetaObject::invokeMethod(app, &QCoreApplication::quit, Qt::QueuedConnection);
             } else {
-                logWarning("signalhandler: QApplication is not created yet");
+                warning().log("signalhandler: QApplication is not created yet");
             }
         }
 

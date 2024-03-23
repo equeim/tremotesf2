@@ -93,7 +93,7 @@ namespace tremotesf {
 
             void applyDarkThemeToTitleBar(QWindow* window) {
                 if (isRunningOnWindows11OrGreater()) {
-                    logInfo("Setting DWMWA_CAPTION_COLOR on {}", *window);
+                    info().log("Setting DWMWA_CAPTION_COLOR on {}", *window);
                     const auto qcolor = QGuiApplication::palette().color(QPalette::Window);
                     const auto color = RGB(qcolor.red(), qcolor.green(), qcolor.blue());
                     try {
@@ -107,10 +107,10 @@ namespace tremotesf {
                             "DwmSetWindowAttribute"
                         );
                     } catch (const winrt::hresult_error& e) {
-                        logWarningWithException(e, "Failed to set DWMWA_CAPTION_COLOR on {}", *window);
+                        warning().logWithException(e, "Failed to set DWMWA_CAPTION_COLOR on {}", *window);
                     }
                 } else {
-                    logInfo("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
+                    info().log("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
                     const auto attribute = []() -> DWORD {
                         if (isRunningOnWindows10_2004OrGreater()) {
                             return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_SINCE_2004;
@@ -140,7 +140,7 @@ namespace tremotesf {
                             "DwmSetWindowAttribute"
                         );
                     } catch (const winrt::hresult_error& e) {
-                        logWarningWithException(e, "Failed to set DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
+                        warning().logWithException(e, "Failed to set DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
                     }
                 }
             }
@@ -263,7 +263,7 @@ namespace tremotesf {
             palette.setColor(QPalette::Link, link);
             palette.setColor(QPalette::LinkVisited, link.darker());
 
-            logInfo("applyDarkThemeToPalette: setting application palette");
+            info().log("applyDarkThemeToPalette: setting application palette");
             QGuiApplication::setPalette(palette);
 
             QPalette toolTipPalette{QToolTip::palette()};

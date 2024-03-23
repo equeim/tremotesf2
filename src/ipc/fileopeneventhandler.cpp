@@ -22,14 +22,14 @@ namespace tremotesf {
         if (event->type() == QEvent::FileOpen) {
             auto* const e = static_cast<QFileOpenEvent*>(event);
             if (!e->file().isEmpty() || e->url().isValid()) {
-                logInfo("Received QEvent::FileOpen");
+                info().log("Received QEvent::FileOpen");
                 auto pendingEvent = [&] {
                     if (!e->file().isEmpty()) {
-                        logInfo("file = {}", e->file());
+                        info().log("file = {}", e->file());
                         return PendingEvent{.fileOrUrl = e->file(), .isFile = true};
                     }
                     auto url = e->url().toString();
-                    logInfo("url = {}", url);
+                    info().log("url = {}", url);
                     return PendingEvent{.fileOrUrl = std::move(url), .isFile = false};
                 }();
                 if (mPendingEvents.empty()) {

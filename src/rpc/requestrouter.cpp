@@ -125,7 +125,7 @@ namespace tremotesf::impl {
     RequestRouter::RequestRouter(QObject* parent) : RequestRouter(nullptr, parent) {}
 
     void RequestRouter::setConfiguration(RequestsConfiguration configuration) {
-        logDebug("Setting requests configuration");
+        debug().log("Setting requests configuration");
 
         mConfiguration = std::move(configuration);
 
@@ -152,13 +152,13 @@ namespace tremotesf::impl {
         }
 
         if (!mConfiguration->serverUrl.isEmpty()) {
-            logDebug("Connection configuration:");
-            logDebug(" - Server url: {}", mConfiguration->serverUrl.toString());
+            debug().log("Connection configuration:");
+            debug().log(" - Server url: {}", mConfiguration->serverUrl.toString());
             if (mConfiguration->proxy.type() != QNetworkProxy::NoProxy) {
-                logDebug(" - Proxy: {}", mConfiguration->proxy);
+                debug().log(" - Proxy: {}", mConfiguration->proxy);
             }
-            logDebug(" - Timeout: {}", mConfiguration->timeout);
-            logDebug(" - HTTP Basic access authentication: {}", mConfiguration->authentication);
+            debug().log(" - Timeout: {}", mConfiguration->timeout);
+            debug().log(" - HTTP Basic access authentication: {}", mConfiguration->authentication);
             if (mConfiguration->authentication) {
                 auto base64Credentials = QString("%1:%2")
                                              .arg(mConfiguration->username, mConfiguration->password)
@@ -169,16 +169,16 @@ namespace tremotesf::impl {
             }
             if (https) {
 #if QT_VERSION_MAJOR >= 6
-                logDebug(" - Available TLS backends: {}", QSslSocket::availableBackends());
-                logDebug(" - Active TLS backend: {}", QSslSocket::activeBackend());
-                logDebug(" - Supported TLS protocols: {}", QSslSocket::supportedProtocols());
+                debug().log(" - Available TLS backends: {}", QSslSocket::availableBackends());
+                debug().log(" - Active TLS backend: {}", QSslSocket::activeBackend());
+                debug().log(" - Supported TLS protocols: {}", QSslSocket::supportedProtocols());
 #endif
-                logDebug(" - TLS library version: {}", QSslSocket::sslLibraryVersionString());
-                logDebug(
+                debug().log(" - TLS library version: {}", QSslSocket::sslLibraryVersionString());
+                debug().log(
                     " - Manually validating server's certificate chain: {}",
                     !mConfiguration->serverCertificateChain.isEmpty()
                 );
-                logDebug(
+                debug().log(
                     " - Client certificate authentication: {}",
                     !mConfiguration->clientCertificate.isNull() && !mConfiguration->clientPrivateKey.isNull()
                 );
@@ -187,7 +187,7 @@ namespace tremotesf::impl {
     }
 
     void RequestRouter::resetConfiguration() {
-        logDebug("Resetting requests configuration");
+        debug().log("Resetting requests configuration");
         mConfiguration.reset();
         mNetwork->clearAccessCache();
     }
@@ -202,7 +202,7 @@ namespace tremotesf::impl {
         QLatin1String method, const QByteArray& data, RequestType type, std::function<void(Response)>&& onResponse
     ) {
         if (!mConfiguration.has_value()) {
-            logWarning("Requests configuration is not set");
+            warning().log("Requests configuration is not set");
             return;
         }
 
@@ -280,14 +280,14 @@ namespace tremotesf::impl {
 
     bool RequestRouter::retryRequest(const QNetworkRequest& request, NetworkRequestMetadata metadata) {
         if (!mConfiguration.has_value()) {
-            logWarning("Not retrying request, requests configuration is not set");
+            warning().log("Not retrying request, requests configuration is not set");
             return false;
         }
         metadata.retryAttempts++;
         if (metadata.retryAttempts > mConfiguration->retryAttempts) {
             return false;
         }
-        logWarning("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
+        warning().log("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
         postRequest(request, metadata);
         return true;
     }
@@ -306,7 +306,7 @@ namespace tremotesf::impl {
     }
 
     void RequestRouter::onRequestSuccess(QNetworkReply* reply, const RpcRequestMetadata& metadata) {
-        logDebug(
+        debug().log(
             "HTTP request for method '{}' succeeded, HTTP status code: {} {}",
             metadata.method,
             reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(),
@@ -318,7 +318,7 @@ namespace tremotesf::impl {
                 QJsonParseError error{};
                 QJsonObject json = QJsonDocument::fromJson(replyData, &error).object();
                 if (error.error != QJsonParseError::NoError) {
-                    logWarning(
+                    warning().log(
                         "Failed to parse JSON reply from server:\n{}\nError '{}' at offset {}",
                         replyData,
                         error.errorString(),
@@ -339,7 +339,7 @@ namespace tremotesf::impl {
             if (json.has_value()) {
                 const bool success = isResultSuccessful(*json);
                 if (!success) {
-                    logWarning("method '{}' failed, response: {}", metadata.method, *json);
+                    warning().log("method '{}' failed, response: {}", metadata.method, *json);
                 }
                 if (metadata.onResponse) {
                     metadata.onResponse({.arguments = getReplyArguments(*json), .success = success});
@@ -362,9 +362,9 @@ namespace tremotesf::impl {
             // to handle case when current session id have already been overwritten by another failed request
             if (newSessionId != reply->request().rawHeader(sessionIdHeader)) {
                 if (!mSessionId.isEmpty()) {
-                    logInfo("Session id changed");
+                    info().log("Session id changed");
                 }
-                logDebug("Session id is {}, retrying '{}' request", newSessionId, metadata.rpcMetadata.method);
+                debug().log("Session id is {}, retrying '{}' request", newSessionId, metadata.rpcMetadata.method);
                 mSessionId = std::move(newSessionId);
                 // Retry without incrementing retryAttempts
                 postRequest(reply->request(), metadata);
@@ -373,15 +373,15 @@ namespace tremotesf::impl {
         }
 
         const QString detailedErrorMessage = makeDetailedErrorMessage(reply, sslErrors);
-        logWarning("HTTP request for method '{}' failed:\n{}", metadata.rpcMetadata.method, detailedErrorMessage);
+        warning().log("HTTP request for method '{}' failed:\n{}", metadata.rpcMetadata.method, detailedErrorMessage);
         switch (reply->error()) {
         case QNetworkReply::AuthenticationRequiredError:
-            logWarning("Authentication error");
+            warning().log("Authentication error");
             emit requestFailed(RpcError::AuthenticationError, reply->errorString(), detailedErrorMessage);
             break;
         case QNetworkReply::OperationCanceledError:
         case QNetworkReply::TimeoutError:
-            logWarning("Timed out");
+            warning().log("Timed out");
             if (!retryRequest(reply->request(), metadata)) {
                 emit requestFailed(RpcError::TimedOut, reply->errorString(), detailedErrorMessage);
             }

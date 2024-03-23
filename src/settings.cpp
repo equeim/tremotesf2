@@ -39,7 +39,7 @@ namespace tremotesf {
             if constexpr (std::is_enum_v<T>) {
                 const auto meta = QMetaEnum::fromType<T>();
                 if (!meta.valueToKey(static_cast<int>(value))) {
-                    logWarning("Settings: key {} has invalid value {}, returning default value", key, value);
+                    warning().log("Settings: key {} has invalid value {}, returning default value", key, value);
                     return defaultValue;
                 }
             }

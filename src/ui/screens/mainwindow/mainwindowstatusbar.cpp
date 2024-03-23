@@ -185,7 +185,7 @@ namespace tremotesf {
                 if (found != servers.end()) {
                     Servers::instance()->setCurrentServer(selectedName);
                 } else {
-                    logWarning("Selected server {} which no longer exists", selectedName);
+                    warning().log("Selected server {} which no longer exists", selectedName);
                 }
             }
         });

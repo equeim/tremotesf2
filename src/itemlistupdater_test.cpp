@@ -45,266 +45,272 @@ class AbortTest : public std::exception {};
         if (!QTest::qCompare(actual, expected, #actual, #expected, __FILE__, __LINE__)) throw AbortTest(); \
     } while (false)
 
-class Updater final : public tremotesf::ItemListUpdater<Item> {
-public:
-    std::vector<std::pair<size_t, size_t>> aboutToRemoveIndexRanges;
-    std::vector<std::pair<size_t, size_t>> removedIndexRanges;
-    std::vector<std::pair<size_t, size_t>> changedIndexRanges;
-    std::optional<size_t> aboutToAddCount;
-    std::optional<size_t> addedCount;
+namespace tremotesf {
+    class Updater final : public tremotesf::ItemListUpdater<Item> {
+    public:
+        std::vector<std::pair<size_t, size_t>> aboutToRemoveIndexRanges;
+        std::vector<std::pair<size_t, size_t>> removedIndexRanges;
+        std::vector<std::pair<size_t, size_t>> changedIndexRanges;
+        std::optional<size_t> aboutToAddCount;
+        std::optional<size_t> addedCount;
 
-protected:
-    typename std::vector<Item>::iterator findNewItemForItem(std::vector<Item>& container, const Item& item) override {
-        return std::find_if(container.begin(), container.end(), [&item](const Item& newItem) {
-            return newItem.id == item.id;
-        });
+    protected:
+        typename std::vector<Item>::iterator
+        findNewItemForItem(std::vector<Item>& container, const Item& item) override {
+            return std::find_if(container.begin(), container.end(), [&item](const Item& newItem) {
+                return newItem.id == item.id;
+            });
+        };
+
+        void onAboutToRemoveItems(size_t first, size_t last) override {
+            aboutToRemoveIndexRanges.emplace_back(first, last);
+        }
+
+        void onRemovedItems(size_t first, size_t last) override { removedIndexRanges.emplace_back(first, last); }
+
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
+        bool updateItem(Item& item, Item&& newItem) override {
+            if (item != newItem) {
+                item = newItem;
+                return true;
+            }
+            return false;
+        }
+
+        void onChangedItems(size_t first, size_t last) override { changedIndexRanges.emplace_back(first, last); }
+
+        Item createItemFromNewItem(Item&& newItem) override { return std::move(newItem); }
+
+        void onAboutToAddItems(size_t count) override {
+            if (aboutToAddCount) {
+                QFAIL("onAboutToAddItems() must be called only once");
+            }
+            aboutToAddCount = count;
+        }
+
+        void onAddedItems(size_t count) override {
+            if (addedCount) {
+                QFAIL("onAddedItems() must be called only once");
+            }
+            addedCount = count;
+        }
     };
 
-    void onAboutToRemoveItems(size_t first, size_t last) override {
-        aboutToRemoveIndexRanges.emplace_back(first, last);
-    }
+    class ItemListUpdaterTest final : public QObject {
+        Q_OBJECT
 
-    void onRemovedItems(size_t first, size_t last) override { removedIndexRanges.emplace_back(first, last); }
+    private slots:
+        void emptyListDidNotChange() { checkUpdate({}, {}); }
 
-    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
-    bool updateItem(Item& item, Item&& newItem) override {
-        if (item != newItem) {
-            item = newItem;
-            return true;
+        void singleItemListDidNotChange() { checkUpdate({{42, "666"}}, {{42, "666"}}); }
+
+        void multipleItemsListDidNotChange() {
+            checkUpdate({{42, "666"}, {1, "Foo"}, {11, "Bar"}}, {{42, "666"}, {1, "Foo"}, {11, "Bar"}});
         }
-        return false;
-    }
 
-    void onChangedItems(size_t first, size_t last) override { changedIndexRanges.emplace_back(first, last); }
+        void addedSingleItemToEmptyList() { checkUpdate({}, {{42, "666"}}); }
 
-    Item createItemFromNewItem(Item&& newItem) override { return std::move(newItem); }
+        void addedMultipleItemsToEmptyList() { checkUpdate({}, {{42, "666"}, {1, "Foo"}}); }
 
-    void onAboutToAddItems(size_t count) override {
-        if (aboutToAddCount) {
-            QFAIL("onAboutToAddItems() must be called only once");
+        void addedSingleItemToNonEmptyList() { checkUpdate({{42, "666"}}, {Item{42, "666"}, {1, "Foo"}}); }
+
+        void addedMultipleItemsToNonEmptyList() { checkUpdate({{42, "666"}}, {{42, "666"}, {1, "Foo"}, {11, "Bar"}}); }
+
+        void removedItemFromSingleItemList() { checkUpdate({{42, "666"}}, {}); }
+
+        void removedLastItemFromMultipleItemsList() { checkUpdate({{42, "666"}, {666, ""}}, {{42, "666"}}); }
+
+        void removedFirstItemFromMultipleItemsList() { checkUpdate({{42, "666"}, {666, ""}}, {{666, ""}}); }
+
+        void removedMiddleItemFromMultipleItemsList() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "666"}, {1, ""}});
         }
-        aboutToAddCount = count;
-    }
 
-    void onAddedItems(size_t count) override {
-        if (addedCount) {
-            QFAIL("onAddedItems() must be called only once");
+        void removedTwoConsecutiveItemsFromEnd() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}}, {{42, "666"}, {666, ""}});
         }
-        addedCount = count;
-    }
-};
 
-class ItemListUpdaterTest final : public QObject {
-    Q_OBJECT
+        void removedTwoConsecutiveItemsFromBeginning() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}}, {{1, ""}, {18, "Nope"}});
+        }
 
-private slots:
-    void emptyListDidNotChange() { checkUpdate({}, {}); }
+        void removedTwoConsecutiveItemsFromMiddle() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}}, {{42, "666"}, {18, "Nope"}});
+        }
 
-    void singleItemListDidNotChange() { checkUpdate({{42, "666"}}, {{42, "666"}}); }
+        void removedTwoSeparateItems1() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, ""}, {18, "Nope"}}
+            );
+        }
 
-    void multipleItemsListDidNotChange() {
-        checkUpdate({{42, "666"}, {1, "Foo"}, {11, "Bar"}}, {{42, "666"}, {1, "Foo"}, {11, "Bar"}});
-    }
+        void removedTwoSeparateItems2() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{666, ""}, {18, "Nope"}, {77, "Foo"}}
+            );
+        }
 
-    void addedSingleItemToEmptyList() { checkUpdate({}, {{42, "666"}}); }
+        void removedTwoSeparateItems3() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{666, ""}, {1, ""}, {18, "Nope"}}
+            );
+        }
 
-    void addedMultipleItemsToEmptyList() { checkUpdate({}, {{42, "666"}, {1, "Foo"}}); }
+        void changedSingleItemList() { checkUpdate({{42, "666"}}, {{42, "42"}}); }
 
-    void addedSingleItemToNonEmptyList() { checkUpdate({{42, "666"}}, {Item{42, "666"}, {1, "Foo"}}); }
+        void changedFirstItemInMultipleItemList() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "42"}, {666, ""}, {1, ""}});
+        }
 
-    void addedMultipleItemsToNonEmptyList() { checkUpdate({{42, "666"}}, {{42, "666"}, {1, "Foo"}, {11, "Bar"}}); }
+        void changedMiddleItemInMultipleItemList() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "666"}, {666, "666"}, {1, ""}});
+        }
 
-    void removedItemFromSingleItemList() { checkUpdate({{42, "666"}}, {}); }
+        void changedLastItemInMultipleItemList() {
+            checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "666"}, {666, ""}, {1, "nnn"}});
+        }
 
-    void removedLastItemFromMultipleItemsList() { checkUpdate({{42, "666"}, {666, ""}}, {{42, "666"}}); }
+        void changedTwoConsecutiveItemsFromBeginning() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "AAAA"}, {666, "ok"}, {1, ""}, {18, "Nope"}, {77, "Foo"}}
+            );
+        }
 
-    void removedFirstItemFromMultipleItemsList() { checkUpdate({{42, "666"}, {666, ""}}, {{666, ""}}); }
+        void changedTwoConsecutiveItemsFromMiddle() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, ""}, {1, "uhh"}, {18, ""}, {77, "Foo"}}
+            );
+        }
 
-    void removedMiddleItemFromMultipleItemsList() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "666"}, {1, ""}});
-    }
+        void changedTwoConsecutiveItemsFromEnd() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "arr"}, {77, "qr"}}
+            );
+        }
 
-    void removedTwoConsecutiveItemsFromEnd() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}}, {{42, "666"}, {666, ""}});
-    }
+        void changedTwoSeparateItems1() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "667"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Fooo"}}
+            );
+        }
 
-    void removedTwoConsecutiveItemsFromBeginning() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}}, {{1, ""}, {18, "Nope"}});
-    }
+        void changedTwoSeparateItems2() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, "sure"}, {1, ""}, {18, "aoa"}, {77, "Foo"}}
+            );
+        }
 
-    void removedTwoConsecutiveItemsFromMiddle() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}}, {{42, "666"}, {18, "Nope"}});
-    }
+        void changedTwoSeparateItems3() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, ""}, {1, "uwu"}, {18, "Nope"}, {77, "www"}}
+            );
+        }
 
-    void removedTwoSeparateItems1() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, ""}, {18, "Nope"}}
-        );
-    }
+        void removedAndAdded() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{666, ""}, {1, ""}, {18, "Nope"}, {33, "fffu"}, {-2, "ew"}}
+            );
+        }
 
-    void removedTwoSeparateItems2() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{666, ""}, {18, "Nope"}, {77, "Foo"}}
-        );
-    }
+        void changedAndAdded() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, "yeeee"}, {1, "what"}, {18, "Nope"}, {77, "now"}, {999, "big"}}
+            );
+        }
 
-    void removedTwoSeparateItems3() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}}, {{666, ""}, {1, ""}, {18, "Nope"}});
-    }
+        void removedChangedAndAdded() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "sad"}, {1, "small"}, {33, "fffu"}, {-2, "ew"}}
+            );
+        }
 
-    void changedSingleItemList() { checkUpdate({{42, "666"}}, {{42, "42"}}); }
+        void removedChangedAndAdded2() {
+            checkUpdate(
+                {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
+                {{42, "666"}, {666, "333"}, {18, "Nope"}, {77, "Foo"}}
+            );
+        }
 
-    void changedFirstItemInMultipleItemList() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "42"}, {666, ""}, {1, ""}});
-    }
+    private:
+        void checkUpdate(const std::vector<Item>& oldList, std::vector<Item> newList) {
+            checkThatItemsAreUnique(oldList);
+            checkThatItemsAreUnique(newList);
 
-    void changedMiddleItemInMultipleItemList() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "666"}, {666, "666"}, {1, ""}});
-    }
+            info().log("Checking update from {}", oldList);
+            std::sort(newList.begin(), newList.end());
+            do {
+                info().log(" - to {}", newList);
+                try {
+                    checkUpdateInner(oldList, newList);
+                } catch (const AbortTest&) {
+                    break;
+                }
+            } while (std::next_permutation(newList.begin(), newList.end()));
+        }
 
-    void changedLastItemInMultipleItemList() {
-        checkUpdate({{42, "666"}, {666, ""}, {1, ""}}, {{42, "666"}, {666, ""}, {1, "nnn"}});
-    }
+        void checkUpdateInner(const std::vector<Item>& oldList, const std::vector<Item>& newList) {
+            auto directlyUpdatedList = oldList;
+            Updater updater;
+            updater.update(directlyUpdatedList, std::vector(newList));
 
-    void changedTwoConsecutiveItemsFromBeginning() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "AAAA"}, {666, "ok"}, {1, ""}, {18, "Nope"}, {77, "Foo"}}
-        );
-    }
+            QVERIFY_THROW(updater.aboutToRemoveIndexRanges == updater.removedIndexRanges);
+            QVERIFY_THROW(updater.aboutToAddCount == updater.addedCount);
 
-    void changedTwoConsecutiveItemsFromMiddle() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, ""}, {1, "uhh"}, {18, ""}, {77, "Foo"}}
-        );
-    }
+            QCOMPARE_THROW(directlyUpdatedList.size(), newList.size());
+            checkThatItemsAreUnique(directlyUpdatedList);
+            QCOMPARE_THROW(
+                std::set(directlyUpdatedList.begin(), directlyUpdatedList.end()),
+                std::set(newList.begin(), newList.end())
+            );
 
-    void changedTwoConsecutiveItemsFromEnd() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "arr"}, {77, "qr"}}
-        );
-    }
+            auto indirectlyUpdatedList = oldList;
 
-    void changedTwoSeparateItems1() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "667"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Fooo"}}
-        );
-    }
-
-    void changedTwoSeparateItems2() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, "sure"}, {1, ""}, {18, "aoa"}, {77, "Foo"}}
-        );
-    }
-
-    void changedTwoSeparateItems3() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, ""}, {1, "uwu"}, {18, "Nope"}, {77, "www"}}
-        );
-    }
-
-    void removedAndAdded() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{666, ""}, {1, ""}, {18, "Nope"}, {33, "fffu"}, {-2, "ew"}}
-        );
-    }
-
-    void changedAndAdded() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, "yeeee"}, {1, "what"}, {18, "Nope"}, {77, "now"}, {999, "big"}}
-        );
-    }
-
-    void removedChangedAndAdded() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "sad"}, {1, "small"}, {33, "fffu"}, {-2, "ew"}}
-        );
-    }
-
-    void removedChangedAndAdded2() {
-        checkUpdate(
-            {{42, "666"}, {666, ""}, {1, ""}, {18, "Nope"}, {77, "Foo"}},
-            {{42, "666"}, {666, "333"}, {18, "Nope"}, {77, "Foo"}}
-        );
-    }
-
-private:
-    void checkUpdate(const std::vector<Item>& oldList, std::vector<Item> newList) {
-        checkThatItemsAreUnique(oldList);
-        checkThatItemsAreUnique(newList);
-
-        logInfo("Checking update from {}", oldList);
-        std::sort(newList.begin(), newList.end());
-        do {
-            logInfo(" - to {}", newList);
-            try {
-                checkUpdateInner(oldList, newList);
-            } catch (const AbortTest&) {
-                break;
+            for (const auto& [first, last] : updater.removedIndexRanges) {
+                indirectlyUpdatedList.erase(
+                    indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(first),
+                    indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(last)
+                );
             }
-        } while (std::next_permutation(newList.begin(), newList.end()));
-    }
 
-    void checkUpdateInner(const std::vector<Item>& oldList, const std::vector<Item>& newList) {
-        auto directlyUpdatedList = oldList;
-        Updater updater;
-        updater.update(directlyUpdatedList, std::vector(newList));
+            for (const auto& [first, last] : updater.changedIndexRanges) {
+                std::copy(
+                    directlyUpdatedList.begin() + static_cast<ptrdiff_t>(first),
+                    directlyUpdatedList.begin() + static_cast<ptrdiff_t>(last),
+                    indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(first)
+                );
+            }
 
-        QVERIFY_THROW(updater.aboutToRemoveIndexRanges == updater.removedIndexRanges);
-        QVERIFY_THROW(updater.aboutToAddCount == updater.addedCount);
+            if (updater.addedCount) {
+                indirectlyUpdatedList.reserve(indirectlyUpdatedList.size() + *updater.addedCount);
+                std::copy(
+                    directlyUpdatedList.end() - static_cast<ptrdiff_t>(*updater.addedCount),
+                    directlyUpdatedList.end(),
+                    std::back_insert_iterator(indirectlyUpdatedList)
+                );
+            }
 
-        QCOMPARE_THROW(directlyUpdatedList.size(), newList.size());
-        checkThatItemsAreUnique(directlyUpdatedList);
-        QCOMPARE_THROW(
-            std::set(directlyUpdatedList.begin(), directlyUpdatedList.end()),
-            std::set(newList.begin(), newList.end())
-        );
-
-        auto indirectlyUpdatedList = oldList;
-
-        for (const auto& [first, last] : updater.removedIndexRanges) {
-            indirectlyUpdatedList.erase(
-                indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(first),
-                indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(last)
-            );
+            QCOMPARE_THROW(indirectlyUpdatedList, directlyUpdatedList);
         }
 
-        for (const auto& [first, last] : updater.changedIndexRanges) {
-            std::copy(
-                directlyUpdatedList.begin() + static_cast<ptrdiff_t>(first),
-                directlyUpdatedList.begin() + static_cast<ptrdiff_t>(last),
-                indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(first)
-            );
+        void checkThatItemsAreUnique(const std::vector<Item>& list) {
+            const auto set = std::set(list.begin(), list.end());
+            QCOMPARE_THROW(set.size(), list.size());
         }
+    };
+}
 
-        if (updater.addedCount) {
-            indirectlyUpdatedList.reserve(indirectlyUpdatedList.size() + *updater.addedCount);
-            std::copy(
-                directlyUpdatedList.end() - static_cast<ptrdiff_t>(*updater.addedCount),
-                directlyUpdatedList.end(),
-                std::back_insert_iterator(indirectlyUpdatedList)
-            );
-        }
-
-        QCOMPARE_THROW(indirectlyUpdatedList, directlyUpdatedList);
-    }
-
-    void checkThatItemsAreUnique(const std::vector<Item>& list) {
-        const auto set = std::set(list.begin(), list.end());
-        QCOMPARE_THROW(set.size(), list.size());
-    }
-};
-
-QTEST_GUILESS_MAIN(ItemListUpdaterTest)
+QTEST_GUILESS_MAIN(tremotesf::ItemListUpdaterTest)
 
 #include "itemlistupdater_test.moc"

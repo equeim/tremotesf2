@@ -128,7 +128,7 @@ namespace tremotesf {
             if (mTorrent) {
                 QObject::connect(mTorrent, &Torrent::peersUpdated, this, &PeersModel::update);
                 if (mTorrent->isPeersEnabled()) {
-                    logWarning("{} already has enabled peers, this shouldn't happen", *mTorrent);
+                    warning().log("{} already has enabled peers, this shouldn't happen", *mTorrent);
                 }
                 mTorrent->setPeersEnabled(true);
             } else {

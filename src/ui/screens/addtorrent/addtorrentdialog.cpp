@@ -205,7 +205,7 @@ namespace tremotesf {
             if (mUrl.isEmpty() && Settings::instance()->fillTorrentLinkFromClipboard()) {
                 const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
                 if (!dropped.urls.isEmpty()) {
-                    logInfo("AddTorrentDialog: filling torrent link from clipboard = {}", dropped.urls.first());
+                    info().log("AddTorrentDialog: filling torrent link from clipboard = {}", dropped.urls.first());
                     mTorrentLinkLineEdit->setText(dropped.urls.first());
                 }
             }

@@ -69,15 +69,15 @@ namespace tremotesf::desktoputils {
         };
 
         if (!QFile::exists(filePath)) {
-            logWarning("Can't open file {}, it does not exist", filePath);
+            warning().log("Can't open file {}, it does not exist", filePath);
             showDialogOnError(qApp->translate("tremotesf", "This file/directory does not exist"));
             return;
         }
 
         const auto url = QUrl::fromLocalFile(filePath);
-        logInfo("Executing QDesktopServices::openUrl() for {}", url);
+        info().log("Executing QDesktopServices::openUrl() for {}", url);
         if (!QDesktopServices::openUrl(url)) {
-            logWarning("QDesktopServices::openUrl() failed for {}", url);
+            warning().log("QDesktopServices::openUrl() failed for {}", url);
             showDialogOnError({});
         }
     }

@@ -122,7 +122,7 @@ namespace tremotesf {
                 QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
                 QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
                 if (mTorrent->isFilesEnabled()) {
-                    logWarning("{} already has enabled files, this shouldn't happen", *mTorrent);
+                    warning().log("{} already has enabled files, this shouldn't happen", *mTorrent);
                 }
                 mTorrent->setFilesEnabled(true);
             } else {

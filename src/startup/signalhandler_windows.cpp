@@ -39,16 +39,16 @@ namespace tremotesf {
                 break;
             }
             if (!type.empty()) {
-                logInfo("Received signal with type = {}", type);
+                info().log("Received signal with type = {}", type);
             } else {
-                logInfo("Received signal with type = {}", dwCtrlType);
+                info().log("Received signal with type = {}", dwCtrlType);
             }
             const auto app = QCoreApplication::instance();
             if (app) {
-                logInfo("signalhandler: post QCoreApplication::quit() to event loop");
+                info().log("signalhandler: post QCoreApplication::quit() to event loop");
                 QMetaObject::invokeMethod(app, &QCoreApplication::quit, Qt::QueuedConnection);
             } else {
-                logWarning("signalhandler: QApplication is not created yet");
+                warning().log("signalhandler: QApplication is not created yet");
             }
             return TRUE;
         }
@@ -59,18 +59,18 @@ namespace tremotesf {
     SignalHandler::SignalHandler() : mImpl{} {
         try {
             checkWin32Bool(SetConsoleCtrlHandler(&consoleHandler, TRUE), "SetConsoleCtrlHandler");
-            logDebug("signalhandler: added console signal handler");
+            debug().log("signalhandler: added console signal handler");
         } catch (const std::system_error& e) {
-            logWarningWithException(e, "signalhandler: failed to add console signal handler");
+            warning().logWithException(e, "signalhandler: failed to add console signal handler");
         }
     }
 
     SignalHandler::~SignalHandler() {
         try {
             checkWin32Bool(SetConsoleCtrlHandler(&consoleHandler, FALSE), "SetConsoleCtrlHandler");
-            logDebug("signalhandler: removed console signal handler");
+            debug().log("signalhandler: removed console signal handler");
         } catch (const std::system_error& e) {
-            logWarningWithException(e, "signalhandler: failed to remove console signal handler");
+            warning().logWithException(e, "signalhandler: failed to remove console signal handler");
         }
     }
 

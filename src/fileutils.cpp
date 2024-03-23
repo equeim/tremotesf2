@@ -212,23 +212,23 @@ namespace tremotesf {
     }
 
     void deleteFile(const QString& path) {
-        logInfo("Deleting file {}", path);
+        info().log("Deleting file {}", path);
         QFile file(path);
         if (file.remove()) {
-            logInfo("Succesfully deleted file");
+            info().log("Succesfully deleted file");
         } else {
             throw QFileError(fmt::format("Failed to delete {}: {}", fileDescription(file), errorDescription(file)));
         }
     }
 
     void moveFileToTrash(const QString& path) {
-        logInfo("Moving file {} to trash", path);
+        info().log("Moving file {} to trash", path);
         QFile file(path);
         if (file.moveToTrash()) {
             if (const auto newPath = file.fileName(); !newPath.isEmpty()) {
-                logInfo("Successfully moved file to trash, new path is {}", newPath);
+                info().log("Successfully moved file to trash, new path is {}", newPath);
             } else {
-                logInfo("Successfully moved file to trash");
+                info().log("Successfully moved file to trash");
             }
         } else {
             throw QFileError(
@@ -293,13 +293,13 @@ namespace tremotesf {
         bool isTransmissionSessionIdFileExists(const QByteArray& sessionId) {
             const auto file = QStandardPaths::locate(sessionIdFileLocation, sessionIdFilePrefix % sessionId);
             if (!file.isEmpty()) {
-                logInfo(
+                info().log(
                     "isSessionIdFileExists: found transmission-daemon session id file {}",
                     QDir::toNativeSeparators(file)
                 );
                 return true;
             }
-            logInfo("isSessionIdFileExists: did not find transmission-daemon session id file");
+            info().log("isSessionIdFileExists: did not find transmission-daemon session id file");
             return false;
         }
     }

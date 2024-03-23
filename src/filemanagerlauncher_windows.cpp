@@ -53,7 +53,7 @@ namespace tremotesf {
                             options.ItemsToSelect().Append(co_await StorageFolder::GetFolderFromPathAsync(nativeFilePath
                             ));
                         } catch (const winrt::hresult_error& e) {
-                            logWarningWithException(
+                            warning().logWithException(
                                 e,
                                 "WindowsFileManagerLauncher: failed to create StorageFolder from {}",
                                 nativeFilePath
@@ -63,7 +63,7 @@ namespace tremotesf {
                         try {
                             options.ItemsToSelect().Append(co_await StorageFile::GetFileFromPathAsync(nativeFilePath));
                         } catch (const winrt::hresult_error& e) {
-                            logWarningWithException(
+                            warning().logWithException(
                                 e,
                                 "WindowsFileManagerLauncher: failed to create StorageFile from {}",
                                 nativeFilePath
@@ -72,7 +72,7 @@ namespace tremotesf {
                     }
                 }
                 auto nativeDirPath = winrt::hstring(QDir::toNativeSeparators(dirPath).toStdWString());
-                logInfo(
+                info().log(
                     "WindowsFileManagerLauncher: opening folder {} and selecting {} items",
                     nativeDirPath,
                     options.ItemsToSelect().Size()
@@ -80,7 +80,7 @@ namespace tremotesf {
                 try {
                     co_await Launcher::LaunchFolderPathAsync(nativeDirPath, options);
                 } catch (const winrt::hresult_error& e) {
-                    logWarningWithException(e, "WindowsFileManagerLauncher: failed to select files");
+                    warning().logWithException(e, "WindowsFileManagerLauncher: failed to select files");
                     fallbackForDirectory(dirPath, parentWidget);
                 }
             }

@@ -635,7 +635,7 @@ namespace tremotesf {
     }
 
     void TorrentPropertiesDialog::saveState() {
-        logDebug("Saving TorrentPropertiesDialog state, window geometry is {}", geometry());
+        debug().log("Saving TorrentPropertiesDialog state, window geometry is {}", geometry());
         Settings::instance()->setTorrentPropertiesDialogGeometry(saveGeometry());
         Settings::instance()->setPeersViewHeaderState(mPeersView->header()->saveState());
         mFilesView->saveState();

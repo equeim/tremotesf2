@@ -40,7 +40,7 @@ namespace tremotesf {
                     }
                 }
                 if (const auto count = [fileUrls count]; count != 0) {
-                    logInfo("Executing NSWorkspace.activateFileViewerSelectingURLs for {} files", count);
+                    info().log("Executing NSWorkspace.activateFileViewerSelectingURLs for {} files", count);
                     [workspace activateFileViewerSelectingURLs:fileUrls];
                 }
                 for (const auto& dirPath : fallbackDirectories) {

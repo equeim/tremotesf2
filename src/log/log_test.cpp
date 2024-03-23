@@ -138,118 +138,118 @@ private slots:
     }
 
     void infoStringLiteral() {
-        logInfo("foo");
-        logInfo("{}", "foo");
-        logInfo(FMT_STRING("{}"), "foo");
-        logInfo(fmt::runtime("{}"), "foo");
+        info().log("foo");
+        info().log("{}", "foo");
+        info().log(FMT_STRING("{}"), "foo");
+        info().log(fmt::runtime("{}"), "foo");
     }
 
     void infoStdString() {
         const std::string str = "foo";
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 
     void infoStdStringView() {
         const std::string_view str = "foo";
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 
     void infoQString() {
         const QString str = "foo";
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 
     void infoQStringView() {
         const QString _str = "foo";
         const QStringView str = _str;
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 
     void infoQLatin1String() {
         const auto str = "foo"_l1;
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 
 #if QT_VERSION_MAJOR >= 6
     void infoQUtf8StringView() {
         const QUtf8StringView str = "foo";
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 
     void infoQAnyStringView() {
         const QAnyStringView str = "foo";
-        logInfo(str);
-        logInfo("{}", str);
-        logInfo(FMT_STRING("{}"), str);
-        logInfo(fmt::runtime("{}"), str);
+        info().log(str);
+        info().log("{}", str);
+        info().log(FMT_STRING("{}"), str);
+        info().log(fmt::runtime("{}"), str);
     }
 #endif
 
     void infoQVariant() {
         const QVariant value = "foo";
-        logInfo(value);
-        logInfo("{}", value);
-        logInfo(FMT_STRING("{}"), value);
-        logInfo(fmt::runtime("{}"), value);
+        info().log(value);
+        info().log("{}", value);
+        info().log(FMT_STRING("{}"), value);
+        info().log(fmt::runtime("{}"), value);
     }
 
     void infoQStringList() {
         const QStringList list{"foo"};
-        logInfo(list);
-        logInfo("{}", list);
-        logInfo(FMT_STRING("{}"), list);
-        logInfo(fmt::runtime("{}"), list);
+        info().log(list);
+        info().log("{}", list);
+        info().log(FMT_STRING("{}"), list);
+        info().log(fmt::runtime("{}"), list);
     }
 
     void infoTorrent() {
         const Torrent value{};
-        logInfo(value);
-        logInfo("{}", value);
-        logInfo(FMT_STRING("{}"), value);
-        logInfo(fmt::runtime("{}"), value);
+        info().log(value);
+        info().log("{}", value);
+        info().log(FMT_STRING("{}"), value);
+        info().log(fmt::runtime("{}"), value);
     }
 
     void infoThis() {
-        logInfo(*this);
-        logInfo("{}", *this);
-        logInfo(FMT_STRING("{}"), *this);
-        logInfo(fmt::runtime("{}"), *this);
+        info().log(*this);
+        info().log("{}", *this);
+        info().log(FMT_STRING("{}"), *this);
+        info().log(fmt::runtime("{}"), *this);
     }
 
     void infoQObject() {
         QObject value{};
-        logInfo(value);
-        logInfo("{}", value);
-        logInfo(FMT_STRING("{}"), value);
-        logInfo(fmt::runtime("{}"), value);
+        info().log(value);
+        info().log("{}", value);
+        info().log(FMT_STRING("{}"), value);
+        info().log(fmt::runtime("{}"), value);
     }
 
     void warningStdException() {
         const std::runtime_error e("nope");
-        logWarning(e);
+        warning().log(e);
     }
 
     void warningWithStdException() {
         const std::runtime_error e("nope");
-        logWarningWithException(e, "oh no");
+        warning().logWithException(e, "oh no");
     }
 
     void warningNested() {
@@ -260,7 +260,7 @@ private slots:
                 std::throw_with_nested(std::runtime_error("higher-level nope"));
             }
         } catch (const std::runtime_error& e) {
-            logWarning(e);
+            warning().log(e);
         }
     }
 
@@ -272,19 +272,19 @@ private slots:
                 std::throw_with_nested(std::runtime_error("higher-level nope"));
             }
         } catch (const std::runtime_error& e) {
-            logWarningWithException(e, "oh no");
+            warning().logWithException(e, "oh no");
         }
     }
 
 #ifdef Q_OS_WIN
     void warningHresultError() {
         winrt::hresult_error e(E_ACCESSDENIED);
-        logWarning(e);
+        warning().log(e);
     }
 
     void warningWithHresultError() {
         winrt::hresult_error e(E_ACCESSDENIED);
-        logWarningWithException(e, "oh no");
+        warning().logWithException(e, "oh no");
     }
 
     void warningHresultErrorNested() {
@@ -295,7 +295,7 @@ private slots:
                 std::throw_with_nested(std::runtime_error("higher-level nope"));
             }
         } catch (const std::runtime_error& e) {
-            logWarning(e);
+            warning().log(e);
         }
     }
 
@@ -307,7 +307,7 @@ private slots:
                 std::throw_with_nested(std::runtime_error("higher-level nope"));
             }
         } catch (const std::runtime_error& e) {
-            logWarningWithException(e, "oh no");
+            warning().logWithException(e, "oh no");
         }
     }
 #endif
