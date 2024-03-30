@@ -144,6 +144,11 @@ int main(int argc, char** argv) {
     const QApplication app(argc, argv);
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
+    // Workaround for application quitting when creating QFileDialog in KDE
+    // https://bugs.kde.org/show_bug.cgi?id=471941
+    // https://bugs.kde.org/show_bug.cgi?id=483439
+    QCoreApplication::setQuitLockEnabled(false);
+
     if constexpr (targetOs == TargetOs::Windows) {
         windowsInitApplication();
     }
