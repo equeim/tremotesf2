@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.6.2] - 2024-04-01
+### Fixed
+- Application being closed when opening file picker in Qt 6 builds
+
 ## [2.6.1] - 2024-03-17
 ### Added
 - Added TREMOTESF_WITH_HTTPLIB CMake option to control how cpp-httplib test dependency is searched. Possible values:
