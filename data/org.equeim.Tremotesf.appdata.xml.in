@@ -54,6 +54,14 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-04-01" version="2.6.2">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Application being closed when opening file picker in Qt 6 builds</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-03-17" version="2.6.1">
       <description>
         <p>Changed</p>
