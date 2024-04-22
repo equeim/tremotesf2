@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.6.3] - 2024-04-22
+### Fixed
+- Qt 6.7 compatibility
+
 ## [2.6.2] - 2024-04-01
 ### Fixed
 - Application being closed when opening file picker in Qt 6 builds
