@@ -57,7 +57,7 @@ namespace tremotesf {
         }
 
         template<std::convertible_to<std::string_view> T>
-            requires(!std::convertible_to<T, QString>)
+            requires(!std::convertible_to<T, QString> && !impl::IsQStringView<T>)
         ALWAYS_INLINE QString convertToQString(const T& string) {
             const auto stringView = static_cast<std::string_view>(string);
             return QString::fromUtf8(stringView.data(), static_cast<QString::size_type>(stringView.size()));
