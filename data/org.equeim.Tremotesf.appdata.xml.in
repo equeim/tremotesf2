@@ -54,6 +54,14 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-04-22" version="2.6.3">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Qt 6.7 compatibility</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-04-01" version="2.6.2">
       <description>
         <p>Fixed</p>
