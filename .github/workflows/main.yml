@@ -80,7 +80,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:12', 'ubuntu:22.04', 'ubuntu:23.10']
+        container-image: ['debian:12', 'ubuntu:22.04', 'ubuntu:23.10', 'ubuntu:24.04']
 
     runs-on: ubuntu-latest
     container: ${{ matrix.container-image }}
