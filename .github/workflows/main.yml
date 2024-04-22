@@ -6,13 +6,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: ['2.6.x']
   pull_request:
-    branches:
-      - master
-      - 'feature/**'
-  schedule:
-    - cron: '0 0 * * 0'
+    branches: ['2.6.x']
 
 jobs:
   build-rpm:
