@@ -59,8 +59,8 @@ elseif (WIN32 OR APPLE)
 
     FetchContent_Declare(
         breeze_icons
-        URL "https://download.kde.org/stable/frameworks/6.0/breeze-icons-6.0.0.tar.xz"
-        URL_HASH SHA256=473e9851e4f84a64f1e808d58fd8760219a1b08feaf4b514a1399c8e5c889dc4
+        URL "https://download.kde.org/stable/frameworks/6.1/breeze-icons-6.1.0.tar.xz"
+        URL_HASH SHA256=b1ba802d0d0dbd0ecd786cbdfaaf545f2dd3c217966b894b9321a2a18426a16a
     )
     FetchContent_Populate(breeze_icons)
     install(CODE "set(breeze_icons_SOURCE_DIR \"${breeze_icons_SOURCE_DIR}\")")
