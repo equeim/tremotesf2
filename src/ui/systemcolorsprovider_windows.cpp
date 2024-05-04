@@ -4,7 +4,7 @@
 
 #include "systemcolorsprovider.h"
 
-#include <guiddef.h>
+#include "winrt_base_include_wrapper.h"
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 

@@ -52,8 +52,9 @@ add_library(
     target_os.h
 
     unixhelpers.h
-    windowshelpers.h
     macoshelpers.h
+    windowshelpers.h
+    winrt_base_include_wrapper.h
 
     ipc/ipcclient.h
     ipc/ipcserver.h

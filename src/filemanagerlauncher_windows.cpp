@@ -9,7 +9,7 @@
 #include <QFileInfo>
 #include <QWidget>
 
-#include <guiddef.h>
+#include "winrt_base_include_wrapper.h"
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Storage.h>

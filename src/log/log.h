@@ -16,8 +16,7 @@
 #include <fmt/core.h>
 
 #ifdef Q_OS_WIN
-#    include <guiddef.h>
-#    include <winrt/base.h>
+#    include "winrt_base_include_wrapper.h"
 #endif
 
 #include "formatters.h"

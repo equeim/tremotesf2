@@ -16,8 +16,7 @@
 
 #include <dwmapi.h>
 
-#include <guiddef.h>
-#include <winrt/base.h>
+#include "winrt_base_include_wrapper.h"
 
 #include "log/log.h"
 #include "settings.h"

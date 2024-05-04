@@ -9,8 +9,7 @@
 #include <QVariant>
 
 #ifdef Q_OS_WIN
-#    include <guiddef.h>
-#    include <winrt/base.h>
+#    include "winrt_base_include_wrapper.h"
 #endif
 
 #include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep

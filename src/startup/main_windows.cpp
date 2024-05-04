@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include <windows.h>
-#include <winrt/base.h>
+#include "winrt_base_include_wrapper.h"
 
 #include <QApplication>
 
