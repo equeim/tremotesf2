@@ -13,7 +13,7 @@
 #    include <winrt/base.h>
 #endif
 
-#include <fmt/format.h>
+#include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep
 #include <fmt/compile.h>
 #include <fmt/ranges.h>
 

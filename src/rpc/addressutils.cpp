@@ -9,7 +9,7 @@
 #include <QNetworkInterface>
 #include <QString>
 
-#include <set>
+#include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep
 #include <fmt/ranges.h>
 
 #include "log/log.h"

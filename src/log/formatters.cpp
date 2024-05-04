@@ -6,8 +6,7 @@
 
 #include <string_view>
 
-// If we don't include it here we will get undefined reference link error for fmt::formatter<fmt::string_view>
-#include <fmt/format.h>
+#include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep
 
 #include <QtGlobal>
 #include <QByteArray>
@@ -70,13 +69,11 @@ namespace fmt {
         return formatter<string_view>::format(toFmtStringView(string.toUtf8()), ctx);
     }
 
-    format_context::iterator formatter<QStringView>::format(const QStringView& string, format_context& ctx)
-        const {
+    format_context::iterator formatter<QStringView>::format(const QStringView& string, format_context& ctx) const {
         return formatter<string_view>::format(toFmtStringView(string.toUtf8()), ctx);
     }
 
-    format_context::iterator formatter<QLatin1String>::format(const QLatin1String& string, format_context& ctx)
-        const {
+    format_context::iterator formatter<QLatin1String>::format(const QLatin1String& string, format_context& ctx) const {
         return formatter<string_view>::format(std::string_view(string.data(), static_cast<size_t>(string.size())), ctx);
     }
 
@@ -85,19 +82,18 @@ namespace fmt {
     }
 
 #if QT_VERSION_MAJOR >= 6
-    format_context::iterator formatter<QUtf8StringView>::format(const QUtf8StringView& string, format_context& ctx)
-        const {
+    format_context::iterator
+    formatter<QUtf8StringView>::format(const QUtf8StringView& string, format_context& ctx) const {
         return formatter<string_view>::format(string_view(string.data(), static_cast<size_t>(string.size())), ctx);
     }
 
-    format_context::iterator formatter<QAnyStringView>::format(const QAnyStringView& string, format_context& ctx)
-        const {
+    format_context::iterator
+    formatter<QAnyStringView>::format(const QAnyStringView& string, format_context& ctx) const {
         return formatter<QString>::format(string.toString(), ctx);
     }
 #endif
 
-    format_context::iterator formatter<std::exception>::format(const std::exception& e, format_context& ctx)
-        const {
+    format_context::iterator formatter<std::exception>::format(const std::exception& e, format_context& ctx) const {
         const auto type = tremotesf::typeName(e);
         const auto what = e.what();
         if (auto s = dynamic_cast<const std::system_error*>(&e); s) {
@@ -106,22 +102,21 @@ namespace fmt {
         return fmt::format_to(ctx.out(), "{}: {}", type, what);
     }
 
-    format_context::iterator formatter<std::system_error>::format(const std::system_error& e, format_context& ctx)
-        const {
+    format_context::iterator
+    formatter<std::system_error>::format(const std::system_error& e, format_context& ctx) const {
         return formatSystemError(tremotesf::typeName(e), e, ctx);
     }
 
 #ifdef Q_OS_WIN
-    format_context::iterator formatter<winrt::hstring>::format(const winrt::hstring& str, format_context& ctx)
-        const {
+    format_context::iterator formatter<winrt::hstring>::format(const winrt::hstring& str, format_context& ctx) const {
         return formatter<QString>::format(
             QString::fromWCharArray(str.data(), static_cast<QString::size_type>(str.size())),
             ctx
         );
     }
 
-    format_context::iterator formatter<winrt::hresult_error>::format(const winrt::hresult_error& e, format_context& ctx)
-        const {
+    format_context::iterator
+    formatter<winrt::hresult_error>::format(const winrt::hresult_error& e, format_context& ctx) const {
         const auto code = e.code().value;
         return fmt::format_to(
             ctx.out(),

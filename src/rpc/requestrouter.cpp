@@ -15,6 +15,7 @@
 #include <QSslSocket>
 #include <QtConcurrentRun>
 
+#include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep
 #include <fmt/chrono.h>
 #include <fmt/ranges.h>
 
@@ -287,7 +288,8 @@ namespace tremotesf::impl {
         if (metadata.retryAttempts > mConfiguration->retryAttempts) {
             return false;
         }
-        warning().log("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
+        warning()
+            .log("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
         postRequest(request, metadata);
         return true;
     }

@@ -60,6 +60,8 @@ add_library(
 
     log/log.cpp
     log/log.h
+    log/fmt_format_include_wrapper.h
+
     log/formatters.cpp
     log/formatters.h
     log/demangle.cpp
@@ -202,6 +204,10 @@ if (registrable_domain_qt)
 else ()
     target_link_libraries(tremotesf_objects PUBLIC PkgConfig::libpsl)
 endif ()
+
+if ((fmt_VERSION_MAJOR LESS 10) AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
+    target_compile_definitions(tremotesf_objects PUBLIC TREMOTESF_FMT_NEEDS_WARNING_WORKAROUND)
+endif()
 
 if (UNIX)
     target_sources(

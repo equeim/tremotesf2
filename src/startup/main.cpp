@@ -13,19 +13,26 @@
 #include <QTimer>
 #include <QTranslator>
 
+#include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep
 #include <fmt/ranges.h>
 
 #include "commandlineparser.h"
-#include "fileutils.h"
 #include "literals.h"
 #include "main_windows.h"
-#include "recoloringsvgiconengineplugin.h"
 #include "signalhandler.h"
 #include "target_os.h"
 #include "ipc/ipcclient.h"
 #include "log/log.h"
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/mainwindow/mainwindow.h"
+
+#ifdef TREMOTESF_BUNDLED_ICON_THEME
+#    include "recoloringsvgiconengineplugin.h"
+#endif
+
+#ifdef TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
+#    include "fileutils.h"
+#endif
 
 #ifdef Q_OS_MACOS
 #    include "ipc/fileopeneventhandler.h"

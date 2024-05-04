@@ -15,7 +15,9 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
+#include "log/fmt_format_include_wrapper.h" // IWYU pragma: keep
 #include <fmt/chrono.h>
+
 #include <httplib.h>
 
 #include "fileutils.h"
