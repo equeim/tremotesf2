@@ -383,9 +383,7 @@ namespace tremotesf {
             for (const auto& i : trackerJsons) {
                 const QJsonObject trackerMap = i.toObject();
                 const int trackerId = trackerMap.value("id"_l1).toInt();
-                const auto found = std::find_if(trackers.begin(), trackers.end(), [&](const auto& tracker) {
-                    return tracker.id() == trackerId;
-                });
+                const auto found = std::ranges::find(trackers, trackerId, &Tracker::id);
                 if (found == trackers.end()) {
                     newTrackers.emplace_back(trackerId, trackerMap);
                     changed = true;
@@ -635,7 +633,10 @@ namespace tremotesf {
     }
 
     namespace {
-        using NewPeer = std::pair<QJsonObject, QString>;
+        struct NewPeer {
+            QJsonObject json;
+            QString address;
+        };
 
         class PeersListUpdater final : public ItemListUpdater<Peer, std::vector<NewPeer>> {
         public:
@@ -648,11 +649,7 @@ namespace tremotesf {
         protected:
             std::vector<NewPeer>::iterator
             findNewItemForItem(std::vector<NewPeer>& newPeers, const Peer& peer) override {
-                const auto& address = peer.address;
-                return std::find_if(newPeers.begin(), newPeers.end(), [address](const auto& newPeer) {
-                    const auto& [json, newPeerAddress] = newPeer;
-                    return newPeerAddress == address;
-                });
+                return std::ranges::find(newPeers, peer.address, &NewPeer::address);
             }
 
             void onAboutToRemoveItems(size_t, size_t) override{};
@@ -691,7 +688,7 @@ namespace tremotesf {
             for (const auto& i : peers) {
                 QJsonObject json = i.toObject();
                 QString address(json.value(Peer::addressKey).toString());
-                newPeers.emplace_back(std::move(json), std::move(address));
+                newPeers.push_back(NewPeer{std::move(json), std::move(address)});
             }
         }
 

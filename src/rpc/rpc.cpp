@@ -128,11 +128,8 @@ namespace tremotesf {
     }
 
     Torrent* Rpc::torrentById(int id) const {
-        const auto end(mTorrents.end());
-        const auto found(std::find_if(mTorrents.begin(), mTorrents.end(), [id](const auto& torrent) {
-            return torrent->data().id == id;
-        }));
-        return (found == end) ? nullptr : found->get();
+        const auto found = std::ranges::find(mTorrents, id, [](const auto& torrent) { return torrent->data().id; });
+        return (found != mTorrents.end()) ? found->get() : nullptr;
     }
 
     bool Rpc::isConnected() const { return (mStatus.connectionState == ConnectionState::Connected); }
@@ -863,10 +860,7 @@ namespace tremotesf {
     protected:
         std::vector<NewTorrent>::iterator
         findNewItemForItem(std::vector<NewTorrent>& newTorrents, const std::unique_ptr<Torrent>& torrent) override {
-            const int id = torrent->data().id;
-            return std::find_if(newTorrents.begin(), newTorrents.end(), [id](const NewTorrent& t) {
-                return t.id == id;
-            });
+            return std::ranges::find(newTorrents, torrent->data().id, &NewTorrent::id);
         }
 
         void onAboutToRemoveItems(size_t first, size_t last) override {
@@ -974,10 +968,10 @@ namespace tremotesf {
                             const auto idKeyIndex = Torrent::idKeyIndex(keys);
                             if (idKeyIndex.has_value()) {
                                 newTorrents.reserve(static_cast<size_t>(torrentsJsons.size() - 1));
-                                for (auto i = torrentsJsons.begin() + 1, end = torrentsJsons.end(); i != end; ++i) {
-                                    const auto array = i->toArray();
+                                for (const auto& json : torrentsJsons | std::views::drop(1)) {
+                                    const auto array = json.toArray();
                                     if (static_cast<size_t>(array.size()) == keys.size()) {
-                                        newTorrents.push_back(NewTorrent{array[*idKeyIndex].toInt(), *i});
+                                        newTorrents.push_back(NewTorrent{array[*idKeyIndex].toInt(), json});
                                     }
                                 }
                                 updater.keys = &keys;

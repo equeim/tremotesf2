@@ -13,6 +13,7 @@
 
 #include "log/log.h"
 #include "itemlistupdater.h"
+#include "stdutils.h"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
 
@@ -22,6 +23,9 @@ struct Item {
 
     bool operator==(const Item& other) const = default;
     bool operator<(const Item& other) const { return id < other.id; }
+    bool operator<=(const Item& other) const { return id <= other.id; }
+    bool operator>(const Item& other) const { return id > other.id; }
+    bool operator>=(const Item& other) const { return id > other.id; }
 };
 
 namespace fmt {
@@ -57,9 +61,7 @@ namespace tremotesf {
     protected:
         typename std::vector<Item>::iterator
         findNewItemForItem(std::vector<Item>& container, const Item& item) override {
-            return std::find_if(container.begin(), container.end(), [&item](const Item& newItem) {
-                return newItem.id == item.id;
-            });
+            return std::ranges::find(container, item.id, &Item::id);
         };
 
         void onAboutToRemoveItems(size_t first, size_t last) override {
@@ -249,7 +251,7 @@ namespace tremotesf {
             checkThatItemsAreUnique(newList);
 
             info().log("Checking update from {}", oldList);
-            std::sort(newList.begin(), newList.end());
+            std::ranges::sort(newList);
             do {
                 info().log(" - to {}", newList);
                 try {
@@ -257,7 +259,7 @@ namespace tremotesf {
                 } catch (const AbortTest&) {
                     break;
                 }
-            } while (std::next_permutation(newList.begin(), newList.end()));
+            } while (std::ranges::next_permutation(newList).found);
         }
 
         void checkUpdateInner(const std::vector<Item>& oldList, const std::vector<Item>& newList) {
@@ -285,18 +287,23 @@ namespace tremotesf {
             }
 
             for (const auto& [first, last] : updater.changedIndexRanges) {
-                std::copy(
-                    directlyUpdatedList.begin() + static_cast<ptrdiff_t>(first),
-                    directlyUpdatedList.begin() + static_cast<ptrdiff_t>(last),
+                std::ranges::copy(
+                    slice(directlyUpdatedList, first, last),
+                    indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(first)
+                );
+                std::ranges::copy(
+                    slice(directlyUpdatedList, first, last),
                     indirectlyUpdatedList.begin() + static_cast<ptrdiff_t>(first)
                 );
             }
 
             if (updater.addedCount) {
                 indirectlyUpdatedList.reserve(indirectlyUpdatedList.size() + *updater.addedCount);
-                std::copy(
-                    directlyUpdatedList.end() - static_cast<ptrdiff_t>(*updater.addedCount),
-                    directlyUpdatedList.end(),
+                std::ranges::copy(
+                    std::views::drop(
+                        directlyUpdatedList,
+                        static_cast<ptrdiff_t>(directlyUpdatedList.size() - *updater.addedCount)
+                    ),
                     std::back_insert_iterator(indirectlyUpdatedList)
                 );
             }

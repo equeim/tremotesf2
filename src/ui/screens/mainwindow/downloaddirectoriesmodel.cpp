@@ -86,9 +86,7 @@ namespace tremotesf {
             std::vector<DownloadDirectoriesModel::DirectoryItem>& newItems,
             const DownloadDirectoriesModel::DirectoryItem& item
         ) override {
-            return std::find_if(newItems.begin(), newItems.end(), [&](const auto& newItem) {
-                return newItem.directory == item.directory;
-            });
+            return std::ranges::find(newItems, item.directory, &DownloadDirectoriesModel::DirectoryItem::directory);
         }
 
         bool updateItem(
@@ -114,9 +112,7 @@ namespace tremotesf {
         directories.push_back({.directory = {}, .displayDirectory = {}, .torrents = rpc()->torrentsCount()});
         for (const auto& torrent : rpc()->torrents()) {
             const QString& directory = torrent->data().downloadDirectory;
-            auto found = std::find_if(directories.begin(), directories.end(), [&](const auto& item) {
-                return item.directory == directory;
-            });
+            auto found = std::ranges::find(directories, directory, &DirectoryItem::directory);
             if (found == directories.end()) {
                 directories.push_back(
                     {.directory = directory,
