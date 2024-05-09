@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <ranges>
+
 #include "torrentfilesmodelentry.h"
 
 #include <QCoreApplication>
-
-#include "literals.h"
 
 namespace tremotesf {
     TorrentFilesModelEntry::Priority TorrentFilesModelEntry::fromFilePriority(TorrentFile::Priority priority) {
@@ -108,9 +108,11 @@ namespace tremotesf {
 
     TorrentFilesModelEntry::WantedState TorrentFilesModelDirectory::wantedState() const {
         const TorrentFilesModelEntry::WantedState first = mChildren.front()->wantedState();
-        for (auto i = mChildren.begin() + 1, end = mChildren.end(); i != end; ++i) {
-            if ((*i)->wantedState() != first) {
-                return MixedWanted;
+        if (mChildren.size() > 1) {
+            for (const auto& child : mChildren | std::views::drop(1)) {
+                if (child->wantedState() != first) {
+                    return MixedWanted;
+                }
             }
         }
         return first;
@@ -124,9 +126,11 @@ namespace tremotesf {
 
     TorrentFilesModelEntry::Priority TorrentFilesModelDirectory::priority() const {
         const Priority first = mChildren.front()->priority();
-        for (auto i = mChildren.begin() + 1, end = mChildren.end(); i != end; ++i) {
-            if ((*i)->priority() != first) {
-                return MixedPriority;
+        if (mChildren.size() > 1) {
+            for (const auto& child : mChildren | std::views::drop(1)) {
+                if (child->priority() != first) {
+                    return MixedPriority;
+                }
             }
         }
         return first;
@@ -183,7 +187,7 @@ namespace tremotesf {
     }
 
     bool TorrentFilesModelDirectory::isChanged() const {
-        return std::any_of(mChildren.begin(), mChildren.end(), [](const auto& child) { return child->isChanged(); });
+        return std::ranges::any_of(mChildren, [](const auto& child) { return child->isChanged(); });
     }
 
     void TorrentFilesModelDirectory::addChild(std::unique_ptr<TorrentFilesModelEntry>&& child) {

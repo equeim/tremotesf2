@@ -134,11 +134,7 @@ namespace tremotesf {
         inline virtual std::ranges::iterator_t<NewItemsRange>
         findNewItemForItem(NewItemsRange& newItems, const Item& item) {
             if constexpr (std::equality_comparable_with<NewItem, Item>) {
-                return std::find_if(
-                    std::ranges::begin(newItems),
-                    std::ranges::end(newItems),
-                    [&item](const NewItem& newItem) { return newItem == item; }
-                );
+                return std::ranges::find(newItems, item);
             } else {
                 throw std::logic_error("findNewItemForItem() must be implemented");
             }

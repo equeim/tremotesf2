@@ -47,8 +47,9 @@ namespace tremotesf {
                     ids.push_back(static_cast<TorrentFilesModelFile*>(entry)->id());
                 }
             }
-            std::sort(ids.begin(), ids.end());
-            ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
+            std::ranges::sort(ids);
+            const auto toErase = std::ranges::unique(ids);
+            ids.erase(toErase.begin(), toErase.end());
             return ids;
         }
 

@@ -178,8 +178,8 @@ namespace tremotesf {
         std::vector<TrackersModel::TrackerItem>::iterator findNewItemForItem(
             std::vector<TrackersModel::TrackerItem>& newItems, const TrackersModel::TrackerItem& item
         ) override {
-            return std::find_if(newItems.begin(), newItems.end(), [item](const TrackersModel::TrackerItem& tracker) {
-                return tracker.tracker.id() == item.tracker.id();
+            return std::ranges::find(newItems, item.tracker.id(), [](const auto& tracker) {
+                return tracker.tracker.id();
             });
         }
 
@@ -197,9 +197,7 @@ namespace tremotesf {
         TrackersModelUpdater updater(*this);
         const auto& trackers = mTorrent->data().trackers;
         updater.update(mTrackers, std::vector<TrackerItem>(trackers.begin(), trackers.end()));
-        if (std::any_of(trackers.begin(), trackers.end(), [](const Tracker& tracker) {
-                return tracker.nextUpdateTime().isValid();
-            })) {
+        if (std::ranges::any_of(trackers, [](const Tracker& tracker) { return tracker.nextUpdateTime().isValid(); })) {
             mEtaUpdateTimer->start();
         }
     }

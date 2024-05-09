@@ -179,9 +179,7 @@ namespace tremotesf {
             } else {
                 const auto selectedName = action->data().toString();
                 const auto servers = Servers::instance()->servers();
-                const auto found = std::find_if(servers.begin(), servers.end(), [&](const auto& server) {
-                    return server.name == selectedName;
-                });
+                const auto found = std::ranges::find(servers, selectedName, &Server::name);
                 if (found != servers.end()) {
                     Servers::instance()->setCurrentServer(selectedName);
                 } else {

@@ -15,7 +15,6 @@
 
 #include "log/log.h"
 #include "literals.h"
-#include "target_os.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
@@ -29,8 +28,7 @@ namespace tremotesf {
             for (const QString& filePath : files) {
                 QString dirPath = QFileInfo(filePath).path();
 
-                if (std::find(nonExistentDirectories.begin(), nonExistentDirectories.end(), dirPath) !=
-                    nonExistentDirectories.end()) {
+                if (std::ranges::find(nonExistentDirectories, dirPath) != nonExistentDirectories.end()) {
                     continue;
                 }
                 if (!QFileInfo::exists(dirPath)) {
@@ -39,9 +37,7 @@ namespace tremotesf {
                     continue;
                 }
 
-                const auto found = std::find_if(filesToSelect.begin(), filesToSelect.end(), [&](const auto& d) {
-                    return d.directory == dirPath;
-                });
+                const auto found = std::ranges::find(filesToSelect, dirPath, &FilesInDirectory::directory);
                 auto& dirFiles = [&]() -> std::vector<QString>& {
                     if (found != filesToSelect.end()) {
                         return found->files;

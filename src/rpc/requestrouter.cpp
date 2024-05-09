@@ -217,15 +217,14 @@ namespace tremotesf::impl {
     }
 
     bool RequestRouter::hasPendingDataUpdateRequests() const {
-        return std::any_of(
-                   mPendingNetworkRequests.begin(),
-                   mPendingNetworkRequests.end(),
-                   [](const auto* reply) {
+        return std::ranges::any_of(
+                   mPendingNetworkRequests,
+                   [](const QNetworkReply* reply) {
                        const auto metadata = reply->property(metadataProperty).template value<NetworkRequestMetadata>();
                        return metadata.rpcMetadata.type == RequestType::DataUpdate;
                    }
                ) ||
-               std::any_of(mPendingParseFutures.begin(), mPendingParseFutures.end(), [](const auto* future) {
+               std::ranges::any_of(mPendingParseFutures, [](const QObject* future) {
                    const auto metadata = future->property(metadataProperty).template value<RpcRequestMetadata>();
                    return metadata.type == RequestType::DataUpdate;
                });
@@ -287,7 +286,8 @@ namespace tremotesf::impl {
         if (metadata.retryAttempts > mConfiguration->retryAttempts) {
             return false;
         }
-        warning().log("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
+        warning()
+            .log("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
         postRequest(request, metadata);
         return true;
     }

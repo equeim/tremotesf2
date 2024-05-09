@@ -43,11 +43,11 @@ namespace tremotesf {
     inline constexpr std::optional<std::ranges::range_size_t<Range>>
     indexOf(const Range& range, std::ranges::range_value_t<Range> value) {
         namespace r = std::ranges;
-        const auto found = std::find(r::begin(range), r::end(range), value);
+        const auto found = r::find(range, value);
         if (found == r::end(range)) {
             return std::nullopt;
         };
-        return static_cast<r::range_size_t<Range>>(std::distance(r::begin(range), found));
+        return static_cast<r::range_size_t<Range>>(r::distance(r::begin(range), found));
     }
 
     template<std::integral Index, std::ranges::random_access_range Range>
@@ -55,6 +55,15 @@ namespace tremotesf {
         const auto index = indexOf(range, value);
         if (!index.has_value()) return std::nullopt;
         return static_cast<Index>(*index);
+    }
+
+    template<std::ranges::random_access_range Range, std::integral Index>
+    inline constexpr auto slice(const Range& range, Index first, Index last) {
+        const auto begin = std::ranges::begin(range);
+        return std::ranges::subrange(
+            begin + static_cast<std::ranges::range_difference_t<Range>>(first),
+            begin + static_cast<std::ranges::range_difference_t<Range>>(last)
+        );
     }
 
     template<
