@@ -250,6 +250,7 @@ if (UNIX)
             tremotesf_objects
             PRIVATE
             filemanagerlauncher_freedesktop.cpp
+            coroutines/dbus.h
             ipc/ipcclient_dbus.cpp
             ipc/ipcserver_dbus_service.cpp
             ipc/ipcserver_dbus_service.h

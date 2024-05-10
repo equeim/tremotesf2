@@ -20,7 +20,7 @@ namespace tremotesf {
 
         protected:
             void launchFileManagerAndSelectFiles(
-                std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
+                std::vector<FilesInDirectory> filesToSelect, QWidget* parentWidget
             ) override {
                 auto* const workspace = [NSWorkspace sharedWorkspace];
                 NSMutableArray<NSURL*>* const fileUrls = [NSMutableArray arrayWithCapacity:filesToSelect.size()];
@@ -44,7 +44,7 @@ namespace tremotesf {
                     [workspace activateFileViewerSelectingURLs:fileUrls];
                 }
                 for (const auto& dirPath : fallbackDirectories) {
-                    fallbackForDirectory(dirPath, parentWidget.get());
+                    fallbackForDirectory(dirPath, parentWidget);
                 }
                 emit done();
             }

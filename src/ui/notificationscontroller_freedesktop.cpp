@@ -6,12 +6,14 @@
 
 #include <QCoreApplication>
 #include <QDBusConnection>
-#include <QDBusPendingCall>
-#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QPointer>
 
+#include "coroutines/dbus.h"
+#include "coroutines/scope.h"
+#include "desktoputils.h"
 #include "log/log.h"
 #include "tremotesf_dbus_generated/org.freedesktop.Notifications.h"
-#include "desktoputils.h"
 #include "rpc/servers.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
@@ -33,51 +35,46 @@ namespace tremotesf {
 
         protected:
             void showNotification(const QString& title, const QString& message) override {
-                info().log(
-                    "FreedesktopNotificationsController: executing org.freedesktop.Notifications.Notify() D-Bus call"
-                );
-                const auto call = new QDBusPendingCallWatcher(
-                    mInterface.Notify(
-                        TREMOTESF_APP_NAME ""_l1,
-                        0,
-                        TREMOTESF_APP_ID ""_l1,
-                        title,
-                        message,
-                        //: Button on notification
-                        {"default"_l1, qApp->translate("tremotesf", "Show Tremotesf")},
-                        {{"desktop-entry"_l1, TREMOTESF_APP_ID ""_l1},
-                         {"x-kde-origin-name"_l1, Servers::instance()->currentServerName()}},
-                        -1
-                    ),
-                    this
-                );
-                const auto onFinished = [=, this] {
-                    if (!call->isError()) {
-                        info().log("FreedesktopNotificationsController: executed org.freedesktop.Notifications.Notify() "
-                                "D-Bus call");
-                    } else {
-                        warning().log(
-                            "FreedesktopNotificationsController: org.freedesktop.Notifications.Notify() D-Bus call "
-                            "failed: {}",
-                            call->error()
-                        );
-                        fallbackToSystemTrayIcon(title, message);
-                    }
-                };
-                if (call->isFinished()) {
-                    onFinished();
-                } else {
-                    QObject::connect(call, &QDBusPendingCallWatcher::finished, this, [=] {
-                        onFinished();
-                        call->deleteLater();
-                    });
-                }
+                mCoroutineScope.launch(showNotificationImpl(title, message));
             }
 
         private:
+            Coroutine<> showNotificationImpl(QString title, QString message) {
+                info().log(
+                    "FreedesktopNotificationsController: executing org.freedesktop.Notifications.Notify() D-Bus call"
+                );
+                const auto reply = mInterface.Notify(
+                    TREMOTESF_APP_NAME ""_l1,
+                    0,
+                    TREMOTESF_APP_ID ""_l1,
+                    title,
+                    message,
+                    //: Button on notification
+                    {"default"_l1, qApp->translate("tremotesf", "Show Tremotesf")},
+                    {{"desktop-entry"_l1, TREMOTESF_APP_ID ""_l1},
+                     {"x-kde-origin-name"_l1, Servers::instance()->currentServerName()}},
+                    -1
+                );
+                // Split co_await to separate line here to workaround internal compiler error bug in GCC 13
+                co_await reply;
+                if (!reply.isError()) {
+                    info().log(
+                        "FreedesktopNotificationsController: executed org.freedesktop.Notifications.Notify() D-Bus call"
+                    );
+                } else {
+                    warning().log(
+                        "FreedesktopNotificationsController: org.freedesktop.Notifications.Notify() D-Bus call failed: "
+                        "{}",
+                        reply.error()
+                    );
+                    fallbackToSystemTrayIcon(title, message);
+                }
+            }
+
             OrgFreedesktopNotificationsInterface mInterface{
                 "org.freedesktop.Notifications"_l1, "/org/freedesktop/Notifications"_l1, QDBusConnection::sessionBus()
             };
+            CoroutineScope mCoroutineScope{};
         };
     }
 
