@@ -4,14 +4,18 @@
 
 #include "filemanagerlauncher.h"
 
+#include <algorithm>
+
 #include <QDBusConnection>
-#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
 #include <QUrl>
 #include <QWidget>
 
+#include "coroutines/dbus.h"
+#include "coroutines/scope.h"
+#include "desktoputils.h"
 #include "literals.h"
 #include "log/log.h"
-#include "desktoputils.h"
 #include "tremotesf_dbus_generated/org.freedesktop.FileManager1.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
@@ -25,10 +29,17 @@ namespace tremotesf {
             FreedesktopFileManagerLauncher() = default;
 
         protected:
-            void launchFileManagerAndSelectFiles(
+            void launchFileManagerAndSelectFiles(std::vector<FilesInDirectory> filesToSelect, QWidget* parentWidget)
+                override {
+                mCoroutineScope.launch(launchFileManagerAndSelectFilesImpl(std::move(filesToSelect), parentWidget));
+            }
+
+        private:
+            Coroutine<> launchFileManagerAndSelectFilesImpl(
                 std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
-            ) override {
-                info().log("FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
+            ) {
+                info().log(
+                    "FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
                 );
                 OrgFreedesktopFileManager1Interface interface(
                     "org.freedesktop.FileManager1"_l1,
@@ -37,40 +48,34 @@ namespace tremotesf {
                 );
                 interface.setTimeout(desktoputils::defaultDbusTimeout);
                 QStringList uris{};
-                for (const auto& [_, dirFiles] : filesToSelect) {
-                    for (const QString& filePath : dirFiles) {
-                        uris.push_back(QUrl::fromLocalFile(filePath).toString());
+                uris.reserve(std::accumulate(
+                    filesToSelect.begin(),
+                    filesToSelect.end(),
+                    0,
+                    [](size_t count, const FilesInDirectory& f) { return count + f.files.size(); }
+                ));
+                for (const auto& [_, files] : filesToSelect) {
+                    std::ranges::copy(files, std::back_insert_iterator(uris));
+                }
+
+                const auto reply = co_await interface.ShowItems(uris, {});
+                if (!reply.isError()) {
+                    info().log(
+                        "FreedesktopFileManagerLauncher: executed org.freedesktop.FileManager1.ShowItems() D-Bus call"
+                    );
+                } else {
+                    warning().log(
+                        "FreedesktopFileManagerLauncher: org.freedesktop.FileManager1.ShowItems() D-Bus call failed: "
+                        "{}",
+                        reply.error()
+                    );
+                    for (const auto& [dirPath, dirFiles] : filesToSelect) {
+                        fallbackForDirectory(dirPath, parentWidget.data());
                     }
                 }
-                const auto pendingReply = interface.ShowItems(uris, {});
-                const auto onFinished = [=, this] {
-                    if (!pendingReply.isError()) {
-                        info().log("FreedesktopFileManagerLauncher: executed org.freedesktop.FileManager1.ShowItems() "
-                                "D-Bus call");
-                    } else {
-                        warning().log(
-                            "FreedesktopFileManagerLauncher: org.freedesktop.FileManager1.ShowItems() D-Bus call "
-                            "failed: {}",
-                            pendingReply.error()
-                        );
-                        for (const auto& [dirPath, dirFiles] : filesToSelect) {
-                            fallbackForDirectory(dirPath, parentWidget);
-                        }
-                    }
-                    emit done();
-                };
-                if (pendingReply.isFinished()) {
-                    onFinished();
-                }
-                auto watcher = new QDBusPendingCallWatcher(pendingReply, this);
-                QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, onFinished);
-                QObject::connect(
-                    watcher,
-                    &QDBusPendingCallWatcher::finished,
-                    watcher,
-                    &QDBusPendingCallWatcher::deleteLater
-                );
             }
+
+            CoroutineScope mCoroutineScope{};
         };
     }
 

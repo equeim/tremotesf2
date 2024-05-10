@@ -20,9 +20,8 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf {
     namespace impl {
-        void FileManagerLauncher::launchFileManagerAndSelectFiles(
-            const std::vector<QString>& files, const QPointer<QWidget>& parentWidget
-        ) {
+        void
+        FileManagerLauncher::launchFileManagerAndSelectFiles(const std::vector<QString>& files, QWidget* parentWidget) {
             std::vector<FilesInDirectory> filesToSelect{};
             std::vector<QString> nonExistentDirectories{};
             for (const QString& filePath : files) {
@@ -63,8 +62,7 @@ namespace tremotesf {
         void FileManagerLauncher::launchFileManagerAndSelectFiles(
             // NOLINTNEXTLINE(performance-unnecessary-value-param)
             std::vector<FilesInDirectory> filesToSelect,
-            // NOLINTNEXTLINE(performance-unnecessary-value-param)
-            QPointer<QWidget> parentWidget
+            QWidget* parentWidget
         ) {
             for (const auto& [directory, _] : filesToSelect) {
                 fallbackForDirectory(directory, parentWidget);

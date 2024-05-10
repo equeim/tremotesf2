@@ -36,7 +36,7 @@ namespace tremotesf {
 
         protected:
             void launchFileManagerAndSelectFiles(
-                std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
+                std::vector<FilesInDirectory> filesToSelect, QWidget* parentWidget
             ) override {
                 mCoroutine = selectFiles(std::move(filesToSelect), parentWidget);
             }
