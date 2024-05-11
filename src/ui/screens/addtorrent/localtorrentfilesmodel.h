@@ -11,6 +11,7 @@
 
 #include "ui/itemmodels/basetorrentfilesmodel.h"
 #include "bencodeparser.h"
+#include "coroutines/scope.h"
 
 namespace tremotesf {
     class TorrentFileParser;
@@ -36,9 +37,12 @@ namespace tremotesf {
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
     private:
+        Coroutine<> loadImpl(QString filePath);
+
         std::vector<TorrentFilesModelFile*> mFiles{};
         bool mLoaded{};
         std::optional<bencode::Error::Type> mErrorType{};
+        CoroutineScope mCoroutineScope{};
 
         std::map<QString, QString> mRenamedFiles{};
 

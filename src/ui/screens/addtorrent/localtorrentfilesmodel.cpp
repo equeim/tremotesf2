@@ -6,10 +6,9 @@
 
 #include <QApplication>
 #include <QCoreApplication>
-#include <QFutureWatcher>
 #include <QStyle>
-#include <QtConcurrentRun>
 
+#include "coroutines/threadpool.h"
 #include "log/log.h"
 #include "ui/itemmodels/torrentfilesmodelentry.h"
 
@@ -149,37 +148,23 @@ namespace tremotesf {
     LocalTorrentFilesModel::LocalTorrentFilesModel(QObject* parent)
         : BaseTorrentFilesModel({Column::Name, Column::Size, Column::Priority}, parent) {}
 
-    void LocalTorrentFilesModel::load(const QString& filePath) {
+    void LocalTorrentFilesModel::load(const QString& filePath) { mCoroutineScope.launch(loadImpl(filePath)); }
+
+    Coroutine<> LocalTorrentFilesModel::loadImpl(QString filePath) {
         beginResetModel();
-
-        using FutureResult = std::variant<CreateTreeResult, bencode::Error::Type>;
-        using FutureWatcher = QFutureWatcher<FutureResult>;
-
-        const auto future = QtConcurrent::run([filePath]() -> FutureResult {
-            try {
-                auto bencodeParseResult = bencode::parse(filePath);
-                return createTree(std::move(bencodeParseResult));
-            } catch (const bencode::Error& e) {
-                warning().logWithException(e, "Failed to parse torrent file {}", filePath);
-                return e.type();
-            }
-        });
-
-        auto watcher = new FutureWatcher(this);
-        QObject::connect(watcher, &FutureWatcher::finished, this, [=, this] {
-            auto result = watcher->result();
-            if (auto createTreeResult = std::get_if<CreateTreeResult>(&result); createTreeResult) {
-                mRootDirectory = std::move(createTreeResult->rootDirectory);
-                mFiles = std::move(createTreeResult->files);
-            } else {
-                mErrorType = std::get<bencode::Error::Type>(result);
-            }
-            endResetModel();
-            mLoaded = true;
-            emit loadedChanged();
-            watcher->deleteLater();
-        });
-        watcher->setFuture(future);
+        try {
+            auto createTreeResult = co_await runOnThreadPool([filePath]() -> CreateTreeResult {
+                return createTree(bencode::parse(filePath));
+            });
+            mRootDirectory = std::move(createTreeResult.rootDirectory);
+            mFiles = std::move(createTreeResult.files);
+        } catch (const bencode::Error& e) {
+            warning().logWithException(e, "Failed to parse torrent file {}", filePath);
+            mErrorType = e.type();
+        }
+        endResetModel();
+        mLoaded = true;
+        emit loadedChanged();
     }
 
     bool LocalTorrentFilesModel::isLoaded() const { return mLoaded; }
