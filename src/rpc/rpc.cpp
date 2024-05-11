@@ -6,17 +6,18 @@
 
 #include <QCoreApplication>
 #include <QFile>
-#include <QFutureWatcher>
 #include <QJsonArray>
 #include <QHostAddress>
 #include <QHostInfo>
 #include <QNetworkProxy>
-#include <QTimer>
 #include <QSslCertificate>
 #include <QSslKey>
-#include <QtConcurrentRun>
 
 #include "addressutils.h"
+#include "coroutines/hostinfo.h"
+#include "coroutines/threadpool.h"
+#include "coroutines/timer.h"
+#include "coroutines/waitall.h"
 #include "fileutils.h"
 #include "jsonutils.h"
 #include "itemlistupdater.h"
@@ -83,31 +84,9 @@ namespace tremotesf {
     Rpc::Rpc(QObject* parent)
         : QObject(parent),
           mRequestRouter(new RequestRouter(this)),
-          mUpdateTimer(new QTimer(this)),
-          mAutoReconnectTimer(new QTimer(this)),
           mServerSettings(new ServerSettings(this, this)),
           mServerStats(new ServerStats(this)) {
-        mAutoReconnectTimer->setSingleShot(true);
-        QObject::connect(mAutoReconnectTimer, &QTimer::timeout, this, [=, this] {
-            info().log("Auto reconnection");
-            connect();
-        });
-
-        mUpdateTimer->setSingleShot(true);
-        QObject::connect(mUpdateTimer, &QTimer::timeout, this, [=, this] { updateData(); });
-
-        QObject::connect(
-            mRequestRouter,
-            &RequestRouter::requestFailed,
-            this,
-            [=, this](RpcError error, const QString& errorMessage, const QString& detailedErrorMessage) {
-                setStatus({RpcConnectionState::Disconnected, error, errorMessage, detailedErrorMessage});
-                if (mAutoReconnectEnabled && !mUpdateDisabled) {
-                    info().log("Auto reconnecting in {} seconds", mAutoReconnectTimer->interval() / 1000);
-                    mAutoReconnectTimer->start();
-                }
-            }
-        );
+        QObject::connect(mRequestRouter, &RequestRouter::requestFailed, this, &Rpc::onRequestFailed);
     }
 
     Rpc::~Rpc() = default;
@@ -147,25 +126,6 @@ namespace tremotesf {
     bool Rpc::isLocal() const { return mServerIsLocal.value_or(false); }
 
     int Rpc::torrentsCount() const { return static_cast<int>(mTorrents.size()); }
-
-    bool Rpc::isUpdateDisabled() const { return mUpdateDisabled; }
-
-    void Rpc::setUpdateDisabled(bool disabled) {
-        if (disabled != mUpdateDisabled) {
-            mUpdateDisabled = disabled;
-            if (isConnected()) {
-                if (disabled) {
-                    mUpdateTimer->stop();
-                } else {
-                    updateData();
-                }
-            }
-            if (disabled) {
-                mAutoReconnectTimer->stop();
-            }
-            emit updateDisabledChanged();
-        }
-    }
 
     void Rpc::setConnectionConfiguration(const ConnectionConfiguration& configuration) {
         disconnect();
@@ -245,484 +205,349 @@ namespace tremotesf {
 
         mRequestRouter->setConfiguration(std::move(requestsConfig));
 
-        mUpdateTimer->setInterval(configuration.updateInterval * 1000); // msecs
+        mUpdateInterval = std::chrono::seconds(configuration.updateInterval);
 
         mAutoReconnectEnabled = configuration.autoReconnectEnabled;
-        mAutoReconnectTimer->setInterval(configuration.autoReconnectInterval * 1000); // msecs
-        mAutoReconnectTimer->stop();
+        mAutoReconnectInterval = std::chrono::seconds(configuration.autoReconnectInterval);
     }
 
     void Rpc::resetConnectionConfiguration() {
         disconnect();
         mRequestRouter->resetConfiguration();
         mAutoReconnectEnabled = false;
-        mAutoReconnectTimer->stop();
+        mAutoReconnectCoroutineScope.cancelAll();
     }
 
     void Rpc::connect() {
         if (connectionState() == ConnectionState::Disconnected && mRequestRouter->configuration().has_value()) {
             setStatus(Status{.connectionState = ConnectionState::Connecting});
-            getServerSettings();
+            mBackgroundRequestsCoroutineScope.launch(connectAndPerformDataUpdates());
         }
     }
 
-    void Rpc::disconnect() {
-        setStatus(Status{.connectionState = ConnectionState::Disconnected});
-        mAutoReconnectTimer->stop();
-    }
+    void Rpc::disconnect() { setStatus(Status{.connectionState = ConnectionState::Disconnected}); }
 
     void Rpc::addTorrentFile(
-        const QString& filePath,
-        const QString& downloadDirectory,
-        const std::vector<int>& unwantedFiles,
-        const std::vector<int>& highPriorityFiles,
-        const std::vector<int>& lowPriorityFiles,
-        const std::map<QString, QString>& renamedFiles,
+        QString filePath,
+        QString downloadDirectory,
+        std::vector<int> unwantedFiles,
+        std::vector<int> highPriorityFiles,
+        std::vector<int> lowPriorityFiles,
+        std::map<QString, QString> renamedFiles,
         TorrentData::Priority bandwidthPriority,
         bool start
     ) {
-        if (!isConnected()) {
-            return;
+        if (isConnected()) {
+            mBackgroundRequestsCoroutineScope.launch(addTorrentFileImpl(
+                std::move(filePath),
+                std::move(downloadDirectory),
+                std::move(unwantedFiles),
+                std::move(highPriorityFiles),
+                std::move(lowPriorityFiles),
+                std::move(renamedFiles),
+                bandwidthPriority,
+                start
+            ));
         }
-        auto file = std::make_shared<QFile>(filePath);
-        try {
-            openFile(*file, QIODevice::ReadOnly);
-        } catch (const QFileError& e) {
-            warning().logWithException(e, "addTorrentFile: failed to open torrent file");
-            emit torrentAddError();
-            return;
+    }
+
+    namespace {
+        std::optional<QByteArray> makeAddTorrentFileRequestData(
+            const QString& filePath,
+            const QString& downloadDirectory,
+            const std::vector<int>& unwantedFiles,
+            const std::vector<int>& highPriorityFiles,
+            const std::vector<int>& lowPriorityFiles,
+            TorrentData::Priority bandwidthPriority,
+            bool start
+        ) {
+            QString fileData{};
+            try {
+                QFile file(filePath);
+                openFile(file, QIODevice::ReadOnly);
+                fileData = readFileAsBase64String(file);
+            } catch (const QFileError& e) {
+                warning().logWithException(e, "addTorrentFile: failed to read torrent file");
+                return std::nullopt;
+            }
+            return RequestRouter::makeRequestData(
+                "torrent-add"_l1,
+                {{"metainfo"_l1, fileData},
+                 {"download-dir"_l1, downloadDirectory},
+                 {"files-unwanted"_l1, toJsonArray(unwantedFiles)},
+                 {"priority-high"_l1, toJsonArray(highPriorityFiles)},
+                 {"priority-low"_l1, toJsonArray(lowPriorityFiles)},
+                 {"bandwidthPriority"_l1, TorrentData::priorityToInt(bandwidthPriority)},
+                 {"paused"_l1, !start}}
+            );
         }
-        addTorrentFile(
-            std::move(file),
+    }
+
+    Coroutine<> Rpc::addTorrentFileImpl(
+        QString filePath,
+        QString downloadDirectory,
+        std::vector<int> unwantedFiles,
+        std::vector<int> highPriorityFiles,
+        std::vector<int> lowPriorityFiles,
+        std::map<QString, QString> renamedFiles,
+        TorrentData::Priority bandwidthPriority,
+        bool start
+    ) {
+        std::optional<QByteArray> requestData = co_await runOnThreadPool(
+            makeAddTorrentFileRequestData,
+            filePath,
             downloadDirectory,
-            unwantedFiles,
-            highPriorityFiles,
-            lowPriorityFiles,
-            renamedFiles,
+            std::move(unwantedFiles),
+            std::move(highPriorityFiles),
+            std::move(lowPriorityFiles),
             bandwidthPriority,
             start
         );
-    }
-
-    void Rpc::addTorrentFile(
-        std::shared_ptr<QFile> file,
-        const QString& downloadDirectory,
-        const std::vector<int>& unwantedFiles,
-        const std::vector<int>& highPriorityFiles,
-        const std::vector<int>& lowPriorityFiles,
-        const std::map<QString, QString>& renamedFiles,
-        TorrentData::Priority bandwidthPriority,
-        bool start
-    ) {
-        if (!isConnected()) {
-            return;
+        if (!requestData.has_value()) {
+            emit torrentAddError();
+            co_return;
         }
-        const auto future = QtConcurrent::run([=, this, file = std::move(file)]() -> std::optional<QByteArray> {
-            try {
-                return RequestRouter::makeRequestData(
-                    "torrent-add"_l1,
-                    {{"metainfo"_l1, readFileAsBase64String(*file)},
-                     {"download-dir"_l1, downloadDirectory},
-                     {"files-unwanted"_l1, toJsonArray(unwantedFiles)},
-                     {"priority-high"_l1, toJsonArray(highPriorityFiles)},
-                     {"priority-low"_l1, toJsonArray(lowPriorityFiles)},
-                     {"bandwidthPriority"_l1, TorrentData::priorityToInt(bandwidthPriority)},
-                     {"paused"_l1, !start}}
-                );
-            } catch (const QFileError& e) {
-                warning().logWithException(e, "addTorrentFile: failed to read torrent file");
-                emit torrentAddError();
-                return std::nullopt;
-            }
-        });
-        using Watcher = QFutureWatcher<std::optional<QByteArray>>;
-        auto watcher = new Watcher(this);
-        QObject::connect(watcher, &Watcher::finished, this, [=, this] {
-            std::optional<QByteArray> requestData = watcher->result();
-            watcher->deleteLater();
-            if (!requestData.has_value()) return;
-            if (!isConnected()) return;
-            mRequestRouter->postRequest(
-                "torrent-add"_l1,
-                requestData.value(),
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.arguments.contains(torrentDuplicateKey)) {
-                        emit torrentAddDuplicate();
-                    } else if (response.success) {
-                        if (!renamedFiles.empty()) {
-                            const auto torrentJson = response.arguments.value("torrent-added"_l1).toObject();
-                            const auto id = Torrent::idFromJson(torrentJson);
-                            if (id.has_value()) {
-                                for (const auto& [filePath, newName] : renamedFiles) {
-                                    renameTorrentFile(*id, filePath, newName);
-                                }
-                            }
-                        }
-                        updateData();
-                    } else {
-                        emit torrentAddError();
+        if (!isConnected()) co_return;
+        const auto response = co_await mRequestRouter->postRequest("torrent-add"_l1, std::move(requestData).value());
+        if (!response) co_return;
+        if (response->arguments.contains(torrentDuplicateKey)) {
+            emit torrentAddDuplicate();
+        } else if (response->success) {
+            if (!renamedFiles.empty()) {
+                const auto torrentJson = response->arguments.value("torrent-added"_l1).toObject();
+                const auto id = Torrent::idFromJson(torrentJson);
+                if (id.has_value()) {
+                    for (const auto& [filePathToRename, newName] : renamedFiles) {
+                        renameTorrentFile(*id, filePathToRename, newName);
                     }
                 }
-            );
-        });
-        watcher->setFuture(future);
+            }
+            mBackgroundRequestsCoroutineScope.launch(updateData());
+        } else {
+            emit torrentAddError();
+        }
     }
 
-    void Rpc::addTorrentLink(
-        const QString& link, const QString& downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
-    ) {
+    void
+    Rpc::addTorrentLink(QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start) {
         if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-add"_l1,
-                {{"filename"_l1, link},
-                 {"download-dir"_l1, downloadDirectory},
-                 {"bandwidthPriority"_l1, TorrentData::priorityToInt(bandwidthPriority)},
-                 {"paused"_l1, !start}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.arguments.contains(torrentDuplicateKey)) {
-                        emit torrentAddDuplicate();
-                    } else if (response.success) {
-                        updateData();
-                    } else {
-                        emit torrentAddError();
-                    }
-                }
+            mBackgroundRequestsCoroutineScope.launch(
+                addTorrentLinkImpl(std::move(link), std::move(downloadDirectory), bandwidthPriority, start)
             );
+        }
+    }
+
+    Coroutine<> Rpc::addTorrentLinkImpl(
+        QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+    ) {
+        QJsonObject arguments{
+            {"filename"_l1, link},
+            {"download-dir"_l1, downloadDirectory},
+            {"bandwidthPriority"_l1, TorrentData::priorityToInt(bandwidthPriority)},
+            {"paused"_l1, !start}
+        };
+        const auto response = co_await mRequestRouter->postRequest("torrent-add"_l1, std::move(arguments));
+        if (!response) co_return;
+        if (response->arguments.contains(torrentDuplicateKey)) {
+            emit torrentAddDuplicate();
+        } else if (response->success) {
+            mBackgroundRequestsCoroutineScope.launch(updateData());
+        } else {
+            emit torrentAddError();
         }
     }
 
     void Rpc::startTorrents(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-start"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("torrent-start"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::startTorrentsNow(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-start-now"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("torrent-start-now"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::pauseTorrents(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-stop"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("torrent-stop"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::removeTorrents(std::span<const int> ids, bool deleteFiles) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-remove"_l1,
-                {{"ids"_l1, toJsonArray(ids)}, {"delete-local-data"_l1, deleteFiles}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(
+            postRequest("torrent-remove"_l1, {{"ids"_l1, toJsonArray(ids)}, {"delete-local-data"_l1, deleteFiles}})
+        );
     }
 
     void Rpc::checkTorrents(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-verify"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("torrent-verify"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::moveTorrentsToTop(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "queue-move-top"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("queue-move-top"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::moveTorrentsUp(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "queue-move-up"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("queue-move-up"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::moveTorrentsDown(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "queue-move-down"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("queue-move-down"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::moveTorrentsToBottom(std::span<const int> ids) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "queue-move-bottom"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
+        mBackgroundRequestsCoroutineScope.launch(postRequest("queue-move-bottom"_l1, {{"ids"_l1, toJsonArray(ids)}}));
     }
 
     void Rpc::reannounceTorrents(std::span<const int> ids) {
+        mBackgroundRequestsCoroutineScope.launch(postRequest("torrent-reannounce"_l1, {{"ids"_l1, toJsonArray(ids)}}));
+    }
+
+    void Rpc::setSessionProperty(QString property, QJsonValue value) {
+        setSessionProperties({{property, std::move(value)}});
+    }
+
+    void Rpc::setSessionProperties(QJsonObject properties) {
+        mBackgroundRequestsCoroutineScope.launch(postRequest("session-set"_l1, std::move(properties), false));
+    }
+
+    void Rpc::setTorrentProperty(int id, QString property, QJsonValue value, bool updateIfSuccessful) {
+        mBackgroundRequestsCoroutineScope.launch(postRequest(
+            "torrent-set"_l1,
+            {{"ids"_l1, QJsonArray{id}}, {property, std::move(value)}},
+            updateIfSuccessful
+        ));
+    }
+
+    void Rpc::setTorrentsLocation(std::span<const int> ids, QString location, bool moveFiles) {
+        mBackgroundRequestsCoroutineScope.launch(postRequest(
+            "torrent-set-location"_l1,
+            {{"ids"_l1, toJsonArray(ids)}, {"location"_l1, location}, {"move"_l1, moveFiles}}
+        ));
+    }
+
+    void Rpc::getTorrentFiles(int torrentId) {
         if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-reannounce"_l1,
-                {{"ids"_l1, toJsonArray(ids)}},
-                RequestRouter::RequestType::Independent
-            );
+            mBackgroundRequestsCoroutineScope.launch(getTorrentsFiles({torrentId}));
         }
     }
 
-    void Rpc::setSessionProperty(const QString& property, const QJsonValue& value) {
-        setSessionProperties({{property, value}});
-    }
-
-    void Rpc::setSessionProperties(const QJsonObject& properties) {
-        if (isConnected()) {
-            mRequestRouter->postRequest("session-set"_l1, properties, RequestRouter::RequestType::Independent);
-        }
-    }
-
-    void Rpc::setTorrentProperty(int id, const QString& property, const QJsonValue& value, bool updateIfSuccessful) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-set"_l1,
-                {{"ids"_l1, QJsonArray{id}}, {property, value}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success && updateIfSuccessful) {
-                        updateData();
-                    }
-                }
-            );
-        }
-    }
-
-    void Rpc::setTorrentsLocation(std::span<const int> ids, const QString& location, bool moveFiles) {
-        if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-set-location"_l1,
-                {{"ids"_l1, toJsonArray(ids)}, {"location"_l1, location}, {"move"_l1, moveFiles}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        updateData();
-                    }
-                }
-            );
-        }
-    }
-
-    void Rpc::getTorrentsFiles(std::span<const int> ids, bool asDataUpdate) {
-        mRequestRouter->postRequest(
-            "torrent-get"_l1,
-            {{"fields"_l1, QJsonArray{"id"_l1, "files"_l1, "fileStats"_l1}}, {"ids"_l1, toJsonArray(ids)}},
-            asDataUpdate ? RequestRouter::RequestType::DataUpdate : RequestRouter::RequestType::Independent,
-            [=, this](const RequestRouter::Response& response) {
-                if (response.success) {
-                    const QJsonArray torrents(response.arguments.value(torrentsKey).toArray());
-                    for (const auto& torrentJson : torrents) {
-                        const auto object = torrentJson.toObject();
-                        const auto torrentId = Torrent::idFromJson(object);
-                        if (torrentId.has_value()) {
-                            Torrent* torrent = torrentById(*torrentId);
-                            if (torrent && torrent->isFilesEnabled()) {
-                                torrent->updateFiles(object);
-                            }
-                        }
-                    }
-                    if (asDataUpdate) {
-                        maybeFinishUpdateOrConnection();
-                    }
+    Coroutine<> Rpc::getTorrentsFiles(QJsonArray ids) {
+        QJsonObject arguments{
+            {"fields"_l1, QJsonArray{"id"_l1, "files"_l1, "fileStats"_l1}},
+            {"ids"_l1, std::move(ids)}
+        };
+        const auto response = co_await mRequestRouter->postRequest("torrent-get"_l1, std::move(arguments));
+        if (!response) co_return;
+        if (!response->success) co_return;
+        const QJsonArray torrents = response->arguments.value(torrentsKey).toArray();
+        for (const auto& torrentJson : torrents) {
+            const auto object = torrentJson.toObject();
+            const auto torrentId = Torrent::idFromJson(object);
+            if (torrentId.has_value()) {
+                Torrent* torrent = torrentById(*torrentId);
+                if (torrent && torrent->isFilesEnabled()) {
+                    torrent->updateFiles(object);
                 }
             }
-        );
+        }
     }
 
-    void Rpc::getTorrentsPeers(std::span<const int> ids, bool asDataUpdate) {
-        mRequestRouter->postRequest(
-            "torrent-get"_l1,
-            {{"fields"_l1, QJsonArray{"id"_l1, "peers"_l1}}, {"ids"_l1, toJsonArray(ids)}},
-            asDataUpdate ? RequestRouter::RequestType::DataUpdate : RequestRouter::RequestType::Independent,
-            [=, this](const RequestRouter::Response& response) {
-                if (response.success) {
-                    const QJsonArray torrents(response.arguments.value(torrentsKey).toArray());
-                    for (const auto& torrentJson : torrents) {
-                        const auto object = torrentJson.toObject();
-                        const auto torrentId = Torrent::idFromJson(object);
-                        if (torrentId.has_value()) {
-                            Torrent* torrent = torrentById(*torrentId);
-                            if (torrent && torrent->isPeersEnabled()) {
-                                torrent->updatePeers(object);
-                            }
-                        }
-                    }
-                    if (asDataUpdate) {
-                        maybeFinishUpdateOrConnection();
-                    }
+    void Rpc::getTorrentPeers(int torrentId) {
+        if (isConnected()) {
+            mBackgroundRequestsCoroutineScope.launch(getTorrentsFiles({torrentId}));
+        }
+    }
+
+    Coroutine<> Rpc::getTorrentsPeers(QJsonArray ids) {
+        QJsonObject arguments{{"fields"_l1, QJsonArray{"id"_l1, "peers"_l1}}, {"ids"_l1, std::move(ids)}};
+        const auto response = co_await mRequestRouter->postRequest("torrent-get"_l1, std::move(arguments));
+        if (!response) co_return;
+        if (!response->success) co_return;
+        const QJsonArray torrents = response->arguments.value(torrentsKey).toArray();
+        for (const auto& torrentJson : torrents) {
+            const auto object = torrentJson.toObject();
+            const auto torrentId = Torrent::idFromJson(object);
+            if (torrentId.has_value()) {
+                Torrent* torrent = torrentById(*torrentId);
+                if (torrent && torrent->isPeersEnabled()) {
+                    torrent->updatePeers(object);
                 }
             }
-        );
+        }
     }
 
-    void Rpc::renameTorrentFile(int torrentId, const QString& filePath, const QString& newName) {
+    void Rpc::renameTorrentFile(int torrentId, QString filePath, QString newName) {
         if (isConnected()) {
-            mRequestRouter->postRequest(
-                "torrent-rename-path"_l1,
-                {{"ids"_l1, QJsonArray{torrentId}}, {"path"_l1, filePath}, {"name"_l1, newName}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        Torrent* torrent = torrentById(torrentId);
-                        if (torrent) {
-                            const QString path(response.arguments.value("path"_l1).toString());
-                            const QString newName(response.arguments.value("name"_l1).toString());
-                            emit torrent->fileRenamed(path, newName);
-                            emit torrentFileRenamed(torrentId, path, newName);
-                            updateData();
-                        }
-                    }
-                }
+            mBackgroundRequestsCoroutineScope.launch(
+                renameTorrentFileImpl(torrentId, std::move(filePath), std::move(newName))
             );
+        }
+    }
+
+    Coroutine<> Rpc::renameTorrentFileImpl(int torrentId, QString filePath, QString newName) {
+        QJsonObject arguments = {{"ids"_l1, QJsonArray{torrentId}}, {"path"_l1, filePath}, {"name"_l1, newName}};
+        const auto response = co_await mRequestRouter->postRequest("torrent-rename-path"_l1, std::move(arguments));
+        if (response && response->success) {
+            Torrent* torrent = torrentById(torrentId);
+            if (torrent) {
+                const QString filePathFromReponse = response->arguments.value("path"_l1).toString();
+                const QString newNameFromReponse = response->arguments.value("name"_l1).toString();
+                emit torrent->fileRenamed(filePathFromReponse, newNameFromReponse);
+                emit torrentFileRenamed(torrentId, filePathFromReponse, newNameFromReponse);
+                mBackgroundRequestsCoroutineScope.launch(updateData());
+            }
         }
     }
 
     void Rpc::getDownloadDirFreeSpace() {
         if (isConnected()) {
-            mRequestRouter->postRequest(
-                "download-dir-free-space"_l1,
-                QByteArrayLiteral("{"
-                                  "\"arguments\":{"
-                                  "\"fields\":["
-                                  "\"download-dir-free-space\""
-                                  "]"
-                                  "},"
-                                  "\"method\":\"session-get\""
-                                  "}"),
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        emit gotDownloadDirFreeSpace(toInt64(response.arguments.value("download-dir-free-space"_l1)));
-                    }
-                }
-            );
+            mBackgroundRequestsCoroutineScope.launch(getDownloadDirFreeSpaceImpl());
         }
     }
 
-    void Rpc::getFreeSpaceForPath(const QString& path) {
+    Coroutine<> Rpc::getDownloadDirFreeSpaceImpl() {
+        const auto response = co_await mRequestRouter->postRequest(
+            "download-dir-free-space"_l1,
+            QByteArrayLiteral("{"
+                              "\"arguments\":{"
+                              "\"fields\":["
+                              "\"download-dir-free-space\""
+                              "]"
+                              "},"
+                              "\"method\":\"session-get\""
+                              "}")
+        );
+        if (response && response->success) {
+            emit gotDownloadDirFreeSpace(toInt64(response->arguments.value("download-dir-free-space"_l1)));
+        }
+    }
+
+    void Rpc::getFreeSpaceForPath(QString path) {
         if (isConnected()) {
-            mRequestRouter->postRequest(
-                "free-space"_l1,
-                {{"path"_l1, path}},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    emit gotFreeSpaceForPath(
-                        path,
-                        response.success,
-                        response.success ? toInt64(response.arguments.value("size-bytes"_l1)) : 0
-                    );
-                }
-            );
+            mBackgroundRequestsCoroutineScope.launch(getFreeSpaceForPathImpl(std::move(path)));
         }
     }
 
-    void Rpc::updateData() {
-        if (connectionState() != ConnectionState::Disconnected && !mUpdating) {
-            debug().log("Updating data");
-            mUpdateTimer->stop();
-            mUpdating = true;
-            if (isConnected()) {
-                getServerSettings();
-            }
-            getTorrents();
-            getServerStats();
-        } else {
-            warning().log(
-                "updateData: called in incorrect state, connectionState = {}, updating = {}",
-                connectionState(),
-                mUpdating
+    Coroutine<> Rpc::getFreeSpaceForPathImpl(QString path) {
+        QJsonObject arguments{{"path"_l1, path}};
+        const auto response = co_await mRequestRouter->postRequest("free-space"_l1, std::move(arguments));
+        if (response) {
+            emit gotFreeSpaceForPath(
+                path,
+                response->success,
+                response->success ? toInt64(response->arguments.value("size-bytes"_l1)) : 0
             );
         }
     }
 
     void Rpc::shutdownServer() {
         if (isConnected()) {
-            mRequestRouter->postRequest(
-                "session-close"_l1,
-                QJsonObject{},
-                RequestRouter::RequestType::Independent,
-                [=, this](const RequestRouter::Response& response) {
-                    if (response.success) {
-                        info().log("Successfully sent shutdown request, disconnecting");
-                        disconnect();
-                    }
-                }
-            );
+            mBackgroundRequestsCoroutineScope.launch(shutdownServerImpl());
+        }
+    }
+
+    Coroutine<> Rpc::shutdownServerImpl() {
+        const auto response = co_await mRequestRouter->postRequest("session-close"_l1, QJsonObject{});
+        if (response && response->success) {
+            info().log("Successfully sent shutdown request, disconnecting");
+            disconnect();
         }
     }
 
@@ -761,15 +586,9 @@ namespace tremotesf {
         case ConnectionState::Disconnected: {
             info().log("Disconnected");
 
-            mRequestRouter->cancelPendingRequestsAndClearSessionId();
-
-            mUpdating = false;
+            mBackgroundRequestsCoroutineScope.cancelAll();
+            mRequestRouter->abortNetworkRequestsAndClearSessionId();
             mServerIsLocal = std::nullopt;
-            if (mPendingHostInfoLookupId.has_value()) {
-                QHostInfo::abortHostLookup(*mPendingHostInfoLookupId);
-                mPendingHostInfoLookupId = std::nullopt;
-            }
-            mUpdateTimer->stop();
 
             if (!mTorrents.empty() && oldConnectionState == ConnectionState::Connected) {
                 removedTorrentsCount = mTorrents.size();
@@ -778,10 +597,15 @@ namespace tremotesf {
                 emit onRemovedTorrents(0, removedTorrentsCount);
             }
 
+            if (error() != RpcError::NoError && mAutoReconnectEnabled) {
+                mAutoReconnectCoroutineScope.launch(autoReconnect());
+            }
+
             break;
         }
         case ConnectionState::Connecting:
             info().log("Connecting");
+            mAutoReconnectCoroutineScope.cancelAll();
             break;
         case ConnectionState::Connected: {
             info().log("Connected");
@@ -813,33 +637,21 @@ namespace tremotesf {
         }
     }
 
-    void Rpc::getServerSettings() {
-        mRequestRouter->postRequest(
-            "session-get"_l1,
-            QByteArrayLiteral("{\"method\":\"session-get\"}"),
-            RequestRouter::RequestType::DataUpdate,
-            [=, this](const RequestRouter::Response& response) {
-                if (response.success) {
-                    mServerSettings->update(response.arguments);
-                    if (connectionState() == ConnectionState::Connecting) {
-                        if (mServerSettings->data().minimumRpcVersion > minimumRpcVersion) {
-                            setStatus(
-                                Status{.connectionState = ConnectionState::Disconnected, .error = Error::ServerIsTooNew}
-                            );
-                        } else if (mServerSettings->data().rpcVersion < minimumRpcVersion) {
-                            setStatus(
-                                Status{.connectionState = ConnectionState::Disconnected, .error = Error::ServerIsTooOld}
-                            );
-                        } else {
-                            updateData();
-                            checkIfServerIsLocal();
-                        }
-                    } else {
-                        maybeFinishUpdateOrConnection();
-                    }
-                }
+    Coroutine<> Rpc::postRequest(QLatin1String method, QJsonObject arguments, bool updateIfSuccessful) {
+        if (isConnected()) {
+            const auto response = co_await mRequestRouter->postRequest(method, std::move(arguments));
+            if (updateIfSuccessful && response && response->success) {
+                mBackgroundRequestsCoroutineScope.launch(updateData());
             }
-        );
+        }
+    }
+
+    Coroutine<> Rpc::getServerSettings() {
+        const auto response =
+            co_await mRequestRouter->postRequest("session-get"_l1, QByteArrayLiteral("{\"method\":\"session-get\"}"));
+        if (!response) co_return;
+        if (!response->success) co_return;
+        mServerSettings->update(response->arguments);
     }
 
     struct NewTorrent {
@@ -934,7 +746,7 @@ namespace tremotesf {
         Rpc& mRpc;
     };
 
-    void Rpc::getTorrents() {
+    Coroutine<> Rpc::getTorrents() {
         const QByteArray* requestData{};
         const bool tableMode = mServerSettings->data().hasTableMode();
         if (tableMode) {
@@ -949,176 +761,167 @@ namespace tremotesf {
             requestData = &objectsModeRequestData;
         }
 
-        mRequestRouter->postRequest(
-            "torrent-get"_l1,
-            *requestData,
-            RequestRouter::RequestType::DataUpdate,
-            [=, this](const RequestRouter::Response& response) {
-                if (!response.success) {
-                    return;
-                }
+        const auto response = co_await mRequestRouter->postRequest("torrent-get"_l1, *requestData);
+        if (!response) co_return;
+        if (!response->success) co_return;
 
-                TorrentsListUpdater updater(*this);
-                {
-                    const QJsonArray torrentsJsons = response.arguments.value("torrents"_l1).toArray();
-                    std::vector<NewTorrent> newTorrents{};
-                    if (tableMode) {
-                        if (!torrentsJsons.empty()) {
-                            const auto keys = Torrent::mapUpdateKeys(torrentsJsons.first().toArray());
-                            const auto idKeyIndex = Torrent::idKeyIndex(keys);
-                            if (idKeyIndex.has_value()) {
-                                newTorrents.reserve(static_cast<size_t>(torrentsJsons.size() - 1));
-                                for (const auto& json : torrentsJsons | std::views::drop(1)) {
-                                    const auto array = json.toArray();
-                                    if (static_cast<size_t>(array.size()) == keys.size()) {
-                                        newTorrents.push_back(NewTorrent{array[*idKeyIndex].toInt(), json});
-                                    }
-                                }
-                                updater.keys = &keys;
-                                updater.update(mTorrents, std::move(newTorrents));
+        TorrentsListUpdater updater(*this);
+        {
+            const QJsonArray torrentsJsons = response->arguments.value("torrents"_l1).toArray();
+            std::vector<NewTorrent> newTorrents{};
+            if (tableMode) {
+                if (!torrentsJsons.empty()) {
+                    const auto keys = Torrent::mapUpdateKeys(torrentsJsons.first().toArray());
+                    const auto idKeyIndex = Torrent::idKeyIndex(keys);
+                    if (idKeyIndex.has_value()) {
+                        newTorrents.reserve(static_cast<size_t>(torrentsJsons.size() - 1));
+                        for (const auto& json : torrentsJsons | std::views::drop(1)) {
+                            const auto array = json.toArray();
+                            if (static_cast<size_t>(array.size()) == keys.size()) {
+                                newTorrents.push_back(NewTorrent{array[*idKeyIndex].toInt(), json});
                             }
                         }
-                    } else {
-                        newTorrents.reserve(static_cast<size_t>(torrentsJsons.size()));
-                        for (const auto& torrentJson : torrentsJsons) {
-                            const auto id = Torrent::idFromJson(torrentJson.toObject());
-                            if (id.has_value()) {
-                                newTorrents.push_back(NewTorrent{*id, torrentJson});
-                            }
-                        }
+                        updater.keys = &keys;
                         updater.update(mTorrents, std::move(newTorrents));
                     }
                 }
-
-                if (!updater.metadataCompletedIds.empty()) {
-                    checkTorrentsSingleFile(updater.metadataCompletedIds);
-                }
-                std::vector<int> getFilesIds{};
-                std::vector<int> getPeersIds{};
-                for (const auto& torrent : mTorrents) {
-                    if (torrent->isFilesEnabled()) {
-                        getFilesIds.push_back(torrent->data().id);
-                    }
-                    if (torrent->isPeersEnabled()) {
-                        getPeersIds.push_back(torrent->data().id);
+            } else {
+                newTorrents.reserve(static_cast<size_t>(torrentsJsons.size()));
+                for (const auto& torrentJson : torrentsJsons) {
+                    const auto id = Torrent::idFromJson(torrentJson.toObject());
+                    if (id.has_value()) {
+                        newTorrents.push_back(NewTorrent{*id, torrentJson});
                     }
                 }
-                if (!getFilesIds.empty()) {
-                    getTorrentsFiles(getFilesIds, true);
-                }
-                if (!getPeersIds.empty()) {
-                    getTorrentsPeers(getPeersIds, true);
-                }
-
-                const bool wasConnecting = connectionState() == ConnectionState::Connecting;
-                maybeFinishUpdateOrConnection();
-                if (!wasConnecting) {
-                    emit torrentsUpdated(updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
-                }
+                updater.update(mTorrents, std::move(newTorrents));
             }
-        );
+        }
+
+        std::vector<Coroutine<>> additionalRequests{};
+        if (!updater.metadataCompletedIds.empty()) {
+            additionalRequests.push_back(checkTorrentsSingleFile(std::move(updater.metadataCompletedIds)));
+        }
+        QJsonArray getFilesIds{};
+        QJsonArray getPeersIds{};
+        for (const auto& torrent : mTorrents) {
+            if (torrent->isFilesEnabled()) {
+                getFilesIds.push_back(torrent->data().id);
+            }
+            if (torrent->isPeersEnabled()) {
+                getPeersIds.push_back(torrent->data().id);
+            }
+        }
+        if (!getFilesIds.empty()) {
+            additionalRequests.push_back(getTorrentsFiles(getFilesIds));
+        }
+        if (!getPeersIds.empty()) {
+            additionalRequests.push_back(getTorrentsPeers(getPeersIds));
+        }
+        if (!additionalRequests.empty()) {
+            co_await waitAll(std::move(additionalRequests));
+        }
+
+        const bool wasConnecting = connectionState() == ConnectionState::Connecting;
+        if (!wasConnecting) {
+            emit torrentsUpdated(updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
+        }
     }
 
-    void Rpc::checkTorrentsSingleFile(std::span<const int> torrentIds) {
-        mRequestRouter->postRequest(
-            "torrent-get"_l1,
-            {{"fields"_l1, QJsonArray{"id"_l1, "priorities"_l1}}, {"ids"_l1, toJsonArray(torrentIds)}},
-            RequestRouter::RequestType::DataUpdate,
-            [=, this](const RequestRouter::Response& response) {
-                if (response.success) {
-                    const auto torrentJsons = response.arguments.value(torrentsKey).toArray();
-                    for (const auto& torrentJson : torrentJsons) {
-                        const auto object = torrentJson.toObject();
-                        const auto torrentId = Torrent::idFromJson(object);
-                        if (torrentId.has_value()) {
-                            Torrent* torrent = torrentById(*torrentId);
-                            if (torrent) {
-                                torrent->checkSingleFile(object);
-                            }
-                        }
-                    }
-                    maybeFinishUpdateOrConnection();
+    Coroutine<> Rpc::checkTorrentsSingleFile(std::vector<int> torrentIds) {
+        QJsonObject arguments{{"fields"_l1, QJsonArray{"id"_l1, "priorities"_l1}}, {"ids"_l1, toJsonArray(torrentIds)}};
+        const auto response = co_await mRequestRouter->postRequest("torrent-get"_l1, std::move(arguments));
+        if (!response) co_return;
+        if (!response->success) co_return;
+        const auto torrentJsons = response->arguments.value(torrentsKey).toArray();
+        for (const auto& torrentJson : torrentJsons) {
+            const auto object = torrentJson.toObject();
+            const auto torrentId = Torrent::idFromJson(object);
+            if (torrentId.has_value()) {
+                Torrent* torrent = torrentById(*torrentId);
+                if (torrent) {
+                    torrent->checkSingleFile(object);
                 }
             }
-        );
+        }
     }
 
-    void Rpc::getServerStats() {
-        mRequestRouter->postRequest(
+    Coroutine<> Rpc::getServerStats() {
+        const auto response = co_await mRequestRouter->postRequest(
             "session-stats"_l1,
-            QByteArrayLiteral("{\"method\":\"session-stats\"}"),
-            RequestRouter::RequestType::DataUpdate,
-            [=, this](const RequestRouter::Response& response) {
-                if (response.success) {
-                    mServerStats->update(response.arguments);
-                    maybeFinishUpdateOrConnection();
-                }
-            }
+            QByteArrayLiteral("{\"method\":\"session-stats\"}")
         );
-    }
-
-    bool Rpc::checkIfUpdateCompleted() { return !mRequestRouter->hasPendingDataUpdateRequests(); }
-
-    bool Rpc::checkIfConnectionCompleted() { return checkIfUpdateCompleted() && mServerIsLocal.has_value(); }
-
-    void Rpc::maybeFinishUpdateOrConnection() {
-        const bool connecting = connectionState() == ConnectionState::Connecting;
-        if (!mUpdating && !connecting) return;
-        if (mUpdating) {
-            if (checkIfUpdateCompleted()) {
-                debug().log("Finished updating data");
-                mUpdating = false;
-            } else {
-                return;
-            }
-        }
-        if (connecting) {
-            if (checkIfConnectionCompleted()) {
-                setStatus(Status{.connectionState = ConnectionState::Connected});
-            } else {
-                return;
-            }
-        }
-        if (!mUpdateDisabled) {
-            mUpdateTimer->start();
+        if (response && response->success) {
+            mServerStats->update(response->arguments);
         }
     }
 
-    void Rpc::checkIfServerIsLocal() {
+    Coroutine<> Rpc::connectAndPerformDataUpdates() {
+        co_await getServerSettings();
+        if (mServerSettings->data().minimumRpcVersion > minimumRpcVersion) {
+            setStatus(Status{.connectionState = ConnectionState::Disconnected, .error = Error::ServerIsTooNew});
+            co_return;
+        }
+        if (mServerSettings->data().rpcVersion < minimumRpcVersion) {
+            setStatus(Status{.connectionState = ConnectionState::Disconnected, .error = Error::ServerIsTooOld});
+            co_return;
+        }
+        co_await waitAll(checkIfServerIsLocal(), getTorrents(), getServerStats());
+        setStatus(Status{.connectionState = ConnectionState::Connected});
+        while (true) {
+            co_await waitFor(mUpdateInterval);
+            co_await updateData();
+        }
+    }
+
+    Coroutine<> Rpc::updateData() {
+        debug().log("Updating data");
+        co_await waitAll(getServerSettings(), getTorrents(), getServerStats());
+        debug().log("Finished updating data");
+    }
+
+    Coroutine<> Rpc::checkIfServerIsLocal() {
         info().log("checkIfServerIsLocal() called");
         if (mServerSettings->data().hasSessionIdFile() && !mRequestRouter->sessionId().isEmpty() &&
             isTransmissionSessionIdFileExists(mRequestRouter->sessionId())) {
             mServerIsLocal = true;
             info().log("checkIfServerIsLocal: server is running locally: true");
-            return;
+            co_return;
         }
         const auto configuration = mRequestRouter->configuration();
         if (!configuration.has_value()) {
-            return;
+            co_return;
         }
         const auto host = configuration->serverUrl.host();
         if (auto localIp = isLocalIpAddress(host); localIp.has_value()) {
-            mServerIsLocal = *localIp;
+            mServerIsLocal = localIp;
             info().log("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
-            return;
+            co_return;
         }
         info().log("checkIfServerIsLocal: resolving IP address for host name {}", host);
-        mPendingHostInfoLookupId = QHostInfo::lookupHost(host, this, [=, this](const QHostInfo& hostInfo) {
-            info().log("checkIfServerIsLocal: resolved IP address for host name {}", host);
-            const auto addresses = hostInfo.addresses();
-            if (!addresses.isEmpty()) {
-                info().log("checkIfServerIsLocal: IP addresses:");
-                for (const auto& address : addresses) {
-                    info().log("checkIfServerIsLocal: - {}", address);
-                }
-                info().log("checkIfServerIsLocal: checking first address");
-                mServerIsLocal = isLocalIpAddress(addresses.first());
-            } else {
-                mServerIsLocal = false;
+        const QHostInfo hostInfo = co_await lookupHost(host);
+        info().log("checkIfServerIsLocal: resolved IP address for host name {}", host);
+        const auto addresses = hostInfo.addresses();
+        if (!addresses.isEmpty()) {
+            info().log("checkIfServerIsLocal: IP addresses:");
+            for (const auto& address : addresses) {
+                info().log("checkIfServerIsLocal: - {}", address);
             }
-            info().log("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
-            mPendingHostInfoLookupId = std::nullopt;
-            maybeFinishUpdateOrConnection();
-        });
+            info().log("checkIfServerIsLocal: checking first address");
+            mServerIsLocal = isLocalIpAddress(addresses.first());
+        } else {
+            mServerIsLocal = false;
+        }
+        info().log("checkIfServerIsLocal: server is running locally: {}", *mServerIsLocal);
+    }
+
+    void Rpc::onRequestFailed(RpcError error, const QString& errorMessage, const QString& detailedErrorMessage) {
+        setStatus({RpcConnectionState::Disconnected, error, errorMessage, detailedErrorMessage});
+    }
+
+    Coroutine<> Rpc::autoReconnect() {
+        info().log("Auto reconnecting in {} seconds", mAutoReconnectInterval.count());
+        co_await waitFor(mAutoReconnectInterval);
+        info().log("Auto reconnection");
+        connect();
     }
 }

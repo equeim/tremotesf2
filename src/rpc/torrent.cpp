@@ -536,7 +536,7 @@ namespace tremotesf {
         if (enabled != mFilesEnabled) {
             mFilesEnabled = enabled;
             if (mFilesEnabled) {
-                mRpc->getTorrentsFiles(std::array{mData.id}, false);
+                mRpc->getTorrentFiles(mData.id);
             } else {
                 mFiles.clear();
             }
@@ -571,7 +571,7 @@ namespace tremotesf {
         if (enabled != mPeersEnabled) {
             mPeersEnabled = enabled;
             if (mPeersEnabled) {
-                mRpc->getTorrentsPeers(std::array{mData.id}, false);
+                mRpc->getTorrentPeers(mData.id);
             } else {
                 mPeers.clear();
             }

@@ -13,13 +13,11 @@
 #include <QByteArray>
 #include <QObject>
 
+#include "coroutines/scope.h"
 #include "log/formatters.h"
 #include "serversettings.h"
 #include "serverstats.h"
 #include "torrent.h"
-
-class QFile;
-class QTimer;
 
 namespace tremotesf {
     Q_NAMESPACE
@@ -115,9 +113,6 @@ namespace tremotesf {
 
         int torrentsCount() const;
 
-        bool isUpdateDisabled() const;
-        void setUpdateDisabled(bool disabled);
-
         void setConnectionConfiguration(const ConnectionConfiguration& configuration);
         void resetConnectionConfiguration();
 
@@ -125,30 +120,18 @@ namespace tremotesf {
         void disconnect();
 
         void addTorrentFile(
-            const QString& filePath,
-            const QString& downloadDirectory,
-            const std::vector<int>& unwantedFiles,
-            const std::vector<int>& highPriorityFiles,
-            const std::vector<int>& lowPriorityFiles,
-            const std::map<QString, QString>& renamedFiles,
+            QString filePath,
+            QString downloadDirectory,
+            std::vector<int> unwantedFiles,
+            std::vector<int> highPriorityFiles,
+            std::vector<int> lowPriorityFiles,
+            std::map<QString, QString> renamedFiles,
             TorrentData::Priority bandwidthPriority,
             bool start
         );
 
-        void addTorrentFile(
-            std::shared_ptr<QFile> file,
-            const QString& downloadDirectory,
-            const std::vector<int>& unwantedFiles,
-            const std::vector<int>& highPriorityFiles,
-            const std::vector<int>& lowPriorityFiles,
-            const std::map<QString, QString>& renamedFiles,
-            TorrentData::Priority bandwidthPriority,
-            bool start
-        );
-
-        void addTorrentLink(
-            const QString& link, const QString& downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
-        );
+        void
+        addTorrentLink(QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start);
 
         void startTorrents(std::span<const int> ids);
         void startTorrentsNow(std::span<const int> ids);
@@ -162,20 +145,17 @@ namespace tremotesf {
 
         void reannounceTorrents(std::span<const int> ids);
 
-        void setSessionProperty(const QString& property, const QJsonValue& value);
-        void setSessionProperties(const QJsonObject& properties);
-        void
-        setTorrentProperty(int id, const QString& property, const QJsonValue& value, bool updateIfSuccessful = false);
-        void setTorrentsLocation(std::span<const int> ids, const QString& location, bool moveFiles);
-        void getTorrentsFiles(std::span<const int> ids, bool asDataUpdate);
-        void getTorrentsPeers(std::span<const int> ids, bool asDataUpdate);
+        void setSessionProperty(QString property, QJsonValue value);
+        void setSessionProperties(QJsonObject properties);
+        void setTorrentProperty(int id, QString property, QJsonValue value, bool updateIfSuccessful = false);
+        void setTorrentsLocation(std::span<const int> ids, QString location, bool moveFiles);
+        void getTorrentFiles(int torrentId);
+        void getTorrentPeers(int torrentId);
 
-        void renameTorrentFile(int torrentId, const QString& filePath, const QString& newName);
+        void renameTorrentFile(int torrentId, QString filePath, QString newName);
 
         void getDownloadDirFreeSpace();
-        void getFreeSpaceForPath(const QString& path);
-
-        void updateData();
+        void getFreeSpaceForPath(QString path);
 
         void shutdownServer();
 
@@ -184,33 +164,54 @@ namespace tremotesf {
         void resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount);
         void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState, size_t removedTorrentsCount);
 
-        void getServerSettings();
-        void getTorrents();
-        void checkTorrentsSingleFile(std::span<const int> torrentIds);
-        void getServerStats();
+        Coroutine<> postRequest(QLatin1String method, QJsonObject arguments, bool updateIfSuccessful = true);
 
-        bool checkIfUpdateCompleted();
-        bool checkIfConnectionCompleted();
-        void maybeFinishUpdateOrConnection();
+        Coroutine<> addTorrentFileImpl(
+            QString filePath,
+            QString downloadDirectory,
+            std::vector<int> unwantedFiles,
+            std::vector<int> highPriorityFiles,
+            std::vector<int> lowPriorityFiles,
+            std::map<QString, QString> renamedFiles,
+            TorrentData::Priority bandwidthPriority,
+            bool start
+        );
+        Coroutine<> addTorrentLinkImpl(
+            QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+        );
+        Coroutine<> getTorrentsFiles(QJsonArray ids);
+        Coroutine<> getTorrentsPeers(QJsonArray ids);
+        Coroutine<> renameTorrentFileImpl(int torrentId, QString filePath, QString newName);
+        Coroutine<> getDownloadDirFreeSpaceImpl();
+        Coroutine<> getFreeSpaceForPathImpl(QString path);
+        Coroutine<> shutdownServerImpl();
 
-        void checkIfServerIsLocal();
+        Coroutine<> getServerSettings();
+        Coroutine<> getTorrents();
+        Coroutine<> checkTorrentsSingleFile(std::vector<int> torrentIds);
+        Coroutine<> getServerStats();
+
+        Coroutine<> connectAndPerformDataUpdates();
+        Coroutine<> updateData();
+
+        Coroutine<> checkIfServerIsLocal();
+
+        void onRequestFailed(RpcError error, const QString& errorMessage, const QString& detailedErrorMessage);
+        Coroutine<> autoReconnect();
 
         impl::RequestRouter* mRequestRouter{};
-
-        bool mUpdateDisabled{};
-        bool mUpdating{};
+        CoroutineScope mBackgroundRequestsCoroutineScope{};
+        CoroutineScope mAutoReconnectCoroutineScope{};
 
         bool mAutoReconnectEnabled{};
 
         std::optional<bool> mServerIsLocal{};
-        std::optional<int> mPendingHostInfoLookupId{};
 
-        QTimer* mUpdateTimer{};
-        QTimer* mAutoReconnectTimer{};
+        std::chrono::seconds mUpdateInterval{};
+        std::chrono::seconds mAutoReconnectInterval{};
 
         ServerSettings* mServerSettings{};
-        // Don't use member initializer to workaround Android NDK bug (https://github.com/android/ndk/issues/1798)
-        std::vector<std::unique_ptr<Torrent>> mTorrents;
+        std::vector<std::unique_ptr<Torrent>> mTorrents{};
         ServerStats* mServerStats{};
 
         Status mStatus{};
@@ -252,8 +253,6 @@ namespace tremotesf {
 
         void gotDownloadDirFreeSpace(qint64 bytes);
         void gotFreeSpaceForPath(const QString& path, bool success, qint64 bytes);
-
-        void updateDisabledChanged();
     };
 }
 
