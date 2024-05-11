@@ -6,21 +6,21 @@
 #define TREMOTESF_RPC_REQUESTROUTER_H
 
 #include <chrono>
-#include <functional>
+#include <memory>
 #include <optional>
-#include <unordered_map>
-#include <unordered_set>
 
 #include <QJsonObject>
 #include <QList>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
 #include <QNetworkRequest>
+#include <QPointer>
 #include <QSslCertificate>
 #include <QSslKey>
 #include <QString>
 #include <QtContainerFwd>
 
+#include "coroutines/coroutines.h"
 #include "rpc.h"
 
 class QNetworkReply;
@@ -30,6 +30,9 @@ class QThreadPool;
 namespace tremotesf::impl {
     struct RpcRequestMetadata;
     struct NetworkRequestMetadata;
+
+    struct NetworkReplyDeleter;
+    using NetworkReplyUniquePtr = std::unique_ptr<QNetworkReply, NetworkReplyDeleter>;
 
     class RequestRouter final : public QObject {
         Q_OBJECT
@@ -51,8 +54,6 @@ namespace tremotesf::impl {
             QString password{};
         };
 
-        enum class RequestType { DataUpdate, Independent };
-
         const std::optional<RequestsConfiguration>& configuration() const { return mConfiguration; }
         void setConfiguration(RequestsConfiguration configuration);
         void resetConfiguration();
@@ -62,42 +63,25 @@ namespace tremotesf::impl {
             bool success{};
         };
 
-        void postRequest(
-            QLatin1String method,
-            const QJsonObject& arguments,
-            RequestType type,
-            std::function<void(Response)>&& onResponse = {}
-        );
+        Coroutine<std::optional<Response>> postRequest(QLatin1String method, QJsonObject arguments);
 
-        void postRequest(
-            QLatin1String method,
-            const QByteArray& data,
-            RequestType type,
-            std::function<void(Response)>&& onResponse = {}
-        );
+        Coroutine<std::optional<Response>> postRequest(QLatin1String method, QByteArray data);
 
         const QByteArray& sessionId() const { return mSessionId; };
 
-        bool hasPendingDataUpdateRequests() const;
-        void cancelPendingRequestsAndClearSessionId();
+        void abortNetworkRequestsAndClearSessionId();
 
-        static QByteArray makeRequestData(const QString& method, const QJsonObject& arguments);
+        static QByteArray makeRequestData(QLatin1String method, QJsonObject arguments);
 
     private:
-        void postRequest(QNetworkRequest request, const NetworkRequestMetadata& metadata);
-
-        bool retryRequest(const QNetworkRequest& request, NetworkRequestMetadata metadata);
-
-        void onRequestFinished(QNetworkReply* reply, const QList<QSslError>& sslErrors);
-        void onRequestSuccess(QNetworkReply* reply, const RpcRequestMetadata& metadata);
-        void
-        onRequestError(QNetworkReply* reply, const QList<QSslError>& sslErrors, const NetworkRequestMetadata& metadata);
-        static QString makeDetailedErrorMessage(QNetworkReply* reply, const QList<QSslError>& sslErrors);
+        Coroutine<std::optional<Response>> performRequest(QNetworkRequest request, NetworkRequestMetadata metadata);
+        Coroutine<std::optional<Response>> onRequestSuccess(NetworkReplyUniquePtr reply, RpcRequestMetadata metadata);
+        Coroutine<std::optional<Response>>
+        onRequestError(NetworkReplyUniquePtr reply, QList<QSslError> sslErrors, NetworkRequestMetadata metadata);
 
         QNetworkAccessManager* mNetwork{};
         QThreadPool* mThreadPool{};
-        std::unordered_set<QNetworkReply*> mPendingNetworkRequests{};
-        std::unordered_set<QObject*> mPendingParseFutures{};
+
         QByteArray mSessionId{};
         QByteArray mAuthorizationHeaderValue{};
 

@@ -55,10 +55,13 @@ add_library(
     windowshelpers.h
     macoshelpers.h
 
+    coroutines/hostinfo.h
     coroutines/coroutines.cpp
     coroutines/coroutines.h
     coroutines/scope.h
     coroutines/scope.cpp
+    coroutines/network.h
+    coroutines/timer.h
     coroutines/threadpool.h
     coroutines/waitall.h
     coroutines/waitall.cpp
