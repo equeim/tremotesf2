@@ -5,11 +5,10 @@
 #include "torrentfilesmodel.h"
 
 #include <QApplication>
-#include <QFutureWatcher>
 #include <QStringBuilder>
 #include <QStyle>
-#include <QtConcurrentRun>
 
+#include "coroutines/threadpool.h"
 #include "log/log.h"
 #include "rpc/mounteddirectoriesutils.h"
 #include "rpc/torrent.h"
@@ -52,9 +51,6 @@ namespace tremotesf {
             ids.erase(toErase.begin(), toErase.end());
             return ids;
         }
-
-        using FutureWatcher =
-            QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
 
         std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
         doCreateTree(const std::vector<TorrentFile>& files) {
@@ -200,36 +196,30 @@ namespace tremotesf {
         if (mLoaded) {
             updateTree(changed);
         } else {
-            createTree();
+            mCoroutineScope.launch(createTree());
         }
     }
 
-    void TorrentFilesModel::createTree() {
+    Coroutine<> TorrentFilesModel::createTree() {
         if (mCreatingTree) {
-            return;
+            co_return;
         }
 
         mCreatingTree = true;
         beginResetModel();
 
-        const auto future =
-            QtConcurrent::run([files = std::vector(mTorrent->files())]() { return doCreateTree(files); });
+        auto self = QPointer(this);
 
-        auto watcher = new FutureWatcher(this);
-        QObject::connect(watcher, &FutureWatcher::finished, this, [=, this] {
-            auto [rootDirectory, files] = watcher->result();
+        auto [rootDirectory, files] =
+            co_await runOnThreadPool([files = std::vector(mTorrent->files())]() { return doCreateTree(files); });
 
-            mRootDirectory = std::move(rootDirectory);
-            endResetModel();
+        mRootDirectory = std::move(rootDirectory);
+        endResetModel();
 
-            mFiles = std::move(files);
+        mFiles = std::move(files);
 
-            setLoaded(true);
-            mCreatingTree = false;
-
-            watcher->deleteLater();
-        });
-        watcher->setFuture(future);
+        setLoaded(true);
+        mCreatingTree = false;
     }
 
     void TorrentFilesModel::resetTree() {
