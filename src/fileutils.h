@@ -27,7 +27,6 @@ namespace tremotesf {
     };
 
     void openFile(QFile& file, QIODevice::OpenMode mode);
-    void openFileFromFd(QFile& file, int fd, QIODevice::OpenMode mode);
 
     void readBytes(QFile& file, std::span<char> buffer);
     void skipBytes(QFile& file, qint64 bytes);

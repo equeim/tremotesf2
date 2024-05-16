@@ -133,12 +133,6 @@ namespace tremotesf {
         }
     }
 
-    void openFileFromFd(QFile& file, int fd, QIODevice::OpenMode mode) {
-        if (!file.open(fd, mode)) {
-            throw QFileError(fmt::format("Failed to open file from handle={}: {}", fd, errorDescription(file)));
-        }
-    }
-
     void readBytes(QFile& file, std::span<char> buffer) {
         const auto result = readWholeBufferOrUntilEndOfFile(file, buffer);
         if (std::holds_alternative<ReadUntilEndOfFile>(result)) {
