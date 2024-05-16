@@ -6,14 +6,13 @@
 #define TREMOTESF_BENCODEPARSER_H
 
 #include <cstdint>
-#include <list>
 #include <map>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <variant>
+#include <vector>
 
 #include <QString>
 
@@ -24,7 +23,7 @@ namespace tremotesf::bencode {
 
     using Integer = int64_t;
     using ByteArray = std::string;
-    using List = std::list<Value>;
+    using List = std::vector<Value>;
     struct DictionaryComparator {
         using is_transparent = void;
         inline bool operator()(const ByteArray& key1, const ByteArray& key2) const { return key1 < key2; }

@@ -6,15 +6,11 @@
 
 #include <array>
 #include <charconv>
-#include <cinttypes>
 #include <limits>
-#include <system_error>
 
 #include <QFile>
-#include <QString>
 
 #include "fileutils.h"
-#include "log/formatters.h"
 
 namespace tremotesf::bencode {
     namespace {
@@ -110,7 +106,9 @@ namespace tremotesf::bencode {
             }
 
             List parseList() {
-                return parseContainer<List>([&](List& list) { list.push_back(parseValue()); });
+                auto list = parseContainer<List>([&](List& list) { list.push_back(parseValue()); });
+                list.shrink_to_fit();
+                return list;
             }
 
             template<std::default_initializable Container, std::invocable<Container&> ParseNextElement>
