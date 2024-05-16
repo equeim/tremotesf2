@@ -20,7 +20,7 @@
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QJsonValue)
 
-namespace tremotesf::impl {
+namespace tremotesf {
     template<typename T>
     concept EnumConstant = std::is_enum_v<T>;
 

@@ -27,9 +27,11 @@ class QNetworkReply;
 class QSslError;
 class QThreadPool;
 
-namespace tremotesf::impl {
-    struct RpcRequestMetadata;
-    struct NetworkRequestMetadata;
+namespace tremotesf {
+    namespace impl {
+        struct RpcRequestMetadata;
+        struct NetworkRequestMetadata;
+    }
 
     class RequestRouter final : public QObject {
         Q_OBJECT
@@ -84,14 +86,15 @@ namespace tremotesf::impl {
         static QByteArray makeRequestData(const QString& method, const QJsonObject& arguments);
 
     private:
-        void postRequest(QNetworkRequest request, const NetworkRequestMetadata& metadata);
+        void postRequest(QNetworkRequest request, const impl::NetworkRequestMetadata& metadata);
 
-        bool retryRequest(const QNetworkRequest& request, NetworkRequestMetadata metadata);
+        bool retryRequest(const QNetworkRequest& request, impl::NetworkRequestMetadata metadata);
 
         void onRequestFinished(QNetworkReply* reply, const QList<QSslError>& sslErrors);
-        void onRequestSuccess(QNetworkReply* reply, const RpcRequestMetadata& metadata);
-        void
-        onRequestError(QNetworkReply* reply, const QList<QSslError>& sslErrors, const NetworkRequestMetadata& metadata);
+        void onRequestSuccess(QNetworkReply* reply, const impl::RpcRequestMetadata& metadata);
+        void onRequestError(
+            QNetworkReply* reply, const QList<QSslError>& sslErrors, const impl::NetworkRequestMetadata& metadata
+        );
         static QString makeDetailedErrorMessage(QNetworkReply* reply, const QList<QSslError>& sslErrors);
 
         QNetworkAccessManager* mNetwork{};

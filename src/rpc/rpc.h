@@ -24,9 +24,7 @@ class QTimer;
 namespace tremotesf {
     Q_NAMESPACE
 
-    namespace impl {
-        class RequestRouter;
-    }
+    class RequestRouter;
 
     struct ConnectionConfiguration {
         Q_GADGET
@@ -195,7 +193,7 @@ namespace tremotesf {
 
         void checkIfServerIsLocal();
 
-        impl::RequestRouter* mRequestRouter{};
+        RequestRouter* mRequestRouter{};
 
         bool mUpdateDisabled{};
         bool mUpdating{};

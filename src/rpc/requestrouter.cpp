@@ -85,7 +85,7 @@ namespace fmt {
     };
 }
 
-namespace tremotesf::impl {
+namespace tremotesf {
     namespace {
         const auto sessionIdHeader = QByteArrayLiteral("X-Transmission-Session-Id");
         const auto authorizationHeader = QByteArrayLiteral("Authorization");
@@ -103,17 +103,22 @@ namespace tremotesf::impl {
         using ParseFutureWatcher = QFutureWatcher<std::optional<QJsonObject>>;
     }
 
-    struct RpcRequestMetadata {
-        QLatin1String method{};
-        RequestRouter::RequestType type{};
-        std::function<void(RequestRouter::Response)> onResponse{};
-    };
+    namespace impl {
+        struct RpcRequestMetadata {
+            QLatin1String method{};
+            RequestRouter::RequestType type{};
+            std::function<void(RequestRouter::Response)> onResponse{};
+        };
 
-    struct NetworkRequestMetadata {
-        QByteArray postData{};
-        int retryAttempts{};
-        RpcRequestMetadata rpcMetadata{};
-    };
+        struct NetworkRequestMetadata {
+            QByteArray postData{};
+            int retryAttempts{};
+            RpcRequestMetadata rpcMetadata{};
+        };
+    }
+
+    using impl::NetworkRequestMetadata;
+    using impl::RpcRequestMetadata;
 
     RequestRouter::RequestRouter(QThreadPool* threadPool, QObject* parent)
         : QObject(parent),

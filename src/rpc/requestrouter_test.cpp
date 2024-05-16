@@ -27,7 +27,6 @@ using namespace std::chrono;
 using namespace std::chrono_literals;
 using namespace std::string_literals;
 using namespace tremotesf;
-using namespace tremotesf::impl;
 
 // NOLINTBEGIN(bugprone-unchecked-optional-access, cppcoreguidelines-avoid-do-while)
 

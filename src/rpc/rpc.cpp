@@ -30,8 +30,6 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QHostAddress)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf {
-    using namespace impl;
-
     namespace {
         // Transmission 2.40+
         constexpr int minimumRpcVersion = 14;
@@ -39,8 +37,6 @@ namespace tremotesf {
         constexpr auto torrentsKey = "torrents"_l1;
         constexpr auto torrentDuplicateKey = "torrent-duplicate"_l1;
     }
-
-    using namespace impl;
 
     QString Rpc::Status::toString() const {
         switch (connectionState) {
