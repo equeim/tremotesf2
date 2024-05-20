@@ -76,9 +76,6 @@ namespace tremotesf {
                 const auto torrentDirectoryName = takeDictValue<QString>(infoMap, nameKey, infoKey);
 
                 auto* torrentDirectory = rootDirectory->addDirectory(torrentDirectoryName);
-
-                const auto filesCount = filesList->size();
-                files.reserve(filesCount);
                 int fileIndex = -1;
                 for (auto& fileValue : *filesList) {
                     ++fileIndex;
@@ -106,7 +103,7 @@ namespace tremotesf {
                             throw bencode::Error(
                                 bencode::Error::Type::Parsing,
                                 fmt::format(
-                                    "Path element at index {} for file at index is not a string",
+                                    "Path element at index {} for file at index {} is not a string",
                                     partIndex,
                                     fileIndex
                                 )
@@ -115,31 +112,41 @@ namespace tremotesf {
 
                         if (partIndex == lastPartIndex) {
                             const auto length = takeDictValue<bencode::Integer>(*fileMap, lengthKey, filesKey);
-
-                            auto* childFile = currentDirectory->addFile(fileIndex, *part, length);
-                            childFile->setWanted(true);
-                            childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
-                            childFile->setChanged(false);
-                            files.push_back(childFile);
+                            currentDirectory->addFile(TorrentFilesModelFile(
+                                fileIndex,
+                                currentDirectory->childrenCount(),
+                                currentDirectory,
+                                *part,
+                                length
+                            ));
                         } else {
-                            const auto& childrenHash = currentDirectory->childrenHash();
-                            const auto found = childrenHash.find(*part);
-                            if (found != childrenHash.end()) {
-                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
+                            auto* childForName = currentDirectory->childForName(*part);
+                            if (childForName) {
+                                if (childForName->isDirectory()) {
+                                    currentDirectory = static_cast<TorrentFilesModelDirectory*>(childForName);
+                                } else {
+                                    throw bencode::Error(
+                                        bencode::Error::Type::Parsing,
+                                        fmt::format(
+                                            "Path element at index {} for file at index {} was already added as a file",
+                                            partIndex,
+                                            fileIndex
+                                        )
+                                    );
+                                }
                             } else {
                                 currentDirectory = currentDirectory->addDirectory(*part);
                             }
                         }
                     }
                 }
+                files.reserve(filesList->size());
+                torrentDirectory->initiallyCalculateFromAllChildrenRecursively(files);
             } else {
                 const auto name = takeDictValue<QString>(infoMap, nameKey, infoKey);
                 const auto length = takeDictValue<bencode::Integer>(infoMap, lengthKey, infoKey);
-                auto* file = rootDirectory->addFile(0, name, length);
-                file->setWanted(true);
-                file->setPriority(TorrentFilesModelEntry::NormalPriority);
-                file->setChanged(false);
-                files.push_back(file);
+                rootDirectory->addFile(TorrentFilesModelFile(0, 0, rootDirectory.get(), name, length));
+                files.push_back(static_cast<TorrentFilesModelFile*>(rootDirectory->childAtRow(0)));
             }
 
             return {std::move(rootDirectory), std::move(files)};
@@ -157,8 +164,22 @@ namespace tremotesf {
 
         const auto future = QtConcurrent::run([filePath]() -> FutureResult {
             try {
-                auto bencodeParseResult = bencode::parse(filePath);
-                return createTree(std::move(bencodeParseResult));
+                CreateTreeResult tree;
+                static constexpr int iterations = 1;
+                qint64 parseTime{};
+                qint64 treeTime{};
+                QElapsedTimer timer{};
+                timer.start();
+                for (int i = 0; i < iterations; ++i) {
+                    auto bencodeParseResult = bencode::parse(filePath);
+                    parseTime += timer.restart();
+                    tree = createTree(std::move(bencodeParseResult));
+                    treeTime += timer.restart();
+                }
+                info().log("Parsed bencode in {} ms", parseTime / iterations);
+                info().log("Created tree in {} ms", treeTime / iterations);
+                info().log("Total time is {} ms", (parseTime + treeTime) / iterations);
+                return tree;
             } catch (const bencode::Error& e) {
                 warning().logWithException(e, "Failed to parse torrent file {}", filePath);
                 return e.type();
@@ -203,7 +224,7 @@ namespace tremotesf {
     std::vector<int> LocalTorrentFilesModel::unwantedFiles() const {
         std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->wantedState() == TorrentFilesModelEntry::Unwanted) {
+            if (file->wantedState() == TorrentFilesModelEntry::WantedState::Unwanted) {
                 files.push_back(file->id());
             }
         }
@@ -213,7 +234,7 @@ namespace tremotesf {
     std::vector<int> LocalTorrentFilesModel::highPriorityFiles() const {
         std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::HighPriority) {
+            if (file->priority() == TorrentFilesModelEntry::Priority::High) {
                 files.push_back(file->id());
             }
         }
@@ -223,7 +244,7 @@ namespace tremotesf {
     std::vector<int> LocalTorrentFilesModel::lowPriorityFiles() const {
         std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::LowPriority) {
+            if (file->priority() == TorrentFilesModelEntry::Priority::Low) {
                 files.push_back(file->id());
             }
         }

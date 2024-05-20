@@ -7,9 +7,11 @@
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
+#include <variant>
 
 #include <QObject>
+
+#include <boost/container/flat_map.hpp>
 
 #include "rpc/torrentfile.h"
 
@@ -19,113 +21,117 @@ namespace tremotesf {
     class TorrentFilesModelEntry {
         Q_GADGET
     public:
-        enum WantedState { Wanted, Unwanted, MixedWanted };
+        enum class WantedState : char { Wanted, Unwanted, Mixed };
         Q_ENUM(WantedState)
 
-        enum Priority { LowPriority, NormalPriority, HighPriority, MixedPriority };
+        enum class Priority : char { Low, Normal, High, Mixed };
         Q_ENUM(Priority)
 
         static Priority fromFilePriority(TorrentFile::Priority priority);
         static TorrentFile::Priority toFilePriority(Priority priority);
 
         TorrentFilesModelEntry() = default;
-        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, QString name);
+        explicit TorrentFilesModelEntry(
+            int row,
+            TorrentFilesModelDirectory* parentDirectory,
+            const QString& name,
+            long long size = 0,
+            long long completedSize = 0,
+            WantedState wantedState = WantedState::Wanted,
+            Priority priority = Priority::Normal
+        );
         virtual ~TorrentFilesModelEntry() = default;
-        Q_DISABLE_COPY_MOVE(TorrentFilesModelEntry)
 
-        int row() const;
-        TorrentFilesModelDirectory* parentDirectory() const;
+        inline int row() const { return mRow; };
+        inline TorrentFilesModelDirectory* parentDirectory() const { return mParentDirectory; };
 
-        QString name() const;
+        inline QString name() const { return mName; };
         void setName(const QString& name);
 
         QString path() const;
 
         virtual bool isDirectory() const = 0;
 
-        virtual long long size() const = 0;
-        virtual long long completedSize() const = 0;
-        virtual double progress() const = 0;
+        inline long long size() const { return mSize; };
+        inline long long completedSize() const { return mCompletedSize; };
+        void setCompletedSize(long long completedSize);
+        inline double progress() const { return static_cast<double>(mCompletedSize) / static_cast<double>(mSize); };
 
-        virtual WantedState wantedState() const = 0;
-        virtual void setWanted(bool wanted) = 0;
+        inline WantedState wantedState() const { return mWantedState; };
+        virtual void setWanted(bool wanted);
 
-        virtual Priority priority() const = 0;
+        inline Priority priority() const { return mPriority; };
         QString priorityString() const;
-        virtual void setPriority(Priority priority) = 0;
+        virtual void setPriority(Priority priority);
 
-        virtual bool isChanged() const = 0;
+        inline bool consumeChangedMark() { return std::exchange(mChangedMark, false); };
 
-    private:
-        int mRow = 0;
-        TorrentFilesModelDirectory* mParentDirectory = nullptr;
-        QString mName;
-    };
-
-    class TorrentFilesModelFile;
-
-    class TorrentFilesModelDirectory final : public TorrentFilesModelEntry {
-    public:
-        TorrentFilesModelDirectory() = default;
-        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
-
-        bool isDirectory() const override;
-        long long size() const override;
-        long long completedSize() const override;
-        double progress() const override;
-        WantedState wantedState() const override;
-        void setWanted(bool wanted) override;
-        Priority priority() const override;
-        void setPriority(Priority priority) override;
-
-        const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const;
-        const std::unordered_map<QString, TorrentFilesModelEntry*>& childrenHash() const;
-
-        TorrentFilesModelFile* addFile(int id, const QString& name, long long size);
-        TorrentFilesModelDirectory* addDirectory(const QString& name);
-
-        void clearChildren();
-        std::vector<int> childrenIds() const;
-
-        bool isChanged() const override;
-
-    private:
-        void addChild(std::unique_ptr<TorrentFilesModelEntry>&& child);
-
-        std::vector<std::unique_ptr<TorrentFilesModelEntry>> mChildren;
-        std::unordered_map<QString, TorrentFilesModelEntry*> mChildrenHash;
+    protected:
+        TorrentFilesModelDirectory* mParentDirectory{};
+        QString mName{};
+        long long mSize{};
+        long long mCompletedSize{};
+        WantedState mWantedState{WantedState::Wanted};
+        Priority mPriority{Priority::Normal};
+        bool mChangedMark{};
+        int mRow{};
     };
 
     class TorrentFilesModelFile final : public TorrentFilesModelEntry {
     public:
         explicit TorrentFilesModelFile(
-            int row, TorrentFilesModelDirectory* parentDirectory, int id, const QString& name, long long size
-        );
+            int id,
+            int row,
+            TorrentFilesModelDirectory* parentDirectory,
+            const QString& name,
+            long long size,
+            long long completedSize = 0,
+            WantedState wantedState = WantedState::Wanted,
+            Priority priority = Priority::Normal
+        )
+            : TorrentFilesModelEntry(row, parentDirectory, name, size, completedSize, wantedState, priority), mId(id) {}
 
-        bool isDirectory() const override;
-        long long size() const override;
-        long long completedSize() const override;
-        double progress() const override;
-        WantedState wantedState() const override;
-        void setWanted(bool wanted) override;
-        Priority priority() const override;
-        void setPriority(Priority priority) override;
-
-        bool isChanged() const override;
-        void setChanged(bool changed);
-
-        int id() const;
-        void setSize(long long size);
-        void setCompletedSize(long long completedSize);
+        inline bool isDirectory() const override { return false; };
+        inline int id() const { return mId; };
 
     private:
-        long long mSize;
-        long long mCompletedSize;
-        WantedState mWantedState;
-        Priority mPriority;
-        int mId;
+        int mId{};
+    };
 
-        bool mChanged;
+    class TorrentFilesModelDirectory final : public TorrentFilesModelEntry {
+    public:
+        inline TorrentFilesModelDirectory() = default;
+        inline explicit TorrentFilesModelDirectory(
+            int row, TorrentFilesModelDirectory* parentDirectory, const QString& name
+        )
+            : TorrentFilesModelEntry(row, parentDirectory, name) {};
+
+        Q_DISABLE_COPY(TorrentFilesModelDirectory)
+
+        using Child = std::variant<TorrentFilesModelFile, std::unique_ptr<TorrentFilesModelDirectory>>;
+        using Children = boost::container::flat_map<QString, Child>;
+
+        inline bool isDirectory() const override { return true; };
+
+        void setWanted(bool wanted) override;
+        void setPriority(Priority priority) override;
+
+        inline int childrenCount() const { return static_cast<int>(mChildren.size()); }
+        TorrentFilesModelEntry* childAtRow(int row);
+        TorrentFilesModelEntry* childForName(const QString& name);
+
+        void addFile(TorrentFilesModelFile&& file);
+        TorrentFilesModelDirectory* addDirectory(const QString& name);
+
+        std::vector<int> childrenIds() const;
+
+        void initiallyCalculateFromAllChildrenRecursively(std::vector<TorrentFilesModelFile*>& files);
+        void recalculateFromChildren();
+
+        void forEachChild(std::function<void(TorrentFilesModelEntry*)>&& func);
+
+    private:
+        Children mChildren;
     };
 }
 

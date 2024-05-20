@@ -27,7 +27,7 @@ namespace tremotesf {
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
-        QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
+        QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override;
         QModelIndex parent(const QModelIndex& child) const override;
         int rowCount(const QModelIndex& parent = {}) const override;
 
@@ -40,7 +40,10 @@ namespace tremotesf {
         void fileRenamed(TorrentFilesModelEntry* entry, const QString& newName);
 
     protected:
-        void updateDirectoryChildren(const QModelIndex& parent = QModelIndex());
+        void addParentDirectoriesToRecalculateList(
+            TorrentFilesModelEntry* entry, std::vector<TorrentFilesModelDirectory*>& directoriesToRecalculate
+        );
+        void emitDataChangedForChildren(const QModelIndex& parent = {});
 
         std::shared_ptr<TorrentFilesModelDirectory> mRootDirectory;
 

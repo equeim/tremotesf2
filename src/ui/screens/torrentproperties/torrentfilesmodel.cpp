@@ -4,6 +4,8 @@
 
 #include "torrentfilesmodel.h"
 
+#include <algorithm>
+
 #include <QApplication>
 #include <QFutureWatcher>
 #include <QStringBuilder>
@@ -19,7 +21,6 @@
 namespace tremotesf {
     namespace {
         void updateFile(TorrentFilesModelFile* treeFile, const TorrentFile& file) {
-            treeFile->setChanged(false);
             treeFile->setCompletedSize(file.completedSize);
             treeFile->setWanted(file.wanted);
             treeFile->setPriority(TorrentFilesModelEntry::fromFilePriority(file.priority));
@@ -53,21 +54,21 @@ namespace tremotesf {
             return ids;
         }
 
-        using FutureWatcher =
-            QFutureWatcher<std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>>;
+        struct CreateTreeResult {
+            std::shared_ptr<TorrentFilesModelDirectory> rootDirectory;
+            std::vector<TorrentFilesModelFile*> files;
+        };
 
-        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
-        doCreateTree(const std::vector<TorrentFile>& files) {
+        CreateTreeResult doCreateTree(const std::vector<TorrentFile>& files) {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
-            std::vector<TorrentFilesModelFile*> treeFiles;
-            treeFiles.reserve(files.size());
+            std::vector<TorrentFilesModelFile*> treeFiles{};
 
             for (size_t fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
                 const TorrentFile& file = files[fileIndex];
 
                 TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
 
-                const std::vector<QString> parts(file.path);
+                const std::vector<QString>& parts = file.path;
 
                 for (size_t partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1;
                      partIndex < partsCount;
@@ -75,15 +76,29 @@ namespace tremotesf {
                     const QString& part = parts[partIndex];
 
                     if (partIndex == lastPartIndex) {
-                        auto* childFile = currentDirectory->addFile(static_cast<int>(fileIndex), part, file.size);
-                        updateFile(childFile, file);
-                        childFile->setChanged(false);
-                        treeFiles.push_back(childFile);
+                        currentDirectory->addFile(TorrentFilesModelFile(
+                            static_cast<int>(fileIndex),
+                            currentDirectory->childrenCount(),
+                            currentDirectory,
+                            part,
+                            file.size,
+                            file.completedSize,
+                            file.wanted ? TorrentFilesModelEntry::WantedState::Wanted
+                                        : TorrentFilesModelEntry::WantedState::Unwanted,
+                            TorrentFilesModelEntry::fromFilePriority(file.priority)
+                        ));
                     } else {
-                        const auto& childrenHash = currentDirectory->childrenHash();
-                        const auto found = childrenHash.find(part);
-                        if (found != childrenHash.end()) {
-                            currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
+                        auto* childForName = currentDirectory->childForName(part);
+                        if (childForName) {
+                            if (childForName->isDirectory()) {
+                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(childForName);
+                            } else {
+                                throw std::runtime_error(fmt::format(
+                                    "Path element at index {} for file at index {} was already added as a file",
+                                    partIndex,
+                                    fileIndex
+                                ));
+                            }
                         } else {
                             currentDirectory = currentDirectory->addDirectory(part);
                         }
@@ -91,8 +106,20 @@ namespace tremotesf {
                 }
             }
 
+            if (rootDirectory->childrenCount() != 0) {
+                auto* child = rootDirectory->childAtRow(0);
+                if (child->isDirectory()) {
+                    treeFiles.reserve(files.size());
+                    static_cast<TorrentFilesModelDirectory*>(child)->initiallyCalculateFromAllChildrenRecursively(
+                        treeFiles
+                    );
+                }
+            }
+
             return {std::move(rootDirectory), std::move(treeFiles)};
         }
+
+        using FutureWatcher = QFutureWatcher<std::optional<CreateTreeResult>>;
     }
 
     TorrentFilesModel::TorrentFilesModel(Torrent* torrent, Rpc* rpc, QObject* parent)
@@ -168,7 +195,10 @@ namespace tremotesf {
         TorrentFilesModelEntry* entry = mRootDirectory.get();
         const auto parts = path.split('/', Qt::SkipEmptyParts);
         for (const QString& part : parts) {
-            entry = static_cast<const TorrentFilesModelDirectory*>(entry)->childrenHash().at(part);
+            if (!entry->isDirectory()) {
+                return;
+            }
+            entry = static_cast<TorrentFilesModelDirectory*>(entry)->childForName(part);
         }
         BaseTorrentFilesModel::fileRenamed(entry, newName);
     }
@@ -193,7 +223,7 @@ namespace tremotesf {
             return true;
         }
         return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() !=
-               TorrentFilesModelEntry::Unwanted;
+               TorrentFilesModelEntry::WantedState::Unwanted;
     }
 
     void TorrentFilesModel::update(std::span<const int> changed) {
@@ -213,20 +243,26 @@ namespace tremotesf {
         beginResetModel();
 
         const auto future =
-            QtConcurrent::run([files = std::vector(mTorrent->files())]() { return doCreateTree(files); });
+            QtConcurrent::run([files = std::vector(mTorrent->files())]() -> std::optional<CreateTreeResult> {
+                try {
+                    return doCreateTree(files);
+                } catch (const std::exception& e) {
+                    warning().logWithException(e, "Failed to create files tree");
+                    return std::nullopt;
+                }
+            });
 
         auto watcher = new FutureWatcher(this);
         QObject::connect(watcher, &FutureWatcher::finished, this, [=, this] {
-            auto [rootDirectory, files] = watcher->result();
-
-            mRootDirectory = std::move(rootDirectory);
+            auto result = watcher->result();
+            if (result) {
+                auto [rootDirectory, files] = *(std::move(result));
+                mRootDirectory = std::move(rootDirectory);
+                mFiles = std::move(files);
+                setLoaded(true);
+            }
             endResetModel();
-
-            mFiles = std::move(files);
-
-            setLoaded(true);
             mCreatingTree = false;
-
             watcher->deleteLater();
         });
         watcher->setFuture(future);
@@ -243,29 +279,29 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::updateTree(std::span<const int> changed) {
-        if (!changed.empty()) {
-            const auto& torrentFiles = mTorrent->files();
-
-            auto changedIter(changed.begin());
-            int changedIndex = *changedIter;
-            const auto changedEnd(changed.end());
-
-            for (int i = 0, max = static_cast<int>(mFiles.size()); i < max; ++i) {
-                const auto& file = mFiles[static_cast<size_t>(i)];
-                if (i == changedIndex) {
-                    updateFile(file, torrentFiles.at(static_cast<size_t>(changedIndex)));
-                    ++changedIter;
-                    if (changedIter == changedEnd) {
-                        changedIndex = -1;
-                    } else {
-                        changedIndex = *changedIter;
-                    }
-                } else {
-                    file->setChanged(false);
-                }
-            }
-            updateDirectoryChildren();
+        if (changed.empty()) {
+            return;
         }
+        const auto& torrentFiles = mTorrent->files();
+        if (torrentFiles.size() != mFiles.size()) {
+            warning().log(
+                "Torrent has {} files, but we have already created tree with {} files",
+                torrentFiles.size(),
+                mFiles.size()
+            );
+            return;
+        }
+        std::vector<TorrentFilesModelDirectory*> directoriesToRecalculate{};
+        for (int changedIndex : changed) {
+            auto* treeFile = mFiles.at(static_cast<size_t>(changedIndex));
+            const auto& rpcFile = torrentFiles.at(static_cast<size_t>(changedIndex));
+            updateFile(treeFile, rpcFile);
+            addParentDirectoriesToRecalculateList(treeFile, directoriesToRecalculate);
+        }
+        if (!directoriesToRecalculate.empty()) {
+            std::ranges::for_each(directoriesToRecalculate, &TorrentFilesModelDirectory::recalculateFromChildren);
+        }
+        emitDataChangedForChildren();
     }
 
     void TorrentFilesModel::setLoaded(bool loaded) { mLoaded = loaded; }

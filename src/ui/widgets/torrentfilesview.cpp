@@ -68,7 +68,7 @@ namespace tremotesf {
             auto entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->sourceIndex(index).internalPointer());
             if (!entry->isDirectory() &&
                 isServerLocalOrTorrentIsMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
-                entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
+                entry->wantedState() != TorrentFilesModelEntry::WantedState::Unwanted) {
                 desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
             }
         });
@@ -135,7 +135,7 @@ namespace tremotesf {
             bool show = true;
             for (const QModelIndex& index : sourceIndexes) {
                 if (static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() ==
-                    TorrentFilesModelEntry::Unwanted) {
+                    TorrentFilesModelEntry::WantedState::Unwanted) {
                     show = false;
                     break;
                 }
@@ -206,7 +206,7 @@ namespace tremotesf {
         highPriorityAction->setCheckable(true);
         QObject::connect(highPriorityAction, &QAction::triggered, this, [=, this](bool checked) {
             if (checked) {
-                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::HighPriority);
+                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::Priority::High);
             }
         });
 
@@ -215,7 +215,7 @@ namespace tremotesf {
         normalPriorityAction->setCheckable(true);
         QObject::connect(normalPriorityAction, &QAction::triggered, this, [=, this](bool checked) {
             if (checked) {
-                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::NormalPriority);
+                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::Priority::Normal);
             }
         });
 
@@ -224,7 +224,7 @@ namespace tremotesf {
         lowPriorityAction->setCheckable(true);
         QObject::connect(lowPriorityAction, &QAction::triggered, this, [=, this](bool checked) {
             if (checked) {
-                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::LowPriority);
+                mModel->setFilesPriority(sourceIndexes, TorrentFilesModelEntry::Priority::Low);
             }
         });
 
@@ -238,23 +238,23 @@ namespace tremotesf {
 
         if (sourceIndexes.size() == 1) {
             auto entry = static_cast<const TorrentFilesModelEntry*>(sourceIndexes.first().internalPointer());
-            if (entry->wantedState() == TorrentFilesModelEntry::Wanted) {
+            if (entry->wantedState() == TorrentFilesModelEntry::WantedState::Wanted) {
                 downloadAction->setEnabled(false);
-            } else if (entry->wantedState() == TorrentFilesModelEntry::Unwanted) {
+            } else if (entry->wantedState() == TorrentFilesModelEntry::WantedState::Unwanted) {
                 notDownloadAction->setEnabled(false);
             }
 
             switch (entry->priority()) {
-            case TorrentFilesModelEntry::LowPriority:
+            case TorrentFilesModelEntry::Priority::Low:
                 lowPriorityAction->setChecked(true);
                 break;
-            case TorrentFilesModelEntry::NormalPriority:
+            case TorrentFilesModelEntry::Priority::Normal:
                 normalPriorityAction->setChecked(true);
                 break;
-            case TorrentFilesModelEntry::HighPriority:
+            case TorrentFilesModelEntry::Priority::High:
                 highPriorityAction->setChecked(true);
                 break;
-            case TorrentFilesModelEntry::MixedPriority:
+            case TorrentFilesModelEntry::Priority::Mixed:
                 mixedPriorityAction->setVisible(true);
             }
         }
