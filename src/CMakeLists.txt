@@ -55,6 +55,13 @@ add_library(
     windowshelpers.h
     macoshelpers.h
 
+    coroutines/coroutines.cpp
+    coroutines/coroutines.h
+    coroutines/scope.h
+    coroutines/scope.cpp
+    coroutines/waitall.h
+    coroutines/waitall.cpp
+
     ipc/ipcclient.h
     ipc/ipcserver.h
 
