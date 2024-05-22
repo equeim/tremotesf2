@@ -37,4 +37,6 @@ Checks: >
   -readability-magic-numbers,
   -readability-named-parameter,
   -readability-qualified-auto,
-  -readability-convert-member-functions-to-static
+  -readability-convert-member-functions-to-static,
+  -readability-redundant-inline-specifier,
+  -readability-redundant-member-init
