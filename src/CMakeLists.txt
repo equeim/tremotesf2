@@ -59,6 +59,7 @@ add_library(
     coroutines/coroutines.h
     coroutines/scope.h
     coroutines/scope.cpp
+    coroutines/threadpool.h
     coroutines/waitall.h
     coroutines/waitall.cpp
 
