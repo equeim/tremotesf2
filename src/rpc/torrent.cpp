@@ -629,7 +629,6 @@ namespace tremotesf {
         }
 
         emit filesUpdated(changed);
-        emit mRpc->torrentFilesUpdated(this, changed);
     }
 
     namespace {
@@ -696,8 +695,6 @@ namespace tremotesf {
         updater.update(mPeers, std::move(newPeers));
 
         emit peersUpdated(updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
-        emit mRpc
-            ->torrentPeersUpdated(this, updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
     }
 
     void Torrent::checkSingleFile(const QJsonObject& torrentMap) {
