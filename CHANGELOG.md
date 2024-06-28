@@ -6,6 +6,7 @@
 - Minimum CMake version is 3.22
 - Minimum fmt version is 8.0
 - Minimum KF5 version is 5.92
+- Removed dependency on Qt Concurrent module
 
 ## [2.6.3] - 2024-04-22
 ### Fixed

@@ -10,7 +10,7 @@ set(TREMOTESF_COMMON_TARGET_PROPERTIES AUTOMOC ON AUTORCC ON)
 find_package(Threads REQUIRED)
 find_package(fmt 8.0 REQUIRED)
 find_package(cxxopts REQUIRED)
-find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network Widgets)
+find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
 
 if (TREMOTESF_QT6)
     set(minimum_kf_version 5.245)
@@ -194,7 +194,6 @@ add_library(
 )
 
 target_link_libraries(tremotesf_objects PUBLIC cxxopts::cxxopts Threads::Threads fmt::fmt Qt::Core Qt::Network Qt::Widgets KF${TREMOTESF_QT_VERSION_MAJOR}::WidgetsAddons)
-target_include_directories(tremotesf_objects PRIVATE ${Qt${TREMOTESF_QT_VERSION_MAJOR}Concurrent_INCLUDE_DIRS})
 
 # We need these as CMake variables for configure_file() call below
 set(TREMOTESF_APP_NAME "Tremotesf")
