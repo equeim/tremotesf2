@@ -31,7 +31,6 @@ BuildRequires: gettext
 BuildRequires: make
 BuildRequires: zstd
 BuildRequires: cmake(Qt%{qt_version})
-BuildRequires: cmake(Qt%{qt_version}Concurrent)
 BuildRequires: cmake(Qt%{qt_version}Core)
 BuildRequires: cmake(Qt%{qt_version}DBus)
 BuildRequires: cmake(Qt%{qt_version}LinguistTools)

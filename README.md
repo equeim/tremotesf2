@@ -23,7 +23,7 @@ Table of Contents
   2. Clang 16 with libstdc++ 13
   3. Clang 16 with libc++ 16
 - CMake 3.22 or newer
-- Qt 6.6 or newer or 5.15 (Core, Network, Concurrent, Gui, Widgets modules)
+- Qt 6.6 or newer or 5.15 (Core, Network, Gui, Widgets modules)
 - fmt 8.0 or newer
 - KWidgetsAddons 5.92 or newer
 - libpsl
