@@ -490,7 +490,6 @@ namespace tremotesf {
                 const QString filePathFromReponse = response->arguments.value("path"_l1).toString();
                 const QString newNameFromReponse = response->arguments.value("name"_l1).toString();
                 emit torrent->fileRenamed(filePathFromReponse, newNameFromReponse);
-                emit torrentFileRenamed(torrentId, filePathFromReponse, newNameFromReponse);
                 mBackgroundRequestsCoroutineScope.launch(updateData());
             }
         }
@@ -565,23 +564,18 @@ namespace tremotesf {
 
         mStatus = std::move(status);
 
-        size_t removedTorrentsCount = 0;
         if (connectionStateChanged) {
-            resetStateOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsCount);
+            resetStateOnConnectionStateChanged(oldStatus.connectionState);
         }
 
         emit statusChanged();
 
         if (connectionStateChanged) {
-            emitSignalsOnConnectionStateChanged(oldStatus.connectionState, removedTorrentsCount);
-        }
-
-        if (mStatus.error != oldStatus.error || mStatus.errorMessage != oldStatus.errorMessage) {
-            emit errorChanged();
+            emitSignalsOnConnectionStateChanged(oldStatus.connectionState);
         }
     }
 
-    void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount) {
+    void Rpc::resetStateOnConnectionStateChanged(ConnectionState oldConnectionState) {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected: {
             info().log("Disconnected");
@@ -591,7 +585,7 @@ namespace tremotesf {
             mServerIsLocal = std::nullopt;
 
             if (!mTorrents.empty() && oldConnectionState == ConnectionState::Connected) {
-                removedTorrentsCount = mTorrents.size();
+                const auto removedTorrentsCount = mTorrents.size();
                 emit onAboutToRemoveTorrents(0, removedTorrentsCount);
                 mTorrents.clear();
                 emit onRemovedTorrents(0, removedTorrentsCount);
@@ -614,14 +608,13 @@ namespace tremotesf {
         }
     }
 
-    void
-    Rpc::emitSignalsOnConnectionStateChanged(Rpc::ConnectionState oldConnectionState, size_t removedTorrentsCount) {
+    void Rpc::emitSignalsOnConnectionStateChanged(Rpc::ConnectionState oldConnectionState) {
         switch (mStatus.connectionState) {
         case ConnectionState::Disconnected: {
             emit connectionStateChanged();
             if (oldConnectionState == ConnectionState::Connected) {
                 emit connectedChanged();
-                emit torrentsUpdated({{0, static_cast<int>(removedTorrentsCount)}}, {}, 0);
+                emit torrentsUpdated();
             }
             break;
         }
@@ -629,7 +622,7 @@ namespace tremotesf {
             emit connectionStateChanged();
             break;
         case ConnectionState::Connected: {
-            emit torrentsUpdated({}, {}, torrentsCount());
+            emit torrentsUpdated();
             emit connectionStateChanged();
             emit connectedChanged();
             break;
@@ -823,7 +816,7 @@ namespace tremotesf {
 
         const bool wasConnecting = connectionState() == ConnectionState::Connecting;
         if (!wasConnecting) {
-            emit torrentsUpdated(updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
+            emit torrentsUpdated();
         }
     }
 

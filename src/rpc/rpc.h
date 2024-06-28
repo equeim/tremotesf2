@@ -161,8 +161,8 @@ namespace tremotesf {
 
     private:
         void setStatus(Status&& status);
-        void resetStateOnConnectionStateChanged(ConnectionState oldConnectionState, size_t& removedTorrentsCount);
-        void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState, size_t removedTorrentsCount);
+        void resetStateOnConnectionStateChanged(ConnectionState oldConnectionState);
+        void emitSignalsOnConnectionStateChanged(ConnectionState oldConnectionState);
 
         Coroutine<> postRequest(QLatin1String method, QJsonObject arguments, bool updateIfSuccessful = true);
 
@@ -221,7 +221,6 @@ namespace tremotesf {
         void statusChanged();
         void connectedChanged();
         void connectionStateChanged();
-        void errorChanged();
 
         void onAboutToRemoveTorrents(size_t first, size_t last);
         void onRemovedTorrents(size_t first, size_t last);
@@ -229,21 +228,7 @@ namespace tremotesf {
         void onAboutToAddTorrents(size_t count);
         void onAddedTorrents(size_t count);
 
-        void torrentsUpdated(
-            const std::vector<std::pair<int, int>>& removedIndexRanges,
-            const std::vector<std::pair<int, int>>& changedIndexRanges,
-            int addedCount
-        );
-
-        void torrentFilesUpdated(const tremotesf::Torrent* torrent, const std::vector<int>& changedIndexes);
-        void torrentPeersUpdated(
-            const tremotesf::Torrent* torrent,
-            const std::vector<std::pair<int, int>>& removedIndexRanges,
-            const std::vector<std::pair<int, int>>& changedIndexRanges,
-            int addedCount
-        );
-
-        void torrentFileRenamed(int torrentId, const QString& filePath, const QString& newName);
+        void torrentsUpdated();
 
         void torrentAdded(tremotesf::Torrent* torrent);
         void torrentFinished(tremotesf::Torrent* torrent);
