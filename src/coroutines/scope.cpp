@@ -41,7 +41,8 @@ namespace tremotesf {
     }
 
     void CoroutineScope::cancelAll() {
-        for (auto* coroutine : mCoroutines) {
+        // Copy vector to handle the case when coroutine completes immediately and is erased from vector while we are iterating
+        for (auto* coroutine : std::vector(mCoroutines)) {
             coroutine->cancel();
         }
     }

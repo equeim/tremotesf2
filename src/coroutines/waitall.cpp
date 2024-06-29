@@ -6,6 +6,18 @@
 #include "log/log.h"
 
 namespace tremotesf::impl {
+    namespace {
+        template<typename T>
+        inline std::vector<T*> getPointers(std::list<T>& list) {
+            std::vector<T*> pointers{};
+            pointers.reserve(list.size());
+            for (auto& item : list) {
+                pointers.push_back(&item);
+            }
+            return pointers;
+        }
+    }
+
     void MultipleCoroutinesAwaiter::await_resume() {
         if (mUnhandledException) {
             std::rethrow_exception(mUnhandledException);
@@ -16,11 +28,12 @@ namespace tremotesf::impl {
         if (mParentCoroutinePromise && !mParentCoroutinePromise->onStartedAwaiting([this] { cancelAll(); })) {
             return;
         }
-        for (auto& coroutine : mCoroutines) {
-            coroutine.setCompletionCallback([this, coroutinePointer = &coroutine](std::exception_ptr unhandledException
-                                            ) { onCoroutineCompleted(coroutinePointer, std::move(unhandledException)); }
-            );
-            coroutine.start();
+        // Copy pointers to handle the case when coroutine completes immediately and is erased from list while we are iterating
+        for (auto* coroutine : getPointers(mCoroutines)) {
+            coroutine->setCompletionCallback([this, coroutine](std::exception_ptr unhandledException) {
+                onCoroutineCompleted(coroutine, std::move(unhandledException));
+            });
+            coroutine->start();
         }
     }
 
@@ -49,6 +62,7 @@ namespace tremotesf::impl {
 
     void MultipleCoroutinesAwaiter::cancelAll() {
         mCancelling = true;
+        // Copy pointers to handle the case when coroutine is cancelled immediately and is erased from list while we are iterating
         for (auto* coroutine : getPointers(mCoroutines)) {
             coroutine->cancel();
         }
