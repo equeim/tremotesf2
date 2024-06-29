@@ -103,7 +103,7 @@ namespace tremotesf {
             sessionCountLabel->setEnabled(rpc->isConnected());
         });
 
-        auto update = [=] {
+        auto update = [=, this] {
             const SessionStats currentSessionStats(rpc->serverStats()->currentSession());
             sessionDownloadedLabel->setText(formatutils::formatByteSize(currentSessionStats.downloaded()));
             sessionUploadedLabel->setText(formatutils::formatByteSize(currentSessionStats.uploaded()));
@@ -121,12 +121,17 @@ namespace tremotesf {
             //: How many times Transmission was launched
             sessionCountLabel->setText(qApp->translate("tremotesf", "%Ln times", nullptr, totalStats.sessionCount()));
 
-            rpc->getDownloadDirFreeSpace();
+            mFreeSpaceCoroutineScope.cancelAll();
+            mFreeSpaceCoroutineScope.launch(getDownloadDirFreeSpace(rpc, freeSpaceField));
         };
         QObject::connect(rpc->serverStats(), &ServerStats::updated, this, update);
-        QObject::connect(rpc, &Rpc::gotDownloadDirFreeSpace, this, [freeSpaceField](long long bytes) {
-            freeSpaceField->setText(formatutils::formatByteSize(bytes));
-        });
         update();
+    }
+
+    Coroutine<> ServerStatsDialog::getDownloadDirFreeSpace(Rpc* rpc, QLabel* freeSpaceField) {
+        const auto freeSpace = co_await rpc->getDownloadDirFreeSpace();
+        if (freeSpace) {
+            freeSpaceField->setText(formatutils::formatByteSize(*freeSpace));
+        }
     }
 }

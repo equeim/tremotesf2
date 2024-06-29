@@ -6,6 +6,8 @@
 #define TREMOTESF_ADDTORRENTDIALOG_H
 
 #include <QDialog>
+
+#include "coroutines/scope.h"
 #include "ui/savewindowstatedispatcher.h"
 
 class QCheckBox;
@@ -49,6 +51,8 @@ namespace tremotesf {
         void setupUi();
         void canAcceptUpdate();
         void saveState();
+        void onDownloadDirectoryPathChanged(QString path);
+        Coroutine<> getFreeSpaceForPath(QString path);
 
         Rpc* mRpc;
         QString mUrl;
@@ -57,10 +61,13 @@ namespace tremotesf {
         LocalTorrentFilesModel* mFilesModel{};
 
         QLineEdit* mTorrentLinkLineEdit{};
+        QLabel* mFreeSpaceLabel{};
         TorrentFilesView* mTorrentFilesView{};
         AddTorrentParametersWidgets mAddTorrentParametersWidgets{};
 
         QDialogButtonBox* mDialogButtonBox{};
+
+        CoroutineScope mFreeSpaceCoroutineScope{};
 
         SaveWindowStateHandler mSaveStateHandler{this, [this] { saveState(); }};
     };

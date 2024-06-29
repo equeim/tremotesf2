@@ -491,13 +491,17 @@ namespace tremotesf {
         }
     }
 
-    void Rpc::getDownloadDirFreeSpace() {
+    Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpace() {
         if (isConnected()) {
-            mBackgroundRequestsCoroutineScope.launch(getDownloadDirFreeSpaceImpl());
+            if (mServerSettings->data().canShowFreeSpaceForPath()) {
+                co_return co_await getFreeSpaceForPathImpl(mServerSettings->data().downloadDirectory);
+            }
+            co_return co_await getDownloadDirFreeSpaceImpl();
         }
+        cancelCoroutine();
     }
 
-    Coroutine<> Rpc::getDownloadDirFreeSpaceImpl() {
+    Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpaceImpl() {
         const auto response = co_await mRequestRouter->postRequest(
             "download-dir-free-space"_l1,
             QByteArrayLiteral("{"
@@ -510,24 +514,31 @@ namespace tremotesf {
                               "}")
         );
         if (response.success) {
-            emit gotDownloadDirFreeSpace(toInt64(response.arguments.value("download-dir-free-space"_l1)));
+            co_return toInt64(response.arguments.value("download-dir-free-space"_l1));
         }
+        co_return std::nullopt;
     }
 
-    void Rpc::getFreeSpaceForPath(QString path) {
+    Coroutine<std::optional<qint64>> Rpc::getFreeSpaceForPath(QString path) {
         if (isConnected()) {
-            mBackgroundRequestsCoroutineScope.launch(getFreeSpaceForPathImpl(std::move(path)));
+            co_await waitFor(std::chrono::seconds(1));
+            if (mServerSettings->data().canShowFreeSpaceForPath()) {
+                co_return co_await getFreeSpaceForPathImpl(std::move(path));
+            }
+            if (path == mServerSettings->data().downloadDirectory) {
+                co_return co_await getDownloadDirFreeSpaceImpl();
+            }
         }
+        cancelCoroutine();
     }
 
-    Coroutine<> Rpc::getFreeSpaceForPathImpl(QString path) {
+    Coroutine<std::optional<qint64>> Rpc::getFreeSpaceForPathImpl(QString path) {
         QJsonObject arguments{{"path"_l1, path}};
         const auto response = co_await mRequestRouter->postRequest("free-space"_l1, std::move(arguments));
-        emit gotFreeSpaceForPath(
-            path,
-            response.success,
-            response.success ? toInt64(response.arguments.value("size-bytes"_l1)) : 0
-        );
+        if (response.success) {
+            co_return toInt64(response.arguments.value("size-bytes"_l1));
+        }
+        co_return std::nullopt;
     }
 
     void Rpc::shutdownServer() {

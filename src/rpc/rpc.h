@@ -154,8 +154,8 @@ namespace tremotesf {
 
         void renameTorrentFile(int torrentId, QString filePath, QString newName);
 
-        void getDownloadDirFreeSpace();
-        void getFreeSpaceForPath(QString path);
+        Coroutine<std::optional<qint64>> getDownloadDirFreeSpace();
+        Coroutine<std::optional<qint64>> getFreeSpaceForPath(QString path);
 
         void shutdownServer();
 
@@ -182,8 +182,8 @@ namespace tremotesf {
         Coroutine<> getTorrentsFiles(QJsonArray ids);
         Coroutine<> getTorrentsPeers(QJsonArray ids);
         Coroutine<> renameTorrentFileImpl(int torrentId, QString filePath, QString newName);
-        Coroutine<> getDownloadDirFreeSpaceImpl();
-        Coroutine<> getFreeSpaceForPathImpl(QString path);
+        Coroutine<std::optional<qint64>> getDownloadDirFreeSpaceImpl();
+        Coroutine<std::optional<qint64>> getFreeSpaceForPathImpl(QString path);
         Coroutine<> shutdownServerImpl();
 
         Coroutine<> getServerSettings();
@@ -235,9 +235,6 @@ namespace tremotesf {
 
         void torrentAddDuplicate();
         void torrentAddError();
-
-        void gotDownloadDirFreeSpace(qint64 bytes);
-        void gotFreeSpaceForPath(const QString& path, bool success, qint64 bytes);
     };
 }
 

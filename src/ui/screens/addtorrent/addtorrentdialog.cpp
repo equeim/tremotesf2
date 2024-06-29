@@ -217,67 +217,23 @@ namespace tremotesf {
 
         mAddTorrentParametersWidgets = createAddTorrentParametersWidgets(mMode, layout, mRpc);
 
-        auto freeSpaceLabel = new QLabel(this);
-        auto getFreeSpace = [=, this](const QString& directory) {
-            if (!directory.isEmpty()) {
-                if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
-                    mRpc->getFreeSpaceForPath(directory);
-                    return;
-                }
-                if (directory == mRpc->serverSettings()->data().downloadDirectory) {
-                    mRpc->getDownloadDirFreeSpace();
-                    return;
-                }
-            }
-            freeSpaceLabel->hide();
-            freeSpaceLabel->clear();
-        };
+        mFreeSpaceLabel = new QLabel(this);
         QObject::connect(
             mAddTorrentParametersWidgets.downloadDirectoryWidget,
             &RemoteDirectorySelectionWidget::pathChanged,
             this,
-            [=, this] { getFreeSpace(mAddTorrentParametersWidgets.downloadDirectoryWidget->path()); }
+            [=, this] { onDownloadDirectoryPathChanged(mAddTorrentParametersWidgets.downloadDirectoryWidget->path()); }
         );
-        if (mRpc->serverSettings()->data().canShowFreeSpaceForPath()) {
-            QObject::connect(
-                mRpc,
-                &Rpc::gotFreeSpaceForPath,
-                this,
-                [=, this](const QString& path, bool success, long long bytes) {
-                    if (path == mAddTorrentParametersWidgets.downloadDirectoryWidget->path()) {
-                        if (success) {
-                            freeSpaceLabel->setText(
-                                //: %1 is a amount of free space in a directory, e.g. 1 GiB
-                                qApp->translate("tremotesf", "Free space: %1").arg(formatutils::formatByteSize(bytes))
-                            );
-                        } else {
-                            freeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
-                        }
-                        freeSpaceLabel->show();
-                    }
-                }
-            );
-        } else {
-            QObject::connect(mRpc, &Rpc::gotDownloadDirFreeSpace, this, [=, this](auto bytes) {
-                if (mAddTorrentParametersWidgets.downloadDirectoryWidget->path() ==
-                    mRpc->serverSettings()->data().downloadDirectory) {
-                    freeSpaceLabel->setText(
-                        qApp->translate("tremotesf", "Free space: %1").arg(formatutils::formatByteSize(bytes))
-                    );
-                    freeSpaceLabel->show();
-                }
-            });
-        }
-        getFreeSpace(mAddTorrentParametersWidgets.downloadDirectoryWidget->path());
+        onDownloadDirectoryPathChanged(mAddTorrentParametersWidgets.downloadDirectoryWidget->path());
         layout->insertRow(
             rowForWidget(layout, mAddTorrentParametersWidgets.downloadDirectoryWidget) + 1,
             nullptr,
-            freeSpaceLabel
+            mFreeSpaceLabel
         );
 
         if (mMode == Mode::File) {
             mTorrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
-            layout->insertRow(rowForWidget(layout, freeSpaceLabel) + 1, mTorrentFilesView);
+            layout->insertRow(rowForWidget(layout, mFreeSpaceLabel) + 1, mTorrentFilesView);
         } else {
             layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
         }
@@ -376,6 +332,28 @@ namespace tremotesf {
         if (mTorrentFilesView) {
             mTorrentFilesView->saveState();
         }
+    }
+
+    void AddTorrentDialog::onDownloadDirectoryPathChanged(QString path) {
+        mFreeSpaceLabel->hide();
+        mFreeSpaceLabel->clear();
+        mFreeSpaceCoroutineScope.cancelAll();
+        if (!path.isEmpty()) {
+            mFreeSpaceCoroutineScope.launch(getFreeSpaceForPath(std::move(path)));
+        }
+    }
+
+    Coroutine<> AddTorrentDialog::getFreeSpaceForPath(QString path) {
+        const auto freeSpace = co_await mRpc->getFreeSpaceForPath(std::move(path));
+        if (freeSpace) {
+            mFreeSpaceLabel->setText(
+                //: %1 is a amount of free space in a directory, e.g. 1 GiB
+                qApp->translate("tremotesf", "Free space: %1").arg(formatutils::formatByteSize(*freeSpace))
+            );
+        } else {
+            mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
+        }
+        mFreeSpaceLabel->show();
     }
 
     void AddTorrentDialog::AddTorrentParametersWidgets::reset(Rpc* rpc) const {
