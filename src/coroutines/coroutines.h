@@ -72,7 +72,7 @@ namespace tremotesf {
             inline void unhandled_exception() { mUnhandledException = std::current_exception(); }
             // promise object contract end
 
-            void cancel();
+            void interruptChildAwaiter();
 
             struct JustCompleteCancellation {};
 
@@ -180,7 +180,9 @@ namespace tremotesf {
             inline std::coroutine_handle<> await_suspend(std::coroutine_handle<Promise> parentCoroutineHandle) {
                 if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
                     mParentCoroutinePromise = &parentCoroutineHandle.promise();
-                    if (!mParentCoroutinePromise->onStartedAwaiting([this] { mHandle.promise().cancel(); })) {
+                    if (!mParentCoroutinePromise->onStartedAwaiting([this] {
+                            mHandle.promise().interruptChildAwaiter();
+                        })) {
                         return std::noop_coroutine();
                     }
                     mHandle.promise().setRootCoroutine(mParentCoroutinePromise->rootCoroutine());
@@ -255,6 +257,20 @@ namespace tremotesf {
 
             friend struct fmt::formatter<RootCoroutine>;
         };
+
+        class [[nodiscard]] CancellationAwaiter final {
+        public:
+            inline bool await_ready() { return false; }
+
+            template<std::derived_from<CoroutinePromiseBase> Promise>
+            inline void await_suspend(std::coroutine_handle<Promise> handle) {
+                if (startAwaiting(handle)) {
+                    handle.promise().rootCoroutine()->cancel();
+                }
+            }
+
+            inline void await_resume() {}
+        };
     }
 
     template<impl::CoroutineReturnValue T>
@@ -279,5 +295,11 @@ namespace fmt {
         }
     };
 }
+
+#define cancelCoroutine()                                         \
+    do {                                                          \
+        co_await tremotesf::impl::CancellationAwaiter{};          \
+        std::abort(); /* CancellationAwaiter must never resume */ \
+    } while (false);
 
 #endif // TREMOTESF_COROUTINES_H

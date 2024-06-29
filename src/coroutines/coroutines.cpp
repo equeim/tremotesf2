@@ -9,7 +9,7 @@ namespace tremotesf::impl {
         mParentCoroutineHandle = parentCoroutineHandle;
     }
 
-    void CoroutinePromiseBase::cancel() {
+    void CoroutinePromiseBase::interruptChildAwaiter() {
         std::visit(
             [&](auto& callback) {
                 using Type = std::decay_t<decltype(callback)>;
@@ -51,10 +51,6 @@ namespace tremotesf::impl {
         if (const auto handle = onPerformedFinalSuspendBase(); handle) {
             return handle;
         }
-        warning().log(
-            "No parent coroutine or completion callback when completing coroutine {}",
-            mCoroutineHandle.address()
-        );
         mRootCoroutine->invokeCompletionCallback(std::move(mUnhandledException));
         return std::noop_coroutine();
     }
@@ -64,7 +60,7 @@ namespace tremotesf::impl {
             return;
         }
         mCancellationState = CancellationState::Cancelling;
-        mCoroutine.mHandle.promise().cancel();
+        mCoroutine.mHandle.promise().interruptChildAwaiter();
     }
 
     bool RootCoroutine::completeCancellation() {

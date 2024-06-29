@@ -254,16 +254,13 @@ namespace tremotesf::impl {
         mNetwork->clearAccessCache();
     }
 
-    Coroutine<std::optional<RequestRouter::Response>>
-    RequestRouter::postRequest(QLatin1String method, QJsonObject arguments) {
+    Coroutine<RequestRouter::Response> RequestRouter::postRequest(QLatin1String method, QJsonObject arguments) {
         co_return co_await postRequest(method, makeRequestData(method, arguments));
     }
 
-    Coroutine<std::optional<RequestRouter::Response>>
-    RequestRouter::postRequest(QLatin1String method, QByteArray data) {
+    Coroutine<RequestRouter::Response> RequestRouter::postRequest(QLatin1String method, QByteArray data) {
         if (!mConfiguration.has_value()) {
-            warning().log("Requests configuration is not set");
-            co_return std::nullopt;
+            throw std::runtime_error("Requests configuration is not set");
         }
 
         QNetworkRequest request(mConfiguration->serverUrl);
@@ -301,7 +298,7 @@ namespace tremotesf::impl {
             .toJson(QJsonDocument::Compact);
     }
 
-    Coroutine<std::optional<RequestRouter::Response>>
+    Coroutine<RequestRouter::Response>
     RequestRouter::performRequest(QNetworkRequest request, NetworkRequestMetadata metadata) {
         if (!mSessionId.isEmpty()) {
             request.setRawHeader(sessionIdHeader, mSessionId);
@@ -326,7 +323,7 @@ namespace tremotesf::impl {
         }
     }
 
-    Coroutine<std::optional<RequestRouter::Response>>
+    Coroutine<RequestRouter::Response>
     RequestRouter::onRequestSuccess(NetworkReplyUniquePtr reply, RpcRequestMetadata metadata) {
         debug()
             .log("HTTP request for method '{}' succeeded, HTTP status: {}", metadata.method, httpStatus(reply.get()));
@@ -348,7 +345,7 @@ namespace tremotesf::impl {
             });
         if (!json.has_value()) {
             emit requestFailed(RpcError::ParseError, {}, {});
-            co_return std::nullopt;
+            cancelCoroutine();
         }
         const bool success = isResultSuccessful(*json);
         if (!success) {
@@ -357,7 +354,7 @@ namespace tremotesf::impl {
         co_return Response{.arguments = getReplyArguments(*json), .success = success};
     }
 
-    Coroutine<std::optional<RequestRouter::Response>> RequestRouter::onRequestError(
+    Coroutine<RequestRouter::Response> RequestRouter::onRequestError(
         NetworkReplyUniquePtr reply, QList<QSslError> sslErrors, NetworkRequestMetadata metadata
     ) {
         if (reply->error() == QNetworkReply::ContentConflictError && reply->hasRawHeader(sessionIdHeader)) {
@@ -406,6 +403,6 @@ namespace tremotesf::impl {
             co_return co_await performRequest(takeRequest(std::move(reply)), metadata);
         }
         emit requestFailed(error, reply->errorString(), detailedErrorMessage);
-        co_return std::nullopt;
+        cancelCoroutine();
     }
 }

@@ -477,7 +477,7 @@ namespace {
 
     private:
         Coroutine<> waitForResponseOrErrorCoroutine(
-            Coroutine<std::optional<RequestRouter::Response>> requestCoroutine,
+            Coroutine<RequestRouter::Response> requestCoroutine,
             std::variant<RequestRouter::Response, RpcError, std::monostate>& destination
         ) {
             const auto connection = QObject::connect(
@@ -490,10 +490,7 @@ namespace {
                 Qt::DirectConnection
             );
             const auto connectionGuard = QScopeGuard([connection] { QObject::disconnect(connection); });
-            auto response = co_await requestCoroutine;
-            if (response) {
-                destination = *std::move(response);
-            }
+            destination = co_await requestCoroutine;
         }
 
         template<typename... Args>
