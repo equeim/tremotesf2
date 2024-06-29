@@ -203,16 +203,6 @@ namespace tremotesf {
             CoroutinePromiseBase* mParentCoroutinePromise{};
         };
 
-        template<typename T>
-        inline std::vector<T*> getPointers(std::list<T>& list) {
-            std::vector<T*> pointers{};
-            pointers.reserve(list.size());
-            for (auto& item : list) {
-                pointers.push_back(&item);
-            }
-            return pointers;
-        }
-
         template<typename Promise>
         [[nodiscard]]
         bool startAwaiting(std::coroutine_handle<Promise> handle) {
