@@ -63,9 +63,9 @@ namespace tremotesf::impl {
             bool success{};
         };
 
-        Coroutine<std::optional<Response>> postRequest(QLatin1String method, QJsonObject arguments);
+        Coroutine<Response> postRequest(QLatin1String method, QJsonObject arguments);
 
-        Coroutine<std::optional<Response>> postRequest(QLatin1String method, QByteArray data);
+        Coroutine<Response> postRequest(QLatin1String method, QByteArray data);
 
         const QByteArray& sessionId() const { return mSessionId; };
 
@@ -74,9 +74,9 @@ namespace tremotesf::impl {
         static QByteArray makeRequestData(QLatin1String method, QJsonObject arguments);
 
     private:
-        Coroutine<std::optional<Response>> performRequest(QNetworkRequest request, NetworkRequestMetadata metadata);
-        Coroutine<std::optional<Response>> onRequestSuccess(NetworkReplyUniquePtr reply, RpcRequestMetadata metadata);
-        Coroutine<std::optional<Response>>
+        Coroutine<Response> performRequest(QNetworkRequest request, NetworkRequestMetadata metadata);
+        Coroutine<Response> onRequestSuccess(NetworkReplyUniquePtr reply, RpcRequestMetadata metadata);
+        Coroutine<Response>
         onRequestError(NetworkReplyUniquePtr reply, QList<QSslError> sslErrors, NetworkRequestMetadata metadata);
 
         QNetworkAccessManager* mNetwork{};

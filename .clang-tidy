@@ -40,3 +40,6 @@ Checks: >
   -readability-convert-member-functions-to-static,
   -readability-redundant-inline-specifier,
   -readability-redundant-member-init
+
+CheckOptions:
+  cppcoreguidelines-avoid-do-while.IgnoreMacros: true
