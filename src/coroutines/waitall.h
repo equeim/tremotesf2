@@ -57,7 +57,7 @@ namespace tremotesf {
         requires(sizeof...(Coroutines) != 0)
     inline impl::MultipleCoroutinesAwaiter waitAll(Coroutines&&... coroutines) {
         std::list<impl::RootCoroutine> list{};
-        (list.emplace_back(std::move(coroutines)), ...);
+        (list.emplace_back(std::forward<Coroutines>(coroutines)), ...);
         return impl::MultipleCoroutinesAwaiter(std::move(list));
     }
 }
