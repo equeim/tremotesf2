@@ -9,7 +9,8 @@
             "host": true,
             "default-features": false,
             "features": [
-                "network"
+                "network",
+                "widgets"
             ]
         },
         {
