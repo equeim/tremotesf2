@@ -209,8 +209,9 @@ namespace tremotesf {
             if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
                 auto& promise = handle.promise();
                 return promise.onStartedAwaiting(CoroutinePromiseBase::JustCompleteCancellation{});
+            } else {
+                return true;
             }
-            return true;
         }
 
         template<typename Promise>
