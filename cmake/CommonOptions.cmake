@@ -87,7 +87,6 @@ function(set_common_options_on_targets)
                 /w44365
                 /w44388
                 /w44577
-                /w44623
                 /we4774
                 /we4777
                 /w44800
