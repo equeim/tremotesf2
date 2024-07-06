@@ -411,6 +411,10 @@ if (BUILD_TESTING)
     add_executable(tracker_test rpc/tracker_test.cpp)
     add_test(NAME tracker_test COMMAND tracker_test)
     target_link_libraries(tracker_test tremotesf_objects Qt::Test)
+
+    add_executable(coroutines_test coroutines/coroutines_test.cpp)
+    add_test(NAME coroutines_test COMMAND coroutines_test)
+    target_link_libraries(coroutines_test tremotesf_objects Qt::Test)
 endif ()
 
 set_common_options_on_targets()
