@@ -30,6 +30,9 @@ namespace tremotesf::impl {
         }
         // Copy pointers to handle the case when coroutine completes immediately and is erased from list while we are iterating
         for (auto* coroutine : getPointers(mCoroutines)) {
+            if (mParentCoroutinePromise) {
+                coroutine->setRootCoroutine(mParentCoroutinePromise->owningStandaloneCoroutine()->rootCoroutine());
+            }
             coroutine->setCompletionCallback([this, coroutine](std::exception_ptr unhandledException) {
                 onCoroutineCompleted(coroutine, std::move(unhandledException));
             });
