@@ -38,7 +38,7 @@ namespace tremotesf::impl {
     }
 
     void
-    MultipleCoroutinesAwaiter::onCoroutineCompleted(RootCoroutine* coroutine, std::exception_ptr unhandledException) {
+    MultipleCoroutinesAwaiter::onCoroutineCompleted(StandaloneCoroutine* coroutine, std::exception_ptr unhandledException) {
         if (!mUnhandledException) {
             mUnhandledException = std::move(unhandledException);
         }
@@ -59,7 +59,7 @@ namespace tremotesf::impl {
     }
 
     void MultipleCoroutinesAwaiter::onAllCoroutinesCompleted() {
-        if (mParentCoroutinePromise && mParentCoroutinePromise->rootCoroutine()->completeCancellation()) {
+        if (mParentCoroutinePromise && mParentCoroutinePromise->owningStandaloneCoroutine()->completeCancellation()) {
             return;
         }
         resume(mParentCoroutineHandle);

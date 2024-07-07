@@ -24,7 +24,7 @@ namespace tremotesf {
         template<CoroutineReturnValue T>
         class CoroutineAwaiter;
 
-        class RootCoroutine;
+        class StandaloneCoroutine;
     }
 
     template<impl::CoroutineReturnValue T = void>
@@ -54,7 +54,7 @@ namespace tremotesf {
     private:
         std::coroutine_handle<impl::CoroutinePromise<T>> mHandle;
 
-        friend class impl::RootCoroutine;
+        friend class impl::StandaloneCoroutine;
         friend struct fmt::formatter<Coroutine<T>>;
     };
 
@@ -80,8 +80,8 @@ namespace tremotesf {
             bool onStartedAwaiting(std::function<void()>&& interruptionCallback);
             inline void onAboutToResume() { mChildAwaiterInterruptionCallback = std::monostate{}; }
 
-            inline RootCoroutine* rootCoroutine() const { return mRootCoroutine; }
-            inline void setRootCoroutine(RootCoroutine* root) { mRootCoroutine = root; }
+            inline StandaloneCoroutine* owningStandaloneCoroutine() const { return mOwningStandaloneCoroutine; }
+            inline void setOwningStandaloneCoroutine(StandaloneCoroutine* root) { mOwningStandaloneCoroutine = root; }
             void setParentCoroutineHandle(std::coroutine_handle<> parentCoroutineHandle);
 
             std::coroutine_handle<> onPerformedFinalSuspendBase();
@@ -99,7 +99,7 @@ namespace tremotesf {
             std::variant<std::monostate, JustCompleteCancellation, std::function<void()>>
                 mChildAwaiterInterruptionCallback{};
             std::exception_ptr mUnhandledException{};
-            RootCoroutine* mRootCoroutine{};
+            StandaloneCoroutine* mOwningStandaloneCoroutine{};
         };
 
         template<CoroutineReturnValue T>
@@ -185,7 +185,8 @@ namespace tremotesf {
                         })) {
                         return std::noop_coroutine();
                     }
-                    mHandle.promise().setRootCoroutine(mParentCoroutinePromise->rootCoroutine());
+                    mHandle.promise().setOwningStandaloneCoroutine(mParentCoroutinePromise->owningStandaloneCoroutine()
+                    );
                 }
                 mHandle.promise().setParentCoroutineHandle(parentCoroutineHandle);
                 return mHandle;
@@ -222,17 +223,18 @@ namespace tremotesf {
             handle.resume();
         }
 
-        class RootCoroutine {
+        class StandaloneCoroutine {
         public:
-            inline explicit RootCoroutine(Coroutine<void>&& coroutine) : mCoroutine(std::move(coroutine)) {
-                mCoroutine.mHandle.promise().setRootCoroutine(this);
+            inline explicit StandaloneCoroutine(Coroutine<void>&& coroutine) : mCoroutine(std::move(coroutine)) {
+                mCoroutine.mHandle.promise().setOwningStandaloneCoroutine(this);
             }
-            inline ~RootCoroutine() = default;
-            Q_DISABLE_COPY_MOVE(RootCoroutine)
+            inline ~StandaloneCoroutine() = default;
+            Q_DISABLE_COPY_MOVE(StandaloneCoroutine)
 
             inline void start() { mCoroutine.mHandle.resume(); }
             void cancel();
             bool completeCancellation();
+
             inline void invokeCompletionCallback(std::exception_ptr&& unhandledException) {
                 mCompletionCallback(std::move(unhandledException));
             }
@@ -246,7 +248,7 @@ namespace tremotesf {
             enum class CancellationState : char { NotCancelled, Cancelling, Cancelled };
             CancellationState mCancellationState{CancellationState::NotCancelled};
 
-            friend struct fmt::formatter<RootCoroutine>;
+            friend struct fmt::formatter<StandaloneCoroutine>;
         };
 
         class [[nodiscard]] CancellationAwaiter final {
@@ -256,7 +258,7 @@ namespace tremotesf {
             template<std::derived_from<CoroutinePromiseBase> Promise>
             inline void await_suspend(std::coroutine_handle<Promise> handle) {
                 if (startAwaiting(handle)) {
-                    handle.promise().rootCoroutine()->cancel();
+                    handle.promise().owningStandaloneCoroutine()->cancel();
                 }
             }
 
@@ -279,9 +281,9 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<tremotesf::impl::RootCoroutine> : tremotesf::SimpleFormatter {
+    struct formatter<tremotesf::impl::StandaloneCoroutine> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator
-        format(const tremotesf::impl::RootCoroutine& coroutine, fmt::format_context& ctx) const {
+        format(const tremotesf::impl::StandaloneCoroutine& coroutine, fmt::format_context& ctx) const {
             return fmt::formatter<tremotesf::Coroutine<>>{}.format(coroutine.mCoroutine, ctx);
         }
     };

@@ -22,9 +22,9 @@ namespace tremotesf {
         inline size_t coroutinesCount() const { return mCoroutines.size(); }
 
     private:
-        void onCoroutineCompleted(impl::RootCoroutine* coroutine, const std::exception_ptr& unhandledException);
+        void onCoroutineCompleted(impl::StandaloneCoroutine* coroutine, const std::exception_ptr& unhandledException);
 
-        std::vector<impl::RootCoroutine*> mCoroutines{};
+        std::vector<impl::StandaloneCoroutine*> mCoroutines{};
     };
 }
 

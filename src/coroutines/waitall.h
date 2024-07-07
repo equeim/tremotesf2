@@ -13,7 +13,7 @@ namespace tremotesf {
     namespace impl {
         class MultipleCoroutinesAwaiter final {
         public:
-            inline explicit MultipleCoroutinesAwaiter(std::list<impl::RootCoroutine> coroutines)
+            inline explicit MultipleCoroutinesAwaiter(std::list<impl::StandaloneCoroutine> coroutines)
                 : mCoroutines(std::move(coroutines)) {}
             inline ~MultipleCoroutinesAwaiter() = default;
             Q_DISABLE_COPY_MOVE(MultipleCoroutinesAwaiter)
@@ -33,11 +33,11 @@ namespace tremotesf {
 
         private:
             void awaitSuspendImpl();
-            void onCoroutineCompleted(impl::RootCoroutine* coroutine, std::exception_ptr unhandledException);
+            void onCoroutineCompleted(impl::StandaloneCoroutine* coroutine, std::exception_ptr unhandledException);
             void onAllCoroutinesCompleted();
             void cancelAll();
 
-            std::list<impl::RootCoroutine> mCoroutines;
+            std::list<impl::StandaloneCoroutine> mCoroutines;
             std::coroutine_handle<> mParentCoroutineHandle{};
             CoroutinePromiseBase* mParentCoroutinePromise{};
             std::exception_ptr mUnhandledException{};
@@ -46,7 +46,7 @@ namespace tremotesf {
     }
 
     inline impl::MultipleCoroutinesAwaiter waitAll(std::vector<Coroutine<>>&& coroutines) {
-        std::list<impl::RootCoroutine> list{};
+        std::list<impl::StandaloneCoroutine> list{};
         for (auto&& coroutine : std::move(coroutines)) {
             list.emplace_back(std::move(coroutine));
         }
@@ -56,7 +56,7 @@ namespace tremotesf {
     template<std::same_as<Coroutine<>>... Coroutines>
         requires(sizeof...(Coroutines) != 0)
     inline impl::MultipleCoroutinesAwaiter waitAll(Coroutines&&... coroutines) {
-        std::list<impl::RootCoroutine> list{};
+        std::list<impl::StandaloneCoroutine> list{};
         (list.emplace_back(std::forward<Coroutines>(coroutines)), ...);
         return impl::MultipleCoroutinesAwaiter(std::move(list));
     }
