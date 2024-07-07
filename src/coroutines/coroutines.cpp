@@ -14,7 +14,7 @@ namespace tremotesf::impl {
             [&](auto& callback) {
                 using Type = std::decay_t<decltype(callback)>;
                 if constexpr (std::same_as<Type, JustCompleteCancellation>) {
-                    mRootCoroutine->completeCancellation();
+                    mOwningStandaloneCoroutine->completeCancellation();
                 } else if constexpr (std::same_as<Type, std::function<void()>>) {
                     callback();
                 } else if constexpr (std::same_as<Type, std::monostate>) {
@@ -25,7 +25,7 @@ namespace tremotesf::impl {
     }
 
     bool CoroutinePromiseBase::onStartedAwaiting(JustCompleteCancellation) {
-        if (mRootCoroutine->completeCancellation()) {
+        if (mOwningStandaloneCoroutine->completeCancellation()) {
             return false;
         }
         mChildAwaiterInterruptionCallback = JustCompleteCancellation{};
@@ -33,7 +33,7 @@ namespace tremotesf::impl {
     }
 
     bool CoroutinePromiseBase::onStartedAwaiting(std::function<void()>&& interruptionCallback) {
-        if (mRootCoroutine->completeCancellation()) {
+        if (mOwningStandaloneCoroutine->completeCancellation()) {
             return false;
         }
         mChildAwaiterInterruptionCallback = std::move(interruptionCallback);
@@ -41,7 +41,7 @@ namespace tremotesf::impl {
     }
 
     std::coroutine_handle<> CoroutinePromiseBase::onPerformedFinalSuspendBase() {
-        if (mRootCoroutine->completeCancellation()) {
+        if (mOwningStandaloneCoroutine->completeCancellation()) {
             return std::noop_coroutine();
         }
         return mParentCoroutineHandle;
@@ -51,11 +51,11 @@ namespace tremotesf::impl {
         if (const auto handle = onPerformedFinalSuspendBase(); handle) {
             return handle;
         }
-        mRootCoroutine->invokeCompletionCallback(std::move(mUnhandledException));
+        mOwningStandaloneCoroutine->invokeCompletionCallback(std::move(mUnhandledException));
         return std::noop_coroutine();
     }
 
-    void RootCoroutine::cancel() {
+    void StandaloneCoroutine::cancel() {
         if (mCancellationState != CancellationState::NotCancelled) {
             return;
         }
@@ -63,7 +63,7 @@ namespace tremotesf::impl {
         mCoroutine.mHandle.promise().interruptChildAwaiter();
     }
 
-    bool RootCoroutine::completeCancellation() {
+    bool StandaloneCoroutine::completeCancellation() {
         switch (mCancellationState) {
         case CancellationState::NotCancelled:
             return false;

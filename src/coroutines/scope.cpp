@@ -32,7 +32,7 @@ namespace tremotesf {
     }
 
     void CoroutineScope::launch(Coroutine<> coroutine) {
-        auto* root = new impl::RootCoroutine(std::move(coroutine));
+        auto* root = new impl::StandaloneCoroutine(std::move(coroutine));
         mCoroutines.push_back(root);
         root->setCompletionCallback([this, root](const std::exception_ptr& unhandledException) {
             onCoroutineCompleted(root, std::move(unhandledException));
@@ -47,8 +47,9 @@ namespace tremotesf {
         }
     }
 
-    void
-    CoroutineScope::onCoroutineCompleted(impl::RootCoroutine* coroutine, const std::exception_ptr& unhandledException) {
+    void CoroutineScope::onCoroutineCompleted(
+        impl::StandaloneCoroutine* coroutine, const std::exception_ptr& unhandledException
+    ) {
         handleException(unhandledException);
         const auto found = std::ranges::find(mCoroutines, coroutine);
         if (found == mCoroutines.end()) {
