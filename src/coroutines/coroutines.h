@@ -232,6 +232,10 @@ namespace tremotesf {
             Q_DISABLE_COPY_MOVE(StandaloneCoroutine)
 
             inline void start() { mCoroutine.mHandle.resume(); }
+
+            inline StandaloneCoroutine* rootCoroutine() const { return mRootCoroutine; }
+            inline void setRootCoroutine(StandaloneCoroutine* coroutine) { mRootCoroutine = coroutine; }
+
             void cancel();
             bool completeCancellation();
 
@@ -244,6 +248,7 @@ namespace tremotesf {
 
         private:
             Coroutine<void> mCoroutine;
+            StandaloneCoroutine* mRootCoroutine{};
             std::function<void(std::exception_ptr)> mCompletionCallback{};
             enum class CancellationState : char { NotCancelled, Cancelling, Cancelled };
             CancellationState mCancellationState{CancellationState::NotCancelled};
@@ -258,7 +263,7 @@ namespace tremotesf {
             template<std::derived_from<CoroutinePromiseBase> Promise>
             inline void await_suspend(std::coroutine_handle<Promise> handle) {
                 if (startAwaiting(handle)) {
-                    handle.promise().owningStandaloneCoroutine()->cancel();
+                    handle.promise().owningStandaloneCoroutine()->rootCoroutine()->cancel();
                 }
             }
 
