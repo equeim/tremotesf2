@@ -41,7 +41,7 @@ namespace tremotesf {
             std::coroutine_handle<> mParentCoroutineHandle{};
             CoroutinePromiseBase* mParentCoroutinePromise{};
             std::exception_ptr mUnhandledException{};
-            bool mCancelling{};
+            bool mCancellingCoroutines{};
         };
     }
 

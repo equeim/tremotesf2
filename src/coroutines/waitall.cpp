@@ -48,7 +48,7 @@ namespace tremotesf::impl {
             std::abort();
         }
         mCoroutines.erase(found);
-        if (mCancelling) {
+        if (mCancellingCoroutines) {
             return;
         }
         if (mCoroutines.empty()) {
@@ -58,15 +58,20 @@ namespace tremotesf::impl {
         }
     }
 
-    void MultipleCoroutinesAwaiter::onAllCoroutinesCompleted() { resume(mParentCoroutineHandle); }
+    void MultipleCoroutinesAwaiter::onAllCoroutinesCompleted() {
+        if (mParentCoroutinePromise && mParentCoroutinePromise->rootCoroutine()->completeCancellation()) {
+            return;
+        }
+        resume(mParentCoroutineHandle);
+    }
 
     void MultipleCoroutinesAwaiter::cancelAll() {
-        mCancelling = true;
+        mCancellingCoroutines = true;
         // Copy pointers to handle the case when coroutine is cancelled immediately and is erased from list while we are iterating
         for (auto* coroutine : getPointers(mCoroutines)) {
             coroutine->cancel();
         }
-        mCancelling = false;
+        mCancellingCoroutines = false;
         if (mCoroutines.empty()) {
             onAllCoroutinesCompleted();
         }
