@@ -34,8 +34,8 @@
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/fmtlib/fmt/releases/download/10.2.1/fmt-10.2.1.zip",
-                    "sha256" : "312151a2d13c8327f5c9c586ac6cf7cddc1658e8f53edae0ec56509c8fa516c9"
+                    "url" : "https://github.com/fmtlib/fmt/releases/download/11.0.1/fmt-11.0.1.zip",
+                    "sha256" : "62ca45531814109b5d6cef0cf2fd17db92c32a30dd23012976e768c685534814"
                 }
             ]
         },
