@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 cmake_minimum_required(VERSION 3.22)
-cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.29)
+cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}..3.30)
 
 set(languages CXX)
 if (APPLE)
