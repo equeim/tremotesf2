@@ -240,6 +240,11 @@ if (UNIX)
         )
         qt_add_dbus_interface(
             dbus_generated
+            org.freedesktop.portal.Notification.xml
+            tremotesf_dbus_generated/org.freedesktop.portal.Notification
+        )
+        qt_add_dbus_interface(
+            dbus_generated
             org.freedesktop.Notifications.xml
             tremotesf_dbus_generated/org.freedesktop.Notifications
         )
