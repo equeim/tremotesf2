@@ -19,11 +19,11 @@
 #include "fileutils.h"
 #include "literals.h"
 #include "main_windows.h"
-#include "recoloringsvgiconengineplugin.h"
 #include "signalhandler.h"
 #include "target_os.h"
 #include "ipc/ipcclient.h"
 #include "log/log.h"
+#include "ui/iconthemesetup.h"
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/mainwindow/mainwindow.h"
 
@@ -152,11 +152,8 @@ int main(int argc, char** argv) {
     if constexpr (targetOs == TargetOs::Windows) {
         windowsInitApplication();
     }
-#if defined(TREMOTESF_BUNDLED_ICON_THEME)
-    QIcon::setThemeSearchPaths({resolveExternalBundledResourcesPath("icons"_l1)});
-    QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_l1);
-    QApplication::setStyle(new RecoloringSvgIconStyle(qApp));
-#endif
+
+    setupIconTheme();
 
     QGuiApplication::setDesktopFileName(TREMOTESF_APP_ID ""_l1);
     QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_l1));

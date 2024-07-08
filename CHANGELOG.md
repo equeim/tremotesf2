@@ -8,6 +8,7 @@
 - Minimum KF5 version is 5.92
 - Removed dependency on Qt Concurrent module
 - Notification portal is used for notification in Flatpak
+- Breeze is used as a fallback icon theme and should be installed as a runtime dependency
 
 ## [2.6.3] - 2024-04-22
 ### Fixed
