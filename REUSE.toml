@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2015-2024 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
+version = 1
+SPDX-PackageName = "Tremotesf"
+SPDX-PackageSupplier = "Alexey Rochev <equeim@gmail.com>"
+SPDX-PackageDownloadLocation = "https://github.com/equeim/tremotesf2"
+
+[[annotations]]
+path = ["CHANGELOG.md", "README.md", "**.json", "debian/**", "src/rpc/test-data/**.pem"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2015-2024 Alexey Rochev"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["translations/**.ts", "data/po/**.po"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2015-2024 Alexey Rochev", "2018 Carlos Gonzalez"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "data/icons/status/**.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2009 Mateusz Tobola", "2023 Alexey Rochev"]
+SPDX-License-Identifier = "GPL-2.0-or-later"
+
+[[annotations]]
+path = ["data/icons/hicolor/**/apps/org.equeim.Tremotesf.png", "data/icons/hicolor/scalable/apps/org.equeim.Tremotesf.svg", "data/icons/macos/tremotesf.icns", "src/tremotesf.ico"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Transmission authors and contributors"
+SPDX-License-Identifier = "GPL-3.0-or-later"
