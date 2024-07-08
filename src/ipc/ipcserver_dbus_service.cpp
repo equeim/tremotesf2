@@ -61,7 +61,7 @@ namespace tremotesf {
      * org.freedesktop.Application methods
      */
     void IpcDbusService::Activate(const QVariantMap& platform_data) {
-        info().log("Window activation requested, platform_data = {}", platform_data);
+        info().log("IpcDbusService: window activation requested, platform_data = {}", platform_data);
         emit mIpcServer->windowActivationRequested(
             platform_data.value(torrentHashField).toString(),
             platformDataToWindowActivationToken(platform_data)
@@ -69,7 +69,7 @@ namespace tremotesf {
     }
 
     void IpcDbusService::Open(const QStringList& uris, const QVariantMap& platform_data) {
-        info().log("Torrents adding requested, uris = {}, platform_data = {}", uris, platform_data);
+        info().log("IpcDbusService: torrents adding requested, uris = {}, platform_data = {}", uris, platform_data);
         QStringList files;
         QStringList urls;
         for (const QUrl& url : QUrl::fromStringList(uris)) {
@@ -88,10 +88,11 @@ namespace tremotesf {
         const QString& action_name, const QVariantList& parameter, const QVariantMap& platform_data
     ) {
         info().log(
-            "Action activated, action_name = {}, parameter = {}, platform_data = {}",
+            "IpcDbusService: action activated, action_name = {}, parameter = {}, platform_data = {}",
             action_name,
             parameter,
             platform_data
         );
+        emit mIpcServer->windowActivationRequested({}, platformDataToWindowActivationToken(platform_data));
     }
 }
