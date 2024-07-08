@@ -16,11 +16,10 @@ namespace tremotesf {
         static IpcServer* createInstance(QObject* parent = nullptr);
 
     protected:
-        inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent){};
+        inline explicit IpcServer(QObject* parent = nullptr) : QObject(parent) {};
 
     signals:
-        void
-        windowActivationRequested(const QString& torrentHash, const std::optional<QByteArray>& windowActivationToken);
+        void windowActivationRequested(const std::optional<QByteArray>& windowActivationToken);
         void torrentsAddingRequested(
             const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
         );

@@ -71,7 +71,7 @@ namespace tremotesf {
             ipcServer,
             &IpcServer::windowActivationRequested,
             this,
-            [=, this](const auto&, const auto& activationToken) { emit showWindow(activationToken); }
+            [=, this](const auto& activationToken) { emit showWindow(activationToken); }
         );
 
         QObject::connect(
