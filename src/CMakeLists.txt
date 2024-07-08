@@ -106,6 +106,7 @@ add_library(
     startup/commandlineparser.h
     startup/signalhandler.h
 
+    ui/iconthemesetup.h
     ui/notificationscontroller.cpp
     ui/notificationscontroller.h
     ui/savewindowstatedispatcher.cpp
@@ -264,6 +265,7 @@ if (UNIX)
             ipc/ipcserver_dbus_service.h
             ipc/ipcserver_dbus.cpp
             ipc/ipcserver_dbus.h
+            ui/iconthemesetup_freedesktop.cpp
             ui/notificationscontroller_freedesktop.cpp
             ${dbus_generated}
         )
@@ -359,6 +361,7 @@ if (WIN32 OR APPLE)
     target_sources(
         tremotesf
         PRIVATE
+        ui/iconthemesetup_bundled.cpp
         ui/recoloringsvgiconengine.cpp
         ui/recoloringsvgiconengine.h
         startup/recoloringsvgiconengineplugin.cpp
