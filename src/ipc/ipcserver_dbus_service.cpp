@@ -62,10 +62,7 @@ namespace tremotesf {
      */
     void IpcDbusService::Activate(const QVariantMap& platform_data) {
         info().log("IpcDbusService: window activation requested, platform_data = {}", platform_data);
-        emit mIpcServer->windowActivationRequested(
-            platform_data.value(torrentHashField).toString(),
-            platformDataToWindowActivationToken(platform_data)
-        );
+        emit mIpcServer->windowActivationRequested(platformDataToWindowActivationToken(platform_data));
     }
 
     void IpcDbusService::Open(const QStringList& uris, const QVariantMap& platform_data) {
@@ -93,6 +90,6 @@ namespace tremotesf {
             parameter,
             platform_data
         );
-        emit mIpcServer->windowActivationRequested({}, platformDataToWindowActivationToken(platform_data));
+        emit mIpcServer->windowActivationRequested(platformDataToWindowActivationToken(platform_data));
     }
 }

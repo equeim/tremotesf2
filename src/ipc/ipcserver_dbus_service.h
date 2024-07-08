@@ -20,7 +20,6 @@ namespace tremotesf {
     public:
         static constexpr auto desktopStartupIdField = "desktop-startup-id"_l1;
         static constexpr auto xdgActivationTokenField = "activation-token"_l1;
-        static constexpr auto torrentHashField = "torrent-hash"_l1;
 
         IpcDbusService(IpcServerDbus* ipcServer, QObject* parent = nullptr);
 
