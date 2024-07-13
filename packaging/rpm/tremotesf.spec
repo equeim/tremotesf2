@@ -52,6 +52,8 @@ BuildRequires: clang
 %else
 BuildRequires: gcc-c++
 %endif
+Requires: qt%{qt_version}-qtsvg
+Requires: breeze-icon-theme
 %if %{qt_version} == 5
 Requires: kwayland-integration
 %endif
@@ -63,12 +65,16 @@ BuildRequires: pkgconfig(cpp-httplib)
 BuildRequires: appstream-glib
 # OBS complains about not owned directories if hicolor-icon-theme isn't installed at build time
 BuildRequires: hicolor-icon-theme
+Requires: libQt6Svg6
+Requires: kf6-breeze-icons
 %global _metainfodir %{_datadir}/metainfo
 %global tremotesf_with_httplib system
 %endif
 
 %if %{defined mageia}
 BuildRequires: appstream-util
+Requires: qtsvg5
+Requires: breeze-icons
 %if %{qt_version} == 5
 Requires: kwayland-integration
 %endif
