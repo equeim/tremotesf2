@@ -5,7 +5,7 @@
 build_freebsd_task:
   freebsd_instance:
     matrix:
-    - image_family: freebsd-13-3
+    #- image_family: freebsd-13-3
     - image_family: freebsd-14-1
 
   only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_BASE_BRANCH == 'master' || $CIRRUS_BASE_BRANCH =~ 'feature/.*'
