@@ -36,11 +36,17 @@ jobs:
 
     - name: Set packages install command for dnf
       if: startsWith(matrix.container-image, 'fedora')
-      run: echo 'INSTALL_PACKAGES=dnf -y --setopt=install_weak_deps=False install' >> "$GITHUB_ENV"
+      run: |
+        cmd='dnf -y --setopt=install_weak_deps=False install'
+        echo "INSTALL_PACKAGES=$cmd" >> "$GITHUB_ENV"
+        echo "INSTALL_LOCAL_PACKAGES=$cmd" >> "$GITHUB_ENV"
 
     - name: Set packages install command for zypper
       if: startsWith(matrix.container-image, 'opensuse')
-      run: echo 'INSTALL_PACKAGES=zypper --non-interactive in --no-recommends --details' >> "$GITHUB_ENV"
+      run: |
+        cmd='zypper --non-interactive in --no-recommends --details'
+        echo "INSTALL_PACKAGES=$cmd" >> "$GITHUB_ENV"
+        echo "INSTALL_LOCAL_PACKAGES=$cmd --allow-unsigned-rpm" >> "$GITHUB_ENV"
 
     - name: Install Git and rpm-build
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
@@ -73,6 +79,10 @@ jobs:
     - name: Build RPM
       run: |
         rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb packaging/rpm/tremotesf.spec
+
+    - name: Install RPM
+      run: |
+        ${{env.INSTALL_LOCAL_PACKAGES}} "$(rpm --eval='%_rpmdir')"/*/*.rpm
 
   build-deb:
     strategy:
@@ -120,6 +130,10 @@ jobs:
     - name: Build DEB
       run: |
         dpkg-buildpackage
+
+    - name: Install DEB
+      run: |
+        DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ../*.deb
 
   build-flatpak:
     runs-on: ubuntu-latest
