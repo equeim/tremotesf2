@@ -36,6 +36,7 @@ On GNU/Linux and BSD, also:
 - Gettext 0.19.7 or newer
 - Qt D-Bus module
 - KWindowSystem (with Qt5/KF5 kwayland-integration is also needed as runtime dependency)
+- Qt's SVG image format plugin as a runtime dependency (usually located somewhere at /usr/lib64/qt6/plugins/imageformats/libqsvg.so)
 
 On Windows, also:
 - Windows 11 SDK is needed to build

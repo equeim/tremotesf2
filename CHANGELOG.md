@@ -9,6 +9,7 @@
 - Removed dependency on Qt Concurrent module
 - Notification portal is used for notification in Flatpak
 - Breeze is used as a fallback icon theme and should be installed as a runtime dependency
+- Clarified runtime dependency on Qt's SVG image format plugin
 
 ## [2.6.3] - 2024-04-22
 ### Fixed
