@@ -41,6 +41,8 @@ namespace tremotesf {
             mSite = registrableDomainFromUrl(QUrl(mAnnounce));
         }
 
+        setChanged(mTier, trackerMap.value("tier"_l1).toInt(), changed);
+
         const bool announceError =
             (!trackerMap.value("lastAnnounceSucceeded"_l1).toBool() &&
              trackerMap.value("lastAnnounceTime"_l1).toInt() != 0);

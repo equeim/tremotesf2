@@ -36,6 +36,8 @@ namespace tremotesf {
         const QString& announce() const { return mAnnounce; };
         const QString& site() const { return mSite; };
 
+        int tier() const { return mTier; }
+
         Status status() const { return mStatus; };
         QString errorMessage() const { return mErrorMessage; };
 
@@ -46,11 +48,14 @@ namespace tremotesf {
 
         bool update(const QJsonObject& trackerMap);
 
+        void replaceAnnounceUrl(const QString& announceUrl) { mAnnounce = announceUrl; }
+
         bool operator==(const Tracker& other) const = default;
 
     private:
         QString mAnnounce{};
         QString mSite{};
+        int mTier{};
 
         Status mStatus{};
         QString mErrorMessage{};

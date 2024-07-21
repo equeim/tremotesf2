@@ -9,10 +9,7 @@
 #include "literals.h"
 #include "recoloringsvgiconengineplugin.h"
 #include "target_os.h"
-#include "log/log.h"
 #include "ui/recoloringsvgiconengine.h"
-
-SPECIALIZE_FORMATTER_FOR_QDEBUG(QPalette)
 
 namespace tremotesf {
     namespace {

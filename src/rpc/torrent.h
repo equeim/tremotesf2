@@ -6,6 +6,7 @@
 #define TREMOTESF_RPC_TORRENT_H
 
 #include <optional>
+#include <set>
 #include <span>
 #include <vector>
 
@@ -166,7 +167,7 @@ namespace tremotesf {
         void setIdleSeedingLimitMode(TorrentData::IdleSeedingLimitMode mode);
         void setIdleSeedingLimit(int limit);
 
-        void addTrackers(const QStringList& announceUrls);
+        void addTrackers(std::span<const std::set<QString>> announceUrls);
         void setTracker(int trackerId, const QString& announce);
         void removeTrackers(std::span<const int> trackerIds);
 
@@ -214,6 +215,12 @@ namespace tremotesf {
         );
         void fileRenamed(const QString& filePath, const QString& newName);
     };
+
+    namespace impl {
+        std::vector<std::set<QString>> mergeTrackers(
+            const std::vector<std::set<QString>>& existingTrackers, std::span<const std::set<QString>> newTrackers
+        );
+    }
 }
 
 SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::Status)
