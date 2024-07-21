@@ -6,12 +6,16 @@
 
 #include <algorithm>
 #include <array>
+#include <map>
+#include <ranges>
 #include <stdexcept>
 
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLocale>
+
+#include <fmt/ranges.h>
 
 #include "jsonutils.h"
 #include "itemlistupdater.h"
@@ -196,6 +200,7 @@ namespace tremotesf {
         constexpr auto addTrackerKey = "trackerAdd"_l1;
         constexpr auto replaceTrackerKey = "trackerReplace"_l1;
         constexpr auto removeTrackerKey = "trackerRemove"_l1;
+        constexpr auto trackerListKey = "trackerList"_l1;
 
         constexpr auto statusMapper = EnumMapper(std::array{
             EnumMapping(TorrentData::Status::Paused, 0),
@@ -558,16 +563,122 @@ namespace tremotesf {
         mRpc->setTorrentProperty(mData.id, updateKeyString(TorrentData::UpdateKey::IdleSeedingLimit), limit);
     }
 
-    void Torrent::addTrackers(const QStringList& announceUrls) {
-        mRpc->setTorrentProperty(mData.id, addTrackerKey, QJsonArray::fromStringList(announceUrls), true);
+    namespace {
+        std::vector<std::set<QString>> toTieredAnnounceUrls(std::span<const Tracker> trackers) {
+            std::map<int, std::set<QString>> tiered{};
+            for (const auto& tracker : trackers) {
+                tiered[tracker.id()].insert(tracker.announce());
+            }
+            return moveToContainer<std::vector>(std::views::values(tiered));
+        }
+
+        QString toTrackerList(std::span<const std::set<QString>> tieredAnnounceUrls) {
+            QString trackerList{};
+            bool processedFirstTier{};
+            for (const auto& tier : tieredAnnounceUrls) {
+                if (processedFirstTier) {
+                    trackerList += "\n\n"_l1;
+                }
+                for (const auto& announceUrl : tier) {
+                    trackerList += announceUrl;
+                    trackerList += '\n';
+                }
+                processedFirstTier = true;
+            }
+            return trackerList;
+        }
+
+        bool isIntersect(const std::set<QString>& existingTier, const std::set<QString>& newTier) {
+            return std::ranges::any_of(newTier, [&](const auto& announceUrl) {
+                return existingTier.contains(announceUrl);
+            });
+        }
+
+        QJsonArray filterOutExistingTrackers(
+            std::span<const std::set<QString>> newTrackers, std::span<const Tracker> existingTrackers
+        ) {
+            QJsonArray trackersToAdd{};
+            for (const auto& tier : newTrackers) {
+                if (tier.empty()) continue;
+                // Transmission adds each announce URL to each own tier when using trackerAdd property, so take first URL from each tier
+                const auto& first = *tier.begin();
+                const auto existingTracker = std::ranges::find(existingTrackers, first, &Tracker::announce);
+                if (existingTracker == existingTrackers.end()) {
+                    trackersToAdd.push_back(first);
+                }
+            }
+            return trackersToAdd;
+        }
+    }
+
+    namespace impl {
+        std::vector<std::set<QString>> mergeTrackers(
+            const std::vector<std::set<QString>>& existingTrackers, std::span<const std::set<QString>> newTrackers
+        ) {
+            auto merged = existingTrackers;
+            for (const auto& newTier : newTrackers) {
+                if (newTier.empty()) continue;
+                const auto existingTier =
+                    std::ranges::find_if(merged, [&](auto& tier) { return isIntersect(tier, newTier); });
+                if (existingTier != merged.end()) {
+                    existingTier->insert(newTier.begin(), newTier.end());
+                } else {
+                    merged.push_back(newTier);
+                }
+            }
+            return merged;
+        }
+    }
+
+    void Torrent::addTrackers(std::span<const std::set<QString>> announceUrls) {
+        if (mRpc->serverSettings()->data().hasTrackerListProperty()) {
+            const auto existingTrackers = toTieredAnnounceUrls(mData.trackers);
+            debug().log("Merging exisiting trackers {} with {}", existingTrackers, announceUrls);
+            const auto merged = mergeTrackers(existingTrackers, announceUrls);
+            const bool changed = merged != existingTrackers;
+            debug().log("Result is {}, changed: {}", merged, changed);
+            if (changed) {
+                mRpc->setTorrentProperty(mData.id, trackerListKey, toTrackerList(merged), true);
+            }
+        } else {
+            auto trackersToAdd = filterOutExistingTrackers(announceUrls, mData.trackers);
+            if (!trackersToAdd.empty()) {
+                mRpc->setTorrentProperty(mData.id, addTrackerKey, std::move(trackersToAdd), true);
+            }
+        }
     }
 
     void Torrent::setTracker(int trackerId, const QString& announce) {
-        mRpc->setTorrentProperty(mData.id, replaceTrackerKey, QJsonArray{trackerId, announce}, true);
+        if (!mRpc->serverSettings()->data().hasTrackerListProperty()) {
+            mRpc->setTorrentProperty(mData.id, replaceTrackerKey, QJsonArray{trackerId, announce}, true);
+            return;
+        }
+        auto trackers = mData.trackers;
+        const auto tracker = std::ranges::find(trackers, trackerId, &Tracker::id);
+        if (tracker == trackers.end()) {
+            warning().log("setTracker: did not find tracker with id {}", trackerId);
+            return;
+        }
+        if (tracker->announce() == announce) {
+            return;
+        }
+        tracker->replaceAnnounceUrl(announce);
+        mRpc->setTorrentProperty(mData.id, trackerListKey, toTrackerList(toTieredAnnounceUrls(trackers)), true);
     }
 
     void Torrent::removeTrackers(std::span<const int> ids) {
-        mRpc->setTorrentProperty(mData.id, removeTrackerKey, toJsonArray(ids), true);
+        if (!mRpc->serverSettings()->data().hasTrackerListProperty()) {
+            mRpc->setTorrentProperty(mData.id, removeTrackerKey, toJsonArray(ids), true);
+            return;
+        }
+        auto trackers = mData.trackers;
+        const auto erased = std::erase_if(trackers, [ids](const auto& tracker) {
+            return std::ranges::find(ids, tracker.id()) != ids.end();
+        });
+        if (erased == 0) {
+            return;
+        }
+        mRpc->setTorrentProperty(mData.id, trackerListKey, toTrackerList(toTieredAnnounceUrls(trackers)), true);
     }
 
     void Torrent::setFilesEnabled(bool enabled) {
