@@ -46,6 +46,8 @@ add_library(
     formatutils.h
     itemlistupdater.h
     literals.h
+    magnetlinkparser.h
+    magnetlinkparser.cpp
     settings.cpp
     settings.h
     stdutils.h
@@ -424,6 +426,10 @@ if (BUILD_TESTING)
     add_executable(coroutines_test coroutines/coroutines_test.cpp)
     add_test(NAME coroutines_test COMMAND coroutines_test)
     target_link_libraries(coroutines_test tremotesf_objects Qt::Test)
+
+    add_executable(magnetlinkparser_test magnetlinkparser_test.cpp)
+    add_test(NAME magnetlinkparser_test COMMAND magnetlinkparser_test)
+    target_link_libraries(magnetlinkparser_test tremotesf_objects Qt::Test)
 endif ()
 
 set_common_options_on_targets()
