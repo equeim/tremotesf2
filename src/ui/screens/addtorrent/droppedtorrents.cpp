@@ -8,13 +8,14 @@
 #include <QUrl>
 
 #include "literals.h"
+#include "log/log.h"
+#include "magnetlinkparser.h"
+
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf {
     namespace {
         constexpr auto torrentFileSuffix = ".torrent"_l1;
-        constexpr auto magnetScheme = "magnet"_l1;
-        constexpr auto magnetQueryPrefixV1 = "xt=urn:btih:"_l1;
-        constexpr auto magnetQueryPrefixV2 = "xt=urn:btmh:"_l1;
         constexpr auto httpScheme = "http"_l1;
         constexpr auto httpsScheme = "https"_l1;
     }
@@ -29,11 +30,9 @@ namespace tremotesf {
             }
         } else if (mime->hasText()) {
             const auto text = mime->text();
-            const auto lines = QStringView(text).split(u'\n');
+            const auto lines = QStringView(text).split(u'\n', Qt::SkipEmptyParts);
             for (auto line : lines) {
-                if (!line.isEmpty()) {
-                    processUrl(QUrl(line.toString()));
-                }
+                processUrl(QUrl(line.toString()));
             }
         }
     }
@@ -45,10 +44,12 @@ namespace tremotesf {
             }
         } else {
             const auto scheme = url.scheme();
-            if (scheme == magnetScheme && url.hasQuery()) {
-                const auto query = url.query();
-                if (query.startsWith(magnetQueryPrefixV1) || query.startsWith(magnetQueryPrefixV2)) {
+            if (scheme == magnetScheme) {
+                try {
+                    parseMagnetLink(url);
                     urls.push_back(url.toString());
+                } catch (const std::runtime_error& e) {
+                    warning().logWithException(e, "Failed to parse URL {} as magnet link", url);
                 }
             } else if (scheme == httpScheme || scheme == httpsScheme) {
                 urls.push_back(url.toString());
