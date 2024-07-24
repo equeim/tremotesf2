@@ -48,6 +48,18 @@ namespace tremotesf {
             );
         }
 
+        std::string formatMimeData(const QMimeData* mime) {
+            return fmt::format(
+                R"(
+    formats = {}
+    urls = {}
+    text = {})",
+                mime->formats(),
+                mime->urls(),
+                mime->text()
+            );
+        }
+
         using namespace std::chrono_literals;
         constexpr auto initialDelayedTorrentAddMessageDelay = 500ms;
     }
@@ -150,6 +162,7 @@ namespace tremotesf {
             warning().log("MainWindowViewModel: clipboard data is null");
             return;
         }
+        debug().log("MainWindowViewModel: clipboard data: {}", formatMimeData(mimeData));
         const auto dropped = DroppedTorrents(mimeData);
         if (dropped.isEmpty()) {
             debug().log("MainWindowViewModel: ignoring clipboard data");
