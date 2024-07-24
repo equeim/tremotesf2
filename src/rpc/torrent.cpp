@@ -353,10 +353,9 @@ namespace tremotesf {
         case TorrentData::UpdateKey::WebSeeders: {
             setChanged(
                 webSeeders,
-                createTransforming<std::vector<QString>>(
-                    value.toArray(),
-                    [](auto&& value) { return value.toString(); }
-                ),
+                toContainer<std::vector>(value.toArray() | std::views::transform([](auto value) {
+                                             return value.toString();
+                                         })),
                 changed
             );
             return;
@@ -487,10 +486,9 @@ namespace tremotesf {
     }
 
     std::vector<std::optional<TorrentData::UpdateKey>> Torrent::mapUpdateKeys(const QJsonArray& stringKeys) {
-        return createTransforming<std::vector<std::optional<TorrentData::UpdateKey>>>(
-            stringKeys,
-            [](const auto& value) { return mapUpdateKey(value.toString()); }
-        );
+        return toContainer<std::vector>(stringKeys | std::views::transform([](auto value) {
+                                            return mapUpdateKey(value.toString());
+                                        }));
     }
 
     void Torrent::setDownloadSpeedLimited(bool limited) {

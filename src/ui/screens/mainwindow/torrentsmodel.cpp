@@ -394,8 +394,8 @@ namespace tremotesf {
     Torrent* TorrentsModel::torrentAtRow(int row) const { return mRpc->torrents()[static_cast<size_t>(row)].get(); }
 
     std::vector<int> TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        return createTransforming<std::vector<int>>(indexes, [this](const QModelIndex& index) {
-            return torrentAtIndex(index)->data().id;
-        });
+        return toContainer<std::vector>(indexes | std::views::transform([this](const QModelIndex& index) {
+                                            return torrentAtIndex(index)->data().id;
+                                        }));
     }
 }

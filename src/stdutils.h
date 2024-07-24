@@ -14,31 +14,6 @@
 #include <QtGlobal>
 
 namespace tremotesf {
-    namespace impl {
-        template<typename T>
-        concept HasReserveFunction = std::ranges::range<T> && requires(T container, std::ranges::range_size_t<T> size) {
-            container.reserve(size);
-        };
-
-        template<typename T>
-        concept HasPushBackFunction =
-            std::ranges::range<T> &&
-            requires(T container, std::ranges::range_reference_t<T> item) { container.push_back(item); };
-
-        template<typename T>
-        concept HasInsertFunction =
-            std::ranges::range<T> &&
-            requires(T container, std::ranges::range_reference_t<T> item) { container.insert(item); };
-
-        template<typename T>
-        concept MovableRange = (std::is_rvalue_reference_v<T> && !std::is_const_v<std::remove_reference_t<T>>) ||
-                               (!std::is_reference_v<T> && !std::is_const_v<T>);
-
-        template<std::ranges::range T>
-        using MaybeMovableRangeReference = std::
-            conditional_t<MovableRange<T>, std::ranges::range_rvalue_reference_t<T>, std::ranges::range_reference_t<T>>;
-    }
-
     template<std::ranges::random_access_range Range>
     inline constexpr std::optional<std::ranges::range_size_t<Range>>
     indexOf(const Range& range, std::ranges::range_value_t<Range> value) {
@@ -66,40 +41,28 @@ namespace tremotesf {
         );
     }
 
-    template<
-        std::default_initializable NewContainer,
-        std::ranges::forward_range FromRange,
-        std::invocable<impl::MaybeMovableRangeReference<FromRange>> Transform>
-        requires(impl::HasPushBackFunction<NewContainer> || impl::HasInsertFunction<NewContainer>)
+    template<template<typename...> typename NewContainer, std::ranges::forward_range FromRange>
     // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
-    inline NewContainer createTransforming(FromRange&& from, Transform&& transform) {
-        NewContainer container{};
-        if constexpr (std::ranges::sized_range<FromRange> && impl::HasReserveFunction<NewContainer>) {
-            container.reserve(static_cast<std::ranges::range_size_t<NewContainer>>(std::ranges::size(from)));
-        }
-        auto outputIterator = [&] {
-            if constexpr (impl::HasPushBackFunction<NewContainer>) {
-                return std::back_insert_iterator(container);
-            } else if constexpr (impl::HasInsertFunction<NewContainer>) {
-                return std::insert_iterator(container);
-            }
-        }();
-        if constexpr (impl::MovableRange<FromRange>) {
-            std::transform(
-                std::move_iterator(std::ranges::begin(from)),
-                std::move_iterator(std::ranges::end(from)),
-                outputIterator,
-                std::forward<Transform>(transform)
-            );
-        } else {
-            std::transform(
-                std::ranges::begin(from),
-                std::ranges::end(from),
-                outputIterator,
-                std::forward<Transform>(transform)
-            );
-        }
-        return container;
+    inline NewContainer<std::ranges::range_value_t<FromRange>> toContainer(FromRange&& from) {
+        return {std::ranges::begin(from), std::ranges::end(from)};
+    }
+
+    template<typename NewContainer, std::ranges::forward_range FromRange>
+    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
+    inline NewContainer toContainer(FromRange&& from) {
+        return {std::ranges::begin(from), std::ranges::end(from)};
+    }
+
+    template<template<typename...> typename NewContainer, std::ranges::forward_range FromRange>
+    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
+    inline NewContainer<std::ranges::range_value_t<FromRange>> moveToContainer(FromRange&& from) {
+        return {std::move_iterator(std::ranges::begin(from)), std::move_iterator(std::ranges::end(from))};
+    }
+
+    template<typename NewContainer, std::ranges::forward_range FromRange>
+    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
+    inline NewContainer moveToContainer(FromRange&& from) {
+        return {std::move_iterator(std::ranges::begin(from)), std::move_iterator(std::ranges::end(from))};
     }
 
     /**

@@ -128,28 +128,28 @@ namespace tremotesf {
     }
 
     QVariant LastTorrents::toVariant() const {
-        return createTransforming<QVariantList>(torrents, [](const LastTorrents::Torrent& torrent) {
-            return QVariantMap{
-                {lastTorrentsHashStringKey, torrent.hashString},
-                {lastTorrentsFinishedKey, torrent.finished}
-            };
-        });
+        return toContainer<QVariantList>(torrents | std::views::transform([](const LastTorrents::Torrent& torrent) {
+                                             return QVariant(QVariantMap{
+                                                 {lastTorrentsHashStringKey, torrent.hashString},
+                                                 {lastTorrentsFinishedKey, torrent.finished}
+                                             });
+                                         }));
     }
 
     LastTorrents LastTorrents::fromVariant(const QVariant& var) {
-        LastTorrents lastTorrents{};
-        if (var.isValid() && var.type() == QVariant::List) {
-            lastTorrents.saved = true;
-            lastTorrents.torrents =
-                createTransforming<std::vector<LastTorrents::Torrent>>(var.toList(), [](const QVariant& torrentVar) {
-                    const QVariantMap map = torrentVar.toMap();
-                    return LastTorrents::Torrent{
-                        map[lastTorrentsHashStringKey].toString(),
-                        map[lastTorrentsFinishedKey].toBool()
-                    };
-                });
+        if (!var.isValid() || var.type() != QVariant::List) {
+            return {};
         }
-        return lastTorrents;
+        return {
+            .saved = true,
+            .torrents = toContainer<std::vector>(var.toList() | std::views::transform([](const QVariant& torrentVar) {
+                                                     const QVariantMap map = torrentVar.toMap();
+                                                     return LastTorrents::Torrent{
+                                                         .hashString = map[lastTorrentsHashStringKey].toString(),
+                                                         .finished = map[lastTorrentsFinishedKey].toBool()
+                                                     };
+                                                 }))
+        };
     }
 
     Servers* Servers::instance() {
@@ -223,13 +223,12 @@ namespace tremotesf {
         }
         mSettings->beginGroup(currentServerName());
         LastTorrents torrents{};
-        torrents.torrents =
-            createTransforming<std::vector<LastTorrents::Torrent>>(rpc->torrents(), [](const auto& torrent) {
-                return LastTorrents::Torrent{
-                    .hashString = torrent->data().hashString,
-                    .finished = torrent->data().isFinished()
-                };
-            });
+        torrents.torrents = toContainer<std::vector>(rpc->torrents() | std::views::transform([](const auto& torrent) {
+                                                         return LastTorrents::Torrent{
+                                                             .hashString = torrent->data().hashString,
+                                                             .finished = torrent->data().isFinished()
+                                                         };
+                                                     }));
         mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();
     }
@@ -237,9 +236,11 @@ namespace tremotesf {
     QStringList Servers::currentServerLastDownloadDirectories(const ServerSettings* serverSettings) const {
         QStringList directories{};
         mSettings->beginGroup(currentServerName());
-        directories = createTransforming<QStringList>(
-            mSettings->value(lastDownloadDirectoriesKey).toStringList(),
-            [serverSettings](const QString& dir) { return normalizePath(dir, serverSettings->data().pathOs); }
+        directories = toContainer<QStringList>(
+            mSettings->value(lastDownloadDirectoriesKey).toStringList() |
+            std::views::transform([serverSettings](const QString& dir) {
+                return normalizePath(dir, serverSettings->data().pathOs);
+            })
         );
         mSettings->endGroup();
         return directories;
