@@ -160,9 +160,9 @@ namespace tremotesf {
     }
 
     std::vector<int> TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        return createTransforming<std::vector<int>>(indexes, [this](const QModelIndex& index) {
-            return mTrackers.at(static_cast<size_t>(index.row())).tracker.id();
-        });
+        return toContainer<std::vector>(indexes | std::views::transform([this](const QModelIndex& index) {
+                                            return mTrackers.at(static_cast<size_t>(index.row())).tracker.id();
+                                        }));
     }
 
     const Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const {
@@ -206,7 +206,7 @@ namespace tremotesf {
         TrackersModelUpdater updater(*this);
         updater.update(
             mTrackers,
-            createTransforming<std::vector<TrackerItem>>(mTrackers, std::mem_fn(&TrackerItem::withUpdatedEta))
+            toContainer<std::vector>(mTrackers | std::views::transform(&TrackerItem::withUpdatedEta))
         );
     }
 }
