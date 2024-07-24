@@ -276,57 +276,82 @@ namespace tremotesf {
             }
             return;
         case TorrentData::UpdateKey::AddedDate:
-            return updateDateTime(addedDate, value, changed);
+            updateDateTime(addedDate, value, changed);
+            return;
         case TorrentData::UpdateKey::Name:
-            return setChanged(name, value.toString(), changed);
+            setChanged(name, value.toString(), changed);
+            return;
         case TorrentData::UpdateKey::MagnetLink:
-            return setChanged(magnetLink, value.toString(), changed);
+            setChanged(magnetLink, value.toString(), changed);
+            return;
         case TorrentData::UpdateKey::QueuePosition:
-            return setChanged(queuePosition, value.toInt(), changed);
+            setChanged(queuePosition, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::TotalSize:
-            return setChanged(totalSize, toInt64(value), changed);
+            setChanged(totalSize, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::CompletedSize:
-            return setChanged(completedSize, toInt64(value), changed);
+            setChanged(completedSize, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::LeftUntilDone:
-            return setChanged(leftUntilDone, toInt64(value), changed);
+            setChanged(leftUntilDone, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::SizeWhenDone:
-            return setChanged(sizeWhenDone, toInt64(value), changed);
+            setChanged(sizeWhenDone, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::PercentDone:
-            return setChanged(percentDone, value.toDouble(), changed);
+            setChanged(percentDone, value.toDouble(), changed);
+            return;
         case TorrentData::UpdateKey::RecheckProgress:
-            return setChanged(recheckProgress, value.toDouble(), changed);
+            setChanged(recheckProgress, value.toDouble(), changed);
+            return;
         case TorrentData::UpdateKey::Eta:
-            return setChanged(eta, value.toInt(), changed);
+            setChanged(eta, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::MetadataPercentComplete:
-            return setChanged(metadataComplete, value.toInt() == 1, changed);
+            setChanged(metadataComplete, value.toInt() == 1, changed);
+            return;
         case TorrentData::UpdateKey::DownloadSpeed:
-            return setChanged(downloadSpeed, toInt64(value), changed);
+            setChanged(downloadSpeed, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::UploadSpeed:
-            return setChanged(uploadSpeed, toInt64(value), changed);
+            setChanged(uploadSpeed, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::DownloadSpeedLimited:
-            return setChanged(downloadSpeedLimited, value.toBool(), changed);
+            setChanged(downloadSpeedLimited, value.toBool(), changed);
+            return;
         case TorrentData::UpdateKey::DownloadSpeedLimit:
-            return setChanged(downloadSpeedLimit, value.toInt(), changed);
+            setChanged(downloadSpeedLimit, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::UploadSpeedLimited:
-            return setChanged(uploadSpeedLimited, value.toBool(), changed);
+            setChanged(uploadSpeedLimited, value.toBool(), changed);
+            return;
         case TorrentData::UpdateKey::UploadSpeedLimit:
-            return setChanged(uploadSpeedLimit, value.toInt(), changed);
+            setChanged(uploadSpeedLimit, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::TotalDownloaded:
-            return setChanged(totalDownloaded, toInt64(value), changed);
+            setChanged(totalDownloaded, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::TotalUploaded:
-            return setChanged(totalUploaded, toInt64(value), changed);
+            setChanged(totalUploaded, toInt64(value), changed);
+            return;
         case TorrentData::UpdateKey::Ratio:
-            return setChanged(ratio, value.toDouble(), changed);
+            setChanged(ratio, value.toDouble(), changed);
+            return;
         case TorrentData::UpdateKey::RatioLimitMode:
-            return setChanged(ratioLimitMode, ratioLimitModeMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            setChanged(ratioLimitMode, ratioLimitModeMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            return;
         case TorrentData::UpdateKey::RatioLimit:
-            return setChanged(ratioLimit, value.toDouble(), changed);
+            setChanged(ratioLimit, value.toDouble(), changed);
+            return;
         case TorrentData::UpdateKey::PeersSendingToUsCount:
-            return setChanged(peersSendingToUsCount, value.toInt(), changed);
+            setChanged(peersSendingToUsCount, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::PeersGettingFromUsCount:
-            return setChanged(peersGettingFromUsCount, value.toInt(), changed);
+            setChanged(peersGettingFromUsCount, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::WebSeeders: {
-            return setChanged(
+            setChanged(
                 webSeeders,
                 createTransforming<std::vector<QString>>(
                     value.toArray(),
@@ -334,46 +359,61 @@ namespace tremotesf {
                 ),
                 changed
             );
+            return;
         }
         case TorrentData::UpdateKey::WebSeedersSendingToUsCount:
-            return setChanged(webSeedersSendingToUsCount, value.toInt(), changed);
+            setChanged(webSeedersSendingToUsCount, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::Status:
-            return setChanged(status, statusMapper.fromJsonValue(value, updateKeyString(key)), changed);
-            break;
+            setChanged(status, statusMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            return;
         case TorrentData::UpdateKey::Error:
-            return setChanged(error, errorMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            setChanged(error, errorMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            return;
         case TorrentData::UpdateKey::ErrorString:
-            return setChanged(errorString, value.toString(), changed);
+            setChanged(errorString, value.toString(), changed);
+            return;
         case TorrentData::UpdateKey::ActivityDate:
-            return updateDateTime(activityDate, value, changed);
+            updateDateTime(activityDate, value, changed);
+            return;
         case TorrentData::UpdateKey::DoneDate:
-            return updateDateTime(doneDate, value, changed);
+            updateDateTime(doneDate, value, changed);
+            return;
         case TorrentData::UpdateKey::PeersLimit:
-            return setChanged(peersLimit, value.toInt(), changed);
+            setChanged(peersLimit, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::HonorSessionLimits:
-            return setChanged(honorSessionLimits, value.toBool(), changed);
+            setChanged(honorSessionLimits, value.toBool(), changed);
+            return;
         case TorrentData::UpdateKey::BandwidthPriority:
-            return setChanged(bandwidthPriority, priorityMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            setChanged(bandwidthPriority, priorityMapper.fromJsonValue(value, updateKeyString(key)), changed);
+            return;
         case TorrentData::UpdateKey::IdleSeedingLimitMode:
-            return setChanged(
+            setChanged(
                 idleSeedingLimitMode,
                 idleSeedingLimitModeMapper.fromJsonValue(value, updateKeyString(key)),
                 changed
             );
+            return;
         case TorrentData::UpdateKey::IdleSeedingLimit:
-            return setChanged(idleSeedingLimit, value.toInt(), changed);
+            setChanged(idleSeedingLimit, value.toInt(), changed);
+            return;
         case TorrentData::UpdateKey::DownloadDirectory:
-            return setChanged(
+            setChanged(
                 downloadDirectory,
                 normalizePath(value.toString(), rpc->serverSettings()->data().pathOs),
                 changed
             );
+            return;
         case TorrentData::UpdateKey::Creator:
-            return setChanged(creator, value.toString(), changed);
+            setChanged(creator, value.toString(), changed);
+            return;
         case TorrentData::UpdateKey::CreationDate:
-            return updateDateTime(creationDate, value, changed);
+            updateDateTime(creationDate, value, changed);
+            return;
         case TorrentData::UpdateKey::Comment:
-            return setChanged(comment, value.toString(), changed);
+            setChanged(comment, value.toString(), changed);
+            return;
         case TorrentData::UpdateKey::TrackerStats: {
             std::vector<Tracker> newTrackers{};
             const QJsonArray trackerJsons = value.toArray();
