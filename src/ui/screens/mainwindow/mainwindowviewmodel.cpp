@@ -145,7 +145,12 @@ namespace tremotesf {
 
     void MainWindowViewModel::pasteShortcutActivated() {
         debug().log("MainWindowViewModel: pasteShortcutActivated() called");
-        const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
+        const auto* const mimeData = QGuiApplication::clipboard()->mimeData();
+        if (!mimeData) {
+            warning().log("MainWindowViewModel: clipboard data is null");
+            return;
+        }
+        const auto dropped = DroppedTorrents(mimeData);
         if (dropped.isEmpty()) {
             debug().log("MainWindowViewModel: ignoring clipboard data");
             return;
