@@ -8,7 +8,7 @@ list(
 )
 
 if (TREMOTESF_UNIX_FREEDESKTOP)
-    find_package(Gettext 0.19.7 REQUIRED)
+    find_package(Gettext 0.21 REQUIRED)
 
     install(DIRECTORY "icons/hicolor" DESTINATION "${CMAKE_INSTALL_DATADIR}/icons" PATTERN ".DS_Store" EXCLUDE)
 
