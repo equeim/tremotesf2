@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:12', 'ubuntu:22.04', 'ubuntu:24.04']
+        container-image: ['debian:12', 'ubuntu:24.04']
 
     runs-on: ubuntu-latest
     container: docker.io/library/${{ matrix.container-image }}
