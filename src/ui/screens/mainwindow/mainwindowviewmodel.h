@@ -48,6 +48,8 @@ namespace tremotesf {
 
         void addTorrentFilesWithoutDialog(const QStringList& files);
         void addTorrentLinksWithoutDialog(const QStringList& urls);
+        std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>
+        separateTorrentsThatAlreadyExistForLinks(QStringList& urls);
 
         Coroutine<>
         addTorrents(QStringList files, QStringList urls, std::optional<QByteArray> windowActivationToken = {});
@@ -56,6 +58,10 @@ namespace tremotesf {
         void showWindow(const std::optional<QByteArray>& windowActivationToken);
         void showAddTorrentDialogs(
             const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
+        );
+        void askForMergingTrackers(
+            const std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>& existingTorrents,
+            const std::optional<QByteArray>& windowActivationToken
         );
         void showDelayedTorrentAddMessage(const QStringList& torrents);
         void hideDelayedTorrentAddMessage();

@@ -58,6 +58,7 @@
 #include "ui/stylehelpers.h"
 #include "ui/screens/aboutdialog.h"
 #include "ui/screens/addtorrent/addtorrentdialog.h"
+#include "ui/screens/addtorrent/addtorrenthelpers.h"
 #include "ui/screens/connectionsettings/servereditdialog.h"
 #include "ui/screens/connectionsettings/connectionsettingsdialog.h"
 #include "ui/screens/serversettings/serversettingsdialog.h"
@@ -268,6 +269,12 @@ namespace tremotesf {
                 &MainWindowViewModel::showAddTorrentDialogs,
                 this,
                 &MainWindow::Impl::showAddTorrentDialogs
+            );
+            QObject::connect(
+                &mViewModel,
+                &MainWindowViewModel::askForMergingTrackers,
+                this,
+                &MainWindow::Impl::askForMergingTrackers
             );
             QObject::connect(
                 &mViewModel,
@@ -1572,6 +1579,22 @@ namespace tremotesf {
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
             return dialog;
+        }
+
+        void askForMergingTrackers(
+            std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>> existingTorrents,
+            std::optional<QByteArray> windowActivationToken
+        ) {
+            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
+            for (auto& [torrent, trackers] : existingTorrents) {
+                auto* const dialog =
+                    tremotesf::askForMergingTrackers(torrent, std::move(trackers), setParent ? mWindow : nullptr);
+                if (windowActivationToken.has_value()) {
+                    activateWindow(dialog, windowActivationToken);
+                    // Can use token only once
+                    windowActivationToken.reset();
+                }
+            }
         }
 
         void showAddTorrentErrors() {

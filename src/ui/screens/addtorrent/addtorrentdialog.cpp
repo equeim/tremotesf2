@@ -25,6 +25,7 @@
 #include <KMessageWidget>
 
 #include "addtorrenthelpers.h"
+#include "magnetlinkparser.h"
 #include "settings.h"
 #include "stdutils.h"
 #include "formatutils.h"
@@ -92,12 +93,14 @@ namespace tremotesf {
                 mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
             );
         } else {
-            mRpc->addTorrentLink(
-                mTorrentLinkLineEdit->text(),
-                mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
-                priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
-                mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
-            );
+            if (!checkIfMagnetLinkTorrentExists()) {
+                mRpc->addTorrentLink(
+                    mTorrentLinkLineEdit->text(),
+                    mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
+                    priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
+                    mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
+                );
+            }
         }
 
         const auto settings = Settings::instance();
@@ -345,6 +348,22 @@ namespace tremotesf {
             mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Error getting free space"));
         }
         mFreeSpaceLabel->show();
+    }
+
+    bool AddTorrentDialog::checkIfMagnetLinkTorrentExists() {
+        try {
+            info().log("Parsing {} as a magnet link", mTorrentLinkLineEdit->text());
+            auto magnetLink = parseMagnetLink(QUrl(mTorrentLinkLineEdit->text()));
+            info().log("Parsed, result = {}", magnetLink);
+            auto* const torrent = mRpc->torrentByHash(magnetLink.infoHashV1);
+            if (torrent) {
+                askForMergingTrackers(torrent, std::move(magnetLink.trackers), parentWidget());
+                return true;
+            }
+        } catch (const std::runtime_error& e) {
+            warning().logWithException(e, "Failed to parse {} as a magnet link", mTorrentLinkLineEdit->text());
+        }
+        return false;
     }
 
     void AddTorrentDialog::AddTorrentParametersWidgets::reset(Rpc* rpc) const {

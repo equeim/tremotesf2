@@ -133,6 +133,23 @@ namespace tremotesf {
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled, "torrentsStatusFilterEnabled", true
     )
+
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool,
+        mergeTrackersWhenAddingExistingTorrent,
+        setMergeTrackersWhenAddingExistingTorrent,
+        "mergeTrackersWhenAddingExistingTorrent",
+        false
+    )
+
+    SETTINGS_PROPERTY_DEF_TRIVIAL(
+        bool,
+        askForMergingTrackersWhenAddingExistingTorrent,
+        setAskForMergingTrackersWhenAddingExistingTorrent,
+        "askForMergingTrackersWhenAddingExistingTorrent",
+        true
+    )
+
     SETTINGS_PROPERTY_DEF_TRIVIAL(
         TorrentsProxyModel::StatusFilter,
         torrentsStatusFilter,
