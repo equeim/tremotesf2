@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Changed
-- Removed Debian 11 support - minimum baseline now corresponds to Ubuntu 22.04
+- Removed Debian 11 and Ubuntu 22.04 support - minimum baseline now corresponds to Debian 12
 - Minimum CMake version is 3.22
 - Minimum fmt version is 8.0
 - Minimum KF5 version is 5.92

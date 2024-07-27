@@ -19,7 +19,7 @@ Table of Contents
 ## Installation
 ### Dependencies
 - C++ compiler with partial C++20 support. Minimum tested versions of GCC and Clang toolchains:
-  1. GCC 11
+  1. GCC 12
   2. Clang 16 with libstdc++ 13
   3. Clang 16 with libc++ 16
 - CMake 3.22 or newer
