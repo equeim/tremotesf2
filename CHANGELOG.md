@@ -6,6 +6,8 @@
 - Minimum CMake version is 3.25
 - Minimum fmt version is 9.1
 - Minimum KF5 version is 5.103
+- Minimum libpsl version is 0.21.2
+- Minimum cxxopts version is 3.1.1
 - Minimum gettext version is 0.21
 - Removed dependency on Qt Concurrent module
 - Notification portal is used for notification in Flatpak

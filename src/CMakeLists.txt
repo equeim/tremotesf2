@@ -9,7 +9,7 @@ set(TREMOTESF_COMMON_TARGET_PROPERTIES AUTOMOC ON AUTORCC ON)
 
 find_package(Threads REQUIRED)
 find_package(fmt 9.1 REQUIRED)
-find_package(cxxopts REQUIRED)
+find_package(cxxopts 3.1.1 REQUIRED)
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
 
 if (TREMOTESF_QT6)
@@ -25,7 +25,7 @@ if (WIN32 OR APPLE)
     set(registrable_domain_qt ON)
 else ()
     set(registrable_domain_qt OFF)
-    pkg_check_modules(libpsl REQUIRED IMPORTED_TARGET libpsl)
+    pkg_check_modules(libpsl REQUIRED IMPORTED_TARGET "libpsl >= 0.21.2")
 endif ()
 
 list(APPEND QRC_FILES resources.qrc)

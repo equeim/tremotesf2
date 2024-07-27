@@ -26,8 +26,8 @@ Table of Contents
 - Qt 6.6 or newer or 5.15 (Core, Network, Gui, Widgets modules)
 - fmt 9.1 or newer
 - KWidgetsAddons 5.103 or newer
-- libpsl
-- cxxopts
+- libpsl 0.21.2 or newer
+- cxxopts 3.1.1 or newer
 - Qt Test module (for tests only)
 - OpenSSL 1.1.1 or newer (for tests only)
 - cpp-httplib 0.11.0 or newer (for tests only, optional)
