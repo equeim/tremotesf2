@@ -521,7 +521,6 @@ namespace tremotesf {
 
     Coroutine<std::optional<qint64>> Rpc::getFreeSpaceForPath(QString path) {
         if (isConnected()) {
-            co_await waitFor(std::chrono::seconds(1));
             if (mServerSettings->data().canShowFreeSpaceForPath()) {
                 co_return co_await getFreeSpaceForPathImpl(std::move(path));
             }
