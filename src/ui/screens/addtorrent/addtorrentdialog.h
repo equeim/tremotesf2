@@ -54,6 +54,8 @@ namespace tremotesf {
         void onDownloadDirectoryPathChanged(QString path);
         Coroutine<> getFreeSpaceForPath(QString path);
 
+        bool checkIfMagnetLinkTorrentExists();
+
         Rpc* mRpc;
         QString mUrl;
         Mode mMode;

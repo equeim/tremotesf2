@@ -176,6 +176,26 @@ namespace tremotesf {
         );
         addTorrentsGroupBoxLayout->addWidget(pasteTipLabel);
 
+        auto askForMergingTrackersCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Ask for merging trackers when adding existing torrent"),
+            this
+        );
+        addTorrentsGroupBoxLayout->addWidget(askForMergingTrackersCheckBox);
+
+        auto mergeTrackersCheckBox = new QCheckBox(
+            //: Check box label
+            qApp->translate("tremotesf", "Merge trackers when adding existing torrent"),
+            this
+        );
+        addTorrentsGroupBoxLayout->addWidget(mergeTrackersCheckBox);
+        QObject::connect(
+            askForMergingTrackersCheckBox,
+            &QCheckBox::toggled,
+            mergeTrackersCheckBox,
+            [mergeTrackersCheckBox](bool checked) { mergeTrackersCheckBox->setEnabled(!checked); }
+        );
+
         layout->addWidget(addTorrentsGroupBox);
 
         //: Options section
@@ -299,6 +319,9 @@ namespace tremotesf {
         }
         showDialogWhenAddingTorrentsCheckBox->setChecked(settings->showAddTorrentDialog());
         fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
+        askForMergingTrackersCheckBox->setChecked(settings->askForMergingTrackersWhenAddingExistingTorrent());
+        mergeTrackersCheckBox->setChecked(settings->mergeTrackersWhenAddingExistingTorrent());
+        mergeTrackersCheckBox->setEnabled(!askForMergingTrackersCheckBox->isChecked());
         notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
         notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
         notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
@@ -327,6 +350,8 @@ namespace tremotesf {
             }
             settings->setShowAddTorrentDialog(showDialogWhenAddingTorrentsCheckBox->isChecked());
             settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
+            settings->setAskForMergingTrackersWhenAddingExistingTorrent(askForMergingTrackersCheckBox->isChecked());
+            settings->setMergeTrackersWhenAddingExistingTorrent(mergeTrackersCheckBox->isChecked());
             settings->setTorrentDoubleClickAction(
                 torrentDoubleClickActionFromComboBoxIndex(torrentDoubleClickActionComboBox->currentIndex())
             );

@@ -9,8 +9,11 @@
 
 #include "rpc/torrent.h"
 
+class QDialog;
+
 namespace tremotesf {
     class Rpc;
+    class Torrent;
 
     struct AddTorrentParameters {
         QString downloadDirectory;
@@ -24,6 +27,8 @@ namespace tremotesf {
     AddTorrentParameters getInitialAddTorrentParameters(Rpc* rpc);
 
     void deleteTorrentFile(const QString& filePath, bool moveToTrash);
+
+    QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent);
 }
 
 #endif // TREMOTESF_ADDTORRENTHELPERS_H

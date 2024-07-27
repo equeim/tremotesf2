@@ -25,6 +25,7 @@
 #include "ui/screens/addtorrent/addtorrenthelpers.h"
 #include "ui/screens/addtorrent/droppedtorrents.h"
 #include "ui/notificationscontroller.h"
+#include "magnetlinkparser.h"
 #include "settings.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
@@ -231,6 +232,30 @@ namespace tremotesf {
         }
     }
 
+    std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>
+    MainWindowViewModel::separateTorrentsThatAlreadyExistForLinks(QStringList& urls) {
+        std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>> existingTorrents{};
+        const auto toErase = std::ranges::remove_if(urls, [&](const QString& url) {
+            try {
+                info().log("Parsing {} as a magnet link", url);
+                auto magnetLink = parseMagnetLink(QUrl(url));
+                info().log("Parsed, result = {}", magnetLink);
+                auto* const torrent = mRpc.torrentByHash(magnetLink.infoHashV1);
+                if (torrent) {
+                    existingTorrents.emplace_back(torrent, std::move(magnetLink.trackers));
+                    return true;
+                }
+            } catch (const std::runtime_error& e) {
+                warning().logWithException(e, "Failed to parse {} as a magnet link", url);
+            }
+            return false;
+        });
+        if (!toErase.empty()) {
+            urls.erase(toErase.begin(), toErase.end());
+        }
+        return existingTorrents;
+    }
+
     Coroutine<> MainWindowViewModel::addTorrents(
         QStringList files, QStringList urls, std::optional<QByteArray> windowActivationToken
     ) {
@@ -262,6 +287,12 @@ namespace tremotesf {
         }
 
         emit hideDelayedTorrentAddMessage();
+
+        const auto existingTorrents = separateTorrentsThatAlreadyExistForLinks(urls);
+        if (!existingTorrents.empty()) {
+            emit askForMergingTrackers(existingTorrents, windowActivationToken);
+            windowActivationToken.reset();
+        }
 
         if (settings->showAddTorrentDialog()) {
             emit showAddTorrentDialogs(files, urls, windowActivationToken);
