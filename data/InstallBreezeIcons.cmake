@@ -8,7 +8,7 @@ cmake_policy(SET CMP0057 NEW)
 
 set(breeze_icons_destination "${CMAKE_INSTALL_PREFIX}/${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/breeze")
 
-file(INSTALL "${breeze_icons_SOURCE_DIR}/icons/index.theme" DESTINATION "${breeze_icons_destination}")
+file(INSTALL "${breeze_extracted_path}/icons/index.theme" DESTINATION "${breeze_icons_destination}")
 
 # Keep in sync with QIcon::fromTheme() calls in source code
 set(bundled_icon_files
@@ -55,12 +55,12 @@ set(bundled_icon_files
 )
 
 set(files_to_install "")
-file(GLOB_RECURSE all_icon_files LIST_DIRECTORIES OFF "${breeze_icons_SOURCE_DIR}/icons/**/*.svg")
+file(GLOB_RECURSE all_icon_files LIST_DIRECTORIES OFF "${breeze_extracted_path}/icons/**/*.svg")
 foreach (icon_path IN LISTS all_icon_files)
     cmake_path(GET icon_path FILENAME icon_filename)
     if (icon_filename IN_LIST bundled_icon_files)
         cmake_path(GET icon_path PARENT_PATH icon_dir)
-        cmake_path(RELATIVE_PATH icon_dir BASE_DIRECTORY "${breeze_icons_SOURCE_DIR}/icons" OUTPUT_VARIABLE relative_icon_dir)
+        cmake_path(RELATIVE_PATH icon_dir BASE_DIRECTORY "${breeze_extracted_path}/icons" OUTPUT_VARIABLE relative_icon_dir)
         set(destination "${breeze_icons_destination}/${relative_icon_dir}")
         if (IS_SYMLINK "${icon_path}")
             file(READ_SYMLINK "${icon_path}" original_icon_filename)
@@ -79,7 +79,7 @@ foreach (icon_path IN LISTS all_icon_files)
     endif()
 endforeach()
 
-file(GLOB size_dirs LIST_DIRECTORIES ON "${breeze_icons_SOURCE_DIR}/icons/*/*")
+file(GLOB size_dirs LIST_DIRECTORIES ON "${breeze_extracted_path}/icons/*/*")
 foreach (size_dir IN LISTS size_dirs)
     if (IS_SYMLINK "${size_dir}")
         cmake_path(GET size_dir PARENT_PATH category_dir)

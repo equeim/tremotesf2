@@ -45,26 +45,36 @@ elseif (WIN32 OR APPLE)
 
     install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons" PATTERN ".DS_Store" EXCLUDE)
 
-    include(FetchContent)
-    cmake_policy(SET CMP0135 NEW)
-    set(FETCHCONTENT_QUIET OFF)
+    set(hicolor_download_path "${CMAKE_CURRENT_BINARY_DIR}/hicolor/index.theme")
+    if (NOT EXISTS "${hicolor_download_path}")
+        set(hicolor_url "https://gitlab.freedesktop.org/xdg/default-icon-theme/-/raw/v0.18/index.theme?ref_type=tags&inline=false")
+        message(STATUS "Downloading ${hicolor_url} to ${hicolor_download_path}")
+        file(
+            DOWNLOAD "${hicolor_url}" "${hicolor_download_path}"
+            SHOW_PROGRESS
+            TLS_VERIFY ON
+            EXPECTED_HASH SHA256=a02db5e1b203d981701481bbef8b6fae1c576baf34927eecbc0feae0d2cb9bc5
+        )
+    endif()
+    install(FILES "${hicolor_download_path}" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
 
-    FetchContent_Declare(
-        hicolor_icon_theme
-        URL "https://gitlab.freedesktop.org/xdg/default-icon-theme/-/archive/0.17/default-icon-theme-0.17.tar.gz"
-        URL_HASH SHA256=3d3a762121c2e78e37ab98221ad48e4596a716abf3bf4475f13e372328f86cd1
-    )
-    FetchContent_Populate(hicolor_icon_theme)
-    install(FILES "${hicolor_icon_theme_SOURCE_DIR}/index.theme" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
-
-    FetchContent_Declare(
-        breeze_icons
-        URL "https://download.kde.org/stable/frameworks/6.1/breeze-icons-6.1.0.tar.xz"
-        URL_HASH SHA256=b1ba802d0d0dbd0ecd786cbdfaaf545f2dd3c217966b894b9321a2a18426a16a
-    )
-    FetchContent_Populate(breeze_icons)
-    install(CODE "set(breeze_icons_SOURCE_DIR \"${breeze_icons_SOURCE_DIR}\")")
-    install(CODE "set(TREMOTESF_EXTERNAL_RESOURCES_PATH \"${TREMOTESF_EXTERNAL_RESOURCES_PATH}\")")
+    set(breeze_download_path "${CMAKE_CURRENT_BINARY_DIR}/breeze.tar.xz")
+    set(breeze_version "6.1")
+    if (NOT EXISTS "${breeze_download_path}")
+        set(breeze_url "https://download.kde.org/stable/frameworks/${breeze_version}/breeze-icons-${breeze_version}.0.tar.xz")
+        message(STATUS "Downloading ${breeze_url} to ${breeze_download_path}")
+        file(
+            DOWNLOAD "${breeze_url}" "${breeze_download_path}"
+            SHOW_PROGRESS
+            TLS_VERIFY ON
+            EXPECTED_HASH SHA256=b1ba802d0d0dbd0ecd786cbdfaaf545f2dd3c217966b894b9321a2a18426a16a
+        )
+        message(STATUS "Extracting ${breeze_download_path} to ${CMAKE_CURRENT_BINARY_DIR}")
+        file(ARCHIVE_EXTRACT INPUT "${breeze_download_path}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+    endif()
+    set(breeze_extracted_path "${CMAKE_CURRENT_BINARY_DIR}/breeze-icons-${breeze_version}.0")
+    install(CODE "set(breeze_extracted_path [=[${breeze_extracted_path}]=])")
+    install(CODE "set(TREMOTESF_EXTERNAL_RESOURCES_PATH [=[${TREMOTESF_EXTERNAL_RESOURCES_PATH}]=])")
     install(SCRIPT InstallBreezeIcons.cmake)
 endif()
 
