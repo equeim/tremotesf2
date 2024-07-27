@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QCoreApplication>
+#include <QCheckBox>
+#include <QMessageBox>
+#include <QPointer>
+
 #include "addtorrenthelpers.h"
 
 #include "fileutils.h"
@@ -53,5 +58,62 @@ namespace tremotesf {
         } catch (const QFileError& e) {
             warning().logWithException(e, "Failed to delete torrent file");
         }
+    }
+
+    QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent) {
+        auto* const settings = Settings::instance();
+        QMessageBox* messageBox{};
+        if (settings->askForMergingTrackersWhenAddingExistingTorrent()) {
+            messageBox = new QMessageBox(
+                QMessageBox::Question,
+                //: Dialog title
+                qApp->translate("tremotesf", "Merge trackers?"),
+                qApp->translate("tremotesf", "Torrent «%1» is already added, merge trackers?")
+                    .arg(torrent->data().name),
+                QMessageBox::Ok | QMessageBox::Cancel,
+                parent
+            );
+            messageBox->setButtonText(QMessageBox::Ok, qApp->translate("tremotesf", "Merge"));
+            messageBox->setCheckBox(new QCheckBox(qApp->translate("tremotesf", "Do not ask again"), messageBox));
+            QObject::connect(
+                messageBox,
+                &QDialog::finished,
+                messageBox,
+                [=, torrent = QPointer(torrent), trackers = std::move(trackers)](int result) {
+                    if (result == QMessageBox::Ok && torrent) {
+                        torrent->addTrackers(trackers);
+                    }
+                    if (messageBox->checkBox()->isChecked()) {
+                        settings->setMergeTrackersWhenAddingExistingTorrent(result == QMessageBox::Ok);
+                        settings->setAskForMergingTrackersWhenAddingExistingTorrent(false);
+                    }
+                }
+            );
+
+        } else if (settings->mergeTrackersWhenAddingExistingTorrent()) {
+            torrent->addTrackers(trackers);
+
+            messageBox = new QMessageBox(
+                QMessageBox::Information,
+                //: Dialog title
+                qApp->translate("tremotesf", "Merged trackers"),
+                qApp->translate("tremotesf", "Merged trackers for torrent «%1»").arg(torrent->data().name),
+                QMessageBox::Close,
+                parent
+            );
+        } else {
+            messageBox = new QMessageBox(
+                QMessageBox::Warning,
+                //: Dialog title
+                qApp->translate("tremotesf", "Torrent already exists"),
+                qApp->translate("tremotesf", "Torrent «%1» already exists").arg(torrent->data().name),
+                QMessageBox::Close,
+                parent
+            );
+        }
+        messageBox->setAttribute(Qt::WA_DeleteOnClose);
+        messageBox->setModal(false);
+        messageBox->show();
+        return messageBox;
     }
 }
