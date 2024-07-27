@@ -8,14 +8,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(TREMOTESF_COMMON_TARGET_PROPERTIES AUTOMOC ON AUTORCC ON)
 
 find_package(Threads REQUIRED)
-find_package(fmt 8.0 REQUIRED)
+find_package(fmt 9.1 REQUIRED)
 find_package(cxxopts REQUIRED)
 find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
 
 if (TREMOTESF_QT6)
     set(minimum_kf_version 5.245)
 else()
-    set(minimum_kf_version 5.92)
+    set(minimum_kf_version 5.103)
 endif()
 find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WidgetsAddons ${minimum_kf_version} REQUIRED)
 

@@ -22,10 +22,10 @@ Table of Contents
   1. GCC 12
   2. Clang 16 with libstdc++ 13
   3. Clang 16 with libc++ 16
-- CMake 3.22 or newer
+- CMake 3.25 or newer
 - Qt 6.6 or newer or 5.15 (Core, Network, Gui, Widgets modules)
-- fmt 8.0 or newer
-- KWidgetsAddons 5.92 or newer
+- fmt 9.1 or newer
+- KWidgetsAddons 5.103 or newer
 - libpsl
 - cxxopts
 - Qt Test module (for tests only)
@@ -33,7 +33,7 @@ Table of Contents
 - cpp-httplib 0.11.0 or newer (for tests only, optional)
 
 On GNU/Linux and BSD, also:
-- Gettext 0.19.7 or newer
+- Gettext 0.21 or newer
 - Qt D-Bus module
 - KWindowSystem (with Qt5/KF5 kwayland-integration is also needed as runtime dependency)
 - Qt's SVG image format plugin as a runtime dependency (usually located somewhere at /usr/lib64/qt6/plugins/imageformats/libqsvg.so)

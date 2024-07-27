@@ -3,9 +3,10 @@
 ## [Unreleased]
 ### Changed
 - Removed Debian 11 and Ubuntu 22.04 support - minimum baseline now corresponds to Debian 12
-- Minimum CMake version is 3.22
-- Minimum fmt version is 8.0
-- Minimum KF5 version is 5.92
+- Minimum CMake version is 3.25
+- Minimum fmt version is 9.1
+- Minimum KF5 version is 5.103
+- Minimum gettext version is 0.21
 - Removed dependency on Qt Concurrent module
 - Notification portal is used for notification in Flatpak
 - Breeze is used as a fallback icon theme and should be installed as a runtime dependency
