@@ -20,8 +20,8 @@ Table of Contents
 ### Dependencies
 - C++ compiler with partial C++20 support. Minimum tested versions of GCC and Clang toolchains:
   1. GCC 12
-  2. Clang 16 with libstdc++ 13
-  3. Clang 16 with libc++ 16
+  2. Clang 17 with libstdc++ 13
+  3. Clang 17 with libc++ 17
 - CMake 3.25 or newer
 - Qt 6.6 or newer or 5.15 (Core, Network, Gui, Widgets modules)
 - fmt 9.1 or newer
