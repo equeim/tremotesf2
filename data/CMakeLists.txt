@@ -54,7 +54,12 @@ elseif (WIN32 OR APPLE)
             SHOW_PROGRESS
             TLS_VERIFY ON
             EXPECTED_HASH SHA256=a02db5e1b203d981701481bbef8b6fae1c576baf34927eecbc0feae0d2cb9bc5
+            STATUS download_status
         )
+        list(GET download_status 0 download_status)
+        if (NOT download_status EQUAL 0)
+            message(FATAL_ERROR "Download failed")
+        endif()
     endif()
     install(FILES "${hicolor_download_path}" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
 
@@ -68,7 +73,12 @@ elseif (WIN32 OR APPLE)
             SHOW_PROGRESS
             TLS_VERIFY ON
             EXPECTED_HASH SHA256=b1ba802d0d0dbd0ecd786cbdfaaf545f2dd3c217966b894b9321a2a18426a16a
+            STATUS download_status
         )
+        list(GET download_status 0 download_status)
+        if (NOT download_status EQUAL 0)
+            message(FATAL_ERROR "Download failed")
+        endif()
         message(STATUS "Extracting ${breeze_download_path} to ${CMAKE_CURRENT_BINARY_DIR}")
         file(ARCHIVE_EXTRACT INPUT "${breeze_download_path}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
     endif()
