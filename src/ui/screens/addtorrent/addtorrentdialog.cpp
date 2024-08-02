@@ -9,7 +9,6 @@
 #include <stdexcept>
 
 #include <QCheckBox>
-#include <QClipboard>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFileInfo>
@@ -35,7 +34,6 @@
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
-#include "droppedtorrents.h"
 #include "localtorrentfilesmodel.h"
 
 namespace tremotesf {
@@ -202,13 +200,6 @@ namespace tremotesf {
         } else {
             //: Input field's label
             layout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
-            if (mUrl.isEmpty() && Settings::instance()->fillTorrentLinkFromClipboard()) {
-                const auto dropped = DroppedTorrents(QGuiApplication::clipboard()->mimeData());
-                if (!dropped.urls.isEmpty()) {
-                    info().log("AddTorrentDialog: filling torrent link from clipboard = {}", dropped.urls.first());
-                    mTorrentLinkLineEdit->setText(dropped.urls.first());
-                }
-            }
             if (!mTorrentLinkLineEdit->text().isEmpty()) {
                 mTorrentLinkLineEdit->setCursorPosition(0);
             }

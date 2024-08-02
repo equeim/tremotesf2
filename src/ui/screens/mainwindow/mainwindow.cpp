@@ -470,7 +470,7 @@ namespace tremotesf {
                 if (Settings::instance()->showMainWindowWhenAddingTorrent() && shouldShowWindows()) {
                     showWindowsAndActivateMainOrDialog();
                 }
-                showAddTorrentLinkDialog();
+                mViewModel.triggeredAddTorrentLinkAction();
             });
             mConnectionDependentActions.push_back(&mAddTorrentLinkAction);
 
@@ -872,9 +872,7 @@ namespace tremotesf {
             }
         }
 
-        QDialog* showAddTorrentLinkDialog(
-            const QString& url = {}, bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent()
-        ) {
+        QDialog* showAddTorrentLinkDialog(const QString& url, bool setParent) {
             auto* const dialog =
                 new AddTorrentDialog(mViewModel.rpc(), url, AddTorrentDialog::Mode::Url, setParent ? mWindow : nullptr);
             dialog->setAttribute(Qt::WA_DeleteOnClose);

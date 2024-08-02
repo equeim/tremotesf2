@@ -157,19 +157,15 @@ namespace tremotesf {
 
     void MainWindowViewModel::pasteShortcutActivated() {
         debug().log("MainWindowViewModel: pasteShortcutActivated() called");
-        const auto* const mimeData = QGuiApplication::clipboard()->mimeData();
-        if (!mimeData) {
-            warning().log("MainWindowViewModel: clipboard data is null");
+        addTorrentsFromClipboard();
+    }
+
+    void MainWindowViewModel::triggeredAddTorrentLinkAction() {
+        debug().log("MainWindowViewModel: triggeredAddTorrentLinkAction() called");
+        if (Settings::instance()->fillTorrentLinkFromClipboard() && addTorrentsFromClipboard(true)) {
             return;
         }
-        debug().log("MainWindowViewModel: clipboard data: {}", formatMimeData(mimeData));
-        const auto dropped = DroppedTorrents(mimeData);
-        if (dropped.isEmpty()) {
-            debug().log("MainWindowViewModel: ignoring clipboard data");
-            return;
-        }
-        info().log("MainWindowViewModel: accepting clipboard data");
-        addTorrents(dropped.files, dropped.urls);
+        emit showAddTorrentDialogs({}, {QString{}}, {});
     }
 
     void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
@@ -214,6 +210,29 @@ namespace tremotesf {
         for (const auto& url : urls) {
             mRpc.addTorrentLink(url, parameters.downloadDirectory, parameters.priority, parameters.startAfterAdding);
         }
+    }
+
+    bool MainWindowViewModel::addTorrentsFromClipboard(bool onlyUrls) {
+        const auto* const mimeData = QGuiApplication::clipboard()->mimeData();
+        if (!mimeData) {
+            warning().log("MainWindowViewModel: clipboard data is null");
+            return false;
+        }
+        debug().log("MainWindowViewModel: clipboard data: {}", formatMimeData(mimeData));
+        if (addTorrentsFromMimeData(mimeData, onlyUrls)) {
+            return true;
+        }
+        debug().log("MainWindowViewModel: ignoring clipboard data");
+        return false;
+    }
+
+    bool MainWindowViewModel::addTorrentsFromMimeData(const QMimeData* mimeData, bool onlyUrls) {
+        const auto dropped = DroppedTorrents(mimeData);
+        if (dropped.isEmpty()) {
+            return false;
+        }
+        addTorrents(onlyUrls ? QStringList{} : dropped.files, dropped.urls);
+        return true;
     }
 
     void MainWindowViewModel::addTorrents(
