@@ -8,12 +8,12 @@
 #include <QObject>
 #include <QStringList>
 
-#include "ipc/ipcserver.h"
 #include "rpc/rpc.h"
 
 class QByteArray;
 class QDragEnterEvent;
 class QDropEvent;
+class QMimeData;
 class QString;
 class QSystemTrayIcon;
 class QTimer;
@@ -31,6 +31,7 @@ namespace tremotesf {
         static void processDragEnterEvent(QDragEnterEvent* event);
         void processDropEvent(QDropEvent* event);
         void pasteShortcutActivated();
+        void triggeredAddTorrentLinkAction();
 
         void setupNotificationsController(QSystemTrayIcon* trayIcon);
 
@@ -45,6 +46,9 @@ namespace tremotesf {
         QStringList mPendingFilesToOpen{};
         QStringList mPendingUrlsToOpen{};
         QTimer* delayedTorrentAddMessageTimer{};
+
+        bool addTorrentsFromClipboard(bool onlyUrls = false);
+        bool addTorrentsFromMimeData(const QMimeData* mimeData, bool onlyUrls);
 
         void addTorrents(
             const QStringList& files,
