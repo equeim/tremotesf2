@@ -9,6 +9,7 @@
 #include <QStringList>
 
 #include "rpc/rpc.h"
+#include "coroutines/scope.h"
 
 class QByteArray;
 class QDragEnterEvent;
@@ -16,7 +17,6 @@ class QDropEvent;
 class QMimeData;
 class QString;
 class QSystemTrayIcon;
-class QTimer;
 
 namespace tremotesf {
 
@@ -32,29 +32,25 @@ namespace tremotesf {
         void processDropEvent(QDropEvent* event);
         void pasteShortcutActivated();
         void triggeredAddTorrentLinkAction();
+        void acceptedFileDialog(QStringList files);
 
         void setupNotificationsController(QSystemTrayIcon* trayIcon);
 
         enum class StartupActionResult { ShowAddServerDialog, DoNothing };
         StartupActionResult performStartupAction();
 
-        void addTorrentFilesWithoutDialog(const QStringList& files);
-        void addTorrentLinksWithoutDialog(const QStringList& urls);
-
     private:
         Rpc mRpc{};
-        QStringList mPendingFilesToOpen{};
-        QStringList mPendingUrlsToOpen{};
-        QTimer* delayedTorrentAddMessageTimer{};
+        CoroutineScope mAddingTorrentsCoroutineScope{};
 
         bool addTorrentsFromClipboard(bool onlyUrls = false);
         bool addTorrentsFromMimeData(const QMimeData* mimeData, bool onlyUrls);
 
-        void addTorrents(
-            const QStringList& files,
-            const QStringList& urls,
-            const std::optional<QByteArray>& windowActivationToken = {}
-        );
+        void addTorrentFilesWithoutDialog(const QStringList& files);
+        void addTorrentLinksWithoutDialog(const QStringList& urls);
+
+        Coroutine<>
+        addTorrents(QStringList files, QStringList urls, std::optional<QByteArray> windowActivationToken = {});
 
     signals:
         void showWindow(const std::optional<QByteArray>& windowActivationToken);
@@ -62,6 +58,7 @@ namespace tremotesf {
             const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
         );
         void showDelayedTorrentAddMessage(const QStringList& torrents);
+        void hideDelayedTorrentAddMessage();
     };
 }
 

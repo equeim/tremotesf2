@@ -58,6 +58,7 @@ add_library(
     coroutines/hostinfo.h
     coroutines/coroutines.cpp
     coroutines/coroutines.h
+    coroutines/qobjectsignal.h
     coroutines/scope.h
     coroutines/scope.cpp
     coroutines/network.h

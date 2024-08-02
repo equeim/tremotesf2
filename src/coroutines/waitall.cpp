@@ -40,9 +40,10 @@ namespace tremotesf::impl {
         }
     }
 
-    void
-    MultipleCoroutinesAwaiter::onCoroutineCompleted(StandaloneCoroutine* coroutine, std::exception_ptr unhandledException) {
-        if (!mUnhandledException) {
+    void MultipleCoroutinesAwaiter::onCoroutineCompleted(
+        StandaloneCoroutine* coroutine, std::exception_ptr unhandledException
+    ) {
+        if (unhandledException && !mUnhandledException) {
             mUnhandledException = std::move(unhandledException);
         }
         const auto found = std::ranges::find_if(mCoroutines, [coroutine](auto& c) { return &c == coroutine; });
@@ -56,7 +57,8 @@ namespace tremotesf::impl {
         }
         if (mCoroutines.empty()) {
             onAllCoroutinesCompleted();
-        } else if (mUnhandledException) {
+        } else if ((mUnhandledException || mCancelAfterFirst) &&
+                   !mCancelledCoroutinesAndWaitingForCompletionCallbacks) {
             cancelAll();
         }
     }
@@ -75,6 +77,7 @@ namespace tremotesf::impl {
             coroutine->cancel();
         }
         mCancellingCoroutines = false;
+        mCancelledCoroutinesAndWaitingForCompletionCallbacks = true;
         if (mCoroutines.empty()) {
             onAllCoroutinesCompleted();
         }

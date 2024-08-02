@@ -7,28 +7,20 @@
 
 #include <QNetworkReply>
 
-#include "coroutines.h"
+#include "qobjectsignal.h"
 
 namespace tremotesf {
     namespace impl {
-        class NetworkReplyAwaitable final {
+        class NetworkReplyAwaitable final : public SignalAwaitable<QNetworkReply, decltype(&QNetworkReply::finished)> {
         public:
-            inline explicit NetworkReplyAwaitable(QNetworkReply* reply) : mReply(reply) {}
+            inline explicit NetworkReplyAwaitable(QNetworkReply* reply)
+                : SignalAwaitable(reply, &QNetworkReply::finished) {}
             inline ~NetworkReplyAwaitable() = default;
             Q_DISABLE_COPY_MOVE(NetworkReplyAwaitable)
 
-            inline bool await_ready() { return mReply->isFinished(); }
-
-            template<typename Promise>
-            inline void await_suspend(std::coroutine_handle<Promise> handle) {
-                if (startAwaiting(handle)) {
-                    QObject::connect(mReply, &QNetworkReply::finished, &mReceiver, [handle] { resume(handle); });
-                }
-            }
-            inline void await_resume() {};
+            inline bool await_ready() { return mSender->isFinished(); }
 
         private:
-            QNetworkReply* mReply;
             QObject mReceiver{};
         };
     }

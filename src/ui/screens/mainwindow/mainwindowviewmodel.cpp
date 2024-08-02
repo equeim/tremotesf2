@@ -16,6 +16,9 @@
 
 #include <fmt/ranges.h>
 
+#include "coroutines/qobjectsignal.h"
+#include "coroutines/timer.h"
+#include "coroutines/waitall.h"
 #include "log/log.h"
 #include "ipc/ipcserver.h"
 #include "rpc/servers.h"
@@ -71,8 +74,8 @@ namespace tremotesf {
         if (!commandLineFiles.isEmpty() || !commandLineUrls.isEmpty()) {
             QMetaObject::invokeMethod(
                 this,
-                [commandLineFiles = std::move(commandLineFiles), commandLineUrls = std::move(commandLineUrls), this] {
-                    addTorrents(commandLineFiles, commandLineUrls, {});
+                [this, files = std::move(commandLineFiles), urls = std::move(commandLineUrls)]() mutable {
+                    mAddingTorrentsCoroutineScope.launch(addTorrents(std::move(files), std::move(urls)));
                 },
                 Qt::QueuedConnection
             );
@@ -91,25 +94,9 @@ namespace tremotesf {
             &IpcServer::torrentsAddingRequested,
             this,
             [=, this](const auto& files, const auto& urls, const auto& activationToken) {
-                addTorrents(files, urls, activationToken);
+                mAddingTorrentsCoroutineScope.launch(addTorrents(files, urls, activationToken));
             }
         );
-
-        QObject::connect(&mRpc, &Rpc::connectedChanged, this, [this] {
-            if (mRpc.isConnected()) {
-                if (delayedTorrentAddMessageTimer) {
-                    info().log("Cancelling showing delayed torrent adding message");
-                    delayedTorrentAddMessageTimer->stop();
-                    delayedTorrentAddMessageTimer->deleteLater();
-                    delayedTorrentAddMessageTimer = nullptr;
-                }
-                if ((!mPendingFilesToOpen.empty() || !mPendingUrlsToOpen.empty())) {
-                    const QStringList files = std::move(mPendingFilesToOpen);
-                    const QStringList urls = std::move(mPendingUrlsToOpen);
-                    emit showAddTorrentDialogs(files, urls, {});
-                }
-            }
-        });
 
         QObject::connect(Servers::instance(), &Servers::currentServerChanged, this, [this] {
             if (Servers::instance()->hasServers()) {
@@ -145,14 +132,14 @@ namespace tremotesf {
     void MainWindowViewModel::processDropEvent(QDropEvent* event) {
         debug().log("MainWindowViewModel: processing QDropEvent");
         debug().log("MainWindowViewModel: event: {}", formatDropEvent(event));
-        const auto dropped = DroppedTorrents(event->mimeData());
+        auto dropped = DroppedTorrents(event->mimeData());
         if (dropped.isEmpty()) {
             warning().log("Dropped torrents are empty");
             return;
         }
         info().log("MainWindowViewModel: accepting QDropEvent");
         event->acceptProposedAction();
-        addTorrents(dropped.files, dropped.urls);
+        mAddingTorrentsCoroutineScope.launch(addTorrents(std::move(dropped.files), std::move(dropped.urls)));
     }
 
     void MainWindowViewModel::pasteShortcutActivated() {
@@ -166,6 +153,11 @@ namespace tremotesf {
             return;
         }
         emit showAddTorrentDialogs({}, {QString{}}, {});
+    }
+
+    void MainWindowViewModel::acceptedFileDialog(QStringList files) {
+        debug().log("MainWindowViewModel: acceptedFileDialog() called with: files = {}", files);
+        mAddingTorrentsCoroutineScope.launch(addTorrents(std::move(files), {}));
     }
 
     void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
@@ -186,7 +178,33 @@ namespace tremotesf {
         return StartupActionResult::DoNothing;
     }
 
+    bool MainWindowViewModel::addTorrentsFromClipboard(bool onlyUrls) {
+        const auto* const mimeData = QGuiApplication::clipboard()->mimeData();
+        if (!mimeData) {
+            warning().log("MainWindowViewModel: clipboard data is null");
+            return false;
+        }
+        debug().log("MainWindowViewModel: clipboard data: {}", formatMimeData(mimeData));
+        if (addTorrentsFromMimeData(mimeData, onlyUrls)) {
+            return true;
+        }
+        debug().log("MainWindowViewModel: ignoring clipboard data");
+        return false;
+    }
+
+    bool MainWindowViewModel::addTorrentsFromMimeData(const QMimeData* mimeData, bool onlyUrls) {
+        auto dropped = DroppedTorrents(mimeData);
+        if (dropped.isEmpty()) {
+            return false;
+        }
+        mAddingTorrentsCoroutineScope.launch(
+            addTorrents(onlyUrls ? QStringList{} : std::move(dropped.files), std::move(dropped.urls))
+        );
+        return true;
+    }
+
     void MainWindowViewModel::addTorrentFilesWithoutDialog(const QStringList& files) {
+        if (files.isEmpty()) return;
         const auto parameters = getAddTorrentParameters(&mRpc);
         for (const auto& filePath : files) {
             mRpc.addTorrentFile(
@@ -206,75 +224,50 @@ namespace tremotesf {
     }
 
     void MainWindowViewModel::addTorrentLinksWithoutDialog(const QStringList& urls) {
+        if (urls.isEmpty()) return;
         const auto parameters = getAddTorrentParameters(&mRpc);
         for (const auto& url : urls) {
             mRpc.addTorrentLink(url, parameters.downloadDirectory, parameters.priority, parameters.startAfterAdding);
         }
     }
 
-    bool MainWindowViewModel::addTorrentsFromClipboard(bool onlyUrls) {
-        const auto* const mimeData = QGuiApplication::clipboard()->mimeData();
-        if (!mimeData) {
-            warning().log("MainWindowViewModel: clipboard data is null");
-            return false;
-        }
-        debug().log("MainWindowViewModel: clipboard data: {}", formatMimeData(mimeData));
-        if (addTorrentsFromMimeData(mimeData, onlyUrls)) {
-            return true;
-        }
-        debug().log("MainWindowViewModel: ignoring clipboard data");
-        return false;
-    }
-
-    bool MainWindowViewModel::addTorrentsFromMimeData(const QMimeData* mimeData, bool onlyUrls) {
-        const auto dropped = DroppedTorrents(mimeData);
-        if (dropped.isEmpty()) {
-            return false;
-        }
-        addTorrents(onlyUrls ? QStringList{} : dropped.files, dropped.urls);
-        return true;
-    }
-
-    void MainWindowViewModel::addTorrents(
-        const QStringList& files, const QStringList& urls, const std::optional<QByteArray>& windowActivationToken
+    Coroutine<> MainWindowViewModel::addTorrents(
+        QStringList files, QStringList urls, std::optional<QByteArray> windowActivationToken
     ) {
         info().log("MainWindowViewModel: addTorrents() called");
         info().log("MainWindowViewModel: files = {}", files);
         info().log("MainWindowViewModel: urls = {}", urls);
-        const auto connectionState = mRpc.connectionState();
-        if (connectionState == RpcConnectionState::Connected) {
-            emit showAddTorrentDialogs(files, urls, windowActivationToken);
-        } else {
-            mPendingFilesToOpen.append(files);
-            mPendingUrlsToOpen.append(urls);
+
+        if (!mRpc.isConnected()) {
             info().log("Postponing opening torrents until connected to server");
-            emit showWindow(windowActivationToken);
-            // If we are connecting then wait a bit before showing message
-            if (connectionState == RpcConnectionState::Connecting) {
+            if (mRpc.connectionState() == RpcConnectionState::Connecting) {
                 info().log("We are already connecting, wait a bit before showing message");
-                if (delayedTorrentAddMessageTimer) {
-                    delayedTorrentAddMessageTimer->stop();
-                    delayedTorrentAddMessageTimer->deleteLater();
-                }
-                delayedTorrentAddMessageTimer = new QTimer(this);
-                delayedTorrentAddMessageTimer->setInterval(initialDelayedTorrentAddMessageDelay);
-                delayedTorrentAddMessageTimer->setSingleShot(true);
-                QObject::connect(delayedTorrentAddMessageTimer, &QTimer::timeout, this, [=, this] {
-                    info().log("Showing delayed torrent adding message");
-                    delayedTorrentAddMessageTimer = nullptr;
-                    emit showDelayedTorrentAddMessage(files + urls);
-                });
-                QObject::connect(
-                    delayedTorrentAddMessageTimer,
-                    &QTimer::timeout,
-                    delayedTorrentAddMessageTimer,
-                    &QTimer::deleteLater
+                co_await waitAny(
+                    []() -> Coroutine<> { co_await waitFor(initialDelayedTorrentAddMessageDelay); }(),
+                    [](Rpc* rpc) -> Coroutine<> { co_await waitForSignal(rpc, &Rpc::connectedChanged); }(&mRpc)
                 );
-                delayedTorrentAddMessageTimer->start();
-            } else {
+            }
+            if (!mRpc.isConnected()) {
                 info().log("Showing delayed torrent adding message");
                 emit showDelayedTorrentAddMessage(files + urls);
+                co_await waitForSignal(&mRpc, &Rpc::connectedChanged);
             }
+        }
+
+        const auto* const settings = Settings::instance();
+
+        if (settings->showMainWindowWhenAddingTorrent()) {
+            emit showWindow(windowActivationToken);
+            windowActivationToken.reset();
+        }
+
+        emit hideDelayedTorrentAddMessage();
+
+        if (settings->showAddTorrentDialog()) {
+            emit showAddTorrentDialogs(files, urls, windowActivationToken);
+        } else {
+            addTorrentFilesWithoutDialog(files);
+            addTorrentLinksWithoutDialog(urls);
         }
     }
 }
