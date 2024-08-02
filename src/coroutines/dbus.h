@@ -7,29 +7,25 @@
 
 #include <QDBusPendingReply>
 
-#include "coroutines.h"
+#include "qobjectsignal.h"
 
 class QDBusPendingCallWatcher;
 
 namespace tremotesf {
     namespace impl {
         template<typename... T>
-        class DbusReplyAwaitable final {
+        class DbusReplyAwaitable final
+            : public SignalAwaitable<QDBusPendingCallWatcher, decltype(&QDBusPendingCallWatcher::finished)> {
         public:
-            inline explicit DbusReplyAwaitable(const QDBusPendingReply<T...>& reply) : mReply(reply) {}
+            inline explicit DbusReplyAwaitable(const QDBusPendingReply<T...>& reply)
+                : SignalAwaitable(nullptr, &QDBusPendingCallWatcher::finished), mReply(reply) {
+                mSender = &mWatcher;
+            }
             inline ~DbusReplyAwaitable() = default;
             Q_DISABLE_COPY_MOVE(DbusReplyAwaitable)
 
             inline bool await_ready() { return mReply.isFinished(); }
 
-            template<typename Promise>
-            inline void await_suspend(std::coroutine_handle<Promise> handle) {
-                if (startAwaiting(handle)) {
-                    QObject::connect(&mWatcher, &QDBusPendingCallWatcher::finished, &mWatcher, [handle] {
-                        resume(handle);
-                    });
-                }
-            }
             inline QDBusPendingReply<T...> await_resume() { return mReply; };
 
         private:

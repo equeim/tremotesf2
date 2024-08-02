@@ -13,8 +13,19 @@ namespace tremotesf {
     namespace impl {
         class MultipleCoroutinesAwaiter final {
         public:
-            inline explicit MultipleCoroutinesAwaiter(std::list<impl::StandaloneCoroutine> coroutines)
-                : mCoroutines(std::move(coroutines)) {}
+            inline explicit MultipleCoroutinesAwaiter(std::vector<Coroutine<>>&& coroutines, bool cancelAfterFirst)
+                : mCancelAfterFirst(cancelAfterFirst) {
+                for (auto& coroutine : coroutines) {
+                    mCoroutines.emplace_back(std::move(coroutine));
+                }
+            }
+
+            template<typename... Coroutines>
+            inline explicit MultipleCoroutinesAwaiter(bool cancelAfterFirst, Coroutines&&... coroutines)
+                : mCancelAfterFirst(cancelAfterFirst) {
+                (mCoroutines.emplace_back(std::forward<Coroutines>(coroutines)), ...);
+            }
+
             inline ~MultipleCoroutinesAwaiter() = default;
             Q_DISABLE_COPY_MOVE(MultipleCoroutinesAwaiter)
 
@@ -37,28 +48,35 @@ namespace tremotesf {
             void onAllCoroutinesCompleted();
             void cancelAll();
 
-            std::list<impl::StandaloneCoroutine> mCoroutines;
+            std::list<impl::StandaloneCoroutine> mCoroutines{};
+            bool mCancelAfterFirst;
             std::coroutine_handle<> mParentCoroutineHandle{};
             CoroutinePromiseBase* mParentCoroutinePromise{};
+            // NOLINTNEXTLINE(bugprone-throw-keyword-missing)
             std::exception_ptr mUnhandledException{};
             bool mCancellingCoroutines{};
+            bool mCancelledCoroutinesAndWaitingForCompletionCallbacks{};
         };
     }
 
     inline impl::MultipleCoroutinesAwaiter waitAll(std::vector<Coroutine<>>&& coroutines) {
-        std::list<impl::StandaloneCoroutine> list{};
-        for (auto&& coroutine : std::move(coroutines)) {
-            list.emplace_back(std::move(coroutine));
-        }
-        return impl::MultipleCoroutinesAwaiter(std::move(list));
+        return impl::MultipleCoroutinesAwaiter(std::move(coroutines), false);
     }
 
     template<std::same_as<Coroutine<>>... Coroutines>
         requires(sizeof...(Coroutines) != 0)
     inline impl::MultipleCoroutinesAwaiter waitAll(Coroutines&&... coroutines) {
-        std::list<impl::StandaloneCoroutine> list{};
-        (list.emplace_back(std::forward<Coroutines>(coroutines)), ...);
-        return impl::MultipleCoroutinesAwaiter(std::move(list));
+        return impl::MultipleCoroutinesAwaiter(false, std::forward<Coroutines>(coroutines)...);
+    }
+
+    inline impl::MultipleCoroutinesAwaiter waitAny(std::vector<Coroutine<>>&& coroutines) {
+        return impl::MultipleCoroutinesAwaiter(std::move(coroutines), true);
+    }
+
+    template<std::same_as<Coroutine<>>... Coroutines>
+        requires(sizeof...(Coroutines) != 0)
+    inline impl::MultipleCoroutinesAwaiter waitAny(Coroutines&&... coroutines) {
+        return impl::MultipleCoroutinesAwaiter(true, std::forward<Coroutines>(coroutines)...);
     }
 }
 
