@@ -7,6 +7,7 @@ Checks: >
   android-*,
   bugprone-*,
   -bugprone-suspicious-include,
+  -bugprone-implicit-widening-of-multiplication-result,
   clang-analyzer-*,
   concurrency-*,
   cppcoreguidelines-*,

@@ -11,134 +11,62 @@
 #include "coroutines/threadpool.h"
 #include "log/log.h"
 #include "ui/itemmodels/torrentfilesmodelentry.h"
+#include "torrentfileparser.h"
 
 namespace tremotesf {
     namespace {
-        using namespace std::string_view_literals;
-
-        constexpr auto infoKey = "info"sv;
-        constexpr auto filesKey = "files"sv;
-        constexpr auto nameKey = "name"sv;
-        constexpr auto pathKey = "path"sv;
-        constexpr auto lengthKey = "length"sv;
-
-        template<bencode::ValueType Expected>
-        std::optional<Expected>
-        maybeTakeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName) {
-            if (auto found = dict.find(key); found != dict.end()) {
-                auto& [_, value] = *found;
-                auto maybeValue = value.maybeTakeValue<Expected>();
-                if (!maybeValue) {
-                    throw bencode::Error(
-                        bencode::Error::Type::Parsing,
-                        fmt::format(
-                            R"(Value of dictionary "{}" with key "{}" is not of {} type)",
-                            dictName,
-                            key,
-                            bencode::getValueTypeName<Expected>()
-                        )
-                    );
-                }
-                return maybeValue;
-            }
-            return {};
-        }
-
-        template<bencode::ValueType Expected>
-        Expected takeDictValue(bencode::Dictionary& dict, std::string_view key, std::string_view dictName) {
-            if (auto maybeValue = maybeTakeDictValue<Expected>(dict, key, dictName); maybeValue) {
-                return std::move(*maybeValue);
-            }
-            throw bencode::Error(
-                bencode::Error::Type::Parsing,
-                fmt::format(R"(Dictionary "{}" does not contain value with key "{}")", dictName, key)
-            );
-        }
-
         struct CreateTreeResult {
             std::shared_ptr<TorrentFilesModelDirectory> rootDirectory;
             std::vector<TorrentFilesModelFile*> files;
         };
 
-        CreateTreeResult createTree(bencode::Value bencodeParseResult) {
-            auto rootMap = bencodeParseResult.maybeTakeDictionary();
-            if (!rootMap) {
-                throw bencode::Error(bencode::Error::Type::Parsing, "Root element is not a dictionary");
-            }
-
-            auto infoMap = takeDictValue<bencode::Dictionary>(*rootMap, infoKey, "<root dictionary>");
-
+        CreateTreeResult createTree(TorrentMetainfoFile torrentFile) {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
             std::vector<TorrentFilesModelFile*> files;
 
-            if (auto filesList = maybeTakeDictValue<bencode::List>(infoMap, filesKey, infoKey); filesList) {
-                const auto torrentDirectoryName = takeDictValue<QString>(infoMap, nameKey, infoKey);
+            if (torrentFile.isSingleFile()) {
+                auto* file = rootDirectory->addFile(0, torrentFile.rootFileName, torrentFile.singleFileSize());
+                file->setWanted(true);
+                file->setPriority(TorrentFilesModelEntry::NormalPriority);
+                file->setChanged(false);
+                files.push_back(file);
+            } else {
+                const auto torrentDirectoryName = torrentFile.rootFileName;
 
                 auto* torrentDirectory = rootDirectory->addDirectory(torrentDirectoryName);
 
-                const auto filesCount = filesList->size();
-                files.reserve(filesCount);
+                auto torrentFiles = torrentFile.files();
+                files.reserve(torrentFiles.size());
                 int fileIndex = -1;
-                for (auto& fileValue : *filesList) {
+                for (TorrentMetainfoFile::File file : torrentFiles) {
                     ++fileIndex;
-
-                    auto fileMap = fileValue.maybeTakeDictionary();
-                    if (!fileMap) {
-                        throw bencode::Error(
-                            bencode::Error::Type::Parsing,
-                            fmt::format("Files list element at index {} is not a dictionary", fileIndex)
-                        );
-                    }
 
                     TorrentFilesModelDirectory* currentDirectory = torrentDirectory;
 
-                    auto pathParts = takeDictValue<bencode::List>(*fileMap, pathKey, filesKey);
+                    auto pathParts = file.path();
 
                     int partIndex = -1;
                     const int lastPartIndex = static_cast<int>(pathParts.size()) - 1;
 
-                    for (auto& partValue : pathParts) {
+                    for (QString part : pathParts) {
                         ++partIndex;
-
-                        auto part = partValue.maybeTakeString();
-                        if (!part) {
-                            throw bencode::Error(
-                                bencode::Error::Type::Parsing,
-                                fmt::format(
-                                    "Path element at index {} for file at index is not a string",
-                                    partIndex,
-                                    fileIndex
-                                )
-                            );
-                        }
-
                         if (partIndex == lastPartIndex) {
-                            const auto length = takeDictValue<bencode::Integer>(*fileMap, lengthKey, filesKey);
-
-                            auto* childFile = currentDirectory->addFile(fileIndex, *part, length);
+                            auto* childFile = currentDirectory->addFile(fileIndex, part, file.size);
                             childFile->setWanted(true);
                             childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
                             childFile->setChanged(false);
                             files.push_back(childFile);
                         } else {
                             const auto& childrenHash = currentDirectory->childrenHash();
-                            const auto found = childrenHash.find(*part);
+                            const auto found = childrenHash.find(part);
                             if (found != childrenHash.end()) {
                                 currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
                             } else {
-                                currentDirectory = currentDirectory->addDirectory(*part);
+                                currentDirectory = currentDirectory->addDirectory(part);
                             }
                         }
                     }
                 }
-            } else {
-                const auto name = takeDictValue<QString>(infoMap, nameKey, infoKey);
-                const auto length = takeDictValue<bencode::Integer>(infoMap, lengthKey, infoKey);
-                auto* file = rootDirectory->addFile(0, name, length);
-                file->setWanted(true);
-                file->setPriority(TorrentFilesModelEntry::NormalPriority);
-                file->setChanged(false);
-                files.push_back(file);
             }
 
             return {std::move(rootDirectory), std::move(files)};
@@ -154,7 +82,7 @@ namespace tremotesf {
         beginResetModel();
         try {
             auto createTreeResult = co_await runOnThreadPool([filePath]() -> CreateTreeResult {
-                return createTree(bencode::parse(filePath));
+                return createTree(parseTorrentFile(filePath));
             });
             mRootDirectory = std::move(createTreeResult.rootDirectory);
             mFiles = std::move(createTreeResult.files);

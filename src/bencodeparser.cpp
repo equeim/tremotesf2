@@ -6,7 +6,6 @@
 
 #include <array>
 #include <charconv>
-#include <cinttypes>
 #include <limits>
 #include <system_error>
 
@@ -29,65 +28,43 @@ namespace tremotesf::bencode {
     }
 
     template<ValueType Expected>
-    std::optional<Expected> Value::maybeTakeValue() {
+    Expected Value::takeValue() && {
         return std::visit(
-            [](auto&& value) -> std::optional<Expected> {
+            [](auto&& value) -> Expected {
                 using T = std::decay_t<decltype(value)>;
                 if constexpr (std::same_as<T, Expected>) {
                     return std::forward<Expected>(value);
-                } else {
-                    return std::nullopt;
-                }
-            },
-            mValue
-        );
-    }
-
-    template std::optional<Integer> Value::maybeTakeValue();
-    template std::optional<ByteArray> Value::maybeTakeValue();
-    template std::optional<List> Value::maybeTakeValue();
-    template std::optional<Dictionary> Value::maybeTakeValue();
-
-    template<>
-    std::optional<QString> Value::maybeTakeValue() {
-        return std::visit(
-            [](auto&& value) -> std::optional<QString> {
-                using T = std::decay_t<decltype(value)>;
-                if constexpr (std::same_as<T, ByteArray>) {
+                } else if constexpr (std::same_as<T, ByteArray> && std::same_as<Expected, QString>) {
                     auto string = QString::fromStdString(value);
                     value.clear();
                     return string;
                 } else {
-                    return std::nullopt;
+                    throw Error(
+                        Error::Type::Parsing,
+                        fmt::format("Value is not of {} type", getValueTypeName<Expected>())
+                    );
                 }
             },
-            mValue
+            std::move(mValue)
         );
     }
 
-    template<ValueType Expected>
-    Expected Value::takeValue() {
-        if (auto maybeValue = maybeTakeValue<Expected>(); maybeValue) {
-            return std::move(*maybeValue);
-        }
-        throw Error(Error::Type::Parsing, fmt::format("Value is not of {} type", getValueTypeName<Expected>()));
-    }
-
-    template Integer Value::takeValue();
-    template ByteArray Value::takeValue();
-    template List Value::takeValue();
-    template Dictionary Value::takeValue();
-    template QString Value::takeValue();
+    template Integer Value::takeValue() &&;
+    template ByteArray Value::takeValue() &&;
+    template List Value::takeValue() &&;
+    template Dictionary Value::takeValue() &&;
+    template QString Value::takeValue() &&;
 
     namespace {
         class Parser {
         public:
-            explicit Parser(QFile& file) : mFile{file} {};
+            explicit Parser(QFile& file, ReadRootDictionaryValueCallback onReadRootDictionaryValue)
+                : mFile{file}, mOnReadRootDictionaryValue(std::move(onReadRootDictionaryValue)) {};
 
-            Value parse() { return parseValue(); }
+            Value parse() { return parseValue(true); }
 
         private:
-            Value parseValue() {
+            Value parseValue(bool root = false) {
                 const char byte = peekByte();
                 if (byte == integerPrefix) {
                     return parseInteger();
@@ -96,15 +73,19 @@ namespace tremotesf::bencode {
                     return parseList();
                 }
                 if (byte == dictionaryPrefix) {
-                    return parseDictionary();
+                    return parseDictionary(root);
                 }
                 return parseByteArray();
             }
 
-            Dictionary parseDictionary() {
+            Dictionary parseDictionary(bool root) {
                 return parseContainer<Dictionary>([&](Dictionary& dict) {
                     ByteArray key(parseByteArray());
+                    const auto valuePos = mFile.pos();
                     Value value(parseValue());
+                    if (root) {
+                        mOnReadRootDictionaryValue(key, valuePos, mFile.pos() - valuePos);
+                    }
                     dict.emplace(std::move(key), std::move(value));
                 });
             }
@@ -245,19 +226,22 @@ namespace tremotesf::bencode {
             }
 
             QFile& mFile;
+            ReadRootDictionaryValueCallback mOnReadRootDictionaryValue;
             std::array<char, integerBufferSize> mIntegerBuffer{};
         };
     }
 
-    Value parse(const QString& filePath) {
+    Value parse(const QString& filePath, ReadRootDictionaryValueCallback onReadRootDictionaryValue) {
         QFile file(filePath);
         try {
             openFile(file, QIODevice::ReadOnly);
         } catch (const QFileError&) {
             std::throw_with_nested(Error(Error::Type::Reading, "Failed to open file"));
         }
-        return parse(file);
+        return parse(file, std::move(onReadRootDictionaryValue));
     }
 
-    Value parse(QFile& device) { return Parser(device).parse(); }
+    Value parse(QFile& device, ReadRootDictionaryValueCallback onReadRootDictionaryValue) {
+        return Parser(device, std::move(onReadRootDictionaryValue)).parse();
+    }
 }
