@@ -52,6 +52,8 @@ add_library(
     settings.h
     stdutils.h
     target_os.h
+    torrentfileparser.cpp
+    torrentfileparser.h
 
     unixhelpers.h
     windowshelpers.h
@@ -430,6 +432,10 @@ if (BUILD_TESTING)
     add_executable(magnetlinkparser_test magnetlinkparser_test.cpp)
     add_test(NAME magnetlinkparser_test COMMAND magnetlinkparser_test)
     target_link_libraries(magnetlinkparser_test tremotesf_objects Qt::Test)
+
+    add_executable(torrentfileparser_test torrentfileparser_test.cpp)
+    add_test(NAME torrentfileparser_test COMMAND torrentfileparser_test WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test-torrents")
+    target_link_libraries(torrentfileparser_test tremotesf_objects Qt::Test)
 endif ()
 
 set_common_options_on_targets()

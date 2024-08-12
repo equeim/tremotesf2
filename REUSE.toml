@@ -8,7 +8,7 @@ SPDX-PackageSupplier = "Alexey Rochev <equeim@gmail.com>"
 SPDX-PackageDownloadLocation = "https://github.com/equeim/tremotesf2"
 
 [[annotations]]
-path = ["CHANGELOG.md", "README.md", "**.json", "debian/**", "src/rpc/test-data/**.pem"]
+path = ["CHANGELOG.md", "README.md", "**.json", "debian/**", "src/rpc/test-data/**.pem", "src/test-torrents/**.torrent"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2015-2024 Alexey Rochev"
 SPDX-License-Identifier = "CC0-1.0"

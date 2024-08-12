@@ -6,9 +6,9 @@
 #define TREMOTESF_BENCODEPARSER_H
 
 #include <cstdint>
+#include <functional>
 #include <list>
 #include <map>
-#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -60,55 +60,31 @@ namespace tremotesf::bencode {
         inline Value(List&& value) : mValue{std::move(value)} {}
         inline Value(Dictionary&& value) : mValue{std::move(value)} {}
 
-        inline std::optional<Integer> maybeTakeInteger();
-        inline std::optional<ByteArray> maybeTakeByteArray();
-        inline std::optional<QString> maybeTakeString();
-        inline std::optional<List> maybeTakeList();
-        inline std::optional<Dictionary> maybeTakeDictionary();
-
-        inline Integer takeInteger();
-        inline ByteArray takeByteArray();
-        inline QString takeString();
-        inline List takeList();
-        inline Dictionary takeDictionary();
+        inline Integer takeInteger() &&;
+        inline ByteArray takeByteArray() &&;
+        inline QString takeString() &&;
+        inline List takeList() &&;
+        inline Dictionary takeDictionary() &&;
 
         template<ValueType Expected>
-        std::optional<Expected> maybeTakeValue();
-
-        template<ValueType Expected>
-        Expected takeValue();
+        Expected takeValue() &&;
 
     private:
         using Variant = std::variant<Integer, ByteArray, List, Dictionary>;
         Variant mValue{};
     };
 
-    extern template std::optional<Integer> Value::maybeTakeValue();
-    extern template std::optional<ByteArray> Value::maybeTakeValue();
-    extern template std::optional<List> Value::maybeTakeValue();
-    extern template std::optional<Dictionary> Value::maybeTakeValue();
+    extern template Integer Value::takeValue() &&;
+    extern template ByteArray Value::takeValue() &&;
+    extern template List Value::takeValue() &&;
+    extern template Dictionary Value::takeValue() &&;
+    extern template QString Value::takeValue() &&;
 
-    template<>
-    std::optional<QString> Value::maybeTakeValue();
-    extern template std::optional<QString> Value::maybeTakeValue();
-
-    inline std::optional<Integer> Value::maybeTakeInteger() { return maybeTakeValue<Integer>(); }
-    inline std::optional<ByteArray> Value::maybeTakeByteArray() { return maybeTakeValue<ByteArray>(); }
-    inline std::optional<QString> Value::maybeTakeString() { return maybeTakeValue<QString>(); }
-    inline std::optional<List> Value::maybeTakeList() { return maybeTakeValue<List>(); }
-    inline std::optional<Dictionary> Value::maybeTakeDictionary() { return maybeTakeValue<Dictionary>(); }
-
-    extern template Integer Value::takeValue();
-    extern template ByteArray Value::takeValue();
-    extern template List Value::takeValue();
-    extern template Dictionary Value::takeValue();
-    extern template QString Value::takeValue();
-
-    inline Integer Value::takeInteger() { return takeValue<Integer>(); }
-    inline ByteArray Value::takeByteArray() { return takeValue<ByteArray>(); }
-    inline QString Value::takeString() { return takeValue<QString>(); }
-    inline List Value::takeList() { return takeValue<List>(); }
-    inline Dictionary Value::takeDictionary() { return takeValue<Dictionary>(); }
+    inline Integer Value::takeInteger() && { return std::move(*this).takeValue<Integer>(); }
+    inline ByteArray Value::takeByteArray() && { return std::move(*this).takeValue<ByteArray>(); }
+    inline QString Value::takeString() && { return std::move(*this).takeValue<QString>(); }
+    inline List Value::takeList() && { return std::move(*this).takeValue<List>(); }
+    inline Dictionary Value::takeDictionary() && { return std::move(*this).takeValue<Dictionary>(); }
 
     class Error : public std::runtime_error {
     public:
@@ -123,8 +99,10 @@ namespace tremotesf::bencode {
         Type mType;
     };
 
-    Value parse(const QString& filePath);
-    Value parse(QFile& device);
+    using ReadRootDictionaryValueCallback = std::function<void(const ByteArray& key, qint64 offset, qint64 length)>;
+
+    Value parse(const QString& filePath, ReadRootDictionaryValueCallback onReadRootDictionaryValue);
+    Value parse(QFile& device, ReadRootDictionaryValueCallback onReadRootDictionaryValue);
 }
 
 #endif // TREMOTESF_BENCODEPARSER_H
