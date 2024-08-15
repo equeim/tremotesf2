@@ -11,7 +11,6 @@
 #include "coroutines/threadpool.h"
 #include "log/log.h"
 #include "ui/itemmodels/torrentfilesmodelentry.h"
-#include "torrentfileparser.h"
 
 namespace tremotesf {
     namespace {
@@ -69,49 +68,28 @@ namespace tremotesf {
                 }
             }
 
-            return {std::move(rootDirectory), std::move(files)};
+            return {.rootDirectory = std::move(rootDirectory), .files = std::move(files)};
         }
     }
 
     LocalTorrentFilesModel::LocalTorrentFilesModel(QObject* parent)
         : BaseTorrentFilesModel({Column::Name, Column::Size, Column::Priority}, parent) {}
 
-    void LocalTorrentFilesModel::load(const QString& filePath) { mCoroutineScope.launch(loadImpl(filePath)); }
-
-    Coroutine<> LocalTorrentFilesModel::loadImpl(QString filePath) {
+    Coroutine<> LocalTorrentFilesModel::load(TorrentMetainfoFile torrentFile) {
         beginResetModel();
         try {
-            auto createTreeResult = co_await runOnThreadPool([filePath]() -> CreateTreeResult {
-                return createTree(parseTorrentFile(filePath));
-            });
-            mRootDirectory = std::move(createTreeResult.rootDirectory);
-            mFiles = std::move(createTreeResult.files);
-        } catch (const bencode::Error& e) {
-            warning().logWithException(e, "Failed to parse torrent file {}", filePath);
-            mErrorType = e.type();
+            auto [rootDirectory, files] = co_await runOnThreadPool(&createTree, std::move(torrentFile));
+            mRootDirectory = std::move(rootDirectory);
+            mFiles = std::move(files);
+            mLoaded = true;
+            endResetModel();
+        } catch (const bencode::Error&) {
+            endResetModel();
+            throw;
         }
-        endResetModel();
-        mLoaded = true;
-        emit loadedChanged();
     }
 
     bool LocalTorrentFilesModel::isLoaded() const { return mLoaded; }
-
-    bool LocalTorrentFilesModel::isSuccessfull() const { return !mErrorType.has_value(); }
-
-    QString LocalTorrentFilesModel::errorString() const {
-        if (!mErrorType) {
-            return {};
-        }
-        switch (*mErrorType) {
-        case bencode::Error::Type::Reading:
-            return qApp->translate("tremotesf", "Error reading torrent file");
-        case bencode::Error::Type::Parsing:
-            return qApp->translate("tremotesf", "Error parsing torrent file");
-        default:
-            return {};
-        }
-    }
 
     std::vector<int> LocalTorrentFilesModel::unwantedFiles() const {
         std::vector<int> files;

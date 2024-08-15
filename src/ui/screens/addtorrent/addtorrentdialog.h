@@ -5,6 +5,11 @@
 #ifndef TREMOTESF_ADDTORRENTDIALOG_H
 #define TREMOTESF_ADDTORRENTDIALOG_H
 
+#include <optional>
+#include <set>
+#include <utility>
+#include <vector>
+
 #include <QDialog>
 
 #include "coroutines/scope.h"
@@ -17,6 +22,8 @@ class QFormLayout;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
+
+class KMessageWidget;
 
 namespace tremotesf {
     class LocalTorrentFilesModel;
@@ -49,19 +56,30 @@ namespace tremotesf {
 
     private:
         void setupUi();
+        void updateUi();
         void canAcceptUpdate();
         void saveState();
+
         void onDownloadDirectoryPathChanged(QString path);
         Coroutine<> getFreeSpaceForPath(QString path);
 
-        bool checkIfMagnetLinkTorrentExists();
+        Coroutine<> parseTorrentFile();
+        void showTorrentParsingError(const QString& errorString);
+
+        void parseMagnetLink();
+        bool checkIfTorrentExists();
+
+        void deleteTorrentFileIfEnabled();
 
         Rpc* mRpc;
         QString mUrl;
         Mode mMode;
 
         LocalTorrentFilesModel* mFilesModel{};
+        CoroutineScope mParseTorrentFileCoroutineScope{};
+        std::optional<std::pair<QString, std::vector<std::set<QString>>>> mTorrentInfoHashAndTrackers{};
 
+        KMessageWidget* mMessageWidget{};
         QLineEdit* mTorrentLinkLineEdit{};
         QLabel* mFreeSpaceLabel{};
         TorrentFilesView* mTorrentFilesView{};

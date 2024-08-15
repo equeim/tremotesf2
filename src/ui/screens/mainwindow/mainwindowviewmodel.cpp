@@ -18,6 +18,7 @@
 
 #include "coroutines/qobjectsignal.h"
 #include "coroutines/timer.h"
+#include "coroutines/threadpool.h"
 #include "coroutines/waitall.h"
 #include "log/log.h"
 #include "ipc/ipcserver.h"
@@ -27,6 +28,7 @@
 #include "ui/notificationscontroller.h"
 #include "magnetlinkparser.h"
 #include "settings.h"
+#include "stdutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
@@ -204,6 +206,42 @@ namespace tremotesf {
         return true;
     }
 
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
+    Coroutine<std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>>
+    MainWindowViewModel::separateTorrentsThatAlreadyExistForFiles(QStringList& files) {
+        std::vector<std::pair<QString, TorrentMetainfoFile>> torrentFiles{};
+        torrentFiles.reserve(static_cast<size_t>(files.size()));
+        co_await waitAll(toContainer<std::vector>(files | std::views::transform([&](const QString& filePath) {
+                                                      return parseTorrentFile(filePath, torrentFiles);
+                                                  })));
+
+        std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>> existingTorrents{};
+
+        for (auto& [filePath, torrentFile] : torrentFiles) {
+            auto* const torrent = mRpc.torrentByHash(torrentFile.infoHashV1);
+            if (torrent) {
+                existingTorrents.emplace_back(torrent, std::move(torrentFile.trackers));
+                files.removeOne(filePath);
+            }
+        }
+
+        co_return existingTorrents;
+    }
+
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
+    Coroutine<> MainWindowViewModel::parseTorrentFile(
+        QString filePath, std::vector<std::pair<QString, TorrentMetainfoFile>>& output
+    ) {
+        try {
+            info().log("Parsing torrent file {}", filePath);
+            auto torrentFile = co_await runOnThreadPool(&tremotesf::parseTorrentFile, filePath);
+            info().log("Parsed {}, result = {}", filePath, torrentFile);
+            output.emplace_back(std::move(filePath), std::move(torrentFile));
+        } catch (const bencode::Error& e) {
+            warning().logWithException(e, "Failed to parse torrent file {}", filePath);
+        }
+    }
+
     void MainWindowViewModel::addTorrentFilesWithoutDialog(const QStringList& files) {
         if (files.isEmpty()) return;
         const auto parameters = getAddTorrentParameters(&mRpc);
@@ -221,14 +259,6 @@ namespace tremotesf {
             if (parameters.deleteTorrentFile) {
                 deleteTorrentFile(filePath, parameters.moveTorrentFileToTrash);
             }
-        }
-    }
-
-    void MainWindowViewModel::addTorrentLinksWithoutDialog(const QStringList& urls) {
-        if (urls.isEmpty()) return;
-        const auto parameters = getAddTorrentParameters(&mRpc);
-        for (const auto& url : urls) {
-            mRpc.addTorrentLink(url, parameters.downloadDirectory, parameters.priority, parameters.startAfterAdding);
         }
     }
 
@@ -254,6 +284,14 @@ namespace tremotesf {
             urls.erase(toErase.begin(), toErase.end());
         }
         return existingTorrents;
+    }
+
+    void MainWindowViewModel::addTorrentLinksWithoutDialog(const QStringList& urls) {
+        if (urls.isEmpty()) return;
+        const auto parameters = getAddTorrentParameters(&mRpc);
+        for (const auto& url : urls) {
+            mRpc.addTorrentLink(url, parameters.downloadDirectory, parameters.priority, parameters.startAfterAdding);
+        }
     }
 
     Coroutine<> MainWindowViewModel::addTorrents(
@@ -288,8 +326,8 @@ namespace tremotesf {
 
         emit hideDelayedTorrentAddMessage();
 
-        const auto existingTorrents = separateTorrentsThatAlreadyExistForLinks(urls);
-        if (!existingTorrents.empty()) {
+        // We can parse magnet links immediately so check whether torrents exist event if we show dialogs
+        if (const auto existingTorrents = separateTorrentsThatAlreadyExistForLinks(urls); !existingTorrents.empty()) {
             emit askForMergingTrackers(existingTorrents, windowActivationToken);
             windowActivationToken.reset();
         }
@@ -297,8 +335,14 @@ namespace tremotesf {
         if (settings->showAddTorrentDialog()) {
             emit showAddTorrentDialogs(files, urls, windowActivationToken);
         } else {
-            addTorrentFilesWithoutDialog(files);
             addTorrentLinksWithoutDialog(urls);
+
+            if (const auto existingTorrents = co_await separateTorrentsThatAlreadyExistForFiles(files);
+                !existingTorrents.empty()) {
+                emit askForMergingTrackers(existingTorrents, windowActivationToken);
+                windowActivationToken.reset();
+            }
+            addTorrentFilesWithoutDialog(files);
         }
     }
 }

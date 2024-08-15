@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QStringList>
 
+#include "torrentfileparser.h"
 #include "rpc/rpc.h"
 #include "coroutines/scope.h"
 
@@ -46,10 +47,14 @@ namespace tremotesf {
         bool addTorrentsFromClipboard(bool onlyUrls = false);
         bool addTorrentsFromMimeData(const QMimeData* mimeData, bool onlyUrls);
 
+        Coroutine<std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>>
+        separateTorrentsThatAlreadyExistForFiles(QStringList& files);
+        Coroutine<> parseTorrentFile(QString filePath, std::vector<std::pair<QString, TorrentMetainfoFile>>& output);
         void addTorrentFilesWithoutDialog(const QStringList& files);
-        void addTorrentLinksWithoutDialog(const QStringList& urls);
+
         std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>
         separateTorrentsThatAlreadyExistForLinks(QStringList& urls);
+        void addTorrentLinksWithoutDialog(const QStringList& urls);
 
         Coroutine<>
         addTorrents(QStringList files, QStringList urls, std::optional<QByteArray> windowActivationToken = {});

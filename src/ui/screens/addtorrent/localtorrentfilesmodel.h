@@ -6,12 +6,11 @@
 #define TREMOTESF_LOCALTORRENTFILESMODEL_H
 
 #include <map>
-#include <optional>
 #include <vector>
 
+#include "torrentfileparser.h"
 #include "ui/itemmodels/basetorrentfilesmodel.h"
-#include "bencodeparser.h"
-#include "coroutines/scope.h"
+#include "coroutines/coroutines.h"
 
 namespace tremotesf {
     class TorrentFileParser;
@@ -22,11 +21,12 @@ namespace tremotesf {
     public:
         explicit LocalTorrentFilesModel(QObject* parent = nullptr);
 
-        void load(const QString& filePath);
+        /**
+         * @throws bencode::Error
+         */
+        Coroutine<> load(TorrentMetainfoFile torrentFile);
 
         bool isLoaded() const;
-        bool isSuccessfull() const;
-        QString errorString() const;
 
         std::vector<int> unwantedFiles() const;
         std::vector<int> highPriorityFiles() const;
@@ -37,17 +37,10 @@ namespace tremotesf {
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
     private:
-        Coroutine<> loadImpl(QString filePath);
-
         std::vector<TorrentFilesModelFile*> mFiles{};
         bool mLoaded{};
-        std::optional<bencode::Error::Type> mErrorType{};
-        CoroutineScope mCoroutineScope{};
 
         std::map<QString, QString> mRenamedFiles{};
-
-    signals:
-        void loadedChanged();
     };
 }
 
