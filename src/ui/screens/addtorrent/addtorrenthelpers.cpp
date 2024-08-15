@@ -116,4 +116,16 @@ namespace tremotesf {
         messageBox->show();
         return messageBox;
     }
+
+    QString bencodeErrorString(bencode::Error::Type type) {
+        switch (type) {
+        case bencode::Error::Type::Reading:
+            return qApp->translate("tremotesf", "Error reading torrent file");
+        case bencode::Error::Type::Parsing:
+            return qApp->translate("tremotesf", "Error parsing torrent file");
+        default:
+            return {};
+        }
+    }
+
 }
