@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Merging trackers when adding existing torrent
+- "None" proxy option to bypass system proxy
 
 ### Changed
 - Removed Debian 11 and Ubuntu 22.04 support - minimum baseline now corresponds to Debian 12
@@ -16,6 +17,10 @@
 - Notification portal is used for notification in Flatpak
 - Breeze is used as a fallback icon theme and should be installed as a runtime dependency
 - Clarified runtime dependency on Qt's SVG image format plugin
+- Networking and some other async code is rewritten using C++ coroutines. Hopefully nothing is broken :)
+
+### Fixed
+- Mapping of mounted directories working incorrectly in some cases
 
 ## [2.6.3] - 2024-04-22
 ### Fixed
