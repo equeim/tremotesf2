@@ -153,7 +153,7 @@ namespace tremotesf {
     }
 
     Servers* Servers::instance() {
-        static auto* const instance = new Servers(qApp);
+        static auto* const instance = new Servers(nullptr, qApp);
         return instance;
     }
 
@@ -190,24 +190,32 @@ namespace tremotesf {
 
     bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
 
-    QString Servers::fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings) {
+    QString Servers::fromLocalToRemoteDirectory(const QString& localPath, PathOs pathOs) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
             if (isPathUnderThisDirectory(localPath, localDirectory)) {
-                const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, serverSettings->data().pathOs);
+                const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, pathOs);
                 return remoteDirectoryNormalized + localPath.mid(localDirectory.size());
             }
         }
         return {};
     }
 
-    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings) {
+    QString Servers::fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings) {
+        return fromLocalToRemoteDirectory(localPath, serverSettings->data().pathOs);
+    }
+
+    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, PathOs pathOs) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
-            const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, serverSettings->data().pathOs);
+            const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, pathOs);
             if (isPathUnderThisDirectory(remoteDirectory, remoteDirectoryNormalized)) {
                 return localDirectory + remotePath.mid(remoteDirectoryNormalized.size());
             }
         }
         return {};
+    }
+
+    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings) {
+        return fromRemoteToLocalDirectory(remotePath, serverSettings->data().pathOs);
     }
 
     LastTorrents Servers::currentServerLastTorrents() const {
@@ -413,9 +421,12 @@ namespace tremotesf {
         }
     }
 
-    Servers::Servers(QObject* parent)
+    Servers::Servers(QSettings* settings, QObject* parent)
         : QObject(parent),
-          mSettings(new QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), fileName, this)) {
+          mSettings(
+              settings ? settings
+                       : new QSettings(settingsFormat, QSettings::UserScope, qApp->organizationName(), fileName, this)
+          ) {
         mSettings->setFallbacksEnabled(false);
         if (hasServers()) {
             bool foundCurrent = false;

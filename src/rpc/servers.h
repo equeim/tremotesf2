@@ -49,6 +49,8 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
+        explicit Servers(QSettings* settings, QObject* parent);
+
         static Servers* instance();
 
         bool hasServers() const;
@@ -60,7 +62,9 @@ namespace tremotesf {
         void setCurrentServer(const QString& name);
 
         bool currentServerHasMountedDirectories() const;
+        QString fromLocalToRemoteDirectory(const QString& localPath, PathOs pathOs);
         QString fromLocalToRemoteDirectory(const QString& localPath, const ServerSettings* serverSettings);
+        QString fromRemoteToLocalDirectory(const QString& remotePath, PathOs pathOs);
         QString fromRemoteToLocalDirectory(const QString& remotePath, const ServerSettings* serverSettings);
 
         LastTorrents currentServerLastTorrents() const;
@@ -109,7 +113,6 @@ namespace tremotesf {
         void sync();
 
     private:
-        explicit Servers(QObject* parent = nullptr);
         Server getServer(const QString& name) const;
         void updateMountedDirectories();
 
