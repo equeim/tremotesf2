@@ -22,7 +22,7 @@
     ],
     "modules": [
         {
-            "name" : "fmt",
+            "name": "fmt",
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
@@ -31,16 +31,16 @@
                 "-DFMT_DOC=OFF",
                 "-DFMT_TEST=OFF"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "archive",
-                    "url" : "https://github.com/fmtlib/fmt/releases/download/11.0.1/fmt-11.0.1.zip",
-                    "sha256" : "62ca45531814109b5d6cef0cf2fd17db92c32a30dd23012976e768c685534814"
+                    "type": "archive",
+                    "url": "https://github.com/fmtlib/fmt/releases/download/11.0.2/fmt-11.0.2.zip",
+                    "sha256": "40fc58bebcf38c759e11a7bd8fdc163507d2423ef5058bba7f26280c5b9c5465"
                 }
             ]
         },
         {
-            "name" : "cxxopts",
+            "name": "cxxopts",
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
@@ -49,16 +49,16 @@
                 "-DCXXOPTS_BUILD_EXAMPLES=OFF",
                 "-DCXXOPTS_BUILD_TESTS=OFF"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "archive",
-                    "url" : "https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.2.1.tar.gz",
-                    "sha256" : "841f49f2e045b9c6365997c2a8fbf76e6f215042dda4511a5bb04bc5ebc7f88a"
+                    "type": "archive",
+                    "url": "https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.2.1.tar.gz",
+                    "sha256": "841f49f2e045b9c6365997c2a8fbf76e6f215042dda4511a5bb04bc5ebc7f88a"
                 }
             ]
         },
         {
-            "name" : "cpp-httplib",
+            "name": "cpp-httplib",
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
@@ -66,11 +66,11 @@
                 "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
                 "-DHTTPLIB_REQUIRE_OPENSSL=ON"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "archive",
-                    "url" : "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.16.0.tar.gz",
-                    "sha256" : "c125022eb85eaa12235518dc4638be93b62c3216d0f87b655af7b17b71b38851"
+                    "type": "archive",
+                    "url": "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.16.3.tar.gz",
+                    "sha256": "c1742fc7179aaae2a67ad9bba0740b7e9ffaf4f5e62feef53101ecdef1478716"
                 }
             ]
         },
