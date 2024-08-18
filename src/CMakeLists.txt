@@ -425,6 +425,10 @@ if (BUILD_TESTING)
     add_test(NAME tracker_test COMMAND tracker_test)
     target_link_libraries(tracker_test tremotesf_objects Qt::Test)
 
+    add_executable(servers_test rpc/servers_test.cpp)
+    add_test(NAME servers_test COMMAND servers_test)
+    target_link_libraries(servers_test tremotesf_objects Qt::Test)
+
     add_executable(coroutines_test coroutines/coroutines_test.cpp)
     add_test(NAME coroutines_test COMMAND coroutines_test)
     target_link_libraries(coroutines_test tremotesf_objects Qt::Test)
