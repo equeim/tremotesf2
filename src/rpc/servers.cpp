@@ -207,7 +207,7 @@ namespace tremotesf {
     QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, PathOs pathOs) {
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
             const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, pathOs);
-            if (isPathUnderThisDirectory(remoteDirectory, remoteDirectoryNormalized)) {
+            if (isPathUnderThisDirectory(remotePath, remoteDirectoryNormalized)) {
                 return localDirectory + remotePath.mid(remoteDirectoryNormalized.size());
             }
         }
