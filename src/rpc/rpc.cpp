@@ -186,6 +186,9 @@ namespace tremotesf {
                 configuration.proxyPassword
             );
             break;
+        case ConnectionConfiguration::ProxyType::None:
+            requestsConfig.proxy = QNetworkProxy(QNetworkProxy::NoProxy);
+            break;
         }
 
         if (configuration.https && configuration.selfSignedCertificateEnabled) {

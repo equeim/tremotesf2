@@ -66,6 +66,7 @@ namespace tremotesf {
         constexpr auto proxyTypeDefault = "Default"_l1;
         constexpr auto proxyTypeHttp = "HTTP"_l1;
         constexpr auto proxyTypeSocks5 = "SOCKS5"_l1;
+        constexpr auto proxyTypeNone = "None"_l1;
 
         ConnectionConfiguration::ProxyType proxyTypeFromSettings(const QString& value) {
             if (value.isEmpty() || value == proxyTypeDefault) {
@@ -76,6 +77,9 @@ namespace tremotesf {
             }
             if (value == proxyTypeSocks5) {
                 return ConnectionConfiguration::ProxyType::Socks5;
+            }
+            if (value == proxyTypeNone) {
+                return ConnectionConfiguration::ProxyType::None;
             }
             return ConnectionConfiguration::ProxyType::Default;
         }
@@ -88,6 +92,8 @@ namespace tremotesf {
                 return proxyTypeHttp;
             case ConnectionConfiguration::ProxyType::Socks5:
                 return proxyTypeSocks5;
+            case ConnectionConfiguration::ProxyType::None:
+                return proxyTypeNone;
             }
             return proxyTypeDefault;
         }
