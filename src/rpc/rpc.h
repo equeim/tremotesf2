@@ -29,7 +29,7 @@ namespace tremotesf {
     struct ConnectionConfiguration {
         Q_GADGET
     public:
-        enum class ProxyType { Default, Http, Socks5 };
+        enum class ProxyType { Default, Http, Socks5, None };
         Q_ENUM(ProxyType)
 
         QString address{};
