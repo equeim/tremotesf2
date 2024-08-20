@@ -8,9 +8,11 @@
 #include <optional>
 #include <set>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include <QDialog>
+#include <QStringList>
 
 #include "coroutines/scope.h"
 #include "ui/savewindowstatedispatcher.h"
@@ -22,6 +24,7 @@ class QFormLayout;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
+class QPlainTextEdit;
 
 class KMessageWidget;
 
@@ -35,9 +38,15 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        enum class Mode { File, Url };
+        struct FileParams {
+            QString filePath;
+        };
 
-        explicit AddTorrentDialog(Rpc* rpc, const QString& url, Mode mode, QWidget* parent = nullptr);
+        struct UrlParams {
+            QStringList urls;
+        };
+
+        explicit AddTorrentDialog(Rpc* rpc, std::variant<FileParams, UrlParams> params, QWidget* parent = nullptr);
 
         void accept() override;
 
@@ -52,9 +61,12 @@ namespace tremotesf {
             void saveToSettings() const;
         };
 
-        static AddTorrentParametersWidgets createAddTorrentParametersWidgets(Mode mode, QFormLayout* layout, Rpc* rpc);
+        static AddTorrentParametersWidgets
+        createAddTorrentParametersWidgets(bool forTorrentFile, QFormLayout* layout, Rpc* rpc);
 
     private:
+        bool isAddingFile() const;
+
         void setupUi();
         void updateUi();
         void canAcceptUpdate();
@@ -66,21 +78,21 @@ namespace tremotesf {
         Coroutine<> parseTorrentFile();
         void showTorrentParsingError(const QString& errorString);
 
-        void parseMagnetLink();
-        bool checkIfTorrentExists();
+        void parseMagnetLinksAndCheckIfTorrentsExist(QStringList& urls);
+        bool checkIfTorrentFileExists();
 
         void deleteTorrentFileIfEnabled();
 
         Rpc* mRpc;
-        QString mUrl;
-        Mode mMode;
+        std::variant<FileParams, UrlParams> mParams;
 
         LocalTorrentFilesModel* mFilesModel{};
         CoroutineScope mParseTorrentFileCoroutineScope{};
-        std::optional<std::pair<QString, std::vector<std::set<QString>>>> mTorrentInfoHashAndTrackers{};
+        std::optional<std::pair<QString, std::vector<std::set<QString>>>> mTorrentFileInfoHashAndTrackers{};
 
         KMessageWidget* mMessageWidget{};
-        QLineEdit* mTorrentLinkLineEdit{};
+        QLineEdit* mTorrentFilePathTextField{};
+        QPlainTextEdit* mTorrentLinkTextField{};
         QLabel* mFreeSpaceLabel{};
         TorrentFilesView* mTorrentFilesView{};
         AddTorrentParametersWidgets mAddTorrentParametersWidgets{};

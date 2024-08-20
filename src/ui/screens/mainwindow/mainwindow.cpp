@@ -1533,7 +1533,7 @@ namespace tremotesf {
                 windowActivationToken.reset();
             }
             if (!urls.isEmpty()) {
-                showAddTorrentLinkDialogs(urls, std::move(windowActivationToken));
+                showAddTorrentLinksDialog(urls, std::move(windowActivationToken));
             }
         }
 
@@ -1552,8 +1552,7 @@ namespace tremotesf {
         QDialog* showAddTorrentFileDialog(const QString& filePath, bool setParent) {
             auto* const dialog = new AddTorrentDialog(
                 mViewModel.rpc(),
-                filePath,
-                AddTorrentDialog::Mode::File,
+                AddTorrentDialog::FileParams{filePath},
                 setParent ? mWindow : nullptr
             );
             dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -1561,21 +1560,27 @@ namespace tremotesf {
             return dialog;
         }
 
-        void showAddTorrentLinkDialogs(const QStringList& urls, std::optional<QByteArray> windowActivationToken) {
-            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
-            for (const QString& url : urls) {
-                auto* const dialog = showAddTorrentLinkDialog(url, setParent);
-                if (windowActivationToken.has_value()) {
-                    activateWindow(dialog, windowActivationToken);
-                    // Can use token only once
-                    windowActivationToken.reset();
-                }
+        void showAddTorrentLinksDialog(const QStringList& urls, std::optional<QByteArray> windowActivationToken) {
+            auto* const dialog = new AddTorrentDialog(
+                mViewModel.rpc(),
+                AddTorrentDialog::UrlParams{urls},
+                Settings::instance()->showMainWindowWhenAddingTorrent() ? mWindow : nullptr
+            );
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->show();
+            if (windowActivationToken.has_value()) {
+                activateWindow(dialog, windowActivationToken);
+                // Can use token only once
+                windowActivationToken.reset();
             }
         }
 
-        QDialog* showAddTorrentLinkDialog(const QString& url, bool setParent) {
-            auto* const dialog =
-                new AddTorrentDialog(mViewModel.rpc(), url, AddTorrentDialog::Mode::Url, setParent ? mWindow : nullptr);
+        QDialog* showAddTorrentLinksDialog(const QStringList& urls, bool setParent) {
+            auto* const dialog = new AddTorrentDialog(
+                mViewModel.rpc(),
+                AddTorrentDialog::UrlParams{urls},
+                setParent ? mWindow : nullptr
+            );
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
             return dialog;

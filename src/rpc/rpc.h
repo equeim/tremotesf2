@@ -130,8 +130,9 @@ namespace tremotesf {
             bool start
         );
 
-        void
-        addTorrentLink(QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start);
+        void addTorrentLinks(
+            QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+        );
 
         void startTorrents(std::span<const int> ids);
         void startTorrentsNow(std::span<const int> ids);
@@ -176,9 +177,10 @@ namespace tremotesf {
             TorrentData::Priority bandwidthPriority,
             bool start
         );
-        Coroutine<> addTorrentLinkImpl(
-            QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+        Coroutine<> addTorrentLinksImpl(
+            QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
         );
+        Coroutine<> addTorrentLinkImpl(QString link, QString downloadDirectory, int bandwidthPriority, bool start);
         Coroutine<> getTorrentsFiles(QJsonArray ids);
         Coroutine<> getTorrentsPeers(QJsonArray ids);
         Coroutine<> renameTorrentFileImpl(int torrentId, QString filePath, QString newName);

@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Merging trackers when adding existing torrent
+- Add Torrent Link dialogs allows multiple links
 - "None" proxy option to bypass system proxy
 
 ### Changed

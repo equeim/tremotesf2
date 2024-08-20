@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -63,33 +64,29 @@ namespace tremotesf {
         }
     }
 
-    AddTorrentDialog::AddTorrentDialog(Rpc* rpc, const QString& url, Mode mode, QWidget* parent)
+    AddTorrentDialog::AddTorrentDialog(Rpc* rpc, std::variant<FileParams, UrlParams> params, QWidget* parent)
         : QDialog(parent),
           mRpc(rpc),
-          mUrl(url),
-          mMode(mode),
-          mFilesModel(mode == Mode::File ? new LocalTorrentFilesModel(this) : nullptr) {
+          mParams(std::move(params)),
+          mFilesModel(isAddingFile() ? new LocalTorrentFilesModel(this) : nullptr) {
         setupUi();
 
         QSize size(448, 0);
-        if (mMode == Mode::File) {
+        if (isAddingFile()) {
             size.setHeight(512);
         }
         resize(sizeHint().expandedTo(size));
 
-        if (mode == Mode::File) {
+        if (isAddingFile()) {
             mParseTorrentFileCoroutineScope.launch(parseTorrentFile());
         }
     }
 
     void AddTorrentDialog::accept() {
-        if (mMode == Mode::Url) {
-            parseMagnetLink();
-        }
-        if (!checkIfTorrentExists()) {
-            if (mMode == Mode::File) {
+        if (isAddingFile()) {
+            if (!checkIfTorrentFileExists()) {
                 mRpc->addTorrentFile(
-                    mUrl,
+                    std::get<FileParams>(mParams).filePath,
                     mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
                     mFilesModel->unwantedFiles(),
                     mFilesModel->highPriorityFiles(),
@@ -98,9 +95,13 @@ namespace tremotesf {
                     priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
                     mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
                 );
-            } else {
-                mRpc->addTorrentLink(
-                    mTorrentLinkLineEdit->text(),
+            }
+        } else {
+            QStringList urls = mTorrentLinkTextField->toPlainText().split('\n', Qt::SkipEmptyParts);
+            parseMagnetLinksAndCheckIfTorrentsExist(urls);
+            if (!urls.empty()) {
+                mRpc->addTorrentLinks(
+                    std::move(urls),
                     mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
                     priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
                     mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
@@ -108,8 +109,8 @@ namespace tremotesf {
             }
         }
         const auto settings = Settings::instance();
-        if (settings->rememberOpenTorrentDir() && mMode == Mode::File) {
-            settings->setLastOpenTorrentDirectory(QFileInfo(mUrl).path());
+        if (settings->rememberOpenTorrentDir() && isAddingFile()) {
+            settings->setLastOpenTorrentDirectory(QFileInfo(std::get<FileParams>(mParams).filePath).path());
         }
         if (settings->rememberAddTorrentParameters()) {
             mAddTorrentParametersWidgets.saveToSettings();
@@ -119,7 +120,7 @@ namespace tremotesf {
     }
 
     AddTorrentDialog::AddTorrentParametersWidgets
-    AddTorrentDialog::createAddTorrentParametersWidgets(Mode mode, QFormLayout* layout, Rpc* rpc) {
+    AddTorrentDialog::createAddTorrentParametersWidgets(bool forTorrentFile, QFormLayout* layout, Rpc* rpc) {
         const auto parameters = getAddTorrentParameters(rpc);
 
         auto* const downloadDirectoryWidget = new TorrentDownloadDirectoryDirectorySelectionWidget{};
@@ -157,7 +158,7 @@ namespace tremotesf {
 
         QGroupBox* deleteTorrentFileGroupBox{};
         QCheckBox* moveTorrentFileToTrashCheckBox{};
-        if (mode == Mode::File) {
+        if (forTorrentFile) {
             deleteTorrentFileGroupBox = new QGroupBox(qApp->translate("tremotesf", "Delete .torrent file"));
             layout->addWidget(deleteTorrentFileGroupBox);
             deleteTorrentFileGroupBox->setCheckable(true);
@@ -179,8 +180,10 @@ namespace tremotesf {
         };
     }
 
+    bool AddTorrentDialog::isAddingFile() const { return std::holds_alternative<FileParams>(mParams); }
+
     void AddTorrentDialog::setupUi() {
-        if (mMode == Mode::File) {
+        if (isAddingFile()) {
             //: Dialog title
             setWindowTitle(qApp->translate("tremotesf", "Add Torrent File"));
         } else {
@@ -196,21 +199,25 @@ namespace tremotesf {
         mMessageWidget->hide();
         layout->addRow(mMessageWidget);
 
-        mTorrentLinkLineEdit = new QLineEdit(mUrl, this);
-        if (mMode == Mode::File) {
-            mTorrentLinkLineEdit->setReadOnly(true);
+        if (isAddingFile()) {
+            mTorrentFilePathTextField = new QLineEdit(std::get<FileParams>(mParams).filePath, this);
+            mTorrentFilePathTextField->setReadOnly(true);
             //: Input field's label
-            layout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentLinkLineEdit);
+            layout->addRow(qApp->translate("tremotesf", "Torrent file:"), mTorrentFilePathTextField);
         } else {
+            mTorrentLinkTextField = new QPlainTextEdit(std::get<UrlParams>(mParams).urls.join('\n'), this);
+            mTorrentLinkTextField->textCursor().setPosition(0);
             //: Input field's label
-            layout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkLineEdit);
-            if (!mTorrentLinkLineEdit->text().isEmpty()) {
-                mTorrentLinkLineEdit->setCursorPosition(0);
-            }
-            QObject::connect(mTorrentLinkLineEdit, &QLineEdit::textChanged, this, &AddTorrentDialog::canAcceptUpdate);
+            layout->addRow(qApp->translate("tremotesf", "Torrent link:"), mTorrentLinkTextField);
+            QObject::connect(
+                mTorrentLinkTextField,
+                &QPlainTextEdit::textChanged,
+                this,
+                &AddTorrentDialog::canAcceptUpdate
+            );
         }
 
-        mAddTorrentParametersWidgets = createAddTorrentParametersWidgets(mMode, layout, mRpc);
+        mAddTorrentParametersWidgets = createAddTorrentParametersWidgets(isAddingFile(), layout, mRpc);
 
         mFreeSpaceLabel = new QLabel(this);
         QObject::connect(
@@ -226,7 +233,7 @@ namespace tremotesf {
             mFreeSpaceLabel
         );
 
-        if (mMode == Mode::File) {
+        if (isAddingFile()) {
             mTorrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
             layout->insertRow(rowForWidget(layout, mFreeSpaceLabel) + 1, mTorrentFilesView);
         } else {
@@ -294,7 +301,7 @@ namespace tremotesf {
 
     void AddTorrentDialog::canAcceptUpdate() {
         bool can = mRpc->isConnected() && (mFilesModel ? mFilesModel->isLoaded() : true);
-        if (mMode == Mode::Url && mTorrentLinkLineEdit->text().isEmpty()) {
+        if (mTorrentLinkTextField && mTorrentLinkTextField->document()->isEmpty()) {
             can = false;
         }
         if (mAddTorrentParametersWidgets.downloadDirectoryWidget->path().isEmpty()) {
@@ -332,13 +339,14 @@ namespace tremotesf {
     }
 
     Coroutine<> AddTorrentDialog::parseTorrentFile() {
+        const auto& filePath = std::get<FileParams>(mParams).filePath;
         try {
-            info().log("Parsing torrent file {}", mUrl);
-            auto torrentFile =
-                co_await runOnThreadPool([filePath = mUrl]() { return tremotesf::parseTorrentFile(filePath); });
+            info().log("Parsing torrent file {}", filePath);
+            auto torrentFile = co_await runOnThreadPool(&tremotesf::parseTorrentFile, filePath);
             info().log("Parsed, result = {}", torrentFile);
-            mTorrentInfoHashAndTrackers = std::pair{std::move(torrentFile.infoHashV1), std::move(torrentFile.trackers)};
-            if (checkIfTorrentExists()) {
+            mTorrentFileInfoHashAndTrackers =
+                std::pair{std::move(torrentFile.infoHashV1), std::move(torrentFile.trackers)};
+            if (checkIfTorrentFileExists()) {
                 deleteTorrentFileIfEnabled();
                 close();
                 co_return;
@@ -346,7 +354,7 @@ namespace tremotesf {
             co_await mFilesModel->load(std::move(torrentFile));
             updateUi();
         } catch (const bencode::Error& e) {
-            warning().logWithException(e, "Failed to parse torrent file {}", mUrl);
+            warning().logWithException(e, "Failed to parse torrent file {}", filePath);
             showTorrentParsingError(bencodeErrorString(e.type()));
             close();
         }
@@ -365,20 +373,30 @@ namespace tremotesf {
         messageBox->show();
     }
 
-    void AddTorrentDialog::parseMagnetLink() {
-        try {
-            info().log("Parsing {} as a magnet link", mTorrentLinkLineEdit->text());
-            auto magnetLink = tremotesf::parseMagnetLink(QUrl(mTorrentLinkLineEdit->text()));
-            info().log("Parsed, result = {}", magnetLink);
-            mTorrentInfoHashAndTrackers = std::pair{std::move(magnetLink.infoHashV1), std::move(magnetLink.trackers)};
-        } catch (const std::runtime_error& e) {
-            warning().logWithException(e, "Failed to parse {} as a magnet link", mTorrentLinkLineEdit->text());
+    void AddTorrentDialog::parseMagnetLinksAndCheckIfTorrentsExist(QStringList& urls) {
+        auto toErase = std::ranges::remove_if(urls, [&](const QString& url) {
+            try {
+                info().log("Parsing {} as a magnet link", url);
+                auto magnetLink = tremotesf::parseMagnetLink(QUrl(url));
+                info().log("Parsed, result = {}", magnetLink);
+                auto* const torrent = mRpc->torrentByHash(magnetLink.infoHashV1);
+                if (torrent) {
+                    askForMergingTrackers(torrent, std::move(magnetLink.trackers), parentWidget());
+                    return true;
+                }
+            } catch (const std::runtime_error& e) {
+                warning().logWithException(e, "Failed to parse {} as a magnet link", url);
+            }
+            return false;
+        });
+        if (!toErase.empty()) {
+            urls.erase(toErase.begin(), toErase.end());
         }
     }
 
-    bool AddTorrentDialog::checkIfTorrentExists() {
-        if (!mTorrentInfoHashAndTrackers.has_value()) return false;
-        auto& [infoHashV1, trackers] = *mTorrentInfoHashAndTrackers;
+    bool AddTorrentDialog::checkIfTorrentFileExists() {
+        if (!mTorrentFileInfoHashAndTrackers.has_value()) return false;
+        auto& [infoHashV1, trackers] = *mTorrentFileInfoHashAndTrackers;
         auto* const torrent = mRpc->torrentByHash(infoHashV1);
         if (torrent) {
             askForMergingTrackers(torrent, std::move(trackers), parentWidget());
@@ -388,8 +406,11 @@ namespace tremotesf {
     }
 
     void AddTorrentDialog::deleteTorrentFileIfEnabled() {
-        if (mMode == Mode::File && mAddTorrentParametersWidgets.deleteTorrentFileGroupBox->isChecked()) {
-            deleteTorrentFile(mUrl, mAddTorrentParametersWidgets.moveTorrentFileToTrashCheckBox->isChecked());
+        if (isAddingFile() && mAddTorrentParametersWidgets.deleteTorrentFileGroupBox->isChecked()) {
+            deleteTorrentFile(
+                std::get<FileParams>(mParams).filePath,
+                mAddTorrentParametersWidgets.moveTorrentFileToTrashCheckBox->isChecked()
+            );
         }
     }
 
