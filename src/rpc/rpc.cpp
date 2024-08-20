@@ -308,7 +308,7 @@ namespace tremotesf {
             start
         );
         if (!requestData.has_value()) {
-            emit torrentAddError();
+            emit torrentAddError(filePath);
             co_return;
         }
         if (!isConnected()) co_return;
@@ -327,7 +327,7 @@ namespace tremotesf {
             }
             mBackgroundRequestsCoroutineScope.launch(updateData());
         } else {
-            emit torrentAddError();
+            emit torrentAddError(filePath);
         }
     }
 
@@ -364,7 +364,7 @@ namespace tremotesf {
         if (response.arguments.contains(torrentDuplicateKey)) {
             emit torrentAddDuplicate();
         } else if (!response.success) {
-            emit torrentAddError();
+            emit torrentAddError(link);
         }
     }
 

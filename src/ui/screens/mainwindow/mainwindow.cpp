@@ -1623,10 +1623,10 @@ namespace tremotesf {
                 );
             });
 
-            QObject::connect(mViewModel.rpc(), &Rpc::torrentAddError, this, [=] {
+            QObject::connect(mViewModel.rpc(), &Rpc::torrentAddError, this, [=](const QString& filePathOrUrl) {
                 showError(
                     qApp->translate("tremotesf", "Error adding torrent"),
-                    qApp->translate("tremotesf", "Error adding torrent")
+                    qApp->translate("tremotesf", "Error adding torrent «%1»").arg(filePathOrUrl)
                 );
             });
         }

@@ -236,7 +236,7 @@ namespace tremotesf {
         void torrentFinished(tremotesf::Torrent* torrent);
 
         void torrentAddDuplicate();
-        void torrentAddError();
+        void torrentAddError(const QString& filePathOrUrl);
     };
 }
 
