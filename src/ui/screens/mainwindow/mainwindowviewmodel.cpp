@@ -286,12 +286,15 @@ namespace tremotesf {
         return existingTorrents;
     }
 
-    void MainWindowViewModel::addTorrentLinksWithoutDialog(const QStringList& urls) {
+    void MainWindowViewModel::addTorrentLinksWithoutDialog(QStringList urls) {
         if (urls.isEmpty()) return;
         const auto parameters = getAddTorrentParameters(&mRpc);
-        for (const auto& url : urls) {
-            mRpc.addTorrentLink(url, parameters.downloadDirectory, parameters.priority, parameters.startAfterAdding);
-        }
+        mRpc.addTorrentLinks(
+            std::move(urls),
+            std::move(parameters.downloadDirectory),
+            parameters.priority,
+            parameters.startAfterAdding
+        );
     }
 
     Coroutine<> MainWindowViewModel::addTorrents(

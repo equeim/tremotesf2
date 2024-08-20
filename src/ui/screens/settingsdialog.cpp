@@ -134,11 +134,8 @@ namespace tremotesf {
         auto addTorrentParametersGroupBox = new QGroupBox(qApp->translate("tremotesf", "Add torrent parameters"), this);
         auto addTorrentParametersGroupBoxLayout = new QFormLayout(addTorrentParametersGroupBox);
         addTorrentParametersGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-        const auto addTorrentParametersWidgets = AddTorrentDialog::createAddTorrentParametersWidgets(
-            AddTorrentDialog::Mode::File,
-            addTorrentParametersGroupBoxLayout,
-            rpc
-        );
+        const auto addTorrentParametersWidgets =
+            AddTorrentDialog::createAddTorrentParametersWidgets(true, addTorrentParametersGroupBoxLayout, rpc);
         auto addTorrentParametersResetButton = new QPushButton(qApp->translate("tremotesf", "Reset"), this);
         addTorrentParametersGroupBoxLayout->addRow(addTorrentParametersResetButton);
 

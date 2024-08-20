@@ -54,7 +54,7 @@ namespace tremotesf {
 
         std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>
         separateTorrentsThatAlreadyExistForLinks(QStringList& urls);
-        void addTorrentLinksWithoutDialog(const QStringList& urls);
+        void addTorrentLinksWithoutDialog(QStringList urls);
 
         Coroutine<>
         addTorrents(QStringList files, QStringList urls, std::optional<QByteArray> windowActivationToken = {});

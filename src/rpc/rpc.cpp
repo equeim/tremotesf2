@@ -25,6 +25,7 @@
 #include "requestrouter.h"
 #include "serversettings.h"
 #include "serverstats.h"
+#include "stdutils.h"
 #include "torrent.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QHostAddress)
@@ -330,30 +331,39 @@ namespace tremotesf {
         }
     }
 
-    void
-    Rpc::addTorrentLink(QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start) {
+    void Rpc::addTorrentLinks(
+        QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+    ) {
         if (isConnected()) {
             mBackgroundRequestsCoroutineScope.launch(
-                addTorrentLinkImpl(std::move(link), std::move(downloadDirectory), bandwidthPriority, start)
+                addTorrentLinksImpl(std::move(links), std::move(downloadDirectory), bandwidthPriority, start)
             );
         }
     }
 
-    Coroutine<> Rpc::addTorrentLinkImpl(
-        QString link, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+    Coroutine<> Rpc::addTorrentLinksImpl(
+        QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
     ) {
+        const int priorityInt = TorrentData::priorityToInt(bandwidthPriority);
+        co_await waitAll(toContainer<std::vector>(
+            links | std::views::transform([&](QString& link) {
+                return addTorrentLinkImpl(std::move(link), downloadDirectory, priorityInt, start);
+            })
+        ));
+        mBackgroundRequestsCoroutineScope.launch(updateData());
+    }
+
+    Coroutine<> Rpc::addTorrentLinkImpl(QString link, QString downloadDirectory, int bandwidthPriority, bool start) {
         QJsonObject arguments{
-            {"filename"_l1, link},
+            {"filename"_l1, std::move(link)},
             {"download-dir"_l1, downloadDirectory},
-            {"bandwidthPriority"_l1, TorrentData::priorityToInt(bandwidthPriority)},
+            {"bandwidthPriority"_l1, bandwidthPriority},
             {"paused"_l1, !start}
         };
         const auto response = co_await mRequestRouter->postRequest("torrent-add"_l1, std::move(arguments));
         if (response.arguments.contains(torrentDuplicateKey)) {
             emit torrentAddDuplicate();
-        } else if (response.success) {
-            mBackgroundRequestsCoroutineScope.launch(updateData());
-        } else {
+        } else if (!response.success) {
             emit torrentAddError();
         }
     }
