@@ -15,7 +15,7 @@ namespace tremotesf {
         public:
             inline explicit MultipleCoroutinesAwaiter(std::vector<Coroutine<>>&& coroutines, bool cancelAfterFirst)
                 : mCancelAfterFirst(cancelAfterFirst) {
-                for (auto& coroutine : coroutines) {
+                for (auto&& coroutine : std::move(coroutines)) {
                     mCoroutines.emplace_back(std::move(coroutine));
                 }
             }

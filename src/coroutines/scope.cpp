@@ -36,7 +36,7 @@ namespace tremotesf {
         mCoroutines.push_back(root);
         root->setRootCoroutine(root);
         root->setCompletionCallback([this, root](const std::exception_ptr& unhandledException) {
-            onCoroutineCompleted(root, std::move(unhandledException));
+            onCoroutineCompleted(root, unhandledException);
         });
         root->start();
     }
