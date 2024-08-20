@@ -206,9 +206,11 @@ namespace tremotesf {
         return true;
     }
 
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
     Coroutine<std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>>
-    MainWindowViewModel::separateTorrentsThatAlreadyExistForFiles(QStringList& files) {
+    MainWindowViewModel::separateTorrentsThatAlreadyExistForFiles(
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
+        QStringList& files
+    ) {
         std::vector<std::pair<QString, TorrentMetainfoFile>> torrentFiles{};
         torrentFiles.reserve(static_cast<size_t>(files.size()));
         co_await waitAll(toContainer<std::vector>(files | std::views::transform([&](const QString& filePath) {
@@ -228,9 +230,10 @@ namespace tremotesf {
         co_return existingTorrents;
     }
 
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
     Coroutine<> MainWindowViewModel::parseTorrentFile(
-        QString filePath, std::vector<std::pair<QString, TorrentMetainfoFile>>& output
+        QString filePath,
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
+        std::vector<std::pair<QString, TorrentMetainfoFile>>& output
     ) {
         try {
             info().log("Parsing torrent file {}", filePath);
@@ -288,7 +291,7 @@ namespace tremotesf {
 
     void MainWindowViewModel::addTorrentLinksWithoutDialog(QStringList urls) {
         if (urls.isEmpty()) return;
-        const auto parameters = getAddTorrentParameters(&mRpc);
+        auto parameters = getAddTorrentParameters(&mRpc);
         mRpc.addTorrentLinks(
             std::move(urls),
             std::move(parameters.downloadDirectory),

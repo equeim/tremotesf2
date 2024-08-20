@@ -30,6 +30,7 @@ Checks: >
   -modernize-use-nodiscard,
   -modernize-use-emplace,
   performance-*,
+  -performance-enum-size,
   portability-*,
   readability-*,
   -readability-braces-around-statements,

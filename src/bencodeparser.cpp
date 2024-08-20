@@ -215,7 +215,7 @@ namespace tremotesf::bencode {
                 return buffer[0];
             }
 
-            void skipByte() { return skip(1); }
+            void skipByte() { skip(1); }
 
             void skip(qint64 size) {
                 try {

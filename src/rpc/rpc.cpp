@@ -355,7 +355,7 @@ namespace tremotesf {
 
     Coroutine<> Rpc::addTorrentLinkImpl(QString link, QString downloadDirectory, int bandwidthPriority, bool start) {
         QJsonObject arguments{
-            {"filename"_l1, std::move(link)},
+            {"filename"_l1, link},
             {"download-dir"_l1, downloadDirectory},
             {"bandwidthPriority"_l1, bandwidthPriority},
             {"paused"_l1, !start}

@@ -47,7 +47,7 @@ namespace tremotesf {
                     int partIndex = -1;
                     const int lastPartIndex = static_cast<int>(pathParts.size()) - 1;
 
-                    for (QString part : pathParts) {
+                    for (const QString& part : pathParts) {
                         ++partIndex;
                         if (partIndex == lastPartIndex) {
                             auto* childFile = currentDirectory->addFile(fileIndex, part, file.size);
