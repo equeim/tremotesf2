@@ -21,48 +21,47 @@
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="61"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="59"/>
         <source>Maintainer</source>
         <translation>Maintainer</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="61"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="59"/>
         <source>Contributor</source>
         <translation>Contributor</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="67"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="63"/>
         <source>Authors</source>
         <extracomment>&quot;About&quot; dialog's &quot;Authors&quot; tab title</extracomment>
         <translation>Authors</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="73"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="69"/>
         <source>Translators</source>
         <extracomment>&quot;About&quot; dialog's &quot;Translators&quot; tab title</extracomment>
         <translation>Translators</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="79"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="75"/>
         <source>License</source>
         <extracomment>&quot;About&quot; dialog's &quot;License&quot; tab title</extracomment>
         <translation>License</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="183"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="188"/>
         <source>Add Torrent File</source>
         <extracomment>Dialog title</extracomment>
         <translation>Add Torrent File</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="251"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="265"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="333"/>
         <source>Free space: %1</source>
         <extracomment>%1 is a amount of free space in a directory, e.g. 1 GiB</extracomment>
         <translation>Free space: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="254"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="336"/>
         <source>Error getting free space</source>
         <translation>Error getting free space</translation>
     </message>
@@ -74,8 +73,8 @@
     </message>
     <message>
         <location filename="../src/ui/itemmodels/torrentfilesmodelentry.cpp" line="70"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="134"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="725"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="137"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="749"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="127"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="338"/>
         <source>High</source>
@@ -86,8 +85,8 @@ Torrent's loading priority</extracomment>
     </message>
     <message>
         <location filename="../src/ui/itemmodels/torrentfilesmodelentry.cpp" line="67"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="138"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="736"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="141"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="760"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="130"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="342"/>
         <source>Normal</source>
@@ -98,8 +97,8 @@ Torrent's loading priority</extracomment>
     </message>
     <message>
         <location filename="../src/ui/itemmodels/torrentfilesmodelentry.cpp" line="64"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="142"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="747"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="145"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="771"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="133"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="346"/>
         <source>Low</source>
@@ -109,28 +108,28 @@ Torrent's loading priority</extracomment>
         <translation>Low</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="152"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="155"/>
         <source>Start downloading after adding</source>
         <translation>Start downloading after adding</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="186"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="191"/>
         <source>Add Torrent Link</source>
         <extracomment>Dialog title</extracomment>
         <translation>Add Torrent Link</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="34"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1105"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1069"/>
         <location filename="../src/ui/screens/mainwindow/mainwindowstatusbar.cpp" line="142"/>
         <source>No servers</source>
         <extracomment>Servers list placeholder</extracomment>
         <translation>No servers</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="51"/>
-        <location filename="../src/ui/notificationscontroller.cpp" line="99"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="323"/>
+        <location filename="../src/rpc/rpc.cpp" line="53"/>
+        <location filename="../src/ui/notificationscontroller.cpp" line="98"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="295"/>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="149"/>
         <location filename="../src/ui/screens/serverstatsdialog.cpp" line="30"/>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="127"/>
@@ -180,7 +179,7 @@ Dialog confirmation button</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindowsidebar.cpp" line="247"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="292"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="121"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="119"/>
         <source>Status</source>
         <extracomment>Title of torrents status filters list
 ----------
@@ -223,16 +222,16 @@ File loading priority</extracomment>
         <translation>Mixed</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1093"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1057"/>
         <source>No torrents</source>
         <extracomment>Torrents list placeholder</extracomment>
         <translation>No torrents</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="114"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="445"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="119"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="202"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="450"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="120"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="205"/>
         <source>Remove</source>
         <extracomment>Button
 ----------
@@ -240,31 +239,30 @@ Dialog confirmation button</extracomment>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="100"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="101"/>
         <source>Set Location</source>
         <extracomment>Dialog title for changing torrent's download directory</extracomment>
         <translation>Set Location</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1637"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1644"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1645"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1621"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1628"/>
         <source>Error adding torrent</source>
         <translation>Error adding torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1638"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1622"/>
         <source>This torrent is already added</source>
         <translation>This torrent is already added</translation>
     </message>
     <message>
-        <location filename="../src/ui/notificationscontroller.cpp" line="120"/>
+        <location filename="../src/ui/notificationscontroller.cpp" line="119"/>
         <source>Torrent added</source>
         <extracomment>Notification title</extracomment>
         <translation>Torrent added</translation>
     </message>
     <message>
-        <location filename="../src/ui/notificationscontroller.cpp" line="109"/>
+        <location filename="../src/ui/notificationscontroller.cpp" line="108"/>
         <source>Torrent finished</source>
         <extracomment>Notification title</extracomment>
         <translation>Torrent finished</translation>
@@ -328,7 +326,7 @@ Options section</extracomment>
     <message>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="255"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="452"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="130"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="128"/>
         <source>Peers</source>
         <extracomment>Torrent's properties dialog tab
 ----------
@@ -344,7 +342,7 @@ Trackers list column title</extracomment>
         <translation>Queue</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="997"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="961"/>
         <source>Also delete the files on the hard disk</source>
         <extracomment>Check box label</extracomment>
         <translation>Also delete the files on the hard disk</translation>
@@ -357,18 +355,18 @@ Trackers list column title</extracomment>
         <translation>Seeding</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="233"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="234"/>
         <source>Overwrite</source>
         <extracomment>Dialog's confirmation button</extracomment>
         <translation>Overwrite</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="227"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="228"/>
         <source>Server already exists</source>
         <translation>Server already exists</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="161"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="162"/>
         <source>Add Server</source>
         <extracomment>Dialog title</extracomment>
         <translation>Add Server</translation>
@@ -383,8 +381,8 @@ Torrents list column name</extracomment>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="84"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="118"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="88"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="116"/>
         <source>Address</source>
         <extracomment>Peers list column title
 ----------
@@ -392,85 +390,85 @@ Trackers list column title</extracomment>
         <translation>Address</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="285"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="286"/>
         <source>Default</source>
         <extracomment>Default proxy option</extracomment>
         <translation>Default</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="321"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="326"/>
         <source>HTTPS</source>
         <translation>HTTPS</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="293"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="294"/>
         <source>SOCKS5</source>
         <extracomment>SOCKS5 proxy option</extracomment>
         <translation>SOCKS5</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="328"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="333"/>
         <source>Server uses self-signed certificate</source>
         <extracomment>Check box label</extracomment>
         <translation>Server uses self-signed certificate</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="336"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="341"/>
         <source>Server&apos;s certificate in PEM format</source>
         <extracomment>Text field placeholder</extracomment>
         <translation>Server&apos;s certificate in PEM format</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="342"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="370"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="347"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="375"/>
         <source>Load from file...</source>
         <extracomment>Button</extracomment>
         <translation>Load from file...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="357"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="362"/>
         <source>Use client certificate authentication</source>
         <extracomment>Check box label</extracomment>
         <translation>Use client certificate authentication</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="365"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="370"/>
         <source>Certificate in PEM format with private key</source>
         <extracomment>Text field placeholder</extracomment>
         <translation>Certificate in PEM format with private key</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="384"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="389"/>
         <source>Authentication</source>
         <extracomment>Check box label</extracomment>
         <translation>Authentication</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="410"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="415"/>
         <source>Auto reconnect on error</source>
         <extracomment>Check box label</extracomment>
         <translation>Auto reconnect on error</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="425"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="430"/>
         <source>Mounted directories</source>
         <translation>Mounted directories</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="73"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="74"/>
         <source>Local directory</source>
         <extracomment>Column title in the list of mounted directories</extracomment>
         <translation>Local directory</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="75"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="76"/>
         <source>Remote directory</source>
         <extracomment>Column title in the list of mounted directories</extracomment>
         <translation>Remote directory</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="432"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="160"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="437"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="161"/>
         <source>Add</source>
         <extracomment>Button
 ----------
@@ -494,7 +492,7 @@ Torrent's limits tab section</extracomment>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="105"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="110"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="111"/>
         <source>Edit...</source>
         <extracomment>Button</extracomment>
         <translation>Edit...</translation>
@@ -506,7 +504,7 @@ Torrent's limits tab section</extracomment>
         <translation>Add Server...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="102"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="103"/>
         <source>Add...</source>
         <extracomment>Button</extracomment>
         <translation>Add...</translation>
@@ -529,98 +527,110 @@ Torrent's limits tab section</extracomment>
         <translation>Add torrent parameters</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="142"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="139"/>
         <source>Reset</source>
         <translation>Reset</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="153"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="150"/>
         <source>Show main window when adding torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>Show main window when adding torrents</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="161"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="158"/>
         <source>Show dialog when adding torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>Show dialog when adding torrents</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="168"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="165"/>
         <source>Automatically fill link from clipboard when adding torrent link</source>
         <extracomment>Check box label</extracomment>
         <translation>Automatically fill link from clipboard when adding torrent link</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="174"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="171"/>
         <source>Tip: you can also press %1 in main window to add torrents from clipboard</source>
         <extracomment>%1 is a key binding, e.g. &quot;Ctrl + C&quot;</extracomment>
         <translation>Tip: you can also press %1 in main window to add torrents from clipboard</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="182"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="178"/>
+        <source>Ask for merging trackers when adding existing torrent</source>
+        <extracomment>Check box label</extracomment>
+        <translation>Ask for merging trackers when adding existing torrent</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="185"/>
+        <source>Merge trackers when adding existing torrent</source>
+        <extracomment>Check box label</extracomment>
+        <translation>Merge trackers when adding existing torrent</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="199"/>
         <source>Other behaviour</source>
         <extracomment>Options section</extracomment>
         <translation>Other behaviour</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="191"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="208"/>
         <source>Open properties dialog</source>
         <translation>Open properties dialog</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="194"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="211"/>
         <source>Open torrent&apos;s file</source>
         <translation>Open torrent&apos;s file</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="197"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="214"/>
         <source>Open download directory</source>
         <translation>Open download directory</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="204"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="221"/>
         <source>What to do when torrent in the list is double clicked:</source>
         <translation>What to do when torrent in the list is double clicked:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="209"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="226"/>
         <source>Notifications</source>
         <extracomment>Options section</extracomment>
         <translation>Notifications</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="215"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="232"/>
         <source>Notify when disconnecting from server</source>
         <extracomment>Check box label</extracomment>
         <translation>Notify when disconnecting from server</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="222"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="239"/>
         <source>Notify on added torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>Notify on added torrents</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="229"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="246"/>
         <source>Notify on finished torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>Notify on finished torrents</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="242"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="259"/>
         <source>When connecting to server</source>
         <extracomment>Options section</extracomment>
         <translation>When connecting to server</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="248"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="265"/>
         <source>Notify on added torrents since last connection to server</source>
         <extracomment>Check box label</extracomment>
         <translation>Notify on added torrents since last connection to server</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="255"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="272"/>
         <source>Notify on finished torrents since last connection to server</source>
         <extracomment>Check box label</extracomment>
         <translation>Notify on finished torrents since last connection to server</translation>
@@ -628,7 +638,7 @@ Torrent's limits tab section</extracomment>
     <message>
         <location filename="../src/ui/itemmodels/basetorrentfilesmodel.cpp" line="110"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="283"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="96"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="100"/>
         <source>Progress</source>
         <extracomment>Column title in torrent's file list
 ----------
@@ -875,7 +885,7 @@ Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomme
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="295"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="133"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="131"/>
         <source>Seeders</source>
         <extracomment>Torrents list column name, number of seeders reported by trackers
 ----------
@@ -884,7 +894,7 @@ Trackers list column title</extracomment>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="298"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="136"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="134"/>
         <source>Leechers</source>
         <extracomment>Torrents list column name, number of leechers reported by trackers
 ----------
@@ -904,86 +914,86 @@ Trackers list column title</extracomment>
         <translation>Torrent Removed</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="178"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="181"/>
         <source>Edit Tracker</source>
         <extracomment>Dialog title</extracomment>
         <translation>Edit Tracker</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="201"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="206"/>
         <source>Torrent file:</source>
         <extracomment>Input field's label</extracomment>
         <translation>Torrent file:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="204"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="211"/>
         <source>Torrent link:</source>
         <extracomment>Input field's label</extracomment>
         <translation>Torrent link:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="126"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="105"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="129"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="106"/>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="172"/>
         <source>Download directory:</source>
         <extracomment>Input field's label</extracomment>
         <translation>Download directory:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="149"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="152"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="350"/>
         <source>Torrent priority:</source>
         <extracomment>Combo box label</extracomment>
         <translation>Torrent priority:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="159"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="162"/>
         <source>Delete .torrent file</source>
         <translation>Delete .torrent file</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="163"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="166"/>
         <source>Move .torrent file to trash</source>
         <translation>Move .torrent file to trash</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="318"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="290"/>
         <source>Loading</source>
         <extracomment>Placeholder shown when torrent file is being read/parsed</extracomment>
         <translation>Loading</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="409"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="433"/>
         <source>&amp;Connect</source>
         <extracomment>Button / menu item to connect to server</extracomment>
         <translation>&amp;Connect</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="411"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="435"/>
         <source>&amp;Disconnect</source>
         <extracomment>Button / menu item to disconnect from server</extracomment>
         <translation>&amp;Disconnect</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="415"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="439"/>
         <source>&amp;Add Torrent File...</source>
         <extracomment>Menu item</extracomment>
         <translation>&amp;Add Torrent File...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="420"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="444"/>
         <source>Add Torrent &amp;Link...</source>
         <extracomment>Menu item</extracomment>
         <translation>Add Torrent &amp;Link...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="522"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="546"/>
         <source>P&amp;ause</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>P&amp;ause</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="552"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="576"/>
         <source>&amp;Delete</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;Delete</translation>
@@ -995,100 +1005,105 @@ Trackers list column title</extracomment>
         <translation>Open &amp;Download Directory</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1005"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="969"/>
         <source>Delete with files</source>
         <translation>Delete with files</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1007"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="971"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1015"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="979"/>
         <source>Delete Torrent</source>
         <extracomment>Dialog title</extracomment>
         <translation>Delete Torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1016"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="980"/>
         <source>Are you sure you want to delete this torrent?</source>
         <translation>Are you sure you want to delete this torrent?</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1019"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="983"/>
         <source>Delete Torrents</source>
         <extracomment>Dialog title</extracomment>
         <translation>Delete Torrents</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1023"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="987"/>
         <source>Are you sure you want to delete %Ln selected torrents?</source>
         <extracomment>%Ln is a number of torrents selected for deletion</extracomment>
         <translation><numerusform>Are you sure you want to delete %Ln selected torrent?</numerusform><numerusform>Are you sure you want to delete %Ln selected torrents?</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1096"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1060"/>
         <source>No torrents matching filters</source>
         <extracomment>Torrents list placeholder</extracomment>
         <translation>No torrents matching filters</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="762"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="786"/>
         <source>&amp;Quit</source>
         <extracomment>Menu item</extracomment>
         <translation>&amp;Quit</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="481"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="505"/>
         <source>&amp;Torrent</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;Torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1602"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1629"/>
+        <source>Error adding torrent «%1»</source>
+        <translation>Error adding torrent «%1»</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1638"/>
         <source>Torrents will be added after connection to server:</source>
         <extracomment>Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents</extracomment>
         <translation>Torrents will be added after connection to server:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="486"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="510"/>
         <source>&amp;Properties</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;Properties</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="343"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="365"/>
         <source>&amp;Show Tremotesf</source>
         <translation>&amp;Show Tremotesf</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="348"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="370"/>
         <source>&amp;Hide Tremotesf</source>
         <translation>&amp;Hide Tremotesf</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="500"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="524"/>
         <source>&amp;Start</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;Start</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="511"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="535"/>
         <source>Start &amp;Now</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Start &amp;Now</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="535"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="559"/>
         <source>Copy &amp;Magnet Link</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Copy &amp;Magnet Link</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="60"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="85"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="74"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="86"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="75"/>
         <source>&amp;Remove</source>
         <extracomment>Server's context menu item
 ----------
@@ -1098,13 +1113,13 @@ Tracker's context menu item</extracomment>
         <translation>&amp;Remove</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="574"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="598"/>
         <source>Set &amp;Location</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Set &amp;Location</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="621"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="645"/>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="149"/>
         <source>&amp;Open</source>
         <extracomment>Torrent's context menu item
@@ -1113,20 +1128,20 @@ Context menu item</extracomment>
         <translation>&amp;Open</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="628"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="652"/>
         <source>Op&amp;en Download Directory</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Op&amp;en Download Directory</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="642"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="666"/>
         <source>&amp;Check Local Data</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;Check Local Data</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="653"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="128"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="677"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="129"/>
         <source>Reanno&amp;unce</source>
         <extracomment>Torrent's context menu item
 ----------
@@ -1134,69 +1149,69 @@ Button</extracomment>
         <translation>Reanno&amp;unce</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="665"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="689"/>
         <source>&amp;Queue</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;Queue</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="671"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="695"/>
         <source>Move To &amp;Top</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Move To &amp;Top</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="682"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="706"/>
         <source>Move &amp;Up</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Move &amp;Up</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="693"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="717"/>
         <source>Move &amp;Down</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Move &amp;Down</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="704"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="728"/>
         <source>Move To &amp;Bottom</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>Move To &amp;Bottom</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1248"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1212"/>
         <location filename="../src/ui/screens/mainwindow/mainwindowstatusbar.cpp" line="174"/>
         <source>&amp;Connection Settings</source>
         <translation>&amp;Connection Settings</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1261"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1225"/>
         <source>&amp;Server Options</source>
         <translation>&amp;Server Options</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1275"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1239"/>
         <source>Server S&amp;tats</source>
         <translation>Server S&amp;tats</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="565"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="806"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="576"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="830"/>
         <source>Select Files</source>
         <extracomment>File chooser dialog title</extracomment>
         <translation>Select Files</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="809"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="833"/>
         <source>Torrent Files (*.torrent)</source>
         <extracomment>Torrent file type. Parentheses and text within them must remain unchanged</extracomment>
         <translation>Torrent Files (*.torrent)</translation>
     </message>
     <message>
         <location filename="../src/desktoputils.cpp" line="58"/>
-        <location filename="../src/filemanagerlauncher.cpp" line="94"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="346"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="124"/>
+        <location filename="../src/filemanagerlauncher.cpp" line="88"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="367"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="122"/>
         <location filename="../src/ui/widgets/remotedirectoryselectionwidget.cpp" line="137"/>
         <source>Error</source>
         <extracomment>Dialog title
@@ -1210,135 +1225,135 @@ Trackers list column title</extracomment>
         <translation>This file/directory does not exist</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1150"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1114"/>
         <source>&amp;File</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;File</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1159"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1123"/>
         <source>&amp;Close Window</source>
         <translation>&amp;Close Window</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1173"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1137"/>
         <source>&amp;Edit</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;Edit</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1177"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1141"/>
         <source>Select &amp;All</source>
         <translation>Select &amp;All</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1184"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1148"/>
         <source>&amp;Invert Selection</source>
         <translation>&amp;Invert Selection</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1200"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1164"/>
         <source>&amp;View</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;View</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1202"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1166"/>
         <source>&amp;Toolbar</source>
         <translation>&amp;Toolbar</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1206"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1170"/>
         <source>&amp;Sidebar</source>
         <translation>&amp;Sidebar</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1214"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1178"/>
         <source>St&amp;atusbar</source>
         <translation>St&amp;atusbar</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1223"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1187"/>
         <source>&amp;Lock Toolbar</source>
         <translation>&amp;Lock Toolbar</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1232"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1196"/>
         <source>T&amp;ools</source>
         <extracomment>Menu bar item</extracomment>
         <translation>T&amp;ools</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1236"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1200"/>
         <source>&amp;Options</source>
         <translation>&amp;Options</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1288"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1252"/>
         <source>S&amp;hutdown Server</source>
         <translation>S&amp;hutdown Server</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1295"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1259"/>
         <source>Shutdown Server</source>
         <extracomment>Dialog title</extracomment>
         <translation>Shutdown Server</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1296"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1260"/>
         <source>Are you sure you want to shutdown remote Transmission instance?</source>
         <translation>Are you sure you want to shutdown remote Transmission instance?</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1303"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1267"/>
         <source>Shutdown</source>
         <extracomment>Dialog confirmation button</extracomment>
         <translation>Shutdown</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1313"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1277"/>
         <source>&amp;Help</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;Help</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1318"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1282"/>
         <source>&amp;About</source>
         <extracomment>Menu item opening &quot;About&quot; dialog</extracomment>
         <translation>&amp;About</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1347"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1311"/>
         <source>Icon Only</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>Icon Only</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1349"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1313"/>
         <source>Text Only</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>Text Only</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1351"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1315"/>
         <source>Text Beside Icon</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>Text Beside Icon</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1353"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1317"/>
         <source>Text Under Icon</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>Text Under Icon</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1355"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1319"/>
         <source>Follow System Style</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>Follow System Style</translation>
     </message>
     <message>
-        <location filename="../src/ui/notificationscontroller_freedesktop.cpp" line="47"/>
+        <location filename="../src/ui/notificationscontroller_freedesktop.cpp" line="110"/>
         <source>Show Tremotesf</source>
         <extracomment>Button on notification</extracomment>
         <translation>Show Tremotesf</translation>
@@ -1380,93 +1395,99 @@ Trackers list column title</extracomment>
         <translation>Search...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="107"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="108"/>
         <source>&amp;Select...</source>
         <extracomment>Context menu item to open directory chooser</extracomment>
         <translation>&amp;Select...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="226"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="227"/>
         <source>Overwrite Server</source>
         <extracomment>Dialog title</extracomment>
         <translation>Overwrite Server</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="259"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="260"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="265"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="307"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="266"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="312"/>
         <source>Address:</source>
         <translation>Address:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="270"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="311"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="271"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="316"/>
         <source>Port:</source>
         <translation>Port:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="273"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="274"/>
         <source>API path:</source>
         <translation>API path:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="275"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="276"/>
         <source>Proxy</source>
         <translation>Proxy</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="289"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="290"/>
         <source>HTTP</source>
         <extracomment>HTTP proxy option</extracomment>
         <translation>HTTP</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="303"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="298"/>
+        <source>None</source>
+        <extracomment>None proxy option</extracomment>
+        <translation>None</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="308"/>
         <source>Proxy type:</source>
         <translation>Proxy type:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="314"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="389"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="319"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="394"/>
         <source>Username:</source>
         <translation>Username:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="317"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="392"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="322"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="397"/>
         <source>Password:</source>
         <translation>Password:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="399"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="406"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="419"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="404"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="411"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="424"/>
         <source> s</source>
         <extracomment>Suffix that is added to input field with number of seconds, e.g. &quot;30 s&quot;</extracomment>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="400"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="405"/>
         <source>Update interval:</source>
         <translation>Update interval:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="407"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="412"/>
         <source>Timeout:</source>
         <translation>Timeout:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="421"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="426"/>
         <source>Auto reconnect interval:</source>
         <translation>Auto reconnect interval:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="73"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="87"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="88"/>
         <source>&amp;Edit...</source>
         <extracomment>Server's context menu item
 ----------
@@ -1628,7 +1649,7 @@ Tracker's context menu item</extracomment>
         <translation>Remember parameters of last added torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="236"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="253"/>
         <source>Show icon in the notification area</source>
         <extracomment>Check box label</extracomment>
         <translation>Show icon in the notification area</translation>
@@ -1640,7 +1661,7 @@ Tracker's context menu item</extracomment>
         <translation>&amp;Not Download</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="714"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="738"/>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="200"/>
         <source>&amp;Priority</source>
         <extracomment>Torrent's context menu item</extracomment>
@@ -1671,7 +1692,7 @@ Tracker's context menu item</extracomment>
         <translation>&amp;Low</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="601"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="625"/>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="267"/>
         <source>&amp;Rename</source>
         <extracomment>Torrent's context menu item
@@ -1856,47 +1877,47 @@ Torrent's uploaded size</extracomment>
         <translation>Maximum peers:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="156"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="157"/>
         <source>Add Trackers</source>
         <extracomment>Dialog title</extracomment>
         <translation>Add Trackers</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="157"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="158"/>
         <source>Trackers announce URLs:</source>
         <translation>Trackers announce URLs:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="179"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="182"/>
         <source>Tracker announce URL:</source>
         <translation>Tracker announce URL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="209"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="212"/>
         <source>Remove Tracker</source>
         <extracomment>Dialog title</extracomment>
         <translation>Remove Tracker</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="210"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="213"/>
         <source>Are you sure you want to remove this tracker?</source>
         <translation>Are you sure you want to remove this tracker?</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="213"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="216"/>
         <source>Remove Trackers</source>
         <extracomment>Dialog title</extracomment>
         <translation>Remove Trackers</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="218"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="221"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
         <extracomment>%Ln is number of trackers selected for deletion</extracomment>
         <translation><numerusform>Are you sure you want to remove %Ln selected tracker?</numerusform><numerusform>Are you sure you want to remove %Ln selected trackers?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="307"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="87"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="91"/>
         <source>Down Speed</source>
         <extracomment>Torrents list column name
 ----------
@@ -1905,7 +1926,7 @@ Peers list column title</extracomment>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="310"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="90"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="94"/>
         <source>Up Speed</source>
         <extracomment>Torrents list column name
 ----------
@@ -1915,7 +1936,7 @@ Peers list column title</extracomment>
     <message>
         <location filename="../src/ui/itemmodels/basetorrentfilesmodel.cpp" line="107"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="280"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="93"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="97"/>
         <source>Progress Bar</source>
         <extracomment>Column title in torrent's file list
 ----------
@@ -1925,61 +1946,61 @@ Peers list column title</extracomment>
         <translation>Progress Bar</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="99"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="103"/>
         <source>Flags</source>
         <extracomment>Peers list column title</extracomment>
         <translation>Flags</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="102"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="106"/>
         <source>Client</source>
         <extracomment>Peers list column title</extracomment>
         <translation>Client</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="54"/>
+        <location filename="../src/rpc/rpc.cpp" line="56"/>
         <source>Timed out</source>
         <extracomment>Server connection status</extracomment>
         <translation>Timed out</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="57"/>
+        <location filename="../src/rpc/rpc.cpp" line="59"/>
         <source>Connection error</source>
         <extracomment>Server connection status</extracomment>
         <translation>Connection error</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="60"/>
+        <location filename="../src/rpc/rpc.cpp" line="62"/>
         <source>Authentication error</source>
         <extracomment>Server connection status</extracomment>
         <translation>Authentication error</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="63"/>
+        <location filename="../src/rpc/rpc.cpp" line="65"/>
         <source>Parse error</source>
         <extracomment>Server connection status</extracomment>
         <translation>Parse error</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="66"/>
+        <location filename="../src/rpc/rpc.cpp" line="68"/>
         <source>Server is too new</source>
         <extracomment>Server connection status</extracomment>
         <translation>Server is too new</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="69"/>
+        <location filename="../src/rpc/rpc.cpp" line="71"/>
         <source>Server is too old</source>
         <extracomment>Server connection status</extracomment>
         <translation>Server is too old</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="74"/>
+        <location filename="../src/rpc/rpc.cpp" line="76"/>
         <source>Connecting...</source>
         <extracomment>Server connection status</extracomment>
         <translation>Connecting...</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="77"/>
+        <location filename="../src/rpc/rpc.cpp" line="79"/>
         <source>Connected</source>
         <extracomment>Server connection status</extracomment>
         <translation>Connected</translation>
@@ -2005,12 +2026,55 @@ Peers list column title</extracomment>
         <translation>Queued for checking</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/localtorrentfilesmodel.cpp" line="195"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="70"/>
+        <source>Merge trackers?</source>
+        <extracomment>Dialog title</extracomment>
+        <translation>Merge trackers?</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="71"/>
+        <source>Torrent «%1» is already added, merge trackers?</source>
+        <translation>Torrent «%1» is already added, merge trackers?</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="76"/>
+        <source>Merge</source>
+        <translation>Merge</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="77"/>
+        <source>Do not ask again</source>
+        <translation>Do not ask again</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="99"/>
+        <source>Merged trackers</source>
+        <extracomment>Dialog title</extracomment>
+        <translation>Merged trackers</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="100"/>
+        <source>Merged trackers for torrent «%1»</source>
+        <translation>Merged trackers for torrent «%1»</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="108"/>
+        <source>Torrent already exists</source>
+        <extracomment>Dialog title</extracomment>
+        <translation>Torrent already exists</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="109"/>
+        <source>Torrent «%1» already exists</source>
+        <translation>Torrent «%1» already exists</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="123"/>
         <source>Error reading torrent file</source>
         <translation>Error reading torrent file</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/localtorrentfilesmodel.cpp" line="197"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="125"/>
         <source>Error parsing torrent file</source>
         <translation>Error parsing torrent file</translation>
     </message>
@@ -2093,7 +2157,7 @@ Peers list column title</extracomment>
         <translation>Updating</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="127"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="125"/>
         <source>Next Update</source>
         <extracomment>Trackers list column title</extracomment>
         <translation>Next Update</translation>
@@ -2240,7 +2304,7 @@ Peers list column title</extracomment>
     </message>
     <message>
         <location filename="../src/desktoputils.cpp" line="60"/>
-        <location filename="../src/filemanagerlauncher.cpp" line="96"/>
+        <location filename="../src/filemanagerlauncher.cpp" line="90"/>
         <source>Error opening %1</source>
         <extracomment>File opening error, %1 is a file path
 ----------
@@ -2248,7 +2312,7 @@ Directory opening error, %1 is a file path</extracomment>
         <translation>Error opening %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="97"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="98"/>
         <source>Move files from current directory</source>
         <extracomment>Check box label</extracomment>
         <translation>Move files from current directory</translation>
@@ -2280,7 +2344,7 @@ Filter option of torrents list's download directory filter. %1 is download direc
         <translation>%1 (%L2)</translation>
     </message>
     <message>
-        <location filename="../src/filemanagerlauncher.cpp" line="55"/>
+        <location filename="../src/filemanagerlauncher.cpp" line="50"/>
         <source>This directory does not exist</source>
         <translation>This directory does not exist</translation>
     </message>
