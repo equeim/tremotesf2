@@ -21,48 +21,47 @@
 &lt;p&gt;翻译: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="61"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="59"/>
         <source>Maintainer</source>
         <translation>维护者</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="61"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="59"/>
         <source>Contributor</source>
         <translation>贡献者</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="67"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="63"/>
         <source>Authors</source>
         <extracomment>&quot;About&quot; dialog's &quot;Authors&quot; tab title</extracomment>
         <translation>作者</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="73"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="69"/>
         <source>Translators</source>
         <extracomment>&quot;About&quot; dialog's &quot;Translators&quot; tab title</extracomment>
         <translation>翻译</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/aboutdialog.cpp" line="79"/>
+        <location filename="../src/ui/screens/aboutdialog.cpp" line="75"/>
         <source>License</source>
         <extracomment>&quot;About&quot; dialog's &quot;License&quot; tab title</extracomment>
         <translation>许可</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="183"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="188"/>
         <source>Add Torrent File</source>
         <extracomment>Dialog title</extracomment>
         <translation>添加Torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="251"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="265"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="333"/>
         <source>Free space: %1</source>
         <extracomment>%1 is a amount of free space in a directory, e.g. 1 GiB</extracomment>
         <translation>可用空间: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="254"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="336"/>
         <source>Error getting free space</source>
         <translation>获取可用空间时出错</translation>
     </message>
@@ -74,8 +73,8 @@
     </message>
     <message>
         <location filename="../src/ui/itemmodels/torrentfilesmodelentry.cpp" line="70"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="134"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="725"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="137"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="749"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="127"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="338"/>
         <source>High</source>
@@ -86,8 +85,8 @@ Torrent's loading priority</extracomment>
     </message>
     <message>
         <location filename="../src/ui/itemmodels/torrentfilesmodelentry.cpp" line="67"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="138"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="736"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="141"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="760"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="130"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="342"/>
         <source>Normal</source>
@@ -98,8 +97,8 @@ Torrent's loading priority</extracomment>
     </message>
     <message>
         <location filename="../src/ui/itemmodels/torrentfilesmodelentry.cpp" line="64"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="142"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="747"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="145"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="771"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="133"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="346"/>
         <source>Low</source>
@@ -109,28 +108,28 @@ Torrent's loading priority</extracomment>
         <translation>低</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="152"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="155"/>
         <source>Start downloading after adding</source>
         <translation>添加后开始下载</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="186"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="191"/>
         <source>Add Torrent Link</source>
         <extracomment>Dialog title</extracomment>
         <translation>添加Torrent链接</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="34"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1105"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1069"/>
         <location filename="../src/ui/screens/mainwindow/mainwindowstatusbar.cpp" line="142"/>
         <source>No servers</source>
         <extracomment>Servers list placeholder</extracomment>
         <translation>没有服务器</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="51"/>
-        <location filename="../src/ui/notificationscontroller.cpp" line="99"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="323"/>
+        <location filename="../src/rpc/rpc.cpp" line="53"/>
+        <location filename="../src/ui/notificationscontroller.cpp" line="98"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="295"/>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="149"/>
         <location filename="../src/ui/screens/serverstatsdialog.cpp" line="30"/>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="127"/>
@@ -180,7 +179,7 @@ Dialog confirmation button</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindowsidebar.cpp" line="247"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="292"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="121"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="119"/>
         <source>Status</source>
         <extracomment>Title of torrents status filters list
 ----------
@@ -223,16 +222,16 @@ File loading priority</extracomment>
         <translation>混合</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1093"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1057"/>
         <source>No torrents</source>
         <extracomment>Torrents list placeholder</extracomment>
         <translation>没有torrents</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="114"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="445"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="119"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="202"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="450"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="120"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="205"/>
         <source>Remove</source>
         <extracomment>Button
 ----------
@@ -240,31 +239,30 @@ Dialog confirmation button</extracomment>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="100"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="101"/>
         <source>Set Location</source>
         <extracomment>Dialog title for changing torrent's download directory</extracomment>
         <translation>设置数据位置</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1637"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1644"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1645"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1621"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1628"/>
         <source>Error adding torrent</source>
         <translation>添加Torrent时出错</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1638"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1622"/>
         <source>This torrent is already added</source>
         <translation>这个torrent已经添加了</translation>
     </message>
     <message>
-        <location filename="../src/ui/notificationscontroller.cpp" line="120"/>
+        <location filename="../src/ui/notificationscontroller.cpp" line="119"/>
         <source>Torrent added</source>
         <extracomment>Notification title</extracomment>
         <translation>添加Torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/notificationscontroller.cpp" line="109"/>
+        <location filename="../src/ui/notificationscontroller.cpp" line="108"/>
         <source>Torrent finished</source>
         <extracomment>Notification title</extracomment>
         <translation>Torrent完成</translation>
@@ -328,7 +326,7 @@ Options section</extracomment>
     <message>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="255"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="452"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="130"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="128"/>
         <source>Peers</source>
         <extracomment>Torrent's properties dialog tab
 ----------
@@ -344,7 +342,7 @@ Trackers list column title</extracomment>
         <translation>传输队列</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="997"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="961"/>
         <source>Also delete the files on the hard disk</source>
         <extracomment>Check box label</extracomment>
         <translation>同时删除硬盘上的文件</translation>
@@ -357,18 +355,18 @@ Trackers list column title</extracomment>
         <translation>做种</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="233"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="234"/>
         <source>Overwrite</source>
         <extracomment>Dialog's confirmation button</extracomment>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="227"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="228"/>
         <source>Server already exists</source>
         <translation>服务器已存在</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="161"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="162"/>
         <source>Add Server</source>
         <extracomment>Dialog title</extracomment>
         <translation>添加服务器</translation>
@@ -383,8 +381,8 @@ Torrents list column name</extracomment>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="84"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="118"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="88"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="116"/>
         <source>Address</source>
         <extracomment>Peers list column title
 ----------
@@ -392,85 +390,85 @@ Trackers list column title</extracomment>
         <translation>地址</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="285"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="286"/>
         <source>Default</source>
         <extracomment>Default proxy option</extracomment>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="321"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="326"/>
         <source>HTTPS</source>
         <translation>HTTPS</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="293"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="294"/>
         <source>SOCKS5</source>
         <extracomment>SOCKS5 proxy option</extracomment>
         <translation>SOCKS5</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="328"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="333"/>
         <source>Server uses self-signed certificate</source>
         <extracomment>Check box label</extracomment>
         <translation>服务器使用自签名证书</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="336"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="341"/>
         <source>Server&apos;s certificate in PEM format</source>
         <extracomment>Text field placeholder</extracomment>
         <translation>PEM格式的服务器证书</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="342"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="370"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="347"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="375"/>
         <source>Load from file...</source>
         <extracomment>Button</extracomment>
         <translation>从文件加载..</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="357"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="362"/>
         <source>Use client certificate authentication</source>
         <extracomment>Check box label</extracomment>
         <translation>使用客户端证书认证</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="365"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="370"/>
         <source>Certificate in PEM format with private key</source>
         <extracomment>Text field placeholder</extracomment>
         <translation>具有私钥的PEM格式的证书</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="384"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="389"/>
         <source>Authentication</source>
         <extracomment>Check box label</extracomment>
         <translation>验证</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="410"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="415"/>
         <source>Auto reconnect on error</source>
         <extracomment>Check box label</extracomment>
         <translation>出错时自动重新连接</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="425"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="430"/>
         <source>Mounted directories</source>
         <translation>安装目录 </translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="73"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="74"/>
         <source>Local directory</source>
         <extracomment>Column title in the list of mounted directories</extracomment>
         <translation>本地目录</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="75"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="76"/>
         <source>Remote directory</source>
         <extracomment>Column title in the list of mounted directories</extracomment>
         <translation>远程目录</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="432"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="160"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="437"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="161"/>
         <source>Add</source>
         <extracomment>Button
 ----------
@@ -494,7 +492,7 @@ Torrent's limits tab section</extracomment>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="105"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="110"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="111"/>
         <source>Edit...</source>
         <extracomment>Button</extracomment>
         <translation>编辑…</translation>
@@ -506,7 +504,7 @@ Torrent's limits tab section</extracomment>
         <translation>添加服务器...</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="102"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="103"/>
         <source>Add...</source>
         <extracomment>Button</extracomment>
         <translation>添加…</translation>
@@ -529,98 +527,110 @@ Torrent's limits tab section</extracomment>
         <translation>添加种子参数</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="142"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="139"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="153"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="150"/>
         <source>Show main window when adding torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>在添加种子时显示主窗口</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="161"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="158"/>
         <source>Show dialog when adding torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>在添加种子时显示对话框</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="168"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="165"/>
         <source>Automatically fill link from clipboard when adding torrent link</source>
         <extracomment>Check box label</extracomment>
         <translation>自动填充从剪贴板添加链接</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="174"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="171"/>
         <source>Tip: you can also press %1 in main window to add torrents from clipboard</source>
         <extracomment>%1 is a key binding, e.g. &quot;Ctrl + C&quot;</extracomment>
         <translation>提示:你也可以在主窗口按 %1 从剪贴板中添加种子</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="182"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="178"/>
+        <source>Ask for merging trackers when adding existing torrent</source>
+        <extracomment>Check box label</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="185"/>
+        <source>Merge trackers when adding existing torrent</source>
+        <extracomment>Check box label</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="199"/>
         <source>Other behaviour</source>
         <extracomment>Options section</extracomment>
         <translation>其他行为</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="191"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="208"/>
         <source>Open properties dialog</source>
         <translation>打开属性对话框</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="194"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="211"/>
         <source>Open torrent&apos;s file</source>
         <translation>打开 Torrent 的文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="197"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="214"/>
         <source>Open download directory</source>
         <translation>打开下载目录</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="204"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="221"/>
         <source>What to do when torrent in the list is double clicked:</source>
         <translation>双击列表中的种子时该怎么做:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="209"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="226"/>
         <source>Notifications</source>
         <extracomment>Options section</extracomment>
         <translation>通知</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="215"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="232"/>
         <source>Notify when disconnecting from server</source>
         <extracomment>Check box label</extracomment>
         <translation>与服务器断开连接时通知</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="222"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="239"/>
         <source>Notify on added torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>通知添加的Torrents</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="229"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="246"/>
         <source>Notify on finished torrents</source>
         <extracomment>Check box label</extracomment>
         <translation>通知已完成的Torrents</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="242"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="259"/>
         <source>When connecting to server</source>
         <extracomment>Options section</extracomment>
         <translation>连接到服务器时</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="248"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="265"/>
         <source>Notify on added torrents since last connection to server</source>
         <extracomment>Check box label</extracomment>
         <translation>通知自上次连接到服务器后添加的种子</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="255"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="272"/>
         <source>Notify on finished torrents since last connection to server</source>
         <extracomment>Check box label</extracomment>
         <translation>通知自上次连接到服务器完成的种子</translation>
@@ -628,7 +638,7 @@ Torrent's limits tab section</extracomment>
     <message>
         <location filename="../src/ui/itemmodels/basetorrentfilesmodel.cpp" line="110"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="283"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="96"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="100"/>
         <source>Progress</source>
         <extracomment>Column title in torrent's file list
 ----------
@@ -875,7 +885,7 @@ Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomme
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="295"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="133"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="131"/>
         <source>Seeders</source>
         <extracomment>Torrents list column name, number of seeders reported by trackers
 ----------
@@ -884,7 +894,7 @@ Trackers list column title</extracomment>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="298"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="136"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="134"/>
         <source>Leechers</source>
         <extracomment>Torrents list column name, number of leechers reported by trackers
 ----------
@@ -904,86 +914,86 @@ Trackers list column title</extracomment>
         <translation>移除Torrent</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="178"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="181"/>
         <source>Edit Tracker</source>
         <extracomment>Dialog title</extracomment>
         <translation>编辑Tracker</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="201"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="206"/>
         <source>Torrent file:</source>
         <extracomment>Input field's label</extracomment>
         <translation>torrent文件：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="204"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="211"/>
         <source>Torrent link:</source>
         <extracomment>Input field's label</extracomment>
         <translation>Torrent链接：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="126"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="105"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="129"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="106"/>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="172"/>
         <source>Download directory:</source>
         <extracomment>Input field's label</extracomment>
         <translation>下载目录：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="149"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="152"/>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="350"/>
         <source>Torrent priority:</source>
         <extracomment>Combo box label</extracomment>
         <translation>Torrent优先级：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="159"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="162"/>
         <source>Delete .torrent file</source>
         <translation>删除. 种子文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="163"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="166"/>
         <source>Move .torrent file to trash</source>
         <translation>将种子文件移动到垃圾桶</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="318"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="290"/>
         <source>Loading</source>
         <extracomment>Placeholder shown when torrent file is being read/parsed</extracomment>
         <translation>正在加载</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="409"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="433"/>
         <source>&amp;Connect</source>
         <extracomment>Button / menu item to connect to server</extracomment>
         <translation>&amp;连接</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="411"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="435"/>
         <source>&amp;Disconnect</source>
         <extracomment>Button / menu item to disconnect from server</extracomment>
         <translation>&amp;断开</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="415"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="439"/>
         <source>&amp;Add Torrent File...</source>
         <extracomment>Menu item</extracomment>
         <translation>&amp;添加Torrent文件…</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="420"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="444"/>
         <source>Add Torrent &amp;Link...</source>
         <extracomment>Menu item</extracomment>
         <translation>添加Torrent&amp;链接…</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="522"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="546"/>
         <source>P&amp;ause</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;暂停</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="552"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="576"/>
         <source>&amp;Delete</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;删除</translation>
@@ -995,100 +1005,105 @@ Trackers list column title</extracomment>
         <translation>打开 &amp;下载目录</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1005"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="969"/>
         <source>Delete with files</source>
         <translation>同时删除文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1007"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="971"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1015"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="979"/>
         <source>Delete Torrent</source>
         <extracomment>Dialog title</extracomment>
         <translation>删除种子</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1016"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="980"/>
         <source>Are you sure you want to delete this torrent?</source>
         <translation>你确定要删除这个种子吗？</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1019"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="983"/>
         <source>Delete Torrents</source>
         <extracomment>Dialog title</extracomment>
         <translation>删除多个种子</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1023"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="987"/>
         <source>Are you sure you want to delete %Ln selected torrents?</source>
         <extracomment>%Ln is a number of torrents selected for deletion</extracomment>
         <translation><numerusform>确实要删除 %Ln 选定的种子吗？</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1096"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1060"/>
         <source>No torrents matching filters</source>
         <extracomment>Torrents list placeholder</extracomment>
         <translation>没有与过滤匹配的种子</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="762"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="786"/>
         <source>&amp;Quit</source>
         <extracomment>Menu item</extracomment>
         <translation>&amp;退出</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="481"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="505"/>
         <source>&amp;Torrent</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;种子</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1602"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1629"/>
+        <source>Error adding torrent «%1»</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1638"/>
         <source>Torrents will be added after connection to server:</source>
         <extracomment>Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents</extracomment>
         <translation>连接到服务器后将添加种子：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="486"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="510"/>
         <source>&amp;Properties</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;属性</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="343"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="365"/>
         <source>&amp;Show Tremotesf</source>
         <translation>&amp;显示 Tremotesf</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="348"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="370"/>
         <source>&amp;Hide Tremotesf</source>
         <translation>&amp;隐藏 Tremotesf</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="500"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="524"/>
         <source>&amp;Start</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;开始</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="511"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="535"/>
         <source>Start &amp;Now</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>强制&amp;开始</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="535"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="559"/>
         <source>Copy &amp;Magnet Link</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>复制 &amp;磁力链接</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="60"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="85"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="74"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="86"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="75"/>
         <source>&amp;Remove</source>
         <extracomment>Server's context menu item
 ----------
@@ -1098,13 +1113,13 @@ Tracker's context menu item</extracomment>
         <translation>&amp;删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="574"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="598"/>
         <source>Set &amp;Location</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>设置&amp;保存位置</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="621"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="645"/>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="149"/>
         <source>&amp;Open</source>
         <extracomment>Torrent's context menu item
@@ -1113,20 +1128,20 @@ Context menu item</extracomment>
         <translation>&amp;打开</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="628"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="652"/>
         <source>Op&amp;en Download Directory</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="642"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="666"/>
         <source>&amp;Check Local Data</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;校验本地数据</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="653"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="128"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="677"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="129"/>
         <source>Reanno&amp;unce</source>
         <extracomment>Torrent's context menu item
 ----------
@@ -1134,69 +1149,69 @@ Button</extracomment>
         <translation>刷新&amp;Trackers</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="665"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="689"/>
         <source>&amp;Queue</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>&amp;队列</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="671"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="695"/>
         <source>Move To &amp;Top</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>移到&amp;最前</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="682"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="706"/>
         <source>Move &amp;Up</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>上&amp;移</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="693"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="717"/>
         <source>Move &amp;Down</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>下&amp;移</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="704"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="728"/>
         <source>Move To &amp;Bottom</source>
         <extracomment>Torrent's context menu item</extracomment>
         <translation>移到&amp;最后</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1248"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1212"/>
         <location filename="../src/ui/screens/mainwindow/mainwindowstatusbar.cpp" line="174"/>
         <source>&amp;Connection Settings</source>
         <translation>&amp;连接设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1261"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1225"/>
         <source>&amp;Server Options</source>
         <translation>&amp;服务器选项</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1275"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1239"/>
         <source>Server S&amp;tats</source>
         <translation>统计&amp;数据</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="565"/>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="806"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="576"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="830"/>
         <source>Select Files</source>
         <extracomment>File chooser dialog title</extracomment>
         <translation>选择文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="809"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="833"/>
         <source>Torrent Files (*.torrent)</source>
         <extracomment>Torrent file type. Parentheses and text within them must remain unchanged</extracomment>
         <translation>Torrent 文件 (*.torrent)</translation>
     </message>
     <message>
         <location filename="../src/desktoputils.cpp" line="58"/>
-        <location filename="../src/filemanagerlauncher.cpp" line="94"/>
-        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="346"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="124"/>
+        <location filename="../src/filemanagerlauncher.cpp" line="88"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="367"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="122"/>
         <location filename="../src/ui/widgets/remotedirectoryselectionwidget.cpp" line="137"/>
         <source>Error</source>
         <extracomment>Dialog title
@@ -1210,135 +1225,135 @@ Trackers list column title</extracomment>
         <translation>这个文件/目录不存在</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1150"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1114"/>
         <source>&amp;File</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1159"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1123"/>
         <source>&amp;Close Window</source>
         <translation>&amp;关闭窗口</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1173"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1137"/>
         <source>&amp;Edit</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;编辑</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1177"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1141"/>
         <source>Select &amp;All</source>
         <translation>选择&amp;全部</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1184"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1148"/>
         <source>&amp;Invert Selection</source>
         <translation>&amp;反选</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1200"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1164"/>
         <source>&amp;View</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;视图</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1202"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1166"/>
         <source>&amp;Toolbar</source>
         <translation>&amp;工具栏</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1206"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1170"/>
         <source>&amp;Sidebar</source>
         <translation>&amp;侧边栏</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1214"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1178"/>
         <source>St&amp;atusbar</source>
         <translation>状态&amp;栏</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1223"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1187"/>
         <source>&amp;Lock Toolbar</source>
         <translation>&amp;锁定工具栏</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1232"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1196"/>
         <source>T&amp;ools</source>
         <extracomment>Menu bar item</extracomment>
         <translation>工&amp;具</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1236"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1200"/>
         <source>&amp;Options</source>
         <translation>&amp;选项</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1288"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1252"/>
         <source>S&amp;hutdown Server</source>
         <translation>&amp;关闭服务器</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1295"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1259"/>
         <source>Shutdown Server</source>
         <extracomment>Dialog title</extracomment>
         <translation>关闭服务器</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1296"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1260"/>
         <source>Are you sure you want to shutdown remote Transmission instance?</source>
         <translation>您确定要关闭Transmission吗？</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1303"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1267"/>
         <source>Shutdown</source>
         <extracomment>Dialog confirmation button</extracomment>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1313"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1277"/>
         <source>&amp;Help</source>
         <extracomment>Menu bar item</extracomment>
         <translation>&amp;帮助</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1318"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1282"/>
         <source>&amp;About</source>
         <extracomment>Menu item opening &quot;About&quot; dialog</extracomment>
         <translation>&amp;关于</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1347"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1311"/>
         <source>Icon Only</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>仅图标</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1349"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1313"/>
         <source>Text Only</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>仅文本</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1351"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1315"/>
         <source>Text Beside Icon</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>图标旁的文本</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1353"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1317"/>
         <source>Text Under Icon</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>图标下的文本</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1355"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1319"/>
         <source>Follow System Style</source>
         <extracomment>Toolbar mode</extracomment>
         <translation>遵循系统样式</translation>
     </message>
     <message>
-        <location filename="../src/ui/notificationscontroller_freedesktop.cpp" line="47"/>
+        <location filename="../src/ui/notificationscontroller_freedesktop.cpp" line="110"/>
         <source>Show Tremotesf</source>
         <extracomment>Button on notification</extracomment>
         <translation>显示Tremotesf</translation>
@@ -1380,93 +1395,99 @@ Trackers list column title</extracomment>
         <translation>搜索…</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="107"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="108"/>
         <source>&amp;Select...</source>
         <extracomment>Context menu item to open directory chooser</extracomment>
         <translation>&amp;选择…</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="226"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="227"/>
         <source>Overwrite Server</source>
         <extracomment>Dialog title</extracomment>
         <translation>覆盖服务器</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="259"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="260"/>
         <source>Name:</source>
         <translation>名称:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="265"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="307"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="266"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="312"/>
         <source>Address:</source>
         <translation>地址：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="270"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="311"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="271"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="316"/>
         <source>Port:</source>
         <translation>端口：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="273"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="274"/>
         <source>API path:</source>
         <translation>API路径：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="275"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="276"/>
         <source>Proxy</source>
         <translation>代理</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="289"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="290"/>
         <source>HTTP</source>
         <extracomment>HTTP proxy option</extracomment>
         <translation>HTTP</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="303"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="298"/>
+        <source>None</source>
+        <extracomment>None proxy option</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="308"/>
         <source>Proxy type:</source>
         <translation>代理类型:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="314"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="389"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="319"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="394"/>
         <source>Username:</source>
         <translation>用户名:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="317"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="392"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="322"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="397"/>
         <source>Password:</source>
         <translation>密码:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="399"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="406"/>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="419"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="404"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="411"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="424"/>
         <source> s</source>
         <extracomment>Suffix that is added to input field with number of seconds, e.g. &quot;30 s&quot;</extracomment>
         <translation>秒</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="400"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="405"/>
         <source>Update interval:</source>
         <translation>刷新间隔:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="407"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="412"/>
         <source>Timeout:</source>
         <translation>超时:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="421"/>
+        <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="426"/>
         <source>Auto reconnect interval:</source>
         <translation>自动重连间隔：</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="73"/>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="87"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="88"/>
         <source>&amp;Edit...</source>
         <extracomment>Server's context menu item
 ----------
@@ -1628,7 +1649,7 @@ Tracker's context menu item</extracomment>
         <translation>记住上次添加torrent的参数</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/settingsdialog.cpp" line="236"/>
+        <location filename="../src/ui/screens/settingsdialog.cpp" line="253"/>
         <source>Show icon in the notification area</source>
         <extracomment>Check box label</extracomment>
         <translation>在通知区域显示图标</translation>
@@ -1640,7 +1661,7 @@ Tracker's context menu item</extracomment>
         <translation>&amp;不下载</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="714"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="738"/>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="200"/>
         <source>&amp;Priority</source>
         <extracomment>Torrent's context menu item</extracomment>
@@ -1671,7 +1692,7 @@ Tracker's context menu item</extracomment>
         <translation>&amp;低</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="601"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="625"/>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="267"/>
         <source>&amp;Rename</source>
         <extracomment>Torrent's context menu item
@@ -1856,47 +1877,47 @@ Torrent's uploaded size</extracomment>
         <translation>最大连接数：</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="156"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="157"/>
         <source>Add Trackers</source>
         <extracomment>Dialog title</extracomment>
         <translation>添加 Trackers</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="157"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="158"/>
         <source>Trackers announce URLs:</source>
         <translation>Trackers 宣告链接:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="179"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="182"/>
         <source>Tracker announce URL:</source>
         <translation>Trackers 宣告链接:</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="209"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="212"/>
         <source>Remove Tracker</source>
         <extracomment>Dialog title</extracomment>
         <translation>移除Tracker</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="210"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="213"/>
         <source>Are you sure you want to remove this tracker?</source>
         <translation>是否确实要删除此Tracker？</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="213"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="216"/>
         <source>Remove Trackers</source>
         <extracomment>Dialog title</extracomment>
         <translation>移除Trackers</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="218"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="221"/>
         <source>Are you sure you want to remove %Ln selected trackers?</source>
         <extracomment>%Ln is number of trackers selected for deletion</extracomment>
         <translation><numerusform>确实要删除 %Ln 选定 trackers?</numerusform></translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="307"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="87"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="91"/>
         <source>Down Speed</source>
         <extracomment>Torrents list column name
 ----------
@@ -1905,7 +1926,7 @@ Peers list column title</extracomment>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="310"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="90"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="94"/>
         <source>Up Speed</source>
         <extracomment>Torrents list column name
 ----------
@@ -1915,7 +1936,7 @@ Peers list column title</extracomment>
     <message>
         <location filename="../src/ui/itemmodels/basetorrentfilesmodel.cpp" line="107"/>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="280"/>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="93"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="97"/>
         <source>Progress Bar</source>
         <extracomment>Column title in torrent's file list
 ----------
@@ -1925,61 +1946,61 @@ Peers list column title</extracomment>
         <translation>进度条</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="99"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="103"/>
         <source>Flags</source>
         <extracomment>Peers list column title</extracomment>
         <translation>标志</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="102"/>
+        <location filename="../src/ui/screens/torrentproperties/peersmodel.cpp" line="106"/>
         <source>Client</source>
         <extracomment>Peers list column title</extracomment>
         <translation>客户端</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="54"/>
+        <location filename="../src/rpc/rpc.cpp" line="56"/>
         <source>Timed out</source>
         <extracomment>Server connection status</extracomment>
         <translation>超时</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="57"/>
+        <location filename="../src/rpc/rpc.cpp" line="59"/>
         <source>Connection error</source>
         <extracomment>Server connection status</extracomment>
         <translation>连接错误</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="60"/>
+        <location filename="../src/rpc/rpc.cpp" line="62"/>
         <source>Authentication error</source>
         <extracomment>Server connection status</extracomment>
         <translation>身份验证错误</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="63"/>
+        <location filename="../src/rpc/rpc.cpp" line="65"/>
         <source>Parse error</source>
         <extracomment>Server connection status</extracomment>
         <translation>解析错误</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="66"/>
+        <location filename="../src/rpc/rpc.cpp" line="68"/>
         <source>Server is too new</source>
         <extracomment>Server connection status</extracomment>
         <translation>服务器太新</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="69"/>
+        <location filename="../src/rpc/rpc.cpp" line="71"/>
         <source>Server is too old</source>
         <extracomment>Server connection status</extracomment>
         <translation>服务器太旧</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="74"/>
+        <location filename="../src/rpc/rpc.cpp" line="76"/>
         <source>Connecting...</source>
         <extracomment>Server connection status</extracomment>
         <translation>连接中...</translation>
     </message>
     <message>
-        <location filename="../src/rpc/rpc.cpp" line="77"/>
+        <location filename="../src/rpc/rpc.cpp" line="79"/>
         <source>Connected</source>
         <extracomment>Server connection status</extracomment>
         <translation>已连接</translation>
@@ -2005,12 +2026,55 @@ Peers list column title</extracomment>
         <translation>排队等待校验</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/localtorrentfilesmodel.cpp" line="195"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="70"/>
+        <source>Merge trackers?</source>
+        <extracomment>Dialog title</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="71"/>
+        <source>Torrent «%1» is already added, merge trackers?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="76"/>
+        <source>Merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="77"/>
+        <source>Do not ask again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="99"/>
+        <source>Merged trackers</source>
+        <extracomment>Dialog title</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="100"/>
+        <source>Merged trackers for torrent «%1»</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="108"/>
+        <source>Torrent already exists</source>
+        <extracomment>Dialog title</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="109"/>
+        <source>Torrent «%1» already exists</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="123"/>
         <source>Error reading torrent file</source>
         <translation>读取Torrent文件时出错</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/addtorrent/localtorrentfilesmodel.cpp" line="197"/>
+        <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="125"/>
         <source>Error parsing torrent file</source>
         <translation>分析Torrent文件时出错</translation>
     </message>
@@ -2093,7 +2157,7 @@ Peers list column title</extracomment>
         <translation>更新中</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="127"/>
+        <location filename="../src/ui/screens/torrentproperties/trackersmodel.cpp" line="125"/>
         <source>Next Update</source>
         <extracomment>Trackers list column title</extracomment>
         <translation>下一次更新</translation>
@@ -2240,7 +2304,7 @@ Peers list column title</extracomment>
     </message>
     <message>
         <location filename="../src/desktoputils.cpp" line="60"/>
-        <location filename="../src/filemanagerlauncher.cpp" line="96"/>
+        <location filename="../src/filemanagerlauncher.cpp" line="90"/>
         <source>Error opening %1</source>
         <extracomment>File opening error, %1 is a file path
 ----------
@@ -2248,7 +2312,7 @@ Directory opening error, %1 is a file path</extracomment>
         <translation>打开时出错 %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="97"/>
+        <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="98"/>
         <source>Move files from current directory</source>
         <extracomment>Check box label</extracomment>
         <translation>从当前目录移动文件</translation>
@@ -2280,7 +2344,7 @@ Filter option of torrents list's download directory filter. %1 is download direc
         <translation>%1 (%L2)</translation>
     </message>
     <message>
-        <location filename="../src/filemanagerlauncher.cpp" line="55"/>
+        <location filename="../src/filemanagerlauncher.cpp" line="50"/>
         <source>This directory does not exist</source>
         <translation>此目录不存在</translation>
     </message>

@@ -5,6 +5,7 @@
 # 
 # Translators:
 # Waldemar Stoczkowski, 2020
+# Oliwier ., 2024
 # 
 #, fuzzy
 msgid ""
@@ -13,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-31 19:28+0300\n"
 "PO-Revision-Date: 2018-08-31 13:48+0000\n"
-"Last-Translator: Waldemar Stoczkowski, 2020\n"
+"Last-Translator: Oliwier ., 2024\n"
 "Language-Team: Polish (https://app.transifex.com/equeim/teams/72280/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,7 +28,7 @@ msgstr "Tremotesf"
 
 #: tmp.desktop.in:5 ../org.equeim.Tremotesf.appdata.xml.in:8
 msgid "Remote GUI for Transmission BitTorrent client"
-msgstr "Zdalne GUI dla klienta transmisji BitTorrent"
+msgstr "Zdalne GUI dla klienta BitTorrent Transmission"
 
 #: ../org.equeim.Tremotesf.appdata.xml.in:11
 msgid ""
@@ -35,9 +36,10 @@ msgid ""
 "control your transmission-daemon instance, manage torrents, set Transmission"
 " settings, view server statistics."
 msgstr ""
-"Tremotesf jest zdalnym GUI dla klienta Transmisji BitTorrent. Możesz w pełni"
-" kontrolować wystąpienie demona transmisji, zarządzać torrentami, ustawiać "
-"ustawienia transmisji, przeglądać statystyki serwera."
+"Tremotesf jest zdalnym GUI dla klienta BitTorrent Transmission. Za jego "
+"pomocą możesz w pełni kontrolować swoją instancję transmission-daemon, "
+"zarządzać torrentami, konfigurować ustawienia Transmission i wyświetlać "
+"statystyki serwera."
 
 #: ../org.equeim.Tremotesf.appdata.xml.in:14
 msgid ""
