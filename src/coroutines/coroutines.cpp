@@ -4,6 +4,8 @@
 
 #include "coroutines.h"
 
+#include "log/log.h"
+
 namespace tremotesf::impl {
     void CoroutinePromiseBase::setParentCoroutineHandle(std::coroutine_handle<> parentCoroutineHandle) {
         mParentCoroutineHandle = parentCoroutineHandle;
@@ -45,6 +47,11 @@ namespace tremotesf::impl {
             return std::noop_coroutine();
         }
         return mParentCoroutineHandle;
+    }
+
+    void CoroutinePromiseBase::abortNoParent() {
+        warning().log("No parent coroutine when completing coroutine {}", mCoroutineHandle.address());
+        std::abort();
     }
 
     std::coroutine_handle<> CoroutinePromise<void>::onPerformedFinalSuspend() {

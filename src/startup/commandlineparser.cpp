@@ -12,6 +12,8 @@
 #include <QFileInfo>
 #include <QUrl>
 
+#include <fmt/format.h>
+
 #define CXXOPTS_VECTOR_DELIMITER '\0'
 #include <cxxopts.hpp>
 

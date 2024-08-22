@@ -4,6 +4,8 @@
 
 #include "log.h"
 
+#include <fmt/format.h>
+
 #ifdef Q_OS_WIN
 #    include <guiddef.h>
 #    include <winrt/base.h>
@@ -22,6 +24,10 @@ namespace tremotesf {
         qputenv(loggingRulesEnvVariable, rules);
     }
 
+    void Logger::logWithFormatArgs(fmt::string_view fmt, fmt::format_args args) const {
+        logImpl(QString::fromStdString(fmt::vformat(fmt, args)));
+    }
+
     void Logger::logImpl(const QString& string) const {
         // We use internal qt_message_output() function here because there are only two methods
         // to output string to QMessageLogger and they have overheads that are unneccessary
@@ -33,7 +39,7 @@ namespace tremotesf {
 
     template<impl::IsException E>
     void Logger::logExceptionRecursively(const E& e) const {
-        logImpl(impl::convertToQString(fmt::format(" |- Caused by: {}", e)));
+        logImpl(QString::fromStdString(fmt::format(" |- Caused by: {}", e)));
         try {
             std::rethrow_if_nested(e);
         } catch (const std::exception& nested) {

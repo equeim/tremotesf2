@@ -16,6 +16,8 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+#include <fmt/format.h>
+
 #include "log/log.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QJsonValue)

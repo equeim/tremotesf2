@@ -13,6 +13,8 @@
 #include <QStandardPaths>
 #include <QStringBuilder>
 
+#include <fmt/format.h>
+
 #include "literals.h"
 #include "macoshelpers.h"
 #include "target_os.h"

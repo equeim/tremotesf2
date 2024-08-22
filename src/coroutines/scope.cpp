@@ -54,7 +54,7 @@ namespace tremotesf {
         handleException(unhandledException);
         const auto found = std::ranges::find(mCoroutines, coroutine);
         if (found == mCoroutines.end()) {
-            warning().log("Did not find completed coroutine {} in CoroutineScope", *coroutine);
+            warning().log("Did not find completed coroutine {} in CoroutineScope", coroutine->address());
             std::abort();
         }
         mCoroutines.erase(found);

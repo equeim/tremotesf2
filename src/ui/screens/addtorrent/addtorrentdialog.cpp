@@ -25,6 +25,8 @@
 
 #include <KMessageWidget>
 
+#include <fmt/format.h>
+
 #include "addtorrenthelpers.h"
 #include "formatutils.h"
 #include "magnetlinkparser.h"
