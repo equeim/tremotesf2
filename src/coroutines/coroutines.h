@@ -10,8 +10,9 @@
 #include <functional>
 #include <optional>
 #include <variant>
+#include <utility>
 
-#include "log/log.h"
+#include <QtGlobal>
 
 namespace tremotesf {
     namespace impl {
@@ -51,11 +52,12 @@ namespace tremotesf {
 
         inline impl::CoroutineAwaiter<T> operator co_await();
 
+        inline void* address() const { return mHandle.address(); }
+
     private:
         std::coroutine_handle<impl::CoroutinePromise<T>> mHandle;
 
         friend class impl::StandaloneCoroutine;
-        friend struct fmt::formatter<Coroutine<T>>;
     };
 
     namespace impl {
@@ -94,6 +96,9 @@ namespace tremotesf {
         protected:
             inline CoroutinePromiseBase(std::coroutine_handle<> handle) : mCoroutineHandle(handle) {}
 
+            [[noreturn]]
+            void abortNoParent();
+
             std::coroutine_handle<> mCoroutineHandle;
             std::coroutine_handle<> mParentCoroutineHandle{};
             std::variant<std::monostate, JustCompleteCancellation, std::function<void()>>
@@ -120,8 +125,7 @@ namespace tremotesf {
                 if (const auto handle = onPerformedFinalSuspendBase(); handle) {
                     return handle;
                 }
-                warning().log("No parent coroutine when completing coroutine {}", mCoroutineHandle.address());
-                std::abort();
+                abortNoParent();
             }
 
             inline T takeValueOrRethrowException() {
@@ -231,6 +235,8 @@ namespace tremotesf {
             inline ~StandaloneCoroutine() = default;
             Q_DISABLE_COPY_MOVE(StandaloneCoroutine)
 
+            inline void* address() const { return mCoroutine.address(); }
+
             inline void start() { mCoroutine.mHandle.resume(); }
 
             inline StandaloneCoroutine* rootCoroutine() const { return mRootCoroutine; }
@@ -252,8 +258,6 @@ namespace tremotesf {
             std::function<void(std::exception_ptr)> mCompletionCallback{};
             enum class CancellationState : char { NotCancelled, Cancelling, Cancelled };
             CancellationState mCancellationState{CancellationState::NotCancelled};
-
-            friend struct fmt::formatter<StandaloneCoroutine>;
         };
 
         class [[nodiscard]] CancellationAwaiter final {
@@ -275,23 +279,6 @@ namespace tremotesf {
     impl::CoroutineAwaiter<T> Coroutine<T>::operator co_await() {
         return impl::CoroutineAwaiter<T>(mHandle);
     }
-}
-
-namespace fmt {
-    template<typename T>
-    struct formatter<tremotesf::Coroutine<T>> : tremotesf::SimpleFormatter {
-        fmt::format_context::iterator format(const tremotesf::Coroutine<T>& coroutine, fmt::format_context& ctx) const {
-            return fmt::format_to(ctx.out(), "Coroutine({})", coroutine.mHandle.address());
-        }
-    };
-
-    template<>
-    struct formatter<tremotesf::impl::StandaloneCoroutine> : tremotesf::SimpleFormatter {
-        fmt::format_context::iterator
-        format(const tremotesf::impl::StandaloneCoroutine& coroutine, fmt::format_context& ctx) const {
-            return fmt::formatter<tremotesf::Coroutine<>>{}.format(coroutine.mCoroutine, ctx);
-        }
-    };
 }
 
 #define cancelCoroutine()                                         \

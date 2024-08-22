@@ -18,7 +18,11 @@
 #    include <QUtf8StringView>
 #endif
 
-#include <fmt/core.h>
+#if __has_include(<fmt/base.h>)
+#    include <fmt/base.h>
+#else
+#    include <fmt/core.h>
+#endif
 
 namespace tremotesf {
     struct SimpleFormatter {

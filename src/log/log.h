@@ -13,7 +13,11 @@
 #include <QMessageLogger>
 #include <QString>
 
-#include <fmt/core.h>
+#if __has_include(<fmt/base.h>)
+#    include <fmt/base.h>
+#else
+#    include <fmt/core.h>
+#endif
 
 #ifdef Q_OS_WIN
 #    include <guiddef.h>
@@ -49,8 +53,6 @@ namespace tremotesf {
 #endif
             ;
 
-        inline constexpr auto printlnFormatString = "{}\n";
-
         template<std::convertible_to<QString> T>
         ALWAYS_INLINE QString convertToQString(const T& string) {
             return static_cast<QString>(string);
@@ -71,6 +73,8 @@ namespace tremotesf {
         template<typename T>
         concept CanConvertToQString = !std::same_as<std::remove_cvref_t<T>, QString> &&
                                       requires(T string) { tremotesf::impl::convertToQString(string); };
+
+        inline void printNewline(FILE* stream) { std::fwrite("\n", 1, 1, stream); }
     }
 
     constexpr auto tremotesfLoggingCategoryName = "tremotesf";
@@ -108,15 +112,18 @@ namespace tremotesf {
         template<typename T>
         ALWAYS_INLINE void log(const T& value) const {
             if (isEnabled()) {
-                logImpl(impl::convertToQString(fmt::format(impl::singleArgumentFormatString, value)));
+                logWithFormatArgs(
+                    fmt::format_string<const T&>(impl::singleArgumentFormatString),
+                    fmt::make_format_args(value)
+                );
             }
         }
 
         template<typename... Args>
             requires(sizeof...(Args) != 0)
-        ALWAYS_INLINE void log(fmt::format_string<Args...> fmt, Args&&... args) const {
+        ALWAYS_INLINE void log(fmt::format_string<Args...> fmt, const Args&... args) const {
             if (isEnabled()) {
-                logImpl(impl::convertToQString(fmt::format(fmt, std::forward<Args>(args)...)));
+                logWithFormatArgs(fmt, fmt::make_format_args(args...));
             }
         }
 
@@ -127,22 +134,27 @@ namespace tremotesf {
         template<impl::IsException E, typename T>
         ALWAYS_INLINE void logWithException(const E& e, const T& value) const {
             if (isEnabled()) {
-                logImpl(impl::convertToQString(fmt::format(impl::singleArgumentFormatString, value)));
+                logWithFormatArgs(
+                    fmt::format_string<const T&>(impl::singleArgumentFormatString),
+                    fmt::make_format_args(value)
+                );
                 logExceptionRecursivelyWrapper(e);
             }
         }
 
         template<impl::IsException E, typename... Args>
             requires(sizeof...(Args) != 0)
-        ALWAYS_INLINE void logWithException(const E& e, fmt::format_string<Args...> fmt, Args&&... args) const {
+        ALWAYS_INLINE void logWithException(const E& e, fmt::format_string<Args...> fmt, const Args&... args) const {
             if (isEnabled()) {
-                logImpl(impl::convertToQString(fmt::format(fmt, std::forward<Args>(args)...)));
+                logWithFormatArgs(fmt, fmt::make_format_args(args...));
                 logExceptionRecursivelyWrapper(e);
             }
         }
 
     private:
         ALWAYS_INLINE bool isEnabled() const { return tremotesfLoggingCategory().isEnabled(type); }
+
+        void logWithFormatArgs(fmt::string_view fmt, fmt::format_args args) const;
 
         /**
          * Actual log function
@@ -191,13 +203,15 @@ namespace tremotesf {
 
     template<typename T>
     ALWAYS_INLINE void printlnStdout(const T& value) {
-        fmt::print(stdout, impl::printlnFormatString, value);
+        fmt::print(stdout, fmt::format_string<const T&>(impl::singleArgumentFormatString), value);
+        impl::printNewline(stdout);
     }
 
     template<typename... Args>
         requires(sizeof...(Args) != 0)
-    ALWAYS_INLINE void printlnStdout(fmt::format_string<Args...> fmt, Args&&... args) {
-        fmt::print(stdout, impl::printlnFormatString, fmt::format(fmt, std::forward<Args>(args)...));
+    ALWAYS_INLINE void printlnStdout(fmt::format_string<Args...> fmt, const Args&... args) {
+        fmt::vprint(stdout, fmt, fmt::make_format_args(args...));
+        impl::printNewline(stdout);
     }
 }
 

@@ -7,7 +7,7 @@
 #include <cerrno>
 #include <system_error>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 namespace tremotesf::impl {
     void throwWithErrno(std::string_view functionName) {

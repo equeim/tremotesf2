@@ -5,6 +5,8 @@
 #include <array>
 #include <QTest>
 
+#include <fmt/format.h>
+
 #include "tracker.h"
 #include "torrent.h"
 

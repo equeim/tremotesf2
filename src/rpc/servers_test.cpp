@@ -8,6 +8,7 @@
 #include <QSettings>
 
 #include "servers.h"
+#include "log/log.h"
 
 namespace tremotesf {
     constexpr auto mountedLocalPathsUnix = std::array{

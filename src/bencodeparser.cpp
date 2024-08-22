@@ -12,6 +12,8 @@
 #include <QFile>
 #include <QString>
 
+#include <fmt/format.h>
+
 #include "fileutils.h"
 #include "log/formatters.h"
 
