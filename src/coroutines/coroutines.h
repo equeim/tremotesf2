@@ -14,21 +14,18 @@
 
 #include <QtGlobal>
 
+#include "coroutinefwd.h"
+
 namespace tremotesf {
     namespace impl {
-        template<typename T>
-        concept CoroutineReturnValue = std::same_as<T, void> || std::movable<T>;
-
         template<CoroutineReturnValue T>
         class CoroutinePromise;
 
         template<CoroutineReturnValue T>
         class CoroutineAwaiter;
-
-        class StandaloneCoroutine;
     }
 
-    template<impl::CoroutineReturnValue T = void>
+    template<impl::CoroutineReturnValue T>
     class [[nodiscard]] Coroutine {
     public:
         using promise_type = impl::CoroutinePromise<T>;

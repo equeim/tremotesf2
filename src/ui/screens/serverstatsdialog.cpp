@@ -15,6 +15,7 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
+#include "coroutines/coroutines.h"
 #include "rpc/serverstats.h"
 #include "rpc/rpc.h"
 #include "formatutils.h"

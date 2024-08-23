@@ -10,7 +10,7 @@
 
 #include "torrentfileparser.h"
 #include "ui/itemmodels/basetorrentfilesmodel.h"
-#include "coroutines/coroutines.h"
+#include "coroutines/coroutinefwd.h"
 
 namespace tremotesf {
     class TorrentFileParser;

@@ -5,9 +5,12 @@
 #ifndef TREMOTESF_COROUTINES_SCOPE_H
 #define TREMOTESF_COROUTINES_SCOPE_H
 
+#include <QtGlobal>
+
+#include <stdexcept>
 #include <vector>
 
-#include "coroutines.h"
+#include "coroutinefwd.h"
 
 namespace tremotesf {
     class CoroutineScope {
