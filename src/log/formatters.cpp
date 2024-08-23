@@ -9,7 +9,6 @@
 // If we don't include it here we will get undefined reference link error for fmt::formatter<fmt::string_view>
 #include <fmt/format.h>
 
-#include <QtGlobal>
 #include <QByteArray>
 #include <QLatin1String>
 #include <QStringView>

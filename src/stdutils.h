@@ -11,7 +11,11 @@
 #include <ranges>
 #include <type_traits>
 
-#include <QtGlobal>
+#if __has_include(<QtNumeric>)
+#    include <QtNumeric>
+#else
+#    include <QtGlobal>
+#endif
 
 namespace tremotesf {
     template<std::ranges::random_access_range Range>
