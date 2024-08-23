@@ -12,8 +12,6 @@
 #include "log/log.h"
 #include "rpc/servers.h"
 
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(QEvent::Type)
-
 namespace tremotesf {
     namespace {
         constexpr auto windowHasSaveStateHandlerProperty = "tremotesf_windowHasSaveStateHandler";
@@ -54,11 +52,7 @@ namespace tremotesf {
     bool ApplicationQuitEventFilter::eventFilter(QObject*, QEvent* event) {
         if (event->type() == QEvent::Quit) {
             isQuittingApplication = true;
-            QMetaObject::invokeMethod(
-                qApp,
-                [this] { isQuittingApplication = false; },
-                Qt::QueuedConnection
-            );
+            QMetaObject::invokeMethod(qApp, [this] { isQuittingApplication = false; }, Qt::QueuedConnection);
         }
         return false;
     }

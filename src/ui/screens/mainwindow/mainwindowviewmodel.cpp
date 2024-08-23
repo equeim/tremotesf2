@@ -31,8 +31,6 @@
 #include "stdutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
-
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::DropAction)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(Qt::DropActions)
 
 namespace tremotesf {

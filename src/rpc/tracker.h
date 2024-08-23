@@ -9,8 +9,6 @@
 #include <QObject>
 #include <QString>
 
-#include "log/formatters.h"
-
 class QJsonObject;
 class QUrl;
 
@@ -73,7 +71,5 @@ namespace tremotesf {
         QString registrableDomainFromUrl(const QUrl& url);
     }
 }
-
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::Tracker::Status)
 
 #endif // TREMOTESF_RPC_TRACKER_H

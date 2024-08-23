@@ -8,7 +8,6 @@
 #include <QObject>
 #include <QTime>
 
-#include "log/formatters.h"
 #include "pathutils.h"
 
 class QJsonObject;
@@ -156,8 +155,5 @@ namespace tremotesf {
         void changed();
     };
 }
-
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::ServerSettingsData::AlternativeSpeedLimitsDays)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::ServerSettingsData::EncryptionMode)
 
 #endif // TREMOTESF_RPC_SERVERSETTINGS_H

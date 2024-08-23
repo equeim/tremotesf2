@@ -20,8 +20,6 @@
 #include "coroutines/threadpool.h"
 #include "log/log.h"
 
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(QNetworkReply::NetworkError)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(QSslError::SslError)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QJsonObject)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QNetworkProxy)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QSslError)

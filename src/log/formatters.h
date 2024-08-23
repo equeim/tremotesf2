@@ -82,23 +82,12 @@ namespace tremotesf::impl {
         }
     };
 
+    // This relies on private Qt API but it should work at least until Qt 7
+    template<typename T>
+    concept QEnum = std::is_enum_v<T> && requires { qt_getEnumMetaObject(T{}); };
+
     fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, qint64 value, fmt::format_context& ctx);
     fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, quint64 value, fmt::format_context& ctx);
-
-    template<typename T>
-        requires std::is_enum_v<T>
-    struct QEnumFormatter : SimpleFormatter {
-        fmt::format_context::iterator format(T t, fmt::format_context& ctx) const {
-            const auto meta = QMetaEnum::fromType<T>();
-            using UnderlyingType = std::underlying_type_t<T>;
-            const auto underlying = static_cast<UnderlyingType>(t);
-            if constexpr (std::signed_integral<UnderlyingType>) {
-                return formatQEnum(meta, static_cast<qint64>(underlying), ctx);
-            } else {
-                return formatQEnum(meta, static_cast<quint64>(underlying), ctx);
-            }
-        }
-    };
 }
 
 namespace fmt {
@@ -111,18 +100,26 @@ namespace fmt {
             return fmt::format_to(ctx.out(), tremotesf::impl::singleArgumentFormatString, buffer);
         }
     };
+
+    template<tremotesf::impl::QEnum T>
+    struct formatter<T> : tremotesf::SimpleFormatter {
+        fmt::format_context::iterator format(T t, fmt::format_context& ctx) const {
+            const auto meta = QMetaEnum::fromType<T>();
+            using UnderlyingType = std::underlying_type_t<T>;
+            const auto underlying = static_cast<UnderlyingType>(t);
+            if constexpr (std::signed_integral<UnderlyingType>) {
+                return tremotesf::impl::formatQEnum(meta, static_cast<qint64>(underlying), ctx);
+            } else {
+                return tremotesf::impl::formatQEnum(meta, static_cast<quint64>(underlying), ctx);
+            }
+        }
+    };
 }
 
 #define SPECIALIZE_FORMATTER_FOR_QDEBUG(Class)                                \
     namespace fmt {                                                           \
         template<>                                                            \
         struct formatter<Class> : tremotesf::impl::QDebugFormatter<Class> {}; \
-    }
-
-#define SPECIALIZE_FORMATTER_FOR_Q_ENUM(Enum)                              \
-    namespace fmt {                                                        \
-        template<>                                                         \
-        struct formatter<Enum> : tremotesf::impl::QEnumFormatter<Enum> {}; \
     }
 
 namespace fmt {

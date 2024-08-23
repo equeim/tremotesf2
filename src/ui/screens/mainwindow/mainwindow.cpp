@@ -82,7 +82,6 @@
 #include "torrentsview.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::ApplicationState)
 
 namespace tremotesf {
     namespace {
