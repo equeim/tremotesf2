@@ -39,11 +39,11 @@ namespace tremotesf::impl {
         return fmt::format_to(ctx.out(), "{}::{}::{}", meta.scope(), meta.enumName(), key);
     }
 
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, qint64 value, fmt::format_context& ctx) {
+    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::intmax_t value, fmt::format_context& ctx) {
         return formatQEnumImpl(meta, value, ctx);
     }
 
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, quint64 value, fmt::format_context& ctx) {
+    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::uintmax_t value, fmt::format_context& ctx) {
         return formatQEnumImpl(meta, value, ctx);
     }
 }
