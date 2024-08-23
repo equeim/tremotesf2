@@ -15,8 +15,6 @@
 #include "itemlistupdater.h"
 #include "stdutils.h"
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
-
 struct Item {
     int id;
     QString data;

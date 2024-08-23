@@ -7,8 +7,6 @@
 
 #include "pathutils.h"
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
-
 using namespace tremotesf;
 
 class PathUtilsTest final : public QObject {

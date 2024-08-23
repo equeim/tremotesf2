@@ -16,6 +16,7 @@ Checks: >
   -cppcoreguidelines-owning-memory,
   -cppcoreguidelines-pro-type-static-cast-downcast,
   -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-avoid-do-while
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-avoid-const-or-ref-data-members,
   -cppcoreguidelines-macro-usage,

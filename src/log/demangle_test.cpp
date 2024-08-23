@@ -6,8 +6,6 @@
 
 #include "demangle.h"
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
-
 using namespace tremotesf;
 
 struct Foo {};
