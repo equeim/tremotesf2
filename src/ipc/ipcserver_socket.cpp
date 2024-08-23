@@ -24,7 +24,6 @@
 #    include "ipc/fileopeneventhandler.h"
 #endif
 
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(QCborError::Code)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QCborValue)
 
 namespace fmt {

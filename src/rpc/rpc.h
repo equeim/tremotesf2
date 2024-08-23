@@ -14,7 +14,6 @@
 #include <QObject>
 
 #include "coroutines/scope.h"
-#include "log/formatters.h"
 #include "serversettings.h"
 #include "serverstats.h"
 #include "torrent.h"
@@ -239,8 +238,5 @@ namespace tremotesf {
         void torrentAddError(const QString& filePathOrUrl);
     };
 }
-
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::RpcConnectionState)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::RpcError)
 
 #endif // TREMOTESF_RPC_RPC_H

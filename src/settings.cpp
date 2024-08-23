@@ -14,11 +14,6 @@
 #include "log/log.h"
 #include "target_os.h"
 
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::ToolButtonStyle)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentsProxyModel::StatusFilter)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::Settings::DarkThemeMode)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::Settings::TorrentDoubleClickAction)
-
 #define SETTINGS_PROPERTY_DEF_IMPL(type, getter, setterType, setter, key, defaultValue)    \
     type Settings::getter() const { return getValue<type>(mSettings, key, defaultValue); } \
     void Settings::setter(setterType value) {                                              \

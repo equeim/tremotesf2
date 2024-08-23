@@ -24,9 +24,6 @@
 #include "windowshelpers.h"
 #include "systemcolorsprovider.h"
 
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(QEvent::Type)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(Qt::WindowType)
-
 namespace tremotesf {
 
     namespace {

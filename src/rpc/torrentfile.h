@@ -9,8 +9,6 @@
 #include <QObject>
 #include <QString>
 
-#include "log/formatters.h"
-
 class QJsonObject;
 
 namespace tremotesf {
@@ -32,7 +30,5 @@ namespace tremotesf {
         bool wanted{};
     };
 }
-
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentFile::Priority)
 
 #endif // TREMOTESF_RPC_TORRENTFILE_H

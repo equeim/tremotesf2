@@ -223,12 +223,6 @@ namespace tremotesf {
     }
 }
 
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::Status)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::Error)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::Priority)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::RatioLimitMode)
-SPECIALIZE_FORMATTER_FOR_Q_ENUM(tremotesf::TorrentData::IdleSeedingLimitMode)
-
 namespace fmt {
     template<>
     struct formatter<tremotesf::Torrent> : tremotesf::SimpleFormatter {
