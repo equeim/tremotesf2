@@ -6,6 +6,7 @@
 #define TREMOTESF_LOG_FORMATTERS_H
 
 #include <concepts>
+#include <cstdint>
 #include <stdexcept>
 #include <system_error>
 #include <type_traits>
@@ -86,8 +87,8 @@ namespace tremotesf::impl {
     template<typename T>
     concept QEnum = std::is_enum_v<T> && requires { qt_getEnumMetaObject(T{}); };
 
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, qint64 value, fmt::format_context& ctx);
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, quint64 value, fmt::format_context& ctx);
+    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::intmax_t value, fmt::format_context& ctx);
+    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::uintmax_t value, fmt::format_context& ctx);
 }
 
 namespace fmt {
@@ -105,12 +106,10 @@ namespace fmt {
     struct formatter<T> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(T t, fmt::format_context& ctx) const {
             const auto meta = QMetaEnum::fromType<T>();
-            using UnderlyingType = std::underlying_type_t<T>;
-            const auto underlying = static_cast<UnderlyingType>(t);
-            if constexpr (std::signed_integral<UnderlyingType>) {
-                return tremotesf::impl::formatQEnum(meta, static_cast<qint64>(underlying), ctx);
+            if constexpr (std::signed_integral<std::underlying_type_t<T>>) {
+                return tremotesf::impl::formatQEnum(meta, static_cast<std::intmax_t>(t), ctx);
             } else {
-                return tremotesf::impl::formatQEnum(meta, static_cast<quint64>(underlying), ctx);
+                return tremotesf::impl::formatQEnum(meta, static_cast<std::uintmax_t>(t), ctx);
             }
         }
     };
