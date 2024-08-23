@@ -4,7 +4,7 @@
 
 #include "ipcclient.h"
 
-#include <QtGlobal>
+//#include <QtGlobal>
 #include <QDBusMessage>
 #include <QDBusPendingReply>
 #include <QUrl>

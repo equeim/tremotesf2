@@ -12,7 +12,11 @@
 #include <variant>
 #include <utility>
 
-#include <QtGlobal>
+#if __has_include(<QtClassHelperMacros>)
+#    include <QtClassHelperMacros>
+#else
+#    include <QtGlobal>
+#endif
 
 #include "coroutinefwd.h"
 

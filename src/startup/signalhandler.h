@@ -6,7 +6,12 @@
 #define TREMOTESF_SIGNALHANDLER_H
 
 #include <memory>
-#include <QtGlobal>
+
+#if __has_include(<QtClassHelperMacros>)
+#    include <QtClassHelperMacros>
+#else
+#    include <QtGlobal>
+#endif
 
 namespace tremotesf {
     class SignalHandler final {
