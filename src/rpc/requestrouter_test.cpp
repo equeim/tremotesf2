@@ -18,6 +18,7 @@
 #include <fmt/chrono.h>
 #include <httplib.h>
 
+#include "coroutines/coroutines.h"
 #include "fileutils.h"
 #include "literals.h"
 #include "log/log.h"

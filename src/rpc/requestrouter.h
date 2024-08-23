@@ -20,7 +20,7 @@
 #include <QString>
 #include <QtContainerFwd>
 
-#include "coroutines/coroutines.h"
+#include "coroutines/coroutinefwd.h"
 #include "rpc.h"
 
 class QNetworkReply;

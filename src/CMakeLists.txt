@@ -59,9 +59,10 @@ add_library(
     windowshelpers.h
     macoshelpers.h
 
-    coroutines/hostinfo.h
+    coroutines/coroutinefwd.h
     coroutines/coroutines.cpp
     coroutines/coroutines.h
+    coroutines/hostinfo.h
     coroutines/qobjectsignal.h
     coroutines/scope.h
     coroutines/scope.cpp

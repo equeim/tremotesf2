@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "coroutines/scope.h"
+#include "coroutines/coroutines.h"
 #include "log/log.h"
 
 namespace tremotesf {
