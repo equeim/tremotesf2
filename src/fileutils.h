@@ -10,15 +10,6 @@
 #include <QFile>
 #include <QString>
 
-#include "log/formatters.h"
-
-namespace fmt {
-    template<>
-    struct formatter<QFile::FileError> : tremotesf::SimpleFormatter {
-        format_context::iterator format(QFile::FileError e, format_context& ctx) const;
-    };
-}
-
 namespace tremotesf {
     class QFileError : public std::runtime_error {
     public:

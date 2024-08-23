@@ -21,52 +21,55 @@
 #include "log/log.h"
 
 namespace fmt {
-    format_context::iterator formatter<QFile::FileError>::format(QFile::FileError e, format_context& ctx) const {
-        const std::string_view string = [e] {
-            using namespace std::string_view_literals;
-            switch (e) {
-            case QFileDevice::NoError:
-                return "NoError"sv;
-            case QFileDevice::ReadError:
-                return "ReadError"sv;
-            case QFileDevice::WriteError:
-                return "WriteError"sv;
-            case QFileDevice::FatalError:
-                return "FatalError"sv;
-            case QFileDevice::ResourceError:
-                return "ResourceError"sv;
-            case QFileDevice::OpenError:
-                return "OpenError"sv;
-            case QFileDevice::AbortError:
-                return "AbortError"sv;
-            case QFileDevice::TimeOutError:
-                return "TimeOutError"sv;
-            case QFileDevice::UnspecifiedError:
-                return "UnspecifiedError"sv;
-            case QFileDevice::RemoveError:
-                return "RemoveError"sv;
-            case QFileDevice::RenameError:
-                return "RenameError"sv;
-            case QFileDevice::PositionError:
-                return "PositionError"sv;
-            case QFileDevice::ResizeError:
-                return "ResizeError"sv;
-            case QFileDevice::PermissionsError:
-                return "PermissionsError"sv;
-            case QFileDevice::CopyError:
-                return "CopyError"sv;
+    template<>
+    struct formatter<QFile::FileError> : tremotesf::SimpleFormatter {
+        format_context::iterator format(QFile::FileError e, format_context& ctx) const {
+            const std::string_view string = [e] {
+                using namespace std::string_view_literals;
+                switch (e) {
+                case QFileDevice::NoError:
+                    return "NoError"sv;
+                case QFileDevice::ReadError:
+                    return "ReadError"sv;
+                case QFileDevice::WriteError:
+                    return "WriteError"sv;
+                case QFileDevice::FatalError:
+                    return "FatalError"sv;
+                case QFileDevice::ResourceError:
+                    return "ResourceError"sv;
+                case QFileDevice::OpenError:
+                    return "OpenError"sv;
+                case QFileDevice::AbortError:
+                    return "AbortError"sv;
+                case QFileDevice::TimeOutError:
+                    return "TimeOutError"sv;
+                case QFileDevice::UnspecifiedError:
+                    return "UnspecifiedError"sv;
+                case QFileDevice::RemoveError:
+                    return "RemoveError"sv;
+                case QFileDevice::RenameError:
+                    return "RenameError"sv;
+                case QFileDevice::PositionError:
+                    return "PositionError"sv;
+                case QFileDevice::ResizeError:
+                    return "ResizeError"sv;
+                case QFileDevice::PermissionsError:
+                    return "PermissionsError"sv;
+                case QFileDevice::CopyError:
+                    return "CopyError"sv;
+                }
+                return std::string_view{};
+            }();
+            if (string.empty()) {
+                return fmt::format_to(
+                    ctx.out(),
+                    "QFileDevice::FileError::<unnamed value {}>",
+                    static_cast<std::underlying_type_t<decltype(e)>>(e)
+                );
             }
-            return std::string_view{};
-        }();
-        if (string.empty()) {
-            return fmt::format_to(
-                ctx.out(),
-                "QFileDevice::FileError::<unnamed value {}>",
-                static_cast<std::underlying_type_t<decltype(e)>>(e)
-            );
+            return fmt::format_to(ctx.out(), "QFileDevice::FileError::{}", string);
         }
-        return fmt::format_to(ctx.out(), "QFileDevice::FileError::{}", string);
-    }
+    };
 }
 
 namespace tremotesf {
