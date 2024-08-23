@@ -9,9 +9,9 @@
 #include <QStringBuilder>
 
 #include "rpc/pathutils.h"
+#include "rpc/serversettings.h"
 #include "stdutils.h"
 #include "target_os.h"
-#include "torrent.h"
 
 namespace tremotesf {
     namespace {

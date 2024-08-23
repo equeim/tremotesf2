@@ -12,10 +12,10 @@
 
 #include "coroutines/scope.h"
 #include "ui/itemmodels/basetorrentfilesmodel.h"
-#include "rpc/torrent.h"
 
 namespace tremotesf {
     class Rpc;
+    class Torrent;
 
     class TorrentFilesModel final : public BaseTorrentFilesModel {
         Q_OBJECT

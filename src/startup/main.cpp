@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <chrono>
 #include <utility>
 
 #include <QApplication>
@@ -10,13 +9,11 @@
 #include <QLibraryInfo>
 #include <QLoggingCategory>
 #include <QLocale>
-#include <QTimer>
 #include <QTranslator>
 
 #include <fmt/ranges.h>
 
 #include "commandlineparser.h"
-#include "fileutils.h"
 #include "literals.h"
 #include "main_windows.h"
 #include "signalhandler.h"
@@ -28,12 +25,18 @@
 #include "ui/screens/mainwindow/mainwindow.h"
 
 #ifdef Q_OS_MACOS
+#    include <chrono>
+#    include <QTimer>
 #    include "ipc/fileopeneventhandler.h"
+using namespace std::chrono_literals;
+#endif
+
+#ifdef TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
+#    include "fileutils.h"
 #endif
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
-using namespace std::chrono_literals;
 using namespace tremotesf;
 
 namespace {

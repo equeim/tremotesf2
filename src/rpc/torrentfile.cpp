@@ -5,7 +5,6 @@
 #include "torrentfile.h"
 
 #include <QJsonObject>
-#include <QStringList>
 
 #include "jsonutils.h"
 #include "literals.h"

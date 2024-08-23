@@ -2,26 +2,25 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "torrent.h"
-
 #include <algorithm>
 #include <array>
 #include <map>
 #include <ranges>
 #include <stdexcept>
 
-#include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QLocale>
 
 #include <fmt/ranges.h>
 
+#include "rpc.h"
+#include "serversettings.h"
+#include "torrent.h"
+
+#include "log/log.h"
 #include "jsonutils.h"
 #include "itemlistupdater.h"
-#include "log/log.h"
 #include "pathutils.h"
-#include "rpc.h"
 #include "stdutils.h"
 
 namespace tremotesf {

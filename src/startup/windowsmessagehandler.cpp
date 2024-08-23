@@ -19,6 +19,8 @@
 #include <QStandardPaths>
 #include <QString>
 
+#include <fmt/format.h>
+
 #include <windows.h>
 
 #include "fileutils.h"

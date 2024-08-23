@@ -8,7 +8,6 @@
 
 #include <QDBusConnection>
 #include <QDBusPendingReply>
-#include <QUrl>
 #include <QWidget>
 
 #include "coroutines/dbus.h"

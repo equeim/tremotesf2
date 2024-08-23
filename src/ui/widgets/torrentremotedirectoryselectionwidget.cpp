@@ -2,17 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "torrentremotedirectoryselectionwidget.h"
-
-#include "stdutils.h"
-#include "rpc/rpc.h"
-#include "rpc/servers.h"
-
 #include <QAbstractItemView>
 #include <QCollator>
 #include <QComboBox>
 #include <QKeyEvent>
 #include <QLineEdit>
+
+#include "torrentremotedirectoryselectionwidget.h"
+
+#include "stdutils.h"
+#include "rpc/rpc.h"
+#include "rpc/servers.h"
+#include "rpc/serversettings.h"
 
 namespace tremotesf {
     void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories() {

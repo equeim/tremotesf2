@@ -14,6 +14,7 @@
 #include "log/log.h"
 #include "rpc/rpc.h"
 #include "rpc/servers.h"
+#include "rpc/serversettings.h"
 
 namespace tremotesf {
     AddTorrentParameters getAddTorrentParameters(Rpc* rpc) {

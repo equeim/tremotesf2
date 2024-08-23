@@ -5,10 +5,7 @@
 #ifndef TREMOTESF_FILESELECTIONWIDGET_H
 #define TREMOTESF_FILESELECTIONWIDGET_H
 
-#include <vector>
 #include <QWidget>
-
-#include "rpc/pathutils.h"
 
 class QLineEdit;
 class QPushButton;

@@ -12,11 +12,11 @@
 #include <QPushButton>
 #include <QMessageBox>
 
-#include "desktoputils.h"
 #include "literals.h"
 #include "target_os.h"
 #include "rpc/rpc.h"
 #include "rpc/servers.h"
+#include "rpc/serversettings.h"
 #include "ui/stylehelpers.h"
 
 namespace tremotesf {

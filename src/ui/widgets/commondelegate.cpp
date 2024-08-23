@@ -5,13 +5,11 @@
 #include "commondelegate.h"
 
 #include <stdexcept>
-#include <utility>
 
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QFontMetrics>
 #include <QHelpEvent>
-#include <QPainter>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QStyleOptionProgressBar>

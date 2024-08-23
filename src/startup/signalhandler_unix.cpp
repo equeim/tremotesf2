@@ -18,7 +18,6 @@
 
 #include <QCoreApplication>
 #include <QScopeGuard>
-#include <QFileInfo>
 
 #include "log/log.h"
 #include "unixhelpers.h"

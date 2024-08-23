@@ -7,8 +7,6 @@
 
 #include <QDialog>
 
-class QCheckBox;
-
 namespace tremotesf {
     class Rpc;
 

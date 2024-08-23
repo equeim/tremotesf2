@@ -4,8 +4,6 @@
 
 #include "tracker.h"
 
-#include <QCoreApplication>
-#include <QDateTime>
 #include <QJsonObject>
 #include <QHostAddress>
 #include <QUrl>

@@ -19,7 +19,6 @@
 #include <QIcon>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
-#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
@@ -27,7 +26,6 @@
 #include <QPushButton>
 #include <QRegularExpressionValidator>
 #include <QScrollArea>
-#include <QScrollBar>
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -39,7 +37,6 @@
 #include "target_os.h"
 #include "ui/widgets/commondelegate.h"
 #include "rpc/servers.h"
-#include "formatutils.h"
 #include "serversmodel.h"
 
 namespace tremotesf {

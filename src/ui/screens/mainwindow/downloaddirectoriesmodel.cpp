@@ -5,17 +5,17 @@
 #include "downloaddirectoriesmodel.h"
 
 #include <algorithm>
-#include <map>
 
 #include <QApplication>
 #include <QStyle>
 
 #include "rpc/pathutils.h"
-#include "rpc/torrent.h"
-#include "ui/itemmodels/modelutils.h"
 #include "rpc/rpc.h"
-#include "torrentsproxymodel.h"
+#include "rpc/torrent.h"
+#include "rpc/serversettings.h"
+#include "ui/itemmodels/modelutils.h"
 #include "ui/screens/mainwindow/downloaddirectoriesmodel.h"
+#include "torrentsproxymodel.h"
 
 namespace tremotesf {
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const {

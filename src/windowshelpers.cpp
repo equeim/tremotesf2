@@ -6,6 +6,8 @@
 
 #include <system_error>
 
+#include <fmt/format.h>
+
 #include <windows.h>
 
 #include <guiddef.h>

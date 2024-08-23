@@ -11,10 +11,10 @@
 #include "rpc/torrent.h"
 
 class QDialog;
+class QWidget;
 
 namespace tremotesf {
     class Rpc;
-    class Torrent;
 
     struct AddTorrentParameters {
         QString downloadDirectory;

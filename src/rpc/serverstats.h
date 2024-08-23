@@ -10,8 +10,6 @@
 class QJsonObject;
 
 namespace tremotesf {
-    class Rpc;
-
     class SessionStats {
     public:
         [[nodiscard]] qint64 downloaded() const { return mDownloaded; };

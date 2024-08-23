@@ -6,14 +6,14 @@
 #define TREMOTESF_STYLEHELPERS_H
 
 #include <optional>
-#include <QApplication>
 
 class QStyle;
 
 namespace tremotesf {
     enum class KnownStyle { Breeze, macOS };
 
-    std::optional<KnownStyle> determineStyle(const QStyle* style = QApplication::style());
+    std::optional<KnownStyle> determineStyle(const QStyle* style);
+    std::optional<KnownStyle> determineStyle();
 }
 
 #endif // TREMOTESF_STYLEHELPERS_H

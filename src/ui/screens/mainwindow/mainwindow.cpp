@@ -27,24 +27,19 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
-#include <QMimeData>
 #include <QPointer>
-#include <QProxyStyle>
 #include <QPushButton>
 #include <QShortcut>
 #include <QSplitter>
 #include <QStackedLayout>
 #include <QSystemTrayIcon>
-#include <QTimer>
 #include <QToolBar>
-#include <QWindow>
 
 #include <KMessageWidget>
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
 #    include <KStartupInfo>
 #    include <KWindowSystem>
-#    include <kwindowsystem_version.h>
 #    include "unixhelpers.h"
 #endif
 

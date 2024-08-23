@@ -4,9 +4,7 @@
 
 #include "torrentfilesmodel.h"
 
-#include <QApplication>
 #include <QStringBuilder>
-#include <QStyle>
 
 #include "coroutines/threadpool.h"
 #include "log/log.h"

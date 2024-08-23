@@ -4,13 +4,9 @@
 
 #include "localtorrentfilesmodel.h"
 
-#include <QApplication>
-#include <QCoreApplication>
-#include <QStyle>
-
 #include "coroutines/threadpool.h"
-#include "log/log.h"
 #include "ui/itemmodels/torrentfilesmodelentry.h"
+#include "torrentfileparser.h"
 
 namespace tremotesf {
     namespace {

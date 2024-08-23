@@ -18,7 +18,6 @@
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
-#include <QPushButton>
 #include <QTimeEdit>
 #include <QVBoxLayout>
 
@@ -30,7 +29,7 @@
 #include "rpc/serversettings.h"
 #include "stdutils.h"
 #include "rpc/rpc.h"
-#include "ui/widgets/torrentremotedirectoryselectionwidget.h"
+#include "ui/widgets/remotedirectoryselectionwidget.h"
 
 namespace tremotesf {
     namespace {

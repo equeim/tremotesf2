@@ -13,7 +13,6 @@
 #include <QIcon>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
-#include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>

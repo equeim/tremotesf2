@@ -11,7 +11,6 @@
 #include <QDropEvent>
 #include <QGuiApplication>
 #include <QMimeData>
-#include <QTimer>
 #include <QUrl>
 
 #include <fmt/ranges.h>
@@ -29,6 +28,7 @@
 #include "magnetlinkparser.h"
 #include "settings.h"
 #include "stdutils.h"
+#include "torrentfileparser.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(Qt::DropActions)

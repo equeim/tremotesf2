@@ -8,12 +8,11 @@
 #include <map>
 #include <vector>
 
-#include "torrentfileparser.h"
 #include "ui/itemmodels/basetorrentfilesmodel.h"
 #include "coroutines/coroutinefwd.h"
 
 namespace tremotesf {
-    class TorrentFileParser;
+    class TorrentMetainfoFile;
 
     class LocalTorrentFilesModel final : public BaseTorrentFilesModel {
         Q_OBJECT

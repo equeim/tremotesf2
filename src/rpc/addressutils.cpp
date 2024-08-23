@@ -5,12 +5,7 @@
 #include "addressutils.h"
 
 #include <QHostAddress>
-#include <QHostInfo>
 #include <QNetworkInterface>
-#include <QString>
-
-#include <set>
-#include <fmt/ranges.h>
 
 #include "log/log.h"
 
