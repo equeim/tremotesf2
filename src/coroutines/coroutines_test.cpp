@@ -249,6 +249,8 @@ namespace tremotesf {
     };
 }
 
+// NOLINTEND(cppcoreguidelines-avoid-reference-coroutine-parameters)
+
 QTEST_GUILESS_MAIN(tremotesf::CoroutinesTest)
 
 #include "coroutines_test.moc"

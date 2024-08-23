@@ -36,7 +36,7 @@ using namespace tremotesf::impl;
         throw std::exception();                                              \
     } while (false)
 
-// NOLINTBEGIN(bugprone-unchecked-optional-access, cppcoreguidelines-avoid-do-while)
+// NOLINTBEGIN(bugprone-unchecked-optional-access)
 
 namespace {
     constexpr auto testApiPath = "/"_l1;
@@ -540,6 +540,8 @@ namespace {
         RequestRouter mRouter{nullptr, &mThreadPool};
     };
 }
+
+// NOLINTEND(bugprone-unchecked-optional-access)
 
 QTEST_GUILESS_MAIN(RequestRouterTest)
 

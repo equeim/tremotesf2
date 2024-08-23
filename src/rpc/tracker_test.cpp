@@ -10,8 +10,6 @@
 #include "tracker.h"
 #include "torrent.h"
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
-
 using namespace tremotesf::impl;
 
 class TrackerTest final : public QObject {
