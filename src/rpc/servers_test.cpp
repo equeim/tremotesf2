@@ -8,6 +8,7 @@
 #include <QSettings>
 
 #include "servers.h"
+#include "pathutils.h"
 #include "log/log.h"
 
 namespace tremotesf {

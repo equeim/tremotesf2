@@ -37,6 +37,7 @@
 #include "rpc/pathutils.h"
 #include "rpc/rpc.h"
 #include "rpc/torrent.h"
+#include "rpc/serversettings.h"
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/itemmodels/stringlistmodel.h"
 #include "ui/widgets/torrentfilesview.h"

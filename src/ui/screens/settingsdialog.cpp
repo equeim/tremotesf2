@@ -26,10 +26,13 @@
 #include "target_os.h"
 #include "settings.h"
 #include "rpc/rpc.h"
-#include "ui/systemcolorsprovider.h"
 #include "ui/screens/addtorrent/addtorrentdialog.h"
 #include "ui/screens/addtorrent/addtorrenthelpers.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
+
+#ifdef Q_OS_WIN
+#    include "ui/systemcolorsprovider.h"
+#endif
 
 namespace tremotesf {
     namespace {

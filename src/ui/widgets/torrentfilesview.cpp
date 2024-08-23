@@ -8,7 +8,6 @@
 #include <QActionGroup>
 #include <QCoreApplication>
 #include <QCursor>
-#include <QFileInfo>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QMenu>

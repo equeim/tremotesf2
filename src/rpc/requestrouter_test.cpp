@@ -23,6 +23,7 @@
 #include "literals.h"
 #include "log/log.h"
 #include "requestrouter.h"
+#include "rpc.h"
 
 using namespace std::chrono;
 using namespace std::chrono_literals;

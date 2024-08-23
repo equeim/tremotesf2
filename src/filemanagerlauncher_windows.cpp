@@ -4,9 +4,9 @@
 
 #include "filemanagerlauncher.h"
 
-#include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QPointer>
 #include <QWidget>
 
 #include <guiddef.h>

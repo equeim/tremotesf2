@@ -6,14 +6,10 @@
 
 #include <array>
 #include <cmath>
-#include <concepts>
 #include <stdexcept>
 
 #include <QCoreApplication>
-#include <QFile>
 #include <QLocale>
-
-#include "fileutils.h"
 
 namespace tremotesf::formatutils {
     namespace {

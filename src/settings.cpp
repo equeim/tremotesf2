@@ -7,9 +7,12 @@
 #include "settings.h"
 
 #include <QCoreApplication>
-#include <QDataStream>
 #include <QMetaEnum>
 #include <QSettings>
+
+#if QT_VERSION_MAJOR < 6
+#    include <QDataStream>
+#endif
 
 #include "log/log.h"
 #include "target_os.h"

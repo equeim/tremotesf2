@@ -6,11 +6,11 @@
 
 #include <optional>
 
-#include <QAuthenticator>
 #include <QJsonDocument>
 #include <QObject>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QScopeGuard>
 #include <QSslSocket>
 
 #include <fmt/chrono.h>
@@ -19,6 +19,8 @@
 #include "coroutines/network.h"
 #include "coroutines/threadpool.h"
 #include "log/log.h"
+#include "literals.h"
+#include "rpc.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QJsonObject)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QNetworkProxy)

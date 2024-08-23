@@ -8,7 +8,6 @@
 #include "serversettings.h"
 #include "servers.h"
 
-#include <QFileInfo>
 #include <QStringBuilder>
 
 namespace tremotesf {

@@ -11,21 +11,23 @@
 
 #include <QJsonObject>
 #include <QList>
-#include <QNetworkAccessManager>
 #include <QNetworkProxy>
-#include <QNetworkRequest>
-#include <QPointer>
+#include <QSslConfiguration>
 #include <QSslCertificate>
 #include <QSslKey>
 #include <QString>
-#include <QtContainerFwd>
 
 #include "coroutines/coroutinefwd.h"
-#include "rpc.h"
 
+class QNetworkAccessManager;
+class QNetworkRequest;
 class QNetworkReply;
 class QSslError;
 class QThreadPool;
+
+namespace tremotesf {
+    enum class RpcError;
+}
 
 namespace tremotesf::impl {
     struct RpcRequestMetadata;

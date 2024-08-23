@@ -9,8 +9,6 @@
 #include <QMainWindow>
 
 namespace tremotesf {
-    class IpcServer;
-
     class MainWindow final : public QMainWindow {
         Q_OBJECT
 

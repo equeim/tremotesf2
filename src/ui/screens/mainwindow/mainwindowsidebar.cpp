@@ -7,16 +7,12 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QFrame>
-#include <QIcon>
 #include <QItemSelectionModel>
 #include <QLineEdit>
-#include <QListWidget>
-#include <QMetaEnum>
-#include <QStyle>
+#include <QListView>
 #include <QVBoxLayout>
 #include <QShortcut>
 
-#include "rpc/rpc.h"
 #include "ui/widgets/commondelegate.h"
 #include "alltrackersmodel.h"
 #include "downloaddirectoriesmodel.h"

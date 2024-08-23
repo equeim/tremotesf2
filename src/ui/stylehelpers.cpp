@@ -4,6 +4,7 @@
 
 #include "stylehelpers.h"
 
+#include <QApplication>
 #include <QProxyStyle>
 
 #include "literals.h"
@@ -43,5 +44,7 @@ namespace tremotesf {
         }
         return std::nullopt;
     }
+
+    std::optional<KnownStyle> determineStyle() { return determineStyle(QApplication::style()); }
 
 }

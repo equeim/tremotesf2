@@ -6,9 +6,11 @@
 #define TREMOTESF_FILEUTILS_H
 
 #include <span>
-#include <variant>
-#include <QFile>
+
+#include <QIODevice>
 #include <QString>
+
+class QFile;
 
 namespace tremotesf {
     class QFileError : public std::runtime_error {

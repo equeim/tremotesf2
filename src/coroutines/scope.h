@@ -11,7 +11,7 @@
 #    include <QtGlobal>
 #endif
 
-#include <stdexcept>
+#include <exception>
 #include <vector>
 
 #include "coroutinefwd.h"

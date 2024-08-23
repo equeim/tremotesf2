@@ -10,7 +10,6 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QMessageBox>
-#include <QProxyStyle>
 #include <QRegularExpression>
 #include <QStringBuilder>
 #include <QTextCursor>

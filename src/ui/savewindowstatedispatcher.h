@@ -6,7 +6,6 @@
 #define TREMOTESF_SAVEWINDOWSTATEDISPATCHER_H
 
 #include <functional>
-#include <QCoreApplication>
 #include <QObject>
 
 class QWidget;
@@ -25,10 +24,8 @@ namespace tremotesf {
     class ApplicationQuitEventFilter : public QObject {
         Q_OBJECT
     public:
-        inline explicit ApplicationQuitEventFilter(QObject* parent = nullptr) : QObject(parent) {
-            qApp->installEventFilter(this);
-        };
-        inline ~ApplicationQuitEventFilter() override { qApp->removeEventFilter(this); }
+        explicit ApplicationQuitEventFilter(QObject* parent = nullptr);
+        ~ApplicationQuitEventFilter() override;
         bool eventFilter(QObject* watched, QEvent* event) override;
         bool isQuittingApplication{};
     };

@@ -6,11 +6,12 @@
 
 #include <cstdlib>
 #include <memory>
-#include <string_view>
 
 #if __has_include(<cxxabi.h>)
 #    include <cxxabi.h>
 #    define TREMOTESF_HAVE_CXXABI_H
+#else
+#    include <string_view>
 #endif
 
 namespace tremotesf::impl {

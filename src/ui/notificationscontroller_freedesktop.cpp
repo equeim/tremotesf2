@@ -7,7 +7,6 @@
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusPendingReply>
-#include <QPointer>
 #include <QUuid>
 
 #include "coroutines/dbus.h"

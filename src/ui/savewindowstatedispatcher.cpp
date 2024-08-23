@@ -5,6 +5,7 @@
 #include "savewindowstatedispatcher.h"
 
 #include <functional>
+
 #include <QApplication>
 #include <QWidget>
 
@@ -49,6 +50,12 @@ namespace tremotesf {
     }
 
 #if QT_VERSION_MAJOR >= 6
+    ApplicationQuitEventFilter::ApplicationQuitEventFilter(QObject* parent) : QObject(parent) {
+        qApp->installEventFilter(this);
+    }
+
+    ApplicationQuitEventFilter::~ApplicationQuitEventFilter() { qApp->removeEventFilter(this); }
+
     bool ApplicationQuitEventFilter::eventFilter(QObject*, QEvent* event) {
         if (event->type() == QEvent::Quit) {
             isQuittingApplication = true;

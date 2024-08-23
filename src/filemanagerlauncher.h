@@ -6,10 +6,9 @@
 #define TREMOTESF_FILEMANAGERLAUNCHER_H
 
 #include <optional>
-#include <utility>
 #include <vector>
+
 #include <QObject>
-#include <QPointer>
 #include <QString>
 
 class QWidget;

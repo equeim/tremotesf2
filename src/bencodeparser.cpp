@@ -15,7 +15,6 @@
 #include <fmt/format.h>
 
 #include "fileutils.h"
-#include "log/formatters.h"
 
 namespace tremotesf::bencode {
     namespace {

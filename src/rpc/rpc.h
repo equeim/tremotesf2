@@ -14,9 +14,17 @@
 #include <QObject>
 
 #include "coroutines/scope.h"
-#include "serversettings.h"
-#include "serverstats.h"
 #include "torrent.h"
+
+#ifdef Q_MOC_RUN
+#    include "serversettings.h"
+#    include "serverstats.h"
+#else
+namespace tremotesf {
+    class ServerSettings;
+    class ServerStats;
+}
+#endif
 
 namespace tremotesf {
     Q_NAMESPACE

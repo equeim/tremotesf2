@@ -8,7 +8,6 @@
 #include <QObject>
 #include <QStringList>
 
-#include "torrentfileparser.h"
 #include "rpc/rpc.h"
 #include "coroutines/scope.h"
 
@@ -20,6 +19,7 @@ class QString;
 class QSystemTrayIcon;
 
 namespace tremotesf {
+    class TorrentMetainfoFile;
 
     class MainWindowViewModel final : public QObject {
         Q_OBJECT

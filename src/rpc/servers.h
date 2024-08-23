@@ -15,6 +15,8 @@
 class QSettings;
 
 namespace tremotesf {
+    enum class PathOs;
+
     struct MountedDirectory {
         QString localPath{};
         QString remotePath{};
