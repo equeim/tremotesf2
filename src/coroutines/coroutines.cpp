@@ -49,8 +49,8 @@ namespace tremotesf::impl {
         return mParentCoroutineHandle;
     }
 
-    void CoroutinePromiseBase::abortNoParent() {
-        warning().log("No parent coroutine when completing coroutine {}", mCoroutineHandle.address());
+    void CoroutinePromiseBase::abortNoParent(std::coroutine_handle<> handle) {
+        warning().log("No parent coroutine when completing coroutine {}", handle.address());
         std::abort();
     }
 

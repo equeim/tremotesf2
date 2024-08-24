@@ -95,12 +95,11 @@ namespace tremotesf {
             }
 
         protected:
-            inline CoroutinePromiseBase(std::coroutine_handle<> handle) : mCoroutineHandle(handle) {}
+            inline CoroutinePromiseBase() = default;
 
             [[noreturn]]
-            void abortNoParent();
+            static void abortNoParent(std::coroutine_handle<> handle);
 
-            std::coroutine_handle<> mCoroutineHandle;
             std::coroutine_handle<> mParentCoroutineHandle{};
             std::variant<std::monostate, JustCompleteCancellation, std::function<void()>>
                 mChildAwaiterInterruptionCallback{};
@@ -112,12 +111,10 @@ namespace tremotesf {
         class CoroutinePromise final : public CoroutinePromiseBase {
         public:
             inline CoroutinePromise()
-                : CoroutinePromiseBase(std::coroutine_handle<CoroutinePromise<T>>::from_promise(*this)) {}
+                : mCoroutineHandle(std::coroutine_handle<CoroutinePromise<T>>::from_promise(*this)) {}
 
             // promise object contract begin
-            inline Coroutine<T> get_return_object() {
-                return Coroutine<T>(std::coroutine_handle<CoroutinePromise<T>>::from_promise(*this));
-            }
+            inline Coroutine<T> get_return_object() { return Coroutine<T>(mCoroutineHandle); }
             inline void return_value(const T& valueToReturn) { mValue = valueToReturn; }
             inline void return_value(T&& valueToReturn) { mValue = std::move(valueToReturn); }
             // promise object contract end
@@ -126,7 +123,7 @@ namespace tremotesf {
                 if (const auto handle = onPerformedFinalSuspendBase(); handle) {
                     return handle;
                 }
-                abortNoParent();
+                abortNoParent(mCoroutineHandle);
             }
 
             inline T takeValueOrRethrowException() {
@@ -138,15 +135,13 @@ namespace tremotesf {
             }
 
         private:
+            std::coroutine_handle<CoroutinePromise<T>> mCoroutineHandle;
             std::optional<T> mValue{};
         };
 
         template<>
         class CoroutinePromise<void> final : public CoroutinePromiseBase {
         public:
-            inline CoroutinePromise()
-                : CoroutinePromiseBase(std::coroutine_handle<CoroutinePromise<void>>::from_promise(*this)) {}
-
             // promise object contract begin
             inline Coroutine<void> get_return_object() {
                 return Coroutine<void>(std::coroutine_handle<CoroutinePromise<void>>::from_promise(*this));
