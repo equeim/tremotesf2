@@ -37,7 +37,7 @@ namespace tremotesf {
         int tier() const { return mTier; }
 
         Status status() const { return mStatus; };
-        QString errorMessage() const { return mErrorMessage; };
+        const QString& errorMessage() const { return mErrorMessage; };
 
         int peers() const { return mPeers; };
         int seeders() const { return mSeeders; }
