@@ -247,6 +247,7 @@ namespace tremotesf {
                 updateProperty(*key, i.value(), changed, firstTime, rpc);
             }
         }
+        applyTrackerErrorWorkaround(changed);
         return changed;
     }
 
@@ -264,6 +265,7 @@ namespace tremotesf {
                 updateProperty(*key, values[static_cast<QJsonArray::size_type>(i)], changed, firstTime, rpc);
             }
         }
+        applyTrackerErrorWorkaround(changed);
         return changed;
     }
 
@@ -448,6 +450,24 @@ namespace tremotesf {
             throw std::logic_error("UpdateKey::Count should not be mapped");
         }
         throw std::logic_error(fmt::format("Can't update key {}", static_cast<int>(intKey)));
+    }
+
+    void TorrentData::applyTrackerErrorWorkaround(bool& changed) {
+        // Sometimes Transmission doesn't propagate tracker error to the torrent's status
+        if (error != Error::None) {
+            return;
+        }
+        if (trackers.empty()) {
+            return;
+        }
+        // Only set error if *all* trackers have an error
+        if (std::ranges::any_of(trackers, [](const Tracker& tracker) { return tracker.errorMessage().isEmpty(); })) {
+            return;
+        }
+        // Set error from first tracker
+        error = Error::TrackerError;
+        errorString = trackers.front().errorMessage();
+        changed = true;
     }
 
     Torrent::Torrent(int id, const QJsonObject& object, Rpc* rpc, QObject* parent) : QObject(parent), mRpc(rpc) {

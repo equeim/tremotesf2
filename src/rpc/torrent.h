@@ -131,6 +131,7 @@ namespace tremotesf {
         void updateProperty(
             TorrentData::UpdateKey key, const QJsonValue& value, bool& changed, bool firstTime, const Rpc* rpc
         );
+        void applyTrackerErrorWorkaround(bool& changed);
     };
 
     class Torrent final : public QObject {

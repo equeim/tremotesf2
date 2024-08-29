@@ -15,9 +15,10 @@
   - Minimum cxxopts version is 3.1.1
   - Minimum gettext version is 0.21
 - Removed dependency on Qt Concurrent module
-- Notification portal is used for notification in Flatpak
 - Breeze is used as a fallback icon theme and should be installed as a runtime dependency
 - Clarified runtime dependency on Qt's SVG image format plugin
+- Notification portal is used for notification in Flatpak
+- Added workaround for Transmission not showing an error for torrent when all trackers have failed
 - Networking and some other async code is rewritten using C++ coroutines. Hopefully nothing is broken :)
 
 ### Fixed
