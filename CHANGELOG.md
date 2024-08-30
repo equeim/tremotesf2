@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.7.0] - 2024-08-31
 ### Added
 - Merging trackers when adding existing torrent
 - Add Torrent Link dialogs allows multiple links
@@ -17,7 +17,7 @@
 - Removed dependency on Qt Concurrent module
 - Breeze is used as a fallback icon theme and should be installed as a runtime dependency
 - Clarified runtime dependency on Qt's SVG image format plugin
-- Notification portal is used for notification in Flatpak
+- Notification portal is used for notifications in Flatpak
 - Added workaround for Transmission not showing an error for torrent when all trackers have failed
 - Networking and some other async code is rewritten using C++ coroutines. Hopefully nothing is broken :)
 

@@ -54,6 +54,26 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-08-31" version="2.7.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>Merging trackers when adding existing torrent</li>
+          <li>Add Torrent Link dialogs allows multiple links</li>
+          <li>"None" proxy option to bypass system proxy</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>Breeze is used as a fallback icon theme</li>
+          <li>Notification portal is used for notifications in Flatpak</li>
+          <li>Added workaround for Transmission not showing an error for torrent when all trackers have failed</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Mapping of mounted directories working incorrectly in some cases</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-04-22" version="2.6.3">
       <description>
         <p>Fixed</p>
