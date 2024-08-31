@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Dialog is shown when fatal error occurs on Windows
+
 ### Fixed
 - Performance regression on Windows (and potential performance improvements on other platforms)
 

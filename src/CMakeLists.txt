@@ -315,8 +315,8 @@ elseif (WIN32)
         ipc/ipcserver_socket.cpp
         ipc/ipcserver_socket.h
         startup/signalhandler_windows.cpp
-        startup/windowsmessagehandler.cpp
-        startup/windowsmessagehandler.h
+        startup/windowsfatalerrorhandlers.cpp
+        startup/windowsfatalerrorhandlers.h
         ui/darkthemeapplier_windows.h
         ui/darkthemeapplier_windows.cpp
         ui/notificationscontroller_fallback.cpp
@@ -340,6 +340,8 @@ if (WIN32)
         PRIVATE
         startup/main_windows.cpp
         startup/main_windows.h
+        startup/windowsmessagehandler.cpp
+        startup/windowsmessagehandler.h
         "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.rc"
     )
     if (MSVC)
@@ -347,6 +349,11 @@ if (WIN32)
     else ()
         target_sources(tremotesf PRIVATE tremotesf.manifest.rc)
     endif ()
+    if (MSVC)
+        # For C++23's std::stacktrace
+        set_source_files_properties(startup/windowsfatalerrorhandlers.cpp PROPERTIES COMPILE_OPTIONS "/std:c++latest")
+        target_link_options(tremotesf PRIVATE "/PDBALTPATH:%_PDB%")
+    endif()
     set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
 endif ()
 

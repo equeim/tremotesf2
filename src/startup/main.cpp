@@ -15,7 +15,6 @@
 
 #include "commandlineparser.h"
 #include "literals.h"
-#include "main_windows.h"
 #include "signalhandler.h"
 #include "target_os.h"
 #include "ipc/ipcclient.h"
@@ -23,6 +22,11 @@
 #include "ui/iconthemesetup.h"
 #include "ui/savewindowstatedispatcher.h"
 #include "ui/screens/mainwindow/mainwindow.h"
+
+#ifdef Q_OS_WIN
+#    include "main_windows.h"
+#    include "windowsfatalerrorhandlers.h"
+#endif
 
 #ifdef Q_OS_MACOS
 #    include <chrono>
@@ -118,13 +122,15 @@ int main(int argc, char** argv) {
     if (args.enableDebugLogs.has_value()) {
         overrideDebugLogs(*args.enableDebugLogs);
     }
+
+#ifdef Q_OS_WIN
+    windowsSetUpFatalErrorHandlers();
+    const WindowsLogger logger{};
+#endif
+
     if (tremotesfLoggingCategory().isDebugEnabled()) {
         debug().log("Debug logging is enabled");
     }
-
-#ifdef Q_OS_WIN
-    const WindowsLogger logger{};
-#endif
 
     // Setup handler for UNIX signals or Windows console handler
     const SignalHandler signalHandler{};
@@ -152,9 +158,9 @@ int main(int argc, char** argv) {
     // https://bugs.kde.org/show_bug.cgi?id=483439
     QCoreApplication::setQuitLockEnabled(false);
 
-    if constexpr (targetOs == TargetOs::Windows) {
-        windowsInitApplication();
-    }
+#ifdef Q_OS_WIN
+    windowsInitApplication();
+#endif
 
     setupIconTheme();
 

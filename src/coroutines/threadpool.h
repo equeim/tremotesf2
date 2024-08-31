@@ -13,6 +13,10 @@
 
 #include "coroutines.h"
 
+#ifdef Q_OS_WIN
+#    include "startup/windowsfatalerrorhandlers.h"
+#endif
+
 namespace tremotesf {
     namespace impl {
         template<std::invocable Function, typename T = std::invoke_result_t<Function>>
@@ -67,6 +71,9 @@ namespace tremotesf {
                     if (mSharedData->cancelled) {
                         return;
                     }
+#ifdef Q_OS_WIN
+                    windowsSetUpFatalErrorHandlersInThread();
+#endif
                     try {
                         mSharedData->result = mFunction();
                     } catch (...) {
