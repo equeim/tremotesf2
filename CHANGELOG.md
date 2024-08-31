@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Performance regression on Windows (and potential performance improvements on other platforms)
+
 ## [2.7.0] - 2024-08-31
 ### Added
 - Merging trackers when adding existing torrent

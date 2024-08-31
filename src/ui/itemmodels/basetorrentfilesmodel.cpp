@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QStyle>
 
+#include "desktoputils.h"
 #include "itemlistupdater.h"
 #include "formatutils.h"
 
@@ -38,9 +39,9 @@ namespace tremotesf {
         case Qt::DecorationRole:
             if (column == Column::Name) {
                 if (entry->isDirectory()) {
-                    return qApp->style()->standardIcon(QStyle::SP_DirIcon);
+                    return desktoputils::standardDirIcon();
                 }
-                return qApp->style()->standardIcon(QStyle::SP_FileIcon);
+                return desktoputils::standardFileIcon();
             }
             break;
         case Qt::DisplayRole:

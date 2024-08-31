@@ -5,8 +5,8 @@
 #ifndef TREMOTESF_DESKTOPUTILS_H
 #define TREMOTESF_DESKTOPUTILS_H
 
-#include <QString>
-
+class QIcon;
+class QString;
 class QTextDocument;
 class QWidget;
 
@@ -24,7 +24,10 @@ namespace tremotesf::desktoputils {
         StalledDownloadingIcon,
         StalledSeedingIcon
     };
-    QString statusIconPath(StatusIcon icon);
+    const QIcon& statusIcon(StatusIcon icon);
+
+    const QIcon& standardFileIcon();
+    const QIcon& standardDirIcon();
 
     void openFile(const QString& filePath, QWidget* parent = nullptr);
 

@@ -17,6 +17,8 @@
 #include "ui/screens/mainwindow/downloaddirectoriesmodel.h"
 #include "torrentsproxymodel.h"
 
+#include "desktoputils.h"
+
 namespace tremotesf {
     QVariant DownloadDirectoriesModel::data(const QModelIndex& index, int role) const {
         if (!index.isValid()) {
@@ -26,8 +28,9 @@ namespace tremotesf {
         switch (role) {
         case DirectoryRole:
             return item.directory;
-        case Qt::DecorationRole:
-            return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
+        case Qt::DecorationRole: {
+            return desktoputils::standardDirIcon();
+        }
         case Qt::DisplayRole:
         case Qt::ToolTipRole:
             if (item.directory.isEmpty()) {

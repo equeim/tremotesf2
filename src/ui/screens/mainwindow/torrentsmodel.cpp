@@ -33,27 +33,27 @@ namespace tremotesf {
             if (static_cast<Column>(index.column()) == Column::Name) {
                 using namespace desktoputils;
                 if (torrent->data().error != TorrentData::Error::None) {
-                    return QIcon(statusIconPath(ErroredIcon));
+                    return statusIcon(ErroredIcon);
                 }
                 switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
-                    return QIcon(statusIconPath(PausedIcon));
+                    return statusIcon(PausedIcon);
                 case TorrentData::Status::Seeding:
                     if (torrent->data().isSeedingStalled()) {
-                        return QIcon(statusIconPath(StalledSeedingIcon));
+                        return statusIcon(StalledSeedingIcon);
                     }
-                    return QIcon(statusIconPath(SeedingIcon));
+                    return statusIcon(SeedingIcon);
                 case TorrentData::Status::Downloading:
                     if (torrent->data().isDownloadingStalled()) {
-                        return QIcon(statusIconPath(StalledDownloadingIcon));
+                        return statusIcon(StalledDownloadingIcon);
                     }
-                    return QIcon(statusIconPath(DownloadingIcon));
+                    return statusIcon(DownloadingIcon);
                 case TorrentData::Status::QueuedForDownloading:
                 case TorrentData::Status::QueuedForSeeding:
-                    return QIcon(statusIconPath(QueuedIcon));
+                    return statusIcon(QueuedIcon);
                 case TorrentData::Status::Checking:
                 case TorrentData::Status::QueuedForChecking:
-                    return QIcon(statusIconPath(CheckingIcon));
+                    return statusIcon(CheckingIcon);
                 }
             }
             break;
