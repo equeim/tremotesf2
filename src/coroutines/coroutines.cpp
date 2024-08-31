@@ -50,8 +50,8 @@ namespace tremotesf::impl {
     }
 
     void CoroutinePromiseBase::abortNoParent(std::coroutine_handle<> handle) {
-        warning().log("No parent coroutine when completing coroutine {}", handle.address());
-        std::abort();
+        fatal().log("No parent coroutine when completing coroutine {}", handle.address());
+        Q_UNREACHABLE();
     }
 
     std::coroutine_handle<> CoroutinePromise<void>::onPerformedFinalSuspend() {

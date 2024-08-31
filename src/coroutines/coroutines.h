@@ -277,10 +277,10 @@ namespace tremotesf {
     }
 }
 
-#define cancelCoroutine()                                         \
-    do {                                                          \
-        co_await tremotesf::impl::CancellationAwaiter{};          \
-        std::abort(); /* CancellationAwaiter must never resume */ \
+#define cancelCoroutine()                                                                  \
+    do {                                                                                   \
+        co_await tremotesf::impl::CancellationAwaiter{};                                   \
+        qFatal("CancellationAwaiter resumed"); /* CancellationAwaiter must never resume */ \
     } while (false);
 
 #endif // TREMOTESF_COROUTINES_H

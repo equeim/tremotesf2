@@ -191,6 +191,10 @@ namespace tremotesf {
         return Logger(QtWarningMsg, location);
     }
 
+    ALWAYS_INLINE consteval Logger fatal(std::source_location location = std::source_location::current()) {
+        return Logger(QtFatalMsg, location);
+    }
+
     template<typename T>
     ALWAYS_INLINE void printlnStdout(const T& value) {
         fmt::print(stdout, fmt::format_string<const T&>(impl::singleArgumentFormatString), value);

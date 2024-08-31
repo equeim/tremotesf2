@@ -48,8 +48,8 @@ namespace tremotesf::impl {
         }
         const auto found = std::ranges::find_if(mCoroutines, [coroutine](auto& c) { return &c == coroutine; });
         if (found == mCoroutines.end()) {
-            warning().log("Did not find completed coroutine {} in MultipleCoroutinesAwaiter", coroutine->address());
-            std::abort();
+            fatal().log("Did not find completed coroutine {} in MultipleCoroutinesAwaiter", coroutine->address());
+            Q_UNREACHABLE();
         }
         mCoroutines.erase(found);
         if (mCancellingCoroutines) {

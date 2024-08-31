@@ -27,6 +27,7 @@
 #include "literals.h"
 #include "log/log.h"
 #include "windowshelpers.h"
+#include "windowsfatalerrorhandlers.h"
 
 namespace fs = std::filesystem;
 
@@ -94,6 +95,8 @@ namespace tremotesf {
 
         private:
             void writeMessagesToFile() {
+                windowsSetUpFatalErrorHandlersInThread();
+
                 debug().log("FileLogger: started write thread");
 
                 auto finishGuard = QScopeGuard([this] {
@@ -171,14 +174,14 @@ namespace tremotesf {
 
         std::unique_ptr<FileLogger> globalFileLogger{};
 
-        [[maybe_unused]] void releaseMessageHandler(QString&& message) {
+        [[maybe_unused]] void releaseMessageHandler(QString message) {
             writeToDebugger(getCWString(message));
             if (globalFileLogger) {
                 globalFileLogger->logMessage(std::move(message));
             }
         }
 
-        [[maybe_unused]] void debugMessageHandler(QString&& message) {
+        [[maybe_unused]] void debugMessageHandler(const QString& message) {
             const auto wstr = getCWString(message);
             writeToDebugger(wstr);
             static const auto stderrHandle = GetStdHandle(STD_ERROR_HANDLE);
@@ -197,13 +200,23 @@ namespace tremotesf {
             }
         }
 
-        void windowsMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
-            QString formatted = qFormatLogMessage(type, context, message);
+        void callReleaseOrDebugHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
+            const QString formatted = qFormatLogMessage(type, context, message);
 #ifdef NDEBUG
-            releaseMessageHandler(std::move(formatted));
+            releaseMessageHandler(formatted);
 #else
-            debugMessageHandler(std::move(formatted));
+            debugMessageHandler(formatted);
 #endif
+        }
+
+        void windowsMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
+            if (type == QtFatalMsg) {
+                std::string report = makeFatalErrorReportFromLogMessage(message, context);
+                callReleaseOrDebugHandler(type, context, QString::fromStdString(report));
+                showFatalErrorReportInDialog(std::move(report));
+                std::abort();
+            }
+            callReleaseOrDebugHandler(type, context, message);
         }
     }
 
