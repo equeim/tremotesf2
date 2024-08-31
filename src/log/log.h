@@ -7,6 +7,7 @@
 
 #include <concepts>
 #include <type_traits>
+#include <string>
 #include <source_location>
 
 #include <QLoggingCategory>
@@ -82,6 +83,12 @@ namespace tremotesf {
 
     void overrideDebugLogs(bool enable);
 
+    std::string formatExceptionRecursively(const std::exception& e);
+    std::string formatExceptionRecursively(const std::system_error& e);
+#ifdef Q_OS_WIN
+    std::string formatExceptionRecursively(const winrt::hresult_error& e);
+#endif
+
     struct Logger {
         ALWAYS_INLINE consteval explicit Logger(QtMsgType type, std::source_location location)
             : type(type),
@@ -134,11 +141,11 @@ namespace tremotesf {
         template<impl::IsException E, typename T>
         ALWAYS_INLINE void logWithException(const E& e, const T& value) const {
             if (isEnabled()) {
+                const auto formattedException = formatExceptionRecursively(e);
                 logWithFormatArgs(
-                    fmt::format_string<const T&>(impl::singleArgumentFormatString),
-                    fmt::make_format_args(value)
+                    fmt::format_string<const T&, const std::string&>("{}\n{}"),
+                    fmt::make_format_args(value, formattedException)
                 );
-                logExceptionRecursivelyWrapper(e);
             }
         }
 
@@ -146,14 +153,21 @@ namespace tremotesf {
             requires(sizeof...(Args) != 0)
         ALWAYS_INLINE void logWithException(const E& e, fmt::format_string<Args...> fmt, const Args&... args) const {
             if (isEnabled()) {
-                logWithFormatArgs(fmt, fmt::make_format_args(args...));
-                logExceptionRecursivelyWrapper(e);
+                auto message = formatToQString(fmt, fmt::make_format_args(args...));
+                message += '\n';
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+                message += formatExceptionRecursively(e);
+#else
+                message += formatExceptionRecursively(e).c_str();
+#endif
+                logImpl(message);
             }
         }
 
     private:
         ALWAYS_INLINE bool isEnabled() const { return tremotesfLoggingCategory().isEnabled(type); }
 
+        static QString formatToQString(fmt::string_view fmt, fmt::format_args args);
         void logWithFormatArgs(fmt::string_view fmt, fmt::format_args args) const;
 
         /**
@@ -161,33 +175,9 @@ namespace tremotesf {
          */
         void logImpl(const QString& string) const;
 
-        template<impl::IsException E>
-        ALWAYS_INLINE void logExceptionRecursivelyWrapper(const E& e) const {
-            if constexpr (std::derived_from<std::remove_cvref_t<E>, std::system_error>) {
-                logExceptionRecursively(static_cast<const std::system_error&>(e));
-            }
-#ifdef Q_OS_WIN
-            else if constexpr (std::derived_from<std::remove_cvref_t<E>, winrt::hresult_error>) {
-                logExceptionRecursively(static_cast<const winrt::hresult_error&>(e));
-            }
-#endif
-            else {
-                logExceptionRecursively(static_cast<const std::exception&>(e));
-            }
-        }
-
-        template<impl::IsException E>
-        void logExceptionRecursively(const E& e) const;
-
         QtMsgType type;
         QMessageLogContext context;
     };
-
-    extern template void Logger::logExceptionRecursively<std::exception>(const std::exception&) const;
-    extern template void Logger::logExceptionRecursively<std::system_error>(const std::system_error&) const;
-#ifdef Q_OS_WIN
-    extern template void Logger::logExceptionRecursively<winrt::hresult_error>(const winrt::hresult_error&) const;
-#endif
 
     ALWAYS_INLINE consteval Logger debug(std::source_location location = std::source_location::current()) {
         return Logger(QtDebugMsg, location);
