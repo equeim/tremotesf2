@@ -25,20 +25,21 @@ namespace tremotesf {
             return item.filter;
         case Qt::DecorationRole:
             switch (item.filter) {
-            case TorrentsProxyModel::All:
-                return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
+            case TorrentsProxyModel::All: {
+                return desktoputils::standardDirIcon();
+            }
             case TorrentsProxyModel::Active:
-                return QIcon(desktoputils::statusIconPath(desktoputils::ActiveIcon));
+                return desktoputils::statusIcon(desktoputils::ActiveIcon);
             case TorrentsProxyModel::Downloading:
-                return QIcon(desktoputils::statusIconPath(desktoputils::DownloadingIcon));
+                return desktoputils::statusIcon(desktoputils::DownloadingIcon);
             case TorrentsProxyModel::Seeding:
-                return QIcon(desktoputils::statusIconPath(desktoputils::SeedingIcon));
+                return desktoputils::statusIcon(desktoputils::SeedingIcon);
             case TorrentsProxyModel::Paused:
-                return QIcon(desktoputils::statusIconPath(desktoputils::PausedIcon));
+                return desktoputils::statusIcon(desktoputils::PausedIcon);
             case TorrentsProxyModel::Checking:
-                return QIcon(desktoputils::statusIconPath(desktoputils::CheckingIcon));
+                return desktoputils::statusIcon(desktoputils::CheckingIcon);
             case TorrentsProxyModel::Errored:
-                return QIcon(desktoputils::statusIconPath(desktoputils::ErroredIcon));
+                return desktoputils::statusIcon(desktoputils::ErroredIcon);
             default:
                 break;
             }

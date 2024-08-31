@@ -9,14 +9,18 @@
 #include <QApplication>
 #include <QDesktopServices>
 #include <QDir>
+#include <QIcon>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QStringBuilder>
+#include <QStyle>
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <QTextDocument>
 #include <QTextDocumentFragment>
 #include <QUrl>
+
+#include <fmt/format.h>
 
 #include "literals.h"
 #include "log/log.h"
@@ -24,29 +28,60 @@
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf::desktoputils {
-    QString statusIconPath(StatusIcon icon) {
+    const QIcon& statusIcon(StatusIcon icon) {
         switch (icon) {
-        case ActiveIcon:
-            return ":/active.svg"_l1;
-        case CheckingIcon:
-            return ":/checking.svg"_l1;
-        case DownloadingIcon:
-            return ":/downloading.svg"_l1;
-        case ErroredIcon:
-            return ":/errored.svg"_l1;
-        case PausedIcon:
-            return ":/paused.svg"_l1;
-        case QueuedIcon:
-            return ":/queued.svg"_l1;
-        case SeedingIcon:
-            return ":/seeding.svg"_l1;
-        case StalledDownloadingIcon:
-            return ":/stalled-downloading.svg"_l1;
-        case StalledSeedingIcon:
-            return ":/stalled-seeding.svg"_l1;
+        case ActiveIcon: {
+            static const QIcon icon(":/active.svg"_l1);
+            return icon;
+        }
+        case CheckingIcon: {
+            static const QIcon icon(":/checking.svg"_l1);
+            return icon;
+        }
+        case DownloadingIcon: {
+            static const QIcon icon(":/downloading.svg"_l1);
+            return icon;
+        }
+        case ErroredIcon: {
+            static const QIcon icon(":/errored.svg"_l1);
+            return icon;
+        }
+        case PausedIcon: {
+            static const QIcon icon(":/paused.svg"_l1);
+            return icon;
+        }
+        case QueuedIcon: {
+            static const QIcon icon(":/queued.svg"_l1);
+            return icon;
+        }
+        case SeedingIcon: {
+            static const QIcon icon(":/seeding.svg"_l1);
+            return icon;
+        }
+        case StalledDownloadingIcon: {
+            static const QIcon icon(":/stalled-downloading.svg"_l1);
+            return icon;
         }
 
-        return {};
+        case StalledSeedingIcon: {
+            static QIcon icon(":/stalled-seeding.svg"_l1);
+            return icon;
+        }
+        }
+
+        throw std::logic_error(
+            fmt::format("Unknown StatusIcon value {}", static_cast<std::underlying_type_t<StatusIcon>>(icon))
+        );
+    }
+
+    const QIcon& standardFileIcon() {
+        static const auto icon = qApp->style()->standardIcon(QStyle::SP_FileIcon);
+        return icon;
+    }
+
+    const QIcon& standardDirIcon() {
+        static const auto icon = qApp->style()->standardIcon(QStyle::SP_DirIcon);
+        return icon;
     }
 
     void openFile(const QString& filePath, QWidget* parent) {
