@@ -19,7 +19,7 @@
 #    include <QUtf8StringView>
 #endif
 
-#if __has_include(<fmt/base.h>)
+#if FMT_VERSION_MAJOR >= 11
 #    include <fmt/base.h>
 #else
 #    include <fmt/core.h>

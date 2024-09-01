@@ -213,6 +213,7 @@ target_compile_definitions(
     TREMOTESF_APP_ID="org.equeim.Tremotesf"
     TREMOTESF_APP_NAME="${TREMOTESF_APP_NAME}"
     TREMOTESF_VERSION="${PROJECT_VERSION}"
+    FMT_VERSION_MAJOR=${fmt_VERSION_MAJOR}
 )
 if (registrable_domain_qt)
     target_compile_definitions(tremotesf_objects PUBLIC TREMOTESF_REGISTRABLE_DOMAIN_QT)
