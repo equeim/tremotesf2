@@ -22,6 +22,7 @@
       "inherits": "base",
       "hidden": true,
       "cacheVariables": {
+        "TREMOTESF_QT6": "ON",
         "TREMOTESF_WITH_HTTPLIB": "system",
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
         "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-buildtrees-after-build;--clean-packages-after-build",
@@ -43,11 +44,9 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "TREMOTESF_QT6": "ON",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static",
         "VCPKG_HOST_TRIPLET": "x64-windows-static"
       },
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "hostOS": [
@@ -73,9 +72,6 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
-      },
-      "cacheVariables": {
-        "TREMOTESF_QT6": "ON"
       }
     },
     {
