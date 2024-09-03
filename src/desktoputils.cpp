@@ -31,41 +31,41 @@ namespace tremotesf::desktoputils {
     const QIcon& statusIcon(StatusIcon icon) {
         switch (icon) {
         case ActiveIcon: {
-            static const QIcon icon(":/active.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/active.svg"_l1);
+            return qicon;
         }
         case CheckingIcon: {
-            static const QIcon icon(":/checking.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/checking.svg"_l1);
+            return qicon;
         }
         case DownloadingIcon: {
-            static const QIcon icon(":/downloading.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/downloading.svg"_l1);
+            return qicon;
         }
         case ErroredIcon: {
-            static const QIcon icon(":/errored.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/errored.svg"_l1);
+            return qicon;
         }
         case PausedIcon: {
-            static const QIcon icon(":/paused.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/paused.svg"_l1);
+            return qicon;
         }
         case QueuedIcon: {
-            static const QIcon icon(":/queued.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/queued.svg"_l1);
+            return qicon;
         }
         case SeedingIcon: {
-            static const QIcon icon(":/seeding.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/seeding.svg"_l1);
+            return qicon;
         }
         case StalledDownloadingIcon: {
-            static const QIcon icon(":/stalled-downloading.svg"_l1);
-            return icon;
+            static const QIcon qicon(":/stalled-downloading.svg"_l1);
+            return qicon;
         }
 
         case StalledSeedingIcon: {
-            static QIcon icon(":/stalled-seeding.svg"_l1);
-            return icon;
+            static QIcon qicon(":/stalled-seeding.svg"_l1);
+            return qicon;
         }
         }
 
