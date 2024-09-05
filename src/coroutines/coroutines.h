@@ -62,8 +62,6 @@ namespace tremotesf {
     };
 
     namespace impl {
-        class CoroutinePromiseFinalSuspendAwaiter;
-
         class CoroutinePromiseBase {
         public:
             inline ~CoroutinePromiseBase() = default;
@@ -71,7 +69,6 @@ namespace tremotesf {
 
             // promise object contract begin
             inline std::suspend_always initial_suspend() { return {}; }
-            inline CoroutinePromiseFinalSuspendAwaiter final_suspend() noexcept;
             inline void unhandled_exception() { mUnhandledException = std::current_exception(); }
             // promise object contract end
 
@@ -87,7 +84,6 @@ namespace tremotesf {
             inline void setOwningStandaloneCoroutine(StandaloneCoroutine* root) { mOwningStandaloneCoroutine = root; }
             void setParentCoroutineHandle(std::coroutine_handle<> parentCoroutineHandle);
 
-            std::coroutine_handle<> onPerformedFinalSuspendBase();
             void rethrowException() {
                 if (mUnhandledException) {
                     std::rethrow_exception(mUnhandledException);
@@ -97,14 +93,30 @@ namespace tremotesf {
         protected:
             inline CoroutinePromiseBase() = default;
 
-            [[noreturn]]
-            static void abortNoParent(std::coroutine_handle<> handle);
+            [[noreturn]] static void abortNoParent(std::coroutine_handle<> handle);
 
             std::coroutine_handle<> mParentCoroutineHandle{};
             std::variant<std::monostate, JustCompleteCancellation, std::function<void()>>
                 mChildAwaiterInterruptionCallback{};
             std::exception_ptr mUnhandledException{};
             StandaloneCoroutine* mOwningStandaloneCoroutine{};
+        };
+
+        class CoroutinePromiseFinalSuspendAwaiter final {
+        public:
+            explicit CoroutinePromiseFinalSuspendAwaiter(std::coroutine_handle<> parentCoroutine)
+                : mParentCoroutine(std::move(parentCoroutine)) {}
+
+            // If there is no parent coroutine then await_ready returns false which causes our coroutine to be destroyed
+            // Otherwise control is transferred to parent coroutine, which destroys CoroutineAwaiter and therefore our coroutine
+
+            inline bool await_ready() noexcept { return !mParentCoroutine; }
+
+            std::coroutine_handle<> await_suspend(std::coroutine_handle<>) noexcept { return mParentCoroutine; }
+            inline void await_resume() noexcept {}
+
+        private:
+            std::coroutine_handle<> mParentCoroutine;
         };
 
         template<CoroutineReturnValue T>
@@ -117,14 +129,13 @@ namespace tremotesf {
             inline Coroutine<T> get_return_object() { return Coroutine<T>(mCoroutineHandle); }
             inline void return_value(const T& valueToReturn) { mValue = valueToReturn; }
             inline void return_value(T&& valueToReturn) { mValue = std::move(valueToReturn); }
-            // promise object contract end
-
-            inline std::coroutine_handle<> onPerformedFinalSuspend() {
-                if (const auto handle = onPerformedFinalSuspendBase(); handle) {
-                    return handle;
+            inline CoroutinePromiseFinalSuspendAwaiter final_suspend() noexcept {
+                if (mParentCoroutineHandle) {
+                    return CoroutinePromiseFinalSuspendAwaiter(mParentCoroutineHandle);
                 }
                 abortNoParent(mCoroutineHandle);
             }
+            // promise object contract end
 
             inline T takeValueOrRethrowException() {
                 rethrowException();
@@ -147,25 +158,19 @@ namespace tremotesf {
                 return Coroutine<void>(std::coroutine_handle<CoroutinePromise<void>>::from_promise(*this));
             }
             inline void return_void() {}
+            inline CoroutinePromiseFinalSuspendAwaiter final_suspend() noexcept {
+                if (mParentCoroutineHandle) {
+                    return CoroutinePromiseFinalSuspendAwaiter(mParentCoroutineHandle);
+                }
+                invokeCompletionCallbackForStandaloneCoroutine();
+                return CoroutinePromiseFinalSuspendAwaiter(nullptr);
+            }
             // promise object contract end
 
-            std::coroutine_handle<> onPerformedFinalSuspend();
+            void invokeCompletionCallbackForStandaloneCoroutine();
 
             inline void takeValueOrRethrowException() { rethrowException(); }
         };
-
-        class CoroutinePromiseFinalSuspendAwaiter final {
-        public:
-            inline bool await_ready() noexcept { return false; }
-
-            template<std::derived_from<CoroutinePromiseBase> Promise>
-            inline std::coroutine_handle<> await_suspend(std::coroutine_handle<Promise> handle) noexcept {
-                return handle.promise().onPerformedFinalSuspend();
-            }
-            inline void await_resume() noexcept {}
-        };
-
-        CoroutinePromiseFinalSuspendAwaiter CoroutinePromiseBase::final_suspend() noexcept { return {}; }
 
         template<CoroutineReturnValue T>
         class CoroutineAwaiter final {
@@ -205,8 +210,7 @@ namespace tremotesf {
         };
 
         template<typename Promise>
-        [[nodiscard]]
-        bool startAwaiting(std::coroutine_handle<Promise> handle) {
+        [[nodiscard]] bool startAwaiting(std::coroutine_handle<Promise> handle) {
             if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
                 auto& promise = handle.promise();
                 return promise.onStartedAwaiting(CoroutinePromiseBase::JustCompleteCancellation{});
@@ -241,12 +245,10 @@ namespace tremotesf {
             void cancel();
             bool completeCancellation();
 
-            inline void invokeCompletionCallback(std::exception_ptr&& unhandledException) {
-                mCompletionCallback(std::move(unhandledException));
-            }
-            inline void setCompletionCallback(std::function<void(std::exception_ptr)>&& callback) {
-                mCompletionCallback = std::move(callback);
-            }
+            void invokeCompletionCallback(
+                std::exception_ptr&& unhandledException, bool coroutineWillBeDestroyedAutomatically
+            );
+            void setCompletionCallback(std::function<void(std::exception_ptr)>&& callback);
 
         private:
             Coroutine<void> mCoroutine;

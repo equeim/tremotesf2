@@ -42,24 +42,16 @@ namespace tremotesf::impl {
         return true;
     }
 
-    std::coroutine_handle<> CoroutinePromiseBase::onPerformedFinalSuspendBase() {
-        if (mOwningStandaloneCoroutine->completeCancellation()) {
-            return std::noop_coroutine();
-        }
-        return mParentCoroutineHandle;
-    }
-
     void CoroutinePromiseBase::abortNoParent(std::coroutine_handle<> handle) {
         fatal().log("No parent coroutine when completing coroutine {}", handle.address());
         Q_UNREACHABLE();
     }
 
-    std::coroutine_handle<> CoroutinePromise<void>::onPerformedFinalSuspend() {
-        if (const auto handle = onPerformedFinalSuspendBase(); handle) {
-            return handle;
-        }
-        mOwningStandaloneCoroutine->invokeCompletionCallback(std::move(mUnhandledException));
-        return std::noop_coroutine();
+    void CoroutinePromise<void>::invokeCompletionCallbackForStandaloneCoroutine() {
+        // Completion callback will destroy Coroutine<> object, but coroutine itself will be destroyed later by compiler's injected machinery
+        // because CoroutinePromiseFinalSuspendAwaiter::await_ready will return false
+        // Pass true for coroutineWillBeDestroyedAutomatically parameter here so that Coroutine<>'s destructor won't destroy coroutine resulting in double free
+        mOwningStandaloneCoroutine->invokeCompletionCallback(std::move(mUnhandledException), true);
     }
 
     void StandaloneCoroutine::cancel() {
@@ -76,11 +68,24 @@ namespace tremotesf::impl {
             return false;
         case CancellationState::Cancelling:
             mCancellationState = CancellationState::Cancelled;
-            invokeCompletionCallback({});
+            invokeCompletionCallback({}, false);
             return true;
         case CancellationState::Cancelled:
             return true;
         }
         return false;
+    }
+
+    void StandaloneCoroutine::invokeCompletionCallback(
+        std::exception_ptr&& unhandledException, bool coroutineWillBeDestroyedAutomatically
+    ) {
+        if (coroutineWillBeDestroyedAutomatically) {
+            mCoroutine.mHandle = nullptr;
+        }
+        mCompletionCallback(std::move(unhandledException));
+    }
+
+    void StandaloneCoroutine::setCompletionCallback(std::function<void(std::exception_ptr)>&& callback) {
+        mCompletionCallback = std::move(callback);
     }
 }
