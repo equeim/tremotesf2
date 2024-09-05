@@ -189,7 +189,10 @@
     {
       "name": "base",
       "displayName": "Base",
-      "hidden": true
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      }
     },
     {
       "name": "base-debug",
