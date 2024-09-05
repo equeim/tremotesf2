@@ -80,8 +80,10 @@
             "builddir": true,
             "build-options": {
                 "env": {
-                    "CTEST_OUTPUT_ON_FAILURE": "1"
-                }
+                    "CTEST_OUTPUT_ON_FAILURE": "1",
+                    "ASAN_OPTIONS": "detect_leaks=0"
+                },
+                "cxxflags": "-fsanitize=address"
             },
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",

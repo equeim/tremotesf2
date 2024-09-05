@@ -49,6 +49,8 @@ jobs:
       with:
         cmake-arguments: --preset ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-vcpkg' || 'windows-msvc-vcpkg' }} -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed
         package: true
+      env:
+        CXXFLAGS: ${{ inputs.release-tag == '' && inputs.build-with-msvc-clang-toolchain == 'false' && '/fsanitize=address /D_DISABLE_VECTOR_ANNOTATION /D_DISABLE_STRING_ANNOTATION' || '' }}
 
     - name: Archive packages
       if: inputs.release-tag == ''
