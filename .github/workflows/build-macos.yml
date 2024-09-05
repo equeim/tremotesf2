@@ -49,6 +49,9 @@ jobs:
         with:
           cmake-arguments: --preset macos-${{ matrix.architecture }}-vcpkg
           package: true
+        env:
+          CXXFLAGS: ${{ inputs.release-tag == '' && '-fsanitize=address' || '' }}
+          ASAN_OPTIONS: detect_leaks=0
 
       - name: Archive packages
         if: inputs.release-tag == ''

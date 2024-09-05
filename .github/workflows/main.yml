@@ -127,7 +127,7 @@ jobs:
 
     - name: Build DEB
       run: |
-        dpkg-buildpackage
+        DEB_BUILD_OPTIONS=sanitize=+address ASAN_OPTIONS=detect_leaks=0 dpkg-buildpackage
 
     - name: Install DEB
       run: |
@@ -208,6 +208,7 @@ jobs:
       run: |
           set -e -o pipefail
           echo '::group::Configuring CMake'
+          # Not enabling ASAN here since it causes linker crash
           cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB=bundled
           echo '::endgroup'
           echo '::group::Building Debug'
