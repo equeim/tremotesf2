@@ -69,8 +69,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.16.3.tar.gz",
-                    "sha256": "c1742fc7179aaae2a67ad9bba0740b7e9ffaf4f5e62feef53101ecdef1478716"
+                    "url": "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.17.2.tar.gz",
+                    "sha256": "c1234649a9198d04c42178bc434b51032b75cf295005bcfd040410267c1a75f1"
                 }
             ]
         },
