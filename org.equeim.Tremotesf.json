@@ -82,13 +82,13 @@
                 "env": {
                     "CTEST_OUTPUT_ON_FAILURE": "1",
                     "ASAN_OPTIONS": "detect_leaks=0"
-                },
-                "cxxflags": "-fsanitize=address"
+                }
             },
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
-                "-DTREMOTESF_WITH_HTTPLIB=system"
+                "-DTREMOTESF_WITH_HTTPLIB=system",
+                "-DTREMOTESF_ASAN=ON"
             ],
             "run-tests": true,
             "sources": [

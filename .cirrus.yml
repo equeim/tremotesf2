@@ -29,7 +29,7 @@ build_freebsd_task:
     else
         httplib=none
     fi
-    CXXFLAGS=-fsanitize=address cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib"
+    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib" -D TREMOTESF_ASAN=ON
     echo 'Building Debug'
     cmake --build --preset base-debug
     echo 'Testing Debug'
