@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Dialog is shown when fatal error occurs on Windows
+- TREMOTESF_ASAN CMake option to build with AddressSanitizer (off by default)
 
 ### Fixed
 - Performance regression on Windows (and potential performance improvements on other platforms)

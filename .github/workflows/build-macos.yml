@@ -47,10 +47,9 @@ jobs:
         id: build
         uses: equeim/action-cmake-build@v10
         with:
-          cmake-arguments: --preset macos-${{ matrix.architecture }}-vcpkg
+          cmake-arguments: --preset macos-${{ matrix.architecture }}-vcpkg -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && 'ON' || 'OFF' }}
           package: true
         env:
-          CXXFLAGS: ${{ inputs.release-tag == '' && '-fsanitize=address' || '' }}
           ASAN_OPTIONS: detect_leaks=0
 
       - name: Archive packages
