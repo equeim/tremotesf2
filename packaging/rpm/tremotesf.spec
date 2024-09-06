@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+%bcond asan 0
+
 %global app_id org.equeim.Tremotesf
 
 %if %{defined suse_version} || 0%{?fedora} >= 40
@@ -47,17 +49,23 @@ BuildRequires: openssl-devel
 %if %{defined fedora}
 BuildRequires: cmake(httplib)
 BuildRequires: libappstream-glib
-%if "%{toolchain}" == "clang"
+  %if "%{toolchain}" == "clang"
 BuildRequires: clang
-%else
+    %if %{with asan}
+BuildRequires: compiler-rt
+    %endif
+  %else
 BuildRequires: gcc-c++
-%endif
+    %if %{with asan}
+BuildRequires: libasan
+    %endif
+  %endif
 Requires: qt%{qt_version}-qtsvg
 Requires: breeze-icon-theme
-%if %{qt_version} == 5
+  %if %{qt_version} == 5
 Requires: kwayland-integration
-%endif
-%global tremotesf_with_httplib system
+  %endif
+  %global tremotesf_with_httplib system
 %endif
 
 %if %{defined suse_version}
@@ -90,10 +98,11 @@ Remote GUI for Transmission BitTorrent client.
 
 
 %build
-%cmake -D TREMOTESF_QT6=%[%{qt_version} == 6 ? "ON" : "OFF"] -D TREMOTESF_WITH_HTTPLIB=%{tremotesf_with_httplib}
+%cmake -D TREMOTESF_QT6=%[%{qt_version} == 6 ? "ON" : "OFF"] -D TREMOTESF_WITH_HTTPLIB=%{tremotesf_with_httplib} -D TREMOTESF_ASAN=%{with asan}
 %cmake_build
 
 %check
+export ASAN_OPTIONS=detect_leaks=0
 %ctest
 
 %install
