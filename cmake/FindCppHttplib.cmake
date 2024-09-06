@@ -8,8 +8,8 @@ macro(find_system_httplib)
     # httplib breaks backwards compatibility on each minor version (i.e. seconds component).
     # With CMake we need to make separate find_package() calls for each version,
     # with pkg-config we can specify range
-    set(httplib_supported_versions 0.16 0.15 0.14 0.13 0.12 0.11)
-    set(httplib_next_unsupported_version 0.17)
+    set(httplib_supported_versions 0.17 0.16 0.15 0.14 0.13 0.12 0.11)
+    set(httplib_next_unsupported_version 0.18)
     foreach (version ${httplib_supported_versions})
         message(STATUS "Trying cpp-httplib ${version} as a CMake package")
         find_package(httplib "${version}" QUIET)
