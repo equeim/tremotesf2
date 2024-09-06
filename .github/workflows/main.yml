@@ -62,7 +62,7 @@ jobs:
 
     - name: Install build dependencies
       run: |
-        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} -q --srpm --qf '[%{REQUIRES}\n]' packaging/rpm/tremotesf.spec)
+        readarray -t dependencies < <(rpmspec ${{steps.fedora-compiler.outputs.rpm-macro}} --define 'with_asan 1' -q --srpm --qf '[%{REQUIRES}\n]' packaging/rpm/tremotesf.spec)
         ${{env.INSTALL_PACKAGES}} "${dependencies[@]}"
 
     - name: Make source archive
@@ -76,7 +76,7 @@ jobs:
 
     - name: Build RPM
       run: |
-        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb packaging/rpm/tremotesf.spec
+        rpmbuild ${{steps.fedora-compiler.outputs.rpm-macro}} -bb --with asan packaging/rpm/tremotesf.spec
 
     - name: Install RPM
       run: |
