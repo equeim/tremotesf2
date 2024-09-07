@@ -45,11 +45,12 @@ namespace tremotesf {
             bool eventFilter(QObject* watched, QEvent* event) override {
                 switch (event->type()) {
                 case QEvent::WinIdChange: {
-                    auto window = qobject_cast<QWindow*>(watched);
-                    if (!window) {
-                        if (auto widget = qobject_cast<QWidget*>(watched); widget) {
-                            window = widget->windowHandle();
-                        }
+                    // Using QWindow::winId instead of QWidget::winId directly because
+                    // QWidget::winId may create native window prematurely which we don't want
+                    // QWidget::windowHandle will return nullptr if native window doesn't exist yet so we check for that
+                    QWindow* window{};
+                    if (auto widget = qobject_cast<QWidget*>(watched); widget) {
+                        window = widget->windowHandle();
                     }
                     if (window) {
                         switch (window->type()) {
