@@ -29,7 +29,8 @@ build_freebsd_task:
     else
         httplib=none
     fi
-    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib" -D TREMOTESF_ASAN=ON
+    # Not enabling ASAN since it causes weird issues with tests that use openssl
+    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib"
     echo 'Building Debug'
     cmake --build --preset base-debug
     echo 'Testing Debug'
