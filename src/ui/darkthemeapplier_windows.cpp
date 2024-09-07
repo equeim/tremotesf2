@@ -91,7 +91,7 @@ namespace tremotesf {
 
             void applyDarkThemeToTitleBar(QWindow* window) {
                 if (isRunningOnWindows11OrGreater()) {
-                    info().log("Setting DWMWA_CAPTION_COLOR on {}", *window);
+                    debug().log("Setting DWMWA_CAPTION_COLOR on {}", *window);
                     const auto qcolor = QGuiApplication::palette().color(QPalette::Window);
                     const auto color = RGB(qcolor.red(), qcolor.green(), qcolor.blue());
                     try {
@@ -108,7 +108,7 @@ namespace tremotesf {
                         warning().logWithException(e, "Failed to set DWMWA_CAPTION_COLOR on {}", *window);
                     }
                 } else {
-                    info().log("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
+                    debug().log("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
                     const auto attribute = []() -> DWORD {
                         if (isRunningOnWindows10_2004OrGreater()) {
                             return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_SINCE_2004;
