@@ -108,7 +108,7 @@ namespace tremotesf {
                 return true;
             }
             // Path ends with segment that's not actually the last segment of parentDirectory, just prefixed by it
-            if (path[directory.size()] != '/') {
+            if (!directory.endsWith('/') && path[directory.size()] != '/') {
                 return false;
             }
             return true;
@@ -196,11 +196,19 @@ namespace tremotesf {
 
     bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
 
-    QString Servers::fromLocalToRemoteDirectory(const QString& localPath, PathOs pathOs) {
+    QString Servers::fromLocalToRemoteDirectory(const QString& localPath, PathOs remotePathOs) {
+        const auto localPathNormalized = normalizePath(localPath, localPathOs);
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
-            if (isPathUnderThisDirectory(localPath, localDirectory)) {
-                const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, pathOs);
-                return remoteDirectoryNormalized + localPath.mid(localDirectory.size());
+            if (isPathUnderThisDirectory(localPathNormalized, localDirectory)) {
+                const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, remotePathOs);
+                auto relativePathIndex = localDirectory.size();
+                if (localDirectory.endsWith('/')) {
+                    relativePathIndex -= 1;
+                }
+                return normalizePath(
+                    remoteDirectoryNormalized + localPathNormalized.mid(relativePathIndex),
+                    remotePathOs
+                );
             }
         }
         return {};
@@ -210,11 +218,16 @@ namespace tremotesf {
         return fromLocalToRemoteDirectory(localPath, serverSettings->data().pathOs);
     }
 
-    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, PathOs pathOs) {
+    QString Servers::fromRemoteToLocalDirectory(const QString& remotePath, PathOs remotePathOs) {
+        const auto remotePathNormalized = normalizePath(remotePath, remotePathOs);
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
-            const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, pathOs);
-            if (isPathUnderThisDirectory(remotePath, remoteDirectoryNormalized)) {
-                return localDirectory + remotePath.mid(remoteDirectoryNormalized.size());
+            const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, remotePathOs);
+            if (isPathUnderThisDirectory(remotePathNormalized, remoteDirectoryNormalized)) {
+                auto relativePathIndex = remoteDirectoryNormalized.size();
+                if (remoteDirectoryNormalized.endsWith('/')) {
+                    relativePathIndex -= 1;
+                }
+                return normalizePath(localDirectory + remotePathNormalized.mid(relativePathIndex), localPathOs);
             }
         }
         return {};
