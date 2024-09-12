@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.7.1] - 2024-09-13
 ### Added
 - Dialog is shown when fatal error occurs on Windows
 - TREMOTESF_ASAN CMake option to build with AddressSanitizer (off by default)
