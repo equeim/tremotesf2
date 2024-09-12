@@ -54,6 +54,15 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-09-13" version="2.7.1">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Performance issue with torrents/files lists</li>
+          <li>Issues with mounted directories mapping</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-08-31" version="2.7.0">
       <description>
         <p>Added</p>
