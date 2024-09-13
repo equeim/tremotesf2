@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Opening download directory of a torrent with some file managers
+
 ## [2.7.1] - 2024-09-13
 ### Added
 - Dialog is shown when fatal error occurs on Windows
