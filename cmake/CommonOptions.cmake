@@ -110,6 +110,9 @@ function(set_common_options_on_targets)
             common_compile_options
             ${gcc_style_warnings}
         )
+        if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
+            list(APPEND common_compile_options -fexperimental-library)
+        endif()
         if (TREMOTESF_ASAN)
             list(APPEND common_compile_options -fsanitize=address)
             list(APPEND common_link_options -fsanitize=address)
