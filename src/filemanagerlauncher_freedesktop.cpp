@@ -4,7 +4,8 @@
 
 #include "filemanagerlauncher.h"
 
-#include <algorithm>
+#include <ranges>
+#include <fmt/ranges.h>
 
 #include <QDBusConnection>
 #include <QDBusPendingReply>
@@ -12,12 +13,15 @@
 
 #include "coroutines/dbus.h"
 #include "coroutines/scope.h"
-#include "desktoputils.h"
-#include "literals.h"
 #include "log/log.h"
 #include "tremotesf_dbus_generated/org.freedesktop.FileManager1.h"
+#include "desktoputils.h"
+#include "literals.h"
+#include "stdutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
+
+using namespace std::views;
 
 namespace tremotesf {
     namespace {
@@ -37,26 +41,22 @@ namespace tremotesf {
             Coroutine<> launchFileManagerAndSelectFilesImpl(
                 std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             ) {
-                info().log(
-                    "FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call"
-                );
                 OrgFreedesktopFileManager1Interface interface(
                     "org.freedesktop.FileManager1"_l1,
                     "/org/freedesktop/FileManager1"_l1,
                     QDBusConnection::sessionBus()
                 );
                 interface.setTimeout(desktoputils::defaultDbusTimeout);
-                QStringList uris{};
-                uris.reserve(std::accumulate(
-                    filesToSelect.begin(),
-                    filesToSelect.end(),
-                    0,
-                    [](size_t count, const FilesInDirectory& f) { return count + f.files.size(); }
-                ));
-                for (const auto& [_, files] : filesToSelect) {
-                    std::ranges::copy(files, std::back_insert_iterator(uris));
-                }
-
+                const auto uris = toContainer<QStringList>(
+                    filesToSelect | transform(&FilesInDirectory::files) | join | transform([](const QString& path) {
+                        return QUrl::fromLocalFile(path).toString(QUrl::FullyEncoded);
+                    })
+                );
+                info().log(
+                    "FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call "
+                    "with: uris = {}",
+                    uris
+                );
                 const auto reply = co_await interface.ShowItems(uris, {});
                 if (!reply.isError()) {
                     info().log(
