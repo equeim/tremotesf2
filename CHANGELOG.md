@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.7.2] - 2024-09-15
 ### Fixed
 - Opening download directory of a torrent with some file managers
 

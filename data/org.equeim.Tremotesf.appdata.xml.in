@@ -54,6 +54,14 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-09-15" version="2.7.2">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Opening torrent's download directory with some file managers</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-09-13" version="2.7.1">
       <description>
         <p>Fixed</p>
