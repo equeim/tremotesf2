@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:39', 'fedora:40', 'opensuse/tumbleweed:latest']
+        container-image: ['fedora:39', 'fedora:40', 'fedora:41', 'opensuse/tumbleweed:latest']
         compiler: ['gcc', 'clang']
         exclude:
         - container-image: 'opensuse/tumbleweed:latest'
@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:12', 'ubuntu:24.04']
+        container-image: ['debian:12', 'ubuntu:24.04', 'ubuntu:24.10']
 
     runs-on: ubuntu-latest
     container: docker.io/library/${{ matrix.container-image }}
