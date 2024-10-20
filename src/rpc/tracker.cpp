@@ -14,6 +14,7 @@
 
 #include "jsonutils.h"
 #include "literals.h"
+#include "pragmamacros.h"
 #include "stdutils.h"
 
 namespace tremotesf {
@@ -106,19 +107,9 @@ namespace {
 #    else
 namespace {
     QString registrableDomainFromDomain(const QString& fullDomain, const QUrl& url) {
-#        if defined(__GNUC__) || defined(__clang__)
-#            pragma GCC diagnostic push
-#            pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#        elif defined(_MSC_VER)
-#            pragma warning(push)
-#            pragma warning(disable : 4996)
-#        endif
+        SUPPRESS_DEPRECATED_WARNINGS_BEGIN
         const auto tld = url.topLevelDomain();
-#        if defined(__GNUC__) || defined(__clang__)
-#            pragma GCC diagnostic pop
-#        elif defined(_MSC_VER)
-#            pragma warning(pop)
-#        endif
+        SUPPRESS_DEPRECATED_WARNINGS_END
         if (tld.isEmpty()) {
             return fullDomain;
         }

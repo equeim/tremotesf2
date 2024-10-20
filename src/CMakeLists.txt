@@ -48,6 +48,7 @@ add_library(
     literals.h
     magnetlinkparser.h
     magnetlinkparser.cpp
+    pragmamacros.h
     settings.cpp
     settings.h
     stdutils.h
