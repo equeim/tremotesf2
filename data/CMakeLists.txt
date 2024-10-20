@@ -64,15 +64,16 @@ elseif (WIN32 OR APPLE)
     install(FILES "${hicolor_download_path}" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
 
     set(breeze_download_path "${CMAKE_CURRENT_BINARY_DIR}/breeze.tar.xz")
-    set(breeze_version "6.1")
+    set(breeze_version "6.7.0")
+    string(REGEX REPLACE "^(.*)\\..*" "\\1" breeze_version_without_patch "${breeze_version}")
     if (NOT EXISTS "${breeze_download_path}")
-        set(breeze_url "https://download.kde.org/stable/frameworks/${breeze_version}/breeze-icons-${breeze_version}.0.tar.xz")
+        set(breeze_url "https://download.kde.org/stable/frameworks/${breeze_version_without_patch}/breeze-icons-${breeze_version}.tar.xz")
         message(STATUS "Downloading ${breeze_url} to ${breeze_download_path}")
         file(
             DOWNLOAD "${breeze_url}" "${breeze_download_path}"
             SHOW_PROGRESS
             TLS_VERIFY ON
-            EXPECTED_HASH SHA256=b1ba802d0d0dbd0ecd786cbdfaaf545f2dd3c217966b894b9321a2a18426a16a
+            EXPECTED_HASH SHA256=39037e3fcbbb7a65011685c498cae31ff496a5f2493269c955bb29c94a688b74
             STATUS download_status
         )
         list(GET download_status 0 download_status)
@@ -82,7 +83,7 @@ elseif (WIN32 OR APPLE)
         message(STATUS "Extracting ${breeze_download_path} to ${CMAKE_CURRENT_BINARY_DIR}")
         file(ARCHIVE_EXTRACT INPUT "${breeze_download_path}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
     endif()
-    set(breeze_extracted_path "${CMAKE_CURRENT_BINARY_DIR}/breeze-icons-${breeze_version}.0")
+    set(breeze_extracted_path "${CMAKE_CURRENT_BINARY_DIR}/breeze-icons-${breeze_version}")
     install(CODE "set(breeze_extracted_path [=[${breeze_extracted_path}]=])")
     install(CODE "set(TREMOTESF_EXTERNAL_RESOURCES_PATH [=[${TREMOTESF_EXTERNAL_RESOURCES_PATH}]=])")
     install(SCRIPT InstallBreezeIcons.cmake)
