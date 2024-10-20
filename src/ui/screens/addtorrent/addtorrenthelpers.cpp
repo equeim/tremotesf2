@@ -74,7 +74,7 @@ namespace tremotesf {
                 QMessageBox::Ok | QMessageBox::Cancel,
                 parent
             );
-            messageBox->setButtonText(QMessageBox::Ok, qApp->translate("tremotesf", "Merge"));
+            messageBox->button(QMessageBox::Ok)->setText(qApp->translate("tremotesf", "Merge"));
             messageBox->setCheckBox(new QCheckBox(qApp->translate("tremotesf", "Do not ask again"), messageBox));
             QObject::connect(
                 messageBox,

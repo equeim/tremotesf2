@@ -13,6 +13,7 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <QObject>
+#include <QTimeZone>
 
 #include "log/formatters.h"
 #include "peer.h"
@@ -103,16 +104,16 @@ namespace tremotesf {
 
         int peersLimit{};
 
-        QDateTime addedDate{{}, {}, Qt::UTC};
-        QDateTime activityDate{{}, {}, Qt::UTC};
-        QDateTime doneDate{{}, {}, Qt::UTC};
+        QDateTime addedDate{{}, {}, QTimeZone::utc()};
+        QDateTime activityDate{{}, {}, QTimeZone::utc()};
+        QDateTime doneDate{{}, {}, QTimeZone::utc()};
 
         IdleSeedingLimitMode idleSeedingLimitMode{};
         int idleSeedingLimit{};
         QString downloadDirectory{};
         QString comment{};
         QString creator{};
-        QDateTime creationDate{{}, {}, Qt::UTC};
+        QDateTime creationDate{{}, {}, QTimeZone::utc()};
         Priority bandwidthPriority{};
         bool honorSessionLimits;
 

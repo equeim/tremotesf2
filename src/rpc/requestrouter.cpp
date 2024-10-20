@@ -31,6 +31,8 @@ namespace fmt {
     struct formatter<QSsl::SslProtocol> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(QSsl::SslProtocol protocol, fmt::format_context& ctx) const {
             const auto str = [&]() -> std::optional<std::string_view> {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 switch (protocol) {
                 case QSsl::TlsV1_0:
                     return "TlsV1_0";
@@ -71,6 +73,7 @@ namespace fmt {
                     return "TlsV1SslV3";
 #endif
                 }
+#pragma GCC diagnostic pop
                 return std::nullopt;
             }();
             if (str) {

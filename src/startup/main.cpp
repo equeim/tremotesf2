@@ -176,7 +176,13 @@ int main(int argc, char** argv) {
 #ifdef TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
             resolveExternalBundledResourcesPath("qt-translations"_l1);
 #else
-            QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#    if QT_VERSION_MAJOR >= 6
+            QLibraryInfo::path(
+#    else
+            QLibraryInfo::location(
+#    endif
+                QLibraryInfo::TranslationsPath
+            );
 #endif
         if (qtTranslator.load(QLocale{}, "qt"_l1, "_"_l1, qtTranslationsPath)) {
             qApp->installTranslator(&qtTranslator);

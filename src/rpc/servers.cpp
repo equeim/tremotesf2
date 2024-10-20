@@ -143,7 +143,13 @@ namespace tremotesf {
     }
 
     LastTorrents LastTorrents::fromVariant(const QVariant& var) {
-        if (!var.isValid() || var.type() != QVariant::List) {
+        if (!var.isValid() ||
+#if QT_VERSION_MAJOR >= 6
+            var.typeId() != QMetaType::QVariantList
+#else
+            var.type() != QVariant::List
+#endif
+        ) {
             return {};
         }
         return {
