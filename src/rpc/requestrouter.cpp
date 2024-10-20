@@ -20,6 +20,7 @@
 #include "coroutines/threadpool.h"
 #include "log/log.h"
 #include "literals.h"
+#include "pragmamacros.h"
 #include "rpc.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QJsonObject)
@@ -31,8 +32,7 @@ namespace fmt {
     struct formatter<QSsl::SslProtocol> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(QSsl::SslProtocol protocol, fmt::format_context& ctx) const {
             const auto str = [&]() -> std::optional<std::string_view> {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+                SUPPRESS_DEPRECATED_WARNINGS_BEGIN
                 switch (protocol) {
                 case QSsl::TlsV1_0:
                     return "TlsV1_0";
@@ -73,7 +73,7 @@ namespace fmt {
                     return "TlsV1SslV3";
 #endif
                 }
-#pragma GCC diagnostic pop
+                SUPPRESS_DEPRECATED_WARNINGS_END
                 return std::nullopt;
             }();
             if (str) {
