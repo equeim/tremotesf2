@@ -19,9 +19,18 @@ namespace tremotesf {
 
         enum class PathType { Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
 
+        QRegularExpressionMatch regexMatch(const QRegularExpression& regex, QStringView subjectView) {
+            return regex
+#if QT_VERSION_MAJOR >= 6
+                .matchView(subjectView);
+#else
+                .match(subjectView);
+#endif
+        }
+
         bool isWindowsUNCOrDOSDevicePath(QStringView path) {
             static const QRegularExpression regex(R"(^(?:\\|//).*$)"_l1);
-            return regex.match(path).hasMatch();
+            return regexMatch(regex, path).hasMatch();
         }
 
         PathType determinePathType(QStringView path, PathOs pathOs) {
@@ -94,7 +103,7 @@ namespace tremotesf {
 
     bool isAbsoluteWindowsDOSFilePath(QStringView path) {
         static const QRegularExpression regex(R"(^[A-Za-z]:[\\/]?.*$)"_l1);
-        return regex.match(path).hasMatch();
+        return regexMatch(regex, path).hasMatch();
     }
 
     QString normalizePath(const QString& path, PathOs pathOs) {

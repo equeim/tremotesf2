@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include <QObject>
 #include <QString>
+#include <QTimeZone>
 
 class QJsonObject;
 class QUrl;
@@ -58,7 +59,7 @@ namespace tremotesf {
         Status mStatus{};
         QString mErrorMessage{};
 
-        QDateTime mNextUpdateTime{{}, {}, Qt::UTC};
+        QDateTime mNextUpdateTime{{}, {}, QTimeZone::utc()};
 
         int mPeers{};
         int mSeeders{};
