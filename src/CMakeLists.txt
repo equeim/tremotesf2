@@ -30,175 +30,185 @@ endif ()
 
 list(APPEND QRC_FILES resources.qrc)
 
-add_library(
-    tremotesf_objects
-    OBJECT
+add_library(tremotesf_objects OBJECT)
 
+target_sources(tremotesf_objects
+    PRIVATE
     bencodeparser.cpp
-    bencodeparser.h
     desktoputils.cpp
-    desktoputils.h
     filemanagerlauncher.cpp
-    filemanagerlauncher.h
     fileutils.cpp
-    fileutils.h
     formatutils.cpp
+    magnetlinkparser.cpp
+
+    settings.cpp
+    torrentfileparser.cpp
+
+    coroutines/coroutines.cpp
+    coroutines/scope.cpp
+    coroutines/waitall.cpp
+
+    log/demangle.cpp
+    log/formatters.cpp
+    log/log.cpp
+    rpc/addressutils.cpp
+    rpc/mounteddirectoriesutils.cpp
+    rpc/pathutils.cpp
+    rpc/peer.cpp
+    rpc/requestrouter.cpp
+    rpc/rpc.cpp
+    rpc/servers.cpp
+    rpc/serversettings.cpp
+    rpc/serverstats.cpp
+    rpc/torrent.cpp
+    rpc/torrentfile.cpp
+    rpc/tracker.cpp
+
+    startup/commandlineparser.cpp
+
+    ui/itemmodels/baseproxymodel.cpp
+    ui/itemmodels/basetorrentfilesmodel.cpp
+    ui/itemmodels/stringlistmodel.cpp
+    ui/itemmodels/torrentfilesmodelentry.cpp
+    ui/itemmodels/torrentfilesproxymodel.cpp
+    ui/notificationscontroller.cpp
+    ui/savewindowstatedispatcher.cpp
+    ui/screens/aboutdialog.cpp
+    ui/screens/addtorrent/addtorrentdialog.cpp
+    ui/screens/addtorrent/addtorrenthelpers.cpp
+    ui/screens/addtorrent/droppedtorrents.cpp
+    ui/screens/addtorrent/localtorrentfilesmodel.cpp
+    ui/screens/connectionsettings/connectionsettingsdialog.cpp
+    ui/screens/connectionsettings/servereditdialog.cpp
+    ui/screens/connectionsettings/serversmodel.cpp
+    ui/screens/mainwindow/alltrackersmodel.cpp
+    ui/screens/mainwindow/basetorrentsfilterssettingsmodel.cpp
+    ui/screens/mainwindow/downloaddirectoriesmodel.cpp
+    ui/screens/mainwindow/mainwindow.cpp
+    ui/screens/mainwindow/mainwindowsidebar.cpp
+    ui/screens/mainwindow/mainwindowstatusbar.cpp
+    ui/screens/mainwindow/mainwindowviewmodel.cpp
+    ui/screens/mainwindow/statusfiltersmodel.cpp
+    ui/screens/mainwindow/torrentsmodel.cpp
+    ui/screens/mainwindow/torrentsproxymodel.cpp
+    ui/screens/mainwindow/torrentsview.cpp
+    ui/screens/serversettings/serversettingsdialog.cpp
+    ui/screens/serverstatsdialog.cpp
+    ui/screens/settingsdialog.cpp
+    ui/screens/torrentproperties/peersmodel.cpp
+    ui/screens/torrentproperties/torrentfilesmodel.cpp
+    ui/screens/torrentproperties/torrentpropertiesdialog.cpp
+    ui/screens/torrentproperties/trackersmodel.cpp
+    ui/screens/torrentproperties/trackersviewwidget.cpp
+    ui/stylehelpers.cpp
+    ui/widgets/basetreeview.cpp
+    ui/widgets/commondelegate.cpp
+    ui/widgets/remotedirectoryselectionwidget.cpp
+    ui/widgets/textinputdialog.cpp
+    ui/widgets/torrentfilesview.cpp
+    ui/widgets/torrentremotedirectoryselectionwidget.cpp
+
+    ${QRC_FILES}
+
+    PRIVATE FILE_SET HEADERS
+    FILES
+
+    bencodeparser.h
+    desktoputils.h
+    filemanagerlauncher.h
+    fileutils.h
     formatutils.h
     itemlistupdater.h
     literals.h
     magnetlinkparser.h
-    magnetlinkparser.cpp
     pragmamacros.h
-    settings.cpp
     settings.h
     stdutils.h
     target_os.h
-    torrentfileparser.cpp
-    torrentfileparser.h
 
+    macoshelpers.h
+    torrentfileparser.h
     unixhelpers.h
     windowshelpers.h
-    macoshelpers.h
 
     coroutines/coroutinefwd.h
-    coroutines/coroutines.cpp
     coroutines/coroutines.h
     coroutines/hostinfo.h
+    coroutines/network.h
     coroutines/qobjectsignal.h
     coroutines/scope.h
-    coroutines/scope.cpp
-    coroutines/network.h
-    coroutines/timer.h
     coroutines/threadpool.h
+    coroutines/timer.h
     coroutines/waitall.h
-    coroutines/waitall.cpp
 
     ipc/ipcclient.h
     ipc/ipcserver.h
 
-    log/log.cpp
-    log/log.h
-    log/formatters.cpp
-    log/formatters.h
-    log/demangle.cpp
     log/demangle.h
+    log/formatters.h
+    log/log.h
 
-    rpc/addressutils.cpp
     rpc/addressutils.h
-    rpc/mounteddirectoriesutils.cpp
-    rpc/mounteddirectoriesutils.h
-    rpc/servers.cpp
-    rpc/servers.h
-    rpc/torrent.cpp
-    rpc/torrent.h
-    rpc/torrentfile.cpp
-    rpc/torrentfile.h
-    rpc/tracker.cpp
     rpc/jsonutils.h
-    rpc/tracker.h
-    rpc/pathutils.cpp
+    rpc/mounteddirectoriesutils.h
     rpc/pathutils.h
-    rpc/peer.cpp
     rpc/peer.h
-    rpc/rpc.cpp
-    rpc/rpc.h
-    rpc/requestrouter.cpp
     rpc/requestrouter.h
-    rpc/serversettings.cpp
+    rpc/rpc.h
+    rpc/servers.h
     rpc/serversettings.h
-    rpc/serverstats.cpp
     rpc/serverstats.h
+    rpc/torrent.h
+    rpc/torrentfile.h
+    rpc/tracker.h
 
-    startup/commandlineparser.cpp
     startup/commandlineparser.h
     startup/signalhandler.h
 
     ui/iconthemesetup.h
-    ui/notificationscontroller.cpp
-    ui/notificationscontroller.h
-    ui/savewindowstatedispatcher.cpp
-    ui/savewindowstatedispatcher.h
-    ui/stylehelpers.cpp
-    ui/stylehelpers.h
-    ui/systemcolorsprovider.h
-    ui/itemmodels/baseproxymodel.cpp
     ui/itemmodels/baseproxymodel.h
-    ui/itemmodels/basetorrentfilesmodel.cpp
     ui/itemmodels/basetorrentfilesmodel.h
     ui/itemmodels/modelutils.h
-    ui/itemmodels/stringlistmodel.cpp
     ui/itemmodels/stringlistmodel.h
-    ui/itemmodels/torrentfilesmodelentry.cpp
     ui/itemmodels/torrentfilesmodelentry.h
-    ui/itemmodels/torrentfilesproxymodel.cpp
     ui/itemmodels/torrentfilesproxymodel.h
-    ui/screens/aboutdialog.cpp
+    ui/notificationscontroller.h
+    ui/savewindowstatedispatcher.h
     ui/screens/aboutdialog.h
-    ui/screens/serverstatsdialog.cpp
-    ui/screens/serverstatsdialog.h
-    ui/screens/settingsdialog.cpp
-    ui/screens/settingsdialog.h
-    ui/screens/addtorrent/addtorrentdialog.cpp
     ui/screens/addtorrent/addtorrentdialog.h
-    ui/screens/addtorrent/addtorrenthelpers.cpp
     ui/screens/addtorrent/addtorrenthelpers.h
-    ui/screens/addtorrent/droppedtorrents.cpp
     ui/screens/addtorrent/droppedtorrents.h
-    ui/screens/addtorrent/localtorrentfilesmodel.cpp
     ui/screens/addtorrent/localtorrentfilesmodel.h
-    ui/screens/connectionsettings/connectionsettingsdialog.cpp
     ui/screens/connectionsettings/connectionsettingsdialog.h
-    ui/screens/connectionsettings/servereditdialog.cpp
     ui/screens/connectionsettings/servereditdialog.h
-    ui/screens/connectionsettings/serversmodel.cpp
     ui/screens/connectionsettings/serversmodel.h
-    ui/screens/mainwindow/alltrackersmodel.cpp
     ui/screens/mainwindow/alltrackersmodel.h
-    ui/screens/mainwindow/basetorrentsfilterssettingsmodel.cpp
     ui/screens/mainwindow/basetorrentsfilterssettingsmodel.h
-    ui/screens/mainwindow/downloaddirectoriesmodel.cpp
     ui/screens/mainwindow/downloaddirectoriesmodel.h
-    ui/screens/mainwindow/mainwindow.cpp
     ui/screens/mainwindow/mainwindow.h
-    ui/screens/mainwindow/mainwindowsidebar.cpp
     ui/screens/mainwindow/mainwindowsidebar.h
-    ui/screens/mainwindow/mainwindowstatusbar.cpp
     ui/screens/mainwindow/mainwindowstatusbar.h
-    ui/screens/mainwindow/mainwindowviewmodel.cpp
     ui/screens/mainwindow/mainwindowviewmodel.h
-    ui/screens/mainwindow/statusfiltersmodel.cpp
     ui/screens/mainwindow/statusfiltersmodel.h
-    ui/screens/mainwindow/torrentsmodel.cpp
     ui/screens/mainwindow/torrentsmodel.h
-    ui/screens/mainwindow/torrentsproxymodel.cpp
     ui/screens/mainwindow/torrentsproxymodel.h
-    ui/screens/mainwindow/torrentsview.cpp
     ui/screens/mainwindow/torrentsview.h
-    ui/screens/serversettings/serversettingsdialog.cpp
     ui/screens/serversettings/serversettingsdialog.h
-    ui/screens/torrentproperties/peersmodel.cpp
+    ui/screens/serverstatsdialog.h
+    ui/screens/settingsdialog.h
     ui/screens/torrentproperties/peersmodel.h
-    ui/screens/torrentproperties/torrentfilesmodel.cpp
     ui/screens/torrentproperties/torrentfilesmodel.h
-    ui/screens/torrentproperties/torrentpropertiesdialog.cpp
     ui/screens/torrentproperties/torrentpropertiesdialog.h
-    ui/screens/torrentproperties/trackersmodel.cpp
     ui/screens/torrentproperties/trackersmodel.h
-    ui/screens/torrentproperties/trackersviewwidget.cpp
     ui/screens/torrentproperties/trackersviewwidget.h
-    ui/widgets/basetreeview.cpp
+    ui/stylehelpers.h
+    ui/systemcolorsprovider.h
     ui/widgets/basetreeview.h
-    ui/widgets/commondelegate.cpp
     ui/widgets/commondelegate.h
-    ui/widgets/remotedirectoryselectionwidget.cpp
     ui/widgets/remotedirectoryselectionwidget.h
-    ui/widgets/textinputdialog.cpp
     ui/widgets/textinputdialog.h
-    ui/widgets/torrentfilesview.cpp
     ui/widgets/torrentfilesview.h
-    ui/widgets/torrentremotedirectoryselectionwidget.cpp
     ui/widgets/torrentremotedirectoryselectionwidget.h
-    ${QRC_FILES}
 )
 
 target_link_libraries(tremotesf_objects PUBLIC cxxopts::cxxopts Threads::Threads fmt::fmt Qt::Core Qt::Network Qt::Widgets KF${TREMOTESF_QT_VERSION_MAJOR}::WidgetsAddons)
@@ -267,15 +277,18 @@ if (UNIX)
             tremotesf_objects
             PRIVATE
             filemanagerlauncher_freedesktop.cpp
-            coroutines/dbus.h
             ipc/ipcclient_dbus.cpp
-            ipc/ipcserver_dbus_service.cpp
-            ipc/ipcserver_dbus_service.h
             ipc/ipcserver_dbus.cpp
-            ipc/ipcserver_dbus.h
+            ipc/ipcserver_dbus_service.cpp
             ui/iconthemesetup_freedesktop.cpp
             ui/notificationscontroller_freedesktop.cpp
             ${dbus_generated}
+
+            PRIVATE FILE_SET HEADERS
+            FILES
+            coroutines/dbus.h
+            ipc/ipcserver_dbus.h
+            ipc/ipcserver_dbus_service.h
         )
     else ()
         target_sources(
@@ -283,8 +296,11 @@ if (UNIX)
             PRIVATE
             ipc/ipcclient_socket.cpp
             ipc/ipcserver_socket.cpp
-            ipc/ipcserver_socket.h
             ui/notificationscontroller_fallback.cpp
+
+            PRIVATE FILE_SET HEADERS
+            FILES
+            ipc/ipcserver_socket.h
         )
         if (APPLE)
             target_sources(
@@ -292,8 +308,11 @@ if (UNIX)
                 PRIVATE
                 macoshelpers.mm
                 filemanagerlauncher_macos.mm
-                ipc/fileopeneventhandler.h
                 ipc/fileopeneventhandler.cpp
+
+                PRIVATE FILE_SET HEADERS
+                FILES
+                ipc/fileopeneventhandler.h
             )
         else ()
             target_sources(
@@ -311,17 +330,20 @@ elseif (WIN32)
         tremotesf_objects
         PRIVATE
         filemanagerlauncher_windows.cpp
-        windowshelpers.cpp
         ipc/ipcclient_socket.cpp
         ipc/ipcserver_socket.cpp
-        ipc/ipcserver_socket.h
         startup/signalhandler_windows.cpp
         startup/windowsfatalerrorhandlers.cpp
-        startup/windowsfatalerrorhandlers.h
-        ui/darkthemeapplier_windows.h
         ui/darkthemeapplier_windows.cpp
         ui/notificationscontroller_fallback.cpp
         ui/systemcolorsprovider_windows.cpp
+        windowshelpers.cpp
+
+        PRIVATE FILE_SET HEADERS
+        FILES
+        ipc/ipcserver_socket.h
+        startup/windowsfatalerrorhandlers.h
+        ui/darkthemeapplier_windows.h
     )
     set(TREMOTESF_WINDOWS_ICON "${CMAKE_CURRENT_SOURCE_DIR}/tremotesf.ico" PARENT_SCOPE)
 else ()
@@ -340,10 +362,13 @@ if (WIN32)
         tremotesf
         PRIVATE
         startup/main_windows.cpp
-        startup/main_windows.h
         startup/windowsmessagehandler.cpp
-        startup/windowsmessagehandler.h
         "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.rc"
+
+        PRIVATE FILE_SET HEADERS
+        FILES
+        startup/main_windows.h
+        startup/windowsmessagehandler.h
     )
     if (MSVC)
         target_sources(tremotesf PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/tremotesf.manifest")
@@ -376,11 +401,14 @@ if (WIN32 OR APPLE)
     target_sources(
         tremotesf
         PRIVATE
+        startup/recoloringsvgiconengineplugin.cpp
         ui/iconthemesetup_bundled.cpp
         ui/recoloringsvgiconengine.cpp
-        ui/recoloringsvgiconengine.h
-        startup/recoloringsvgiconengineplugin.cpp
+
+        PRIVATE FILE_SET HEADERS
+        FILES
         startup/recoloringsvgiconengineplugin.h
+        ui/recoloringsvgiconengine.h
     )
     target_compile_definitions(
         tremotesf
