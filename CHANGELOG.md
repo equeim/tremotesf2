@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Black screen issues when closing fullscreen window on macOS
+- Crash with GCC 12
 
 ## [2.7.2] - 2024-09-15
 ### Fixed

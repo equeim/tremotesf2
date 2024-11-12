@@ -330,8 +330,8 @@ namespace tremotesf::impl {
     RequestRouter::onRequestSuccess(NetworkReplyUniquePtr reply, RpcRequestMetadata metadata) {
         debug()
             .log("HTTP request for method '{}' succeeded, HTTP status: {}", metadata.method, httpStatus(reply.get()));
-        const auto json =
-            co_await runOnThreadPool(mThreadPool, [reply = std::move(reply)]() -> std::optional<QJsonObject> {
+        const auto json = co_await runOnThreadPool(
+            [](NetworkReplyUniquePtr reply) -> std::optional<QJsonObject> {
                 const auto replyData = reply->readAll();
                 QJsonParseError error{};
                 QJsonObject json = QJsonDocument::fromJson(replyData, &error).object();
@@ -345,7 +345,9 @@ namespace tremotesf::impl {
                     return {};
                 }
                 return json;
-            });
+            },
+            std::move(reply)
+        );
         if (!json.has_value()) {
             emit requestFailed(RpcError::ParseError, {}, {});
             cancelCoroutine();
