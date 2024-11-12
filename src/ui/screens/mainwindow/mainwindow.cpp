@@ -1486,6 +1486,13 @@ namespace tremotesf {
                 }
             }
             debug().log("Hiding {}", *mWindow);
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                // Hiding window when it's in fullscreen mode can have weird effects on macOS
+                if (mWindow->isFullScreen()) {
+                    debug().log("Exiting fullscreen");
+                    mWindow->setWindowState(mWindow->windowState().setFlag(Qt::WindowFullScreen, false));
+                }
+            }
             mWindow->hide();
             if constexpr (targetOs == TargetOs::UnixMacOS) {
                 // We need this so that system menu bar switches to previous app
