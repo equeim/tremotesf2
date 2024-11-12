@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Black screen issues when closing fullscreen window on macOS
+
 ## [2.7.2] - 2024-09-15
 ### Fixed
 - Opening download directory of a torrent with some file managers
