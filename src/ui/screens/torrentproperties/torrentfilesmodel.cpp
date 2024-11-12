@@ -206,10 +206,10 @@ namespace tremotesf {
         mCreatingTree = true;
         beginResetModel();
 
-        auto self = QPointer(this);
-
-        auto [rootDirectory, files] =
-            co_await runOnThreadPool([files = std::vector(mTorrent->files())]() { return doCreateTree(files); });
+        auto [rootDirectory, files] = co_await runOnThreadPool(
+            [](const std::vector<TorrentFile>& files) { return doCreateTree(files); },
+            mTorrent->files()
+        );
 
         mRootDirectory = std::move(rootDirectory);
         endResetModel();
