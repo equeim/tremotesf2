@@ -73,8 +73,9 @@ CMake configuration options:
 - Debian - [Official repository](https://packages.debian.org/sid/tremotesf), or [my own OBS repository](https://build.opensuse.org/package/show/home:equeim:tremotesf/Tremotesf)
 
 ```sh
-wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_12/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_12/ /"
+debian_version="$(source /etc/os-release && echo "$VERSION_ID")"
+wget -qO - "https://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_${debian_version}/Release.key" | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/Debian_${debian_version}/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
@@ -102,8 +103,9 @@ sudo zypper in tremotesf
 - Ubuntu - [OBS](https://build.opensuse.org/package/show/home:equeim:tremotesf/Tremotesf)
 
 ```sh
-wget -qO - https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_23.10/Release.key | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
-sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_23.10/ /"
+ubuntu_version="$(source /etc/os-release && echo "$VERSION_ID")"
+wget -qO - "https://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_${ubuntu_version}/Release.key" | sudo tee /etc/apt/trusted.gpg.d/tremotesf.asc
+sudo add-apt-repository "deb http://download.opensuse.org/repositories/home:/equeim:/tremotesf/xUbuntu_${ubuntu_version}/ /"
 sudo apt update
 sudo apt install tremotesf
 ```
