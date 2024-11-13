@@ -208,7 +208,7 @@ namespace {
             QCOMPARE(error.has_value(), true);
             if (error.value() == RpcError::TimedOut) {
                 // This is not what we test here but it can happen on some systems
-                QWARN("Connection to port 9 timed out instead of being refused");
+                warning().log("Connection to port 9 timed out instead of being refused");
             } else {
                 QCOMPARE(error.value(), RpcError::ConnectionError);
             }
@@ -467,7 +467,7 @@ namespace {
                 )
             );
             if (!ok) {
-                QWARN("Timed out when waiting for response");
+                warning().log("Timed out when waiting for response");
             }
 
             if (std::holds_alternative<RpcError>(responseOrError)) {
@@ -508,7 +508,7 @@ namespace {
                 )
             );
             if (!ok) {
-                QWARN("Timed out when waiting for response");
+                warning().log("Timed out when waiting for response");
             }
             return responseOrError;
         }

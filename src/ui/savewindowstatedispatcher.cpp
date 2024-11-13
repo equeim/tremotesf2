@@ -73,7 +73,7 @@ namespace tremotesf {
 
     SaveWindowStateHandler::~SaveWindowStateHandler() {
         mWindow->removeEventFilter(this);
-        mWindow->setProperty(windowHasSaveStateHandlerProperty, QVariant::Invalid);
+        mWindow->setProperty(windowHasSaveStateHandlerProperty, QVariant{});
     }
 
     bool SaveWindowStateHandler::eventFilter(QObject* watched, QEvent* event) {
