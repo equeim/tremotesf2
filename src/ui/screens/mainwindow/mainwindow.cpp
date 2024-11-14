@@ -309,32 +309,7 @@ namespace tremotesf {
             });
 
             if constexpr (targetOs == TargetOs::UnixMacOS) {
-                QObject::connect(
-                    qApp,
-                    &QGuiApplication::applicationStateChanged,
-                    this,
-                    [this](Qt::ApplicationState state) {
-                        debug().log("Application state is {}", state);
-                        if (state == Qt::ApplicationActive) {
-                            // When window is hidden and application is activated by the system (e.g. by click on its icon in Dock),
-                            // applicationStateChanged signal is emitted with ApplicationActive
-                            // We need to show our window manually in this case
-                            if (mWindow->isHidden()) {
-                                info().log("Application is activated by the system, showing windows");
-                                showWindowsAndActivateMainOrDialog();
-                            }
-                        } else {
-                            // On macOS application can be hidden without mWindow becoming hidden
-                            // In this case applicationStateChanged is emitted with ApplicationInactive
-                            // while isNSAppHidden returns true,
-                            // and need to update show/hide tray icon action
-                            if (isNSAppHidden() && !mWindow->isHidden()) {
-                                info().log("Application is hidden by the system, hiding windows");
-                                hideWindows();
-                            }
-                        }
-                    }
-                );
+                QObject::connect(qApp, &QGuiApplication::applicationStateChanged, this, &MainWindow::Impl::updateShowHideAction);
             }
 
             // restoreGeometry() may call MainWindow::event() but we are still in MainWindow constructor
@@ -1381,7 +1356,12 @@ namespace tremotesf {
             });
         }
 
-        bool isMainWindowHiddenOrMinimized() const { return mWindow->isHidden() || mWindow->isMinimized(); }
+        bool isMainWindowHiddenOrMinimized() const {
+            if constexpr (targetOs == TargetOs::UnixMacOS) {
+                if (isNSAppHidden()) return true;
+            }
+            return mWindow->isHidden() || mWindow->isMinimized();
+        }
 
         void showWindowsAndActivateMainOrDialog(
             [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
@@ -1394,24 +1374,26 @@ namespace tremotesf {
                 } else {
                     debug().log("NSApp is not hidden");
                 }
-            }
-            showAndRaiseWindow(mWindow);
-            QWidget* lastDialog = nullptr;
-            // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
-            // so that we don't operate on deleted QWidgets
-            for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
-                if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
-                    showAndRaiseWindow(widget);
-                    lastDialog = widget;
+            } else {
+                showAndRaiseWindow(mWindow);
+                QWidget* lastDialog = nullptr;
+                // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
+                // so that we don't operate on deleted QWidgets
+                for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
+                    if (widget && widget->windowType() == Qt::Dialog &&
+                        !widget->inherits(kdePlatformFileDialogClassName)) {
+                        showAndRaiseWindow(widget);
+                        lastDialog = widget;
+                    }
                 }
-            }
-            QWidget* dialogToActivate = qApp->activeModalWidget();
-            if (!dialogToActivate) {
-                dialogToActivate = lastDialog;
-            }
-            activateWindow(mWindow, windowActivationToken);
-            if (dialogToActivate) {
-                activateWindow(dialogToActivate);
+                QWidget* dialogToActivate = qApp->activeModalWidget();
+                if (!dialogToActivate) {
+                    dialogToActivate = lastDialog;
+                }
+                activateWindow(mWindow, windowActivationToken);
+                if (dialogToActivate) {
+                    activateWindow(dialogToActivate);
+                }
             }
         }
 
@@ -1477,27 +1459,26 @@ namespace tremotesf {
 
         void hideWindows() {
             info().log("Hiding windows");
-            // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
-            // so that we don't operate on deleted QWidgets
-            for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
-                if (widget && widget->windowType() == Qt::Dialog && !widget->inherits(kdePlatformFileDialogClassName)) {
-                    debug().log("Hiding {}", *widget);
-                    widget->hide();
-                }
-            }
-            debug().log("Hiding {}", *mWindow);
             if constexpr (targetOs == TargetOs::UnixMacOS) {
-                // Hiding window when it's in fullscreen mode can have weird effects on macOS
+                // Hiding application doesn't work in fullscreen mode
                 if (mWindow->isFullScreen()) {
                     debug().log("Exiting fullscreen");
                     mWindow->setWindowState(mWindow->windowState().setFlag(Qt::WindowFullScreen, false));
                 }
-            }
-            mWindow->hide();
-            if constexpr (targetOs == TargetOs::UnixMacOS) {
-                // We need this so that system menu bar switches to previous app
                 debug().log("Hiding NSApp");
                 hideNSApp();
+            } else {
+                // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
+                // so that we don't operate on deleted QWidgets
+                for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
+                    if (widget && widget->windowType() == Qt::Dialog &&
+                        !widget->inherits(kdePlatformFileDialogClassName)) {
+                        debug().log("Hiding {}", *widget);
+                        widget->hide();
+                    }
+                }
+                debug().log("Hiding {}", *mWindow);
+                mWindow->hide();
             }
         }
 
