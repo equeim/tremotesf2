@@ -315,7 +315,7 @@ namespace tremotesf {
                 &mViewModel,
                 &MainWindowViewModel::showWindow,
                 this,
-                &MainWindow::Impl::showWindowsAndActivateMainOrDialog
+                &MainWindow::Impl::showWindowsOrActivateMainWindow
             );
             QObject::connect(
                 &mViewModel,
@@ -392,7 +392,7 @@ namespace tremotesf {
             if (isMainWindowHiddenOrMinimized()) {
                 mShowHideAppAction.setText(qApp->translate("tremotesf", "&Show Tremotesf"));
                 QObject::connect(&mShowHideAppAction, &QAction::triggered, this, [this] {
-                    showWindowsAndActivateMainOrDialog();
+                    showWindowsOrActivateMainWindow();
                 });
             } else {
                 mShowHideAppAction.setText(qApp->translate("tremotesf", "&Hide Tremotesf"));
@@ -496,6 +496,10 @@ namespace tremotesf {
 
         QSystemTrayIcon mTrayIcon{QIcon::fromTheme("tremotesf-tray-icon"_l1, mWindow->windowIcon())};
 
+#ifndef Q_OS_MACOS
+        std::vector<QPointer<QWidget>> mOtherWindowsHiddenByUs;
+#endif
+
         SaveWindowStateHandler mSaveStateHandler{mWindow, [this] { saveState(); }};
 #if QT_VERSION_MAJOR >= 6
         ApplicationQuitEventFilter mAppQuitEventFilter{};
@@ -520,7 +524,7 @@ namespace tremotesf {
 
             QObject::connect(&mAddTorrentLinkAction, &QAction::triggered, this, [this] {
                 if (Settings::instance()->showMainWindowWhenAddingTorrent() && isMainWindowHiddenOrMinimized()) {
-                    showWindowsAndActivateMainOrDialog();
+                    showWindowsOrActivateMainWindow();
                 }
                 mViewModel.triggeredAddTorrentLinkAction();
             });
@@ -846,7 +850,7 @@ namespace tremotesf {
         void openTorrentFiles() {
             auto* const settings = Settings::instance();
             if (settings->showMainWindowWhenAddingTorrent() && isMainWindowHiddenOrMinimized()) {
-                showWindowsAndActivateMainOrDialog();
+                showWindowsOrActivateMainWindow();
             }
             auto directory = settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString{};
             if (directory.isEmpty()) {
@@ -1368,7 +1372,7 @@ namespace tremotesf {
                 QObject::connect(&mTrayIcon, &QSystemTrayIcon::activated, this, [this](auto reason) {
                     if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
                         if (isMainWindowHiddenOrMinimized()) {
-                            showWindowsAndActivateMainOrDialog();
+                            showWindowsOrActivateMainWindow();
                         } else {
                             hideWindows();
                         }
@@ -1410,7 +1414,7 @@ namespace tremotesf {
                     mTrayIcon.show();
                 } else {
                     mTrayIcon.hide();
-                    showWindowsAndActivateMainOrDialog();
+                    showWindowsOrActivateMainWindow();
                 }
             });
         }
@@ -1422,63 +1426,80 @@ namespace tremotesf {
             return mWindow->isHidden() || mWindow->isMinimized();
         }
 
-        void showWindowsAndActivateMainOrDialog(
-            [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
-        ) {
+        void showWindowsOrActivateMainWindow([[maybe_unused]] std::optional<QByteArray> windowActivationToken = {}) {
             info().log("Showing windows");
-            if constexpr (targetOs == TargetOs::UnixMacOS) {
-                if (isNSAppHidden()) {
-                    info().log("NSApp is hidden, unhiding it");
-                    unhideNSApp();
-                } else {
-                    debug().log("NSApp is not hidden");
-                }
+#ifdef Q_OS_MACOS
+            if (isNSAppHidden()) {
+                info().log("NSApp is hidden, unhiding it");
+                unhideNSApp();
             } else {
+                info().log("NSApp is not hidden, activating main window");
                 showAndRaiseWindow(mWindow);
-                QWidget* lastDialog = nullptr;
-                // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
-                // so that we don't operate on deleted QWidgets
-                for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
-                    if (widget && widget->windowType() == Qt::Dialog &&
-                        !widget->inherits(kdePlatformFileDialogClassName)) {
-                        showAndRaiseWindow(widget);
-                        lastDialog = widget;
-                    }
-                }
-                QWidget* dialogToActivate = qApp->activeModalWidget();
-                if (!dialogToActivate) {
-                    dialogToActivate = lastDialog;
-                }
+                activateWindowCompat(mWindow);
+            }
+#else
+            if (!mWindow->isHidden()) {
+                info().log("Main window is not hidden, activating it");
+                showAndRaiseWindow(mWindow);
                 activateWindowCompat(mWindow, windowActivationToken);
-                if (dialogToActivate) {
-                    activateWindowCompat(dialogToActivate);
+                return;
+            }
+
+#    if defined(TREMOTESF_UNIX_FREEDESKTOP) && QT_VERSION_MAJOR >= 6
+            // With Qt 6 and Wayland we need to set XDG_ACTIVATION_TOKEN environment variable before show()
+            // so that Qt handles activation automatically
+            if (windowActivationToken.has_value() && KWindowSystem::isPlatformWayland()) {
+                info().log("Showing window with token {}", *windowActivationToken);
+                // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
+                // It we be read and unset in QWidget::show() call below
+                qputenv(xdgActivationTokenEnvVariable, *windowActivationToken);
+                windowActivationToken.reset();
+            }
+#    endif
+            showAndRaiseWindow(mWindow);
+            if (windowActivationToken.has_value()) {
+                activateWindowCompat(mWindow, windowActivationToken);
+            }
+            for (const auto& widget : mOtherWindowsHiddenByUs) {
+                if (widget) {
+                    showAndRaiseWindow(widget);
                 }
             }
+            mOtherWindowsHiddenByUs.clear();
+#endif
         }
 
         void hideWindows() {
             info().log("Hiding windows");
-            if constexpr (targetOs == TargetOs::UnixMacOS) {
-                // Hiding application doesn't work in fullscreen mode
-                if (mWindow->isFullScreen()) {
-                    debug().log("Exiting fullscreen");
-                    mWindow->setWindowState(mWindow->windowState().setFlag(Qt::WindowFullScreen, false));
-                }
-                debug().log("Hiding NSApp");
-                hideNSApp();
-            } else {
-                // Hiding/showing widgets while we are iterating over topLevelWidgets() is not safe, so wrap them in QPointers
-                // so that we don't operate on deleted QWidgets
-                for (const auto& widget : toQPointers(qApp->topLevelWidgets())) {
-                    if (widget && widget->windowType() == Qt::Dialog &&
-                        !widget->inherits(kdePlatformFileDialogClassName)) {
-                        debug().log("Hiding {}", *widget);
-                        widget->hide();
-                    }
-                }
-                debug().log("Hiding {}", *mWindow);
-                mWindow->hide();
+#ifdef Q_OS_MACOS
+            if (isNSAppHidden()) {
+                info().log("NSApp is already hidden, do nothing");
+                return;
             }
+            // Hiding application doesn't work in fullscreen mode
+            if (mWindow->isFullScreen()) {
+                info().log("Exiting fullscreen");
+                mWindow->setWindowState(mWindow->windowState().setFlag(Qt::WindowFullScreen, false));
+            }
+            info().log("Hiding NSApp");
+            hideNSApp();
+#else
+            if (mWindow->isHidden()) {
+                info().log("Main window is already hidden, do nothing");
+                return;
+            }
+            info().log("Hiding {}", *mWindow);
+            mWindow->hide();
+            mOtherWindowsHiddenByUs.clear();
+            for (auto&& widget : toQPointers(qApp->topLevelWidgets())) {
+                if (widget != mWindow && widget->isWindow() && !widget->isHidden() &&
+                    !widget->inherits(kdePlatformFileDialogClassName)) {
+                    info().log("Hiding {}", *widget);
+                    widget->hide();
+                    mOtherWindowsHiddenByUs.push_back(std::move(widget));
+                }
+            }
+#endif
         }
 
         void openTorrentsFiles() {
@@ -1588,7 +1609,7 @@ namespace tremotesf {
                 QWidget* parent{};
                 if (Settings::instance()->showMainWindowWhenAddingTorrent()) {
                     parent = mWindow;
-                    showWindowsAndActivateMainOrDialog();
+                    showWindowsOrActivateMainWindow();
                 }
                 auto* const dialog = new QMessageBox(QMessageBox::Warning, title, text, QMessageBox::Close, parent);
                 dialog->setAttribute(Qt::WA_DeleteOnClose, true);
