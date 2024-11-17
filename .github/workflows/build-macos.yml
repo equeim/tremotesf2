@@ -22,6 +22,9 @@ jobs:
 
     runs-on: macos-latest
     steps:
+      - name: Add GCC problem matcher
+        uses: ammaraskar/gcc-problem-matcher@master
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
