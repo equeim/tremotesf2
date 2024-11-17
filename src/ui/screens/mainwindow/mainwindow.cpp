@@ -144,11 +144,13 @@ namespace tremotesf {
             QCheckBox* const mMoveFilesCheckBox;
         };
 
+#ifndef Q_OS_MACOS
         constexpr auto kdePlatformFileDialogClassName = "KDEPlatformFileDialog";
 
         [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(const QWidgetList& widgets) {
             return {widgets.begin(), widgets.end()};
         }
+#endif
 
         void unminimizeAndRaiseWindow(QWidget* window) {
             if (window->isMinimized()) {
