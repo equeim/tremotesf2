@@ -150,19 +150,12 @@ namespace tremotesf {
             return {widgets.begin(), widgets.end()};
         }
 
-        void showAndRaiseWindow(QWidget* window) {
-            info().log(
-                "Showing {}, it is hidden = {}, minimized = {}",
-                *window,
-                window->isHidden(),
-                window->isMinimized()
-            );
-            if (window->isHidden()) {
-                window->show();
-            }
+        void unminimizeAndRaiseWindow(QWidget* window) {
             if (window->isMinimized()) {
+                info().log("Unminimizing window {}", *window);
                 window->setWindowState(window->windowState().setFlag(Qt::WindowMinimized, false));
             }
+            info().log("Raising window {}", *window);
             window->raise();
         }
 
@@ -957,7 +950,7 @@ namespace tremotesf {
                 const auto hashString = torrent->data().hashString;
                 const auto existingDialog = mTorrentsDialogs.find(hashString);
                 if (existingDialog != mTorrentsDialogs.end()) {
-                    showAndRaiseWindow(existingDialog->second);
+                    unminimizeAndRaiseWindow(existingDialog->second);
                     activateWindowCompat(existingDialog->second);
                 } else {
                     auto dialog = new TorrentPropertiesDialog(torrent, mViewModel.rpc(), mWindow);
@@ -1132,7 +1125,7 @@ namespace tremotesf {
         void showSingleInstanceDialog(CreateDialogFunction createDialog) {
             auto existingDialog = mWindow->findChild<Dialog*>({}, Qt::FindDirectChildrenOnly);
             if (existingDialog) {
-                showAndRaiseWindow(existingDialog);
+                unminimizeAndRaiseWindow(existingDialog);
                 activateWindowCompat(existingDialog);
             } else {
                 auto dialog = createDialog();
@@ -1434,13 +1427,13 @@ namespace tremotesf {
                 unhideNSApp();
             } else {
                 info().log("NSApp is not hidden, activating main window");
-                showAndRaiseWindow(mWindow);
+                unminimizeAndRaiseWindow(mWindow);
                 activateWindowCompat(mWindow);
             }
 #else
             if (!mWindow->isHidden()) {
                 info().log("Main window is not hidden, activating it");
-                showAndRaiseWindow(mWindow);
+                unminimizeAndRaiseWindow(mWindow);
                 activateWindowCompat(mWindow, windowActivationToken);
                 return;
             }
@@ -1456,13 +1449,17 @@ namespace tremotesf {
                 windowActivationToken.reset();
             }
 #    endif
-            showAndRaiseWindow(mWindow);
+            info().log("Showing window {}", *mWindow);
+            mWindow->show();
+            unminimizeAndRaiseWindow(mWindow);
             if (windowActivationToken.has_value()) {
                 activateWindowCompat(mWindow, windowActivationToken);
             }
-            for (const auto& widget : mOtherWindowsHiddenByUs) {
-                if (widget) {
-                    showAndRaiseWindow(widget);
+            for (const auto& window : mOtherWindowsHiddenByUs) {
+                if (window) {
+                    info().log("Showing window {}", *window);
+                    window->show();
+                    unminimizeAndRaiseWindow(window);
                 }
             }
             mOtherWindowsHiddenByUs.clear();
