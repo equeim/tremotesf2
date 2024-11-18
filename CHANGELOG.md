@@ -5,6 +5,7 @@
 - Black screen issues when closing fullscreen window on macOS
 - File dialog being shown twice in some Linux environments
 - Crash with GCC 12
+- Torrent's details in list not being updated for most recently added torrent
 
 ## [2.7.2] - 2024-09-15
 ### Fixed

@@ -376,7 +376,7 @@ namespace tremotesf {
                 QObject::connect(rpc, &Rpc::onChangedTorrents, this, [=, this](size_t first, size_t last) {
                     emit dataChanged(
                         index(static_cast<int>(first), 0),
-                        index(static_cast<int>(last), columnCount() - 1)
+                        index(static_cast<int>(last - 1), columnCount() - 1)
                     );
                 });
 
