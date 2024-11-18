@@ -16,17 +16,18 @@
 &lt;p&gt;Source code: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Translations: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</source>
         <extracomment>&quot;About&quot; dialog text</extracomment>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;&amp;#169; 2015-2024 Alexey Rochev &amp;lt;&lt;a href=&quot;mailto:equeim@gmail.com&quot;&gt;equeim@gmail.com&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p&gt;Quelltext: &lt;a href=&quot;https://github.com/equeim/tremotesf2&quot;&gt;https://github.com/equeim/tremotesf2&lt;/a&gt;&lt;/p&gt;Übersetzungen: &lt;a href=&quot;https://www.transifex.com/equeim/tremotesf&quot;&gt;https://www.transifex.com/equeim/tremotesf&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/aboutdialog.cpp" line="59"/>
         <source>Maintainer</source>
-        <translation type="unfinished"/>
+        <translation>Betreuer</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/aboutdialog.cpp" line="59"/>
         <source>Contributor</source>
-        <translation type="unfinished"/>
+        <translation>Mitwirkender</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/aboutdialog.cpp" line="63"/>
@@ -522,24 +523,24 @@ Torrent's limits tab section</extracomment>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="134"/>
         <source>Add torrent parameters</source>
-        <translation type="unfinished"/>
+        <translation>Torrent-Parameter hinzufügen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="139"/>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>Zurücksetzen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="150"/>
         <source>Show main window when adding torrents</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Beim Hinzufügen von Torrents das Hauptfenster anzeigen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="158"/>
         <source>Show dialog when adding torrents</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Dialog beim Hinzufügen von Torrents anzeigen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="165"/>
@@ -557,39 +558,39 @@ Torrent's limits tab section</extracomment>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="178"/>
         <source>Ask for merging trackers when adding existing torrent</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Nach dem Zusammenführen von Trackern fragen, wenn vorhandene Torrents hinzugefügt werden.</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="185"/>
         <source>Merge trackers when adding existing torrent</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Beim Hinzufügen vorhandener Torrents Tracker zusammenführen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="199"/>
         <source>Other behaviour</source>
         <extracomment>Options section</extracomment>
-        <translation type="unfinished"/>
+        <translation>Anderes Verhalten</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="208"/>
         <source>Open properties dialog</source>
-        <translation type="unfinished"/>
+        <translation>Eigenschaftendialog öffnen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="211"/>
         <source>Open torrent&apos;s file</source>
-        <translation type="unfinished"/>
+        <translation>Es werden Torrent-Dateien geöffnet</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="214"/>
         <source>Open download directory</source>
-        <translation type="unfinished"/>
+        <translation>Downloadverzeichnis öffnen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="221"/>
         <source>What to do when torrent in the list is double clicked:</source>
-        <translation type="unfinished"/>
+        <translation>Was tun, wenn in der Liste auf ein Torrent doppelt geklickt wird:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="226"/>
@@ -769,7 +770,7 @@ Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomme
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="378"/>
         <source>Seed regardless of ratio</source>
         <extracomment>Seeding ratio limit mode (global settings/stop at ratio/unlimited)</extracomment>
-        <translation type="unfinished"/>
+        <translation>Seeden unabhängig von der Ratio</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="218"/>
@@ -782,7 +783,7 @@ Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomme
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="419"/>
         <source>Seed regardless of activity</source>
         <extracomment>Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomment>
-        <translation type="unfinished"/>
+        <translation>Seeden unabhängig von der Aktivität</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="227"/>
@@ -867,13 +868,13 @@ Seeding idle limit mode (global settings/stop if idle for/unlimited)</extracomme
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="301"/>
         <source>Downloading to peers</source>
         <extracomment>Torrents list column name, number of peers that we are downloading from</extracomment>
-        <translation type="unfinished"/>
+        <translation>Herunterladen von Peers</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="304"/>
         <source>Uploading to peers</source>
         <extracomment>Torrents list column name, number of peers that we are uploading to</extracomment>
-        <translation type="unfinished"/>
+        <translation>Hochladen zu Peers</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/torrentsmodel.cpp" line="334"/>
@@ -947,12 +948,12 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="162"/>
         <source>Delete .torrent file</source>
-        <translation type="unfinished"/>
+        <translation>.torrent-Datei löschen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="166"/>
         <source>Move .torrent file to trash</source>
-        <translation type="unfinished"/>
+        <translation>.torrent-Datei in Papierkorb verschieben</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="290"/>
@@ -976,36 +977,36 @@ Trackers list column title</extracomment>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="439"/>
         <source>&amp;Add Torrent File...</source>
         <extracomment>Menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Torrent-Datei hinzufügen...</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="444"/>
         <source>Add Torrent &amp;Link...</source>
         <extracomment>Menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Torrent &amp;Link hinzufügen...</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="546"/>
         <source>P&amp;ause</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>P&amp;ause</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="576"/>
         <source>&amp;Delete</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Lös&amp;chen</translation>
     </message>
     <message>
         <location filename="../src/ui/widgets/torrentfilesview.cpp" line="164"/>
         <source>Open &amp;Download Directory</source>
         <extracomment>Context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Downloadverzeichnis öffnen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="969"/>
         <source>Delete with files</source>
-        <translation type="unfinished"/>
+        <translation>Mit Dateien löschen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="971"/>
@@ -1045,24 +1046,24 @@ Trackers list column title</extracomment>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="786"/>
         <source>&amp;Quit</source>
         <extracomment>Menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Beenden</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="505"/>
         <source>&amp;Torrent</source>
         <extracomment>Menu bar item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Torrent</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1629"/>
         <source>Error adding torrent «%1»</source>
-        <translation type="unfinished"/>
+        <translation>Fehler beim hinzufügen von Torrent «%1»</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1638"/>
         <source>Torrents will be added after connection to server:</source>
         <extracomment>Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents</extracomment>
-        <translation type="unfinished"/>
+        <translation>Torrents werden hinzufügt, nach Herstellung der Verbindung zum Server:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="510"/>
@@ -1073,30 +1074,30 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="365"/>
         <source>&amp;Show Tremotesf</source>
-        <translation type="unfinished"/>
+        <translation>Tremote&amp;sf anzeigen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="370"/>
         <source>&amp;Hide Tremotesf</source>
-        <translation type="unfinished"/>
+        <translation>Tremotesf a&amp;usblenden</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="524"/>
         <source>&amp;Start</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Start</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="535"/>
         <source>Start &amp;Now</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Jetzt starten</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="559"/>
         <source>Copy &amp;Magnet Link</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Magnet-Link kopieren</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/connectionsettingsdialog.cpp" line="60"/>
@@ -1108,13 +1109,13 @@ Trackers list column title</extracomment>
 Context menu item
 ----------
 Tracker's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Entfe&amp;rnen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="598"/>
         <source>Set &amp;Location</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Verzeichnis fest&amp;legen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="645"/>
@@ -1123,19 +1124,19 @@ Tracker's context menu item</extracomment>
         <extracomment>Torrent's context menu item
 ----------
 Context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Öffnen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="652"/>
         <source>Op&amp;en Download Directory</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Downloadverzeichnis öffn&amp;en</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="666"/>
         <source>&amp;Check Local Data</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Lokale Daten &amp;prüfen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="677"/>
@@ -1144,53 +1145,53 @@ Context menu item</extracomment>
         <extracomment>Torrent's context menu item
 ----------
 Button</extracomment>
-        <translation type="unfinished"/>
+        <translation>Reanno&amp;unce</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="689"/>
         <source>&amp;Queue</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>&amp;Warteschlange</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="695"/>
         <source>Move To &amp;Top</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Nach O&amp;ben verschieben</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="706"/>
         <source>Move &amp;Up</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Nach &amp;Oben</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="717"/>
         <source>Move &amp;Down</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Nach &amp;Unten</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="728"/>
         <source>Move To &amp;Bottom</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Nach Unten verschie&amp;ben</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1212"/>
         <location filename="../src/ui/screens/mainwindow/mainwindowstatusbar.cpp" line="174"/>
         <source>&amp;Connection Settings</source>
-        <translation type="unfinished"/>
+        <translation>Verbindun&amp;gseinstellungen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1225"/>
         <source>&amp;Server Options</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Serveroptionen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1239"/>
         <source>Server S&amp;tats</source>
-        <translation type="unfinished"/>
+        <translation>Server-S&amp;tatistiken</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="576"/>
@@ -1220,7 +1221,7 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/desktoputils.cpp" line="73"/>
         <source>This file/directory does not exist</source>
-        <translation type="unfinished"/>
+        <translation>Datei/Verzeichnis existiert nicht</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1114"/>
@@ -1231,7 +1232,7 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1123"/>
         <source>&amp;Close Window</source>
-        <translation type="unfinished"/>
+        <translation>Fenster s&amp;chließen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1137"/>
@@ -1242,12 +1243,12 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1141"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Alle auswählen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1148"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"/>
+        <translation>Auswahl &amp;umkehren</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1164"/>
@@ -1258,49 +1259,49 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1166"/>
         <source>&amp;Toolbar</source>
-        <translation type="unfinished"/>
+        <translation>Symbolleis&amp;te</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1170"/>
         <source>&amp;Sidebar</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Seitenleiste</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1178"/>
         <source>St&amp;atusbar</source>
-        <translation type="unfinished"/>
+        <translation>St&amp;atusleiste</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1187"/>
         <source>&amp;Lock Toolbar</source>
-        <translation type="unfinished"/>
+        <translation>Symbo&amp;lleiste sperren</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1196"/>
         <source>T&amp;ools</source>
         <extracomment>Menu bar item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Werk&amp;zeuge</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1200"/>
         <source>&amp;Options</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Optionen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1252"/>
         <source>S&amp;hutdown Server</source>
-        <translation type="unfinished"/>
+        <translation>Server &amp;herunterfahren</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1259"/>
         <source>Shutdown Server</source>
         <extracomment>Dialog title</extracomment>
-        <translation type="unfinished"/>
+        <translation>Server herunterfahren</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1260"/>
         <source>Are you sure you want to shutdown remote Transmission instance?</source>
-        <translation type="unfinished"/>
+        <translation>Sind Sie sicher, dass Sie die Remote-Instanz von Transmission herunterfahren möchten?</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1267"/>
@@ -1441,7 +1442,7 @@ Trackers list column title</extracomment>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="298"/>
         <source>None</source>
         <extracomment>None proxy option</extracomment>
-        <translation type="unfinished"/>
+        <translation>Keine</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="308"/>
@@ -1514,17 +1515,17 @@ Tracker's context menu item</extracomment>
     <message>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="259"/>
         <source>Maximum active downloads:</source>
-        <translation type="unfinished"/>
+        <translation>Maximale Anzahl an aktiven Downloads:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="273"/>
         <source>Maximum active uploads:</source>
-        <translation type="unfinished"/>
+        <translation>Maximale Anzahl an aktiven Uploads:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="288"/>
         <source>Ignore queue position if idle for:</source>
-        <translation type="unfinished"/>
+        <translation>Warteschlangenposition ignorieren, wenn inaktiv für:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/serversettings/serversettingsdialog.cpp" line="320"/>
@@ -1638,13 +1639,13 @@ Tracker's context menu item</extracomment>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="113"/>
         <source>Remember location of last opened torrent file</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Speicherort der zuletzt geöffneten Torrent-Datei merken</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="120"/>
         <source>Remember parameters of last added torrent</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Parameter des zuletzt hinzugefügten Torrents merken</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="253"/>
@@ -1713,7 +1714,7 @@ Context menu item</extracomment>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="130"/>
         <source>Completed:</source>
         <extracomment>Torrent's completed size</extracomment>
-        <translation type="unfinished"/>
+        <translation>Fertiggestellt:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/serverstatsdialog.cpp" line="43"/>
@@ -1862,17 +1863,17 @@ Torrent's uploaded size</extracomment>
     <message>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="363"/>
         <source>Ratio limit mode:</source>
-        <translation type="unfinished"/>
+        <translation>Ratio-Limit-Modus:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="404"/>
         <source>Idle seeding mode:</source>
-        <translation type="unfinished"/>
+        <translation>Leerlauf-Seed-Modus:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertiesdialog.cpp" line="458"/>
         <source>Maximum peers:</source>
-        <translation type="unfinished"/>
+        <translation>Maximale Peers:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="157"/>
@@ -1883,12 +1884,12 @@ Torrent's uploaded size</extracomment>
     <message>
         <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="158"/>
         <source>Trackers announce URLs:</source>
-        <translation type="unfinished"/>
+        <translation>Tracker-Announce URLs:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="182"/>
         <source>Tracker announce URL:</source>
-        <translation type="unfinished"/>
+        <translation>Tracker-Announce URL:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/torrentproperties/trackersviewwidget.cpp" line="212"/>
@@ -2027,44 +2028,44 @@ Peers list column title</extracomment>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="70"/>
         <source>Merge trackers?</source>
         <extracomment>Dialog title</extracomment>
-        <translation type="unfinished"/>
+        <translation>Tracker zusammenführen?</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="71"/>
         <source>Torrent «%1» is already added, merge trackers?</source>
-        <translation type="unfinished"/>
+        <translation>Torrent «%1» bereits hinzugefügt, Tracker zusammenführen?</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="76"/>
         <source>Merge</source>
-        <translation type="unfinished"/>
+        <translation>Zusammenführen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="77"/>
         <source>Do not ask again</source>
-        <translation type="unfinished"/>
+        <translation>Nicht noch einmal fragen</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="99"/>
         <source>Merged trackers</source>
         <extracomment>Dialog title</extracomment>
-        <translation type="unfinished"/>
+        <translation>Tracker zusammengeführt</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="100"/>
         <source>Merged trackers for torrent «%1»</source>
-        <translation type="unfinished"/>
+        <translation>Tracker für Torrent „%1“ zusammengeführt</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="108"/>
         <source>Torrent already exists</source>
         <extracomment>Dialog title</extracomment>
-        <translation type="unfinished"/>
+        <translation>Torrent existiert bereits</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="109"/>
         <source>Torrent «%1» already exists</source>
-        <translation type="unfinished"/>
+        <translation>Torrent «%1» existiert bereits</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrenthelpers.cpp" line="123"/>
@@ -2344,7 +2345,7 @@ Filter option of torrents list's download directory filter. %1 is download direc
     <message>
         <location filename="../src/filemanagerlauncher.cpp" line="50"/>
         <source>This directory does not exist</source>
-        <translation type="unfinished"/>
+        <translation>Dieses Verzeichnis existiert nicht</translation>
     </message>
 </context>
 </TS>
