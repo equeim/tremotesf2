@@ -54,6 +54,17 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-11-20" version="2.7.3">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Black screen issues when closing fullscreen window on macOS</li>
+          <li>File dialog being shown twice in some Linux environments</li>
+          <li>Crash with GCC 12</li>
+          <li>Torrent's details in list not being updated for most recently added torrent</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-09-15" version="2.7.2">
       <description>
         <p>Fixed</p>

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.7.3] - 2024-11-20
 ### Fixed
 - Black screen issues when closing fullscreen window on macOS
 - File dialog being shown twice in some Linux environments
