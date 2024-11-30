@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Tray icon disappearing in some X11 environments
+
 ## [2.7.3] - 2024-11-20
 ### Fixed
 - Black screen issues when closing fullscreen window on macOS

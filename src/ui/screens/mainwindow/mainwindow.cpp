@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <cmath>
 #include <unordered_map>
@@ -145,8 +146,17 @@ namespace tremotesf {
         };
 
 #ifndef Q_OS_MACOS
-        constexpr auto kdePlatformFileDialogClassName = "KDEPlatformFileDialog";
-        constexpr auto kDirSelectDialogClassName = "KDirSelectDialog";
+        bool isAllowedToHide(const QWidget* window) {
+            static constexpr std::array classNames{// Managed by QFileDialog
+                                                   "KDEPlatformFileDialog"_l1,
+                                                   "KDirSelectDialog"_l1,
+                                                   // Managed by QSystemTrayIcon
+                                                   "QSystemTrayIconSys"_l1
+            };
+            auto* const metaObject = window->metaObject();
+            return metaObject &&
+                   std::ranges::find(classNames, QLatin1String(metaObject->className())) == classNames.end();
+        }
 
         [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(const QWidgetList& widgets) {
             return {widgets.begin(), widgets.end()};
@@ -1492,9 +1502,7 @@ namespace tremotesf {
             mWindow->hide();
             mOtherWindowsHiddenByUs.clear();
             for (auto&& widget : toQPointers(qApp->topLevelWidgets())) {
-                if (widget != mWindow && widget->isWindow() && !widget->isHidden() &&
-                    // These are managed by QFileDialog
-                    !widget->inherits(kdePlatformFileDialogClassName) && !widget->inherits(kDirSelectDialogClassName)) {
+                if (widget != mWindow && widget->isWindow() && !widget->isHidden() && isAllowedToHide(widget)) {
                     info().log("Hiding {}", *widget);
                     widget->hide();
                     mOtherWindowsHiddenByUs.push_back(std::move(widget));
