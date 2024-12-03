@@ -12,7 +12,14 @@
 #endif
 
 namespace tremotesf {
-    Q_LOGGING_CATEGORY(tremotesfLoggingCategory, tremotesfLoggingCategoryName, QtInfoMsg)
+    constexpr auto defaultLogLevel =
+#ifdef NDEBUG
+        QtInfoMsg;
+#else
+        QtDebugMsg;
+#endif
+
+    Q_LOGGING_CATEGORY(tremotesfLoggingCategory, tremotesfLoggingCategoryName, defaultLogLevel)
 
     void overrideDebugLogs(bool enable) {
         constexpr auto loggingRulesEnvVariable = "QT_LOGGING_RULES";
