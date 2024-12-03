@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Tray icon disappearing in some X11 environments
+- Wrong translation being loaded on Windows
 
 ## [2.7.3] - 2024-11-20
 ### Fixed
