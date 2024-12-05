@@ -11,7 +11,7 @@ if (APPLE)
     list(APPEND languages OBJCXX)
 endif ()
 
-project(tremotesf VERSION 2.7.3 LANGUAGES ${languages})
+project(tremotesf VERSION 2.7.4 LANGUAGES ${languages})
 
 option(TREMOTESF_QT6 "Build with Qt 6" ON)
 option(TREMOTESF_ASAN "Build with AddressSanitizer" OFF)
