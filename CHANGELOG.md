@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.7.4] - 2024-12-06
 ### Fixed
 - Tray icon disappearing in some X11 environments
 - Wrong translation being loaded on Windows

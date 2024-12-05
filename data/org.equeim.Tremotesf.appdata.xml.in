@@ -54,6 +54,15 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2024-12-06" version="2.7.4">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Tray icon disappearing in some X11 environments</li>
+          <li>Wrong translation being loaded on Windows</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-11-20" version="2.7.3">
       <description>
         <p>Fixed</p>
