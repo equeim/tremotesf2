@@ -5,6 +5,7 @@
 cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0009 NEW)
 cmake_policy(SET CMP0057 NEW)
+cmake_policy(SET CMP0177 NEW)
 
 set(breeze_icons_destination "${CMAKE_INSTALL_PREFIX}/${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/breeze")
 
