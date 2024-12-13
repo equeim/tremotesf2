@@ -47,10 +47,12 @@ def make_tar_archive(tempdir: PurePath, debian: bool) -> PurePath:
         archive_filename = f"tremotesf-{version}.tar"
     archive_path = tempdir / archive_filename
     logging.info(f"Making tar archive {archive_path}")
-    files = subprocess.run(["git", "ls-files", "--recurse-submodules"],
+    files = subprocess.run(["git", "ls-files", "--recurse-submodules", "-z"],
                            check=True,
                            stdout=subprocess.PIPE,
-                           text=True).stdout.splitlines()
+                           text=True).stdout.split("\0")
+    # There is an empty string in the end for some reason
+    files = [f for f in files if f]
     logging.info(f"Archiving {len(files)} files")
     with tarfile.open(archive_path, mode="x") as tar:
         for file in files:
