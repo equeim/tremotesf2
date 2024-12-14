@@ -155,7 +155,7 @@ function(set_common_options_on_targets)
         list(APPEND common_public_compile_features ${TREMOTESF_COMMON_PUBLIC_COMPILE_FEATURES})
     endif()
 
-    set(common_target_properties CXX_EXTENSIONS OFF)
+    set(common_target_properties CXX_EXTENSIONS OFF CXX_SCAN_FOR_MODULES OFF)
     if (DEFINED TREMOTESF_COMMON_TARGET_PROPERTIES)
         list(APPEND common_target_properties ${TREMOTESF_COMMON_TARGET_PROPERTIES})
     endif()
