@@ -8,10 +8,10 @@ endif()
 
 if (TREMOTESF_QT6)
     set(TREMOTESF_QT_VERSION_MAJOR 6)
-    set(TREMOTESF_MINIMUM_QT_VERSION 6.6)
+    set(TREMOTESF_MINIMUM_QT_VERSION 6.6.0)
 else()
     set(TREMOTESF_QT_VERSION_MAJOR 5)
-    set(TREMOTESF_MINIMUM_QT_VERSION 5.15)
+    set(TREMOTESF_MINIMUM_QT_VERSION 5.15.0)
 endif()
 
 if (UNIX AND NOT APPLE)
@@ -31,6 +31,20 @@ if (MSVC AND (NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY))
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     endif()
 endif()
+
+function(append_qt_disable_deprecated_macro LIST_VAR)
+    string(REPLACE "." ";" min_qt_version_components "${TREMOTESF_MINIMUM_QT_VERSION}")
+    list(GET min_qt_version_components 0 major)
+    list(GET min_qt_version_components 1 minor)
+    list(GET min_qt_version_components 2 patch)
+    math(EXPR macro_value "(${major}<<16)|(${minor}<<8)|(${patch})" OUTPUT_FORMAT HEXADECIMAL)
+    if (TREMOTESF_QT6)
+        list(APPEND "${LIST_VAR}" "QT_DISABLE_DEPRECATED_UP_TO=${macro_value}")
+    else()
+        list(APPEND "${LIST_VAR}" "QT_DISABLE_DEPRECATED_BEFORE=${macro_value}")
+    endif()
+    return(PROPAGATE "${LIST_VAR}")
+endfunction()
 
 function(set_common_options_on_targets)
     set(
@@ -126,9 +140,14 @@ function(set_common_options_on_targets)
     set(
         common_compile_definitions
         QT_DEPRECATED_WARNINGS
-        QT_DISABLE_DEPRECATED_BEFORE=0x050e00
         QT_MESSAGELOGCONTEXT
     )
+
+    # QT_DISABLE_DEPRECATED_BEFORE can cause linker errors with static Qt
+    get_target_property(qt_library_type Qt::Core TYPE)
+    if (NOT (qt_library_type STREQUAL STATIC_LIBRARY))
+        append_qt_disable_deprecated_macro(common_compile_definitions)
+    endif()
 
     if (WIN32)
         include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WindowsMinimumVersion.cmake")
