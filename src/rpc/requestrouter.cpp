@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+// Needed to access deprecated QSsl::SslProtocol enum values
+#undef QT_DISABLE_DEPRECATED_BEFORE
+#undef QT_DISABLE_DEPRECATED_UP_TO
+
 #include "requestrouter.h"
 
 #include <optional>
