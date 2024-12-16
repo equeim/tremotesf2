@@ -17,34 +17,6 @@
 
 namespace tremotesf {
     namespace {
-        bool isWindowsVersionOrGreater(DWORD major, DWORD minor, DWORD build) {
-            debug().log(
-                "isWindowsVersionOrGreater() called with: major = {}, minor = {}, build = {}",
-                major,
-                minor,
-                build
-            );
-            OSVERSIONINFOEXW info{};
-            info.dwOSVersionInfoSize = sizeof(info);
-            info.dwMajorVersion = major;
-            info.dwMinorVersion = minor;
-            info.dwBuildNumber = build;
-            const auto conditionMask = VerSetConditionMask(
-                VerSetConditionMask(
-                    VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL),
-                    VER_MINORVERSION,
-                    VER_GREATER_EQUAL
-                ),
-                VER_BUILDNUMBER,
-                VER_GREATER_EQUAL
-            );
-            const auto ret =
-                VerifyVersionInfoW(&info, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask) !=
-                FALSE;
-            debug().log("isWindowsVersionOrGreater: returning {}", ret);
-            return ret;
-        }
-
         /**
          * @brief std::error_category for Win32 errors (returned by GetLastError())
          * Returns UTF-8 strings
@@ -76,16 +48,6 @@ namespace tremotesf {
                 return category;
             }
         };
-    }
-
-    bool isRunningOnWindows10_2004OrGreater() {
-        static const bool is = isWindowsVersionOrGreater(10, 0, 19041);
-        return is;
-    }
-
-    bool isRunningOnWindows11OrGreater() {
-        static const bool is = isWindowsVersionOrGreater(10, 0, 22000);
-        return is;
     }
 
     void checkWin32Bool(int win32BoolResult, std::string_view functionName) {

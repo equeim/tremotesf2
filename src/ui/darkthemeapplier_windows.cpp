@@ -8,6 +8,7 @@
 
 #include <QApplication>
 #include <QGuiApplication>
+#include <QOperatingSystemVersion>
 #include <QPalette>
 #include <QToolTip>
 #include <QStyle>
@@ -90,7 +91,7 @@ namespace tremotesf {
             }
 
             void applyDarkThemeToTitleBar(QWindow* window) {
-                if (isRunningOnWindows11OrGreater()) {
+                if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows11) {
                     debug().log("Setting DWMWA_CAPTION_COLOR on {}", *window);
                     const auto qcolor = QGuiApplication::palette().color(QPalette::Window);
                     const auto color = RGB(qcolor.red(), qcolor.green(), qcolor.blue());
@@ -110,7 +111,7 @@ namespace tremotesf {
                 } else {
                     debug().log("Setting DWMWA_USE_IMMERSIVE_DARK_MODE on {}", *window);
                     const auto attribute = []() -> DWORD {
-                        if (isRunningOnWindows10_2004OrGreater()) {
+                        if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10_2004) {
                             return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_SINCE_2004;
                         }
                         return DWMWINDOWATTRIBUTE_compat::DWMWA_USE_IMMERSIVE_DARK_MODE_1809_UNTIL_2004;

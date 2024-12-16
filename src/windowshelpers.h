@@ -11,9 +11,6 @@
 #include <QString>
 
 namespace tremotesf {
-    bool isRunningOnWindows10_2004OrGreater();
-    bool isRunningOnWindows11OrGreater();
-
     /**
      * @brief checkWin32Bool
      * @param win32BoolResult BOOL returned from Win32 function
