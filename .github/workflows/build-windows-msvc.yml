@@ -7,11 +7,11 @@ name: Build Tremotesf for Windows
 on:
   workflow_call:
     inputs:
-      build-with-msvc-clang-toolchain:
-        description: Build with MSVC + Clang toolchain
+      toolchain:
+        description: Either 'msvc' or 'msvc-clang'
         type: string
-        required: true
-
+        required: false
+        default: 'msvc'
       release-tag:
         description: Release tag
         type: string
@@ -20,6 +20,15 @@ on:
 
 jobs:
   build-windows-msvc:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - msvc-arch: amd64
+            cmake-preset-arch: x86_64
+          - msvc-arch: amd64_arm64
+            cmake-preset-arch: arm64
+
     runs-on: windows-latest
 
     steps:
@@ -30,9 +39,11 @@ jobs:
 
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1
+      with:
+        arch: ${{ matrix.arch.msvc-arch }}
 
     - name: Upgrade LLVM
-      if: inputs.build-with-msvc-clang-toolchain == 'true'
+      if: inputs.toolchain == 'msvc-clang'
       run: |
         choco upgrade llvm
 
@@ -41,20 +52,22 @@ jobs:
       with:
         vcpkg-root: ${{ github.workspace }}\vcpkg
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
-        save-cache: ${{ github.event_name != 'pull_request' && inputs.build-with-msvc-clang-toolchain != 'true' }}
+        save-cache: ${{ github.event_name != 'pull_request' && inputs.toolchain == 'msvc' }}
+        cache-key-tag: ${{ matrix.arch.cmake-preset-arch }}
 
-    - name: Build Tremotesf with ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'MSVC + Clang' || 'MSVC' }} toolchain
+    - name: Build Tremotesf with ${{ inputs.toolchain }} toolchain for ${{ matrix.arch.cmake-preset-arch }} architecture
       id: build
       uses: equeim/action-cmake-build@v10
       with:
-        cmake-arguments: --preset ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-vcpkg' || 'windows-msvc-vcpkg' }} -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && inputs.build-with-msvc-clang-toolchain == 'false' && 'ON' || 'OFF' }}
+        cmake-arguments: --preset windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && inputs.toolchain == 'msvc' && 'ON' || 'OFF' }}
         package: true
+        test: ${{ matrix.arch.cmake-preset-arch == 'x86_64' }}
 
     - name: Archive packages
       if: inputs.release-tag == ''
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-packages' || 'windows-msvc-packages' }}
+        name: 'windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-packages'
         retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
         path: |
           ${{ steps.build.outputs.build-directory }}\packaging\windows\*.zip
@@ -73,6 +86,6 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: ${{ inputs.build-with-msvc-clang-toolchain == 'true' && 'windows-msvc-clang-vcpkg-logs' || 'windows-msvc-vcpkg-logs' }}
+        name: 'windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-vcpkg-logs'
         retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
         path: ${{ env.VCPKG_ROOT }}\buildtrees\*\*.log

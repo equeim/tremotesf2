@@ -159,13 +159,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolchain:
-        - msvc
-        - msvc-clang
-
+        toolchain: ['msvc', 'msvc-clang']
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
-      build-with-msvc-clang-toolchain: ${{ matrix.toolchain == 'msvc-clang' && 'true' || 'false' }}
+      toolchain: ${{ matrix.toolchain  }}
 
   build-windows-mingw:
     runs-on: windows-latest

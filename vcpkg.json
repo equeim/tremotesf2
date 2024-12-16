@@ -7,11 +7,7 @@
         {
             "name": "qtbase",
             "host": true,
-            "default-features": false,
-            "features": [
-                "network",
-                "widgets"
-            ]
+            "default-features": false
         },
         {
             "name": "qtbase",
@@ -49,7 +45,8 @@
         "cpp-httplib",
         {
             "name": "pkgconf",
-            "platform": "windows"
+            "platform": "windows",
+            "host": true
         }
     ]
 }
