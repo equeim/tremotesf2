@@ -73,10 +73,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Archive vcpkg logs
+      - name: Archive build logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: macos-${{ matrix.architecture }}-vcpkg-logs
+          name: macos-${{ matrix.architecture }}-build-logs
           retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
-          path: ${{ env.VCPKG_ROOT }}/buildtrees/*/*.log
+          path: |
+            ${{ steps.build.outputs.build-directory }}/CMakeCache.txt
+            ${{ steps.build.outputs.build-directory }}/compile_commands.json
+            ${{ steps.build.outputs.build-directory }}/vcpkg-manifest-install.log
+            ${{ steps.build.outputs.build-directory }}/CMakeFiles/CMakeConfigureLog.yaml
+            ${{ env.VCPKG_ROOT }}/buildtrees/*/*.log
