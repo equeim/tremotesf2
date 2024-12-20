@@ -380,7 +380,7 @@ if (WIN32)
         set_source_files_properties(startup/windowsfatalerrorhandlers.cpp PROPERTIES COMPILE_OPTIONS "/std:c++latest")
         target_link_options(tremotesf PRIVATE "/PDBALTPATH:%_PDB%")
     endif()
-    set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
+    set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE OFF)
 endif ()
 
 # Executable installation
