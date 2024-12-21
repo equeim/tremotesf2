@@ -20,8 +20,9 @@
 #define SETTINGS_PROPERTY_DEF_IMPL(type, getter, setterType, setter, key, defaultValue)    \
     type Settings::getter() const { return getValue<type>(mSettings, key, defaultValue); } \
     void Settings::setter(setterType value) {                                              \
-        setValue<type>(mSettings, key, value);                                             \
-        emit getter##Changed();                                                            \
+        if (setValue<type>(mSettings, key, value)) {                                       \
+            emit getter##Changed();                                                        \
+        }                                                                                  \
     }
 
 #define SETTINGS_PROPERTY_DEF_TRIVIAL(type, getter, setter, key, defaultValue) \
@@ -45,8 +46,12 @@ namespace tremotesf {
         }
 
         template<typename T>
-        void setValue(QSettings* settings, const char* key, T value) {
-            settings->setValue(QLatin1String(key), QVariant::fromValue<T>(value));
+        bool setValue(QSettings* settings, const char* key, T value) {
+            if (value != settings->value(key).template value<T>()) {
+                settings->setValue(QLatin1String(key), QVariant::fromValue<T>(value));
+                return true;
+            }
+            return false;
         }
     }
 
