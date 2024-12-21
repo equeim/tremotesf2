@@ -24,8 +24,12 @@ namespace tremotesf {
             QColor accentColor{};
             QColor accentColorLight1{};
             QColor accentColorDark1{};
+            QColor accentColorDark2{};
 
-            [[nodiscard]] bool isValid() const { return accentColor.isValid(); }
+            [[nodiscard]] bool isValid() const {
+                return accentColor.isValid() && accentColorLight1.isValid() && accentColorDark1.isValid() &&
+                       accentColorDark2.isValid();
+            }
             [[nodiscard]] bool operator==(const AccentColors&) const = default;
         };
 
@@ -41,17 +45,17 @@ namespace tremotesf {
 
 }
 
-SPECIALIZE_FORMATTER_FOR_QDEBUG(QColor)
-
 template<>
 struct fmt::formatter<tremotesf::SystemColorsProvider::AccentColors> : tremotesf::SimpleFormatter {
-    format_context::iterator format(const tremotesf::SystemColorsProvider::AccentColors& colors, format_context& ctx)
-        const {
+    format_context::iterator
+    format(const tremotesf::SystemColorsProvider::AccentColors& colors, format_context& ctx) const {
         return fmt::format_to(
             ctx.out(),
-            "AccentColors(accentColor={}, accentColorLight1={})",
-            colors.accentColor,
-            colors.accentColorLight1
+            "AccentColors(accentColor={}, accentColorLight1={}, accentColorDark1={}, accentColorDark2={})",
+            colors.accentColor.name(),
+            colors.accentColorLight1.name(),
+            colors.accentColorDark1.name(),
+            colors.accentColorDark2.name()
         );
     }
 };

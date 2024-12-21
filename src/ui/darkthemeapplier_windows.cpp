@@ -4,14 +4,12 @@
 
 #include "darkthemeapplier_windows.h"
 
-#include <algorithm>
+#include <cmath>
 
 #include <QApplication>
-#include <QGuiApplication>
 #include <QOperatingSystemVersion>
 #include <QPalette>
-#include <QToolTip>
-#include <QStyle>
+#include <QStyleHints>
 #include <QWidget>
 #include <QWindow>
 
@@ -169,111 +167,67 @@ namespace tremotesf {
             return 0.2126 * trans(color.redF()) + 0.7152 * trans(color.greenF()) + 0.0722 * trans(color.blueF());
         }
 
-        // From Web Content Accessibility Guidelines 2.2
         double getContrastRatio(QColor lighterColor, QColor darkerColor) {
             return (getRelativeLuminance(lighterColor) + 0.05) / (getRelativeLuminance(darkerColor) + 0.05);
         }
 
-        void applyWindowsPalette(bool darkTheme, SystemColorsProvider::AccentColors accentColors) {
-            QPalette palette{QApplication::style()->standardPalette()};
+        // From Web Content Accessibility Guidelines 2.2
+        bool isLegibleWithWhiteText(QColor backgroundColor) {
+            const auto ratio = getContrastRatio(blendAtop(Qt::white, backgroundColor), backgroundColor);
+            return std::ceil(ratio * 10.0) >= 45.0;
+        }
 
-            const auto darkTextColor = QColor(0, 0, 0, 228);
-            const auto darkTextColorDisabled = QColor(0, 0, 0, 92);
-            const auto lightTextColor = QColor(255, 255, 255, 255);
-            const auto lightTextColorDisabled = QColor(255, 255, 255, 93);
-            if (darkTheme) {
-                palette.setColor(QPalette::Window, QColor(32, 32, 32, 255));
-                palette.setColor(QPalette::WindowText, lightTextColor);
-                palette.setColor(QPalette::Disabled, QPalette::WindowText, lightTextColorDisabled);
-                palette.setColor(QPalette::Base, QColor(45, 45, 45, 255));
-                palette.setColor(QPalette::Disabled, QPalette::Base, QColor(41, 41, 41, 255));
-                palette.setColor(QPalette::PlaceholderText, QColor(255, 255, 255, 197));
-                palette.setColor(QPalette::Button, QColor(45, 45, 45, 255));
-                palette.setColor(QPalette::Disabled, QPalette::Button, QColor(41, 41, 41, 255));
-            } else {
-                palette.setColor(QPalette::Window, QColor(243, 243, 243, 255));
-                palette.setColor(QPalette::WindowText, darkTextColor);
-                palette.setColor(QPalette::Disabled, QPalette::WindowText, darkTextColorDisabled);
-                palette.setColor(QPalette::Base, QColor(251, 251, 251, 255));
-                palette.setColor(QPalette::Disabled, QPalette::Base, QColor(244, 244, 244, 255));
-                palette.setColor(QPalette::PlaceholderText, QColor(0, 0, 0, 158));
-                palette.setColor(QPalette::Button, QColor(251, 251, 251, 255));
-                palette.setColor(QPalette::Disabled, QPalette::Button, QColor(244, 244, 244, 255));
-            }
+        QColor withAlpha(QColor color, int alpha) {
+            color.setAlpha(alpha);
+            return color;
+        }
 
-            palette.setColor(QPalette::AlternateBase, palette.color(QPalette::Base));
-            palette.setColor(
-                QPalette::Disabled,
-                QPalette::AlternateBase,
-                palette.color(QPalette::Disabled, QPalette::Base)
-            );
-            palette.setColor(QPalette::Text, palette.color(QPalette::WindowText));
-            palette
-                .setColor(QPalette::Disabled, QPalette::Text, palette.color(QPalette::Disabled, QPalette::WindowText));
-            palette.setColor(QPalette::ButtonText, palette.color(QPalette::WindowText));
-            palette.setColor(
-                QPalette::Disabled,
-                QPalette::ButtonText,
-                palette.color(QPalette::Disabled, QPalette::WindowText)
-            );
-            palette.setColor(QPalette::BrightText, palette.color(QPalette::WindowText));
-            palette.setColor(
-                QPalette::Disabled,
-                QPalette::BrightText,
-                palette.color(QPalette::Disabled, QPalette::WindowText)
-            );
-            palette.setColor(
-                QPalette::Disabled,
-                QPalette::PlaceholderText,
-                palette.color(QPalette::Disabled, QPalette::WindowText)
-            );
+        inline constexpr SystemColorsProvider::AccentColors defaultAccentColors{
+            .accentColor = QColor(48, 140, 198),
+            .accentColorLight1 = QColor(58, 168, 238),
+            .accentColorDark1 = QColor(40, 117, 165),
+            .accentColorDark2 = QColor(33, 97, 137)
+        };
 
-            const auto buttonColor = palette.color(QPalette::Button);
-            const auto buttonColorDisabled = palette.color(QPalette::Disabled, QPalette::Button);
-            palette.setColor(QPalette::Light, buttonColor.lighter(150));
-            palette.setColor(QPalette::Disabled, QPalette::Light, buttonColorDisabled);
-            palette.setColor(QPalette::Midlight, buttonColor.lighter(125));
-            palette.setColor(QPalette::Disabled, QPalette::Midlight, buttonColorDisabled);
-            palette.setColor(QPalette::Dark, buttonColor.darker(200));
-            palette.setColor(QPalette::Disabled, QPalette::Dark, buttonColorDisabled);
-            palette.setColor(QPalette::Mid, buttonColor.darker(150));
-            palette.setColor(QPalette::Disabled, QPalette::Mid, buttonColorDisabled);
-
-            if (accentColors.isValid()) {
-                const auto ratio =
-                    getContrastRatio(blendAtop(lightTextColor, accentColors.accentColor), accentColors.accentColor);
-                if (std::ceil(ratio * 10.0) >= 45.0) {
-                    palette.setColor(QPalette::Highlight, accentColors.accentColor);
-                    palette.setColor(QPalette::Inactive, QPalette::Highlight, accentColors.accentColorLight1);
-                } else {
-                    palette.setColor(QPalette::Highlight, accentColors.accentColorDark1);
-                    palette.setColor(QPalette::Inactive, QPalette::Highlight, accentColors.accentColor);
+        void applyAccentToPalette(Settings* settings, SystemColorsProvider* systemColorsProvider) {
+            info().log("Applying accent colors to palette");
+            SystemColorsProvider::AccentColors accentColors;
+            if (settings->useSystemAccentColor()) {
+                accentColors = systemColorsProvider->accentColors();
+                if (!accentColors.isValid()) {
+                    accentColors = defaultAccentColors;
                 }
-                palette.setColor(QPalette::HighlightedText, lightTextColor);
-                palette.setColor(QPalette::Disabled, QPalette::HighlightedText, lightTextColorDisabled);
-            }
-            const auto highlightColor = palette.color(QPalette::Active, QPalette::Highlight);
-            QColor link{};
-            if (darkTheme) {
-                link = highlightColor.lighter(150);
             } else {
-                link = highlightColor.darker(150);
+                accentColors = defaultAccentColors;
             }
-            palette.setColor(QPalette::Link, link);
-            palette.setColor(QPalette::LinkVisited, link.darker());
+            info().log("Accent colors are {}", accentColors);
 
-            info().log("applyDarkThemeToPalette: setting application palette");
+            QPalette palette{};
+            if (isLegibleWithWhiteText(accentColors.accentColor)) {
+                palette.setColor(QPalette::Active, QPalette::Highlight, accentColors.accentColor);
+                palette.setColor(QPalette::Disabled, QPalette::Highlight, withAlpha(accentColors.accentColor, 93));
+            } else {
+                palette.setColor(QPalette::Active, QPalette::Highlight, accentColors.accentColorDark1);
+                palette.setColor(QPalette::Disabled, QPalette::Highlight, withAlpha(accentColors.accentColorDark1, 93));
+            }
+            palette.setColor(QPalette::Active, QPalette::HighlightedText, Qt::white);
+            palette.setColor(QPalette::Disabled, QPalette::HighlightedText, withAlpha(Qt::white, 93));
+            palette.setColor(
+                QPalette::Inactive,
+                QPalette::Highlight,
+                withAlpha(palette.color(QPalette::Active, QPalette::Highlight), 153)
+            );
+            palette.setColor(QPalette::Inactive, QPalette::HighlightedText, Qt::white);
+
             QGuiApplication::setPalette(palette);
-
-            QPalette toolTipPalette{QToolTip::palette()};
-            if (darkTheme) {
-                toolTipPalette.setColor(QPalette::ToolTipBase, QColor(43, 43, 43, 255));
-                toolTipPalette.setColor(QPalette::ToolTipText, QColor(255, 255, 255, 255));
-            } else {
-                toolTipPalette.setColor(QPalette::ToolTipBase, QColor(242, 242, 242, 255));
-                toolTipPalette.setColor(QPalette::ToolTipText, QColor(0, 0, 0, 228));
+            if (qApp->styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+                QPalette checkBoxPalette{};
+                checkBoxPalette.setColor(QPalette::Active, QPalette::Base, accentColors.accentColorDark1);
+                checkBoxPalette.setColor(QPalette::Active, QPalette::Button, accentColors.accentColorLight1);
+                checkBoxPalette.setColor(QPalette::Inactive, QPalette::Base, accentColors.accentColorDark2);
+                QApplication::setPalette(checkBoxPalette, "QCheckBox");
+                QApplication::setPalette(checkBoxPalette, "QRadioButton");
             }
-            QToolTip::setPalette(toolTipPalette);
         }
     }
 
@@ -291,29 +245,22 @@ namespace tremotesf {
                 }
                 throw std::logic_error("Unknown DarkThemeMode value");
             }();
-            const auto accentColors = settings->useSystemAccentColor() ? systemColorsProvider->accentColors()
-                                                                       : SystemColorsProvider::AccentColors{};
-            applyWindowsPalette(darkTheme, accentColors);
+            const auto colorScheme = darkTheme ? Qt::ColorScheme::Dark : Qt::ColorScheme::Light;
+            info().log("Setting color scheme {}", colorScheme);
+            qApp->styleHints()->setColorScheme(colorScheme);
+            QMetaObject::invokeMethod(
+                qApp,
+                [=]() { applyAccentToPalette(settings, systemColorsProvider); },
+                Qt::QueuedConnection
+            );
         };
         apply();
-        QObject::connect(
-            systemColorsProvider,
-            &SystemColorsProvider::darkThemeEnabledChanged,
-            QGuiApplication::instance(),
-            apply
-        );
-        QObject::connect(
-            systemColorsProvider,
-            &SystemColorsProvider::accentColorsChanged,
-            QGuiApplication::instance(),
-            apply
-        );
-        QObject::connect(settings, &Settings::darkThemeModeChanged, QGuiApplication::instance(), apply);
-        QObject::connect(settings, &Settings::useSystemAccentColorChanged, QGuiApplication::instance(), apply);
+        QObject::connect(systemColorsProvider, &SystemColorsProvider::darkThemeEnabledChanged, qApp, apply);
+        QObject::connect(systemColorsProvider, &SystemColorsProvider::accentColorsChanged, qApp, apply);
+        QObject::connect(settings, &Settings::darkThemeModeChanged, qApp, apply);
+        QObject::connect(settings, &Settings::useSystemAccentColorChanged, qApp, apply);
 
-        QGuiApplication::instance()->installEventFilter(
-            new TitleBarBackgroundEventFilter(systemColorsProvider, QGuiApplication::instance())
-        );
+        qApp->installEventFilter(new TitleBarBackgroundEventFilter(systemColorsProvider, QGuiApplication::instance()));
     }
 
 }
