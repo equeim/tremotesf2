@@ -37,6 +37,9 @@
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "hostOS": [
