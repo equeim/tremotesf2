@@ -57,9 +57,10 @@ namespace tremotesf {
 
             AccentColors accentColorsImpl() {
                 return {
-                    qColor(settings.GetColorValue(UIColorType::Accent)),
-                    qColor(settings.GetColorValue(UIColorType::AccentLight1)),
-                    qColor(settings.GetColorValue(UIColorType::AccentDark1)),
+                    .accentColor = qColor(settings.GetColorValue(UIColorType::Accent)),
+                    .accentColorLight1 = qColor(settings.GetColorValue(UIColorType::AccentLight1)),
+                    .accentColorDark1 = qColor(settings.GetColorValue(UIColorType::AccentDark1)),
+                    .accentColorDark2 = qColor(settings.GetColorValue(UIColorType::AccentDark2)),
                 };
             }
 
