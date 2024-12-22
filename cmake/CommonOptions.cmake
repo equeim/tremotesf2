@@ -137,7 +137,7 @@ function(set_common_options_on_targets)
         list(APPEND common_compile_options ${TREMOTESF_COMMON_COMPILE_OPTIONS})
     endif()
 
-    set(common_compile_definitions QT_MESSAGELOGCONTEXT)
+    set(common_compile_definitions QT_MESSAGELOGCONTEXT QT_STRICT_QLIST_ITERATORS)
 
     # QT_DISABLE_DEPRECATED_BEFORE can cause linker errors with static Qt
     get_target_property(qt_library_type Qt::Core TYPE)
