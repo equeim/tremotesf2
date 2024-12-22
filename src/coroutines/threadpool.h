@@ -47,15 +47,19 @@ namespace tremotesf {
                 if (mSharedData->unhandledException) {
                     std::rethrow_exception(mSharedData->unhandledException);
                 }
-                // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-                return std::move(mSharedData->result).value();
+                if constexpr (!std::is_void_v<T>) {
+                    // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+                    return std::move(mSharedData->result).value();
+                }
             }
 
         private:
+            struct Empty {};
+            using ResultValue = std::conditional_t<std::is_void_v<T>, Empty, T>;
             struct SharedData {
                 QObject receiver{};
                 std::atomic_bool cancelled{};
-                std::optional<T> result{};
+                std::optional<ResultValue> result{};
                 std::exception_ptr unhandledException{};
                 std::coroutine_handle<> coroutineHandle{};
             };
@@ -75,7 +79,11 @@ namespace tremotesf {
                     windowsSetUpFatalErrorHandlersInThread();
 #endif
                     try {
-                        mSharedData->result = mFunction();
+                        if constexpr (std::is_void_v<T>) {
+                            mFunction();
+                        } else {
+                            mSharedData->result = mFunction();
+                        }
                     } catch (...) {
                         mSharedData->unhandledException = std::current_exception();
                     }
