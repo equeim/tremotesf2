@@ -255,11 +255,12 @@ namespace tremotesf {
                 {},
                 {},
                 parameters.priority,
-                parameters.startAfterAdding
+                parameters.startAfterAdding,
+                parameters.deleteTorrentFile
+                    ? (parameters.moveTorrentFileToTrash ? Rpc::DeleteFileMode::MoveToTrash : Rpc::DeleteFileMode::Delete)
+                    : Rpc::DeleteFileMode::No
+
             );
-            if (parameters.deleteTorrentFile) {
-                deleteTorrentFile(filePath, parameters.moveTorrentFileToTrash);
-            }
         }
     }
 

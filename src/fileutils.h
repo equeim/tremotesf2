@@ -29,8 +29,8 @@ namespace tremotesf {
 
     [[nodiscard]] QByteArray readFile(const QString& path);
 
-    void deleteFile(const QString& path);
-    void moveFileToTrash(const QString& path);
+    void deleteFile(const QString &filePath);
+    void moveFileToTrashOrDelete(const QString &filePath);
 
     [[maybe_unused]]
     QString resolveExternalBundledResourcesPath(QLatin1String path);
