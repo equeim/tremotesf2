@@ -216,19 +216,25 @@ namespace tremotesf {
         return data;
     }
 
-    void deleteFile(const QString& path) {
-        info().log("Deleting file {}", path);
-        QFile file(path);
-        if (file.remove()) {
-            info().log("Succesfully deleted file");
-        } else {
-            throw QFileError(fmt::format("Failed to delete {}: {}", fileDescription(file), errorDescription(file)));
+    namespace {
+        void deleteFileImpl(QFile& file) {
+            info().log("Deleting {}", fileDescription(file));
+            if (file.remove()) {
+                info().log("Succesfully deleted file");
+            } else {
+                throw QFileError(fmt::format("Failed to delete {}: {}", fileDescription(file), errorDescription(file)));
+            }
         }
     }
 
-    void moveFileToTrash(const QString& path) {
-        info().log("Moving file {} to trash", path);
-        QFile file(path);
+    void deleteFile(const QString& filePath) {
+        QFile file(filePath);
+        deleteFileImpl(file);
+    }
+
+    void moveFileToTrashOrDelete(const QString& filePath) {
+        QFile file(filePath);
+        info().log("Moving {} to trash", fileDescription(file));
         if (file.moveToTrash()) {
             if (const auto newPath = file.fileName(); !newPath.isEmpty()) {
                 info().log("Successfully moved file to trash, new path is {}", newPath);
@@ -236,9 +242,8 @@ namespace tremotesf {
                 info().log("Successfully moved file to trash");
             }
         } else {
-            throw QFileError(
-                fmt::format("Failed to move {} to trash: {}", fileDescription(file), errorDescription(file))
-            );
+            warning().log("Failed to move {} to trash: {}", fileDescription(file), errorDescription(file));
+            deleteFileImpl(file);
         }
     }
 

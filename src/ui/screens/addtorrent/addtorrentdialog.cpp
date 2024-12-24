@@ -28,6 +28,7 @@
 #include <fmt/format.h>
 
 #include "addtorrenthelpers.h"
+#include "fileutils.h"
 #include "formatutils.h"
 #include "magnetlinkparser.h"
 #include "settings.h"
@@ -64,6 +65,19 @@ namespace tremotesf {
             }
             return row;
         }
+
+        Rpc::DeleteFileMode determineDeleteFileMode(const AddTorrentDialog::AddTorrentParametersWidgets& widgets) {
+            if (!widgets.deleteTorrentFileGroupBox || !widgets.moveTorrentFileToTrashCheckBox) {
+                return Rpc::DeleteFileMode::No;
+            }
+            if (!widgets.deleteTorrentFileGroupBox->isChecked()) {
+                return Rpc::DeleteFileMode::No;
+            }
+            if (widgets.moveTorrentFileToTrashCheckBox->isChecked()) {
+                return Rpc::DeleteFileMode::MoveToTrash;
+            }
+            return Rpc::DeleteFileMode::Delete;
+        }
     }
 
     AddTorrentDialog::AddTorrentDialog(Rpc* rpc, std::variant<FileParams, UrlParams> params, QWidget* parent)
@@ -95,7 +109,8 @@ namespace tremotesf {
                     mFilesModel->lowPriorityFiles(),
                     mFilesModel->renamedFiles(),
                     priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
-                    mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
+                    mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked(),
+                    determineDeleteFileMode(mAddTorrentParametersWidgets)
                 );
             }
         } else {
@@ -117,7 +132,6 @@ namespace tremotesf {
         if (settings->rememberAddTorrentParameters()) {
             mAddTorrentParametersWidgets.saveToSettings();
         }
-        deleteTorrentFileIfEnabled();
         QDialog::accept();
     }
 
@@ -349,7 +363,9 @@ namespace tremotesf {
             mTorrentFileInfoHashAndTrackers =
                 std::pair{std::move(torrentFile.infoHashV1), std::move(torrentFile.trackers)};
             if (checkIfTorrentFileExists()) {
-                deleteTorrentFileIfEnabled();
+                if (isAddingFile()) {
+                    co_await deleteTorrentFileIfEnabled();
+                }
                 close();
                 co_return;
             }
@@ -407,13 +423,22 @@ namespace tremotesf {
         return false;
     }
 
-    void AddTorrentDialog::deleteTorrentFileIfEnabled() {
-        if (isAddingFile() && mAddTorrentParametersWidgets.deleteTorrentFileGroupBox->isChecked()) {
-            deleteTorrentFile(
-                std::get<FileParams>(mParams).filePath,
-                mAddTorrentParametersWidgets.moveTorrentFileToTrashCheckBox->isChecked()
-            );
+    Coroutine<> AddTorrentDialog::deleteTorrentFileIfEnabled() {
+        const auto deleteFileMode = determineDeleteFileMode(mAddTorrentParametersWidgets);
+        if (deleteFileMode == Rpc::DeleteFileMode::No) {
+            co_return;
         }
+        co_await runOnThreadPool([deleteFileMode, filePath = std::get<FileParams>(mParams).filePath] {
+            try {
+                if (deleteFileMode == Rpc::DeleteFileMode::MoveToTrash) {
+                    moveFileToTrashOrDelete(filePath);
+                } else {
+                    deleteFile(filePath);
+                }
+            } catch (const QFileError& e) {
+                warning().logWithException(e, "Failed to delete torrent file");
+            }
+        });
     }
 
     void AddTorrentDialog::AddTorrentParametersWidgets::reset(Rpc* rpc) const {

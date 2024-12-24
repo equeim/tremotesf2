@@ -27,8 +27,6 @@ namespace tremotesf {
     AddTorrentParameters getAddTorrentParameters(Rpc* rpc);
     AddTorrentParameters getInitialAddTorrentParameters(Rpc* rpc);
 
-    void deleteTorrentFile(const QString& filePath, bool moveToTrash);
-
     QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent);
 
     QString bencodeErrorString(bencode::Error::Type type);

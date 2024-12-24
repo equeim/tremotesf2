@@ -126,6 +126,8 @@ namespace tremotesf {
         void connect();
         void disconnect();
 
+        enum class DeleteFileMode { No, Delete, MoveToTrash };
+
         void addTorrentFile(
             QString filePath,
             QString downloadDirectory,
@@ -134,7 +136,8 @@ namespace tremotesf {
             std::vector<int> lowPriorityFiles,
             std::map<QString, QString> renamedFiles,
             TorrentData::Priority bandwidthPriority,
-            bool start
+            bool start,
+            DeleteFileMode deleteFileMode
         );
 
         void addTorrentLinks(
@@ -182,7 +185,8 @@ namespace tremotesf {
             std::vector<int> lowPriorityFiles,
             std::map<QString, QString> renamedFiles,
             TorrentData::Priority bandwidthPriority,
-            bool start
+            bool start,
+            DeleteFileMode deleteFileMode
         );
         Coroutine<> addTorrentLinksImpl(
             QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
@@ -211,6 +215,7 @@ namespace tremotesf {
         impl::RequestRouter* mRequestRouter{};
         CoroutineScope mBackgroundRequestsCoroutineScope{};
         CoroutineScope mAutoReconnectCoroutineScope{};
+        CoroutineScope mDeletingFilesCoroutineScope{};
 
         bool mAutoReconnectEnabled{};
 

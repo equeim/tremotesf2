@@ -81,7 +81,7 @@ namespace tremotesf {
         void parseMagnetLinksAndCheckIfTorrentsExist(QStringList& urls);
         bool checkIfTorrentFileExists();
 
-        void deleteTorrentFileIfEnabled();
+        Coroutine<> deleteTorrentFileIfEnabled();
 
         Rpc* mRpc;
         std::variant<FileParams, UrlParams> mParams;

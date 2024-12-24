@@ -239,7 +239,8 @@ namespace tremotesf {
         std::vector<int> lowPriorityFiles,
         std::map<QString, QString> renamedFiles,
         TorrentData::Priority bandwidthPriority,
-        bool start
+        bool start,
+        DeleteFileMode deleteFileMode
     ) {
         if (isConnected()) {
             mBackgroundRequestsCoroutineScope.launch(addTorrentFileImpl(
@@ -250,7 +251,8 @@ namespace tremotesf {
                 std::move(lowPriorityFiles),
                 std::move(renamedFiles),
                 bandwidthPriority,
-                start
+                start,
+                deleteFileMode
             ));
         }
     }
@@ -285,6 +287,20 @@ namespace tremotesf {
                  {"paused"_l1, !start}}
             );
         }
+
+        Coroutine<> deleteTorrentFile(QString filePath, bool moveToTrash) {
+            co_await runOnThreadPool([moveToTrash, filePath = std::move(filePath)] {
+                try {
+                    if (moveToTrash) {
+                        moveFileToTrashOrDelete(filePath);
+                    } else {
+                        deleteFile(filePath);
+                    }
+                } catch (const QFileError& e) {
+                    warning().logWithException(e, "Failed to delete torrent file");
+                }
+            });
+        }
     }
 
     Coroutine<> Rpc::addTorrentFileImpl(
@@ -295,7 +311,8 @@ namespace tremotesf {
         std::vector<int> lowPriorityFiles,
         std::map<QString, QString> renamedFiles,
         TorrentData::Priority bandwidthPriority,
-        bool start
+        bool start,
+        DeleteFileMode deleteFileMode
     ) {
         std::optional<QByteArray> requestData = co_await runOnThreadPool(
             makeAddTorrentFileRequestData,
@@ -310,6 +327,9 @@ namespace tremotesf {
         if (!requestData.has_value()) {
             emit torrentAddError(filePath);
             co_return;
+        }
+        if (deleteFileMode != DeleteFileMode::No) {
+            mDeletingFilesCoroutineScope.launch(deleteTorrentFile(filePath, deleteFileMode == DeleteFileMode::MoveToTrash));
         }
         if (!isConnected()) co_return;
         const auto response = co_await mRequestRouter->postRequest("torrent-add"_l1, std::move(requestData).value());

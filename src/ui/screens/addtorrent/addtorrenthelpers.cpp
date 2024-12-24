@@ -9,9 +9,7 @@
 
 #include "addtorrenthelpers.h"
 
-#include "fileutils.h"
 #include "settings.h"
-#include "log/log.h"
 #include "rpc/rpc.h"
 #include "rpc/servers.h"
 #include "rpc/serversettings.h"
@@ -42,23 +40,6 @@ namespace tremotesf {
             .deleteTorrentFile = false,
             .moveTorrentFileToTrash = true
         };
-    }
-
-    void deleteTorrentFile(const QString& filePath, bool moveToTrash) {
-        try {
-            if (moveToTrash) {
-                try {
-                    moveFileToTrash(filePath);
-                } catch (const QFileError& e) {
-                    warning().logWithException(e, "Failed to move torrent file to trash");
-                    deleteFile(filePath);
-                }
-            } else {
-                deleteFile(filePath);
-            }
-        } catch (const QFileError& e) {
-            warning().logWithException(e, "Failed to delete torrent file");
-        }
     }
 
     QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent) {
