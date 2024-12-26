@@ -33,7 +33,7 @@ def get_project_version() -> str:
             for arg in args:
                 if found_version:
                     return arg
-                elif arg.lower() == "version":
+                if arg.lower() == "version":
                     found_version = True
     raise RuntimeError("Failed to find version in CMake trace output")
 
