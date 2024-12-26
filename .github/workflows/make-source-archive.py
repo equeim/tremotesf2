@@ -76,7 +76,6 @@ def compress_zstd(output_directory: PurePath, tar_path: PurePath) -> PurePath:
 
 
 class CompressionType(Enum):
-    ALL = "all"
     GZIP = "gzip"
     ZSTD = "zstd"
 
@@ -85,7 +84,8 @@ def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stderr)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('compression',
+    parser.add_argument("compression_types",
+                        nargs="+",
                         choices=[member.value for member in list(CompressionType)],
                         help="Compression type")
     parser.add_argument("--output-directory",
@@ -95,7 +95,7 @@ def main():
                         help="Make Debian upstream tarball")
 
     args = parser.parse_args()
-    compression_type = CompressionType(args.compression)
+    compression_types = [CompressionType(arg) for arg in args.compression_types]
     if args.output_directory:
         output_directory = PurePath(args.output_directory)
     else:
@@ -103,13 +103,12 @@ def main():
 
     with TemporaryDirectory() as tempdir:
         tar = make_tar_archive(PurePath(tempdir), args.debian)
-        if compression_type == CompressionType.ALL:
-            print(compress_gzip(output_directory, tar))
-            print(compress_zstd(output_directory, tar))
-        elif compression_type == CompressionType.GZIP:
-            print(compress_gzip(output_directory, tar))
-        elif compression_type == CompressionType.ZSTD:
-            print(compress_zstd(output_directory, tar))
+        for compression_type in compression_types:
+            match compression_type:
+                case CompressionType.GZIP:
+                    print(compress_gzip(output_directory, tar))
+                case CompressionType.ZSTD:
+                    print(compress_zstd(output_directory, tar))
 
 
 if __name__ == "__main__":

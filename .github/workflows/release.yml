@@ -20,7 +20,7 @@ jobs:
 
     - name: Upload source archives to release
       run: |
-        readarray -t archives < <(.github/workflows/make-source-archive.py all)
+        readarray -t archives < <(.github/workflows/make-source-archive.py gzip zstd)
         echo "Uploading source archives ${archives[@]}"
         gh release upload '${{ github.event.release.tag_name }}' "${archives[@]}"
       env:
