@@ -23,6 +23,11 @@ jobs:
         readarray -t archives < <(.github/workflows/make-source-archive.py gzip zstd)
         echo "Uploading source archives ${archives[@]}"
         gh release upload '${{ github.event.release.tag_name }}' "${archives[@]}"
+
+        .github/workflows/make-flatpak-manifest-for-release.py '${{ github.event.release.tag_name }}' "${archives[-1]}"
+        echo "Release Flatpak manifest:"
+        cat org.equeim.Tremotesf.json
+        gh release upload '${{ github.event.release.tag_name }}' org.equeim.Tremotesf.json
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
