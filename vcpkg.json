@@ -43,7 +43,10 @@
         },
         "qtsvg",
         "fmt",
-        "openssl",
+        {
+            "name": "openssl",
+            "platform": "!windows"
+        },
         "kf6widgetsaddons",
         "cxxopts",
         "cpp-httplib",

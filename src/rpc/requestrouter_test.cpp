@@ -248,6 +248,7 @@ namespace {
             QCOMPARE(requestsCount.load(), retryAttempts + 1);
         }
 
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
         void checkSelfSignedCertificateError() {
             TestHttpServer<httplib::SSLServer> server(
                 TEST_DATA_PATH "/root-certificate.pem",
@@ -348,6 +349,7 @@ namespace {
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->success, true);
         }
+#endif
 
         void checkInvalidJsonIsHandled() {
             mServer.handle([&](const httplib::Request&, httplib::Response& res) {
