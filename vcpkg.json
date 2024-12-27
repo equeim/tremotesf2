@@ -1,8 +1,5 @@
 {
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-    "name": "tremotesf",
-    "version": "0",
-    "supports": "windows,osx",
     "dependencies": [
         {
             "name": "qtbase",
