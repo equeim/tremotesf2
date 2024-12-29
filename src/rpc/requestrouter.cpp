@@ -227,11 +227,12 @@ namespace tremotesf::impl {
                 mSslConfiguration.setPrivateKey(mConfiguration->clientPrivateKey);
             }
             mExpectedSslErrors.clear();
-            mExpectedSslErrors.reserve(mConfiguration->serverCertificateChain.size() * 3);
+            mExpectedSslErrors.reserve(mConfiguration->serverCertificateChain.size() * 4);
             for (const auto& certificate : mConfiguration->serverCertificateChain) {
                 mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, certificate));
                 mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, certificate));
                 mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificateInChain, certificate));
+                mExpectedSslErrors.push_back(QSslError(QSslError::CertificateUntrusted, certificate));
             }
         }
 
