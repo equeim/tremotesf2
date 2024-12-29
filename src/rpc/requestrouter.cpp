@@ -33,6 +33,21 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QSslError)
 
 namespace fmt {
     template<>
+    struct formatter<QSslCertificate> : tremotesf::SimpleFormatter {
+        fmt::format_context::iterator format(const QSslCertificate& certificate, fmt::format_context& ctx) const {
+            // QSslCertificate::toText is implemented only for OpenSSL backend
+#if QT_VERSION_MAJOR >= 6
+            using tremotesf::operator""_l1;
+            static const bool isOpenSSL = (QSslSocket::activeBackend() == "openssl"_l1);
+            if (!isOpenSSL) {
+                return tremotesf::impl::QDebugFormatter<QSslCertificate>{}.format(certificate, ctx);
+            }
+#endif
+            return fmt::formatter<QString>{}.format(certificate.toText(), ctx);
+        }
+    };
+
+    template<>
     struct formatter<QSsl::SslProtocol> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(QSsl::SslProtocol protocol, fmt::format_context& ctx) const {
             const auto str = [&]() -> std::optional<std::string_view> {
@@ -165,7 +180,7 @@ namespace tremotesf::impl {
                         i,
                         sslError.error(),
                         sslError.errorString(),
-                        sslError.certificate().toText()
+                        sslError.certificate()
                     ));
                     ++i;
                 }
