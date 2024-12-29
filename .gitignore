@@ -26,4 +26,6 @@
 /.idea
 /cmake-build*
 
+/.flatpak-builder
+
 .DS_Store
