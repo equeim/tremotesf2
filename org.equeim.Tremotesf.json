@@ -17,28 +17,9 @@
     "cleanup": [
         "/include",
         "/lib/cmake",
-        "/lib/pkgconfig",
-        "/lib/*.a"
+        "/lib/pkgconfig"
     ],
     "modules": [
-        {
-            "name": "fmt",
-            "buildsystem": "cmake-ninja",
-            "builddir": true,
-            "config-opts": [
-                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
-                "-DFMT_DOC=OFF",
-                "-DFMT_TEST=OFF"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/fmtlib/fmt/releases/download/11.0.2/fmt-11.0.2.zip",
-                    "sha256": "40fc58bebcf38c759e11a7bd8fdc163507d2423ef5058bba7f26280c5b9c5465"
-                }
-            ]
-        },
         {
             "name": "cxxopts",
             "buildsystem": "cmake-ninja",
