@@ -26,7 +26,6 @@
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
                 "-DCXXOPTS_BUILD_EXAMPLES=OFF",
                 "-DCXXOPTS_BUILD_TESTS=OFF"
             ],
@@ -44,7 +43,6 @@
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
                 "-DHTTPLIB_REQUIRE_OPENSSL=ON"
             ],
             "sources": [
