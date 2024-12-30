@@ -18,15 +18,11 @@
                 "png",
                 "testlib",
                 "thread",
-                "widgets"
-            ]
-        },
-        {
-            "name": "qtbase",
-            "platform": "!windows",
-            "default-features": false,
-            "features": [
-                "openssl"
+                "widgets",
+                {
+                    "name": "openssl",
+                    "platform": "!windows"
+                }
             ]
         },
         {
