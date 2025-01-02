@@ -320,7 +320,12 @@ namespace {
             }
             const auto error = waitForError("foo"_l1, QByteArray{});
             QCOMPARE(error.has_value(), true);
-            QCOMPARE(error.value(), RpcError::ConnectionError);
+            if (error.value() == RpcError::TimedOut) {
+                // Can happen with TLS 1.3
+                warning().log("Connecting to server requiring client certificate timed out");
+            } else {
+                QCOMPARE(error.value(), RpcError::ConnectionError);
+            }
         }
 
         void checkClientCertificateSuccess() {
