@@ -47,7 +47,7 @@
             "features": [
                 {
                     "name": "openssl",
-                    "platform": "!windows"
+                    "platform": "!(windows & arm64)"
                 }
             ]
         },
