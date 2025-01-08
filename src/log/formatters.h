@@ -128,7 +128,7 @@ namespace fmt {
     };
 
     template<std::derived_from<std::exception> T>
-        requires(!std::same_as<T, std::exception>)
+        requires(!std::derived_from<T, std::system_error>)
     struct formatter<T> : formatter<std::exception> {};
 
     template<>
