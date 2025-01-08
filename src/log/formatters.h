@@ -121,6 +121,14 @@ namespace fmt {
         struct formatter<Class> : tremotesf::impl::QDebugFormatter<Class> {}; \
     }
 
+#define DISABLE_RANGE_FORMATTING(Class)                          \
+    namespace fmt {                                              \
+        template<>                                               \
+        struct is_range<Class, char> : std::false_type {};       \
+        template<>                                               \
+        struct is_range<const Class, char> : std::false_type {}; \
+    }
+
 namespace fmt {
     template<>
     struct formatter<std::exception> : tremotesf::SimpleFormatter {
