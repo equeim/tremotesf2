@@ -128,8 +128,28 @@ function(set_common_options_on_targets)
             common_compile_options
             ${gcc_style_warnings}
         )
-        if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
-            list(APPEND common_compile_options -fexperimental-library)
+        if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            include(CheckCXXSymbolExists)
+            set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+            check_cxx_symbol_exists("__GLIBCXX__" "version" is_glibcxx)
+            if (is_glibcxx)
+                list(APPEND common_compile_definitions _GLIBCXX_ASSERTIONS)
+            else()
+                include(CheckCXXSourceCompiles)
+                # Can't use CMAKE_CXX_COMPILER_VERSION here because it may not correspond to the actual version of libc++ (e.g. with Apple Clang)
+                check_cxx_source_compiles([=[
+                    #include <version>
+                    static_assert(_LIBCPP_VERSION >= 180000);
+                ]=] is_libcpp_18_or_newer)
+                if (is_libcpp_18_or_newer)
+                    list(APPEND common_compile_definitions _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST)
+                else()
+                    # For std::views::join
+                    list(APPEND common_compile_options -fexperimental-library)
+                endif()
+            endif()
+        else()
+            list(APPEND common_compile_definitions _GLIBCXX_ASSERTIONS)
         endif()
         if (TREMOTESF_ASAN)
             list(APPEND common_compile_options -fsanitize=address)
@@ -141,7 +161,7 @@ function(set_common_options_on_targets)
         list(APPEND common_compile_options ${TREMOTESF_COMMON_COMPILE_OPTIONS})
     endif()
 
-    set(common_compile_definitions QT_MESSAGELOGCONTEXT QT_STRICT_QLIST_ITERATORS)
+    list(APPEND common_compile_definitions QT_MESSAGELOGCONTEXT QT_STRICT_QLIST_ITERATORS)
 
     # QT_DISABLE_DEPRECATED_BEFORE can cause linker errors with static Qt
     get_target_property(qt_library_type Qt::Core TYPE)
