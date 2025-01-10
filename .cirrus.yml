@@ -32,10 +32,10 @@ build_freebsd_task:
     # Not enabling ASAN since it causes weird issues with tests that use openssl
     cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib"
     echo 'Building Debug'
-    cmake --build --preset base-debug
+    cmake --build --preset base-debug -v
     echo 'Testing Debug'
     ASAN_OPTIONS=detect_leaks=0 ctest --preset base-debug
     echo 'Building Release'
-    cmake --build --preset base-release
+    cmake --build --preset base-release -v
     echo 'Testing Release'
     ASAN_OPTIONS=detect_leaks=0 ctest --preset base-release

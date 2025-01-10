@@ -216,13 +216,13 @@ jobs:
           cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB=bundled -D TREMOTESF_ASAN=ON -D CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=OFF
           echo '::endgroup'
           echo '::group::Building Debug'
-          cmake --build --preset base-debug
+          cmake --build --preset base-debug -v
           echo '::endgroup'
           echo '::group::Testing Debug'
           ctest --preset base-debug
           echo '::endgroup'
           echo '::group::Building Release'
-          cmake --build --preset base-release
+          cmake --build --preset base-release -v
           echo '::endgroup'
           echo '::group::Testing Release'
           ctest --preset base-release
