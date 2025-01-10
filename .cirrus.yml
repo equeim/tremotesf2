@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_BASE_BRANCH == 'master' || $CIRRUS_BASE_BRANCH =~ 'feature/.*'
+
 build_freebsd_task:
   freebsd_instance:
     matrix:
     - image_family: freebsd-13-4
     - image_family: freebsd-14-2
-
-  only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_BASE_BRANCH == 'master' || $CIRRUS_BASE_BRANCH =~ 'feature/.*'
 
   packages_cache:
     folder: /var/cache/pkg
@@ -30,7 +30,29 @@ build_freebsd_task:
         httplib=none
     fi
     # Not enabling ASAN since it causes weird issues with tests that use openssl
-    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib"
+    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB="$httplib" -D TREMOTESF_ASAN=OFF
+    echo 'Building Debug'
+    cmake --build --preset base-debug -v
+    echo 'Testing Debug'
+    ASAN_OPTIONS=detect_leaks=0 ctest --preset base-debug
+    echo 'Building Release'
+    cmake --build --preset base-release -v
+    echo 'Testing Release'
+    ASAN_OPTIONS=detect_leaks=0 ctest --preset base-release
+
+build_fedora_arm_task:
+  arm_container:
+    image: fedora:latest
+    cpu: 4
+    memory: 12G
+
+  install_dependencies_script: |
+    dnf -y --setopt=install_weak_deps=False install rpm-build ninja-build
+    readarray -t dependencies < <(rpmspec --define 'with_asan 1' -q --srpm --qf '[%{REQUIRES}\n]' packaging/rpm/tremotesf.spec)
+    dnf -y --setopt=install_weak_deps=False install "${dependencies[@]}"
+
+  cmake_build_script: |
+    cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB=system -D TREMOTESF_ASAN=ON
     echo 'Building Debug'
     cmake --build --preset base-debug -v
     echo 'Testing Debug'
