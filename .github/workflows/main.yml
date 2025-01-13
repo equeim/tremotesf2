@@ -134,7 +134,8 @@ jobs:
         DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ../*.deb
 
   build-flatpak:
-    runs-on: ubuntu-latest
+    # https://github.com/actions/runner-images/issues/11359
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Add GCC problem matcher
