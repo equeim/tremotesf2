@@ -1,5 +1,26 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Windows on ARM64 support
+
+### Changed
+- Windows builds now use system TLS library (schannel) instead of OpenSSL
+- Various hardening GCC and Clang compiler options are applied:
+  - `-fhardened` with GCC >= 14
+  - `-ftrivial-auto-var-init=pattern`, `-fstack-protector-strong`
+  - `-fstack-clash-protection` on Linux and FreeBSD
+  - `-fcf-protection=full` on x86_64
+  - `-mbranch-protection=standard` on ARM64
+  - `-D_FORTIFY_SOURCE=3`
+  - `-D_GLIBCXX_ASSERTIONS` with libstdc++
+  - `-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST` with libc++ >= 18
+
+### Fixed
+- Failures to add torrents when "Delete .torrent file" option is enabled
+- Compilation errors with fmt 11.1
+- Debug logs being enabled in release builds in some cases
+
 ## [2.7.4] - 2024-12-06
 ### Fixed
 - Tray icon disappearing in some X11 environments
