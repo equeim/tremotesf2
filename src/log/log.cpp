@@ -13,10 +13,10 @@
 
 namespace tremotesf {
     constexpr auto defaultLogLevel =
-#ifdef NDEBUG
-        QtInfoMsg;
-#else
+#ifdef QT_DEBUG
         QtDebugMsg;
+#else
+        QtInfoMsg;
 #endif
 
     Q_LOGGING_CATEGORY(tremotesfLoggingCategory, tremotesfLoggingCategoryName, defaultLogLevel)
