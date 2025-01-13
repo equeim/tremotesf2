@@ -202,10 +202,10 @@ namespace tremotesf {
 
         void callReleaseOrDebugHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
             const QString formatted = qFormatLogMessage(type, context, message);
-#ifdef NDEBUG
-            releaseMessageHandler(formatted);
-#else
+#ifdef QT_DEBUG
             debugMessageHandler(formatted);
+#else
+            releaseMessageHandler(formatted);
 #endif
         }
 
@@ -225,14 +225,14 @@ namespace tremotesf {
         qSetMessagePattern(
             "[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_l1
         );
-#ifdef NDEBUG
+#ifndef QT_DEBUG
         globalFileLogger = std::make_unique<FileLogger>();
         debug().log("FileLogger: created, starting write thread");
 #endif
     }
 
     void deinitWindowsMessageHandler() {
-#ifdef NDEBUG
+#ifndef QT_DEBUG
         if (globalFileLogger) {
             globalFileLogger->finishWriting();
         }
