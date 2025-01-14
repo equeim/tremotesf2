@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.7.5] - 2025-01-14
 ### Added
 - Windows on ARM64 support
 
