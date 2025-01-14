@@ -29,7 +29,7 @@ Table of Contents
 - libpsl 0.21.2 or newer
 - cxxopts 3.1.1 or newer
 - Qt Test module (for tests only)
-- OpenSSL 1.1.1 or newer (for tests only)
+- OpenSSL 3.0.0 or newer (for tests only)
 - cpp-httplib 0.11.0 or newer (for tests only, optional)
 
 On GNU/Linux and BSD, also:
@@ -87,12 +87,6 @@ sudo dnf install tremotesf
 ```
 
 - Gentoo - [equeim-overlay](https://github.com/equeim/equeim-overlay)
-
-- Mageia - [Copr](https://copr.fedorainfracloud.org/coprs/equeim/tremotesf)
-```sh
-sudo dnf copr enable equeim/tremotesf
-sudo dnf install tremotesf
-```
 
 - openSUSE Tumbleweed - [OBS](https://build.opensuse.org/package/show/home:equeim:tremotesf/Tremotesf)
 ```sh
