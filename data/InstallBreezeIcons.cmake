@@ -50,6 +50,9 @@ set(bundled_icon_files
     network-server.svg
     preferences-system.svg
     preferences-system-network.svg
+    preferences-desktop.svg
+    preferences-desktop-notification.svg
+    preferences-other.svg
     preferences-system-time.svg
     system-shutdown.svg
     view-refresh.svg
