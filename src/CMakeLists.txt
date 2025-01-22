@@ -99,6 +99,7 @@ target_sources(tremotesf_objects
     ui/screens/torrentproperties/peersmodel.cpp
     ui/screens/torrentproperties/torrentfilesmodel.cpp
     ui/screens/torrentproperties/torrentpropertiesdialog.cpp
+    ui/screens/torrentproperties/torrentpropertieswidget.cpp
     ui/screens/torrentproperties/trackersmodel.cpp
     ui/screens/torrentproperties/trackersviewwidget.cpp
     ui/stylehelpers.cpp
@@ -200,6 +201,7 @@ target_sources(tremotesf_objects
     ui/screens/torrentproperties/peersmodel.h
     ui/screens/torrentproperties/torrentfilesmodel.h
     ui/screens/torrentproperties/torrentpropertiesdialog.h
+    ui/screens/torrentproperties/torrentpropertieswidget.h
     ui/screens/torrentproperties/trackersmodel.h
     ui/screens/torrentproperties/trackersviewwidget.h
     ui/stylehelpers.h
