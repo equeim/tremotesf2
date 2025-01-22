@@ -66,6 +66,8 @@ namespace tremotesf {
           mFilesModel(new TorrentFilesModel(mRpc, this)),
           mFilesView(new TorrentFilesView(mFilesModel, mRpc, this)),
           mTrackersViewWidget(new TrackersViewWidget(mRpc, this)) {
+        setEnabled(false);
+
         setupDetailsTab();
 
         auto filesTab = new QWidget(this);
@@ -80,10 +82,6 @@ namespace tremotesf {
         setupPeersTab();
         setupWebSeedersTab();
         setupLimitsTab();
-
-        for (int i = 0, count = this->count(); i < count; i++) {
-            widget(i)->setEnabled(false);
-        }
     }
 
     void TorrentPropertiesWidget::saveState() {
@@ -603,9 +601,7 @@ namespace tremotesf {
         mPeersModel->setTorrent(mTorrent);
 
         const auto onHasTorrentChanged = [this](bool hasTorrent) {
-            for (int i = 0, count = this->count(); i < count; i++) {
-                widget(i)->setEnabled(hasTorrent);
-            }
+            setEnabled(hasTorrent);
             emit hasTorrentChanged(hasTorrent);
         };
         if (hadTorrent && !mTorrent) {
