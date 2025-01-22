@@ -50,11 +50,10 @@ namespace tremotesf {
         };
     }
 
-    TrackersViewWidget::TrackersViewWidget(Torrent* torrent, Rpc* rpc, QWidget* parent)
+    TrackersViewWidget::TrackersViewWidget(Rpc* rpc, QWidget* parent)
         : QWidget(parent),
-          mTorrent(torrent),
           mRpc(rpc),
-          mModel(new TrackersModel(torrent, this)),
+          mModel(new TrackersModel(this)),
           mProxyModel(new BaseProxyModel(
               mModel, TrackersModel::SortRole, static_cast<int>(TrackersModel::Column::Announce), this
           )),

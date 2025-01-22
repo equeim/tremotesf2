@@ -63,12 +63,10 @@ namespace tremotesf {
         }
     };
 
-    TrackersModel::TrackersModel(Torrent* torrent, QObject* parent)
-        : QAbstractTableModel(parent), mEtaUpdateTimer(new QTimer(this)) {
+    TrackersModel::TrackersModel(QObject* parent) : QAbstractTableModel(parent), mEtaUpdateTimer(new QTimer(this)) {
         mEtaUpdateTimer->setInterval(1s);
         mEtaUpdateTimer->setSingleShot(false);
         QObject::connect(mEtaUpdateTimer, &QTimer::timeout, this, &TrackersModel::updateEtas);
-        setTorrent(torrent);
     }
 
     TrackersModel::~TrackersModel() = default;
@@ -140,22 +138,24 @@ namespace tremotesf {
 
     Torrent* TrackersModel::torrent() const { return mTorrent; }
 
-    void TrackersModel::setTorrent(Torrent* torrent) {
-        if (torrent != mTorrent) {
-            if (const auto oldTorrent = mTorrent.data(); oldTorrent) {
-                QObject::disconnect(oldTorrent, nullptr, this, nullptr);
-            }
+    void TrackersModel::setTorrent(Torrent* torrent) { setTorrent(torrent, false); }
 
-            mTorrent = torrent;
-
-            if (mTorrent) {
-                update();
-                QObject::connect(mTorrent, &Torrent::updated, this, &TrackersModel::update);
-            } else {
-                beginResetModel();
-                mTrackers.clear();
-                endResetModel();
-            }
+    void TrackersModel::setTorrent(Torrent* torrent, bool oldTorrentDestroyed) {
+        if (torrent == mTorrent) {
+            return;
+        }
+        if (mTorrent && !oldTorrentDestroyed) {
+            QObject::disconnect(mTorrent, nullptr, this, nullptr);
+        }
+        mTorrent = torrent;
+        if (mTorrent) {
+            update();
+            QObject::connect(mTorrent, &Torrent::updated, this, &TrackersModel::update);
+            QObject::connect(mTorrent, &QObject::destroyed, this, [this] { setTorrent(nullptr, true); });
+        } else {
+            beginResetModel();
+            mTrackers.clear();
+            endResetModel();
         }
     }
 

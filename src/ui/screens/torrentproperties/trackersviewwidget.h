@@ -21,7 +21,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        TrackersViewWidget(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
+        TrackersViewWidget(Rpc* rpc, QWidget* parent = nullptr);
         Q_DISABLE_COPY_MOVE(TrackersViewWidget)
 
         void setTorrent(Torrent* torrent);
@@ -32,11 +32,11 @@ namespace tremotesf {
         void showEditDialogs();
         void removeTrackers();
 
-        Torrent* mTorrent;
-        Rpc* mRpc;
-        TrackersModel* mModel;
-        BaseProxyModel* mProxyModel;
-        BaseTreeView* mTrackersView;
+        Torrent* mTorrent{};
+        Rpc* mRpc{};
+        TrackersModel* mModel{};
+        BaseProxyModel* mProxyModel{};
+        BaseTreeView* mTrackersView{};
     };
 }
 

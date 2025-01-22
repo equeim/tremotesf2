@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <QAbstractTableModel>
-#include <QPointer>
 
 class QTimer;
 
@@ -27,7 +26,7 @@ namespace tremotesf {
 
         static constexpr auto SortRole = Qt::UserRole;
 
-        explicit TrackersModel(Torrent* torrent = nullptr, QObject* parent = nullptr);
+        explicit TrackersModel(QObject* parent = nullptr);
         ~TrackersModel() override;
         Q_DISABLE_COPY_MOVE(TrackersModel)
 
@@ -50,10 +49,11 @@ namespace tremotesf {
         struct TrackerItem;
 
     private:
+        void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
         void update();
         void updateEtas();
 
-        QPointer<Torrent> mTorrent{};
+        Torrent* mTorrent{};
 
         std::vector<TrackerItem> mTrackers;
 

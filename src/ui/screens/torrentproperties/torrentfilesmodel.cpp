@@ -89,12 +89,11 @@ namespace tremotesf {
         }
     }
 
-    TorrentFilesModel::TorrentFilesModel(Torrent* torrent, Rpc* rpc, QObject* parent)
+    TorrentFilesModel::TorrentFilesModel(Rpc* rpc, QObject* parent)
         : BaseTorrentFilesModel(
               {Column::Name, Column::Size, Column::ProgressBar, Column::Progress, Column::Priority}, parent
           ) {
         setRpc(rpc);
-        setTorrent(torrent);
     }
 
     TorrentFilesModel::~TorrentFilesModel() {
@@ -105,24 +104,26 @@ namespace tremotesf {
 
     Torrent* TorrentFilesModel::torrent() const { return mTorrent; }
 
-    void TorrentFilesModel::setTorrent(Torrent* torrent) {
-        if (torrent != mTorrent) {
-            if (const auto oldTorrent = mTorrent.data(); oldTorrent) {
-                QObject::disconnect(oldTorrent, nullptr, this, nullptr);
-            }
+    void TorrentFilesModel::setTorrent(Torrent* torrent) { setTorrent(torrent, false); }
 
-            mTorrent = torrent;
-
-            if (mTorrent) {
-                QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
-                QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
-                if (mTorrent->isFilesEnabled()) {
-                    warning().log("{} already has enabled files, this shouldn't happen", *mTorrent);
-                }
-                mTorrent->setFilesEnabled(true);
-            } else {
-                resetTree();
+    void TorrentFilesModel::setTorrent(Torrent* torrent, bool oldTorrentDestroyed) {
+        if (torrent == mTorrent) {
+            return;
+        }
+        mTorrent = torrent;
+        if (mTorrent && !oldTorrentDestroyed) {
+            QObject::disconnect(mTorrent, nullptr, this, nullptr);
+            mTorrent->setFilesEnabled(false);
+        }
+        resetTree();
+        if (mTorrent) {
+            QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
+            QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
+            if (mTorrent->isFilesEnabled()) {
+                warning().log("{} already has enabled files, this shouldn't happen", *mTorrent);
             }
+            mTorrent->setFilesEnabled(true);
+            QObject::connect(mTorrent, &QObject::destroyed, this, [this] { setTorrent(nullptr, true); });
         }
     }
 
