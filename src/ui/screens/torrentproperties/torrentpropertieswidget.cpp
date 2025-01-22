@@ -16,6 +16,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QLocale>
+#include <QScrollArea>
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QTextBrowser>
@@ -92,11 +93,16 @@ namespace tremotesf {
     }
 
     void TorrentPropertiesWidget::setupDetailsTab() {
-        auto detailsTab = new QWidget(this);
+        auto detailsTab = new QScrollArea(this);
+        detailsTab->setWidgetResizable(true);
+        detailsTab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         //: Torrent's properties dialog tab
         addTab(detailsTab, qApp->translate("tremotesf", "Details"));
 
-        auto detailsTabLayout = new QVBoxLayout(detailsTab);
+        auto detailsTabScrollContent = new QWidget(detailsTab);
+        detailsTab->setWidget(detailsTabScrollContent);
+
+        auto detailsTabLayout = new QVBoxLayout(detailsTabScrollContent);
 
         //: Torrent's details tab section
         auto activityGroupBox = new QGroupBox(qApp->translate("tremotesf", "Activity"), this);
@@ -251,11 +257,16 @@ namespace tremotesf {
     }
 
     void TorrentPropertiesWidget::setupLimitsTab() {
-        auto limitsTab = new QWidget(this);
+        auto limitsTab = new QScrollArea(this);
+        limitsTab->setWidgetResizable(true);
+        limitsTab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         //: Torrent's properties dialog tab
         addTab(limitsTab, qApp->translate("tremotesf", "Limits"));
 
-        auto limitsTabLayout = new QVBoxLayout(limitsTab);
+        auto limitsTabScrollContent = new QWidget(limitsTab);
+        limitsTab->setWidget(limitsTabScrollContent);
+
+        auto limitsTabLayout = new QVBoxLayout(limitsTabScrollContent);
 
         //
         // Speed group box
