@@ -481,7 +481,7 @@ namespace tremotesf {
 
     void Rpc::getTorrentPeers(int torrentId) {
         if (isConnected()) {
-            mBackgroundRequestsCoroutineScope.launch(getTorrentsFiles({torrentId}));
+            mBackgroundRequestsCoroutineScope.launch(getTorrentsPeers({torrentId}));
         }
     }
 
