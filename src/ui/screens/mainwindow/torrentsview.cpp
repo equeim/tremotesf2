@@ -26,7 +26,7 @@ namespace tremotesf {
         setRootIsDecorated(false);
 
         const auto header = this->header();
-        if (!header->restoreState(Settings::instance()->torrentsViewHeaderState())) {
+        if (!header->restoreState(Settings::instance()->get_torrentsViewHeaderState())) {
             using C = TorrentsModel::Column;
             const std::set defaultColumns{
                 C::Name,
@@ -60,6 +60,6 @@ namespace tremotesf {
         }
     }
 
-    void TorrentsView::saveState() { Settings::instance()->setTorrentsViewHeaderState(header()->saveState()); }
+    void TorrentsView::saveState() { Settings::instance()->set_torrentsViewHeaderState(header()->saveState()); }
 
 }

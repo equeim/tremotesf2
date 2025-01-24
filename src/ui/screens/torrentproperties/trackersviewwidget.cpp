@@ -65,7 +65,7 @@ namespace tremotesf {
         mTrackersView->setModel(mProxyModel);
         mTrackersView->setSelectionMode(QAbstractItemView::ExtendedSelection);
         mTrackersView->setRootIsDecorated(false);
-        mTrackersView->header()->restoreState(Settings::instance()->trackersViewHeaderState());
+        mTrackersView->header()->restoreState(Settings::instance()->get_trackersViewHeaderState());
         QObject::connect(mTrackersView, &EnterEatingTreeView::activated, this, &TrackersViewWidget::showEditDialogs);
 
         auto removeAction = new QAction(
@@ -147,7 +147,7 @@ namespace tremotesf {
     }
 
     void TrackersViewWidget::saveState() {
-        Settings::instance()->setTrackersViewHeaderState(mTrackersView->header()->saveState());
+        Settings::instance()->set_trackersViewHeaderState(mTrackersView->header()->saveState());
     }
 
     void TrackersViewWidget::addTrackers() {

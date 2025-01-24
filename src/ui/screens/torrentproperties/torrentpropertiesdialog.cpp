@@ -112,7 +112,7 @@ namespace tremotesf {
 
         onTorrentChanged();
 
-        restoreGeometry(Settings::instance()->torrentPropertiesDialogGeometry());
+        restoreGeometry(Settings::instance()->get_torrentPropertiesDialogGeometry());
     }
 
     void TorrentPropertiesDialog::setupDetailsTab() {
@@ -249,7 +249,7 @@ namespace tremotesf {
         );
         mPeersView->setModel(peersProxyModel);
         mPeersView->setRootIsDecorated(false);
-        mPeersView->header()->restoreState(Settings::instance()->peersViewHeaderState());
+        mPeersView->header()->restoreState(Settings::instance()->get_peersViewHeaderState());
 
         peersTabLayout->addWidget(mPeersView);
         //: Torrent's properties dialog tab
@@ -637,8 +637,8 @@ namespace tremotesf {
 
     void TorrentPropertiesDialog::saveState() {
         debug().log("Saving TorrentPropertiesDialog state, window geometry is {}", geometry());
-        Settings::instance()->setTorrentPropertiesDialogGeometry(saveGeometry());
-        Settings::instance()->setPeersViewHeaderState(mPeersView->header()->saveState());
+        Settings::instance()->set_torrentPropertiesDialogGeometry(saveGeometry());
+        Settings::instance()->set_peersViewHeaderState(mPeersView->header()->saveState());
         mFilesView->saveState();
         mTrackersViewWidget->saveState();
     }
