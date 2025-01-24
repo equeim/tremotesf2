@@ -17,12 +17,12 @@ namespace tremotesf {
               static_cast<int>(TorrentsModel::Column::Name),
               parent
           ),
-          mStatusFilterEnabled(Settings::instance()->isTorrentsStatusFilterEnabled()),
-          mStatusFilter(Settings::instance()->torrentsStatusFilter()),
-          mTrackerFilterEnabled(Settings::instance()->isTorrentsTrackerFilterEnabled()),
-          mTrackerFilter(Settings::instance()->torrentsTrackerFilter()),
-          mDownloadDirectoryFilterEnabled(Settings::instance()->isTorrentsDownloadDirectoryFilterEnabled()),
-          mDownloadDirectoryFilter(Settings::instance()->torrentsDownloadDirectoryFilter()) {}
+          mStatusFilterEnabled(Settings::instance()->get_torrentsStatusFilterEnabled()),
+          mStatusFilter(Settings::instance()->get_torrentsStatusFilter()),
+          mTrackerFilterEnabled(Settings::instance()->get_torrentsTrackerFilterEnabled()),
+          mTrackerFilter(Settings::instance()->get_torrentsTrackerFilter()),
+          mDownloadDirectoryFilterEnabled(Settings::instance()->get_torrentsDownloadDirectoryFilterEnabled()),
+          mDownloadDirectoryFilter(Settings::instance()->get_torrentsDownloadDirectoryFilter()) {}
 
     QString TorrentsProxyModel::searchString() const { return mSearchString; }
 
@@ -39,7 +39,7 @@ namespace tremotesf {
         if (enabled != mStatusFilterEnabled) {
             mStatusFilterEnabled = enabled;
             invalidateFilter();
-            Settings::instance()->setTorrentsStatusFilterEnabled(mStatusFilterEnabled);
+            Settings::instance()->set_torrentsStatusFilterEnabled(mStatusFilterEnabled);
         }
     }
 
@@ -50,7 +50,7 @@ namespace tremotesf {
             mStatusFilter = filter;
             invalidateFilter();
             emit statusFilterChanged();
-            Settings::instance()->setTorrentsStatusFilter(mStatusFilter);
+            Settings::instance()->set_torrentsStatusFilter(mStatusFilter);
         }
     }
 
@@ -60,7 +60,7 @@ namespace tremotesf {
         if (enabled != mTrackerFilterEnabled) {
             mTrackerFilterEnabled = enabled;
             invalidateFilter();
-            Settings::instance()->setTorrentsTrackerFilterEnabled(mTrackerFilterEnabled);
+            Settings::instance()->set_torrentsTrackerFilterEnabled(mTrackerFilterEnabled);
         }
     }
 
@@ -71,7 +71,7 @@ namespace tremotesf {
             mTrackerFilter = filter;
             invalidateFilter();
             emit trackerFilterChanged();
-            Settings::instance()->setTorrentsTrackerFilter(mTrackerFilter);
+            Settings::instance()->set_torrentsTrackerFilter(mTrackerFilter);
         }
     }
 
@@ -81,7 +81,7 @@ namespace tremotesf {
         if (enabled != mDownloadDirectoryFilterEnabled) {
             mDownloadDirectoryFilterEnabled = enabled;
             invalidateFilter();
-            Settings::instance()->setTorrentsDownloadDirectoryFilterEnabled(mDownloadDirectoryFilterEnabled);
+            Settings::instance()->set_torrentsDownloadDirectoryFilterEnabled(mDownloadDirectoryFilterEnabled);
         }
     }
 
@@ -92,7 +92,7 @@ namespace tremotesf {
             mDownloadDirectoryFilter = filter;
             invalidateFilter();
             emit downloadDirectoryFilterChanged();
-            Settings::instance()->setTorrentsDownloadDirectoryFilter(mDownloadDirectoryFilter);
+            Settings::instance()->set_torrentsDownloadDirectoryFilter(mDownloadDirectoryFilter);
         }
     }
 

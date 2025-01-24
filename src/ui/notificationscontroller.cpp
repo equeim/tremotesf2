@@ -33,13 +33,13 @@ namespace tremotesf {
         });
 
         QObject::connect(rpc, &Rpc::torrentAdded, this, [this](const auto* torrent) {
-            if (Settings::instance()->notificationOnAddingTorrent()) {
+            if (Settings::instance()->get_notificationOnAddingTorrent()) {
                 showAddedTorrentsNotification({torrent->data().name});
             }
         });
 
         QObject::connect(rpc, &Rpc::torrentFinished, this, [this](const auto* torrent) {
-            if (Settings::instance()->notificationOfFinishedTorrents()) {
+            if (Settings::instance()->get_notificationOfFinishedTorrents()) {
                 showFinishedTorrentsNotification({torrent->data().name});
             }
         });
@@ -55,8 +55,8 @@ namespace tremotesf {
     }
 
     void NotificationsController::onConnected(const Rpc* rpc) {
-        const bool notifyOnAdded = Settings::instance()->notificationsOnAddedTorrentsSinceLastConnection();
-        const bool notifyOnFinished = Settings::instance()->notificationsOnFinishedTorrentsSinceLastConnection();
+        const bool notifyOnAdded = Settings::instance()->get_notificationsOnAddedTorrentsSinceLastConnection();
+        const bool notifyOnFinished = Settings::instance()->get_notificationsOnFinishedTorrentsSinceLastConnection();
         if (!notifyOnAdded && !notifyOnFinished) {
             return;
         }
@@ -92,7 +92,7 @@ namespace tremotesf {
 
     void NotificationsController::onDisconnected(const Rpc* rpc) {
         const auto& status = rpc->status();
-        if ((status.error != Rpc::Error::NoError) && Settings::instance()->notificationOnDisconnecting()) {
+        if ((status.error != Rpc::Error::NoError) && Settings::instance()->get_notificationOnDisconnecting()) {
             showNotification(
                 //: Notification title when disconnected from server
                 qApp->translate("tremotesf", "Disconnected"),

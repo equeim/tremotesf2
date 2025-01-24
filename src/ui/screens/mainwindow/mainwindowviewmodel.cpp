@@ -150,7 +150,7 @@ namespace tremotesf {
 
     void MainWindowViewModel::triggeredAddTorrentLinkAction() {
         debug().log("MainWindowViewModel: triggeredAddTorrentLinkAction() called");
-        if (Settings::instance()->fillTorrentLinkFromClipboard() && addTorrentsFromClipboard(true)) {
+        if (Settings::instance()->get_fillTorrentLinkFromClipboard() && addTorrentsFromClipboard(true)) {
             return;
         }
         emit showAddTorrentDialogs({}, {QString{}}, {});
@@ -173,7 +173,7 @@ namespace tremotesf {
             return StartupActionResult::ShowAddServerDialog;
         }
         mRpc.setConnectionConfiguration(Servers::instance()->currentServer().connectionConfiguration);
-        if (Settings::instance()->connectOnStartup()) {
+        if (Settings::instance()->get_connectOnStartup()) {
             mRpc.connect();
         }
         return StartupActionResult::DoNothing;
@@ -256,9 +256,9 @@ namespace tremotesf {
                 {},
                 parameters.priority,
                 parameters.startAfterAdding,
-                parameters.deleteTorrentFile
-                    ? (parameters.moveTorrentFileToTrash ? Rpc::DeleteFileMode::MoveToTrash : Rpc::DeleteFileMode::Delete)
-                    : Rpc::DeleteFileMode::No
+                parameters.deleteTorrentFile ? (parameters.moveTorrentFileToTrash ? Rpc::DeleteFileMode::MoveToTrash
+                                                                                  : Rpc::DeleteFileMode::Delete)
+                                             : Rpc::DeleteFileMode::No
 
             );
         }
@@ -324,7 +324,7 @@ namespace tremotesf {
 
         const auto* const settings = Settings::instance();
 
-        if (settings->showMainWindowWhenAddingTorrent()) {
+        if (settings->get_showMainWindowWhenAddingTorrent()) {
             emit showWindow(windowActivationToken);
             windowActivationToken.reset();
         }
@@ -337,7 +337,7 @@ namespace tremotesf {
             windowActivationToken.reset();
         }
 
-        if (settings->showAddTorrentDialog()) {
+        if (settings->get_showAddTorrentDialog()) {
             emit showAddTorrentDialogs(files, urls, windowActivationToken);
         } else {
             addTorrentLinksWithoutDialog(urls);

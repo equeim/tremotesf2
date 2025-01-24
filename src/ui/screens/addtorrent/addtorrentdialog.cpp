@@ -126,10 +126,10 @@ namespace tremotesf {
             }
         }
         const auto settings = Settings::instance();
-        if (settings->rememberOpenTorrentDir() && isAddingFile()) {
-            settings->setLastOpenTorrentDirectory(QFileInfo(std::get<FileParams>(mParams).filePath).path());
+        if (settings->get_rememberOpenTorrentDir() && isAddingFile()) {
+            settings->set_lastOpenTorrentDirectory(QFileInfo(std::get<FileParams>(mParams).filePath).path());
         }
-        if (settings->rememberAddTorrentParameters()) {
+        if (settings->get_rememberAddTorrentParameters()) {
             mAddTorrentParametersWidgets.saveToSettings();
         }
         QDialog::accept();
@@ -457,11 +457,11 @@ namespace tremotesf {
     void AddTorrentDialog::AddTorrentParametersWidgets::saveToSettings() const {
         downloadDirectoryWidget->saveDirectories();
         auto* const settings = Settings::instance();
-        settings->setLastAddTorrentPriority(priorityFromComboBoxIndex(priorityComboBox->currentIndex()));
-        settings->setLastAddTorrentStartAfterAdding(startTorrentCheckBox->isChecked());
+        settings->set_lastAddTorrentPriority(priorityFromComboBoxIndex(priorityComboBox->currentIndex()));
+        settings->set_lastAddTorrentStartAfterAdding(startTorrentCheckBox->isChecked());
         if (deleteTorrentFileGroupBox) {
-            settings->setLastAddTorrentDeleteTorrentFile(deleteTorrentFileGroupBox->isChecked());
-            settings->setLastAddTorrentMoveTorrentFileToTrash(moveTorrentFileToTrashCheckBox->isChecked());
+            settings->set_lastAddTorrentDeleteTorrentFile(deleteTorrentFileGroupBox->isChecked());
+            settings->set_lastAddTorrentMoveTorrentFileToTrash(moveTorrentFileToTrashCheckBox->isChecked());
         }
     }
 

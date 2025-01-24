@@ -14,80 +14,65 @@
 
 class QSettings;
 
-#define SETTINGS_PROPERTY_IMPL(type, getter, setterType, setter) \
-public:                                                          \
-    type getter() const;                                         \
-    void setter(setterType value);                               \
-Q_SIGNALS:                                                       \
-    void getter##Changed();
-
-#define SETTINGS_PROPERTY_TRIVIAL(type, getter, setter)     SETTINGS_PROPERTY_IMPL(type, getter, type, setter)
-#define SETTINGS_PROPERTY_NON_TRIVIAL(type, getter, setter) SETTINGS_PROPERTY_IMPL(type, getter, const type&, setter)
+#define SETTINGS_PROPERTY(type, name) \
+public:                               \
+    type get_##name() const;          \
+    void set_##name(type value);      \
+Q_SIGNALS:                            \
+    void name##Changed();
 
 namespace tremotesf {
     class Settings final : public QObject {
         Q_OBJECT
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, connectOnStartup, setConnectOnStartup)
-        SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnDisconnecting, setNotificationOnDisconnecting)
-        SETTINGS_PROPERTY_TRIVIAL(bool, notificationOnAddingTorrent, setNotificationOnAddingTorrent)
-        SETTINGS_PROPERTY_TRIVIAL(bool, notificationOfFinishedTorrents, setNotificationOfFinishedTorrents)
-        SETTINGS_PROPERTY_TRIVIAL(
-            bool, notificationsOnAddedTorrentsSinceLastConnection, setNotificationsOnAddedTorrentsSinceLastConnection
-        )
-        SETTINGS_PROPERTY_TRIVIAL(
-            bool,
-            notificationsOnFinishedTorrentsSinceLastConnection,
-            setNotificationsOnFinishedTorrentsSinceLastConnection
-        )
+        SETTINGS_PROPERTY(bool, connectOnStartup)
+        SETTINGS_PROPERTY(bool, notificationOnDisconnecting)
+        SETTINGS_PROPERTY(bool, notificationOnAddingTorrent)
+        SETTINGS_PROPERTY(bool, notificationOfFinishedTorrents)
+        SETTINGS_PROPERTY(bool, notificationsOnAddedTorrentsSinceLastConnection)
+        SETTINGS_PROPERTY(bool, notificationsOnFinishedTorrentsSinceLastConnection)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, rememberOpenTorrentDir, setRememberOpenTorrentDir)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QString, lastOpenTorrentDirectory, setLastOpenTorrentDirectory)
-        SETTINGS_PROPERTY_TRIVIAL(bool, rememberAddTorrentParameters, setRememberTorrentAddParameters)
-        SETTINGS_PROPERTY_TRIVIAL(TorrentData::Priority, lastAddTorrentPriority, setLastAddTorrentPriority)
-        SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentStartAfterAdding, setLastAddTorrentStartAfterAdding)
-        SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentDeleteTorrentFile, setLastAddTorrentDeleteTorrentFile)
-        SETTINGS_PROPERTY_TRIVIAL(bool, lastAddTorrentMoveTorrentFileToTrash, setLastAddTorrentMoveTorrentFileToTrash)
+        SETTINGS_PROPERTY(bool, rememberOpenTorrentDir)
+        SETTINGS_PROPERTY(QString, lastOpenTorrentDirectory)
+        SETTINGS_PROPERTY(bool, rememberAddTorrentParameters)
+        SETTINGS_PROPERTY(TorrentData::Priority, lastAddTorrentPriority)
+        SETTINGS_PROPERTY(bool, lastAddTorrentStartAfterAdding)
+        SETTINGS_PROPERTY(bool, lastAddTorrentDeleteTorrentFile)
+        SETTINGS_PROPERTY(bool, lastAddTorrentMoveTorrentFileToTrash)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, fillTorrentLinkFromClipboard, setFillTorrentLinkFromClipboard)
+        SETTINGS_PROPERTY(bool, fillTorrentLinkFromClipboard)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, showMainWindowWhenAddingTorrent, setShowMainWindowWhenAddingTorrent)
-        SETTINGS_PROPERTY_TRIVIAL(bool, showAddTorrentDialog, setShowAddTorrentDialog)
+        SETTINGS_PROPERTY(bool, showMainWindowWhenAddingTorrent)
+        SETTINGS_PROPERTY(bool, showAddTorrentDialog)
 
-        SETTINGS_PROPERTY_TRIVIAL(
-            bool, mergeTrackersWhenAddingExistingTorrent, setMergeTrackersWhenAddingExistingTorrent
-        )
-        SETTINGS_PROPERTY_TRIVIAL(
-            bool, askForMergingTrackersWhenAddingExistingTorrent, setAskForMergingTrackersWhenAddingExistingTorrent
-        )
+        SETTINGS_PROPERTY(bool, mergeTrackersWhenAddingExistingTorrent)
+        SETTINGS_PROPERTY(bool, askForMergingTrackersWhenAddingExistingTorrent)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsStatusFilterEnabled, setTorrentsStatusFilterEnabled)
-        SETTINGS_PROPERTY_TRIVIAL(TorrentsProxyModel::StatusFilter, torrentsStatusFilter, setTorrentsStatusFilter)
+        SETTINGS_PROPERTY(bool, torrentsStatusFilterEnabled)
+        SETTINGS_PROPERTY(TorrentsProxyModel::StatusFilter, torrentsStatusFilter)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, isTorrentsTrackerFilterEnabled, setTorrentsTrackerFilterEnabled)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsTrackerFilter, setTorrentsTrackerFilter)
+        SETTINGS_PROPERTY(bool, torrentsTrackerFilterEnabled)
+        SETTINGS_PROPERTY(QString, torrentsTrackerFilter)
 
-        SETTINGS_PROPERTY_TRIVIAL(
-            bool, isTorrentsDownloadDirectoryFilterEnabled, setTorrentsDownloadDirectoryFilterEnabled
-        )
-        SETTINGS_PROPERTY_NON_TRIVIAL(QString, torrentsDownloadDirectoryFilter, setTorrentsDownloadDirectoryFilter)
+        SETTINGS_PROPERTY(bool, torrentsDownloadDirectoryFilterEnabled)
+        SETTINGS_PROPERTY(QString, torrentsDownloadDirectoryFilter)
 
-        SETTINGS_PROPERTY_TRIVIAL(bool, showTrayIcon, setShowTrayIcon)
-        SETTINGS_PROPERTY_TRIVIAL(Qt::ToolButtonStyle, toolButtonStyle, setToolButtonStyle)
-        SETTINGS_PROPERTY_TRIVIAL(bool, isToolBarLocked, setToolBarLocked)
-        SETTINGS_PROPERTY_TRIVIAL(bool, isSideBarVisible, setSideBarVisible)
-        SETTINGS_PROPERTY_TRIVIAL(bool, isStatusBarVisible, setStatusBarVisible)
+        SETTINGS_PROPERTY(bool, showTrayIcon)
+        SETTINGS_PROPERTY(Qt::ToolButtonStyle, toolButtonStyle)
+        SETTINGS_PROPERTY(bool, toolBarLocked)
+        SETTINGS_PROPERTY(bool, sideBarVisible)
+        SETTINGS_PROPERTY(bool, statusBarVisible)
 
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, mainWindowGeometry, setMainWindowGeometry)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, mainWindowState, setMainWindowState)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, splitterState, setSplitterState)
+        SETTINGS_PROPERTY(QByteArray, mainWindowGeometry)
+        SETTINGS_PROPERTY(QByteArray, mainWindowState)
+        SETTINGS_PROPERTY(QByteArray, splitterState)
 
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentsViewHeaderState, setTorrentsViewHeaderState)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentPropertiesDialogGeometry, setTorrentPropertiesDialogGeometry)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, torrentFilesViewHeaderState, setTorrentFilesViewHeaderState)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, trackersViewHeaderState, setTrackersViewHeaderState)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, peersViewHeaderState, setPeersViewHeaderState)
-        SETTINGS_PROPERTY_NON_TRIVIAL(QByteArray, localTorrentFilesViewHeaderState, setLocalTorrentFilesViewHeaderState)
+        SETTINGS_PROPERTY(QByteArray, torrentsViewHeaderState)
+        SETTINGS_PROPERTY(QByteArray, torrentPropertiesDialogGeometry)
+        SETTINGS_PROPERTY(QByteArray, torrentFilesViewHeaderState)
+        SETTINGS_PROPERTY(QByteArray, trackersViewHeaderState)
+        SETTINGS_PROPERTY(QByteArray, peersViewHeaderState)
+        SETTINGS_PROPERTY(QByteArray, localTorrentFilesViewHeaderState)
 
     public:
         enum class DarkThemeMode { FollowSystem, On, Off };
@@ -96,11 +81,9 @@ namespace tremotesf {
         enum class TorrentDoubleClickAction { OpenPropertiesDialog, OpenTorrentFile, OpenDownloadDirectory };
         Q_ENUM(TorrentDoubleClickAction)
 
-        SETTINGS_PROPERTY_TRIVIAL(Settings::DarkThemeMode, darkThemeMode, setDarkThemeMode)
-        SETTINGS_PROPERTY_TRIVIAL(bool, useSystemAccentColor, setUseSystemAccentColor)
-        SETTINGS_PROPERTY_TRIVIAL(
-            Settings::TorrentDoubleClickAction, torrentDoubleClickAction, setTorrentDoubleClickAction
-        )
+        SETTINGS_PROPERTY(Settings::DarkThemeMode, darkThemeMode)
+        SETTINGS_PROPERTY(bool, useSystemAccentColor)
+        SETTINGS_PROPERTY(Settings::TorrentDoubleClickAction, torrentDoubleClickAction)
 
     public:
         static Settings* instance();

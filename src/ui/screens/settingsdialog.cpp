@@ -69,18 +69,18 @@ namespace tremotesf {
 
             darkThemeComboBox->setCurrentIndex(
                 // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-                indexOfCasted<int>(darkThemeComboBoxValues, settings->darkThemeMode()).value()
+                indexOfCasted<int>(darkThemeComboBoxValues, settings->get_darkThemeMode()).value()
             );
             if (systemAccentColorCheckBox) {
-                systemAccentColorCheckBox->setChecked(settings->useSystemAccentColor());
+                systemAccentColorCheckBox->setChecked(settings->get_useSystemAccentColor());
             }
 
             return [=] {
                 if (const auto index = darkThemeComboBox->currentIndex(); index != -1) {
-                    settings->setDarkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
+                    settings->set_darkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
                 }
                 if (systemAccentColorCheckBox) {
-                    settings->setUseSystemAccentColor(systemAccentColorCheckBox->isChecked());
+                    settings->set_useSystemAccentColor(systemAccentColorCheckBox->isChecked());
                 }
             };
         }
@@ -182,8 +182,8 @@ namespace tremotesf {
 
             layout->addStretch();
 
-            rememberOpenTorrentDirCheckbox->setChecked(settings->rememberOpenTorrentDir());
-            rememberAddTorrentParametersCheckBox->setChecked(settings->rememberAddTorrentParameters());
+            rememberOpenTorrentDirCheckbox->setChecked(settings->get_rememberOpenTorrentDir());
+            rememberAddTorrentParametersCheckBox->setChecked(settings->get_rememberAddTorrentParameters());
             addTorrentParametersDisconnectedMessage->setVisible(!rpc->isConnected());
             addTorrentParametersGroupBox->setEnabled(rpc->isConnected());
             QObject::connect(rpc, &Rpc::connectedChanged, page, [=] {
@@ -206,25 +206,27 @@ namespace tremotesf {
             });
 
             if (showMainWindowWhenAddingTorrentsCheckBox) {
-                showMainWindowWhenAddingTorrentsCheckBox->setChecked(settings->showMainWindowWhenAddingTorrent());
+                showMainWindowWhenAddingTorrentsCheckBox->setChecked(settings->get_showMainWindowWhenAddingTorrent());
             }
-            showDialogWhenAddingTorrentsCheckBox->setChecked(settings->showAddTorrentDialog());
-            fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->fillTorrentLinkFromClipboard());
-            askForMergingTrackersCheckBox->setChecked(settings->askForMergingTrackersWhenAddingExistingTorrent());
-            mergeTrackersCheckBox->setChecked(settings->mergeTrackersWhenAddingExistingTorrent());
+            showDialogWhenAddingTorrentsCheckBox->setChecked(settings->get_showAddTorrentDialog());
+            fillTorrentLinkFromKeyboardCheckBox->setChecked(settings->get_fillTorrentLinkFromClipboard());
+            askForMergingTrackersCheckBox->setChecked(settings->get_askForMergingTrackersWhenAddingExistingTorrent());
+            mergeTrackersCheckBox->setChecked(settings->get_mergeTrackersWhenAddingExistingTorrent());
             mergeTrackersCheckBox->setEnabled(!askForMergingTrackersCheckBox->isChecked());
 
             return [=] {
-                settings->setRememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
-                settings->setRememberTorrentAddParameters(rememberAddTorrentParametersCheckBox->isChecked());
+                settings->set_rememberOpenTorrentDir(rememberOpenTorrentDirCheckbox->isChecked());
+                settings->set_rememberAddTorrentParameters(rememberAddTorrentParametersCheckBox->isChecked());
                 addTorrentParametersWidgets.saveToSettings();
                 if (showMainWindowWhenAddingTorrentsCheckBox) {
-                    settings->setShowMainWindowWhenAddingTorrent(showMainWindowWhenAddingTorrentsCheckBox->isChecked());
+                    settings->set_showMainWindowWhenAddingTorrent(showMainWindowWhenAddingTorrentsCheckBox->isChecked()
+                    );
                 }
-                settings->setShowAddTorrentDialog(showDialogWhenAddingTorrentsCheckBox->isChecked());
-                settings->setFillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
-                settings->setAskForMergingTrackersWhenAddingExistingTorrent(askForMergingTrackersCheckBox->isChecked());
-                settings->setMergeTrackersWhenAddingExistingTorrent(mergeTrackersCheckBox->isChecked());
+                settings->set_showAddTorrentDialog(showDialogWhenAddingTorrentsCheckBox->isChecked());
+                settings->set_fillTorrentLinkFromClipboard(fillTorrentLinkFromKeyboardCheckBox->isChecked());
+                settings->set_askForMergingTrackersWhenAddingExistingTorrent(askForMergingTrackersCheckBox->isChecked()
+                );
+                settings->set_mergeTrackersWhenAddingExistingTorrent(mergeTrackersCheckBox->isChecked());
             };
         }
 
@@ -248,7 +250,7 @@ namespace tremotesf {
                 page
             );
             layout->addRow(connectOnStartupCheckBox);
-            connectOnStartupCheckBox->setChecked(settings->connectOnStartup());
+            connectOnStartupCheckBox->setChecked(settings->get_connectOnStartup());
 
             auto torrentDoubleClickActionComboBox = new QComboBox(page);
             layout->addRow(
@@ -273,13 +275,14 @@ namespace tremotesf {
 
             torrentDoubleClickActionComboBox->setCurrentIndex(
                 // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-                indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->torrentDoubleClickAction()).value()
+                indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->get_torrentDoubleClickAction())
+                    .value()
             );
 
             return [=] {
-                settings->setConnectOnStartup(connectOnStartupCheckBox->isChecked());
+                settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());
                 if (const auto index = torrentDoubleClickActionComboBox->currentIndex(); index != -1) {
-                    settings->setTorrentDoubleClickAction(
+                    settings->set_torrentDoubleClickAction(
                         torrentDoubleClickActionComboBoxValues[static_cast<size_t>(index)]
                     );
                 }
@@ -343,24 +346,25 @@ namespace tremotesf {
             );
             whenConnectingGroupBoxLayout->addWidget(finishedSinceLastConnectionCheckBox);
 
-            notificationOnDisconnectingCheckBox->setChecked(settings->notificationOnDisconnecting());
-            notificationOnAddingTorrentCheckBox->setChecked(settings->notificationOnAddingTorrent());
-            notificationOfFinishedTorrentsCheckBox->setChecked(settings->notificationOfFinishedTorrents());
-            trayIconCheckBox->setChecked(settings->showTrayIcon());
-            addedSinceLastConnectionCheckBox->setChecked(settings->notificationsOnAddedTorrentsSinceLastConnection());
+            notificationOnDisconnectingCheckBox->setChecked(settings->get_notificationOnDisconnecting());
+            notificationOnAddingTorrentCheckBox->setChecked(settings->get_notificationOnAddingTorrent());
+            notificationOfFinishedTorrentsCheckBox->setChecked(settings->get_notificationOfFinishedTorrents());
+            trayIconCheckBox->setChecked(settings->get_showTrayIcon());
+            addedSinceLastConnectionCheckBox->setChecked(settings->get_notificationsOnAddedTorrentsSinceLastConnection()
+            );
             finishedSinceLastConnectionCheckBox->setChecked(
-                settings->notificationsOnFinishedTorrentsSinceLastConnection()
+                settings->get_notificationsOnFinishedTorrentsSinceLastConnection()
             );
 
             return [=] {
-                settings->setNotificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());
-                settings->setNotificationOnAddingTorrent(notificationOnAddingTorrentCheckBox->isChecked());
-                settings->setNotificationOfFinishedTorrents(notificationOfFinishedTorrentsCheckBox->isChecked());
-                settings->setShowTrayIcon(trayIconCheckBox->isChecked());
-                settings->setNotificationsOnAddedTorrentsSinceLastConnection(
+                settings->set_notificationOnDisconnecting(notificationOnDisconnectingCheckBox->isChecked());
+                settings->set_notificationOnAddingTorrent(notificationOnAddingTorrentCheckBox->isChecked());
+                settings->set_notificationOfFinishedTorrents(notificationOfFinishedTorrentsCheckBox->isChecked());
+                settings->set_showTrayIcon(trayIconCheckBox->isChecked());
+                settings->set_notificationsOnAddedTorrentsSinceLastConnection(
                     addedSinceLastConnectionCheckBox->isChecked()
                 );
-                settings->setNotificationsOnFinishedTorrentsSinceLastConnection(
+                settings->set_notificationsOnFinishedTorrentsSinceLastConnection(
                     finishedSinceLastConnectionCheckBox->isChecked()
                 );
             };

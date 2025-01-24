@@ -238,7 +238,7 @@ namespace tremotesf {
         explicit Impl(QStringList&& commandLineFiles, QStringList&& commandLineUrls, MainWindow* window)
             : mWindow(window), mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)} {
             mSplitter.setChildrenCollapsible(false);
-            if (!Settings::instance()->isSideBarVisible()) {
+            if (!Settings::instance()->get_sideBarVisible()) {
                 mSideBar.hide();
             }
             mSplitter.addWidget(&mSideBar);
@@ -273,13 +273,13 @@ namespace tremotesf {
 
             setupTorrentsPlaceholder(torrentsViewLayout);
 
-            mSplitter.restoreState(Settings::instance()->splitterState());
+            mSplitter.restoreState(Settings::instance()->get_splitterState());
 
             mWindow->setCentralWidget(&mSplitter);
 
             auto* const statusBar = new MainWindowStatusBar(mViewModel.rpc());
             mWindow->setStatusBar(statusBar);
-            if (!Settings::instance()->isStatusBarVisible()) {
+            if (!Settings::instance()->get_statusBarVisible()) {
                 statusBar->hide();
             }
             QObject::connect(statusBar, &MainWindowStatusBar::showConnectionSettingsDialog, this, [this] {
@@ -314,7 +314,7 @@ namespace tremotesf {
                 &MainWindow::Impl::updateRpcActions
             );
 
-            mWindow->restoreState(Settings::instance()->mainWindowState());
+            mWindow->restoreState(Settings::instance()->get_mainWindowState());
             mToolBarAction->setChecked(!mToolBar.isHidden());
 
             QObject::connect(
@@ -374,7 +374,12 @@ namespace tremotesf {
             });
 
             if constexpr (targetOs == TargetOs::UnixMacOS) {
-                QObject::connect(qApp, &QGuiApplication::applicationStateChanged, this, &MainWindow::Impl::updateShowHideAction);
+                QObject::connect(
+                    qApp,
+                    &QGuiApplication::applicationStateChanged,
+                    this,
+                    &MainWindow::Impl::updateShowHideAction
+                );
             }
 
             // restoreGeometry() may call MainWindow::event() but we are still in MainWindow constructor
@@ -382,10 +387,10 @@ namespace tremotesf {
             QMetaObject::invokeMethod(
                 this,
                 [this] {
-                    if (!mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry())) {
+                    if (!mWindow->restoreGeometry(Settings::instance()->get_mainWindowGeometry())) {
                         mWindow->resize(mWindow->sizeHint().expandedTo(QSize(896, 640)));
                     }
-                    mWindow->restoreGeometry(Settings::instance()->mainWindowGeometry());
+                    mWindow->restoreGeometry(Settings::instance()->get_mainWindowGeometry());
                 },
                 Qt::QueuedConnection
             );
@@ -433,9 +438,9 @@ namespace tremotesf {
 
         void saveState() {
             debug().log("Saving MainWindow state, window geometry is {}", mWindow->geometry());
-            Settings::instance()->setMainWindowGeometry(mWindow->saveGeometry());
-            Settings::instance()->setMainWindowState(mWindow->saveState());
-            Settings::instance()->setSplitterState(mSplitter.saveState());
+            Settings::instance()->set_mainWindowGeometry(mWindow->saveGeometry());
+            Settings::instance()->set_mainWindowState(mWindow->saveState());
+            Settings::instance()->set_splitterState(mSplitter.saveState());
             mTorrentsView.saveState();
         }
 
@@ -529,7 +534,7 @@ namespace tremotesf {
             mConnectionDependentActions.push_back(&mAddTorrentFileAction);
 
             QObject::connect(&mAddTorrentLinkAction, &QAction::triggered, this, [this] {
-                if (Settings::instance()->showMainWindowWhenAddingTorrent() && isMainWindowHiddenOrMinimized()) {
+                if (Settings::instance()->get_showMainWindowWhenAddingTorrent() && isMainWindowHiddenOrMinimized()) {
                     showWindowsOrActivateMainWindow();
                 }
                 mViewModel.triggeredAddTorrentLinkAction();
@@ -855,15 +860,16 @@ namespace tremotesf {
 
         void openTorrentFiles() {
             auto* const settings = Settings::instance();
-            if (settings->showMainWindowWhenAddingTorrent() && isMainWindowHiddenOrMinimized()) {
+            if (settings->get_showMainWindowWhenAddingTorrent() && isMainWindowHiddenOrMinimized()) {
                 showWindowsOrActivateMainWindow();
             }
-            auto directory = settings->rememberOpenTorrentDir() ? settings->lastOpenTorrentDirectory() : QString{};
+            auto directory =
+                settings->get_rememberOpenTorrentDir() ? settings->get_lastOpenTorrentDirectory() : QString{};
             if (directory.isEmpty()) {
                 directory = QDir::homePath();
             }
             auto* const fileDialog = new QFileDialog(
-                settings->showMainWindowWhenAddingTorrent() ? mWindow : nullptr,
+                settings->get_showMainWindowWhenAddingTorrent() ? mWindow : nullptr,
                 //: File chooser dialog title
                 qApp->translate("tremotesf", "Select Files"),
                 directory,
@@ -941,7 +947,7 @@ namespace tremotesf {
         }
 
         void performTorrentDoubleClickAction() {
-            switch (Settings::instance()->torrentDoubleClickAction()) {
+            switch (Settings::instance()->get_torrentDoubleClickAction()) {
             case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
                 showTorrentsPropertiesDialogs();
                 break;
@@ -1207,27 +1213,27 @@ namespace tremotesf {
 
             QAction* sideBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Sidebar"));
             sideBarAction->setCheckable(true);
-            sideBarAction->setChecked(Settings::instance()->isSideBarVisible());
+            sideBarAction->setChecked(Settings::instance()->get_sideBarVisible());
             QObject::connect(sideBarAction, &QAction::triggered, this, [this](bool checked) {
                 mSideBar.setVisible(checked);
-                Settings::instance()->setSideBarVisible(checked);
+                Settings::instance()->set_sideBarVisible(checked);
             });
 
             QAction* statusBarAction = viewMenu->addAction(qApp->translate("tremotesf", "St&atusbar"));
             statusBarAction->setCheckable(true);
-            statusBarAction->setChecked(Settings::instance()->isStatusBarVisible());
+            statusBarAction->setChecked(Settings::instance()->get_statusBarVisible());
             QObject::connect(statusBarAction, &QAction::triggered, this, [this](bool checked) {
                 mWindow->statusBar()->setVisible(checked);
-                Settings::instance()->setStatusBarVisible(checked);
+                Settings::instance()->set_statusBarVisible(checked);
             });
 
             viewMenu->addSeparator();
             QAction* lockToolBarAction = viewMenu->addAction(qApp->translate("tremotesf", "&Lock Toolbar"));
             lockToolBarAction->setCheckable(true);
-            lockToolBarAction->setChecked(Settings::instance()->isToolBarLocked());
+            lockToolBarAction->setChecked(Settings::instance()->get_toolBarLocked());
             QObject::connect(lockToolBarAction, &QAction::triggered, &mToolBar, [this](bool checked) {
                 mToolBar.setMovable(!checked);
-                Settings::instance()->setToolBarLocked(checked);
+                Settings::instance()->set_toolBarLocked(checked);
             });
 
             //: Menu bar item
@@ -1328,7 +1334,7 @@ namespace tremotesf {
         void setupToolBar() {
             mToolBar.setObjectName("toolBar"_l1);
             mToolBar.setContextMenuPolicy(Qt::CustomContextMenu);
-            mToolBar.setMovable(!Settings::instance()->isToolBarLocked());
+            mToolBar.setMovable(!Settings::instance()->get_toolBarLocked());
             mWindow->addToolBar(Qt::TopToolBarArea, &mToolBar);
 
             mToolBar.addAction(&mConnectAction);
@@ -1364,7 +1370,7 @@ namespace tremotesf {
                 if (action) {
                     const auto style = static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action));
                     mWindow->setToolButtonStyle(style);
-                    Settings::instance()->setToolButtonStyle(style);
+                    Settings::instance()->set_toolButtonStyle(style);
                 }
             });
         }
@@ -1411,12 +1417,12 @@ namespace tremotesf {
                 );
             });
 
-            if (Settings::instance()->showTrayIcon()) {
+            if (Settings::instance()->get_showTrayIcon()) {
                 mTrayIcon.show();
             }
 
             QObject::connect(Settings::instance(), &Settings::showTrayIconChanged, this, [this] {
-                if (Settings::instance()->showTrayIcon()) {
+                if (Settings::instance()->get_showTrayIcon()) {
                     mTrayIcon.show();
                 } else {
                     mTrayIcon.hide();
@@ -1549,7 +1555,7 @@ namespace tremotesf {
         }
 
         void showAddTorrentFileDialogs(const QStringList& files, std::optional<QByteArray> windowActivationToken) {
-            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
+            const bool setParent = Settings::instance()->get_showMainWindowWhenAddingTorrent();
             for (const QString& filePath : files) {
                 auto* const dialog = showAddTorrentFileDialog(filePath, setParent);
                 if (windowActivationToken.has_value()) {
@@ -1575,7 +1581,7 @@ namespace tremotesf {
             auto* const dialog = new AddTorrentDialog(
                 mViewModel.rpc(),
                 AddTorrentDialog::UrlParams{urls},
-                Settings::instance()->showMainWindowWhenAddingTorrent() ? mWindow : nullptr
+                Settings::instance()->get_showMainWindowWhenAddingTorrent() ? mWindow : nullptr
             );
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
@@ -1601,7 +1607,7 @@ namespace tremotesf {
             std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>> existingTorrents,
             std::optional<QByteArray> windowActivationToken
         ) {
-            const bool setParent = Settings::instance()->showMainWindowWhenAddingTorrent();
+            const bool setParent = Settings::instance()->get_showMainWindowWhenAddingTorrent();
             for (auto& [torrent, trackers] : existingTorrents) {
                 auto* const dialog =
                     tremotesf::askForMergingTrackers(torrent, std::move(trackers), setParent ? mWindow : nullptr);
@@ -1616,7 +1622,7 @@ namespace tremotesf {
         void showAddTorrentErrors() {
             const auto showError = [this](const QString& title, const QString& text) {
                 QWidget* parent{};
-                if (Settings::instance()->showMainWindowWhenAddingTorrent()) {
+                if (Settings::instance()->get_showMainWindowWhenAddingTorrent()) {
                     parent = mWindow;
                     showWindowsOrActivateMainWindow();
                 }
@@ -1669,7 +1675,7 @@ namespace tremotesf {
         setWindowTitle(TREMOTESF_APP_NAME ""_l1);
         setMinimumSize(minimumSizeHint().expandedTo(QSize(384, 256)));
         setContextMenuPolicy(Qt::NoContextMenu);
-        setToolButtonStyle(Settings::instance()->toolButtonStyle());
+        setToolButtonStyle(Settings::instance()->get_toolButtonStyle());
         setAcceptDrops(true);
         if constexpr (targetOs == TargetOs::UnixMacOS) {
             if (determineStyle() == KnownStyle::macOS) {
@@ -1681,7 +1687,7 @@ namespace tremotesf {
     MainWindow::~MainWindow() = default;
 
     void MainWindow::initialShow(bool minimized) {
-        if (!(minimized && Settings::instance()->showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
+        if (!(minimized && Settings::instance()->get_showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
 #if defined(TREMOTESF_UNIX_FREEDESKTOP)
             // On Wayland we need to explicitly activate our window to consume XDG_ACTIVATION_TOKEN environment variable

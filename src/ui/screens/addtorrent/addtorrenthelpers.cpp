@@ -24,10 +24,10 @@ namespace tremotesf {
                     const auto lastDir = Servers::instance()->currentServerLastDownloadDirectory(serverSettings);
                     return !lastDir.isEmpty() ? lastDir : serverSettings->data().downloadDirectory;
                 }(),
-            .priority = settings->lastAddTorrentPriority(),
-            .startAfterAdding = settings->lastAddTorrentStartAfterAdding(),
-            .deleteTorrentFile = settings->lastAddTorrentDeleteTorrentFile(),
-            .moveTorrentFileToTrash = settings->lastAddTorrentMoveTorrentFileToTrash()
+            .priority = settings->get_lastAddTorrentPriority(),
+            .startAfterAdding = settings->get_lastAddTorrentStartAfterAdding(),
+            .deleteTorrentFile = settings->get_lastAddTorrentDeleteTorrentFile(),
+            .moveTorrentFileToTrash = settings->get_lastAddTorrentMoveTorrentFileToTrash()
         };
     }
 
@@ -45,7 +45,7 @@ namespace tremotesf {
     QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent) {
         auto* const settings = Settings::instance();
         QMessageBox* messageBox{};
-        if (settings->askForMergingTrackersWhenAddingExistingTorrent()) {
+        if (settings->get_askForMergingTrackersWhenAddingExistingTorrent()) {
             messageBox = new QMessageBox(
                 QMessageBox::Question,
                 //: Dialog title
@@ -66,13 +66,13 @@ namespace tremotesf {
                         torrent->addTrackers(trackers);
                     }
                     if (messageBox->checkBox()->isChecked()) {
-                        settings->setMergeTrackersWhenAddingExistingTorrent(result == QMessageBox::Ok);
-                        settings->setAskForMergingTrackersWhenAddingExistingTorrent(false);
+                        settings->set_mergeTrackersWhenAddingExistingTorrent(result == QMessageBox::Ok);
+                        settings->set_askForMergingTrackersWhenAddingExistingTorrent(false);
                     }
                 }
             );
 
-        } else if (settings->mergeTrackersWhenAddingExistingTorrent()) {
+        } else if (settings->get_mergeTrackersWhenAddingExistingTorrent()) {
             torrent->addTrackers(trackers);
 
             messageBox = new QMessageBox(
