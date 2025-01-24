@@ -81,13 +81,13 @@ namespace tremotesf {
             systemAccentColorCheckBox->setChecked(settings->get_useSystemAccentColor());
 #endif
 
-            auto connectOnStartupCheckBox = new QCheckBox(
+            auto showTorrentPropertiesInMainWindowCheckBox = new QCheckBox(
                 //: Check box label
-                qApp->translate("tremotesf", "Connect to server on startup"),
+                qApp->translate("tremotesf", "Show torrent properties in a panel in the main window"),
                 page
             );
-            layout->addRow(connectOnStartupCheckBox);
-            connectOnStartupCheckBox->setChecked(settings->get_connectOnStartup());
+            layout->addRow(showTorrentPropertiesInMainWindowCheckBox);
+            showTorrentPropertiesInMainWindowCheckBox->setChecked(settings->get_showTorrentPropertiesInMainWindow());
 
             auto torrentDoubleClickActionComboBox = new QComboBox(page);
             layout->addRow(
@@ -116,6 +116,48 @@ namespace tremotesf {
                     .value()
             );
 
+            auto dialogWarningMessage = new KMessageWidget(page);
+            layout->addRow(dialogWarningMessage);
+            dialogWarningMessage->setMessageType(KMessageWidget::Warning);
+            dialogWarningMessage->setCloseButtonVisible(false);
+            dialogWarningMessage->setText(qApp->translate(
+                "tremotesf",
+                "Properties dialog won't be shown because torrent properties are shown in the main window"
+            ));
+            const auto updateDialogWarningMessage = [=] {
+                if (showTorrentPropertiesInMainWindowCheckBox->isChecked() &&
+                    torrentDoubleClickActionComboBox->currentIndex() ==
+                        indexOfCasted<int>(
+                            torrentDoubleClickActionComboBoxValues,
+                            Settings::TorrentDoubleClickAction::OpenPropertiesDialog
+                        )) {
+                    dialogWarningMessage->animatedShow();
+                } else {
+                    dialogWarningMessage->animatedHide();
+                }
+            };
+            updateDialogWarningMessage();
+            QObject::connect(
+                showTorrentPropertiesInMainWindowCheckBox,
+                &QCheckBox::toggled,
+                dialogWarningMessage,
+                updateDialogWarningMessage
+            );
+            QObject::connect(
+                torrentDoubleClickActionComboBox,
+                &QComboBox::currentIndexChanged,
+                dialogWarningMessage,
+                updateDialogWarningMessage
+            );
+
+            auto connectOnStartupCheckBox = new QCheckBox(
+                //: Check box label
+                qApp->translate("tremotesf", "Connect to server on startup"),
+                page
+            );
+            layout->addRow(connectOnStartupCheckBox);
+            connectOnStartupCheckBox->setChecked(settings->get_connectOnStartup());
+
             return [=] {
 #ifdef Q_OS_WIN
                 if (const auto index = darkThemeComboBox->currentIndex(); index != -1) {
@@ -125,12 +167,13 @@ namespace tremotesf {
                     settings->set_useSystemAccentColor(systemAccentColorCheckBox->isChecked());
                 }
 #endif
-                settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());
+                settings->set_showTorrentPropertiesInMainWindow(showTorrentPropertiesInMainWindowCheckBox->isChecked());
                 if (const auto index = torrentDoubleClickActionComboBox->currentIndex(); index != -1) {
                     settings->set_torrentDoubleClickAction(
                         torrentDoubleClickActionComboBoxValues[static_cast<size_t>(index)]
                     );
                 }
+                settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());
             };
         }
 

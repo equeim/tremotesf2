@@ -62,10 +62,12 @@ namespace tremotesf {
         SETTINGS_PROPERTY(bool, toolBarLocked)
         SETTINGS_PROPERTY(bool, sideBarVisible)
         SETTINGS_PROPERTY(bool, statusBarVisible)
+        SETTINGS_PROPERTY(bool, showTorrentPropertiesInMainWindow)
 
         SETTINGS_PROPERTY(QByteArray, mainWindowGeometry)
         SETTINGS_PROPERTY(QByteArray, mainWindowState)
-        SETTINGS_PROPERTY(QByteArray, splitterState)
+        SETTINGS_PROPERTY(QByteArray, horizontalSplitterState)
+        SETTINGS_PROPERTY(QByteArray, verticalSplitterState)
 
         SETTINGS_PROPERTY(QByteArray, torrentsViewHeaderState)
         SETTINGS_PROPERTY(QByteArray, torrentPropertiesDialogGeometry)

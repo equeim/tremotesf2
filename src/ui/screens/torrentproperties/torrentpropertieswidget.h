@@ -22,14 +22,14 @@ namespace tremotesf {
     class TorrentPropertiesWidget : public QTabWidget {
         Q_OBJECT
     public:
-        explicit TorrentPropertiesWidget(Rpc* rpc, QWidget* parent = nullptr);
+        explicit TorrentPropertiesWidget(Rpc* rpc, bool horizontalDetails, QWidget* parent = nullptr);
 
         void setTorrent(Torrent* torrent);
         bool hasTorrent() const { return mTorrent != nullptr; }
         void saveState();
 
     private:
-        void setupDetailsTab();
+        void setupDetailsTab(bool horizontal);
         void setupPeersTab();
         void setupWebSeedersTab();
         void setupLimitsTab();
@@ -49,7 +49,6 @@ namespace tremotesf {
 
         bool mUpdatingLimits{};
         std::function<void()> mUpdateLimitsTab;
-
     signals:
         void hasTorrentChanged(bool hasTorrent);
     };

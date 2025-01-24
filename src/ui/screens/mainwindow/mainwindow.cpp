@@ -61,6 +61,7 @@
 #include "ui/screens/serverstatsdialog.h"
 #include "ui/screens/settingsdialog.h"
 #include "ui/screens/torrentproperties/torrentpropertiesdialog.h"
+#include "ui/screens/torrentproperties/torrentpropertieswidget.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
@@ -237,28 +238,38 @@ namespace tremotesf {
     public:
         explicit Impl(QStringList&& commandLineFiles, QStringList&& commandLineUrls, MainWindow* window)
             : mWindow(window), mViewModel{std::move(commandLineFiles), std::move(commandLineUrls)} {
-            mSplitter.setChildrenCollapsible(false);
+            mHorizontalSplitter.setChildrenCollapsible(false);
             if (!Settings::instance()->get_sideBarVisible()) {
                 mSideBar.hide();
             }
-            mSplitter.addWidget(&mSideBar);
+            mHorizontalSplitter.addWidget(&mSideBar);
 
-            auto mainWidgetContainer = new QWidget(mWindow);
-            mSplitter.addWidget(mainWidgetContainer);
-            mSplitter.setStretchFactor(1, 1);
-            auto mainWidgetLayout = new QVBoxLayout(mainWidgetContainer);
-            mainWidgetLayout->setContentsMargins(0, 0, 0, 0);
+            mHorizontalSplitter.addWidget(&mVerticalSplitter);
+            mHorizontalSplitter.setStretchFactor(1, 1);
+
+            mVerticalSplitter.setChildrenCollapsible(false);
+            mVerticalSplitter.setOrientation(Qt::Vertical);
+
+            auto torrentsListVBoxLayout = [this] {
+                auto widget = new QWidget();
+                mVerticalSplitter.addWidget(widget);
+                mVerticalSplitter.setStretchFactor(0, 1);
+                return new QVBoxLayout(widget);
+            }();
+            torrentsListVBoxLayout->setContentsMargins(0, 0, 0, 0);
 
             mDelayedTorrentAddMessage.setWordWrap(true);
             mDelayedTorrentAddMessage.hide();
-            mainWidgetLayout->addWidget(&mDelayedTorrentAddMessage);
+            torrentsListVBoxLayout->addWidget(&mDelayedTorrentAddMessage);
 
-            auto torrentsViewContainer = new QWidget(mWindow);
-            mainWidgetLayout->addWidget(torrentsViewContainer);
-            auto torrentsViewLayout = new QStackedLayout(torrentsViewContainer);
-            torrentsViewLayout->setStackingMode(QStackedLayout::StackAll);
+            auto torrentsListWithPlaceholderLayout = [&] {
+                auto widget = new QWidget();
+                torrentsListVBoxLayout->addWidget(widget);
+                return new QStackedLayout(widget);
+            }();
+            torrentsListWithPlaceholderLayout->setStackingMode(QStackedLayout::StackAll);
 
-            torrentsViewLayout->addWidget(&mTorrentsView);
+            torrentsListWithPlaceholderLayout->addWidget(&mTorrentsView);
             QObject::connect(&mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](auto point) {
                 if (mTorrentsView.indexAt(point).isValid()) {
                     mTorrentMenu->popup(QCursor::pos());
@@ -271,11 +282,20 @@ namespace tremotesf {
                 &MainWindow::Impl::performTorrentDoubleClickAction
             );
 
-            setupTorrentsPlaceholder(torrentsViewLayout);
+            QObject::connect(mViewModel.rpc(), &Rpc::connectedChanged, this, [this] {
+                if (mViewModel.rpc()->isConnected() && mTorrentsProxyModel.rowCount() > 0) {
+                    mTorrentsView.setCurrentIndex(mTorrentsProxyModel.index(0, 0));
+                }
+            });
 
-            mSplitter.restoreState(Settings::instance()->get_splitterState());
+            setupTorrentsPlaceholder(torrentsListWithPlaceholderLayout);
 
-            mWindow->setCentralWidget(&mSplitter);
+            setupTorrentPropertiesWidget();
+
+            mHorizontalSplitter.restoreState(Settings::instance()->get_horizontalSplitterState());
+            mVerticalSplitter.restoreState(Settings::instance()->get_verticalSplitterState());
+
+            mWindow->setCentralWidget(&mHorizontalSplitter);
 
             auto* const statusBar = new MainWindowStatusBar(mViewModel.rpc());
             mWindow->setStatusBar(statusBar);
@@ -435,8 +455,12 @@ namespace tremotesf {
             debug().log("Saving MainWindow state, window geometry is {}", mWindow->geometry());
             Settings::instance()->set_mainWindowGeometry(mWindow->saveGeometry());
             Settings::instance()->set_mainWindowState(mWindow->saveState());
-            Settings::instance()->set_splitterState(mSplitter.saveState());
+            Settings::instance()->set_horizontalSplitterState(mHorizontalSplitter.saveState());
+            Settings::instance()->set_verticalSplitterState(mVerticalSplitter.saveState());
             mTorrentsView.saveState();
+            if (mTorrentPropertiesWidget) {
+                mTorrentPropertiesWidget->saveState();
+            }
         }
 
 #if defined(TREMOTESF_UNIX_FREEDESKTOP)
@@ -451,16 +475,18 @@ namespace tremotesf {
         MainWindow* mWindow;
         MainWindowViewModel mViewModel;
 
-        QSplitter mSplitter{};
+        QSplitter mHorizontalSplitter{};
+        QSplitter mVerticalSplitter{};
 
         KMessageWidget mDelayedTorrentAddMessage{};
 
         TorrentsModel mTorrentsModel{mViewModel.rpc()};
         TorrentsProxyModel mTorrentsProxyModel{&mTorrentsModel};
         TorrentsView mTorrentsView{&mTorrentsProxyModel};
+        TorrentPropertiesWidget* mTorrentPropertiesWidget{};
 
         MainWindowSideBar mSideBar{mViewModel.rpc(), &mTorrentsProxyModel};
-        std::unordered_map<QString, TorrentPropertiesDialog*> mTorrentsDialogs{};
+        std::unordered_map<QString, TorrentPropertiesDialog*> mTorrentPropertiesDialogs{};
 
         QAction mShowHideAppAction{};
         //: Button / menu item to connect to server
@@ -552,6 +578,15 @@ namespace tremotesf {
                 &QAction::triggered,
                 this,
                 &MainWindow::Impl::showTorrentsPropertiesDialogs
+            );
+            torrentPropertiesAction->setVisible(!Settings::instance()->get_showTorrentPropertiesInMainWindow());
+            QObject::connect(
+                Settings::instance(),
+                &Settings::showTorrentPropertiesInMainWindowChanged,
+                this,
+                [torrentPropertiesAction] {
+                    torrentPropertiesAction->setVisible(!Settings::instance()->get_showTorrentPropertiesInMainWindow());
+                }
             );
 
             mTorrentMenu->addSeparator();
@@ -885,6 +920,62 @@ namespace tremotesf {
             }
         }
 
+        void setupTorrentPropertiesWidget() {
+            const auto setup = [this] {
+                if (Settings::instance()->get_showTorrentPropertiesInMainWindow()) {
+                    useTorrentPropertiesWidget();
+                } else {
+                    useTorrentPropertiesDialogs();
+                }
+            };
+            setup();
+            QObject::connect(Settings::instance(), &Settings::showTorrentPropertiesInMainWindowChanged, this, setup);
+        }
+
+        void useTorrentPropertiesDialogs() {
+            if (!mTorrentPropertiesWidget) {
+                return;
+            }
+
+            mTorrentPropertiesWidget->deleteLater();
+            mTorrentPropertiesWidget = nullptr;
+        }
+
+        void useTorrentPropertiesWidget() {
+            if (mTorrentPropertiesWidget) {
+                return;
+            }
+
+            if (!mTorrentPropertiesDialogs.empty()) {
+                // Don't iterate over mTorrentPropertiesDialogs directly since call to reject() will modify it (through QDialog::finished slot)
+                const auto dialogs = mTorrentPropertiesDialogs;
+                mTorrentPropertiesDialogs.clear();
+                for (const auto& [hashString, dialog] : dialogs) {
+                    dialog->reject();
+                }
+            }
+
+            mTorrentPropertiesWidget = new TorrentPropertiesWidget(mViewModel.rpc(), true, mWindow);
+            mVerticalSplitter.addWidget(mTorrentPropertiesWidget);
+
+            const auto updateCurrentTorrent = [this] {
+                const auto currentIndex = mTorrentsView.selectionModel()->currentIndex();
+                if (currentIndex.isValid()) {
+                    auto source = mTorrentsProxyModel.sourceIndex(currentIndex);
+                    mTorrentPropertiesWidget->setTorrent(mTorrentsModel.torrentAtIndex(source));
+                } else {
+                    mTorrentPropertiesWidget->setTorrent(nullptr);
+                }
+            };
+            updateCurrentTorrent();
+            QObject::connect(
+                mTorrentsView.selectionModel(),
+                &QItemSelectionModel::selectionChanged,
+                mTorrentPropertiesWidget,
+                updateCurrentTorrent
+            );
+        }
+
         void updateTorrentActions() {
             const auto actions = mTorrentMenu->actions();
 
@@ -944,7 +1035,12 @@ namespace tremotesf {
         void performTorrentDoubleClickAction() {
             switch (Settings::instance()->get_torrentDoubleClickAction()) {
             case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
-                showTorrentsPropertiesDialogs();
+                if (Settings::instance()->get_showTorrentPropertiesInMainWindow()) {
+                    warning().log("torrentDoubleClickAction is OpenPropertiesDialog, but "
+                                  "showTorrentPropertiesInMainWindow is true");
+                } else {
+                    showTorrentsPropertiesDialogs();
+                }
                 break;
             case Settings::TorrentDoubleClickAction::OpenTorrentFile:
                 openTorrentsFiles();
@@ -962,16 +1058,16 @@ namespace tremotesf {
             for (const auto& index : selectedRows) {
                 auto* const torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
                 const auto hashString = torrent->data().hashString;
-                const auto existingDialog = mTorrentsDialogs.find(hashString);
-                if (existingDialog != mTorrentsDialogs.end()) {
+                const auto existingDialog = mTorrentPropertiesDialogs.find(hashString);
+                if (existingDialog != mTorrentPropertiesDialogs.end()) {
                     unminimizeAndRaiseWindow(existingDialog->second);
                     activateWindowCompat(existingDialog->second);
                 } else {
                     auto dialog = new TorrentPropertiesDialog(torrent, mViewModel.rpc(), mWindow);
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
-                    mTorrentsDialogs.emplace(hashString, dialog);
+                    mTorrentPropertiesDialogs.emplace(hashString, dialog);
                     QObject::connect(dialog, &TorrentPropertiesDialog::finished, this, [hashString, this] {
-                        mTorrentsDialogs.erase(hashString);
+                        mTorrentPropertiesDialogs.erase(hashString);
                     });
                     dialog->show();
                 }
@@ -1036,10 +1132,10 @@ namespace tremotesf {
             }
         }
 
-        void setupTorrentsPlaceholder(QStackedLayout* parentLayout) {
+        void setupTorrentsPlaceholder(QStackedLayout* torrentsListStackedLayout) {
             auto container = new QWidget(mWindow);
-            parentLayout->addWidget(container);
-            parentLayout->setCurrentWidget(container);
+            torrentsListStackedLayout->addWidget(container);
+            torrentsListStackedLayout->setCurrentWidget(container);
             container->setAttribute(Qt::WA_TransparentForMouseEvents);
 
             auto layout = new QVBoxLayout(container);
@@ -1220,6 +1316,21 @@ namespace tremotesf {
             QObject::connect(statusBarAction, &QAction::triggered, this, [this](bool checked) {
                 mWindow->statusBar()->setVisible(checked);
                 Settings::instance()->set_statusBarVisible(checked);
+            });
+
+            QAction* torrentPropertiesWidgetAction =
+                viewMenu->addAction(qApp->translate("tremotesf", "Torrent properties &panel"));
+            torrentPropertiesWidgetAction->setCheckable(true);
+            torrentPropertiesWidgetAction->setChecked(Settings::instance()->get_showTorrentPropertiesInMainWindow());
+            QObject::connect(
+                torrentPropertiesWidgetAction,
+                &QAction::triggered,
+                Settings::instance(),
+                &Settings::set_showTorrentPropertiesInMainWindow
+            );
+            QObject::connect(Settings::instance(), &Settings::showTorrentPropertiesInMainWindowChanged, this, [=] {
+                torrentPropertiesWidgetAction->setChecked(Settings::instance()->get_showTorrentPropertiesInMainWindow()
+                );
             });
 
             viewMenu->addSeparator();

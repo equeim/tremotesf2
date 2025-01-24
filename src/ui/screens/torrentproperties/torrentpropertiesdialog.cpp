@@ -21,7 +21,7 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QRect)
 
 namespace tremotesf {
     TorrentPropertiesDialog::TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent)
-        : QDialog(parent), mTorrentPropertiesWidget(new TorrentPropertiesWidget(rpc, this)) {
+        : QDialog(parent), mTorrentPropertiesWidget(new TorrentPropertiesWidget(rpc, false, this)) {
         auto layout = new QVBoxLayout(this);
         auto messageWidget = new KMessageWidget(this);
         layout->addWidget(messageWidget);
