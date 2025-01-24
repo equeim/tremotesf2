@@ -12,6 +12,7 @@
 #include <QCoreApplication>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
+#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QGroupBox>
 #include <QLabel>
@@ -60,7 +61,7 @@ namespace tremotesf {
         };
     }
 
-    TorrentPropertiesWidget::TorrentPropertiesWidget(Rpc* rpc, QWidget* parent)
+    TorrentPropertiesWidget::TorrentPropertiesWidget(Rpc* rpc, bool horizontalDetails, QWidget* parent)
         : QTabWidget(parent),
           mRpc(rpc),
           mFilesModel(new TorrentFilesModel(mRpc, this)),
@@ -68,7 +69,7 @@ namespace tremotesf {
           mTrackersViewWidget(new TrackersViewWidget(mRpc, this)) {
         setEnabled(false);
 
-        setupDetailsTab();
+        setupDetailsTab(horizontalDetails);
 
         auto filesTab = new QWidget(this);
         auto filesTabLayout = new QVBoxLayout(filesTab);
@@ -90,17 +91,24 @@ namespace tremotesf {
         mTrackersViewWidget->saveState();
     }
 
-    void TorrentPropertiesWidget::setupDetailsTab() {
+    void TorrentPropertiesWidget::setupDetailsTab(bool horizontal) {
         auto detailsTab = new QScrollArea(this);
         detailsTab->setWidgetResizable(true);
-        detailsTab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        if (!horizontal) {
+            detailsTab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        }
         //: Torrent's properties dialog tab
         addTab(detailsTab, qApp->translate("tremotesf", "Details"));
 
         auto detailsTabScrollContent = new QWidget(detailsTab);
         detailsTab->setWidget(detailsTabScrollContent);
 
-        auto detailsTabLayout = new QVBoxLayout(detailsTabScrollContent);
+        QBoxLayout* detailsTabLayout{};
+        if (horizontal) {
+            detailsTabLayout = new QHBoxLayout(detailsTabScrollContent);
+        } else {
+            detailsTabLayout = new QVBoxLayout(detailsTabScrollContent);
+        }
 
         //: Torrent's details tab section
         auto activityGroupBox = new QGroupBox(qApp->translate("tremotesf", "Activity"), this);
@@ -168,48 +176,73 @@ namespace tremotesf {
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Created on:"), creationDateLabel);
         auto commentTextEdit = new QTextBrowser(this);
         commentTextEdit->setOpenExternalLinks(true);
+        commentTextEdit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         //: Torrent's comment text
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Comment:"), commentTextEdit);
         detailsTabLayout->addWidget(infoGroupBox);
 
-        auto resizer = new KColumnResizer(this);
-        resizer->addWidgetsFromLayout(activityGroupBoxLayout);
-        resizer->addWidgetsFromLayout(infoGroupBoxLayout);
+        if (!horizontal) {
+            auto resizer = new KColumnResizer(this);
+            resizer->addWidgetsFromLayout(activityGroupBoxLayout);
+            resizer->addWidgetsFromLayout(infoGroupBoxLayout);
+        }
 
         mUpdateDetailsTab = [=, this] {
-            //: Torrent's completion size, e.g. 100 MiB of 200 MiB (50%). %1 is completed size, %2 is size, %3 is progress in percents
-            completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
-                                        .arg(
-                                            formatutils::formatByteSize(mTorrent->data().completedSize),
-                                            formatutils::formatByteSize(mTorrent->data().sizeWhenDone),
-                                            formatutils::formatProgress(mTorrent->data().percentDone)
-                                        ));
-            downloadedLabel->setText(formatutils::formatByteSize(mTorrent->data().totalDownloaded));
-            uploadedLabel->setText(formatutils::formatByteSize(mTorrent->data().totalUploaded));
-            ratioLabel->setText(formatutils::formatRatio(mTorrent->data().ratio));
-            downloadSpeedLabel->setText(formatutils::formatByteSpeed(mTorrent->data().downloadSpeed));
-            uploadSpeedLabel->setText(formatutils::formatByteSpeed(mTorrent->data().uploadSpeed));
-            etaLabel->setText(formatutils::formatEta(mTorrent->data().eta));
+            if (mTorrent) {
+                //: Torrent's completion size, e.g. 100 MiB of 200 MiB (50%). %1 is completed size, %2 is size, %3 is progress in percents
+                completedLabel->setText(qApp->translate("tremotesf", "%1 of %2 (%3)")
+                                            .arg(
+                                                formatutils::formatByteSize(mTorrent->data().completedSize),
+                                                formatutils::formatByteSize(mTorrent->data().sizeWhenDone),
+                                                formatutils::formatProgress(mTorrent->data().percentDone)
+                                            ));
+                downloadedLabel->setText(formatutils::formatByteSize(mTorrent->data().totalDownloaded));
+                uploadedLabel->setText(formatutils::formatByteSize(mTorrent->data().totalUploaded));
+                ratioLabel->setText(formatutils::formatRatio(mTorrent->data().ratio));
+                downloadSpeedLabel->setText(formatutils::formatByteSpeed(mTorrent->data().downloadSpeed));
+                uploadSpeedLabel->setText(formatutils::formatByteSpeed(mTorrent->data().uploadSpeed));
+                etaLabel->setText(formatutils::formatEta(mTorrent->data().eta));
 
-            const QLocale locale{};
-            seedersLabel->setText(locale.toString(mTorrent->data().totalSeedersFromTrackersCount));
-            leechersLabel->setText(locale.toString(mTorrent->data().totalLeechersFromTrackersCount));
-            peersSendingToUsLabel->setText(locale.toString(mTorrent->data().peersSendingToUsCount));
-            webSeedersSendingToUsLabel->setText(locale.toString(mTorrent->data().webSeedersSendingToUsCount));
-            peersGettingFromUsLabel->setText(locale.toString(mTorrent->data().peersGettingFromUsCount));
+                const QLocale locale{};
+                seedersLabel->setText(locale.toString(mTorrent->data().totalSeedersFromTrackersCount));
+                leechersLabel->setText(locale.toString(mTorrent->data().totalLeechersFromTrackersCount));
+                peersSendingToUsLabel->setText(locale.toString(mTorrent->data().peersSendingToUsCount));
+                webSeedersSendingToUsLabel->setText(locale.toString(mTorrent->data().webSeedersSendingToUsCount));
+                peersGettingFromUsLabel->setText(locale.toString(mTorrent->data().peersGettingFromUsCount));
 
-            lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
+                lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
 
-            totalSizeLabel->setText(formatutils::formatByteSize(mTorrent->data().totalSize));
-            locationLabel->setText(
-                toNativeSeparators(mTorrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs)
-            );
-            hashLabel->setText(mTorrent->data().hashString);
-            creatorLabel->setText(mTorrent->data().creator);
-            creationDateLabel->setText(mTorrent->data().creationDate.toLocalTime().toString());
-            if (mTorrent->data().comment != commentTextEdit->toPlainText()) {
-                commentTextEdit->document()->setPlainText(mTorrent->data().comment);
-                desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
+                totalSizeLabel->setText(formatutils::formatByteSize(mTorrent->data().totalSize));
+                locationLabel->setText(
+                    toNativeSeparators(mTorrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs)
+                );
+                hashLabel->setText(mTorrent->data().hashString);
+                creatorLabel->setText(mTorrent->data().creator);
+                creationDateLabel->setText(mTorrent->data().creationDate.toLocalTime().toString());
+                if (mTorrent->data().comment != commentTextEdit->toPlainText()) {
+                    commentTextEdit->document()->setPlainText(mTorrent->data().comment);
+                    desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
+                }
+            } else {
+                completedLabel->clear();
+                downloadedLabel->clear();
+                uploadedLabel->clear();
+                ratioLabel->clear();
+                downloadSpeedLabel->clear();
+                uploadSpeedLabel->clear();
+                etaLabel->clear();
+                seedersLabel->clear();
+                leechersLabel->clear();
+                peersSendingToUsLabel->clear();
+                webSeedersSendingToUsLabel->clear();
+                peersGettingFromUsLabel->clear();
+                lastActivityLabel->clear();
+                totalSizeLabel->clear();
+                locationLabel->clear();
+                hashLabel->clear();
+                creatorLabel->clear();
+                creationDateLabel->clear();
+                commentTextEdit->clear();
             }
         };
     }
@@ -550,23 +583,37 @@ namespace tremotesf {
         mUpdateLimitsTab = [=, this] {
             mUpdatingLimits = true;
 
-            globalLimitsCheckBox->setChecked(mTorrent->data().honorSessionLimits);
-            downloadSpeedCheckBox->setChecked(mTorrent->data().downloadSpeedLimited);
-            downloadSpeedSpinBox->setValue(mTorrent->data().downloadSpeedLimit);
-            uploadSpeedCheckBox->setChecked(mTorrent->data().uploadSpeedLimited);
-            uploadSpeedSpinBox->setValue(mTorrent->data().uploadSpeedLimit);
-            priorityComboBox->setCurrentIndex(
-                indexOfCasted<int>(priorityComboBoxItems, mTorrent->data().bandwidthPriority).value()
-            );
-            ratioLimitComboBox->setCurrentIndex(
-                indexOfCasted<int>(ratioLimitComboBoxItems, mTorrent->data().ratioLimitMode).value()
-            );
-            ratioLimitSpinBox->setValue(mTorrent->data().ratioLimit);
-            idleSeedingLimitComboBox->setCurrentIndex(
-                indexOfCasted<int>(idleSeedingLimitComboBoxItems, mTorrent->data().idleSeedingLimitMode).value()
-            );
-            idleSeedingLimitSpinBox->setValue(mTorrent->data().idleSeedingLimit);
-            peersLimitsSpinBox->setValue(mTorrent->data().peersLimit);
+            if (mTorrent) {
+                globalLimitsCheckBox->setChecked(mTorrent->data().honorSessionLimits);
+                downloadSpeedCheckBox->setChecked(mTorrent->data().downloadSpeedLimited);
+                downloadSpeedSpinBox->setValue(mTorrent->data().downloadSpeedLimit);
+                uploadSpeedCheckBox->setChecked(mTorrent->data().uploadSpeedLimited);
+                uploadSpeedSpinBox->setValue(mTorrent->data().uploadSpeedLimit);
+                priorityComboBox->setCurrentIndex(
+                    indexOfCasted<int>(priorityComboBoxItems, mTorrent->data().bandwidthPriority).value()
+                );
+                ratioLimitComboBox->setCurrentIndex(
+                    indexOfCasted<int>(ratioLimitComboBoxItems, mTorrent->data().ratioLimitMode).value()
+                );
+                ratioLimitSpinBox->setValue(mTorrent->data().ratioLimit);
+                idleSeedingLimitComboBox->setCurrentIndex(
+                    indexOfCasted<int>(idleSeedingLimitComboBoxItems, mTorrent->data().idleSeedingLimitMode).value()
+                );
+                idleSeedingLimitSpinBox->setValue(mTorrent->data().idleSeedingLimit);
+                peersLimitsSpinBox->setValue(mTorrent->data().peersLimit);
+            } else {
+                globalLimitsCheckBox->setChecked(false);
+                downloadSpeedCheckBox->setChecked(false);
+                downloadSpeedSpinBox->clear();
+                uploadSpeedCheckBox->setChecked(false);
+                uploadSpeedSpinBox->clear();
+                priorityComboBox->setCurrentIndex(0);
+                ratioLimitComboBox->setCurrentIndex(0);
+                ratioLimitSpinBox->clear();
+                idleSeedingLimitComboBox->setCurrentIndex(0);
+                idleSeedingLimitSpinBox->clear();
+                peersLimitsSpinBox->clear();
+            }
 
             mUpdatingLimits = false;
         };
@@ -581,20 +628,23 @@ namespace tremotesf {
         if (mTorrent && !oldTorrentDestroyed) {
             QObject::disconnect(mTorrent, nullptr, this, nullptr);
         }
+
         const bool hadTorrent = mTorrent != nullptr;
         mTorrent = torrent;
 
-        if (mTorrent) {
-            const auto update = [this] {
-                mUpdateDetailsTab();
+        const auto update = [this] {
+            mUpdateDetailsTab();
+            if (mTorrent) {
                 mWebSeedersModel->setStringList(mTorrent->data().webSeeders);
-                mUpdateLimitsTab();
-            };
-            update();
+            } else {
+                mWebSeedersModel->setStringList({});
+            }
+            mUpdateLimitsTab();
+        };
+        update();
+        if (mTorrent) {
             QObject::connect(mTorrent, &Torrent::changed, this, update);
             QObject::connect(mTorrent, &QObject::destroyed, this, [this] { setTorrent(nullptr, true); });
-        } else {
-            mWebSeedersModel->setStringList({});
         }
         mFilesModel->setTorrent(mTorrent);
         mTrackersViewWidget->setTorrent(mTorrent);
