@@ -382,18 +382,13 @@ namespace tremotesf {
                 );
             }
 
-            // restoreGeometry() may call MainWindow::event() but we are still in MainWindow constructor
-            // Call it on the next event loop iteration
-            QMetaObject::invokeMethod(
-                this,
-                [this] {
-                    if (!mWindow->restoreGeometry(Settings::instance()->get_mainWindowGeometry())) {
-                        mWindow->resize(mWindow->sizeHint().expandedTo(QSize(896, 640)));
-                    }
-                    mWindow->restoreGeometry(Settings::instance()->get_mainWindowGeometry());
-                },
-                Qt::QueuedConnection
-            );
+            info().log("Restoring main window geometry");
+            if (!mWindow->restoreGeometry(Settings::instance()->get_mainWindowGeometry())) {
+                info().log("Did not restore geometry");
+                mWindow->resize(mWindow->sizeHint().expandedTo(QSize(896, 640)));
+            } else {
+                info().log("Restored geometry {}", mWindow->geometry());
+            }
         }
 
         Q_DISABLE_COPY_MOVE(Impl)
@@ -1699,18 +1694,19 @@ namespace tremotesf {
 
     bool MainWindow::event(QEvent* event) {
         if (event->type() == QEvent::WindowStateChange) {
-            mImpl->updateShowHideAction();
+            // This may be called in Impl constructor from restoreGeometry(), when mImpl is still uninitialized, so access it inside the lambda
+            QMetaObject::invokeMethod(this, [this] { mImpl->updateShowHideAction(); }, Qt::QueuedConnection);
         }
         return QMainWindow::event(event);
     }
 
     void MainWindow::showEvent(QShowEvent* event) {
-        mImpl->updateShowHideAction();
+        QMetaObject::invokeMethod(this, [this] { mImpl->updateShowHideAction(); }, Qt::QueuedConnection);
         QMainWindow::showEvent(event);
     }
 
     void MainWindow::hideEvent(QHideEvent* event) {
-        mImpl->updateShowHideAction();
+        QMetaObject::invokeMethod(this, [this] { mImpl->updateShowHideAction(); }, Qt::QueuedConnection);
         QMainWindow::hideEvent(event);
     }
 
