@@ -40,16 +40,23 @@ namespace tremotesf {
         constexpr std::array darkThemeComboBoxValues{
             Settings::DarkThemeMode::FollowSystem, Settings::DarkThemeMode::On, Settings::DarkThemeMode::Off
         };
+#endif
 
-        std::invocable auto createAppearancePage(KPageWidget* pageWidget, Settings* settings) {
+        constexpr std::array torrentDoubleClickActionComboBoxValues{
+            Settings::TorrentDoubleClickAction::OpenPropertiesDialog,
+            Settings::TorrentDoubleClickAction::OpenTorrentFile,
+            Settings::TorrentDoubleClickAction::OpenDownloadDirectory
+        };
+
+        std::invocable auto createGeneralPage(KPageWidget* pageWidget, Settings* settings) {
             auto page = new QWidget();
             //: Options tab
-            pageWidget->addPage(page, qApp->translate("tremotesf", "Appearance"))
+            pageWidget->addPage(page, qApp->translate("tremotesf", "General"))
                 ->setIcon(QIcon::fromTheme("preferences-desktop"));
-
             auto layout = new QFormLayout(page);
             layout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
+#ifdef Q_OS_WIN
             auto darkThemeComboBox = new QComboBox(pageWidget);
 
             //: Dark theme mode
@@ -71,20 +78,61 @@ namespace tremotesf {
                 // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(darkThemeComboBoxValues, settings->get_darkThemeMode()).value()
             );
-            if (systemAccentColorCheckBox) {
-                systemAccentColorCheckBox->setChecked(settings->get_useSystemAccentColor());
+            systemAccentColorCheckBox->setChecked(settings->get_useSystemAccentColor());
+#endif
+
+            auto connectOnStartupCheckBox = new QCheckBox(
+                //: Check box label
+                qApp->translate("tremotesf", "Connect to server on startup"),
+                page
+            );
+            layout->addRow(connectOnStartupCheckBox);
+            connectOnStartupCheckBox->setChecked(settings->get_connectOnStartup());
+
+            auto torrentDoubleClickActionComboBox = new QComboBox(page);
+            layout->addRow(
+                qApp->translate("tremotesf", "What to do when torrent in the list is double clicked:"),
+                torrentDoubleClickActionComboBox
+            );
+            for (const auto action : torrentDoubleClickActionComboBoxValues) {
+                switch (action) {
+                case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
+                    torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open properties dialog"));
+                    break;
+                case Settings::TorrentDoubleClickAction::OpenTorrentFile:
+                    torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open torrent's file"));
+                    break;
+                case Settings::TorrentDoubleClickAction::OpenDownloadDirectory:
+                    torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open download directory"));
+                    break;
+                default:
+                    break;
+                }
             }
 
+            torrentDoubleClickActionComboBox->setCurrentIndex(
+                // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+                indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->get_torrentDoubleClickAction())
+                    .value()
+            );
+
             return [=] {
+#ifdef Q_OS_WIN
                 if (const auto index = darkThemeComboBox->currentIndex(); index != -1) {
                     settings->set_darkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
                 }
                 if (systemAccentColorCheckBox) {
                     settings->set_useSystemAccentColor(systemAccentColorCheckBox->isChecked());
                 }
+#endif
+                settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());
+                if (const auto index = torrentDoubleClickActionComboBox->currentIndex(); index != -1) {
+                    settings->set_torrentDoubleClickAction(
+                        torrentDoubleClickActionComboBoxValues[static_cast<size_t>(index)]
+                    );
+                }
             };
         }
-#endif
 
         std::invocable auto createAddingTorrentsPage(KPageWidget* pageWidget, Settings* settings, Rpc* rpc) {
             auto page = new QWidget();
@@ -230,65 +278,6 @@ namespace tremotesf {
             };
         }
 
-        constexpr std::array torrentDoubleClickActionComboBoxValues{
-            Settings::TorrentDoubleClickAction::OpenPropertiesDialog,
-            Settings::TorrentDoubleClickAction::OpenTorrentFile,
-            Settings::TorrentDoubleClickAction::OpenDownloadDirectory
-        };
-
-        std::invocable auto createOtherBehaviourPage(KPageWidget* pageWidget, Settings* settings) {
-            auto page = new QWidget();
-            //: Options tab
-            pageWidget->addPage(page, qApp->translate("tremotesf", "Other behaviour"))
-                ->setIcon(QIcon::fromTheme("preferences-other"));
-            auto layout = new QFormLayout(page);
-            layout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-
-            auto connectOnStartupCheckBox = new QCheckBox(
-                //: Check box label
-                qApp->translate("tremotesf", "Connect to server on startup"),
-                page
-            );
-            layout->addRow(connectOnStartupCheckBox);
-            connectOnStartupCheckBox->setChecked(settings->get_connectOnStartup());
-
-            auto torrentDoubleClickActionComboBox = new QComboBox(page);
-            layout->addRow(
-                qApp->translate("tremotesf", "What to do when torrent in the list is double clicked:"),
-                torrentDoubleClickActionComboBox
-            );
-            for (const auto action : torrentDoubleClickActionComboBoxValues) {
-                switch (action) {
-                case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
-                    torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open properties dialog"));
-                    break;
-                case Settings::TorrentDoubleClickAction::OpenTorrentFile:
-                    torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open torrent's file"));
-                    break;
-                case Settings::TorrentDoubleClickAction::OpenDownloadDirectory:
-                    torrentDoubleClickActionComboBox->addItem(qApp->translate("tremotesf", "Open download directory"));
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            torrentDoubleClickActionComboBox->setCurrentIndex(
-                // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-                indexOfCasted<int>(torrentDoubleClickActionComboBoxValues, settings->get_torrentDoubleClickAction())
-                    .value()
-            );
-
-            return [=] {
-                settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());
-                if (const auto index = torrentDoubleClickActionComboBox->currentIndex(); index != -1) {
-                    settings->set_torrentDoubleClickAction(
-                        torrentDoubleClickActionComboBoxValues[static_cast<size_t>(index)]
-                    );
-                }
-            };
-        }
-
         std::invocable auto createNotificationsPage(KPageWidget* pageWidget, Settings* settings) {
             auto page = new QWidget();
             //: Options tab
@@ -383,11 +372,8 @@ namespace tremotesf {
 
         auto settings = Settings::instance();
 
-#ifdef Q_OS_WIN
-        const auto saveAppearancePage = createAppearancePage(pageWidget, settings);
-#endif
+        const auto saveGeneralPage = createGeneralPage(pageWidget, settings);
         const auto saveAddingTorrentsPage = createAddingTorrentsPage(pageWidget, settings, rpc);
-        const auto saveOtherBehaviourPage = createOtherBehaviourPage(pageWidget, settings);
         const auto saveNotificationsPage = createNotificationsPage(pageWidget, settings);
 
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -396,11 +382,8 @@ namespace tremotesf {
         pageWidget->setPageFooter(dialogButtonBox);
 
         QObject::connect(this, &SettingsDialog::accepted, this, [=] {
-#ifdef Q_OS_WIN
-            saveAppearancePage();
-#endif
+            saveGeneralPage();
             saveAddingTorrentsPage();
-            saveOtherBehaviourPage();
             saveNotificationsPage();
         });
     }
