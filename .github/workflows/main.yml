@@ -21,11 +21,12 @@ jobs:
       matrix:
         container-image: ['fedora:40', 'fedora:41', 'opensuse/tumbleweed:latest']
         compiler: ['gcc', 'clang']
+        runner: ['ubuntu-24.04', 'ubuntu-24.04-arm']
         exclude:
         - container-image: 'opensuse/tumbleweed:latest'
           compiler: clang
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     container: ${{ startsWith(matrix.container-image, 'fedora') && 'registry.fedoraproject.org' || 'registry.opensuse.org' }}/${{ matrix.container-image }}
 
     steps:
@@ -87,8 +88,9 @@ jobs:
       fail-fast: false
       matrix:
         container-image: ['debian:12', 'ubuntu:24.04', 'ubuntu:24.10']
+        runner: ['ubuntu-24.04', 'ubuntu-24.04-arm']
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     container: docker.io/library/${{ matrix.container-image }}
 
     steps:
@@ -134,7 +136,12 @@ jobs:
         DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ../*.deb
 
   build-flatpak:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ['ubuntu-24.04', 'ubuntu-24.04-arm']
+
+    runs-on: ${{ matrix.runner }}
 
     steps:
     - name: Add GCC problem matcher
