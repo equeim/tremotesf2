@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Options dialog is rearranged to use multiple tabs
+
+### Fixed
+- Delayed loading peers for active torrents
+
 ## [2.7.5] - 2025-01-14
 ### Added
 - Windows on ARM64 support
