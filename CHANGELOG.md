@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Option to show torrent properties in a panel in the main window instead of dialog
+
 ### Changed
 - Options dialog is rearranged to use multiple tabs
 
