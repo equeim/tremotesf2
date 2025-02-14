@@ -2,13 +2,13 @@
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
     "default-registry": {
         "kind": "builtin",
-        "baseline": "3b57fb2e1ff55613db14d2aaf0a30529289c7050"
+        "baseline": "43cd0c600f8180e0d5e1ce4bfba7b1bebf051a63"
     },
     "registries": [
         {
             "kind": "git",
             "repository": "https://github.com/equeim/vcpkg-registry.git",
-            "baseline": "eb649aafc1187ffec0d5cf57abe7eddb39746347",
+            "baseline": "c36be719d38851c71e67e36dbfc8facb63e91e19",
             "packages": [
                 "kf6ecm",
                 "kf6widgetsaddons",
