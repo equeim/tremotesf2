@@ -8,7 +8,8 @@
 - Options dialog is rearranged to use multiple tabs
 
 ### Fixed
-- Delayed loading peers for active torrents
+- Delayed loading of peers for active torrents
+- Window activation from clicking on notification
 
 ## [2.7.5] - 2025-01-14
 ### Added

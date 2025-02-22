@@ -86,8 +86,18 @@ namespace tremotesf {
                 mLegacyInterface.setTimeout(desktoputils::defaultDbusTimeout);
                 QObject::connect(&mLegacyInterface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, [this] {
                     info().log("LegacyFreedesktopNotificationsController: notification clicked");
-                    emit notificationClicked();
+                    emit notificationClicked(mActivationToken);
+                    mActivationToken.reset();
                 });
+                QObject::connect(
+                    &mLegacyInterface,
+                    &OrgFreedesktopNotificationsInterface::ActivationToken,
+                    this,
+                    [this](uint, const QString& activationToken) {
+                        info().log("LegacyFreedesktopNotificationsController: activationToken = {}", activationToken);
+                        mActivationToken = activationToken.toUtf8();
+                    }
+                );
             }
 
         protected:
@@ -129,6 +139,7 @@ namespace tremotesf {
             OrgFreedesktopNotificationsInterface mLegacyInterface{
                 "org.freedesktop.Notifications"_l1, "/org/freedesktop/Notifications"_l1, QDBusConnection::sessionBus()
             };
+            std::optional<QByteArray> mActivationToken{};
             CoroutineScope mCoroutineScope{};
         };
     }
