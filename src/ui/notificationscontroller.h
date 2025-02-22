@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_NOTIFICATIONSCONTROLLER_H
 #define TREMOTESF_NOTIFICATIONSCONTROLLER_H
 
+#include <optional>
 #include <QObject>
 
 class QSystemTrayIcon;
@@ -35,7 +36,7 @@ namespace tremotesf {
         QSystemTrayIcon* mTrayIcon{};
 
     signals:
-        void notificationClicked();
+        void notificationClicked(const std::optional<QByteArray>& windowActivationToken);
     };
 }
 

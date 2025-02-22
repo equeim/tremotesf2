@@ -21,7 +21,7 @@ namespace tremotesf {
         : QObject(parent), mTrayIcon(trayIcon) {
         QObject::connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, [this] {
             info().log("NotificationsController: notification clicked");
-            emit notificationClicked();
+            emit notificationClicked({});
         });
 
         QObject::connect(rpc, &Rpc::connectedChanged, this, [rpc, this] {

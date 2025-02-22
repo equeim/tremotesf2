@@ -163,9 +163,12 @@ namespace tremotesf {
 
     void MainWindowViewModel::setupNotificationsController(QSystemTrayIcon* trayIcon) {
         const auto controller = NotificationsController::createInstance(trayIcon, &mRpc, this);
-        QObject::connect(controller, &NotificationsController::notificationClicked, this, [this] {
-            emit showWindow({});
-        });
+        QObject::connect(
+            controller,
+            &NotificationsController::notificationClicked,
+            this,
+            [this](const std::optional<QByteArray>& windowActivationToken) { emit showWindow(windowActivationToken); }
+        );
     }
 
     MainWindowViewModel::StartupActionResult MainWindowViewModel::performStartupAction() {
