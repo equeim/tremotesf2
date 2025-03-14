@@ -21,12 +21,12 @@ jobs:
       matrix:
         container-image: ['fedora:41', 'opensuse/tumbleweed:latest']
         compiler: ['gcc', 'clang']
-        runner: ['ubuntu-24.04', 'ubuntu-24.04-arm']
+        arch: ['x86_64', 'arm64']
         exclude:
         - container-image: 'opensuse/tumbleweed:latest'
           compiler: clang
 
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
     container: ${{ startsWith(matrix.container-image, 'fedora') && 'registry.fedoraproject.org' || 'registry.opensuse.org' }}/${{ matrix.container-image }}
 
     steps:
@@ -88,9 +88,9 @@ jobs:
       fail-fast: false
       matrix:
         container-image: ['debian:12', 'ubuntu:24.04', 'ubuntu:24.10']
-        runner: ['ubuntu-24.04', 'ubuntu-24.04-arm']
+        arch: ['x86_64', 'arm64']
 
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
     container: docker.io/library/${{ matrix.container-image }}
 
     steps:
@@ -139,9 +139,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ['ubuntu-24.04', 'ubuntu-24.04-arm']
+        arch: ['x86_64', 'arm64']
 
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
 
     steps:
     - name: Add GCC problem matcher
