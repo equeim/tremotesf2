@@ -24,6 +24,7 @@ class QJsonObject;
 
 namespace tremotesf {
     class Rpc;
+    class ServerSettings;
 
     struct TorrentData {
         Q_GADGET
@@ -150,7 +151,7 @@ namespace tremotesf {
         // For testing only
         explicit Torrent() = default;
 
-        [[nodiscard]] static QJsonArray updateFields();
+        [[nodiscard]] static QJsonArray updateFields(const ServerSettings* serverSettings);
         [[nodiscard]] static std::optional<int> idFromJson(const QJsonObject& object);
         [[nodiscard]] static std::optional<QJsonArray::size_type>
         idKeyIndex(std::span<const std::optional<TorrentData::UpdateKey>> keys);

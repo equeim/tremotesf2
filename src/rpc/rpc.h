@@ -220,6 +220,7 @@ namespace tremotesf {
         bool mAutoReconnectEnabled{};
 
         std::optional<bool> mServerIsLocal{};
+        QByteArray mGetTorrentsRequestData{};
 
         std::chrono::seconds mUpdateInterval{};
         std::chrono::seconds mAutoReconnectInterval{};
