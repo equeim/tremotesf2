@@ -329,7 +329,9 @@ namespace tremotesf {
             co_return;
         }
         if (deleteFileMode != DeleteFileMode::No) {
-            mDeletingFilesCoroutineScope.launch(deleteTorrentFile(filePath, deleteFileMode == DeleteFileMode::MoveToTrash));
+            mDeletingFilesCoroutineScope.launch(
+                deleteTorrentFile(filePath, deleteFileMode == DeleteFileMode::MoveToTrash)
+            );
         }
         if (!isConnected()) co_return;
         const auto response = co_await mRequestRouter->postRequest("torrent-add"_l1, std::move(requestData).value());
@@ -620,6 +622,7 @@ namespace tremotesf {
             mBackgroundRequestsCoroutineScope.cancelAll();
             mRequestRouter->abortNetworkRequestsAndClearSessionId();
             mServerIsLocal = std::nullopt;
+            mGetTorrentsRequestData.clear();
 
             if (!mTorrents.empty() && oldConnectionState == ConnectionState::Connected) {
                 const auto removedTorrentsCount = mTorrents.size();
@@ -681,6 +684,17 @@ namespace tremotesf {
             co_await mRequestRouter->postRequest("session-get"_l1, QByteArrayLiteral("{\"method\":\"session-get\"}"));
         if (response.success) {
             mServerSettings->update(response.arguments);
+            if (mServerSettings->data().hasTableMode()) {
+                mGetTorrentsRequestData = RequestRouter::makeRequestData(
+                    "torrent-get"_l1,
+                    QJsonObject{{"fields"_l1, Torrent::updateFields(mServerSettings)}, {"format"_l1, "table"_l1}}
+                );
+            } else {
+                mGetTorrentsRequestData = RequestRouter::makeRequestData(
+                    "torrent-get"_l1,
+                    QJsonObject{{"fields"_l1, Torrent::updateFields(mServerSettings)}}
+                );
+            }
         }
     }
 
@@ -777,28 +791,14 @@ namespace tremotesf {
     };
 
     Coroutine<> Rpc::getTorrents() {
-        const QByteArray* requestData{};
-        const bool tableMode = mServerSettings->data().hasTableMode();
-        if (tableMode) {
-            static const auto tableModeRequestData = RequestRouter::makeRequestData(
-                "torrent-get"_l1,
-                QJsonObject{{"fields"_l1, Torrent::updateFields()}, {"format"_l1, "table"_l1}}
-            );
-            requestData = &tableModeRequestData;
-        } else {
-            static const auto objectsModeRequestData =
-                RequestRouter::makeRequestData("torrent-get"_l1, QJsonObject{{"fields"_l1, Torrent::updateFields()}});
-            requestData = &objectsModeRequestData;
-        }
-
-        const auto response = co_await mRequestRouter->postRequest("torrent-get"_l1, *requestData);
+        const auto response = co_await mRequestRouter->postRequest("torrent-get"_l1, mGetTorrentsRequestData);
         if (!response.success) co_return;
 
         TorrentsListUpdater updater(*this);
         {
             const QJsonArray torrentsJsons = response.arguments.value("torrents"_l1).toArray();
             std::vector<NewTorrent> newTorrents{};
-            if (tableMode) {
+            if (mServerSettings->data().hasTableMode()) {
                 if (!torrentsJsons.empty()) {
                     const auto keys = Torrent::mapUpdateKeys(torrentsJsons.first().toArray());
                     const auto idKeyIndex = Torrent::idKeyIndex(keys);
@@ -827,7 +827,7 @@ namespace tremotesf {
         }
 
         std::vector<Coroutine<>> additionalRequests{};
-        if (!updater.metadataCompletedIds.empty()) {
+        if (!mServerSettings->data().hasFileCountProperty() && !updater.metadataCompletedIds.empty()) {
             additionalRequests.push_back(checkTorrentsSingleFile(std::move(updater.metadataCompletedIds)));
         }
         QJsonArray getFilesIds{};
