@@ -118,6 +118,8 @@ namespace tremotesf {
         Priority bandwidthPriority{};
         bool honorSessionLimits;
 
+        std::vector<QString> labels{};
+
         bool singleFile = true;
 
         std::vector<Tracker> trackers{};

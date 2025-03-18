@@ -72,6 +72,7 @@ namespace tremotesf {
         Comment,
         TrackerStats,
         FileCount,
+        Labels,
 
         Count
     };
@@ -169,6 +170,8 @@ namespace tremotesf {
                 return "trackerStats"_l1;
             case TorrentData::UpdateKey::FileCount:
                 return "file-count"_l1;
+            case TorrentData::UpdateKey::Labels:
+                return "labels"_l1;
             case TorrentData::UpdateKey::Count:
                 return {};
             }
@@ -453,6 +456,16 @@ namespace tremotesf {
         case TorrentData::UpdateKey::FileCount:
             setChanged(singleFile, value.toInt() == 1, changed);
             return;
+        case TorrentData::UpdateKey::Labels: {
+            setChanged(
+                labels,
+                toContainer<std::vector>(value.toArray() | std::views::transform([](auto value) {
+                                             return value.toString();
+                                         })),
+                changed
+            );
+            return;
+        }
         case TorrentData::UpdateKey::Count:
             throw std::logic_error("UpdateKey::Count should not be mapped");
         }
@@ -499,6 +512,9 @@ namespace tremotesf {
         for (int i = 0; i < static_cast<int>(TorrentData::UpdateKey::Count); ++i) {
             const auto key = static_cast<TorrentData::UpdateKey>(i);
             if (key == TorrentData::UpdateKey::FileCount && !serverSettings->data().hasFileCountProperty()) {
+                continue;
+            }
+            if (key == TorrentData::UpdateKey::Labels && !serverSettings->data().hasLabelsProperty()) {
                 continue;
             }
             fields.push_back(updateKeyString(key));
