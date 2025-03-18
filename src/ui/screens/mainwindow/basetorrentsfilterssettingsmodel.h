@@ -28,6 +28,12 @@ namespace tremotesf {
 
         virtual QModelIndex indexForTorrentsProxyModelFilter() const = 0;
 
+        // Needed for ModelListUpdater
+        using QAbstractItemModel::beginInsertRows;
+        using QAbstractItemModel::beginRemoveRows;
+        using QAbstractItemModel::endInsertRows;
+        using QAbstractItemModel::endRemoveRows;
+
     protected:
         virtual void update() = 0;
         virtual void resetTorrentsProxyModelFilter() const = 0;

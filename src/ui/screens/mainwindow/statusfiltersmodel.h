@@ -25,11 +25,6 @@ namespace tremotesf {
         QModelIndex indexForStatusFilter(TorrentsProxyModel::StatusFilter filter) const;
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
-        using QAbstractItemModel::beginInsertRows;
-        using QAbstractItemModel::beginRemoveRows;
-        using QAbstractItemModel::endInsertRows;
-        using QAbstractItemModel::endRemoveRows;
-
         struct Item {
             TorrentsProxyModel::StatusFilter filter;
             int torrents;
