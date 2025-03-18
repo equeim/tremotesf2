@@ -80,14 +80,6 @@ namespace tremotesf {
 
     int StatusFiltersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mItems.size()); }
 
-    bool StatusFiltersModel::removeRows(int row, int count, const QModelIndex& parent) {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first = mItems.begin() + row;
-        mItems.erase(first, first + count);
-        endRemoveRows();
-        return true;
-    }
-
     QModelIndex StatusFiltersModel::indexForStatusFilter(TorrentsProxyModel::StatusFilter filter) const {
         for (size_t i = 0, max = mItems.size(); i < max; ++i) {
             const auto& item = mItems[i];

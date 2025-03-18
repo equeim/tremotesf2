@@ -17,11 +17,10 @@ namespace tremotesf {
     public:
         static constexpr auto FilterRole = Qt::UserRole;
 
-        inline explicit StatusFiltersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent){};
+        inline explicit StatusFiltersModel(QObject* parent = nullptr) : BaseTorrentsFiltersSettingsModel(parent) {};
 
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;
-        bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
         QModelIndex indexForStatusFilter(TorrentsProxyModel::StatusFilter filter) const;
         QModelIndex indexForTorrentsProxyModelFilter() const override;
