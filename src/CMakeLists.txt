@@ -85,6 +85,7 @@ target_sources(tremotesf_objects
     ui/screens/mainwindow/alltrackersmodel.cpp
     ui/screens/mainwindow/basetorrentsfilterssettingsmodel.cpp
     ui/screens/mainwindow/downloaddirectoriesmodel.cpp
+    ui/screens/mainwindow/labelsmodel.cpp
     ui/screens/mainwindow/mainwindow.cpp
     ui/screens/mainwindow/mainwindowsidebar.cpp
     ui/screens/mainwindow/mainwindowstatusbar.cpp
@@ -187,6 +188,7 @@ target_sources(tremotesf_objects
     ui/screens/mainwindow/alltrackersmodel.h
     ui/screens/mainwindow/basetorrentsfilterssettingsmodel.h
     ui/screens/mainwindow/downloaddirectoriesmodel.h
+    ui/screens/mainwindow/labelsmodel.h
     ui/screens/mainwindow/mainwindow.h
     ui/screens/mainwindow/mainwindowsidebar.h
     ui/screens/mainwindow/mainwindowstatusbar.h

@@ -13,9 +13,12 @@
 #include <QVBoxLayout>
 #include <QShortcut>
 
+#include "rpc/rpc.h"
+#include "rpc/serversettings.h"
 #include "ui/widgets/commondelegate.h"
 #include "alltrackersmodel.h"
 #include "downloaddirectoriesmodel.h"
+#include "labelsmodel.h"
 #include "statusfiltersmodel.h"
 #include "torrentsproxymodel.h"
 
@@ -157,6 +160,28 @@ namespace tremotesf {
             }
         };
 
+        class LabelsListView final : public BaseListView {
+            Q_OBJECT
+
+        public:
+            LabelsListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
+                : BaseListView(torrentsModel, new LabelsModel(), parent) {
+                init(rpc, LabelsModel::LabelRole);
+                QObject::connect(torrentsModel, &TorrentsProxyModel::labelFilterChanged, this, [=, this] {
+                    updateCurrentIndex();
+                });
+            }
+
+        protected:
+            void setTorrentsModelFilterFromIndex(const QModelIndex& index) override {
+                mTorrentsProxyModel->setLabelFilter(index.data(LabelsModel::LabelRole).toString());
+            }
+
+            void setTorrentsModelFilterEnabled(bool enabled) override {
+                mTorrentsProxyModel->setLabelFilterEnabled(enabled);
+            }
+        };
+
         class TrackersListView final : public BaseListView {
             Q_OBJECT
 
@@ -254,6 +279,28 @@ namespace tremotesf {
         );
         layout->addWidget(statusFiltersListView);
         statusCheckBox->setChecked(proxyModel->isStatusFilterEnabled());
+
+        //: Title of torrents label filters list
+        auto labelsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Labels"), this);
+        labelsCheckBox->setChecked(proxyModel->isLabelFilterEnabled());
+        labelsCheckBox->setFont(checkBoxFont);
+        layout->addWidget(labelsCheckBox);
+
+        auto labelsListView = new LabelsListView(rpc, proxyModel, this);
+        QObject::connect(labelsCheckBox, &QCheckBox::toggled, labelsListView, &LabelsListView::setFilterEnabled);
+        layout->addWidget(labelsListView);
+
+        QObject::connect(rpc, &Rpc::connectedChanged, this, [=] {
+            const bool serverSupportsLabels =
+                rpc->isConnected() ? rpc->serverSettings()->data().hasLabelsProperty() : true;
+            if (serverSupportsLabels) {
+                labelsCheckBox->setVisible(true);
+                labelsListView->setVisible(labelsCheckBox->isChecked());
+            } else {
+                labelsCheckBox->setVisible(false);
+                labelsListView->setVisible(false);
+            }
+        });
 
         //: Title of torrents download directory filters list
         auto directoriesCheckBox = new QCheckBox(qApp->translate("tremotesf", "Directories"), this);

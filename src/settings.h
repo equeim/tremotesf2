@@ -51,6 +51,9 @@ namespace tremotesf {
         SETTINGS_PROPERTY(bool, torrentsStatusFilterEnabled)
         SETTINGS_PROPERTY(TorrentsProxyModel::StatusFilter, torrentsStatusFilter)
 
+        SETTINGS_PROPERTY(bool, torrentsLabelFilterEnabled)
+        SETTINGS_PROPERTY(QString, torrentsLabelFilter)
+
         SETTINGS_PROPERTY(bool, torrentsTrackerFilterEnabled)
         SETTINGS_PROPERTY(QString, torrentsTrackerFilter)
 

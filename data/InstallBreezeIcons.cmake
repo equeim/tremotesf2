@@ -54,6 +54,7 @@ set(bundled_icon_files
     preferences-desktop-notification.svg
     preferences-system-time.svg
     system-shutdown.svg
+    tag.svg
     view-refresh.svg
     view-refresh.svg
     view-statistics.svg

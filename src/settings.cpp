@@ -100,6 +100,9 @@ namespace tremotesf {
         TorrentsProxyModel::StatusFilter::All
     )
 
+    SETTINGS_PROPERTY_DEF(bool, torrentsLabelFilterEnabled, "torrentsLabelFilterEnabled", true)
+    SETTINGS_PROPERTY_DEF(QString, torrentsLabelFilter, "torrentsLabelFilter", {})
+
     SETTINGS_PROPERTY_DEF(bool, torrentsTrackerFilterEnabled, "torrentsTrackerFilterEnabled", true)
     SETTINGS_PROPERTY_DEF(QString, torrentsTrackerFilter, "torrentsTrackerFilter", {})
 

@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <algorithm>
+
 #include "torrentsproxymodel.h"
 
 #include "rpc/torrent.h"
@@ -19,6 +21,8 @@ namespace tremotesf {
           ),
           mStatusFilterEnabled(Settings::instance()->get_torrentsStatusFilterEnabled()),
           mStatusFilter(Settings::instance()->get_torrentsStatusFilter()),
+          mLabelFilterEnabled(Settings::instance()->get_torrentsLabelFilterEnabled()),
+          mLabelFilter(Settings::instance()->get_torrentsLabelFilter()),
           mTrackerFilterEnabled(Settings::instance()->get_torrentsTrackerFilterEnabled()),
           mTrackerFilter(Settings::instance()->get_torrentsTrackerFilter()),
           mDownloadDirectoryFilterEnabled(Settings::instance()->get_torrentsDownloadDirectoryFilterEnabled()),
@@ -51,6 +55,27 @@ namespace tremotesf {
             invalidateFilter();
             emit statusFilterChanged();
             Settings::instance()->set_torrentsStatusFilter(mStatusFilter);
+        }
+    }
+
+    bool TorrentsProxyModel::isLabelFilterEnabled() const { return mLabelFilterEnabled; }
+
+    void TorrentsProxyModel::setLabelFilterEnabled(bool enabled) {
+        if (enabled != mLabelFilterEnabled) {
+            mLabelFilterEnabled = enabled;
+            invalidateFilter();
+            Settings::instance()->set_torrentsLabelFilterEnabled(mLabelFilterEnabled);
+        }
+    }
+
+    QString TorrentsProxyModel::labelFilter() const { return mLabelFilter; }
+
+    void TorrentsProxyModel::setLabelFilter(const QString& filter) {
+        if (filter != mLabelFilter) {
+            mLabelFilter = filter;
+            invalidateFilter();
+            emit labelFilterChanged();
+            Settings::instance()->set_torrentsLabelFilter(mLabelFilter);
         }
     }
 
@@ -129,37 +154,36 @@ namespace tremotesf {
     }
 
     bool TorrentsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const {
-        bool accepts = true;
-
         const Torrent* torrent = static_cast<TorrentsModel*>(sourceModel())->torrentAtRow(sourceRow);
 
         if (!mSearchString.isEmpty() && !torrent->data().name.contains(mSearchString, Qt::CaseInsensitive)) {
-            accepts = false;
+            return false;
         }
 
         if (mStatusFilterEnabled && !statusFilterAcceptsTorrent(torrent, mStatusFilter)) {
-            accepts = false;
+            return false;
+        }
+
+        if (mLabelFilterEnabled && !mLabelFilter.isEmpty()) {
+            const auto matchingLabel = std::ranges::find(torrent->data().labels, mLabelFilter);
+            if (matchingLabel == torrent->data().labels.end()) {
+                return false;
+            }
         }
 
         if (mTrackerFilterEnabled && !mTrackerFilter.isEmpty()) {
-            bool found = false;
-            for (const Tracker& tracker : torrent->data().trackers) {
-                if (tracker.site() == mTrackerFilter) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                accepts = false;
+            const auto matchingTracker = std::ranges::find(torrent->data().trackers, mTrackerFilter, &Tracker::site);
+            if (matchingTracker == torrent->data().trackers.end()) {
+                return false;
             }
         }
 
         if (mDownloadDirectoryFilterEnabled && !mDownloadDirectoryFilter.isEmpty()) {
             if (torrent->data().downloadDirectory != mDownloadDirectoryFilter) {
-                accepts = false;
+                return false;
             }
         }
 
-        return accepts;
+        return true;
     }
 }
