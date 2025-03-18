@@ -4,8 +4,8 @@
 
 #include "basetorrentfilesmodel.h"
 
-#include <QApplication>
-#include <QStyle>
+#include <QCoreApplication>
+#include <QIcon>
 
 #include "desktoputils.h"
 #include "itemlistupdater.h"
