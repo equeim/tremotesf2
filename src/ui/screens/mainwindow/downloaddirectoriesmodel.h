@@ -26,11 +26,6 @@ namespace tremotesf {
 
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
-        using QAbstractItemModel::beginInsertRows;
-        using QAbstractItemModel::beginRemoveRows;
-        using QAbstractItemModel::endInsertRows;
-        using QAbstractItemModel::endRemoveRows;
-
         struct DirectoryItem {
             QString directory{};
             QString displayDirectory{};
