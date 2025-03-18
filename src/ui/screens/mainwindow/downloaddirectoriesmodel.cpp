@@ -46,21 +46,18 @@ namespace tremotesf {
 
     int DownloadDirectoriesModel::rowCount(const QModelIndex&) const { return static_cast<int>(mDirectories.size()); }
 
-    QModelIndex DownloadDirectoriesModel::indexForDirectory(const QString& downloadDirectory) const {
-        for (size_t i = 0, max = mDirectories.size(); i < max; ++i) {
-            const auto& item = mDirectories[i];
-            if (item.directory == downloadDirectory) {
-                return index(static_cast<int>(i));
-            }
-        }
-        return {};
-    }
-
     QModelIndex DownloadDirectoriesModel::indexForTorrentsProxyModelFilter() const {
         if (!torrentsProxyModel()) {
             return {};
         }
-        return indexForDirectory(torrentsProxyModel()->downloadDirectoryFilter());
+        const auto filter = torrentsProxyModel()->downloadDirectoryFilter();
+        for (size_t i = 0, max = mDirectories.size(); i < max; ++i) {
+            const auto& item = mDirectories[i];
+            if (item.directory == filter) {
+                return index(static_cast<int>(i));
+            }
+        }
+        return {};
     }
 
     void DownloadDirectoriesModel::resetTorrentsProxyModelFilter() const {
