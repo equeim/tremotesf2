@@ -47,14 +47,6 @@ namespace tremotesf {
 
     int AllTrackersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mTrackers.size()); }
 
-    bool AllTrackersModel::removeRows(int row, int count, const QModelIndex& parent) {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first = mTrackers.begin() + row;
-        mTrackers.erase(first, first + count);
-        endRemoveRows();
-        return true;
-    }
-
     QModelIndex AllTrackersModel::indexForTracker(const QString& tracker) const {
         for (size_t i = 0, max = mTrackers.size(); i < max; ++i) {
             const auto& item = mTrackers[i];

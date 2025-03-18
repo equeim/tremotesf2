@@ -109,14 +109,6 @@ namespace tremotesf {
 
     int PeersModel::rowCount(const QModelIndex&) const { return static_cast<int>(mPeers.size()); }
 
-    bool PeersModel::removeRows(int row, int count, const QModelIndex& parent) {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first(mPeers.begin() + row);
-        mPeers.erase(first, first + count);
-        endRemoveRows();
-        return true;
-    }
-
     Torrent* PeersModel::torrent() const { return mTorrent; }
 
     void PeersModel::setTorrent(Torrent* torrent, bool oldTorrentDestroyed) {

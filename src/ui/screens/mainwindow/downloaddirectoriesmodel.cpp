@@ -46,14 +46,6 @@ namespace tremotesf {
 
     int DownloadDirectoriesModel::rowCount(const QModelIndex&) const { return static_cast<int>(mDirectories.size()); }
 
-    bool DownloadDirectoriesModel::removeRows(int row, int count, const QModelIndex& parent) {
-        beginRemoveRows(parent, row, row + count - 1);
-        const auto first = mDirectories.begin() + row;
-        mDirectories.erase(first, first + count);
-        endRemoveRows();
-        return true;
-    }
-
     QModelIndex DownloadDirectoriesModel::indexForDirectory(const QString& downloadDirectory) const {
         for (size_t i = 0, max = mDirectories.size(); i < max; ++i) {
             const auto& item = mDirectories[i];

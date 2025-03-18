@@ -17,11 +17,10 @@ namespace tremotesf {
         static constexpr auto DirectoryRole = Qt::UserRole;
 
         inline explicit DownloadDirectoriesModel(QObject* parent = nullptr)
-            : BaseTorrentsFiltersSettingsModel(parent){};
+            : BaseTorrentsFiltersSettingsModel(parent) {};
 
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;
-        bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
         QModelIndex indexForDirectory(const QString& downloadDirectory) const;
 
