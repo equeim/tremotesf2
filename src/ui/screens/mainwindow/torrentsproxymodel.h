@@ -33,6 +33,12 @@ namespace tremotesf {
         StatusFilter statusFilter() const;
         void setStatusFilter(StatusFilter filter);
 
+        bool isLabelFilterEnabled() const;
+        void setLabelFilterEnabled(bool enabled);
+
+        QString labelFilter() const;
+        void setLabelFilter(const QString& filter);
+
         bool isTrackerFilterEnabled() const;
         void setTrackerFilterEnabled(bool enabled);
 
@@ -56,14 +62,17 @@ namespace tremotesf {
         bool mStatusFilterEnabled;
         StatusFilter mStatusFilter;
 
+        bool mLabelFilterEnabled;
+        QString mLabelFilter;
+
         bool mTrackerFilterEnabled;
         QString mTrackerFilter;
 
         bool mDownloadDirectoryFilterEnabled;
         QString mDownloadDirectoryFilter;
     signals:
-        //void searchStringChanged();
         void statusFilterChanged();
+        void labelFilterChanged();
         void trackerFilterChanged();
         void downloadDirectoryFilterChanged();
     };
