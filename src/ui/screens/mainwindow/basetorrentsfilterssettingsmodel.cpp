@@ -39,7 +39,7 @@ namespace tremotesf {
             populatedChanged = true;
         }
         update();
-        if (!indexForTorrentsProxyModelFilter().isValid()) {
+        if (mPopulated && !indexForTorrentsProxyModelFilter().isValid()) {
             resetTorrentsProxyModelFilter();
         }
         if (populatedChanged) {
