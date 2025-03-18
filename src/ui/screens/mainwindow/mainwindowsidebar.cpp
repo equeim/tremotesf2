@@ -81,11 +81,12 @@ namespace tremotesf {
 
                 setModel(actualModel);
 
-                QObject::connect(mModel, &BaseTorrentsFiltersSettingsModel::populatedChanged, this, [this] {
-                    if (mModel->isPopulated()) {
-                        updateCurrentIndex();
-                    }
-                });
+                QObject::connect(
+                    mModel,
+                    &BaseTorrentsFiltersSettingsModel::populatedChanged,
+                    this,
+                    &BaseListView::updateCurrentIndex
+                );
 
                 QObject::connect(
                     selectionModel(),
@@ -120,10 +121,14 @@ namespace tremotesf {
             }
 
             void updateCurrentIndex() {
-                const auto index = mModel->indexForTorrentsProxyModelFilter();
-                if (mProxyModel) {
-                    setCurrentIndex(mProxyModel->mapFromSource(index));
-                } else {
+                auto index = mModel->indexForTorrentsProxyModelFilter();
+                if (index.isValid() && mProxyModel) {
+                    index = mProxyModel->mapFromSource(index);
+                }
+                if (!index.isValid() && model()->rowCount() > 0) {
+                    index = model()->index(0, 0);
+                }
+                if (index.isValid()) {
                     setCurrentIndex(index);
                 }
             }
