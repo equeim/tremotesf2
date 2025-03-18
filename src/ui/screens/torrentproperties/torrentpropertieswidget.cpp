@@ -16,6 +16,7 @@
 #include <QHeaderView>
 #include <QGroupBox>
 #include <QLabel>
+#include <QListView>
 #include <QLocale>
 #include <QScrollArea>
 #include <QSpinBox>
@@ -179,6 +180,19 @@ namespace tremotesf {
         commentTextEdit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         //: Torrent's comment text
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Comment:"), commentTextEdit);
+
+        auto labelsModel = new StringListModel({}, QIcon::fromTheme("tag"_l1), this);
+        auto labelsProxyModel = new BaseProxyModel(labelsModel, Qt::DisplayRole, std::nullopt, this);
+        auto labelsView = new QListView(this);
+        labelsView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+        labelsView->setFlow(QListView::LeftToRight);
+        labelsView->setWrapping(true);
+        labelsView->setResizeMode(QListView::Adjust);
+        labelsView->setModel(labelsProxyModel);
+        //: Torrent's labels
+        infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Labels:"), labelsView);
+        auto labelsLabel = infoGroupBoxLayout->labelForField(labelsView);
+
         detailsTabLayout->addWidget(infoGroupBox);
 
         if (!horizontal) {
@@ -223,6 +237,7 @@ namespace tremotesf {
                     commentTextEdit->document()->setPlainText(mTorrent->data().comment);
                     desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
                 }
+                labelsModel->setStringList(mTorrent->data().labels);
             } else {
                 completedLabel->clear();
                 downloadedLabel->clear();
@@ -243,7 +258,11 @@ namespace tremotesf {
                 creatorLabel->clear();
                 creationDateLabel->clear();
                 commentTextEdit->clear();
+                labelsModel->setStringList({});
             }
+            const bool labelsViewVisible = labelsModel->rowCount() > 0;
+            labelsView->setVisible(labelsViewVisible);
+            labelsLabel->setVisible(labelsViewVisible);
         };
     }
 
@@ -270,7 +289,7 @@ namespace tremotesf {
 
     void TorrentPropertiesWidget::setupWebSeedersTab() {
         //: Web seeders list column title
-        mWebSeedersModel = new StringListModel(qApp->translate("tremotesf", "Web seeder"), this);
+        mWebSeedersModel = new StringListModel(qApp->translate("tremotesf", "Web seeder"), {}, this);
         auto webSeedersProxyModel = new BaseProxyModel(mWebSeedersModel, Qt::DisplayRole, std::nullopt, this);
 
         auto webSeedersTab = new QWidget(this);
