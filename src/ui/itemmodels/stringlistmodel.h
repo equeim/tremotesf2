@@ -5,9 +5,11 @@
 #ifndef TREMOTESF_STRINGLISTMODEL_H
 #define TREMOTESF_STRINGLISTMODEL_H
 
+#include <optional>
 #include <vector>
 
 #include <QAbstractListModel>
+#include <QIcon>
 #include <QString>
 
 namespace tremotesf {
@@ -15,15 +17,24 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        explicit inline StringListModel(QString header = {}, QObject* parent = nullptr)
-            : QAbstractListModel(parent), mHeader(std::move(header)){};
+        explicit inline StringListModel(std::optional<QString> header, std::optional<QIcon> decoration, QObject* parent)
+            : QAbstractListModel(parent), mHeader(std::move(header)), mDecoration(std::move(decoration)) {};
 
         inline QVariant data(const QModelIndex& index, int role) const override {
-            return index.isValid() && role == Qt::DisplayRole ? mStringList.at(static_cast<size_t>(index.row()))
-                                                              : QVariant{};
+            if (!index.isValid()) return {};
+            switch (role) {
+            case Qt::DisplayRole:
+                return mStringList.at(static_cast<size_t>(index.row()));
+            case Qt::DecorationRole:
+                if (mDecoration) {
+                    return *mDecoration;
+                }
+                break;
+            }
+            return {};
         };
         inline QVariant headerData(int, Qt::Orientation orientation, int role) const override {
-            return orientation == Qt::Horizontal && role == Qt::DisplayRole ? mHeader : QVariant{};
+            return (orientation == Qt::Horizontal && role == Qt::DisplayRole && mHeader) ? *mHeader : QVariant{};
         };
         inline int rowCount(const QModelIndex& = {}) const override { return static_cast<int>(mStringList.size()); };
 
@@ -35,7 +46,8 @@ namespace tremotesf {
         using QAbstractItemModel::endRemoveRows;
 
     private:
-        QString mHeader;
+        std::optional<QString> mHeader;
+        std::optional<QIcon> mDecoration;
         std::vector<QString> mStringList;
     };
 }
