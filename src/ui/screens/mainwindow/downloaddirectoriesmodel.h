@@ -22,8 +22,6 @@ namespace tremotesf {
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;
 
-        QModelIndex indexForDirectory(const QString& downloadDirectory) const;
-
         QModelIndex indexForTorrentsProxyModelFilter() const override;
 
         struct DirectoryItem {
