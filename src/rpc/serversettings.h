@@ -41,6 +41,7 @@ namespace tremotesf {
         [[nodiscard]] bool hasTableMode() const;
         [[nodiscard]] bool hasTrackerListProperty() const;
         [[nodiscard]] bool hasFileCountProperty() const;
+        [[nodiscard]] bool hasLabelsProperty() const;
 
         int rpcVersion = 0;
         int minimumRpcVersion = 0;
