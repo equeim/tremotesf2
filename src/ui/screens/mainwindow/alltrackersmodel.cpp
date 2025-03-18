@@ -6,8 +6,8 @@
 
 #include <map>
 
-#include <QApplication>
-#include <QStyle>
+#include <QCoreApplication>
+#include <QIcon>
 
 #include "rpc/torrent.h"
 #include "rpc/tracker.h"
