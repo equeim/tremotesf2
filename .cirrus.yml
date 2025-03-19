@@ -7,7 +7,7 @@ only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_BASE_BRANCH == 'master' || $CIRRU
 build_freebsd_task:
   freebsd_instance:
     matrix:
-    - image_family: freebsd-13-4
+    - image_family: freebsd-13-5
     - image_family: freebsd-14-2
 
   packages_cache:
