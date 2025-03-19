@@ -970,7 +970,7 @@ namespace tremotesf {
             updateCurrentTorrent();
             QObject::connect(
                 mTorrentsView.selectionModel(),
-                &QItemSelectionModel::selectionChanged,
+                &QItemSelectionModel::currentChanged,
                 mTorrentPropertiesWidget,
                 updateCurrentTorrent
             );
