@@ -24,7 +24,7 @@ namespace tremotesf {
         TrackersViewWidget(Rpc* rpc, QWidget* parent = nullptr);
         Q_DISABLE_COPY_MOVE(TrackersViewWidget)
 
-        void setTorrent(Torrent* torrent);
+        void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
         void saveState();
 
     private:

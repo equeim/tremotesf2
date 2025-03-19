@@ -36,11 +36,9 @@ namespace tremotesf {
         bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
         Torrent* torrent() const;
-        void setTorrent(Torrent* torrent);
-
-    private:
         void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
 
+    private:
         void update(
             const std::vector<std::pair<int, int>>& removedIndexRanges,
             const std::vector<std::pair<int, int>>& changedIndexRanges,

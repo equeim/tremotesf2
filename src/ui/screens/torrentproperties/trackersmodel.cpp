@@ -138,8 +138,6 @@ namespace tremotesf {
 
     Torrent* TrackersModel::torrent() const { return mTorrent; }
 
-    void TrackersModel::setTorrent(Torrent* torrent) { setTorrent(torrent, false); }
-
     void TrackersModel::setTorrent(Torrent* torrent, bool oldTorrentDestroyed) {
         if (torrent == mTorrent) {
             return;

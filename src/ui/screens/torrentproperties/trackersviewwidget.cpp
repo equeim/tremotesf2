@@ -140,9 +140,9 @@ namespace tremotesf {
         });
     }
 
-    void TrackersViewWidget::setTorrent(Torrent* torrent) {
+    void TrackersViewWidget::setTorrent(Torrent* torrent, bool oldTorrentDestroyed) {
         mTorrent = torrent;
-        mModel->setTorrent(torrent);
+        mModel->setTorrent(torrent, oldTorrentDestroyed);
     }
 
     void TrackersViewWidget::saveState() {

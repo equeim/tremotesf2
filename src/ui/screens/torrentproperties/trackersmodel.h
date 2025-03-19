@@ -36,7 +36,7 @@ namespace tremotesf {
         int rowCount(const QModelIndex& = {}) const override;
 
         Torrent* torrent() const;
-        void setTorrent(Torrent* torrent);
+        void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
 
         std::vector<int> idsFromIndexes(const QModelIndexList& indexes) const;
         const Tracker& trackerAtIndex(const QModelIndex& index) const;
@@ -49,7 +49,6 @@ namespace tremotesf {
         struct TrackerItem;
 
     private:
-        void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
         void update();
         void updateEtas();
 

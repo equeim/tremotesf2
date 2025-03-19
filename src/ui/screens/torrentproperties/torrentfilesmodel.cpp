@@ -104,8 +104,6 @@ namespace tremotesf {
 
     Torrent* TorrentFilesModel::torrent() const { return mTorrent; }
 
-    void TorrentFilesModel::setTorrent(Torrent* torrent) { setTorrent(torrent, false); }
-
     void TorrentFilesModel::setTorrent(Torrent* torrent, bool oldTorrentDestroyed) {
         if (torrent == mTorrent) {
             return;
