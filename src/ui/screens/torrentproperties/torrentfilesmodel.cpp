@@ -110,11 +110,11 @@ namespace tremotesf {
         if (torrent == mTorrent) {
             return;
         }
-        mTorrent = torrent;
         if (mTorrent && !oldTorrentDestroyed) {
             QObject::disconnect(mTorrent, nullptr, this, nullptr);
             mTorrent->setFilesEnabled(false);
         }
+        mTorrent = torrent;
         resetTree();
         if (mTorrent) {
             QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
