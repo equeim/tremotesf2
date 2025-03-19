@@ -646,9 +646,9 @@ namespace tremotesf {
             QObject::connect(mTorrent, &Torrent::changed, this, update);
             QObject::connect(mTorrent, &QObject::destroyed, this, [this] { setTorrent(nullptr, true); });
         }
-        mFilesModel->setTorrent(mTorrent);
-        mTrackersViewWidget->setTorrent(mTorrent);
-        mPeersModel->setTorrent(mTorrent);
+        mFilesModel->setTorrent(mTorrent, oldTorrentDestroyed);
+        mTrackersViewWidget->setTorrent(mTorrent, oldTorrentDestroyed);
+        mPeersModel->setTorrent(mTorrent, oldTorrentDestroyed);
 
         const auto onHasTorrentChanged = [this](bool hasTorrent) {
             setEnabled(hasTorrent);

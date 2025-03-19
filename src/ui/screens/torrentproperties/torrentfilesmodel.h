@@ -24,7 +24,7 @@ namespace tremotesf {
         Q_DISABLE_COPY_MOVE(TorrentFilesModel)
 
         Torrent* torrent() const;
-        void setTorrent(Torrent* torrent);
+        void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
 
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
@@ -41,7 +41,6 @@ namespace tremotesf {
         bool isWanted(const QModelIndex& index) const;
 
     private:
-        void setTorrent(Torrent* torrent, bool oldTorrentDestroyed);
         void update(std::span<const int> changed);
         Coroutine<> createTree();
         void resetTree();
