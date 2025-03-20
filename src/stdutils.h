@@ -45,13 +45,13 @@ namespace tremotesf {
         );
     }
 
-    template<template<typename...> typename NewContainer, std::ranges::forward_range FromRange>
+    template<template<typename...> typename NewContainer, std::ranges::input_range FromRange>
     // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
     inline NewContainer<std::ranges::range_value_t<FromRange>> toContainer(FromRange&& from) {
         return {std::ranges::begin(from), std::ranges::end(from)};
     }
 
-    template<typename NewContainer, std::ranges::forward_range FromRange>
+    template<typename NewContainer, std::ranges::input_range FromRange>
     // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
     inline NewContainer toContainer(FromRange&& from) {
         return {std::ranges::begin(from), std::ranges::end(from)};
