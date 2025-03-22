@@ -16,7 +16,7 @@ namespace tremotesf {
 
         header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
-        QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, [=, this] {
+        QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, [=, this](QPoint pos) {
             if (!model()) {
                 return;
             }
@@ -28,7 +28,7 @@ namespace tremotesf {
                 action->setChecked(!isColumnHidden(i));
             }
 
-            QAction* action = contextMenu.exec(QCursor::pos());
+            QAction* action = contextMenu.exec(header()->viewport()->mapToGlobal(pos));
             if (action) {
                 const auto column = static_cast<int>(contextMenu.actions().indexOf(action));
                 if (isColumnHidden(column)) {

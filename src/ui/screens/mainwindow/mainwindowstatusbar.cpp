@@ -152,7 +152,7 @@ namespace tremotesf {
         }
     }
 
-    void MainWindowStatusBar::showContextMenu() {
+    void MainWindowStatusBar::showContextMenu(QPoint pos) {
         auto* const menu = new QMenu(this);
         auto* const group = new QActionGroup(menu);
         group->setExclusive(true);
@@ -187,7 +187,7 @@ namespace tremotesf {
                 }
             }
         });
-        menu->popup(QCursor::pos());
+        menu->popup(mapToGlobal(pos));
     }
 
     StatusBarSeparator::StatusBarSeparator(QWidget* parent) : QWidget(parent) {

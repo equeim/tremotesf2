@@ -6,7 +6,6 @@
 
 #include <QAction>
 #include <QCoreApplication>
-#include <QCursor>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QIcon>
@@ -64,7 +63,7 @@ namespace tremotesf {
         mServersView->addAction(removeAction);
         QObject::connect(removeAction, &QAction::triggered, this, &ConnectionSettingsDialog::removeServers);
 
-        QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=, this](auto pos) {
+        QObject::connect(mServersView, &QListView::customContextMenuRequested, this, [=, this](QPoint pos) {
             if (mServersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(
@@ -74,7 +73,7 @@ namespace tremotesf {
                 );
                 QObject::connect(editAction, &QAction::triggered, this, &ConnectionSettingsDialog::showEditDialogs);
                 contextMenu.addAction(removeAction);
-                contextMenu.exec(QCursor::pos());
+                contextMenu.exec(mServersView->viewport()->mapToGlobal(pos));
             }
         });
 
