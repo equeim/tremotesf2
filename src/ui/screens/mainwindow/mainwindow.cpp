@@ -1322,12 +1322,16 @@ namespace tremotesf {
                 viewMenu->addAction(qApp->translate("tremotesf", "Torrent properties &panel"));
             torrentPropertiesWidgetAction->setCheckable(true);
             torrentPropertiesWidgetAction->setChecked(Settings::instance()->get_showTorrentPropertiesInMainWindow());
-            QObject::connect(
-                torrentPropertiesWidgetAction,
-                &QAction::triggered,
-                Settings::instance(),
-                &Settings::set_showTorrentPropertiesInMainWindow
-            );
+            QObject::connect(torrentPropertiesWidgetAction, &QAction::triggered, this, [](bool checked) {
+                Settings::instance()->set_showTorrentPropertiesInMainWindow(checked);
+                Settings::TorrentDoubleClickAction action;
+                if (checked) {
+                    action = Settings::TorrentDoubleClickAction::OpenTorrentFile;
+                } else {
+                    action = Settings::TorrentDoubleClickAction::OpenPropertiesDialog;
+                }
+                Settings::instance()->set_torrentDoubleClickAction(action);
+            });
             QObject::connect(Settings::instance(), &Settings::showTorrentPropertiesInMainWindowChanged, this, [=] {
                 torrentPropertiesWidgetAction->setChecked(Settings::instance()->get_showTorrentPropertiesInMainWindow()
                 );
