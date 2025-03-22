@@ -7,8 +7,8 @@
 
 #include <algorithm>
 #include <array>
-#include <functional>
 #include <cmath>
+#include <functional>
 #include <unordered_map>
 
 #include <QAction>
@@ -65,6 +65,7 @@
 #include "ui/widgets/torrentfilesview.h"
 
 #include "desktoputils.h"
+#include "editlabelsdialog.h"
 #include "filemanagerlauncher.h"
 #include "formatutils.h"
 #include "macoshelpers.h"
@@ -72,6 +73,7 @@
 #include "mainwindowstatusbar.h"
 #include "mainwindowviewmodel.h"
 #include "settings.h"
+#include "stdutils.h"
 #include "target_os.h"
 #include "torrentsmodel.h"
 #include "torrentsproxymodel.h"
@@ -706,6 +708,25 @@ namespace tremotesf {
                     TorrentFilesView::showFileRenameDialog(name, mWindow, [id, name, this](const auto& newName) {
                         mViewModel.rpc()->renameTorrentFile(id, name, newName);
                     });
+                }
+            });
+
+            QAction* editLabelsAction = mTorrentMenu->addAction(
+                QIcon::fromTheme("tag"_l1),
+                //: Torrent's context menu item
+                qApp->translate("tremotesf", "Edi&t Labels")
+            );
+            QObject::connect(editLabelsAction, &QAction::triggered, this, [this] {
+                if (mTorrentsView.selectionModel()->hasSelection()) {
+                    const auto selectedTorrents = toContainer<std::vector>(
+                        mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows()) |
+                        std::views::transform([this](const QModelIndex& index) {
+                            return mTorrentsModel.torrentAtIndex(index);
+                        })
+                    );
+                    auto dialog = new EditLabelsDialog(selectedTorrents, mViewModel.rpc(), mWindow);
+                    dialog->setAttribute(Qt::WA_DeleteOnClose);
+                    dialog->show();
                 }
             });
 

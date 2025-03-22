@@ -9,7 +9,6 @@
 #include <concepts>
 #include <cstddef>
 #include <optional>
-#include <span>
 #include <stdexcept>
 #include <type_traits>
 
@@ -83,9 +82,11 @@ namespace tremotesf::impl {
         std::array<EnumMapping<EnumConstantT, JsonConstantT>, EnumCount> mappings{};
     };
 
-    inline QJsonArray toJsonArray(std::span<const int> ids) {
+    template<std::ranges::input_range FromRange>
+        requires std::convertible_to<std::ranges::range_value_t<FromRange>, QJsonValue>
+    inline QJsonArray toJsonArray(FromRange&& from) {
         QJsonArray array{};
-        std::ranges::copy(ids, std::back_insert_iterator(array));
+        std::ranges::copy(from, std::back_insert_iterator(array));
         return array;
     }
 

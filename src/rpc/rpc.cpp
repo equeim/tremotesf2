@@ -455,6 +455,12 @@ namespace tremotesf {
         ));
     }
 
+    void Rpc::setTorrentsLabels(std::span<const int> ids, std::span<const QString> labels) {
+        mBackgroundRequestsCoroutineScope.launch(
+            postRequest("torrent-set"_l1, {{"ids"_l1, toJsonArray(ids)}, {"labels"_l1, toJsonArray(labels)}})
+        );
+    }
+
     void Rpc::getTorrentFiles(int torrentId) {
         if (isConnected()) {
             mBackgroundRequestsCoroutineScope.launch(getTorrentsFiles({torrentId}));
