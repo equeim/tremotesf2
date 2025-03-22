@@ -7,7 +7,6 @@
 #include <array>
 
 #include <QCoreApplication>
-#include <QCursor>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QIcon>
@@ -77,7 +76,7 @@ namespace tremotesf {
         mTrackersView->addAction(removeAction);
         QObject::connect(removeAction, &QAction::triggered, this, &TrackersViewWidget::removeTrackers);
 
-        QObject::connect(mTrackersView, &EnterEatingTreeView::customContextMenuRequested, this, [=, this](auto pos) {
+        QObject::connect(mTrackersView, &EnterEatingTreeView::customContextMenuRequested, this, [=, this](QPoint pos) {
             if (mTrackersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(
@@ -87,7 +86,7 @@ namespace tremotesf {
                 );
                 QObject::connect(editAction, &QAction::triggered, this, &TrackersViewWidget::showEditDialogs);
                 contextMenu.addAction(removeAction);
-                contextMenu.exec(QCursor::pos());
+                contextMenu.exec(mTrackersView->viewport()->mapToGlobal(pos));
             }
         });
 

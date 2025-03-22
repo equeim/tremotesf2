@@ -91,7 +91,7 @@ namespace tremotesf {
                 }
             });
 
-            QObject::connect(this, &QWidget::customContextMenuRequested, this, [=, this](auto pos) {
+            QObject::connect(this, &QWidget::customContextMenuRequested, this, [=, this](QPoint pos) {
                 const QModelIndex index(indexAt(pos));
                 if (!index.isValid()) {
                     return;

@@ -24,7 +24,7 @@ namespace tremotesf {
         void updateLayout();
         void updateServerLabel();
         void updateStatusLabels();
-        void showContextMenu();
+        void showContextMenu(QPoint pos);
 
         const Rpc* mRpc{};
         QLabel* mNoServersErrorImage{};

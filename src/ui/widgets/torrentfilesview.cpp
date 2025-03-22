@@ -7,7 +7,6 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QCoreApplication>
-#include <QCursor>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QMenu>
@@ -275,6 +274,6 @@ namespace tremotesf {
             });
         }
 
-        contextMenu.exec(QCursor::pos());
+        contextMenu.exec(viewport()->mapToGlobal(pos));
     }
 }

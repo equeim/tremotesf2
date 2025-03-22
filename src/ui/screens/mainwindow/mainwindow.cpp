@@ -17,7 +17,6 @@
 #include <QCheckBox>
 #include <QClipboard>
 #include <QCloseEvent>
-#include <QCursor>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QIcon>
@@ -270,9 +269,9 @@ namespace tremotesf {
             torrentsListWithPlaceholderLayout->setStackingMode(QStackedLayout::StackAll);
 
             torrentsListWithPlaceholderLayout->addWidget(&mTorrentsView);
-            QObject::connect(&mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](auto point) {
-                if (mTorrentsView.indexAt(point).isValid()) {
-                    mTorrentMenu->popup(QCursor::pos());
+            QObject::connect(&mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](QPoint pos) {
+                if (mTorrentsView.indexAt(pos).isValid()) {
+                    mTorrentMenu->popup(mTorrentsView.viewport()->mapToGlobal(pos));
                 }
             });
             QObject::connect(
@@ -1453,7 +1452,7 @@ namespace tremotesf {
             mToolBar.addAction(mPauseTorrentAction);
             mToolBar.addAction(mRemoveTorrentAction);
 
-            QObject::connect(&mToolBar, &QToolBar::customContextMenuRequested, this, [this] {
+            QObject::connect(&mToolBar, &QToolBar::customContextMenuRequested, this, [this](QPoint pos) {
                 QMenu contextMenu;
                 QActionGroup group(this);
 
@@ -1472,7 +1471,7 @@ namespace tremotesf {
 
                 contextMenu.addActions(group.actions());
 
-                QAction* action = contextMenu.exec(QCursor::pos());
+                QAction* action = contextMenu.exec(mToolBar.mapToGlobal(pos));
                 if (action) {
                     const auto style = static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action));
                     mWindow->setToolButtonStyle(style);
