@@ -29,6 +29,7 @@ class QPlainTextEdit;
 class KMessageWidget;
 
 namespace tremotesf {
+    class EditLabelsWidget;
     class LocalTorrentFilesModel;
     class TorrentDownloadDirectoryDirectorySelectionWidget;
     class TorrentFilesView;
@@ -96,6 +97,8 @@ namespace tremotesf {
         QLabel* mFreeSpaceLabel{};
         TorrentFilesView* mTorrentFilesView{};
         AddTorrentParametersWidgets mAddTorrentParametersWidgets{};
+        QGroupBox* mEditLabelsGroupBox{};
+        EditLabelsWidget* mEditLabelsWidget{};
 
         QDialogButtonBox* mDialogButtonBox{};
 

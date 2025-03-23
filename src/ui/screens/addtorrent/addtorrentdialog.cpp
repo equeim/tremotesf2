@@ -36,8 +36,10 @@
 #include "torrentfileparser.h"
 #include "coroutines/threadpool.h"
 #include "log/log.h"
-#include "rpc/torrent.h"
 #include "rpc/rpc.h"
+#include "rpc/serversettings.h"
+#include "rpc/torrent.h"
+#include "ui/widgets/editlabelswidget.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
@@ -110,7 +112,8 @@ namespace tremotesf {
                     mFilesModel->renamedFiles(),
                     priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
                     mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked(),
-                    determineDeleteFileMode(mAddTorrentParametersWidgets)
+                    determineDeleteFileMode(mAddTorrentParametersWidgets),
+                    mEditLabelsWidget->enabledLabels()
                 );
             }
         } else {
@@ -121,7 +124,8 @@ namespace tremotesf {
                     std::move(urls),
                     mAddTorrentParametersWidgets.downloadDirectoryWidget->path(),
                     priorityFromComboBoxIndex(mAddTorrentParametersWidgets.priorityComboBox->currentIndex()),
-                    mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked()
+                    mAddTorrentParametersWidgets.startTorrentCheckBox->isChecked(),
+                    mEditLabelsWidget->enabledLabels()
                 );
             }
         }
@@ -253,12 +257,24 @@ namespace tremotesf {
         if (isAddingFile()) {
             mTorrentFilesView = new TorrentFilesView(mFilesModel, mRpc);
             layout->insertRow(rowForWidget(layout, mFreeSpaceLabel) + 1, mTorrentFilesView);
-        } else {
+        }
+
+        mEditLabelsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Labels"), this);
+        layout->addRow(mEditLabelsGroupBox);
+        auto labelsGroupBoxLayout = new QVBoxLayout(mEditLabelsGroupBox);
+        mEditLabelsWidget = new EditLabelsWidget({}, mRpc, this);
+        labelsGroupBoxLayout->addWidget(mEditLabelsWidget);
+
+        if (!isAddingFile()) {
             layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
         }
 
         mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-        QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &AddTorrentDialog::accept);
+        QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, [this] {
+            if (!mEditLabelsWidget->comboBoxHasFocus()) {
+                accept();
+            }
+        });
         QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &AddTorrentDialog::reject);
         layout->addRow(mDialogButtonBox);
 
@@ -312,6 +328,10 @@ namespace tremotesf {
             mMessageWidget->setText(qApp->translate("tremotesf", "Disconnected"));
             mMessageWidget->animatedShow();
         }
+
+        mEditLabelsGroupBox->setVisible(
+            mRpc->isConnected() ? mRpc->serverSettings()->data().hasLabelsProperty() : true
+        );
 
         canAcceptUpdate();
     }

@@ -261,8 +261,8 @@ namespace tremotesf {
                 parameters.startAfterAdding,
                 parameters.deleteTorrentFile ? (parameters.moveTorrentFileToTrash ? Rpc::DeleteFileMode::MoveToTrash
                                                                                   : Rpc::DeleteFileMode::Delete)
-                                             : Rpc::DeleteFileMode::No
-
+                                             : Rpc::DeleteFileMode::No,
+                {}
             );
         }
     }
@@ -298,7 +298,8 @@ namespace tremotesf {
             std::move(urls),
             std::move(parameters.downloadDirectory),
             parameters.priority,
-            parameters.startAfterAdding
+            parameters.startAfterAdding,
+            {}
         );
     }
 
