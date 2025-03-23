@@ -137,11 +137,16 @@ namespace tremotesf {
             std::map<QString, QString> renamedFiles,
             TorrentData::Priority bandwidthPriority,
             bool start,
-            DeleteFileMode deleteFileMode
+            DeleteFileMode deleteFileMode,
+            std::vector<QString> labels
         );
 
         void addTorrentLinks(
-            QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+            QStringList links,
+            QString downloadDirectory,
+            TorrentData::Priority bandwidthPriority,
+            bool start,
+            std::vector<QString> labels
         );
 
         void startTorrents(std::span<const int> ids);
@@ -187,12 +192,19 @@ namespace tremotesf {
             std::map<QString, QString> renamedFiles,
             TorrentData::Priority bandwidthPriority,
             bool start,
-            DeleteFileMode deleteFileMode
+            DeleteFileMode deleteFileMode,
+            std::vector<QString> labels
         );
         Coroutine<> addTorrentLinksImpl(
-            QStringList links, QString downloadDirectory, TorrentData::Priority bandwidthPriority, bool start
+            QStringList links,
+            QString downloadDirectory,
+            TorrentData::Priority bandwidthPriority,
+            bool start,
+            std::vector<QString> labels
         );
-        Coroutine<> addTorrentLinkImpl(QString link, QString downloadDirectory, int bandwidthPriority, bool start);
+        Coroutine<> addTorrentLinkImpl(
+            QString link, QString downloadDirectory, int bandwidthPriority, bool start, std::vector<QString> labels
+        );
         Coroutine<> getTorrentsFiles(QJsonArray ids);
         Coroutine<> getTorrentsPeers(QJsonArray ids);
         Coroutine<> renameTorrentFileImpl(int torrentId, QString filePath, QString newName);
