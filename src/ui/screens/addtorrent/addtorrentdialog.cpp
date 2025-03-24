@@ -209,6 +209,7 @@ namespace tremotesf {
 
         auto layout = new QFormLayout(this);
         layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+        layout->setFieldGrowthPolicy(QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow);
 
         mMessageWidget = new KMessageWidget(this);
         mMessageWidget->setCloseButtonVisible(false);
