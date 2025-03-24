@@ -427,7 +427,7 @@ if (WIN32 OR APPLE)
         QT_STATICPLUGIN
     )
     find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
-    target_link_libraries(tremotesf PUBLIC Qt::Svg)
+    target_link_libraries(tremotesf PUBLIC Qt::GuiPrivate Qt::Svg)
     set(exclude_plugins bearer iconengines imageformats)
     if (WIN32)
         list(APPEND exclude_plugins styles)
