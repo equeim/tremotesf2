@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <ranges>
+
 #include <QAbstractItemView>
 #include <QCollator>
 #include <QComboBox>
@@ -16,11 +18,13 @@
 #include "rpc/serversettings.h"
 
 namespace tremotesf {
-    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories() {
+    void
+    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories(std::vector<ComboBoxItem> comboBoxItems
+    ) {
         if (mPath.isEmpty()) {
             return;
         }
-        auto paths = toContainer<QStringList>(mComboBoxItems | std::views::transform(&ComboBoxItem::path));
+        auto paths = moveToContainer<QStringList>(comboBoxItems | std::views::transform(&ComboBoxItem::path));
         if (!paths.contains(mPath)) {
             paths.push_back(mPath);
         }
@@ -29,8 +33,13 @@ namespace tremotesf {
         servers->setCurrentServerLastDownloadDirectory(mPath);
     }
 
+    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updatePathImpl(QString path, QString displayPath) {
+        RemoteDirectorySelectionWidgetViewModel::updatePathImpl(std::move(path), std::move(displayPath));
+        updateInitialComboBoxItems();
+    }
+
     std::vector<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::ComboBoxItem>
-    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createComboBoxItems() const {
+    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createInitialComboBoxItems() const {
         QStringList directories = Servers::instance()->currentServerLastDownloadDirectories(mRpc->serverSettings());
         directories.reserve(directories.size() + static_cast<QStringList::size_type>(mRpc->torrents().size()) + 2);
         for (const auto& torrent : mRpc->torrents()) {
@@ -62,37 +71,12 @@ namespace tremotesf {
         return ret;
     }
 
-    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updateComboBoxItems() {
-        auto items = createComboBoxItems();
-        if (items != mComboBoxItems) {
-            mComboBoxItems = std::move(items);
-            emit comboBoxItemsChanged();
+    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updateInitialComboBoxItems() {
+        auto items = createInitialComboBoxItems();
+        if (items != mInitialComboBoxItems) {
+            mInitialComboBoxItems = std::move(items);
+            emit initialComboBoxItemsChanged();
         }
-    }
-
-    namespace {
-        class ComboBoxEventFilter final : public QObject {
-            Q_OBJECT
-
-        public:
-            explicit ComboBoxEventFilter(QComboBox* comboBox) : QObject(comboBox), mComboBox(comboBox) {}
-
-        protected:
-            bool eventFilter(QObject* watched, QEvent* event) override {
-                if (event->type() == QEvent::KeyPress &&
-                    static_cast<QKeyEvent*>(event)->matches(QKeySequence::Delete)) {
-                    const QModelIndex index(static_cast<QAbstractItemView*>(watched)->currentIndex());
-                    if (index.isValid()) {
-                        mComboBox->removeItem(index.row());
-                        return true;
-                    }
-                }
-                return QObject::eventFilter(watched, event);
-            }
-
-        private:
-            QComboBox* mComboBox;
-        };
     }
 
     QLineEdit* TorrentDownloadDirectoryDirectorySelectionWidget::lineEditFromTextField() {
@@ -102,7 +86,7 @@ namespace tremotesf {
     QWidget* TorrentDownloadDirectoryDirectorySelectionWidget::createTextField() {
         const auto comboBox = new QComboBox();
         comboBox->setEditable(true);
-        comboBox->view()->installEventFilter(new ComboBoxEventFilter(comboBox));
+        new ComboBoxDeleteKeyEventFilter(comboBox);
         return comboBox;
     }
 
@@ -113,7 +97,7 @@ namespace tremotesf {
         const auto comboBox = qobject_cast<QComboBox*>(mTextField);
 
         const auto updateItems = [=] {
-            const auto items = viewModel->comboBoxItems();
+            const auto items = viewModel->initialComboBoxItems();
             comboBox->clear();
             for (const auto& [itemPath, itemDisplayPath] : items) {
                 comboBox->addItem(itemDisplayPath, itemPath);
@@ -123,7 +107,7 @@ namespace tremotesf {
         updateItems();
         QObject::connect(
             viewModel,
-            &TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::comboBoxItemsChanged,
+            &TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::initialComboBoxItemsChanged,
             this,
             updateItems
         );
@@ -134,6 +118,34 @@ namespace tremotesf {
             }
         });
     }
-}
 
-#include "torrentremotedirectoryselectionwidget.moc"
+    void TorrentDownloadDirectoryDirectorySelectionWidget::saveDirectories() {
+        auto comboBox = qobject_cast<QComboBox*>(mTextField);
+        auto comboBoxItems = toContainer<std::vector>(
+            std::views::iota(0, comboBox->count()) | std::views::transform([comboBox](int index) {
+                return TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::ComboBoxItem{
+                    .path = comboBox->itemData(index).toString(),
+                    .displayPath = comboBox->itemText(index)
+                };
+            })
+        );
+        qobject_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel)
+            ->saveDirectories(std::move(comboBoxItems));
+    }
+
+    ComboBoxDeleteKeyEventFilter::ComboBoxDeleteKeyEventFilter(QComboBox* comboBox) : QObject(comboBox) {
+        comboBox->view()->installEventFilter(this);
+    }
+
+    bool ComboBoxDeleteKeyEventFilter::eventFilter(QObject* watched, QEvent* event) {
+        if (event->type() == QEvent::KeyPress && static_cast<QKeyEvent*>(event)->matches(QKeySequence::Delete)) {
+            const auto index = qobject_cast<QAbstractItemView*>(watched)->currentIndex();
+            if (index.isValid()) {
+                qobject_cast<QComboBox*>(parent())->removeItem(index.row());
+                return true;
+            }
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+}
