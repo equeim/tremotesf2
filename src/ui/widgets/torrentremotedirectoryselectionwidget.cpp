@@ -86,6 +86,7 @@ namespace tremotesf {
     QWidget* TorrentDownloadDirectoryDirectorySelectionWidget::createTextField() {
         const auto comboBox = new QComboBox();
         comboBox->setEditable(true);
+        comboBox->setInsertPolicy(QComboBox::NoInsert);
         new ComboBoxDeleteKeyEventFilter(comboBox);
         return comboBox;
     }
