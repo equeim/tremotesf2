@@ -7,6 +7,8 @@
 
 #include "remotedirectoryselectionwidget.h"
 
+class QComboBox;
+
 namespace tremotesf {
     class Rpc;
 
@@ -22,27 +24,24 @@ namespace tremotesf {
             QString displayPath{};
             [[nodiscard]] bool operator==(const ComboBoxItem&) const = default;
         };
-        [[nodiscard]] std::vector<ComboBoxItem> comboBoxItems() const { return mComboBoxItems; };
+        [[nodiscard]] std::vector<ComboBoxItem> initialComboBoxItems() const { return mInitialComboBoxItems; };
 
         void onComboBoxItemSelected(QString path, QString displayPath) {
             updatePathImpl(std::move(path), std::move(displayPath));
         }
-        void saveDirectories();
+        void saveDirectories(std::vector<ComboBoxItem> comboBoxItems);
 
     protected:
-        void updatePathImpl(QString path, QString displayPath) override {
-            RemoteDirectorySelectionWidgetViewModel::updatePathImpl(std::move(path), std::move(displayPath));
-            updateComboBoxItems();
-        }
+        void updatePathImpl(QString path, QString displayPath) override;
 
     private:
-        [[nodiscard]] std::vector<ComboBoxItem> createComboBoxItems() const;
-        void updateComboBoxItems();
+        [[nodiscard]] std::vector<ComboBoxItem> createInitialComboBoxItems() const;
+        void updateInitialComboBoxItems();
 
-        std::vector<ComboBoxItem> mComboBoxItems{createComboBoxItems()};
+        std::vector<ComboBoxItem> mInitialComboBoxItems{createInitialComboBoxItems()};
 
     signals:
-        void comboBoxItemsChanged();
+        void initialComboBoxItemsChanged();
     };
 
     class TorrentDownloadDirectoryDirectorySelectionWidget final : public RemoteDirectorySelectionWidget {
@@ -53,9 +52,7 @@ namespace tremotesf {
 
         void setup(QString path, const Rpc* rpc) override;
 
-        void saveDirectories() {
-            static_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel)->saveDirectories();
-        }
+        void saveDirectories();
 
     protected:
         QWidget* createTextField() override;
@@ -63,6 +60,16 @@ namespace tremotesf {
         RemoteDirectorySelectionWidgetViewModel* createViewModel(QString path, const Rpc* rpc) override {
             return new TorrentDownloadDirectoryDirectorySelectionWidgetViewModel(std::move(path), rpc, this);
         }
+    };
+
+    class ComboBoxDeleteKeyEventFilter final : public QObject {
+        Q_OBJECT
+
+    public:
+        explicit ComboBoxDeleteKeyEventFilter(QComboBox* comboBox);
+
+    protected:
+        bool eventFilter(QObject* watched, QEvent* event) override;
     };
 }
 
