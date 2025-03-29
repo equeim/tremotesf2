@@ -139,6 +139,8 @@ namespace tremotesf {
         Settings::TorrentDoubleClickAction::OpenPropertiesDialog
     )
 
+    SETTINGS_PROPERTY_DEF(bool, displayRelativeTime, "displayRelativeTime", false)
+
     Settings::Settings(QObject* parent) : QObject(parent) {
         if constexpr (targetOs == TargetOs::Windows) {
             mSettings = new QSettings(

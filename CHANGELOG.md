@@ -4,6 +4,7 @@
 ### Added
 - Option to show torrent properties in a panel in the main window instead of dialog
 - Ability to set labels on torrents and filter torrent list by labels
+- Option to display relative time
 
 ### Changed
 - Options dialog is rearranged to use multiple tabs

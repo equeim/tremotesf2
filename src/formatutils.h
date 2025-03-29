@@ -5,7 +5,10 @@
 #ifndef TREMOTESF_FORMATUTILS_H
 #define TREMOTESF_FORMATUTILS_H
 
+#include <QLocale>
 #include <QString>
+
+class QDateTime;
 
 namespace tremotesf::formatutils {
     QString formatByteSize(long long size);
@@ -17,6 +20,9 @@ namespace tremotesf::formatutils {
     QString formatRatio(long long downloaded, long long uploaded);
 
     QString formatEta(int seconds);
+
+    QString formatDateTime(const QDateTime& dateTime, QLocale::FormatType format, bool displayRelativeTime);
+    QString formatDateTime(const QDateTime& dateTime, QLocale::FormatType format);
 }
 
 #endif // TREMOTESF_FORMATUTILS_H

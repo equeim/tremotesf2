@@ -70,6 +70,7 @@ namespace tremotesf {
 
     private:
         QPointer<Rpc> mRpc;
+        bool mUseRelativeTime{};
     };
 }
 

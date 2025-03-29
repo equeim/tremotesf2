@@ -158,6 +158,14 @@ namespace tremotesf {
             layout->addRow(connectOnStartupCheckBox);
             connectOnStartupCheckBox->setChecked(settings->get_connectOnStartup());
 
+            auto displayRelativeTimeCheckBox = new QCheckBox(
+                //: Check box label
+                qApp->translate("tremotesf", "Display relative time"),
+                page
+            );
+            layout->addRow(displayRelativeTimeCheckBox);
+            displayRelativeTimeCheckBox->setChecked(settings->get_displayRelativeTime());
+
             return [=] {
 #ifdef Q_OS_WIN
                 if (const auto index = darkThemeComboBox->currentIndex(); index != -1) {
@@ -174,6 +182,7 @@ namespace tremotesf {
                     );
                 }
                 settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());
+                settings->set_displayRelativeTime(displayRelativeTimeCheckBox->isChecked());
             };
         }
 
