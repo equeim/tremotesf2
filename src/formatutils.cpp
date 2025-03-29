@@ -193,11 +193,7 @@ namespace tremotesf::formatutils {
 
         QString formatRelativeDate(const QDate& date, QLocale::FormatType format, const QLocale& locale) {
             if (!date.isValid()) {
-                return qApp->translate(
-                    "tremotesf"
-                    "Invalid date",
-                    "used when a relative date string can't be generated because the date is invalid"
-                );
+                return {};
             }
 
             const qint64 daysTo = QDate::currentDate().daysTo(date);
