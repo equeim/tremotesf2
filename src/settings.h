@@ -79,6 +79,8 @@ namespace tremotesf {
         SETTINGS_PROPERTY(QByteArray, peersViewHeaderState)
         SETTINGS_PROPERTY(QByteArray, localTorrentFilesViewHeaderState)
 
+        SETTINGS_PROPERTY(bool, displayRelativeTime)
+
     public:
         enum class DarkThemeMode { FollowSystem, On, Off };
         Q_ENUM(DarkThemeMode)

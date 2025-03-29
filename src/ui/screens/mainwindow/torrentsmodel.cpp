@@ -15,10 +15,17 @@
 #include "rpc/rpc.h"
 #include "desktoputils.h"
 #include "formatutils.h"
+#include "settings.h"
 
 namespace tremotesf {
     TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent) : QAbstractTableModel(parent), mRpc(nullptr) {
         setRpc(rpc);
+
+        const auto settings = Settings::instance();
+        mUseRelativeTime = settings->get_displayRelativeTime();
+        QObject::connect(settings, &Settings::displayRelativeTimeChanged, this, [this, settings] {
+            mUseRelativeTime = settings->get_displayRelativeTime();
+        });
     }
 
     int TorrentsModel::columnCount(const QModelIndex&) const { return QMetaEnum::fromType<Column>().keyCount(); }
@@ -152,9 +159,17 @@ namespace tremotesf {
             case Column::Ratio:
                 return formatutils::formatRatio(torrent->data().ratio);
             case Column::AddedDate:
-                return torrent->data().addedDate.toLocalTime();
+                return formatutils::formatDateTime(
+                    torrent->data().addedDate.toLocalTime(),
+                    QLocale::ShortFormat,
+                    mUseRelativeTime
+                );
             case Column::DoneDate:
-                return torrent->data().doneDate.toLocalTime();
+                return formatutils::formatDateTime(
+                    torrent->data().doneDate.toLocalTime(),
+                    QLocale::ShortFormat,
+                    mUseRelativeTime
+                );
             case Column::DownloadSpeedLimit:
                 if (torrent->data().downloadSpeedLimited) {
                     return formatutils::formatSpeedLimit(torrent->data().downloadSpeedLimit);
@@ -176,7 +191,11 @@ namespace tremotesf {
             case Column::CompletedSize:
                 return formatutils::formatByteSize(torrent->data().completedSize);
             case Column::ActivityDate:
-                return torrent->data().activityDate.toLocalTime();
+                return formatutils::formatDateTime(
+                    torrent->data().activityDate.toLocalTime(),
+                    QLocale::ShortFormat,
+                    mUseRelativeTime
+                );
             default:
                 break;
             }

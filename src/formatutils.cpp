@@ -2,6 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+/*
+    For formatRelativeDateTime()
+
+    SPDX-FileCopyrightText: 2013 Alex Merry <alex.merry@kdemail.net>
+    SPDX-FileCopyrightText: 2013 John Layt <jlayt@kde.org>
+    SPDX-FileCopyrightText: 2010 Michael Leupold <lemma@confuego.org>
+    SPDX-FileCopyrightText: 2009 Michael Pyne <mpyne@kde.org>
+    SPDX-FileCopyrightText: 2008 Albert Astals Cid <aacid@kde.org>
+
+    SPDX-License-Identifier: LGPL-2.0-or-later
+*/
+
 #include "formatutils.h"
 
 #include <array>
@@ -9,7 +21,10 @@
 #include <stdexcept>
 
 #include <QCoreApplication>
-#include <QLocale>
+#include <QDate>
+#include <QDateTime>
+
+#include "settings.h"
 
 namespace tremotesf::formatutils {
     namespace {
@@ -171,5 +186,86 @@ namespace tremotesf::formatutils {
 
         //: Remaining time string. %L1 is seconds, "10 s"
         return qApp->translate("tremotesf", "%L1 s").arg(seconds);
+    }
+
+    namespace {
+        // Adapted from KCoreAddons' KFormat
+
+        QString formatRelativeDate(const QDate& date, QLocale::FormatType format, const QLocale& locale) {
+            if (!date.isValid()) {
+                return qApp->translate(
+                    "tremotesf"
+                    "Invalid date",
+                    "used when a relative date string can't be generated because the date is invalid"
+                );
+            }
+
+            const qint64 daysTo = QDate::currentDate().daysTo(date);
+            if (daysTo > 0 || daysTo < -2) {
+                return locale.toString(date, format);
+            }
+
+            switch (daysTo) {
+            case 0:
+                return qApp->translate("tremotesf", "Today");
+            case -1:
+                return qApp->translate("tremotesf", "Yesterday");
+            case -2:
+                return qApp->translate("tremotesf", "Two days ago");
+            }
+            Q_UNREACHABLE();
+        }
+
+        QString
+        addTimeToDate(const QString& dateString, QTime time, QLocale::FormatType format, const QLocale& locale) {
+            //: Relative date & time
+            return qApp->translate("tremotesf", "%1 at %2")
+                .arg(
+                    dateString,
+                    locale.toString(
+                        time,
+                        format == QLocale::FormatType::LongFormat ? QLocale::FormatType::ShortFormat : format
+                    )
+                );
+        }
+
+        QString formatRelativeDateTime(const QDateTime& dateTime, QLocale::FormatType format, const QLocale& locale) {
+            const QDateTime now = QDateTime::currentDateTime();
+
+            const auto secsToNow = dateTime.secsTo(now);
+            constexpr int secsInAHour = 60 * 60;
+            if (secsToNow >= 0 && secsToNow < secsInAHour) {
+                const auto minutesToNow = static_cast<int>(secsToNow / 60);
+                if (minutesToNow <= 1) {
+                    //: Relative time
+                    return qApp->translate("tremotesf", "Just now");
+                } else {
+                    //: @item:intext %1 is a whole number
+                    //~ singular %n minute ago
+                    //~ plural %n minutes ago
+                    return qApp->translate("tremotesf", "%n minute(s) ago", nullptr, minutesToNow);
+                }
+            }
+            const qint64 daysToNow = dateTime.daysTo(now);
+            QString dateString;
+            if (daysToNow < 2 && daysToNow > 0) {
+                dateString = formatRelativeDate(dateTime.date(), format, locale);
+            } else {
+                dateString = locale.toString(dateTime.date(), format);
+            }
+            return addTimeToDate(dateString, dateTime.time(), format, locale);
+        }
+    }
+
+    QString formatDateTime(const QDateTime& dateTime, QLocale::FormatType format, bool displayRelativeTime) {
+        const QLocale locale{};
+        if (displayRelativeTime) {
+            return formatRelativeDateTime(dateTime, format, locale);
+        }
+        return addTimeToDate(locale.toString(dateTime.date(), format), dateTime.time(), format, locale);
+    }
+
+    QString formatDateTime(const QDateTime& dateTime, QLocale::FormatType format) {
+        return formatDateTime(dateTime, format, Settings::instance()->get_displayRelativeTime());
     }
 }

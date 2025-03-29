@@ -29,6 +29,7 @@
 
 #include "desktoputils.h"
 #include "formatutils.h"
+#include "log/log.h"
 #include "peersmodel.h"
 #include "settings.h"
 #include "stdutils.h"
@@ -224,7 +225,9 @@ namespace tremotesf {
                 webSeedersSendingToUsLabel->setText(locale.toString(mTorrent->data().webSeedersSendingToUsCount));
                 peersGettingFromUsLabel->setText(locale.toString(mTorrent->data().peersGettingFromUsCount));
 
-                lastActivityLabel->setText(mTorrent->data().activityDate.toLocalTime().toString());
+                lastActivityLabel->setText(
+                    formatutils::formatDateTime(mTorrent->data().activityDate.toLocalTime(), QLocale::LongFormat)
+                );
 
                 totalSizeLabel->setText(formatutils::formatByteSize(mTorrent->data().totalSize));
                 locationLabel->setText(
@@ -232,7 +235,9 @@ namespace tremotesf {
                 );
                 hashLabel->setText(mTorrent->data().hashString);
                 creatorLabel->setText(mTorrent->data().creator);
-                creationDateLabel->setText(mTorrent->data().creationDate.toLocalTime().toString());
+                creationDateLabel->setText(
+                    formatutils::formatDateTime(mTorrent->data().creationDate.toLocalTime(), QLocale::LongFormat)
+                );
                 if (mTorrent->data().comment != commentTextEdit->toPlainText()) {
                     commentTextEdit->document()->setPlainText(mTorrent->data().comment);
                     desktoputils::findLinksAndAddAnchors(commentTextEdit->document());
@@ -264,6 +269,8 @@ namespace tremotesf {
             labelsView->setVisible(labelsViewVisible);
             labelsLabel->setVisible(labelsViewVisible);
         };
+
+        QObject::connect(Settings::instance(), &Settings::displayRelativeTimeChanged, this, mUpdateDetailsTab);
     }
 
     void TorrentPropertiesWidget::setupPeersTab() {
