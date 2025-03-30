@@ -10,12 +10,14 @@
 #include <QIcon>
 #include <QMetaEnum>
 
-#include "stdutils.h"
-#include "rpc/torrent.h"
+#include "rpc/pathutils.h"
 #include "rpc/rpc.h"
+#include "rpc/serversettings.h"
+#include "rpc/torrent.h"
 #include "desktoputils.h"
 #include "formatutils.h"
 #include "settings.h"
+#include "stdutils.h"
 
 namespace tremotesf {
     TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent) : QAbstractTableModel(parent), mRpc(nullptr) {
@@ -187,7 +189,7 @@ namespace tremotesf {
             case Column::LeftUntilDone:
                 return formatutils::formatByteSize(torrent->data().leftUntilDone);
             case Column::DownloadDirectory:
-                return torrent->data().downloadDirectory;
+                return toNativeSeparators(torrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs);
             case Column::CompletedSize:
                 return formatutils::formatByteSize(torrent->data().completedSize);
             case Column::ActivityDate:
