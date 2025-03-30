@@ -282,9 +282,11 @@ namespace tremotesf {
         auto peersTabLayout = new QVBoxLayout(peersTab);
 
         mPeersView = new BaseTreeView(this);
-        mPeersView->setItemDelegate(
-            new CommonDelegate(static_cast<int>(PeersModel::Column::ProgressBar), PeersModel::SortRole, -1, this)
-        );
+        mPeersView->setItemDelegate(new CommonDelegate(
+            {.progressBarColumn = static_cast<int>(PeersModel::Column::ProgressBar),
+             .progressRole = PeersModel::SortRole},
+            this
+        ));
         mPeersView->setModel(peersProxyModel);
         mPeersView->setRootIsDecorated(false);
         mPeersView->header()->restoreState(Settings::instance()->get_peersViewHeaderState());
