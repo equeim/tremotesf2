@@ -16,9 +16,9 @@ namespace tremotesf {
     TorrentsView::TorrentsView(TorrentsProxyModel* model, QWidget* parent) : BaseTreeView(parent) {
         setContextMenuPolicy(Qt::CustomContextMenu);
         setItemDelegate(new CommonDelegate(
-            static_cast<int>(TorrentsModel::Column::ProgressBar),
-            static_cast<int>(TorrentsModel::Role::Sort),
-            static_cast<int>(TorrentsModel::Role::TextElideMode),
+            {.progressBarColumn = static_cast<int>(TorrentsModel::Column::ProgressBar),
+             .progressRole = static_cast<int>(TorrentsModel::Role::Sort),
+             .textElideModeRole = static_cast<int>(TorrentsModel::Role::TextElideMode)},
             this
         ));
         setModel(model);

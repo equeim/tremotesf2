@@ -13,16 +13,14 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        explicit CommonDelegate(
-            std::optional<int> progressBarColumn,
-            std::optional<int> progressRole,
-            std::optional<int> textElideModeRole,
-            QObject* parent = nullptr
-        )
-            : QStyledItemDelegate(parent),
-              mProgressBarColumn(progressBarColumn),
-              mProgressRole(progressRole),
-              mTextElideModeRole(textElideModeRole){};
+        struct Params {
+            std::optional<int> progressBarColumn{};
+            std::optional<int> progressRole{};
+            std::optional<int> textElideModeRole{};
+        };
+
+        explicit CommonDelegate(Params params, QObject* parent = nullptr)
+            : QStyledItemDelegate(parent), mParams(std::move(params)) {};
 
         explicit CommonDelegate(QObject* parent = nullptr) : QStyledItemDelegate(parent) {}
 
@@ -33,9 +31,7 @@ namespace tremotesf {
         ) override;
 
     private:
-        std::optional<int> mProgressBarColumn{};
-        std::optional<int> mProgressRole{};
-        std::optional<int> mTextElideModeRole{};
+        Params mParams{};
     };
 }
 

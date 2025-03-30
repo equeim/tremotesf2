@@ -50,9 +50,10 @@ namespace tremotesf {
 
         auto* style = opt.widget ? opt.widget->style() : QApplication::style();
 
-        if (!(mProgressBarColumn.has_value() && mProgressRole.has_value() && index.column() == mProgressBarColumn)) {
-            if (mTextElideModeRole.has_value()) {
-                opt.textElideMode = index.data(*mTextElideModeRole).value<Qt::TextElideMode>();
+        if (!(mParams.progressBarColumn.has_value() && mParams.progressRole.has_value() &&
+              index.column() == mParams.progressBarColumn)) {
+            if (mParams.textElideModeRole.has_value()) {
+                opt.textElideMode = index.data(*mParams.textElideModeRole).value<Qt::TextElideMode>();
             }
             // Not progress bar
             style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
@@ -72,7 +73,7 @@ namespace tremotesf {
             opt.rect.marginsRemoved(QMargins(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin));
         progressBar.minimum = 0;
         progressBar.maximum = 100;
-        const auto progress = index.data(*mProgressRole).toDouble();
+        const auto progress = index.data(*mParams.progressRole).toDouble();
         progressBar.progress = static_cast<int>(progress * 100);
         if (progressBar.progress < 0) {
             progressBar.progress = 0;
