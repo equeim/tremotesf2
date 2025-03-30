@@ -254,6 +254,9 @@ namespace tremotesf::formatutils {
     }
 
     QString formatDateTime(const QDateTime& dateTime, QLocale::FormatType format, bool displayRelativeTime) {
+        if (!dateTime.isValid()) {
+            return {};
+        }
         const QLocale locale{};
         if (displayRelativeTime) {
             return formatRelativeDateTime(dateTime, format, locale);
