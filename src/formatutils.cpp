@@ -242,14 +242,7 @@ namespace tremotesf::formatutils {
                     return qApp->translate("tremotesf", "%n minute(s) ago", nullptr, minutesToNow);
                 }
             }
-            const qint64 daysToNow = dateTime.daysTo(now);
-            QString dateString;
-            if (daysToNow < 2 && daysToNow > 0) {
-                dateString = formatRelativeDate(dateTime.date(), format, locale);
-            } else {
-                dateString = locale.toString(dateTime.date(), format);
-            }
-            return addTimeToDate(dateString, dateTime.time(), format, locale);
+            return addTimeToDate(formatRelativeDate(dateTime.date(), format, locale), dateTime.time(), format, locale);
         }
     }
 
