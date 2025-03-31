@@ -15,11 +15,10 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include <KMessageWidget>
-
-#include "ui/itemmodels/baseproxymodel.h"
 #include "serversmodel.h"
 #include "servereditdialog.h"
+#include "ui/itemmodels/baseproxymodel.h"
+#include "ui/widgets/listplaceholder.h"
 
 namespace tremotesf {
     namespace {
@@ -30,7 +29,6 @@ namespace tremotesf {
     ConnectionSettingsDialog::ConnectionSettingsDialog(QWidget* parent)
         : QDialog(parent),
           //: Servers list placeholder
-          mNoServersWidget(new KMessageWidget(qApp->translate("tremotesf", "No servers"), this)),
           mModel(new ServersModel(this)),
           mProxyModel(new BaseProxyModel(mModel, Qt::DisplayRole, std::nullopt, this)),
           mServersView(new QListView(this)) {
@@ -40,13 +38,6 @@ namespace tremotesf {
         mProxyModel->sort();
 
         auto layout = new QGridLayout(this);
-
-        mNoServersWidget->setCloseButtonVisible(false);
-        mNoServersWidget->setMessageType(KMessageWidget::Warning);
-        if (!mModel->servers().empty()) {
-            mNoServersWidget->hide();
-        }
-        layout->addWidget(mNoServersWidget, 0, 0);
 
         mServersView->setContextMenuPolicy(Qt::CustomContextMenu);
         mServersView->setSelectionMode(QListView::ExtendedSelection);
@@ -77,10 +68,13 @@ namespace tremotesf {
             }
         });
 
-        layout->addWidget(mServersView, 1, 0);
+        auto placeholder = createListPlaceholderLabel(qApp->translate("tremotesf", "No servers"));
+        addListPlaceholderLabelToViewportAndManageVisibility(mServersView, placeholder);
+
+        layout->addWidget(mServersView, 0, 0);
 
         auto buttonsLayout = new QVBoxLayout();
-        layout->addLayout(buttonsLayout, 0, 1, 2, 1);
+        layout->addLayout(buttonsLayout, 0, 1);
         auto addServerButton = new QPushButton(
             QIcon::fromTheme("list-add"_l1),
             //: Button
@@ -90,11 +84,6 @@ namespace tremotesf {
         QObject::connect(addServerButton, &QPushButton::clicked, this, [=, this] {
             auto dialog = new ServerEditDialog(mModel, -1, this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
-            QObject::connect(dialog, &ServerEditDialog::accepted, this, [=, this] {
-                if (mModel->servers().size() == 1) {
-                    mNoServersWidget->animatedHide();
-                }
-            });
             dialog->show();
         });
         buttonsLayout->addWidget(addServerButton);
@@ -127,7 +116,7 @@ namespace tremotesf {
         auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ConnectionSettingsDialog::accept);
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ConnectionSettingsDialog::reject);
-        layout->addWidget(dialogButtonBox, 2, 0, 1, 2);
+        layout->addWidget(dialogButtonBox, 1, 0, 1, 2);
 
         resize(sizeHint().expandedTo(QSize(384, 320)));
     }
@@ -151,9 +140,6 @@ namespace tremotesf {
             mModel->removeServerAtIndex(
                 mProxyModel->sourceIndex(mServersView->selectionModel()->selectedIndexes().first())
             );
-        }
-        if (mModel->servers().empty()) {
-            mNoServersWidget->animatedShow();
         }
     }
 }

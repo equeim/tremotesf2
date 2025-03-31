@@ -108,6 +108,7 @@ target_sources(tremotesf_objects
     ui/widgets/basetreeview.cpp
     ui/widgets/commondelegate.cpp
     ui/widgets/editlabelswidget.cpp
+    ui/widgets/listplaceholder.cpp
     ui/widgets/remotedirectoryselectionwidget.cpp
     ui/widgets/textinputdialog.cpp
     ui/widgets/torrentfilesview.cpp
@@ -214,6 +215,7 @@ target_sources(tremotesf_objects
     ui/widgets/basetreeview.h
     ui/widgets/commondelegate.h
     ui/widgets/editlabelswidget.h
+    ui/widgets/listplaceholder.h
     ui/widgets/remotedirectoryselectionwidget.h
     ui/widgets/textinputdialog.h
     ui/widgets/torrentfilesview.h

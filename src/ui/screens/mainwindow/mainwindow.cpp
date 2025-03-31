@@ -58,6 +58,7 @@
 #include "ui/screens/settingsdialog.h"
 #include "ui/screens/torrentproperties/torrentpropertiesdialog.h"
 #include "ui/screens/torrentproperties/torrentpropertieswidget.h"
+#include "ui/widgets/listplaceholder.h"
 #include "ui/widgets/torrentremotedirectoryselectionwidget.h"
 #include "ui/widgets/torrentfilesview.h"
 
@@ -1125,30 +1126,12 @@ namespace tremotesf {
 
         void setupTorrentsPlaceholder() {
             auto layout = new QVBoxLayout(mTorrentsView.viewport());
-            layout->setAlignment(Qt::AlignHCenter);
-
-            const auto setupPlaceholderLabel = [](QLabel* label) {
-                label->setAlignment(Qt::AlignHCenter);
-                label->setForegroundRole(QPalette::PlaceholderText);
-                label->setTextInteractionFlags(Qt::NoTextInteraction);
-#if QT_VERSION_MAJOR < 6
-                const auto setPalette = [label] {
-                    auto palette = label->palette();
-                    auto brush = QGuiApplication::palette().placeholderText();
-                    brush.setStyle(Qt::SolidPattern);
-                    palette.setBrush(QPalette::PlaceholderText, brush);
-                    label->setPalette(palette);
-                };
-                setPalette();
-                QObject::connect(qApp, &QGuiApplication::paletteChanged, label, setPalette);
-#endif
-            };
 
             layout->addStretch();
 
-            auto status = new QLabel(mWindow);
+            auto status = createListPlaceholderLabel();
             layout->addWidget(status);
-            setupPlaceholderLabel(status);
+            layout->setAlignment(status, Qt::AlignCenter);
             {
                 auto font = status->font();
                 constexpr int minFontSize = 12;
@@ -1156,9 +1139,9 @@ namespace tremotesf {
                 status->setFont(font);
             }
 
-            auto error = new QLabel(mWindow);
+            auto error = createListPlaceholderLabel();
             layout->addWidget(error);
-            setupPlaceholderLabel(error);
+            layout->setAlignment(error, Qt::AlignCenter);
             {
                 auto font = error->font();
                 constexpr int minFontSize = 10;
