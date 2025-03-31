@@ -8,7 +8,6 @@
 #include <QDialog>
 
 class QListView;
-class KMessageWidget;
 
 namespace tremotesf {
     class ServersModel;
@@ -25,7 +24,6 @@ namespace tremotesf {
         void showEditDialogs();
         void removeServers();
 
-        KMessageWidget* mNoServersWidget;
         ServersModel* mModel;
         BaseProxyModel* mProxyModel;
         QListView* mServersView;
