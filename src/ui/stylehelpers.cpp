@@ -4,6 +4,7 @@
 
 #include "stylehelpers.h"
 
+#include <QAbstractScrollArea>
 #include <QApplication>
 #include <QProxyStyle>
 
@@ -46,5 +47,16 @@ namespace tremotesf {
     }
 
     std::optional<KnownStyle> determineStyle() { return determineStyle(QApplication::style()); }
+
+    void overrideBreezeFramelessScrollAreaHeuristic(QAbstractScrollArea* widget, bool drawFrame) {
+        widget->setProperty("_breeze_force_frame", drawFrame);
+    }
+
+    void makeScrollAreaTransparent(QAbstractScrollArea* widget) {
+        widget->setFrameShape(QFrame::NoFrame);
+        QPalette palette{};
+        palette.setColor(widget->viewport()->backgroundRole(), QColor(Qt::transparent));
+        widget->setPalette(palette);
+    }
 
 }
