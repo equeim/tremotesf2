@@ -31,7 +31,6 @@
 #include <QPushButton>
 #include <QShortcut>
 #include <QSplitter>
-#include <QStackedLayout>
 #include <QSystemTrayIcon>
 #include <QToolBar>
 
@@ -258,19 +257,14 @@ namespace tremotesf {
                 return new QVBoxLayout(widget);
             }();
             torrentsListVBoxLayout->setContentsMargins(0, 0, 0, 0);
+            torrentsListVBoxLayout->setSpacing(0);
 
             mDelayedTorrentAddMessage.setWordWrap(true);
             mDelayedTorrentAddMessage.hide();
             torrentsListVBoxLayout->addWidget(&mDelayedTorrentAddMessage);
 
-            auto torrentsListWithPlaceholderLayout = [&] {
-                auto widget = new QWidget();
-                torrentsListVBoxLayout->addWidget(widget);
-                return new QStackedLayout(widget);
-            }();
-            torrentsListWithPlaceholderLayout->setStackingMode(QStackedLayout::StackAll);
+            torrentsListVBoxLayout->addWidget(&mTorrentsView);
 
-            torrentsListWithPlaceholderLayout->addWidget(&mTorrentsView);
             QObject::connect(&mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](QPoint pos) {
                 if (mTorrentsView.indexAt(pos).isValid()) {
                     mTorrentMenu->popup(mTorrentsView.viewport()->mapToGlobal(pos));
@@ -289,7 +283,7 @@ namespace tremotesf {
                 }
             });
 
-            setupTorrentsPlaceholder(torrentsListWithPlaceholderLayout);
+            setupTorrentsPlaceholder();
 
             setupTorrentPropertiesWidget();
 
@@ -1152,13 +1146,8 @@ namespace tremotesf {
             }
         }
 
-        void setupTorrentsPlaceholder(QStackedLayout* torrentsListStackedLayout) {
-            auto container = new QWidget(mWindow);
-            torrentsListStackedLayout->addWidget(container);
-            torrentsListStackedLayout->setCurrentWidget(container);
-            container->setAttribute(Qt::WA_TransparentForMouseEvents);
-
-            auto layout = new QVBoxLayout(container);
+        void setupTorrentsPlaceholder() {
+            auto layout = new QVBoxLayout(mTorrentsView.viewport());
             layout->setAlignment(Qt::AlignHCenter);
 
             const auto setupPlaceholderLabel = [](QLabel* label) {
