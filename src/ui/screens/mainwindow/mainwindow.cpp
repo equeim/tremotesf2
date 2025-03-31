@@ -34,8 +34,6 @@
 #include <QSystemTrayIcon>
 #include <QToolBar>
 
-#include <KMessageWidget>
-
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
 #    include <KStartupInfo>
 #    include <KWindowSystem>
@@ -250,21 +248,8 @@ namespace tremotesf {
             mVerticalSplitter.setChildrenCollapsible(false);
             mVerticalSplitter.setOrientation(Qt::Vertical);
 
-            auto torrentsListVBoxLayout = [this] {
-                auto widget = new QWidget();
-                mVerticalSplitter.addWidget(widget);
-                mVerticalSplitter.setStretchFactor(0, 1);
-                return new QVBoxLayout(widget);
-            }();
-            torrentsListVBoxLayout->setContentsMargins(0, 0, 0, 0);
-            torrentsListVBoxLayout->setSpacing(0);
-
-            mDelayedTorrentAddMessage.setWordWrap(true);
-            mDelayedTorrentAddMessage.hide();
-            torrentsListVBoxLayout->addWidget(&mDelayedTorrentAddMessage);
-
-            torrentsListVBoxLayout->addWidget(&mTorrentsView);
-
+            mVerticalSplitter.addWidget(&mTorrentsView);
+            mVerticalSplitter.setStretchFactor(0, 1);
             QObject::connect(&mTorrentsView, &TorrentsView::customContextMenuRequested, this, [this](QPoint pos) {
                 if (mTorrentsView.indexAt(pos).isValid()) {
                     mTorrentMenu->popup(mTorrentsView.viewport()->mapToGlobal(pos));
@@ -282,7 +267,6 @@ namespace tremotesf {
                     mTorrentsView.setCurrentIndex(mTorrentsProxyModel.index(0, 0));
                 }
             });
-
             setupTorrentsPlaceholder();
 
             setupTorrentPropertiesWidget();
@@ -352,15 +336,10 @@ namespace tremotesf {
             );
             QObject::connect(
                 &mViewModel,
-                &MainWindowViewModel::showDelayedTorrentAddMessage,
+                &MainWindowViewModel::showDelayedTorrentAddDialog,
                 this,
-                &MainWindow::Impl::showDelayedTorrentAddMessage
+                &MainWindow::Impl::showDelayedTorrentAddDialog
             );
-            QObject::connect(&mViewModel, &MainWindowViewModel::hideDelayedTorrentAddMessage, this, [this] {
-                if (mDelayedTorrentAddMessage.isVisible()) {
-                    mDelayedTorrentAddMessage.animatedHide();
-                }
-            });
             showAddTorrentErrors();
 
             auto pasteShortcut = new QShortcut(QKeySequence::Paste, mWindow);
@@ -472,8 +451,6 @@ namespace tremotesf {
 
         QSplitter mHorizontalSplitter{};
         QSplitter mVerticalSplitter{};
-
-        KMessageWidget mDelayedTorrentAddMessage{};
 
         TorrentsModel mTorrentsModel{mViewModel.rpc()};
         TorrentsProxyModel mTorrentsProxyModel{&mTorrentsModel};
@@ -1767,25 +1744,34 @@ namespace tremotesf {
             });
         }
 
-        void showDelayedTorrentAddMessage(const QStringList& torrents) {
-            debug().log("MainWindow: showing delayed torrent add message");
-            mDelayedTorrentAddMessage.setMessageType(KMessageWidget::Information);
-            //: Message shown when user attempts to add torrent while disconnect from server. After that will be list of added torrents
-            QString text = qApp->translate("tremotesf", "Torrents will be added after connection to server:");
-            constexpr QStringList::size_type maxCount = 5;
-            const auto count = std::min(torrents.size(), maxCount);
-            const auto subList = torrents.mid(0, count);
-            for (const auto& torrent : subList) {
-                text += "\n \u2022 ";
-                text += torrent;
+        void showDelayedTorrentAddDialog(
+            const QStringList& torrents, const std::optional<QByteArray>& windowActivationToken
+        ) {
+            debug().log("MainWindow: showing delayed torrent add dialog");
+            const auto dialog = new QMessageBox(
+                QMessageBox::Information,
+                qApp->translate("tremotesf", "Disconnected"),
+                //: Message shown when user attempts to add torrent while disconnect from server.
+                qApp->translate("tremotesf", "Torrents will be added after connection to server"),
+                QMessageBox::Close,
+                Settings::instance()->get_showMainWindowWhenAddingTorrent() ? mWindow : nullptr
+            );
+            dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+            dialog->setModal(false);
+            QString detailedText{};
+            for (const auto& torrent : torrents) {
+                detailedText += "\u2022 ";
+                detailedText += torrent;
+                detailedText += '\n';
             }
-            if (auto remaining = torrents.size() - count; remaining > 0) {
-                text += "\n \u2022 ";
-                //: Shown when list of items exceeds maximum size. %n is a number of remaining items
-                text += qApp->translate("tremotesf", "And %n more", nullptr, static_cast<int>(remaining));
+            dialog->setDetailedText(detailedText);
+            dialog->show();
+            if (windowActivationToken.has_value()) {
+                activateWindowCompat(dialog, windowActivationToken);
             }
-            mDelayedTorrentAddMessage.setText(text);
-            mDelayedTorrentAddMessage.animatedShow();
+            QObject::connect(mViewModel.rpc(), &Rpc::connectedChanged, dialog, [=, this] {
+                if (mViewModel.rpc()->isConnected()) dialog->close();
+            });
         }
     };
 

@@ -9,6 +9,7 @@
 
 ### Changed
 - Options dialog is rearranged to use multiple tabs
+- Message that's shown when trying to add torrent while disconnected from server is now displayed in a dialog instead of main window
 
 ### Fixed
 - Delayed loading of peers for active torrents

@@ -310,6 +310,14 @@ namespace tremotesf {
         info().log("MainWindowViewModel: files = {}", files);
         info().log("MainWindowViewModel: urls = {}", urls);
 
+        const auto* const settings = Settings::instance();
+        const auto showMainWindowIfNeeded = [&] {
+            if (settings->get_showMainWindowWhenAddingTorrent()) {
+                emit showWindow(windowActivationToken);
+                windowActivationToken.reset();
+            }
+        };
+
         if (!mRpc.isConnected()) {
             info().log("Postponing opening torrents until connected to server");
             if (mRpc.connectionState() == RpcConnectionState::Connecting) {
@@ -321,19 +329,14 @@ namespace tremotesf {
             }
             if (!mRpc.isConnected()) {
                 info().log("Showing delayed torrent adding message");
-                emit showDelayedTorrentAddMessage(files + urls);
+                showMainWindowIfNeeded();
+                emit showDelayedTorrentAddDialog(files + urls, windowActivationToken);
+                windowActivationToken.reset();
                 co_await waitForSignal(&mRpc, &Rpc::connectedChanged);
             }
         }
 
-        const auto* const settings = Settings::instance();
-
-        if (settings->get_showMainWindowWhenAddingTorrent()) {
-            emit showWindow(windowActivationToken);
-            windowActivationToken.reset();
-        }
-
-        emit hideDelayedTorrentAddMessage();
+        showMainWindowIfNeeded();
 
         // We can parse magnet links immediately so check whether torrents exist event if we show dialogs
         if (const auto existingTorrents = separateTorrentsThatAlreadyExistForLinks(urls); !existingTorrents.empty()) {

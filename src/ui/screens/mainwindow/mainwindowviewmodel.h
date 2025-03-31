@@ -68,8 +68,9 @@ namespace tremotesf {
             const std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>>& existingTorrents,
             const std::optional<QByteArray>& windowActivationToken
         );
-        void showDelayedTorrentAddMessage(const QStringList& torrents);
-        void hideDelayedTorrentAddMessage();
+        void showDelayedTorrentAddDialog(
+            const QStringList& torrents, const std::optional<QByteArray>& windowActivationToken
+        );
     };
 }
 
