@@ -1160,10 +1160,10 @@ namespace tremotesf {
             layout->addWidget(error);
             setupPlaceholderLabel(error);
             {
-                auto font = status->font();
+                auto font = error->font();
                 constexpr int minFontSize = 10;
                 font.setPointSize(std::max(minFontSize, font.pointSize()));
-                status->setFont(font);
+                error->setFont(font);
             }
 
             layout->addStretch();
