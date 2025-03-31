@@ -1683,20 +1683,7 @@ namespace tremotesf {
             dialog->show();
             if (windowActivationToken.has_value()) {
                 activateWindowCompat(dialog, windowActivationToken);
-                // Can use token only once
-                windowActivationToken.reset();
             }
-        }
-
-        QDialog* showAddTorrentLinksDialog(const QStringList& urls, bool setParent) {
-            auto* const dialog = new AddTorrentDialog(
-                mViewModel.rpc(),
-                AddTorrentDialog::UrlParams{urls},
-                setParent ? mWindow : nullptr
-            );
-            dialog->setAttribute(Qt::WA_DeleteOnClose);
-            dialog->show();
-            return dialog;
         }
 
         void askForMergingTrackers(
