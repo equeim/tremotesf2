@@ -15,6 +15,7 @@
 
 #include "rpc/rpc.h"
 #include "rpc/serversettings.h"
+#include "ui/stylehelpers.h"
 #include "ui/widgets/commondelegate.h"
 #include "alltrackersmodel.h"
 #include "downloaddirectoriesmodel.h"
@@ -36,17 +37,13 @@ namespace tremotesf {
             )
                 : QListView(parent), mTorrentsProxyModel(torrentsProxyModel), mModel(model) {
                 mModel->setParent(this);
-                setFrameShape(QFrame::NoFrame);
                 setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
                 setIconSize(QSize(16, 16));
                 setItemDelegate(new CommonDelegate({.alwaysShowTooltipRole = alwaysShowTooltipRole}, this));
                 setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
                 setTextElideMode(Qt::ElideMiddle);
                 setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-                QPalette palette{};
-                palette.setColor(QPalette::Base, QColor(Qt::transparent));
-                setPalette(palette);
+                makeScrollAreaTransparent(this);
             }
 
             [[nodiscard]] QSize minimumSizeHint() const override { return {8, 0}; }

@@ -7,6 +7,7 @@
 
 #include <optional>
 
+class QAbstractScrollArea;
 class QStyle;
 
 namespace tremotesf {
@@ -14,6 +15,9 @@ namespace tremotesf {
 
     std::optional<KnownStyle> determineStyle(const QStyle* style);
     std::optional<KnownStyle> determineStyle();
+
+    void overrideBreezeFramelessScrollAreaHeuristic(QAbstractScrollArea* widget, bool drawFrame);
+    void makeScrollAreaTransparent(QAbstractScrollArea* widget);
 }
 
 #endif // TREMOTESF_STYLEHELPERS_H

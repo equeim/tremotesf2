@@ -41,6 +41,7 @@
 #include "rpc/torrent.h"
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/itemmodels/stringlistmodel.h"
+#include "ui/stylehelpers.h"
 #include "ui/widgets/commondelegate.h"
 #include "ui/widgets/torrentfilesview.h"
 
@@ -76,6 +77,7 @@ namespace tremotesf {
         auto filesTab = new QWidget(this);
         auto filesTabLayout = new QVBoxLayout(filesTab);
         filesTabLayout->addWidget(mFilesView);
+        overrideBreezeFramelessScrollAreaHeuristic(mFilesView, true);
         //: Torrent properties dialog tab
         addTab(filesTab, qApp->translate("tremotesf", "Files"));
 
@@ -96,6 +98,8 @@ namespace tremotesf {
     void TorrentPropertiesWidget::setupDetailsTab(bool horizontal) {
         auto detailsTab = new QScrollArea(this);
         detailsTab->setWidgetResizable(true);
+        makeScrollAreaTransparent(detailsTab);
+
         if (!horizontal) {
             detailsTab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         }
@@ -290,6 +294,7 @@ namespace tremotesf {
         mPeersView->setModel(peersProxyModel);
         mPeersView->setRootIsDecorated(false);
         mPeersView->header()->restoreState(Settings::instance()->get_peersViewHeaderState());
+        overrideBreezeFramelessScrollAreaHeuristic(mPeersView, true);
 
         peersTabLayout->addWidget(mPeersView);
         //: Torrent's properties dialog tab
@@ -308,6 +313,7 @@ namespace tremotesf {
         webSeedersView->header()->setContextMenuPolicy(Qt::DefaultContextMenu);
         webSeedersView->setModel(webSeedersProxyModel);
         webSeedersView->setRootIsDecorated(false);
+        overrideBreezeFramelessScrollAreaHeuristic(webSeedersView, true);
 
         webSeedersTabLayout->addWidget(webSeedersView);
 
@@ -319,6 +325,7 @@ namespace tremotesf {
         auto limitsTab = new QScrollArea(this);
         limitsTab->setWidgetResizable(true);
         limitsTab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        makeScrollAreaTransparent(limitsTab);
         //: Torrent's properties dialog tab
         addTab(limitsTab, qApp->translate("tremotesf", "Limits"));
 
