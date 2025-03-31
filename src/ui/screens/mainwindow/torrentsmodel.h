@@ -51,7 +51,7 @@ namespace tremotesf {
         };
         Q_ENUM(Column)
 
-        enum class Role { Sort = Qt::UserRole, TextElideMode };
+        enum class Role { Sort = Qt::UserRole, TextElideMode, AlwaysShowTooltip };
 
         explicit TorrentsModel(Rpc* rpc = nullptr, QObject* parent = nullptr);
 
@@ -71,6 +71,7 @@ namespace tremotesf {
     private:
         QPointer<Rpc> mRpc;
         bool mUseRelativeTime{};
+        bool mDisplayFullDownloadDirectoryPath{};
     };
 }
 

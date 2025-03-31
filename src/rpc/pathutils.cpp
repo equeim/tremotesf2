@@ -136,4 +136,17 @@ namespace tremotesf {
         }
         return native;
     }
+
+    QString lastPathSegment(const QString& path) {
+        const auto index = path.lastIndexOf(unixSeparatorChar);
+        if (index == -1 || index == (path.size() - 1)) {
+            return path;
+        }
+#if QT_VERSION_MAJOR >= 6
+        return path.sliced(index + 1);
+#else
+        return path.mid(index + 1);
+#endif
+    }
+
 }

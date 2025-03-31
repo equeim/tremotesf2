@@ -14,10 +14,9 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        static constexpr auto DirectoryRole = Qt::UserRole;
+        enum class Role { Directory = Qt::UserRole, AlwaysShowTooltip };
 
-        inline explicit DownloadDirectoriesModel(QObject* parent = nullptr)
-            : BaseTorrentsFiltersSettingsModel(parent) {};
+        explicit DownloadDirectoriesModel(QObject* parent = nullptr);
 
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
         int rowCount(const QModelIndex& = {}) const override;
@@ -37,6 +36,7 @@ namespace tremotesf {
         void update() override;
 
         std::vector<DirectoryItem> mDirectories{};
+        bool mDisplayFullDownloadDirectoryPath{};
     };
 }
 

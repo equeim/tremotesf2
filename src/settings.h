@@ -81,6 +81,8 @@ namespace tremotesf {
 
         SETTINGS_PROPERTY(bool, displayRelativeTime)
 
+        SETTINGS_PROPERTY(bool, displayFullDownloadDirectoryPath)
+
     public:
         enum class DarkThemeMode { FollowSystem, On, Off };
         Q_ENUM(DarkThemeMode)

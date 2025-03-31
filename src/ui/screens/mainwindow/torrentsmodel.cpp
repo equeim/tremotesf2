@@ -28,6 +28,10 @@ namespace tremotesf {
         QObject::connect(settings, &Settings::displayRelativeTimeChanged, this, [this, settings] {
             mUseRelativeTime = settings->get_displayRelativeTime();
         });
+        mDisplayFullDownloadDirectoryPath = settings->get_displayFullDownloadDirectoryPath();
+        QObject::connect(settings, &Settings::displayFullDownloadDirectoryPathChanged, this, [this, settings] {
+            mDisplayFullDownloadDirectoryPath = settings->get_displayFullDownloadDirectoryPath();
+        });
     }
 
     int TorrentsModel::columnCount(const QModelIndex&) const { return QMetaEnum::fromType<Column>().keyCount(); }
@@ -189,7 +193,10 @@ namespace tremotesf {
             case Column::LeftUntilDone:
                 return formatutils::formatByteSize(torrent->data().leftUntilDone);
             case Column::DownloadDirectory:
-                return toNativeSeparators(torrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs);
+                if (mDisplayFullDownloadDirectoryPath) {
+                    return toNativeSeparators(torrent->data().downloadDirectory, mRpc->serverSettings()->data().pathOs);
+                }
+                return lastPathSegment(torrent->data().downloadDirectory);
             case Column::CompletedSize:
                 return formatutils::formatByteSize(torrent->data().completedSize);
             case Column::ActivityDate:
@@ -208,9 +215,10 @@ namespace tremotesf {
             case Column::Status:
             case Column::AddedDate:
             case Column::DoneDate:
-            case Column::DownloadDirectory:
             case Column::ActivityDate:
                 return data(index, Qt::DisplayRole);
+            case Column::DownloadDirectory:
+                return torrent->data().downloadDirectory;
             default:
                 break;
             }
@@ -276,6 +284,9 @@ namespace tremotesf {
                 return Qt::ElideMiddle;
             }
             return Qt::ElideRight;
+        case static_cast<int>(Role::AlwaysShowTooltip):
+            return static_cast<Column>(index.column()) == Column::DownloadDirectory &&
+                   !mDisplayFullDownloadDirectoryPath;
         default:
             break;
         }

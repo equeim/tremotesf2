@@ -141,6 +141,8 @@ namespace tremotesf {
 
     SETTINGS_PROPERTY_DEF(bool, displayRelativeTime, "displayRelativeTime", false)
 
+    SETTINGS_PROPERTY_DEF(bool, displayFullDownloadDirectoryPath, "displayFullDownloadDirectoryPath", true)
+
     Settings::Settings(QObject* parent) : QObject(parent) {
         if constexpr (targetOs == TargetOs::Windows) {
             mSettings = new QSettings(

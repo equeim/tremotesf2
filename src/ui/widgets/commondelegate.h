@@ -17,6 +17,7 @@ namespace tremotesf {
             std::optional<int> progressBarColumn{};
             std::optional<int> progressRole{};
             std::optional<int> textElideModeRole{};
+            std::optional<int> alwaysShowTooltipRole{};
         };
 
         explicit CommonDelegate(Params params, QObject* parent = nullptr)
