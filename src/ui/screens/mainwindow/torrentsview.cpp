@@ -18,7 +18,8 @@ namespace tremotesf {
         setItemDelegate(new CommonDelegate(
             {.progressBarColumn = static_cast<int>(TorrentsModel::Column::ProgressBar),
              .progressRole = static_cast<int>(TorrentsModel::Role::Sort),
-             .textElideModeRole = static_cast<int>(TorrentsModel::Role::TextElideMode)},
+             .textElideModeRole = static_cast<int>(TorrentsModel::Role::TextElideMode),
+             .alwaysShowTooltipRole = static_cast<int>(TorrentsModel::Role::AlwaysShowTooltip)},
             this
         ));
         setModel(model);

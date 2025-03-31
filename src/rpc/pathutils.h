@@ -24,6 +24,7 @@ namespace tremotesf {
 
     QString normalizePath(const QString& path, PathOs pathOs);
     QString toNativeSeparators(const QString& path, PathOs pathOs);
+    QString lastPathSegment(const QString& path);
 }
 
 #endif // TREMOTESF_RPC_PATHUTILS_H

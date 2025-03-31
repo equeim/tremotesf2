@@ -122,10 +122,7 @@ namespace tremotesf {
             return false;
         }
 
-        QStyleOptionViewItem opt(option);
-        initStyleOption(&opt, index);
-
-        const QString tooltip(displayText(index.data(Qt::ToolTipRole), opt.locale));
+        const auto tooltip = displayText(index.data(Qt::ToolTipRole), QLocale{});
         if (tooltip.isEmpty()) {
             event->ignore();
             return false;
@@ -136,19 +133,27 @@ namespace tremotesf {
             return true;
         }
 
-        // Get real item rect
-        const QRect intersected(opt.rect.intersected(view->viewport()->rect()));
-        opt.rect.setLeft(intersected.left());
-        opt.rect.setRight(intersected.right());
+        QStyleOptionViewItem opt(option);
+        initStyleOption(&opt, index);
 
-        // Show tooltip only if display text is elided
-        if (isTextElided(displayText(index.data(Qt::DisplayRole), opt.locale), opt)) {
-            QToolTip::showText(event->globalPos(), tooltip, view->viewport(), opt.rect);
-            event->accept();
-            return true;
+        const bool alwaysShowTooltip =
+            mParams.alwaysShowTooltipRole.has_value() ? index.data(*mParams.alwaysShowTooltipRole).toBool() : false;
+
+        if (!alwaysShowTooltip) {
+            // Get real item rect
+            const QRect intersected(opt.rect.intersected(view->viewport()->rect()));
+            opt.rect.setLeft(intersected.left());
+            opt.rect.setRight(intersected.right());
+
+            // Show tooltip only if display text is elided
+            if (!isTextElided(displayText(index.data(Qt::DisplayRole), opt.locale), opt)) {
+                event->ignore();
+                return false;
+            }
         }
 
-        event->ignore();
-        return false;
+        QToolTip::showText(event->globalPos(), tooltip, view->viewport(), opt.rect);
+        event->accept();
+        return true;
     }
 }
