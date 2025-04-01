@@ -64,7 +64,7 @@ elseif (WIN32 OR APPLE)
     install(FILES "${hicolor_download_path}" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/hicolor")
 
     set(breeze_download_path "${CMAKE_CURRENT_BINARY_DIR}/breeze.tar.xz")
-    set(breeze_version "6.9.0")
+    set(breeze_version "6.12.0")
     string(REGEX REPLACE "^(.*)\\..*" "\\1" breeze_version_without_patch "${breeze_version}")
     if (NOT EXISTS "${breeze_download_path}")
         set(breeze_url "https://download.kde.org/stable/frameworks/${breeze_version_without_patch}/breeze-icons-${breeze_version}.tar.xz")
@@ -73,7 +73,7 @@ elseif (WIN32 OR APPLE)
             DOWNLOAD "${breeze_url}" "${breeze_download_path}"
             SHOW_PROGRESS
             TLS_VERIFY ON
-            EXPECTED_HASH SHA256=618f633bafb0a5aabaa93eaa6733dfebd6e79303ef1d0a93dcf249181896bed9
+            EXPECTED_HASH SHA256=1af979a67c0539f27a8fcbff973c91245584bfb260dd64c206bc691575cbb668
             STATUS download_status
         )
         list(GET download_status 0 download_status)
