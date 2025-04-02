@@ -45,12 +45,12 @@ namespace tremotesf {
 
     class EngineForStyle final : public RecoloringSvgIconEngine {
     public:
-        QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override {
+        QPixmap scaledPixmap(const QSize& size, QIcon::Mode mode, QIcon::State state, qreal scale) override {
             // QFusionStyle passes QIcon::Active for selected menu items, but RecoloringSvgIconEngine/KIconEngine expects QIcon::Selected
             if (drawingSelectedMenuItem) {
                 mode = QIcon::Selected;
             }
-            return RecoloringSvgIconEngine::pixmap(size, mode, state);
+            return RecoloringSvgIconEngine::scaledPixmap(size, mode, state, scale);
         }
     };
 
