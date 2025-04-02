@@ -35,6 +35,7 @@ namespace tremotesf {
         mLabelsList = new QListWidget(this);
         layout->addWidget(mLabelsList, 0, 0, 1, 2);
         mLabelsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        mLabelsList->setIconSize(QSize(16, 16));
 
         const auto addLabel = [=, this](const QString& label) {
             mLabelsList->addItem(label);

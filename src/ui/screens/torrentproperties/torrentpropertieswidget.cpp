@@ -193,6 +193,7 @@ namespace tremotesf {
         labelsView->setFlow(QListView::LeftToRight);
         labelsView->setWrapping(true);
         labelsView->setResizeMode(QListView::Adjust);
+        labelsView->setIconSize(QSize(16, 16));
         labelsView->setModel(labelsProxyModel);
         //: Torrent's labels
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Labels:"), labelsView);
