@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <QBuffer>
 #include <QPalette>
+#include <QXmlStreamReader>
 
 namespace tremotesf {
 
@@ -28,51 +29,33 @@ namespace {
 
 QString STYLESHEET_TEMPLATE()
 {
-    return QStringLiteral(".ColorScheme-Text {\
-color:%1;\
-}\
-.ColorScheme-Background{\
-color:%2;\
-}\
-.ColorScheme-Highlight{\
-color:%3;\
-}\
-.ColorScheme-HighlightedText{\
-color:%4;\
-}\
-.ColorScheme-PositiveText{\
-color:%5;\
-}\
-.ColorScheme-NeutralText{\
-color:%6;\
-}\
-.ColorScheme-NegativeText{\
-color:%7;\
-}");
+    return QStringLiteral(".ColorScheme-Text { color:%1; }\
+        .ColorScheme-Background{ color:%2; }\
+        .ColorScheme-Highlight{ color:%3; }\
+        .ColorScheme-HighlightedText{ color:%4; }\
+        .ColorScheme-PositiveText{ color:%5; }\
+        .ColorScheme-NeutralText{ color:%6; }\
+        .ColorScheme-NegativeText{ color:%7; }\
+        .ColorScheme-ActiveText{ color:%8; }\
+        .ColorScheme-Complement{ color:%9; }\
+        .ColorScheme-Contrast{ color:%10; }\
+        .ColorScheme-Accent{ color:%11; }\
+        ");
+}
+
+qreal luma(const QColor &color) {
+    return (0.299 * color.red() + 0.587 * color.green() + 0.114 * color.blue()) / 255;
+}
+
+QPalette paletteForStylesheet() {
+    return QApplication::palette("QMenu");
+}
+
 }
 
 enum FileType { OtherFile, SvgFile, CompressedSvgFile };
 
-static FileType fileType(const QFileInfo &fi)
-{
-    const QString &suffix = fi.completeSuffix();
-    if (suffix.endsWith(QLatin1String("svg"), Qt::CaseInsensitive))
-        return SvgFile;
-    if (suffix.endsWith(QLatin1String("svgz"), Qt::CaseInsensitive)
-        || suffix.endsWith(QLatin1String("svg.gz"), Qt::CaseInsensitive)) {
-        return CompressedSvgFile;
-        }
-        #if QT_CONFIG(mimetype)
-        const QString &mimeTypeName = QMimeDatabase().mimeTypeForFile(fi).name();
-    if (mimeTypeName == QLatin1String("image/svg+xml"))
-        return SvgFile;
-    if (mimeTypeName == QLatin1String("image/svg+xml-compressed"))
-        return CompressedSvgFile;
-    #endif
-    return OtherFile;
-}
-
-}
+static FileType fileType(const QFileInfo &fi);
 
 class RecoloringSvgIconEnginePrivate : public QSharedData
 {
@@ -87,7 +70,7 @@ public:
         return ((mode << 4) | state);
     }
 
-    QString pmcKey(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale, const QPalette& pal) const
+    QString pmcKey(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale) const
     {
         return QLatin1String("$qt_svgicon_")
                 % HexString<int>(serialNum)
@@ -96,12 +79,7 @@ public:
                 % HexString<int>(size.width())
                 % HexString<int>(size.height())
                 % HexString<qint16>(qRound(scale * 1000))
-                % QLatin1Char('_')
-                % pal.windowText().color().name()
-                % QLatin1Char('_')
-                % pal.highlight().color().name()
-                % QLatin1Char('_')
-                % pal.highlightedText().color().name();
+                % HexString<qint64>(paletteForStylesheet().cacheKey());
     }
 
     void stepSerialNum()
@@ -184,15 +162,50 @@ bool RecoloringSvgIconEnginePrivate::tryLoad(QSvgRenderer *renderer, QIcon::Mode
             qWarning() << "Can't recolor compressed svg" << svgFile;
             return renderer->load(svgFile);
         }
-        const auto pal = QApplication::palette("QMenu");
+        const auto pal = paletteForStylesheet();
+
+        const QColor complement = luma(pal.window().color()) > 0.5 ? Qt::white : Qt::black;
+
+        const QColor contrast = luma(pal.window().color()) > 0.5 ? Qt::black : Qt::white;
+
+        QColor accentColor = pal.accent().color();
+        // When selected, tint the accent color with a small portion of highlighted text color,
+        // because since the accent color used to be the same as the highlight color, it might cause
+        // icons, especially folders to "disappear" against the background
+        if (actualMode == QIcon::Selected) {
+            const qreal tintRatio = 0.85;
+            const auto highlightedText = pal.highlightedText().color();
+            const qreal r = accentColor.redF() * tintRatio + highlightedText.redF() * (1.0 - tintRatio);
+            const qreal g = accentColor.greenF() * tintRatio + highlightedText.greenF() * (1.0 - tintRatio);
+            const qreal b = accentColor.blueF() * tintRatio + highlightedText.blueF() * (1.0 - tintRatio);
+            accentColor.setRgbF(r, g, b, accentColor.alphaF());
+        }
+
         const QString styleSheet = STYLESHEET_TEMPLATE().arg(
+            // ColorScheme-Text
             actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name(),
+            // ColorScheme-Background
             actualMode == QIcon::Selected ? pal.highlight().color().name() : pal.window().color().name(),
+            // ColorScheme-Highlight
             actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.highlight().color().name(),
+            // ColorScheme-HighlightedText
             actualMode == QIcon::Selected ? pal.highlight().color().name() : pal.highlightedText().color().name(),
+            // ColorScheme-PositiveText
             actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name(),
+            // ColorScheme-NeutralText
             actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name(),
-            actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name());
+            // ColorScheme-NegativeText
+            actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name(),
+            // ColorScheme-ActiveText
+            actualMode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name(),
+            // ColorScheme-Complement
+            complement.name(),
+            // ColorScheme-Contrast
+            contrast.name(),
+            // ColorScheme-Accent
+            accentColor.name()
+        );
+
         QFile file(svgFile);
         if (!file.open(QIODevice::ReadOnly)) {
             return false;
@@ -277,7 +290,7 @@ QPixmap RecoloringSvgIconEngine::scaledPixmap(const QSize &size, QIcon::Mode mod
 {
     QPixmap pm;
 
-    QString pmckey(d->pmcKey(size, mode, state, scale, QGuiApplication::palette()));
+    QString pmckey(d->pmcKey(size, mode, state, scale));
     if (QPixmapCache::find(pmckey, &pm))
         return pm;
 
@@ -288,7 +301,7 @@ QPixmap RecoloringSvgIconEngine::scaledPixmap(const QSize &size, QIcon::Mode mod
         while (it != d->addedPixmaps.end() && it.key() == key) {
             const auto &pm = it.value();
             if (!pm.isNull()) {
-                // we don't care about dpr here - don't use QSvgIconEngine when
+                // we don't care about dpr here - don't use RecoloringSvgIconEngine when
                 // there are a lot of raster images are to handle.
                 if (pm.size() == realSize)
                     return pm;
@@ -338,8 +351,27 @@ void RecoloringSvgIconEngine::addPixmap(const QPixmap &pixmap, QIcon::Mode mode,
     d->addedPixmaps.insert(d->hashKey(mode, state), pixmap);
 }
 
+static FileType fileType(const QFileInfo &fi)
+{
+    const QString &suffix = fi.completeSuffix();
+    if (suffix.endsWith(QLatin1String("svg"), Qt::CaseInsensitive))
+        return SvgFile;
+    if (suffix.endsWith(QLatin1String("svgz"), Qt::CaseInsensitive)
+        || suffix.endsWith(QLatin1String("svg.gz"), Qt::CaseInsensitive)) {
+        return CompressedSvgFile;
+    }
+#if QT_CONFIG(mimetype)
+    const QString &mimeTypeName = QMimeDatabase().mimeTypeForFile(fi).name();
+    if (mimeTypeName == QLatin1String("image/svg+xml"))
+        return SvgFile;
+    if (mimeTypeName == QLatin1String("image/svg+xml-compressed"))
+        return CompressedSvgFile;
+#endif
+    return OtherFile;
+}
+
 void RecoloringSvgIconEngine::addFile(const QString &fileName, const QSize &,
-                                      QIcon::Mode mode, QIcon::State state)
+                             QIcon::Mode mode, QIcon::State state)
 {
     if (!fileName.isEmpty()) {
          const QFileInfo fi(fileName);
@@ -368,7 +400,7 @@ void RecoloringSvgIconEngine::paint(QPainter *painter, const QRect &rect,
 {
     QSize pixmapSize = rect.size();
     if (painter->device())
-        pixmapSize *= painter->device()->devicePixelRatioF();
+        pixmapSize *= painter->device()->devicePixelRatio();
     painter->drawPixmap(rect, pixmap(pixmapSize, mode, state));
 }
 
