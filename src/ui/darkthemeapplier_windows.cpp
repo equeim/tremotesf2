@@ -218,6 +218,9 @@ namespace tremotesf {
                 withAlpha(palette.color(QPalette::Active, QPalette::Highlight), 153)
             );
             palette.setColor(QPalette::Inactive, QPalette::HighlightedText, Qt::white);
+            palette.setColor(QPalette::Active, QPalette::Accent, palette.color(QPalette::Active, QPalette::Highlight));
+            palette
+                .setColor(QPalette::Disabled, QPalette::Accent, palette.color(QPalette::Disabled, QPalette::Highlight));
 
             QGuiApplication::setPalette(palette);
             if (qApp->styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
