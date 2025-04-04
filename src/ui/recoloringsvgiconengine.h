@@ -7,6 +7,8 @@
 #include <QtGui/qiconengine.h>
 #include <QtCore/qshareddata.h>
 
+// clang-format off
+
 namespace tremotesf {
 
 class RecoloringSvgIconEnginePrivate;
