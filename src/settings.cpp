@@ -15,35 +15,41 @@
 #endif
 
 #include "log/log.h"
+#include "literals.h"
 #include "target_os.h"
 
-#define SETTINGS_PROPERTY_DEF(type, name, key, defaultValue)                                   \
-    type Settings::get_##name() const { return getValue<type>(mSettings, key, defaultValue); } \
-    void Settings::set_##name(type value) {                                                    \
-        if (setValue<type>(mSettings, key, std::move(value))) {                                \
-            emit name##Changed();                                                              \
-        }                                                                                      \
+#define SETTINGS_PROPERTY_DEF(type, name, key, defaultValue)                                                 \
+    const QVariant& name##_defaultValue() {                                                                  \
+        static const auto v = QVariant::fromValue<type>(defaultValue);                                       \
+        return v;                                                                                            \
+    }                                                                                                        \
+    type Settings::get_##name() const { return getValue<type>(mSettings, key##_l1, name##_defaultValue()); } \
+    void Settings::set_##name(type value) {                                                                  \
+        if (setValue<type>(mSettings, key##_l1, std::move(value), name##_defaultValue())) {                  \
+            emit name##Changed();                                                                            \
+        }                                                                                                    \
     }
 
 namespace tremotesf {
     namespace {
         template<typename T>
-        T getValue(QSettings* settings, const char* key, T defaultValue) {
-            T value = settings->value(QLatin1String(key), QVariant::fromValue<T>(defaultValue)).template value<T>();
+        T getValue(QSettings* settings, QLatin1String key, const QVariant& defaultValue) {
+            T value = settings->value(key, defaultValue).value<T>();
             if constexpr (std::is_enum_v<T>) {
                 const auto meta = QMetaEnum::fromType<T>();
                 if (!meta.valueToKey(static_cast<int>(value))) {
                     warning().log("Settings: key {} has invalid value {}, returning default value", key, value);
-                    return defaultValue;
+                    return defaultValue.value<T>();
                 }
             }
             return value;
         }
 
         template<typename T>
-        bool setValue(QSettings* settings, const char* key, T value) {
-            if (value != settings->value(key).template value<T>()) {
-                settings->setValue(QLatin1String(key), QVariant::fromValue<T>(value));
+        bool setValue(QSettings* settings, QLatin1String key, T newValue, const QVariant& defaultValue) {
+            const auto currentValue = getValue<T>(settings, key, defaultValue);
+            if (newValue != currentValue) {
+                settings->setValue(key, QVariant::fromValue<T>(newValue));
                 return true;
             }
             return false;
