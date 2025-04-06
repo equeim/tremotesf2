@@ -1035,7 +1035,9 @@ namespace tremotesf {
                 }
                 break;
             case Settings::TorrentDoubleClickAction::OpenTorrentFile:
-                openTorrentsFiles();
+                if (mOpenTorrentFilesAction->isEnabled()) {
+                    openTorrentsFiles();
+                }
                 break;
             case Settings::TorrentDoubleClickAction::OpenDownloadDirectory:
                 showTorrentsInFileManager();
