@@ -589,30 +589,30 @@ Torrent's limits tab section</extracomment>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="54"/>
         <source>General</source>
         <extracomment>Options tab</extracomment>
-        <translation type="unfinished"/>
+        <translation>Genel</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="86"/>
         <source>Show torrent properties in a panel in the main window</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Torrent özelliklerini ana penceredeki panelde göster</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="123"/>
         <source>Properties dialog won&apos;t be shown because torrent properties are shown in the main window</source>
-        <translation type="unfinished"/>
+        <translation>Torrent özellikleri ana pencerede gösterildiğinden özellikler iletişim kutusu gösterilmez</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="163"/>
         <source>Display relative time</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Bağıl zamanı göster</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="171"/>
         <source>Display full path of download directories in sidebar and torrents list</source>
         <extracomment>Check box label</extracomment>
-        <translation type="unfinished"/>
+        <translation>Kenar çubuğunda ve torrentler listesinde indirme dizinlerinin tam yolunu göster</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/settingsdialog.cpp" line="345"/>
@@ -982,7 +982,7 @@ Trackers list column title</extracomment>
         <location filename="../src/ui/screens/mainwindow/mainwindowsidebar.cpp" line="292"/>
         <source>Labels</source>
         <extracomment>Title of torrents label filters list</extracomment>
-        <translation type="unfinished"/>
+        <translation>Etiketler</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/addtorrent/addtorrentdialog.cpp" line="323"/>
@@ -1145,7 +1145,7 @@ Tracker's context menu item</extracomment>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="689"/>
         <source>Edi&amp;t Labels</source>
         <extracomment>Torrent's context menu item</extracomment>
-        <translation type="unfinished"/>
+        <translation>Etiketleri Düzen&amp;le</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="710"/>
@@ -1304,7 +1304,7 @@ Trackers list column title</extracomment>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1291"/>
         <source>Torrent properties &amp;panel</source>
-        <translation type="unfinished"/>
+        <translation>Torrent özellikleri &amp;panel</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1310"/>
@@ -1390,7 +1390,7 @@ Trackers list column title</extracomment>
         <location filename="../src/ui/screens/mainwindow/mainwindow.cpp" line="1725"/>
         <source>Torrents will be added after connection to server</source>
         <extracomment>Message shown when user attempts to add torrent while disconnect from server.</extracomment>
-        <translation type="unfinished"/>
+        <translation>Torrentler sunucuya bağlandıktan sonra eklenecektir</translation>
     </message>
     <message>
         <location filename="../src/ui/notificationscontroller_freedesktop.cpp" line="119"/>
@@ -1880,7 +1880,7 @@ Torrent's uploaded size</extracomment>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertieswidget.cpp" line="198"/>
         <source>Labels:</source>
         <extracomment>Torrent's labels</extracomment>
-        <translation type="unfinished"/>
+        <translation>Etiketler:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/torrentproperties/torrentpropertieswidget.cpp" line="306"/>
@@ -2345,35 +2345,35 @@ Peers list column title</extracomment>
     <message>
         <location filename="../src/formatutils.cpp" line="206"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Bugün</translation>
     </message>
     <message>
         <location filename="../src/formatutils.cpp" line="208"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Dün</translation>
     </message>
     <message>
         <location filename="../src/formatutils.cpp" line="210"/>
         <source>Two days ago</source>
-        <translation type="unfinished"/>
+        <translation>İki gün önce</translation>
     </message>
     <message>
         <location filename="../src/formatutils.cpp" line="218"/>
         <source>%1 at %2</source>
         <extracomment>Relative date &amp; time</extracomment>
-        <translation type="unfinished"/>
+        <translation>%2&apos;de %1</translation>
     </message>
     <message>
         <location filename="../src/formatutils.cpp" line="237"/>
         <source>Just now</source>
         <extracomment>Relative time</extracomment>
-        <translation type="unfinished"/>
+        <translation>Şimdi</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/formatutils.cpp" line="242"/>
         <source>%n minute(s) ago</source>
         <extracomment>@item:intext %1 is a whole number</extracomment>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>%n dakika(lar) önce</numerusform><numerusform>%n dakika(lar) önce</numerusform></translation>
         <extra-plural>%n minutes ago</extra-plural>
         <extra-singular>%n minute ago</extra-singular>
     </message>
@@ -2430,12 +2430,12 @@ Filter option of torrents list's label filter. %1 is label, %L2 is number of tor
     <message>
         <location filename="../src/ui/screens/mainwindow/editlabelsdialog.cpp" line="20"/>
         <source>Edit Labels</source>
-        <translation type="unfinished"/>
+        <translation>Etiketleri Düzenle</translation>
     </message>
     <message>
         <location filename="../src/ui/widgets/editlabelswidget.cpp" line="74"/>
         <source>New label...</source>
-        <translation type="unfinished"/>
+        <translation>Yeni etiket...</translation>
     </message>
 </context>
 </TS>
