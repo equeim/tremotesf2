@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.8.0] - 2025-04-09
 ### Added
 - Option to show torrent properties in a panel in the main window instead of dialog
 - Ability to set labels on torrents and filter torrent list by labels
