@@ -54,6 +54,27 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2025-04-09" version="2.8.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>Option to show torrent properties in a panel in the main window instead of dialog</li>
+          <li>Ability to set labels on torrents and filter torrent list by labels</li>
+          <li>Option to display relative time</li>
+          <li>Option to display only names of download directories in sidebar and torrents list</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>Options dialog is rearranged to use multiple tabs</li>
+          <li>Message that's shown when trying to add torrent while disconnected from server is now displayed in a dialog instead of main window</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Delayed loading of peers for active torrents</li>
+          <li>Window activation from clicking on notification</li>
+        </ul>
+      </description>
+    </release>
     <release date="2025-01-14" version="2.7.5">
       <description>
         <p>Fixed</p>
