@@ -13,6 +13,8 @@
 #include "stdutils.h"
 #include "target_os.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         constexpr QSettings::Format settingsFormat = [] {
@@ -23,50 +25,50 @@ namespace tremotesf {
             }
         }();
 
-        constexpr auto fileName = "servers"_l1;
+        constexpr auto fileName = "servers"_L1;
 
-        constexpr auto currentServerKey = "current"_l1;
-        constexpr auto addressKey = "address"_l1;
-        constexpr auto portKey = "port"_l1;
-        constexpr auto apiPathKey = "apiPath"_l1;
+        constexpr auto currentServerKey = "current"_L1;
+        constexpr auto addressKey = "address"_L1;
+        constexpr auto portKey = "port"_L1;
+        constexpr auto apiPathKey = "apiPath"_L1;
 
-        constexpr auto proxyTypeKey = "proxyType"_l1;
-        constexpr auto proxyHostnameKey = "proxyHostname"_l1;
-        constexpr auto proxyPortKey = "proxyPort"_l1;
-        constexpr auto proxyUserKey = "proxyUser"_l1;
-        constexpr auto proxyPasswordKey = "proxyPassword"_l1;
+        constexpr auto proxyTypeKey = "proxyType"_L1;
+        constexpr auto proxyHostnameKey = "proxyHostname"_L1;
+        constexpr auto proxyPortKey = "proxyPort"_L1;
+        constexpr auto proxyUserKey = "proxyUser"_L1;
+        constexpr auto proxyPasswordKey = "proxyPassword"_L1;
 
-        constexpr auto httpsKey = "https"_l1;
-        constexpr auto selfSignedCertificateEnabledKey = "selfSignedCertificateEnabled"_l1;
-        constexpr auto selfSignedCertificateKey = "selfSignedCertificate"_l1;
-        constexpr auto clientCertificateEnabledKey = "clientCertificateEnabled"_l1;
-        constexpr auto clientCertificateKey = "clientCertificate"_l1;
+        constexpr auto httpsKey = "https"_L1;
+        constexpr auto selfSignedCertificateEnabledKey = "selfSignedCertificateEnabled"_L1;
+        constexpr auto selfSignedCertificateKey = "selfSignedCertificate"_L1;
+        constexpr auto clientCertificateEnabledKey = "clientCertificateEnabled"_L1;
+        constexpr auto clientCertificateKey = "clientCertificate"_L1;
 
-        constexpr auto authenticationKey = "authentication"_l1;
-        constexpr auto usernameKey = "username"_l1;
-        constexpr auto passwordKey = "password"_l1;
+        constexpr auto authenticationKey = "authentication"_L1;
+        constexpr auto usernameKey = "username"_L1;
+        constexpr auto passwordKey = "password"_L1;
 
-        constexpr auto updateIntervalKey = "updateInterval"_l1;
-        constexpr auto timeoutKey = "timeout"_l1;
+        constexpr auto updateIntervalKey = "updateInterval"_L1;
+        constexpr auto timeoutKey = "timeout"_L1;
 
-        constexpr auto autoReconnectEnabledKey = "autoReconnectEnabled"_l1;
-        constexpr auto autoReconnectIntervalKey = "autoReconnectInterval"_l1;
+        constexpr auto autoReconnectEnabledKey = "autoReconnectEnabled"_L1;
+        constexpr auto autoReconnectIntervalKey = "autoReconnectInterval"_L1;
 
-        constexpr auto mountedDirectoriesKey = "mountedDirectories"_l1;
+        constexpr auto mountedDirectoriesKey = "mountedDirectories"_L1;
 
-        constexpr auto lastDownloadDirectoriesKey = "addTorrentDialogDirectories"_l1;
-        constexpr auto lastDownloadDirectoryKey = "lastDownloadDirectory"_l1;
+        constexpr auto lastDownloadDirectoriesKey = "addTorrentDialogDirectories"_L1;
+        constexpr auto lastDownloadDirectoryKey = "lastDownloadDirectory"_L1;
 
-        constexpr auto lastTorrentsKey = "lastTorrents"_l1;
-        constexpr auto lastTorrentsHashStringKey = "hashString"_l1;
-        constexpr auto lastTorrentsFinishedKey = "finished"_l1;
+        constexpr auto lastTorrentsKey = "lastTorrents"_L1;
+        constexpr auto lastTorrentsHashStringKey = "hashString"_L1;
+        constexpr auto lastTorrentsFinishedKey = "finished"_L1;
 
-        constexpr auto localCertificateKey = "localCertificate"_l1;
+        constexpr auto localCertificateKey = "localCertificate"_L1;
 
-        constexpr auto proxyTypeDefault = "Default"_l1;
-        constexpr auto proxyTypeHttp = "HTTP"_l1;
-        constexpr auto proxyTypeSocks5 = "SOCKS5"_l1;
-        constexpr auto proxyTypeNone = "None"_l1;
+        constexpr auto proxyTypeDefault = "Default"_L1;
+        constexpr auto proxyTypeHttp = "HTTP"_L1;
+        constexpr auto proxyTypeSocks5 = "SOCKS5"_L1;
+        constexpr auto proxyTypeNone = "None"_L1;
 
         ConnectionConfiguration::ProxyType proxyTypeFromSettings(const QString& value) {
             if (value.isEmpty() || value == proxyTypeDefault) {

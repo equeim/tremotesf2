@@ -22,6 +22,7 @@
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariant)
 
+using namespace Qt::StringLiterals;
 using namespace tremotesf;
 
 #ifdef Q_OS_WIN
@@ -73,7 +74,7 @@ private slots:
     }
 
     void stdoutQLatin1String() {
-        const auto str = "foo"_l1;
+        const auto str = "foo"_L1;
         printlnStdout(str);
         printlnStdout("{}", str);
         printlnStdout(FMT_STRING("{}"), str);
@@ -176,7 +177,7 @@ private slots:
     }
 
     void infoQLatin1String() {
-        const auto str = "foo"_l1;
+        const auto str = "foo"_L1;
         info().log(str);
         info().log("{}", str);
         info().log(FMT_STRING("{}"), str);

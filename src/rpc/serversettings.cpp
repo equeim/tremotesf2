@@ -7,87 +7,92 @@
 #include <QJsonObject>
 
 #include "jsonutils.h"
-#include "literals.h"
 #include "pathutils.h"
 #include "rpc.h"
 #include "stdutils.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     using namespace impl;
 
     namespace {
-        constexpr auto downloadDirectoryKey = "download-dir"_l1;
-        constexpr auto trashTorrentFilesKey = "trash-original-torrent-files"_l1;
-        constexpr auto startAddedTorrentsKey = "start-added-torrents"_l1;
-        constexpr auto renameIncompleteFilesKey = "rename-partial-files"_l1;
-        constexpr auto incompleteDirectoryEnabledKey = "incomplete-dir-enabled"_l1;
-        constexpr auto incompleteDirectoryKey = "incomplete-dir"_l1;
+        constexpr auto downloadDirectoryKey = "download-dir"_L1;
+        constexpr auto trashTorrentFilesKey = "trash-original-torrent-files"_L1;
+        constexpr auto startAddedTorrentsKey = "start-added-torrents"_L1;
+        constexpr auto renameIncompleteFilesKey = "rename-partial-files"_L1;
+        constexpr auto incompleteDirectoryEnabledKey = "incomplete-dir-enabled"_L1;
+        constexpr auto incompleteDirectoryKey = "incomplete-dir"_L1;
 
-        constexpr auto ratioLimitedKey = "seedRatioLimited"_l1;
-        constexpr auto ratioLimitKey = "seedRatioLimit"_l1;
-        constexpr auto idleSeedingLimitedKey = "idle-seeding-limit-enabled"_l1;
-        constexpr auto idleSeedingLimitKey = "idle-seeding-limit"_l1;
+        constexpr auto ratioLimitedKey = "seedRatioLimited"_L1;
+        constexpr auto ratioLimitKey = "seedRatioLimit"_L1;
+        constexpr auto idleSeedingLimitedKey = "idle-seeding-limit-enabled"_L1;
+        constexpr auto idleSeedingLimitKey = "idle-seeding-limit"_L1;
 
-        constexpr auto downloadQueueEnabledKey = "download-queue-enabled"_l1;
-        constexpr auto downloadQueueSizeKey = "download-queue-size"_l1;
-        constexpr auto seedQueueEnabledKey = "seed-queue-enabled"_l1;
-        constexpr auto seedQueueSizeKey = "seed-queue-size"_l1;
-        constexpr auto idleQueueLimitedKey = "queue-stalled-enabled"_l1;
-        constexpr auto idleQueueLimitKey = "queue-stalled-minutes"_l1;
+        constexpr auto downloadQueueEnabledKey = "download-queue-enabled"_L1;
+        constexpr auto downloadQueueSizeKey = "download-queue-size"_L1;
+        constexpr auto seedQueueEnabledKey = "seed-queue-enabled"_L1;
+        constexpr auto seedQueueSizeKey = "seed-queue-size"_L1;
+        constexpr auto idleQueueLimitedKey = "queue-stalled-enabled"_L1;
+        constexpr auto idleQueueLimitKey = "queue-stalled-minutes"_L1;
 
-        constexpr auto downloadSpeedLimitedKey = "speed-limit-down-enabled"_l1;
-        constexpr auto downloadSpeedLimitKey = "speed-limit-down"_l1;
-        constexpr auto uploadSpeedLimitedKey = "speed-limit-up-enabled"_l1;
-        constexpr auto uploadSpeedLimitKey = "speed-limit-up"_l1;
-        constexpr auto alternativeSpeedLimitsEnabledKey = "alt-speed-enabled"_l1;
-        constexpr auto alternativeDownloadSpeedLimitKey = "alt-speed-down"_l1;
-        constexpr auto alternativeUploadSpeedLimitKey = "alt-speed-up"_l1;
-        constexpr auto alternativeSpeedLimitsScheduledKey = "alt-speed-time-enabled"_l1;
-        constexpr auto alternativeSpeedLimitsBeginTimeKey = "alt-speed-time-begin"_l1;
-        constexpr auto alternativeSpeedLimitsEndTimeKey = "alt-speed-time-end"_l1;
-        constexpr auto alternativeSpeedLimitsDaysKey = "alt-speed-time-day"_l1;
+        constexpr auto downloadSpeedLimitedKey = "speed-limit-down-enabled"_L1;
+        constexpr auto downloadSpeedLimitKey = "speed-limit-down"_L1;
+        constexpr auto uploadSpeedLimitedKey = "speed-limit-up-enabled"_L1;
+        constexpr auto uploadSpeedLimitKey = "speed-limit-up"_L1;
+        constexpr auto alternativeSpeedLimitsEnabledKey = "alt-speed-enabled"_L1;
+        constexpr auto alternativeDownloadSpeedLimitKey = "alt-speed-down"_L1;
+        constexpr auto alternativeUploadSpeedLimitKey = "alt-speed-up"_L1;
+        constexpr auto alternativeSpeedLimitsScheduledKey = "alt-speed-time-enabled"_L1;
+        constexpr auto alternativeSpeedLimitsBeginTimeKey = "alt-speed-time-begin"_L1;
+        constexpr auto alternativeSpeedLimitsEndTimeKey = "alt-speed-time-end"_L1;
+        constexpr auto alternativeSpeedLimitsDaysKey = "alt-speed-time-day"_L1;
 
-        constexpr auto peerPortKey = "peer-port"_l1;
-        constexpr auto randomPortEnabledKey = "peer-port-random-on-start"_l1;
-        constexpr auto portForwardingEnabledKey = "port-forwarding-enabled"_l1;
+        constexpr auto peerPortKey = "peer-port"_L1;
+        constexpr auto randomPortEnabledKey = "peer-port-random-on-start"_L1;
+        constexpr auto portForwardingEnabledKey = "port-forwarding-enabled"_L1;
 
-        constexpr auto encryptionModeKey = "encryption"_l1;
+        constexpr auto encryptionModeKey = "encryption"_L1;
 
-        constexpr auto utpEnabledKey = "utp-enabled"_l1;
-        constexpr auto pexEnabledKey = "pex-enabled"_l1;
-        constexpr auto dhtEnabledKey = "dht-enabled"_l1;
-        constexpr auto lpdEnabledKey = "lpd-enabled"_l1;
-        constexpr auto maximumPeersPerTorrentKey = "peer-limit-per-torrent"_l1;
-        constexpr auto maximumPeersGloballyKey = "peer-limit-global"_l1;
+        constexpr auto utpEnabledKey = "utp-enabled"_L1;
+        constexpr auto pexEnabledKey = "pex-enabled"_L1;
+        constexpr auto dhtEnabledKey = "dht-enabled"_L1;
+        constexpr auto lpdEnabledKey = "lpd-enabled"_L1;
+        constexpr auto maximumPeersPerTorrentKey = "peer-limit-per-torrent"_L1;
+        constexpr auto maximumPeersGloballyKey = "peer-limit-global"_L1;
 
-        constexpr auto alternativeSpeedLimitsDaysMapper = EnumMapper(std::array{
-            // (1 << 0)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Sunday, 1),
-            // (1 << 1)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Monday, 2),
-            // (1 << 2)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Tuesday, 4),
-            // (1 << 3)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Wednesday, 8),
-            // (1 << 4)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Thursday, 16),
-            // (1 << 5)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Friday, 32),
-            // (1 << 6)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Saturday, 64),
-            // (Monday | Tuesday | Wednesday | Thursday | Friday)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Weekdays, 62),
-            // (Sunday | Saturday)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Weekends, 65),
-            // (Weekdays | Weekends)
-            EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::All, 127),
-        });
+        constexpr auto alternativeSpeedLimitsDaysMapper = EnumMapper(
+            std::array{
+                // (1 << 0)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Sunday, 1),
+                // (1 << 1)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Monday, 2),
+                // (1 << 2)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Tuesday, 4),
+                // (1 << 3)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Wednesday, 8),
+                // (1 << 4)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Thursday, 16),
+                // (1 << 5)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Friday, 32),
+                // (1 << 6)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Saturday, 64),
+                // (Monday | Tuesday | Wednesday | Thursday | Friday)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Weekdays, 62),
+                // (Sunday | Saturday)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::Weekends, 65),
+                // (Weekdays | Weekends)
+                EnumMapping(ServerSettingsData::AlternativeSpeedLimitsDays::All, 127),
+            }
+        );
 
-        constexpr auto encryptionModeMapper = EnumMapper(std::array{
-            EnumMapping(ServerSettingsData::EncryptionMode::Allowed, "tolerated"_l1),
-            EnumMapping(ServerSettingsData::EncryptionMode::Preferred, "preferred"_l1),
-            EnumMapping(ServerSettingsData::EncryptionMode::Required, "required"_l1)
-        });
+        constexpr auto encryptionModeMapper = EnumMapper(
+            std::array{
+                EnumMapping(ServerSettingsData::EncryptionMode::Allowed, "tolerated"_L1),
+                EnumMapping(ServerSettingsData::EncryptionMode::Preferred, "preferred"_L1),
+                EnumMapping(ServerSettingsData::EncryptionMode::Required, "required"_L1)
+            }
+        );
     }
 
     bool ServerSettingsData::canRenameFiles() const { return (rpcVersion >= 15); }
@@ -387,10 +392,10 @@ namespace tremotesf {
     void ServerSettings::update(const QJsonObject& serverSettings) {
         bool changed = false;
 
-        mData.rpcVersion = serverSettings.value("rpc-version"_l1).toInt();
-        mData.minimumRpcVersion = serverSettings.value("rpc-version-minimum"_l1).toInt();
+        mData.rpcVersion = serverSettings.value("rpc-version"_L1).toInt();
+        mData.minimumRpcVersion = serverSettings.value("rpc-version-minimum"_L1).toInt();
 
-        if (const auto newConfigDir = serverSettings.value("config-dir"_l1).toString();
+        if (const auto newConfigDir = serverSettings.value("config-dir"_L1).toString();
             newConfigDir != mData.configDirectory) {
             mData.configDirectory = newConfigDir;
             // Transmission's config directory is likely located under 'C:\Users' on Windows

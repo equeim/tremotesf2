@@ -20,7 +20,6 @@
 
 #include "coroutines/coroutines.h"
 #include "fileutils.h"
-#include "literals.h"
 #include "log/log.h"
 #include "requestrouter.h"
 #include "rpc.h"
@@ -28,6 +27,7 @@
 using namespace std::chrono;
 using namespace std::chrono_literals;
 using namespace std::string_literals;
+using namespace Qt::StringLiterals;
 using namespace tremotesf;
 using namespace tremotesf::impl;
 
@@ -40,7 +40,7 @@ using namespace tremotesf::impl;
 // NOLINTBEGIN(bugprone-unchecked-optional-access)
 
 namespace {
-    constexpr auto testApiPath = "/"_l1;
+    constexpr auto testApiPath = "/"_L1;
     constexpr auto testTimeout = 5s;
     constexpr auto testRetryAttempts = 0;
 
@@ -140,7 +140,7 @@ namespace {
         void init() {
             const int port = mServer.port;
             RequestRouter::RequestsConfiguration config{};
-            config.serverUrl.setScheme("http"_l1);
+            config.serverUrl.setScheme("http"_L1);
             config.serverUrl.setHost(mServer.host);
             config.serverUrl.setPort(port);
             config.serverUrl.setPath(testApiPath);
@@ -156,20 +156,20 @@ namespace {
 
         void checkUrlIsCorrect() {
             mServer.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
-            const auto response = waitForResponse("foo"_l1, QByteArray{});
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->arguments, QJsonObject{});
             QCOMPARE(response->success, true);
         }
 
         void checkThatJsonIsFormedCorrectly() {
-            const auto method = "foo"_l1;
+            const auto method = "foo"_L1;
             const QJsonObject arguments{{"bar", "foobar"}};
 
             mServer.handle([&](const httplib::Request& req, httplib::Response& res) {
                 const auto json = QJsonDocument::fromJson(req.body.c_str());
                 const auto expectedJson =
-                    QJsonDocument(QJsonObject{{"method"_l1, method}, {"arguments"_l1, arguments}});
+                    QJsonDocument(QJsonObject{{"method"_L1, method}, {"arguments"_L1, arguments}});
                 if (json == expectedJson) {
                     success(res);
                 } else {
@@ -192,7 +192,7 @@ namespace {
                 mRouter.setConfiguration(std::move(config));
             }
 
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::TimedOut);
         }
@@ -204,7 +204,7 @@ namespace {
                 config.serverUrl.setPort(9);
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             if (error.value() == RpcError::TimedOut) {
                 // This is not what we test here but it can happen on some systems
@@ -225,7 +225,7 @@ namespace {
                 config.serverUrl.setPort(tcpServer.serverPort());
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::ConnectionError);
         }
@@ -242,7 +242,7 @@ namespace {
                 config.retryAttempts = retryAttempts;
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::ConnectionError);
             QCOMPARE(requestsCount.load(), retryAttempts + 1);
@@ -257,11 +257,11 @@ namespace {
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
-                config.serverUrl.setScheme("https"_l1);
+                config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::ConnectionError);
         }
@@ -274,13 +274,13 @@ namespace {
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
-                config.serverUrl.setScheme("https"_l1);
+                config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
                 config.serverCertificateChain =
                     QSslCertificate::fromPath(TEST_DATA_PATH "/root-certificate.pem", QSsl::Pem);
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto response = waitForResponse("foo"_l1, QByteArray{});
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->success, true);
         }
@@ -293,12 +293,12 @@ namespace {
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
-                config.serverUrl.setScheme("https"_l1);
+                config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
                 config.serverCertificateChain = QSslCertificate::fromPath(TEST_DATA_PATH "/chain.pem", QSsl::Pem);
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto response = waitForResponse("foo"_l1, QByteArray{});
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->success, true);
         }
@@ -312,13 +312,13 @@ namespace {
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
-                config.serverUrl.setScheme("https"_l1);
+                config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
                 config.serverCertificateChain =
                     QSslCertificate::fromPath(TEST_DATA_PATH "/root-certificate.pem", QSsl::Pem);
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             if (error.value() == RpcError::TimedOut) {
                 // Can happen with TLS 1.3
@@ -337,7 +337,7 @@ namespace {
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
-                config.serverUrl.setScheme("https"_l1);
+                config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
                 config.serverCertificateChain =
                     QSslCertificate::fromPath(TEST_DATA_PATH "/root-certificate.pem", QSsl::Pem);
@@ -350,7 +350,7 @@ namespace {
                 }
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto response = waitForResponse("foo"_l1, QByteArray{});
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->success, true);
         }
@@ -360,14 +360,14 @@ namespace {
             mServer.handle([&](const httplib::Request&, httplib::Response& res) {
                 res.set_content(invalidJsonResponse, contentType);
             });
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::ParseError);
         }
 
         void checkConflictErrorWithoutSessionIdIsHandled() {
             mServer.handle([&](const httplib::Request&, httplib::Response& res) { res.status = 409; });
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::ConnectionError);
         }
@@ -378,7 +378,7 @@ namespace {
                 res.status = 409;
                 res.set_header(sessionIdHeader, sessionIdValue);
             });
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::ConnectionError);
         }
@@ -393,7 +393,7 @@ namespace {
                 }
                 res.set_header(sessionIdHeader, sessionIdValue);
             });
-            const auto response = waitForResponse("foo"_l1, QByteArray{});
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->arguments, QJsonObject{});
             QCOMPARE(response->success, true);
@@ -409,21 +409,21 @@ namespace {
                 }
                 res.set_header(sessionIdHeader, sessionIdValue);
             });
-            auto response = waitForResponse("foo"_l1, QByteArray{});
+            auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->arguments, QJsonObject{});
             QCOMPARE(response->success, true);
 
             sessionIdValue = "session id 2";
-            response = waitForResponse("foo"_l1, QByteArray{});
+            response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->arguments, QJsonObject{});
             QCOMPARE(response->success, true);
         }
 
         void checkThatAuthenticationWorks() {
-            const QString user = "foo"_l1;
-            const QString password = "bar"_l1;
+            const QString user = "foo"_L1;
+            const QString password = "bar"_L1;
             const auto header = httplib::make_basic_authentication_header(user.toStdString(), password.toStdString());
             mServer.handle([&](const httplib::Request& req, httplib::Response& res) {
                 checkAuthentication(req, res, user.toStdString(), password.toStdString());
@@ -435,7 +435,7 @@ namespace {
                 config.password = password;
                 mRouter.setConfiguration(std::move(config));
             }
-            const auto response = waitForResponse("foo"_l1, QByteArray{});
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->arguments, QJsonObject{});
             QCOMPARE(response->success, true);
@@ -445,7 +445,7 @@ namespace {
             mServer.handle([&](const httplib::Request& req, httplib::Response& res) {
                 checkAuthentication(req, res, "foo", "bar");
             });
-            const auto error = waitForError("foo"_l1, QByteArray{});
+            const auto error = waitForError("foo"_L1, QByteArray{});
             QCOMPARE(error.has_value(), true);
             QCOMPARE(error.value(), RpcError::AuthenticationError);
         }
@@ -463,7 +463,7 @@ namespace {
             CoroutineScope scope{};
             const auto connection = connectToErrorSignal(responseOrError, scope);
             const auto connectionGuard = QScopeGuard([=] { QObject::disconnect(connection); });
-            scope.launch(waitForResponseCoroutine(mRouter.postRequest("foo"_l1, QByteArray{}), responseOrError));
+            scope.launch(waitForResponseCoroutine(mRouter.postRequest("foo"_L1, QByteArray{}), responseOrError));
 
             QTest::qWait(100);
             mRouter.abortNetworkRequestsAndClearSessionId();

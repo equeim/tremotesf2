@@ -26,6 +26,8 @@
 #include "commondelegate.h"
 #include "textinputdialog.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     TorrentFilesView::TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent)
         : BaseTreeView(parent),
@@ -143,7 +145,7 @@ namespace tremotesf {
                 const bool localOrMounted =
                     isServerLocalOrTorrentIsMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent());
                 QAction* openAction = contextMenu.addAction(
-                    QIcon::fromTheme("document-open"_l1),
+                    QIcon::fromTheme("document-open"_L1),
                     //: Context menu item
                     qApp->translate("tremotesf", "&Open")
                 );
@@ -158,7 +160,7 @@ namespace tremotesf {
                 });
 
                 QAction* openDownloadDirectoryAction = contextMenu.addAction(
-                    QIcon::fromTheme("go-jump"_l1),
+                    QIcon::fromTheme("go-jump"_L1),
                     //: Context menu item
                     qApp->translate("tremotesf", "Open &Download Directory")
                 );
@@ -177,7 +179,7 @@ namespace tremotesf {
         contextMenu.addSeparator();
 
         QAction* downloadAction = contextMenu.addAction(
-            QIcon::fromTheme("download"_l1),
+            QIcon::fromTheme("download"_L1),
             //: Context menu item to select file for downloading
             qApp->translate("tremotesf", "&Download")
         );
@@ -186,7 +188,7 @@ namespace tremotesf {
         });
 
         QAction* notDownloadAction = contextMenu.addAction(
-            QIcon::fromTheme("dialog-cancel"_l1),
+            QIcon::fromTheme("dialog-cancel"_L1),
             //: Context menu item to unselect file for downloading
             qApp->translate("tremotesf", "&Not Download")
         );
@@ -261,7 +263,7 @@ namespace tremotesf {
         if (mRpc->serverSettings()->data().canRenameFiles()) {
             contextMenu.addSeparator();
             QAction* renameAction = contextMenu.addAction(
-                QIcon::fromTheme("edit-rename"_l1),
+                QIcon::fromTheme("edit-rename"_L1),
                 //: Context menu item
                 qApp->translate("tremotesf", "&Rename")
             );

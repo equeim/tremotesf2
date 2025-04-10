@@ -7,17 +7,18 @@
 #include <QMimeData>
 #include <QUrl>
 
-#include "literals.h"
 #include "log/log.h"
 #include "magnetlinkparser.h"
+
+using namespace Qt::StringLiterals;
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
 namespace tremotesf {
     namespace {
-        constexpr auto torrentFileSuffix = ".torrent"_l1;
-        constexpr auto httpScheme = "http"_l1;
-        constexpr auto httpsScheme = "https"_l1;
+        constexpr auto torrentFileSuffix = ".torrent"_L1;
+        constexpr auto httpScheme = "http"_L1;
+        constexpr auto httpsScheme = "https"_L1;
     }
 
     DroppedTorrents::DroppedTorrents(const QMimeData* mime) {

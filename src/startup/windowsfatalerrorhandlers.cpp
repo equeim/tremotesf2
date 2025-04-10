@@ -18,10 +18,11 @@
 
 #include <fmt/format.h>
 
-#include "literals.h"
 #include "windowsfatalerrorhandlers.h"
 #include "windowshelpers.h"
 #include "log/log.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
@@ -53,7 +54,7 @@ namespace tremotesf {
             }
             const QFileInfo executable(executablePath);
             const auto executableDir = executable.path();
-            const QString pdbPath = executableDir % '/' % executable.completeBaseName() % ".pdb"_l1;
+            const QString pdbPath = executableDir % '/' % executable.completeBaseName() % ".pdb"_L1;
             if (!QFileInfo::exists(pdbPath)) {
                 fmt::format_to(
                     std::back_insert_iterator(report),

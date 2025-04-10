@@ -14,7 +14,6 @@
 #include <fmt/ranges.h>
 
 #include "commandlineparser.h"
-#include "literals.h"
 #include "signalhandler.h"
 #include "target_os.h"
 #include "ipc/ipcclient.h"
@@ -41,6 +40,7 @@ using namespace std::chrono_literals;
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QLocale)
 
+using namespace Qt::StringLiterals;
 using namespace tremotesf;
 
 namespace {
@@ -127,9 +127,9 @@ namespace {
 
 int main(int argc, char** argv) {
     // This does not need QApplication instance, and we need it in windowsInitPrelude()
-    QCoreApplication::setOrganizationName(TREMOTESF_EXECUTABLE_NAME ""_l1);
+    QCoreApplication::setOrganizationName(TREMOTESF_EXECUTABLE_NAME ""_L1);
     QCoreApplication::setApplicationName(QCoreApplication::organizationName());
-    QCoreApplication::setApplicationVersion(TREMOTESF_VERSION ""_l1);
+    QCoreApplication::setApplicationVersion(TREMOTESF_VERSION ""_L1);
 
     //
     // Command line parsing
@@ -187,8 +187,8 @@ int main(int argc, char** argv) {
 
     setupIconTheme();
 
-    QGuiApplication::setDesktopFileName(TREMOTESF_APP_ID ""_l1);
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_l1));
+    QGuiApplication::setDesktopFileName(TREMOTESF_APP_ID ""_L1);
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_L1));
     //
     // End of QApplication initialization
     //
@@ -199,11 +199,11 @@ int main(int argc, char** argv) {
     {
         const QString qtTranslationsPath =
 #ifdef TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
-            resolveExternalBundledResourcesPath("qt-translations"_l1);
+            resolveExternalBundledResourcesPath("qt-translations"_L1);
 #else
             QLibraryInfo::path(QLibraryInfo::TranslationsPath);
 #endif
-        if (loadTranslation(qtTranslator, "qt"_l1, "_"_l1, qtTranslationsPath)) {
+        if (loadTranslation(qtTranslator, "qt"_L1, "_"_L1, qtTranslationsPath)) {
             info().log("Loaded Qt translation {}", qtTranslator.filePath());
             qApp->installTranslator(&qtTranslator);
         } else {
@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
     }
 
     QTranslator appTranslator;
-    if (loadTranslation(appTranslator, {}, {}, ":/translations/"_l1)) {
+    if (loadTranslation(appTranslator, {}, {}, ":/translations/"_L1)) {
         info().log("Loaded Tremotesf translation {}", appTranslator.filePath());
         qApp->installTranslator(&appTranslator);
     } else {

@@ -6,10 +6,11 @@
 #include <QStyleOptionMenuItem>
 #include <QGuiApplication>
 
-#include "literals.h"
 #include "recoloringsvgiconengineplugin.h"
 #include "target_os.h"
 #include "ui/recoloringsvgiconengine.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
@@ -22,9 +23,9 @@ namespace tremotesf {
                 return qEnvironmentVariable(overrideStyleEnvVariable);
             }
             if constexpr (targetOs == TargetOs::UnixMacOS) {
-                return "macOS"_l1;
+                return "macOS"_L1;
             }
-            return "fusion"_l1;
+            return "fusion"_L1;
         }
     }
 

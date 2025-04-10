@@ -8,13 +8,14 @@
 #include "iconthemesetup.h"
 
 #include "fileutils.h"
-#include "literals.h"
 #include "startup/recoloringsvgiconengineplugin.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     void setupIconTheme() {
-        QIcon::setThemeSearchPaths({resolveExternalBundledResourcesPath("icons"_l1)});
-        QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_l1);
+        QIcon::setThemeSearchPaths({resolveExternalBundledResourcesPath("icons"_L1)});
+        QIcon::setThemeName(TREMOTESF_BUNDLED_ICON_THEME ""_L1);
         QApplication::setStyle(new RecoloringSvgIconStyle(qApp));
     }
 }

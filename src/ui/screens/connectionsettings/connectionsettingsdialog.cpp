@@ -20,10 +20,12 @@
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/widgets/listplaceholder.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
-        constexpr auto editIconName = "document-properties"_l1;
-        constexpr auto removeIconName = "list-remove"_l1;
+        constexpr auto editIconName = "document-properties"_L1;
+        constexpr auto removeIconName = "list-remove"_L1;
     }
 
     ConnectionSettingsDialog::ConnectionSettingsDialog(QWidget* parent)
@@ -76,7 +78,7 @@ namespace tremotesf {
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout, 0, 1);
         auto addServerButton = new QPushButton(
-            QIcon::fromTheme("list-add"_l1),
+            QIcon::fromTheme("list-add"_L1),
             //: Button
             qApp->translate("tremotesf", "Add Server..."),
             this

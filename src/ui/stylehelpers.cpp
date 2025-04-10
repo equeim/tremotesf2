@@ -8,8 +8,9 @@
 #include <QApplication>
 #include <QProxyStyle>
 
-#include "literals.h"
 #include "target_os.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
@@ -32,11 +33,11 @@ namespace tremotesf {
         style = baseStyle(style);
         const auto name = style->name();
         if constexpr (targetOs == TargetOs::UnixMacOS) {
-            if (name.compare("macos"_l1, Qt::CaseInsensitive) == 0) {
+            if (name.compare("macos"_L1, Qt::CaseInsensitive) == 0) {
                 return KnownStyle::macOS;
             }
         }
-        if (name.compare("breeze"_l1, Qt::CaseInsensitive) == 0) {
+        if (name.compare("breeze"_L1, Qt::CaseInsensitive) == 0) {
             return KnownStyle::Breeze;
         }
         return std::nullopt;

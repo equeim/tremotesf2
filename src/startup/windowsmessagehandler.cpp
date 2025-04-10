@@ -24,12 +24,12 @@
 #include <windows.h>
 
 #include "fileutils.h"
-#include "literals.h"
 #include "log/log.h"
 #include "windowshelpers.h"
 #include "windowsfatalerrorhandlers.h"
 
 namespace fs = std::filesystem;
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
@@ -223,7 +223,7 @@ namespace tremotesf {
     void initWindowsMessageHandler() {
         qInstallMessageHandler(windowsMessageHandler);
         qSetMessagePattern(
-            "[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_l1
+            "[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_L1
         );
 #ifndef QT_DEBUG
         globalFileLogger = std::make_unique<FileLogger>();

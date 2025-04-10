@@ -121,7 +121,6 @@ target_sources(tremotesf_objects
     fileutils.h
     formatutils.h
     itemlistupdater.h
-    literals.h
     magnetlinkparser.h
     pragmamacros.h
     settings.h

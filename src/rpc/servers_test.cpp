@@ -11,6 +11,8 @@
 #include "pathutils.h"
 #include "log/log.h"
 
+using namespace Qt::StringLiterals;
+
 namespace fmt {
     template<>
     struct formatter<tremotesf::PathOs> : tremotesf::SimpleFormatter {
@@ -46,39 +48,39 @@ namespace tremotesf {
             check(
                 {.mountedLocalDirectories = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
-                         return {"G:/downloads"_l1, "G:/downloads2"_l1};
+                         return {"G:/downloads"_L1, "G:/downloads2"_L1};
                      } else {
-                         return {"/mnt/downloads"_l1, "/mnt/downloads2"_l1};
+                         return {"/mnt/downloads"_L1, "/mnt/downloads2"_L1};
                      }
                  }(),
-                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/home/test/Downloads"_l1, "/home/test/Downloads2"_l1},
+                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/home/test/Downloads"_L1, "/home/test/Downloads2"_L1},
                  .mountedRemoteDirectoriesWhenServerIsWindows =
-                     {"C:/Users/test/Downloads"_l1, "C:/Users/test/Downloads2"_l1},
+                     {"C:/Users/test/Downloads"_L1, "C:/Users/test/Downloads2"_L1},
 
                  .localPathsToCheck = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
                          return {
                              {},
-                             "G:/"_l1,
-                             "G:/nope"_l1,
-                             "G:/downloads"_l1,
-                             "G:/downloads/"_l1,
-                             "G:/downloads/hmm"_l1,
-                             "G:/downloads2"_l1,
-                             "G:/downloads2/"_l1,
-                             "G:/downloads2/hmm"_l1,
+                             "G:/"_L1,
+                             "G:/nope"_L1,
+                             "G:/downloads"_L1,
+                             "G:/downloads/"_L1,
+                             "G:/downloads/hmm"_L1,
+                             "G:/downloads2"_L1,
+                             "G:/downloads2/"_L1,
+                             "G:/downloads2/hmm"_L1,
                          };
                      } else {
                          return {
                              {},
-                             "/"_l1,
-                             "/nope"_l1,
-                             "/mnt/downloads"_l1,
-                             "/mnt/downloads/"_l1,
-                             "/mnt/downloads/hmm"_l1,
-                             "/mnt/downloads2"_l1,
-                             "/mnt/downloads2/"_l1,
-                             "/mnt/downloads2/hmm"_l1,
+                             "/"_L1,
+                             "/nope"_L1,
+                             "/mnt/downloads"_L1,
+                             "/mnt/downloads/"_L1,
+                             "/mnt/downloads/hmm"_L1,
+                             "/mnt/downloads2"_L1,
+                             "/mnt/downloads2/"_L1,
+                             "/mnt/downloads2/hmm"_L1,
                          };
                      }
                  }(),
@@ -87,49 +89,49 @@ namespace tremotesf {
                          {},
                          {},
                          {},
-                         "/home/test/Downloads"_l1,
-                         "/home/test/Downloads"_l1,
-                         "/home/test/Downloads/hmm"_l1,
-                         "/home/test/Downloads2"_l1,
-                         "/home/test/Downloads2"_l1,
-                         "/home/test/Downloads2/hmm"_l1,
+                         "/home/test/Downloads"_L1,
+                         "/home/test/Downloads"_L1,
+                         "/home/test/Downloads/hmm"_L1,
+                         "/home/test/Downloads2"_L1,
+                         "/home/test/Downloads2"_L1,
+                         "/home/test/Downloads2/hmm"_L1,
                      },
                  .expectedRemotePathsWhenServerIsWindows =
                      {
                          {},
                          {},
                          {},
-                         "C:/Users/test/Downloads"_l1,
-                         "C:/Users/test/Downloads"_l1,
-                         "C:/Users/test/Downloads/hmm"_l1,
-                         "C:/Users/test/Downloads2"_l1,
-                         "C:/Users/test/Downloads2"_l1,
-                         "C:/Users/test/Downloads2/hmm"_l1,
+                         "C:/Users/test/Downloads"_L1,
+                         "C:/Users/test/Downloads"_L1,
+                         "C:/Users/test/Downloads/hmm"_L1,
+                         "C:/Users/test/Downloads2"_L1,
+                         "C:/Users/test/Downloads2"_L1,
+                         "C:/Users/test/Downloads2/hmm"_L1,
                      },
 
                  .remotePathsToCheckWhenServerIsUnix =
                      {
                          {},
-                         "/"_l1,
-                         "/nope"_l1,
-                         "/home/test/Downloads"_l1,
-                         "/home/test/Downloads/"_l1,
-                         "/home/test/Downloads/hmm"_l1,
-                         "/home/test/Downloads2"_l1,
-                         "/home/test/Downloads2/"_l1,
-                         "/home/test/Downloads2/hmm"_l1,
+                         "/"_L1,
+                         "/nope"_L1,
+                         "/home/test/Downloads"_L1,
+                         "/home/test/Downloads/"_L1,
+                         "/home/test/Downloads/hmm"_L1,
+                         "/home/test/Downloads2"_L1,
+                         "/home/test/Downloads2/"_L1,
+                         "/home/test/Downloads2/hmm"_L1,
                      },
                  .remotePathsToCheckWhenServerIsWindows =
                      {
                          {},
-                         "C:/"_l1,
-                         "C:/nope"_l1,
-                         "C:/Users/test/Downloads"_l1,
-                         "C:/Users/test/Downloads/"_l1,
-                         "C:/Users/test/Downloads/hmm"_l1,
-                         "C:/Users/test/Downloads2"_l1,
-                         "C:/Users/test/Downloads2/"_l1,
-                         "C:/Users/test/Downloads2/hmm"_l1,
+                         "C:/"_L1,
+                         "C:/nope"_L1,
+                         "C:/Users/test/Downloads"_L1,
+                         "C:/Users/test/Downloads/"_L1,
+                         "C:/Users/test/Downloads/hmm"_L1,
+                         "C:/Users/test/Downloads2"_L1,
+                         "C:/Users/test/Downloads2/"_L1,
+                         "C:/Users/test/Downloads2/hmm"_L1,
                      },
                  .expectedLocalPaths = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
@@ -137,24 +139,24 @@ namespace tremotesf {
                              {},
                              {},
                              {},
-                             "G:/downloads"_l1,
-                             "G:/downloads"_l1,
-                             "G:/downloads/hmm"_l1,
-                             "G:/downloads2"_l1,
-                             "G:/downloads2"_l1,
-                             "G:/downloads2/hmm"_l1,
+                             "G:/downloads"_L1,
+                             "G:/downloads"_L1,
+                             "G:/downloads/hmm"_L1,
+                             "G:/downloads2"_L1,
+                             "G:/downloads2"_L1,
+                             "G:/downloads2/hmm"_L1,
                          };
                      } else {
                          return {
                              {},
                              {},
                              {},
-                             "/mnt/downloads"_l1,
-                             "/mnt/downloads"_l1,
-                             "/mnt/downloads/hmm"_l1,
-                             "/mnt/downloads2"_l1,
-                             "/mnt/downloads2"_l1,
-                             "/mnt/downloads2/hmm"_l1,
+                             "/mnt/downloads"_L1,
+                             "/mnt/downloads"_L1,
+                             "/mnt/downloads/hmm"_L1,
+                             "/mnt/downloads2"_L1,
+                             "/mnt/downloads2"_L1,
+                             "/mnt/downloads2/hmm"_L1,
                          };
                      }
                  }()}
@@ -165,31 +167,31 @@ namespace tremotesf {
             check(
                 {.mountedLocalDirectories = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
-                         return {"G:/root"_l1};
+                         return {"G:/root"_L1};
                      } else {
-                         return {"/mnt/root"_l1};
+                         return {"/mnt/root"_L1};
                      }
                  }(),
-                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/"_l1},
-                 .mountedRemoteDirectoriesWhenServerIsWindows = {"D:/"_l1},
+                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/"_L1},
+                 .mountedRemoteDirectoriesWhenServerIsWindows = {"D:/"_L1},
 
                  .localPathsToCheck = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
-                         return {"G:/root"_l1, "G:/root/"_l1, "G:/root/hmm"_l1, "G:/root/hmm/"_l1};
+                         return {"G:/root"_L1, "G:/root/"_L1, "G:/root/hmm"_L1, "G:/root/hmm/"_L1};
                      } else {
-                         return {"/mnt/root"_l1, "/mnt/root/"_l1, "/mnt/root/hmm"_l1, "/mnt/root/hmm/"_l1};
+                         return {"/mnt/root"_L1, "/mnt/root/"_L1, "/mnt/root/hmm"_L1, "/mnt/root/hmm/"_L1};
                      }
                  }(),
-                 .expectedRemotePathsWhenServerIsUnix = {"/"_l1, "/"_l1, "/hmm"_l1, "/hmm"_l1},
-                 .expectedRemotePathsWhenServerIsWindows = {"D:/"_l1, "D:/"_l1, "D:/hmm"_l1, "D:/hmm"},
+                 .expectedRemotePathsWhenServerIsUnix = {"/"_L1, "/"_L1, "/hmm"_L1, "/hmm"_L1},
+                 .expectedRemotePathsWhenServerIsWindows = {"D:/"_L1, "D:/"_L1, "D:/hmm"_L1, "D:/hmm"},
 
-                 .remotePathsToCheckWhenServerIsUnix = {"/"_l1, "/hmm"_l1, "/hmm/"_l1},
-                 .remotePathsToCheckWhenServerIsWindows = {"D:/"_l1, "D:/hmm"_l1, "D:/hmm/"_l1},
+                 .remotePathsToCheckWhenServerIsUnix = {"/"_L1, "/hmm"_L1, "/hmm/"_L1},
+                 .remotePathsToCheckWhenServerIsWindows = {"D:/"_L1, "D:/hmm"_L1, "D:/hmm/"_L1},
                  .expectedLocalPaths = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
-                         return {"G:/root"_l1, "G:/root/hmm"_l1, "G:/root/hmm"_l1};
+                         return {"G:/root"_L1, "G:/root/hmm"_L1, "G:/root/hmm"_L1};
                      } else {
-                         return {"/mnt/root"_l1, "/mnt/root/hmm"_l1, "/mnt/root/hmm"_l1};
+                         return {"/mnt/root"_L1, "/mnt/root/hmm"_L1, "/mnt/root/hmm"_L1};
                      }
                  }()}
             );
@@ -199,41 +201,41 @@ namespace tremotesf {
             check(
                 {.mountedLocalDirectories = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
-                         return {"//42.42.42.42/D"_l1};
+                         return {"//42.42.42.42/D"_L1};
                      } else {
-                         return {"/remote"_l1};
+                         return {"/remote"_L1};
                      }
                  }(),
-                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/"_l1},
-                 .mountedRemoteDirectoriesWhenServerIsWindows = {"D:"_l1},
+                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/"_L1},
+                 .mountedRemoteDirectoriesWhenServerIsWindows = {"D:"_L1},
 
                  .localPathsToCheck = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
                          return {
-                             "//42.42.42.42/D"_l1,
-                             "//42.42.42.42/D/"_l1,
-                             "//42.42.42.42/D/hmm"_l1,
-                             "//42.42.42.42/D/hmm/"_l1,
+                             "//42.42.42.42/D"_L1,
+                             "//42.42.42.42/D/"_L1,
+                             "//42.42.42.42/D/hmm"_L1,
+                             "//42.42.42.42/D/hmm/"_L1,
                          };
                      } else {
                          return {
-                             "/remote"_l1,
-                             "/remote/"_l1,
-                             "/remote/hmm"_l1,
-                             "/remote/hmm/"_l1,
+                             "/remote"_L1,
+                             "/remote/"_L1,
+                             "/remote/hmm"_L1,
+                             "/remote/hmm/"_L1,
                          };
                      }
                  }(),
-                 .expectedRemotePathsWhenServerIsUnix = {"/"_l1, "/"_l1, "/hmm"_l1, "/hmm"_l1},
-                 .expectedRemotePathsWhenServerIsWindows = {"D:/"_l1, "D:/"_l1, "D:/hmm"_l1, "D:/hmm"_l1},
+                 .expectedRemotePathsWhenServerIsUnix = {"/"_L1, "/"_L1, "/hmm"_L1, "/hmm"_L1},
+                 .expectedRemotePathsWhenServerIsWindows = {"D:/"_L1, "D:/"_L1, "D:/hmm"_L1, "D:/hmm"_L1},
 
-                 .remotePathsToCheckWhenServerIsUnix = {"/"_l1, "/hmm"_l1, "/hmm/"_l1},
-                 .remotePathsToCheckWhenServerIsWindows = {"D:/"_l1, "D:/hmm"_l1, "D:/hmm/"_l1},
+                 .remotePathsToCheckWhenServerIsUnix = {"/"_L1, "/hmm"_L1, "/hmm/"_L1},
+                 .remotePathsToCheckWhenServerIsWindows = {"D:/"_L1, "D:/hmm"_L1, "D:/hmm/"_L1},
                  .expectedLocalPaths = []() -> std::vector<QString> {
                      if constexpr (targetOs == TargetOs::Windows) {
-                         return {"//42.42.42.42/D"_l1, "//42.42.42.42/D/hmm"_l1, "//42.42.42.42/D/hmm"_l1};
+                         return {"//42.42.42.42/D"_L1, "//42.42.42.42/D/hmm"_L1, "//42.42.42.42/D/hmm"_L1};
                      } else {
-                         return {"/remote"_l1, "/remote/hmm"_l1, "/remote/hmm"_l1};
+                         return {"/remote"_L1, "/remote/hmm"_L1, "/remote/hmm"_L1};
                      }
                  }()}
             );

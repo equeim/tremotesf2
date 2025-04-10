@@ -16,12 +16,12 @@
 #include "log/log.h"
 #include "tremotesf_dbus_generated/org.freedesktop.FileManager1.h"
 #include "desktoputils.h"
-#include "literals.h"
 #include "stdutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 
 using namespace std::views;
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
@@ -32,8 +32,9 @@ namespace tremotesf {
             FreedesktopFileManagerLauncher() = default;
 
         protected:
-            void launchFileManagerAndSelectFiles(std::vector<FilesInDirectory> filesToSelect, QWidget* parentWidget)
-                override {
+            void launchFileManagerAndSelectFiles(
+                std::vector<FilesInDirectory> filesToSelect, QWidget* parentWidget
+            ) override {
                 mCoroutineScope.launch(launchFileManagerAndSelectFilesImpl(std::move(filesToSelect), parentWidget));
             }
 
@@ -42,8 +43,8 @@ namespace tremotesf {
                 std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             ) {
                 OrgFreedesktopFileManager1Interface interface(
-                    "org.freedesktop.FileManager1"_l1,
-                    "/org/freedesktop/FileManager1"_l1,
+                    "org.freedesktop.FileManager1"_L1,
+                    "/org/freedesktop/FileManager1"_L1,
                     QDBusConnection::sessionBus()
                 );
                 interface.setTimeout(desktoputils::defaultDbusTimeout);

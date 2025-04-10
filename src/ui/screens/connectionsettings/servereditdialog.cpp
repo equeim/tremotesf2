@@ -39,9 +39,11 @@
 #include "rpc/servers.h"
 #include "serversmodel.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
-        constexpr auto removeIconName = "list-remove"_l1;
+        constexpr auto removeIconName = "list-remove"_L1;
 
         constexpr std::array proxyTypeComboBoxValues{
             ConnectionConfiguration::ProxyType::Default,
@@ -67,11 +69,13 @@ namespace tremotesf {
             setMinimumHeight(192);
             setSelectionMode(QAbstractItemView::SingleSelection);
             setItemDelegate(new CommonDelegate(this));
-            setHorizontalHeaderLabels({//: Column title in the list of mounted directories
-                                       qApp->translate("tremotesf", "Local directory"),
-                                       //: Column title in the list of mounted directories
-                                       qApp->translate("tremotesf", "Remote directory")
-            });
+            setHorizontalHeaderLabels(
+                {//: Column title in the list of mounted directories
+                 qApp->translate("tremotesf", "Local directory"),
+                 //: Column title in the list of mounted directories
+                 qApp->translate("tremotesf", "Remote directory")
+                }
+            );
             horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
             horizontalHeader()->setSectionsClickable(false);
             verticalHeader()->setVisible(false);
@@ -159,7 +163,7 @@ namespace tremotesf {
             setWindowTitle(qApp->translate("tremotesf", "Add Server"));
 
             mPortSpinBox->setValue(9091);
-            mApiPathLineEdit->setText("/transmission/rpc"_l1);
+            mApiPathLineEdit->setText("/transmission/rpc"_L1);
             mProxyTypeComboBox->setCurrentIndex(
                 // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(proxyTypeComboBoxValues, ConnectionConfiguration::ProxyType::Default).value()
@@ -429,7 +433,7 @@ namespace tremotesf {
         mMountedDirectoriesWidget = new MountedDirectoriesWidget(0, 2);
         mountedDirectoriesLayout->addWidget(mMountedDirectoriesWidget, 0, 0, 1, 2);
         auto addDirectoriesButton = new QPushButton(
-            QIcon::fromTheme("list-add"_l1),
+            QIcon::fromTheme("list-add"_L1),
             //: Button
             qApp->translate("tremotesf", "Add"),
             this
@@ -576,7 +580,7 @@ namespace tremotesf {
         );
         fileDialog->setAttribute(Qt::WA_DeleteOnClose);
         fileDialog->setFileMode(QFileDialog::ExistingFile);
-        fileDialog->setMimeTypeFilters({"application/x-pem-file"_l1});
+        fileDialog->setMimeTypeFilters({"application/x-pem-file"_L1});
 
         QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
             try {

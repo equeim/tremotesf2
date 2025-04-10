@@ -12,11 +12,13 @@
 #include "magnetlinkparser.h"
 #include "stdutils.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
-        constexpr auto xtKey = "xt"_l1;
-        constexpr auto xtValuePrefix = "urn:btih:"_l1;
-        constexpr auto trKey = "tr"_l1;
+        constexpr auto xtKey = "xt"_L1;
+        constexpr auto xtValuePrefix = "urn:btih:"_L1;
+        constexpr auto trKey = "tr"_L1;
     }
 
     TorrentMagnetLink parseMagnetLink(const QUrl& url) {

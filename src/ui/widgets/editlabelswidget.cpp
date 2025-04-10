@@ -19,10 +19,12 @@
 #include "rpc/torrent.h"
 #include "stdutils.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         const QIcon& tagIcon() {
-            static const auto icon = QIcon::fromTheme("tag"_l1);
+            static const auto icon = QIcon::fromTheme("tag"_L1);
             return icon;
         }
     }
@@ -54,7 +56,7 @@ namespace tremotesf {
         QObject::connect(mLabelsList->model(), &QAbstractItemModel::rowsRemoved, this, updateListVisibility);
 
         const auto removeAction =
-            new QAction(QIcon::fromTheme("list-remove"_l1), qApp->translate("tremotesf", "&Remove"), mLabelsList);
+            new QAction(QIcon::fromTheme("list-remove"_L1), qApp->translate("tremotesf", "&Remove"), mLabelsList);
         mLabelsList->addAction(removeAction);
         removeAction->setShortcut(QKeySequence::Delete);
         QObject::connect(removeAction, &QAction::triggered, this, [this] { qDeleteAll(mLabelsList->selectedItems()); });
@@ -77,7 +79,7 @@ namespace tremotesf {
         QObject::connect(rpc, &Rpc::connectedChanged, this, &EditLabelsWidget::updateComboBoxLabels);
 
         const auto addButton =
-            new QPushButton(QIcon::fromTheme("list-add"_l1), qApp->translate("tremotesf", "Add"), this);
+            new QPushButton(QIcon::fromTheme("list-add"_L1), qApp->translate("tremotesf", "Add"), this);
         layout->addWidget(addButton, 1, 1);
         addButton->setEnabled(false);
         const auto updateButtonEnabledState = [=, this] {

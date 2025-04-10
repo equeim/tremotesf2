@@ -16,7 +16,8 @@
 #include <KTitleWidget>
 
 #include "fileutils.h"
-#include "literals.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent) {
@@ -27,7 +28,7 @@ namespace tremotesf {
 
         auto titleWidget = new KTitleWidget(this);
         titleWidget->setIcon(qApp->windowIcon(), KTitleWidget::ImageLeft);
-        titleWidget->setText(QString::fromLatin1("%1 %2").arg(TREMOTESF_APP_NAME ""_l1, qApp->applicationVersion()));
+        titleWidget->setText(QString::fromLatin1("%1 %2").arg(TREMOTESF_APP_NAME ""_L1, qApp->applicationVersion()));
         layout->addWidget(titleWidget);
 
         auto tabWidget = new QTabWidget(this);

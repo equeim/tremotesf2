@@ -11,17 +11,18 @@
 #include <QSettings>
 
 #include "log/log.h"
-#include "literals.h"
 #include "target_os.h"
+
+using namespace Qt::StringLiterals;
 
 #define SETTINGS_PROPERTY_DEF(type, name, key, defaultValue)                                                 \
     const QVariant& name##_defaultValue() {                                                                  \
         static const auto v = QVariant::fromValue<type>(defaultValue);                                       \
         return v;                                                                                            \
     }                                                                                                        \
-    type Settings::get_##name() const { return getValue<type>(mSettings, key##_l1, name##_defaultValue()); } \
+    type Settings::get_##name() const { return getValue<type>(mSettings, key##_L1, name##_defaultValue()); } \
     void Settings::set_##name(type value) {                                                                  \
-        if (setValue<type>(mSettings, key##_l1, std::move(value), name##_defaultValue())) {                  \
+        if (setValue<type>(mSettings, key##_L1, std::move(value), name##_defaultValue())) {                  \
             emit name##Changed();                                                                            \
         }                                                                                                    \
     }

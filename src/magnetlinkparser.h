@@ -9,12 +9,11 @@
 #include <vector>
 
 #include "log/formatters.h"
-#include "literals.h"
 
 class QUrl;
 
 namespace tremotesf {
-    inline constexpr auto magnetScheme = "magnet"_l1;
+    inline constexpr auto magnetScheme = QLatin1String("magnet");
 
     struct TorrentMagnetLink {
         QString infoHashV1;

@@ -16,6 +16,8 @@
 #include "torrentsproxymodel.h"
 #include "desktoputils.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     QVariant AllTrackersModel::data(const QModelIndex& index, int role) const {
         if (!index.isValid()) {
@@ -29,7 +31,7 @@ namespace tremotesf {
             if (item.tracker.isEmpty()) {
                 return desktoputils::standardDirIcon();
             }
-            static const auto networkServerIcon = QIcon::fromTheme("network-server"_l1);
+            static const auto networkServerIcon = QIcon::fromTheme("network-server"_L1);
             return networkServerIcon;
         }
         case Qt::DisplayRole:
