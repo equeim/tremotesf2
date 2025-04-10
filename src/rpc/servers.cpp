@@ -135,21 +135,17 @@ namespace tremotesf {
 
     QVariant LastTorrents::toVariant() const {
         return toContainer<QVariantList>(torrents | std::views::transform([](const LastTorrents::Torrent& torrent) {
-                                             return QVariant(QVariantMap{
-                                                 {lastTorrentsHashStringKey, torrent.hashString},
-                                                 {lastTorrentsFinishedKey, torrent.finished}
-                                             });
+                                             return QVariant(
+                                                 QVariantMap{
+                                                     {lastTorrentsHashStringKey, torrent.hashString},
+                                                     {lastTorrentsFinishedKey, torrent.finished}
+                                                 }
+                                             );
                                          }));
     }
 
     LastTorrents LastTorrents::fromVariant(const QVariant& var) {
-        if (!var.isValid() ||
-#if QT_VERSION_MAJOR >= 6
-            var.typeId() != QMetaType::QVariantList
-#else
-            var.type() != QVariant::List
-#endif
-        ) {
+        if (!var.isValid() || var.typeId() != QMetaType::QVariantList) {
             return {};
         }
         return {

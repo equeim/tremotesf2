@@ -20,7 +20,6 @@ namespace tremotesf {
         void onAboutToQuit();
     };
 
-#if QT_VERSION_MAJOR >= 6
     class ApplicationQuitEventFilter : public QObject {
         Q_OBJECT
     public:
@@ -29,7 +28,6 @@ namespace tremotesf {
         bool eventFilter(QObject* watched, QEvent* event) override;
         bool isQuittingApplication{};
     };
-#endif
 
     class SaveWindowStateHandler : public QObject {
         Q_OBJECT
@@ -42,9 +40,7 @@ namespace tremotesf {
     private:
         QWidget* mWindow{};
         std::function<void()> mSaveState{};
-#if QT_VERSION_MAJOR >= 6
         ApplicationQuitEventFilter mApplicationEventFilter{};
-#endif
     };
 }
 

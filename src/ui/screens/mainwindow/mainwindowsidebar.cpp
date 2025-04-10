@@ -255,14 +255,7 @@ namespace tremotesf {
         });
         layout->addWidget(searchLineEdit);
 
-        auto* const searchShortcut = new QShortcut(
-#if QT_VERSION_MAJOR >= 6
-            QKeyCombination(Qt::ControlModifier, Qt::Key_F),
-#else
-            QKeySequence(static_cast<int>(Qt::ControlModifier) | static_cast<int>(Qt::Key_F)),
-#endif
-            this
-        );
+        auto* const searchShortcut = new QShortcut(QKeyCombination(Qt::ControlModifier, Qt::Key_F), this);
         QObject::connect(searchShortcut, &QShortcut::activated, this, [searchLineEdit] {
             searchLineEdit->selectAll();
             searchLineEdit->setFocus();

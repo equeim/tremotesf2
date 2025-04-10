@@ -11,14 +11,10 @@ set(CMAKE_AUTORCC ON)
 find_package(Threads REQUIRED)
 find_package(fmt 9.1 REQUIRED)
 find_package(cxxopts 3.1.1 REQUIRED)
-find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
+find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
 
-if (TREMOTESF_QT6)
-    set(minimum_kf_version 5.245)
-else()
-    set(minimum_kf_version 5.103)
-endif()
-find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WidgetsAddons ${minimum_kf_version} REQUIRED)
+set(minimum_kf_version 6.6.0)
+find_package(KF6WidgetsAddons ${minimum_kf_version} REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
@@ -222,7 +218,7 @@ target_sources(tremotesf_objects
     ui/widgets/torrentremotedirectoryselectionwidget.h
 )
 
-target_link_libraries(tremotesf_objects PUBLIC cxxopts::cxxopts Threads::Threads fmt::fmt Qt::Core Qt::Network Qt::Widgets KF${TREMOTESF_QT_VERSION_MAJOR}::WidgetsAddons)
+target_link_libraries(tremotesf_objects PUBLIC cxxopts::cxxopts Threads::Threads fmt::fmt Qt::Core Qt::Network Qt::Widgets KF6::WidgetsAddons)
 
 # We need these as CMake variables for configure_file() call below
 set(TREMOTESF_APP_NAME "Tremotesf")
@@ -251,9 +247,9 @@ if (UNIX)
         startup/signalhandler_unix.cpp
     )
     if (TREMOTESF_UNIX_FREEDESKTOP)
-        find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
-        find_package(KF${TREMOTESF_QT_VERSION_MAJOR}WindowSystem ${minimum_kf_version} REQUIRED)
-        target_link_libraries(tremotesf_objects PUBLIC Qt::DBus KF${TREMOTESF_QT_VERSION_MAJOR}::WindowSystem)
+        find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS DBus)
+        find_package(KF6WindowSystem ${minimum_kf_version} REQUIRED)
+        target_link_libraries(tremotesf_objects PUBLIC Qt::DBus KF6::WindowSystem)
 
         qt_add_dbus_adaptor(
             dbus_generated
@@ -428,7 +424,7 @@ if (WIN32 OR APPLE)
         TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
         QT_STATICPLUGIN
     )
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
+    find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Svg)
     target_link_libraries(tremotesf PUBLIC Qt::GuiPrivate Qt::Svg)
     set(exclude_plugins bearer iconengines imageformats)
     if (WIN32)
@@ -438,7 +434,7 @@ if (WIN32 OR APPLE)
 endif ()
 
 if (BUILD_TESTING)
-    find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Test)
+    find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Test)
 
     add_executable(itemlistupdater_test itemlistupdater_test.cpp)
     add_test(NAME itemlistupdater_test COMMAND itemlistupdater_test)

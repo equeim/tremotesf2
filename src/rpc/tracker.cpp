@@ -20,12 +20,14 @@
 namespace tremotesf {
     using namespace impl;
     namespace {
-        constexpr auto statusMapper = EnumMapper(std::array{
-            EnumMapping(Tracker::Status::Inactive, 0),
-            EnumMapping(Tracker::Status::WaitingForUpdate, 1),
-            EnumMapping(Tracker::Status::QueuedForUpdate, 2),
-            EnumMapping(Tracker::Status::Updating, 3)
-        });
+        constexpr auto statusMapper = EnumMapper(
+            std::array{
+                EnumMapping(Tracker::Status::Inactive, 0),
+                EnumMapping(Tracker::Status::WaitingForUpdate, 1),
+                EnumMapping(Tracker::Status::QueuedForUpdate, 2),
+                EnumMapping(Tracker::Status::Updating, 3)
+            }
+        );
     }
 
     Tracker::Tracker(int id, const QJsonObject& trackerMap) : mId(id) { update(trackerMap); }
@@ -82,7 +84,6 @@ namespace tremotesf {
 }
 
 #ifdef TREMOTESF_REGISTRABLE_DOMAIN_QT
-#    if QT_VERSION_MAJOR >= 6
 // Private Qt API
 bool qIsEffectiveTLD(QStringView domain);
 
@@ -104,24 +105,6 @@ namespace {
         return fullDomain;
     }
 }
-#    else
-namespace {
-    QString registrableDomainFromDomain(const QString& fullDomain, const QUrl& url) {
-        SUPPRESS_DEPRECATED_WARNINGS_BEGIN
-        const auto tld = url.topLevelDomain();
-        SUPPRESS_DEPRECATED_WARNINGS_END
-        if (tld.isEmpty()) {
-            return fullDomain;
-        }
-        const auto dotBeforeTldIndex = fullDomain.lastIndexOf(tld);
-        if (dotBeforeTldIndex == -1) {
-            return fullDomain;
-        }
-        const auto dotBeforeRegistrableIndex = fullDomain.lastIndexOf('.', dotBeforeTldIndex - 1);
-        return fullDomain.mid(dotBeforeRegistrableIndex + 1);
-    }
-}
-#    endif
 #else
 namespace {
     QString registrableDomainFromDomain(const QString& fullDomain, [[maybe_unused]] const QUrl& url) {

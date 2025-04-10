@@ -49,7 +49,6 @@ namespace tremotesf {
         Servers::instance()->sync();
     }
 
-#if QT_VERSION_MAJOR >= 6
     ApplicationQuitEventFilter::ApplicationQuitEventFilter(QObject* parent) : QObject(parent) {
         qApp->installEventFilter(this);
     }
@@ -63,7 +62,6 @@ namespace tremotesf {
         }
         return false;
     }
-#endif
 
     SaveWindowStateHandler::SaveWindowStateHandler(QWidget* window, std::function<void()> saveState, QObject* parent)
         : QObject(parent), mWindow(window), mSaveState(std::move(saveState)) {
@@ -83,12 +81,10 @@ namespace tremotesf {
         case QEvent::WindowDeactivate:
         case QEvent::Hide:
             debug().log("Received {} event for {}", event->type(), *window);
-#if QT_VERSION_MAJOR >= 6
             if (mApplicationEventFilter.isQuittingApplication) {
                 debug().log("Already quitting application, ignore");
                 break;
             }
-#endif
             if (event->type() == QEvent::WindowDeactivate && window->isHidden()) {
                 debug().log("Window is hidden, ignore");
                 break;

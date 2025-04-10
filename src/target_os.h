@@ -5,11 +5,7 @@
 #ifndef TREMOTESF_TARGET_OS_H
 #define TREMOTESF_TARGET_OS_H
 
-#if __has_include(<QtSystemDetection>)
-#    include <QtSystemDetection>
-#else
-#    include <QtGlobal>
-#endif
+#include <QtSystemDetection>
 
 namespace tremotesf {
     enum class TargetOs { UnixFreedesktop, UnixMacOS, Windows };

@@ -37,13 +37,11 @@ namespace fmt {
     struct formatter<QSslCertificate> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(const QSslCertificate& certificate, fmt::format_context& ctx) const {
             // QSslCertificate::toText is implemented only for OpenSSL backend
-#if QT_VERSION_MAJOR >= 6
             using tremotesf::operator""_l1;
             static const bool isOpenSSL = (QSslSocket::activeBackend() == "openssl"_l1);
             if (!isOpenSSL) {
                 return tremotesf::impl::QDebugFormatter<QSslCertificate>{}.format(certificate, ctx);
             }
-#endif
             return fmt::formatter<QString>{}.format(certificate.toText(), ctx);
         }
     };
@@ -84,14 +82,6 @@ namespace fmt {
                     return "TlsV1_3OrLater";
                 case QSsl::UnknownProtocol:
                     return "UnknownProtocol";
-#if QT_VERSION_MAJOR < 6
-                case QSsl::SslV3:
-                    return "SslV3";
-                case QSsl::SslV2:
-                    return "SslV2";
-                case QSsl::TlsV1SslV3:
-                    return "TlsV1SslV3";
-#endif
                 }
                 SUPPRESS_DEPRECATED_WARNINGS_END
                 return std::nullopt;
@@ -150,18 +140,22 @@ namespace tremotesf::impl {
             if (reply->url() == reply->request().url()) {
                 detailedErrorMessage += QString::fromStdString(fmt::format("\nURL: {}", reply->url().toString()));
             } else {
-                detailedErrorMessage += QString::fromStdString(fmt::format(
-                    "\nOriginal URL: {}\nRedirected URL: {}",
-                    reply->request().url().toString(),
-                    reply->url().toString()
-                ));
+                detailedErrorMessage += QString::fromStdString(
+                    fmt::format(
+                        "\nOriginal URL: {}\nRedirected URL: {}",
+                        reply->request().url().toString(),
+                        reply->url().toString()
+                    )
+                );
             }
             if (const auto status = httpStatus(reply); !status.isEmpty()) {
-                detailedErrorMessage += QString::fromStdString(fmt::format(
-                    "\nHTTP status: {}\nConnection was encrypted: {}",
-                    status,
-                    reply->attribute(QNetworkRequest::ConnectionEncryptedAttribute).toBool()
-                ));
+                detailedErrorMessage += QString::fromStdString(
+                    fmt::format(
+                        "\nHTTP status: {}\nConnection was encrypted: {}",
+                        status,
+                        reply->attribute(QNetworkRequest::ConnectionEncryptedAttribute).toBool()
+                    )
+                );
                 if (!reply->rawHeaderPairs().isEmpty()) {
                     detailedErrorMessage += "\nReply headers:"_l1;
                     for (const QNetworkReply::RawHeaderPair& pair : reply->rawHeaderPairs()) {
@@ -176,13 +170,15 @@ namespace tremotesf::impl {
                 detailedErrorMessage += QString::fromStdString(fmt::format("\n\n{} TLS errors:", sslErrors.size()));
                 int i = 1;
                 for (const QSslError& sslError : sslErrors) {
-                    detailedErrorMessage += QString::fromStdString(fmt::format(
-                        "\n\n {}. {}: {} on certificate:\n - {}",
-                        i,
-                        sslError.error(),
-                        sslError.errorString(),
-                        sslError.certificate()
-                    ));
+                    detailedErrorMessage += QString::fromStdString(
+                        fmt::format(
+                            "\n\n {}. {}: {} on certificate:\n - {}",
+                            i,
+                            sslError.error(),
+                            sslError.errorString(),
+                            sslError.certificate()
+                        )
+                    );
                     ++i;
                 }
             }
@@ -254,11 +250,9 @@ namespace tremotesf::impl {
                 mAuthorizationHeaderValue = QByteArray("Basic ").append(base64Credentials);
             }
             if (https) {
-#if QT_VERSION_MAJOR >= 6
                 debug().log(" - Available TLS backends: {}", QSslSocket::availableBackends());
                 debug().log(" - Active TLS backend: {}", QSslSocket::activeBackend());
                 debug().log(" - Supported TLS protocols: {}", QSslSocket::supportedProtocols());
-#endif
                 debug().log(" - TLS library version: {}", QSslSocket::sslLibraryVersionString());
                 debug().log(
                     " - Manually validating server's certificate chain: {}",
@@ -315,10 +309,12 @@ namespace tremotesf::impl {
     }
 
     QByteArray RequestRouter::makeRequestData(QLatin1String method, QJsonObject arguments) {
-        return QJsonDocument(QJsonObject{
-                                 {QStringLiteral("method"), QJsonValue(QString(method))},
-                                 {QStringLiteral("arguments"), QJsonValue(std::move(arguments))},
-                             })
+        return QJsonDocument(
+                   QJsonObject{
+                       {QStringLiteral("method"), QJsonValue(QString(method))},
+                       {QStringLiteral("arguments"), QJsonValue(std::move(arguments))},
+                   }
+        )
             .toJson(QJsonDocument::Compact);
     }
 

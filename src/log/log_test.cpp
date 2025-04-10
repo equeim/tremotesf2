@@ -80,7 +80,6 @@ private slots:
         printlnStdout(fmt::runtime("{}"), str);
     }
 
-#if QT_VERSION_MAJOR >= 6
     void stdoutQUtf8StringView() {
         const QUtf8StringView str = "foo";
         printlnStdout(str);
@@ -96,7 +95,6 @@ private slots:
         printlnStdout(FMT_STRING("{}"), str);
         printlnStdout(fmt::runtime("{}"), str);
     }
-#endif
 
     void stdoutQVariant() {
         const QVariant value = "foo";
@@ -185,7 +183,6 @@ private slots:
         info().log(fmt::runtime("{}"), str);
     }
 
-#if QT_VERSION_MAJOR >= 6
     void infoQUtf8StringView() {
         const QUtf8StringView str = "foo";
         info().log(str);
@@ -201,7 +198,6 @@ private slots:
         info().log(FMT_STRING("{}"), str);
         info().log(fmt::runtime("{}"), str);
     }
-#endif
 
     void infoQVariant() {
         const QVariant value = "foo";

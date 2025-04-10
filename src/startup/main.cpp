@@ -103,9 +103,7 @@ namespace {
         debug().log("Current locale is: {}", locale.name());
         debug().log("Language: {}", locale.language());
         debug().log("Script: {}", locale.script());
-#if QT_VERSION_MAJOR >= 6
         debug().log("Territory: {}", locale.territory());
-#endif
         debug().log("UI languages: {}", locale.uiLanguages());
     }
 
@@ -170,10 +168,6 @@ int main(int argc, char** argv) {
     //
     // QApplication initialization
     //
-#if QT_VERSION_MAJOR < 6
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
     const QApplication app(argc, argv);
 
     if (shouldExitBecauseAnotherInstanceIsRunning(args)) {
@@ -207,13 +201,7 @@ int main(int argc, char** argv) {
 #ifdef TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
             resolveExternalBundledResourcesPath("qt-translations"_l1);
 #else
-#    if QT_VERSION_MAJOR >= 6
-            QLibraryInfo::path(
-#    else
-            QLibraryInfo::location(
-#    endif
-                QLibraryInfo::TranslationsPath
-            );
+            QLibraryInfo::path(QLibraryInfo::TranslationsPath);
 #endif
         if (loadTranslation(qtTranslator, "qt"_l1, "_"_l1, qtTranslationsPath)) {
             info().log("Loaded Qt translation {}", qtTranslator.filePath());

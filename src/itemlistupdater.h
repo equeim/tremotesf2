@@ -13,11 +13,7 @@
 #include <stdexcept>
 #include <vector>
 
-#if __has_include(<QtClassHelperMacros>)
-#    include <QtClassHelperMacros>
-#else
-#    include <QtGlobal>
-#endif
+#include <QtClassHelperMacros>
 
 namespace tremotesf {
     class ItemBatchProcessor {
