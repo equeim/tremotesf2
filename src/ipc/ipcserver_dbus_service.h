@@ -7,8 +7,6 @@
 
 #include <QObject>
 
-#include "literals.h"
-
 class OrgFreedesktopApplicationAdaptor;
 
 namespace tremotesf {
@@ -18,8 +16,8 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        static constexpr auto desktopStartupIdField = "desktop-startup-id"_l1;
-        static constexpr auto xdgActivationTokenField = "activation-token"_l1;
+        static constexpr auto desktopStartupIdField = QLatin1String("desktop-startup-id");
+        static constexpr auto xdgActivationTokenField = QLatin1String("activation-token");
 
         IpcDbusService(IpcServerDbus* ipcServer, QObject* parent = nullptr);
 

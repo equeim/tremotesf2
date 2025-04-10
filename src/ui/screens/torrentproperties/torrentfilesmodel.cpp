@@ -13,6 +13,8 @@
 #include "rpc/serversettings.h"
 #include "rpc/rpc.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         void updateFile(TorrentFilesModelFile* treeFile, const TorrentFile& file) {
@@ -176,7 +178,7 @@ namespace tremotesf {
         const auto* entry = static_cast<const TorrentFilesModelEntry*>(index.internalPointer());
         QString path(entry->path());
         if (!entry->isDirectory() && entry->progress() < 1 && mRpc->serverSettings()->data().renameIncompleteFiles) {
-            path += ".part"_l1;
+            path += ".part"_L1;
         }
         return localTorrentDownloadDirectoryPath(mRpc, mTorrent) % '/' % path;
     }

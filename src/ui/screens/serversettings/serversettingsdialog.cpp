@@ -31,6 +31,8 @@
 #include "rpc/rpc.h"
 #include "ui/widgets/remotedirectoryselectionwidget.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         constexpr std::array encryptionModeComboBoxItems{
@@ -115,9 +117,10 @@ namespace tremotesf {
         settings->setAlternativeSpeedLimitsBeginTime(mLimitScheduleBeginTimeEdit->time());
         settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time());
 
-        settings->setAlternativeSpeedLimitsDays(static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(
-            mLimitScheduleDaysComboBox->currentData().toInt()
-        ));
+        settings->setAlternativeSpeedLimitsDays(
+            static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt(
+            ))
+        );
 
         settings->setPeerPort(mPeerPortSpinBox->value());
         settings->setRandomPortEnabled(mRandomPortCheckBox->isChecked());
@@ -161,7 +164,7 @@ namespace tremotesf {
             //: "Downloading" server setting page
             qApp->translate("tremotesf", "Downloading", "Noun")
         );
-        downloadingPageItem->setIcon(QIcon::fromTheme("folder-download"_l1));
+        downloadingPageItem->setIcon(QIcon::fromTheme("folder-download"_L1));
 
         auto downloadingPageLayout = new QFormLayout(mDownloadingPageWidget);
         downloadingPageLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
@@ -210,7 +213,7 @@ namespace tremotesf {
             //: "Seeding" server setting page
             qApp->translate("tremotesf", "Seeding", "Noun")
         );
-        seedingPageItem->setIcon(QIcon::fromTheme("network-server"_l1));
+        seedingPageItem->setIcon(QIcon::fromTheme("network-server"_L1));
 
         auto seedingPageLayout = new QGridLayout(mSeedingPageWidget);
 
@@ -250,7 +253,7 @@ namespace tremotesf {
             //: "Queue" server settings page
             qApp->translate("tremotesf", "Queue")
         );
-        queuePageItem->setIcon(QIcon::fromTheme("applications-utilities"_l1));
+        queuePageItem->setIcon(QIcon::fromTheme("applications-utilities"_L1));
 
         auto queuePageLayout = new QGridLayout(mQueuePageWidget);
 
@@ -306,7 +309,7 @@ namespace tremotesf {
             //: "Speed" server settings page
             qApp->translate("tremotesf", "Speed")
         );
-        speedPageItem->setIcon(QIcon::fromTheme("preferences-system-time"_l1));
+        speedPageItem->setIcon(QIcon::fromTheme("preferences-system-time"_L1));
 
         auto speedPageLayout = new QVBoxLayout(mSpeedPageWidget);
 
@@ -469,7 +472,7 @@ namespace tremotesf {
             //: "Network" server settings page
             qApp->translate("tremotesf", "Network")
         );
-        networkPageItem->setIcon(QIcon::fromTheme("preferences-system-network"_l1));
+        networkPageItem->setIcon(QIcon::fromTheme("preferences-system-network"_L1));
 
         auto networkPageLayout = new QVBoxLayout(mNetworkPageWidget);
 

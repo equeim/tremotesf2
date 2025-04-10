@@ -6,7 +6,8 @@
 #include <QRegularExpression>
 
 #include "pathutils.h"
-#include "literals.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     // We can't use QDir::to/fromNativeSeparators because it checks for current OS,
@@ -15,12 +16,12 @@ namespace tremotesf {
     namespace {
         constexpr auto windowsSeparatorChar = '\\';
         constexpr auto unixSeparatorChar = '/';
-        constexpr auto unixSeparatorString = "/"_l1;
+        constexpr auto unixSeparatorString = "/"_L1;
 
         enum class PathType { Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
 
         bool isWindowsUNCOrDOSDevicePath(QStringView path) {
-            static const QRegularExpression regex(R"(^(?:\\|//).*$)"_l1);
+            static const QRegularExpression regex(R"(^(?:\\|//).*$)"_L1);
             return regex.matchView(path).hasMatch();
         }
 
@@ -59,10 +60,10 @@ namespace tremotesf {
             const auto& regex = [pathType]() -> const QRegularExpression& {
                 if (pathType == PathType::WindowsUNCOrDOSDevicePath) {
                     // Don't collapse leading '//'
-                    static const QRegularExpression regex(R"((?!^)//+)"_l1);
+                    static const QRegularExpression regex(R"((?!^)//+)"_L1);
                     return regex;
                 }
-                static const QRegularExpression regex(R"(//+)"_l1);
+                static const QRegularExpression regex(R"(//+)"_L1);
                 return regex;
             }();
             path.replace(regex, unixSeparatorString);
@@ -93,7 +94,7 @@ namespace tremotesf {
     }
 
     bool isAbsoluteWindowsDOSFilePath(QStringView path) {
-        static const QRegularExpression regex(R"(^[A-Za-z]:[\\/]?.*$)"_l1);
+        static const QRegularExpression regex(R"(^[A-Za-z]:[\\/]?.*$)"_L1);
         return regex.matchView(path).hasMatch();
     }
 

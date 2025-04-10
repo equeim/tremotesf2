@@ -15,10 +15,11 @@
 
 #include <fmt/format.h>
 
-#include "literals.h"
 #include "macoshelpers.h"
 #include "target_os.h"
 #include "log/log.h"
+
+using namespace Qt::StringLiterals;
 
 namespace fmt {
     template<>
@@ -194,7 +195,8 @@ namespace tremotesf {
             const qint64 bytesWritten = file.write(remainingData.data(), static_cast<qint64>(remainingData.size()));
             if (bytesWritten == -1) {
                 // Error, throw
-                throw QFileError(fmt::format("Failed to write to {}: {}", fileDescription(file), errorDescription(file))
+                throw QFileError(
+                    fmt::format("Failed to write to {}: {}", fileDescription(file), errorDescription(file))
                 );
             }
             if (bytesWritten == static_cast<qint64>(remainingData.size())) {
@@ -293,9 +295,9 @@ namespace tremotesf {
 
             constexpr QLatin1String sessionIdFilePrefix = [] {
                 if constexpr (targetOs == TargetOs::Windows) {
-                    return "Transmission/tr_session_id_"_l1;
+                    return "Transmission/tr_session_id_"_L1;
                 } else {
-                    return "tr_session_id_"_l1;
+                    return "tr_session_id_"_L1;
                 }
             }();
         }

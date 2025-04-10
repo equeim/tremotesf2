@@ -13,9 +13,9 @@
 #endif
 
 #include "jsonutils.h"
-#include "literals.h"
-#include "pragmamacros.h"
 #include "stdutils.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     using namespace impl;
@@ -35,32 +35,32 @@ namespace tremotesf {
     bool Tracker::update(const QJsonObject& trackerMap) {
         bool changed = false;
 
-        QString announce(trackerMap.value("announce"_l1).toString());
+        QString announce(trackerMap.value("announce"_L1).toString());
         if (announce != mAnnounce) {
             changed = true;
             mAnnounce = std::move(announce);
             mSite = registrableDomainFromUrl(QUrl(mAnnounce));
         }
 
-        setChanged(mTier, trackerMap.value("tier"_l1).toInt(), changed);
+        setChanged(mTier, trackerMap.value("tier"_L1).toInt(), changed);
 
         const bool announceError =
-            (!trackerMap.value("lastAnnounceSucceeded"_l1).toBool() &&
-             trackerMap.value("lastAnnounceTime"_l1).toInt() != 0);
+            (!trackerMap.value("lastAnnounceSucceeded"_L1).toBool() &&
+             trackerMap.value("lastAnnounceTime"_L1).toInt() != 0);
         if (announceError) {
-            setChanged(mErrorMessage, trackerMap.value("lastAnnounceResult"_l1).toString(), changed);
+            setChanged(mErrorMessage, trackerMap.value("lastAnnounceResult"_L1).toString(), changed);
         } else {
             setChanged(mErrorMessage, {}, changed);
         }
 
-        constexpr auto announceStateKey = "announceState"_l1;
+        constexpr auto announceStateKey = "announceState"_L1;
         setChanged(mStatus, statusMapper.fromJsonValue(trackerMap.value(announceStateKey), announceStateKey), changed);
 
-        setChanged(mPeers, trackerMap.value("lastAnnouncePeerCount"_l1).toInt(), changed);
+        setChanged(mPeers, trackerMap.value("lastAnnouncePeerCount"_L1).toInt(), changed);
         setChanged(
             mSeeders,
             [&] {
-                if (auto seeders = trackerMap.value("seederCount"_l1).toInt(); seeders >= 0) {
+                if (auto seeders = trackerMap.value("seederCount"_L1).toInt(); seeders >= 0) {
                     return seeders;
                 }
                 return 0;
@@ -70,14 +70,14 @@ namespace tremotesf {
         setChanged(
             mLeechers,
             [&] {
-                if (auto leechers = trackerMap.value("leecherCount"_l1).toInt(); leechers >= 0) {
+                if (auto leechers = trackerMap.value("leecherCount"_L1).toInt(); leechers >= 0) {
                     return leechers;
                 }
                 return 0;
             }(),
             changed
         );
-        updateDateTime(mNextUpdateTime, trackerMap.value("nextAnnounceTime"_l1), changed);
+        updateDateTime(mNextUpdateTime, trackerMap.value("nextAnnounceTime"_L1), changed);
 
         return changed;
     }

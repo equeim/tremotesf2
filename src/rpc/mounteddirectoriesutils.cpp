@@ -10,6 +10,8 @@
 
 #include <QStringBuilder>
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     bool isServerLocalOrTorrentIsMounted(const Rpc* rpc, const Torrent* torrent) {
         if (rpc->isLocal()) {
@@ -44,7 +46,7 @@ namespace tremotesf {
         const auto& torrentName = torrent->data().name;
         if (torrent->data().singleFile && torrent->data().leftUntilDone > 0 &&
             rpc->serverSettings()->data().renameIncompleteFiles) {
-            return downloadDirectoryPath % '/' % torrentName % ".part"_l1;
+            return downloadDirectoryPath % '/' % torrentName % ".part"_L1;
         }
         return downloadDirectoryPath % '/' % torrentName;
     }

@@ -23,9 +23,10 @@
 #include "coroutines/network.h"
 #include "coroutines/threadpool.h"
 #include "log/log.h"
-#include "literals.h"
 #include "pragmamacros.h"
 #include "rpc.h"
+
+using namespace Qt::StringLiterals;
 
 DISABLE_RANGE_FORMATTING(QJsonObject)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QJsonObject)
@@ -37,8 +38,7 @@ namespace fmt {
     struct formatter<QSslCertificate> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(const QSslCertificate& certificate, fmt::format_context& ctx) const {
             // QSslCertificate::toText is implemented only for OpenSSL backend
-            using tremotesf::operator""_l1;
-            static const bool isOpenSSL = (QSslSocket::activeBackend() == "openssl"_l1);
+            static const bool isOpenSSL = (QSslSocket::activeBackend() == "openssl"_L1);
             if (!isOpenSSL) {
                 return tremotesf::impl::QDebugFormatter<QSslCertificate>{}.format(certificate, ctx);
             }
@@ -108,11 +108,11 @@ namespace tremotesf::impl {
         const auto authorizationHeader = QByteArrayLiteral("Authorization");
 
         QJsonObject getReplyArguments(const QJsonObject& parseResult) {
-            return parseResult.value("arguments"_l1).toObject();
+            return parseResult.value("arguments"_L1).toObject();
         }
 
         bool isResultSuccessful(const QJsonObject& parseResult) {
-            return (parseResult.value("result"_l1).toString() == "success"_l1);
+            return (parseResult.value("result"_L1).toString() == "success"_L1);
         }
 
         QString httpStatus(QNetworkReply* reply) {
@@ -157,14 +157,14 @@ namespace tremotesf::impl {
                     )
                 );
                 if (!reply->rawHeaderPairs().isEmpty()) {
-                    detailedErrorMessage += "\nReply headers:"_l1;
+                    detailedErrorMessage += "\nReply headers:"_L1;
                     for (const QNetworkReply::RawHeaderPair& pair : reply->rawHeaderPairs()) {
                         detailedErrorMessage +=
                             QString::fromStdString(fmt::format("\n  {}: {}", pair.first, pair.second));
                     }
                 }
             } else {
-                detailedErrorMessage += "\nDid not establish HTTP connection"_l1;
+                detailedErrorMessage += "\nDid not establish HTTP connection"_L1;
             }
             if (!sslErrors.isEmpty()) {
                 detailedErrorMessage += QString::fromStdString(fmt::format("\n\n{} TLS errors:", sslErrors.size()));
@@ -213,7 +213,7 @@ namespace tremotesf::impl {
         mNetwork->setProxy(mConfiguration->proxy);
         mNetwork->clearAccessCache();
 
-        const bool https = mConfiguration->serverUrl.scheme() == "https"_l1;
+        const bool https = mConfiguration->serverUrl.scheme() == "https"_L1;
 
         mSslConfiguration = QSslConfiguration::defaultConfiguration();
         if (https) {
@@ -282,7 +282,7 @@ namespace tremotesf::impl {
         }
 
         QNetworkRequest request(mConfiguration->serverUrl);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json"_l1);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json"_L1);
         // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
         if (mConfiguration->authentication) {
             request.setRawHeader(authorizationHeader, mAuthorizationHeaderValue);

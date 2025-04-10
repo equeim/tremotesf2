@@ -6,23 +6,24 @@
 
 #include <QJsonObject>
 
-#include "literals.h"
 #include "stdutils.h"
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     using namespace impl;
 
     Peer::Peer(QString&& address, const QJsonObject& peerJson)
-        : address(std::move(address)), client(peerJson.value("clientName"_l1).toString()) {
+        : address(std::move(address)), client(peerJson.value("clientName"_L1).toString()) {
         update(peerJson);
     }
 
     bool Peer::update(const QJsonObject& peerJson) {
         bool changed = false;
-        setChanged(downloadSpeed, peerJson.value("rateToClient"_l1).toInteger(), changed);
-        setChanged(uploadSpeed, peerJson.value("rateToPeer"_l1).toInteger(), changed);
-        setChanged(progress, peerJson.value("progress"_l1).toDouble(), changed);
-        setChanged(flags, peerJson.value("flagStr"_l1).toString(), changed);
+        setChanged(downloadSpeed, peerJson.value("rateToClient"_L1).toInteger(), changed);
+        setChanged(uploadSpeed, peerJson.value("rateToPeer"_L1).toInteger(), changed);
+        setChanged(progress, peerJson.value("progress"_L1).toDouble(), changed);
+        setChanged(flags, peerJson.value("flagStr"_L1).toString(), changed);
         return changed;
     }
 }

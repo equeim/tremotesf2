@@ -16,6 +16,8 @@
 #include "torrentsproxymodel.h"
 #include "desktoputils.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     QVariant LabelsModel::data(const QModelIndex& index, int role) const {
         if (!index.isValid()) {
@@ -29,7 +31,7 @@ namespace tremotesf {
             if (item.label.isEmpty()) {
                 return desktoputils::standardDirIcon();
             }
-            static const auto tagIcon = QIcon::fromTheme("tag"_l1);
+            static const auto tagIcon = QIcon::fromTheme("tag"_L1);
             return tagIcon;
         }
         case Qt::DisplayRole:

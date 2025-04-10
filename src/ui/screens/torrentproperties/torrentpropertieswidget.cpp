@@ -45,6 +45,8 @@
 #include "ui/widgets/commondelegate.h"
 #include "ui/widgets/torrentfilesview.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         constexpr TorrentData::Priority priorityComboBoxItems[] = {
@@ -186,7 +188,7 @@ namespace tremotesf {
         //: Torrent's comment text
         infoGroupBoxLayout->addRow(qApp->translate("tremotesf", "Comment:"), commentTextEdit);
 
-        auto labelsModel = new StringListModel({}, QIcon::fromTheme("tag"_l1), this);
+        auto labelsModel = new StringListModel({}, QIcon::fromTheme("tag"_L1), this);
         auto labelsProxyModel = new BaseProxyModel(labelsModel, Qt::DisplayRole, std::nullopt, this);
         auto labelsView = new QListView(this);
         labelsView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);

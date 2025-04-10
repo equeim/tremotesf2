@@ -27,6 +27,8 @@
 #include "settings.h"
 #include "trackersmodel.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         class EnterEatingTreeView final : public BaseTreeView {
@@ -67,7 +69,7 @@ namespace tremotesf {
         QObject::connect(mTrackersView, &EnterEatingTreeView::activated, this, &TrackersViewWidget::showEditDialogs);
 
         auto removeAction = new QAction(
-            QIcon::fromTheme("list-remove"_l1),
+            QIcon::fromTheme("list-remove"_L1),
             //: Tracker's context menu item
             qApp->translate("tremotesf", "&Remove"),
             this
@@ -80,7 +82,7 @@ namespace tremotesf {
             if (mTrackersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
                 QAction* editAction = contextMenu.addAction(
-                    QIcon::fromTheme("document-properties"_l1),
+                    QIcon::fromTheme("document-properties"_L1),
                     //: Tracker's context menu item
                     qApp->translate("tremotesf", "&Edit...")
                 );
@@ -95,7 +97,7 @@ namespace tremotesf {
         auto buttonsLayout = new QVBoxLayout();
         layout->addLayout(buttonsLayout);
         auto addTrackersButton = new QPushButton(
-            QIcon::fromTheme("list-add"_l1),
+            QIcon::fromTheme("list-add"_L1),
             //: Button
             qApp->translate("tremotesf", "Add..."),
             this
@@ -103,7 +105,7 @@ namespace tremotesf {
         QObject::connect(addTrackersButton, &QPushButton::clicked, this, &TrackersViewWidget::addTrackers);
         buttonsLayout->addWidget(addTrackersButton);
         auto editButton = new QPushButton(
-            QIcon::fromTheme("document-properties"_l1),
+            QIcon::fromTheme("document-properties"_L1),
             //: Button
             qApp->translate("tremotesf", "Edit..."),
             this
@@ -112,7 +114,7 @@ namespace tremotesf {
         editButton->setEnabled(false);
         buttonsLayout->addWidget(editButton);
         auto removeButton = new QPushButton(
-            QIcon::fromTheme("list-remove"_l1),
+            QIcon::fromTheme("list-remove"_L1),
             //: Button
             qApp->translate("tremotesf", "Remove"),
             this
@@ -121,7 +123,7 @@ namespace tremotesf {
         QObject::connect(removeButton, &QPushButton::clicked, this, &TrackersViewWidget::removeTrackers);
         buttonsLayout->addWidget(removeButton);
         auto reannounceButton = new QPushButton(
-            QIcon::fromTheme("view-refresh"_l1),
+            QIcon::fromTheme("view-refresh"_L1),
             //: Button
             qApp->translate("tremotesf", "Reanno&unce"),
             this

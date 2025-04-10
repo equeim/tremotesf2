@@ -22,49 +22,50 @@
 
 #include <fmt/format.h>
 
-#include "literals.h"
 #include "log/log.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf::desktoputils {
     const QIcon& statusIcon(StatusIcon icon) {
         switch (icon) {
         case ActiveIcon: {
-            static const QIcon qicon(":/active.svg"_l1);
+            static const QIcon qicon(":/active.svg"_L1);
             return qicon;
         }
         case CheckingIcon: {
-            static const QIcon qicon(":/checking.svg"_l1);
+            static const QIcon qicon(":/checking.svg"_L1);
             return qicon;
         }
         case DownloadingIcon: {
-            static const QIcon qicon(":/downloading.svg"_l1);
+            static const QIcon qicon(":/downloading.svg"_L1);
             return qicon;
         }
         case ErroredIcon: {
-            static const QIcon qicon(":/errored.svg"_l1);
+            static const QIcon qicon(":/errored.svg"_L1);
             return qicon;
         }
         case PausedIcon: {
-            static const QIcon qicon(":/paused.svg"_l1);
+            static const QIcon qicon(":/paused.svg"_L1);
             return qicon;
         }
         case QueuedIcon: {
-            static const QIcon qicon(":/queued.svg"_l1);
+            static const QIcon qicon(":/queued.svg"_L1);
             return qicon;
         }
         case SeedingIcon: {
-            static const QIcon qicon(":/seeding.svg"_l1);
+            static const QIcon qicon(":/seeding.svg"_L1);
             return qicon;
         }
         case StalledDownloadingIcon: {
-            static const QIcon qicon(":/stalled-downloading.svg"_l1);
+            static const QIcon qicon(":/stalled-downloading.svg"_L1);
             return qicon;
         }
 
         case StalledSeedingIcon: {
-            static QIcon qicon(":/stalled-seeding.svg"_l1);
+            static QIcon qicon(":/stalled-seeding.svg"_L1);
             return qicon;
         }
         }
@@ -96,7 +97,7 @@ namespace tremotesf::desktoputils {
                 parent
             );
             if (error.has_value()) {
-                dialog->setText(dialog->text() % "\n\n"_l1 % *error);
+                dialog->setText(dialog->text() % "\n\n"_L1 % *error);
             }
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
@@ -118,14 +119,14 @@ namespace tremotesf::desktoputils {
 
     namespace {
         QRegularExpression urlRegex() {
-            constexpr auto protocol = "(?:(?:[a-z]+:)?//)"_l1;
+            constexpr auto protocol = "(?:(?:[a-z]+:)?//)"_L1;
             constexpr auto host = R"((?:(?:[a-z\x{00a1}-\x{ffff0}-9][-_]*)*[a-z\x{00a1}-\x{ffff0}-9]+))";
             constexpr auto domain = R"((?:\.(?:[a-z\x{00a1}-\x{ffff0}-9]-*)*[a-z\x{00a1}-\x{ffff0}-9]+)*)";
             constexpr auto tld = R"((?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,}))\.?)";
             constexpr auto port = R"((?::\d{2,5})?)";
             constexpr auto path = R"((?:[/?#][^\s"\)']*)?)";
             const auto regex =
-                QString("(?:"_l1 % protocol % R"(|www\.)(?:)" % host % domain % tld % ")"_l1 % port % path);
+                QString("(?:"_L1 % protocol % R"(|www\.)(?:)" % host % domain % tld % ")"_L1 % port % path);
             return QRegularExpression(regex, QRegularExpression::CaseInsensitiveOption);
         }
     }

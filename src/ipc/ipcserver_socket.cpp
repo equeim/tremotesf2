@@ -12,7 +12,6 @@
 #include <QTimer>
 
 #include "fileopeneventhandler.h"
-#include "literals.h"
 #include "log/log.h"
 
 #ifdef Q_OS_WIN
@@ -23,6 +22,8 @@
 #ifdef Q_OS_MACOS
 #    include "ipc/fileopeneventhandler.h"
 #endif
+
+using namespace Qt::StringLiterals;
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QCborValue)
 
@@ -96,7 +97,7 @@ namespace tremotesf {
     }
 
     QString IpcServerSocket::socketName() {
-        QString name("tremotesf"_l1);
+        QString name("tremotesf"_L1);
 #ifdef Q_OS_WIN
         try {
             DWORD sessionId{};

@@ -14,9 +14,10 @@
 #include <QUrl>
 
 #include "log/log.h"
-#include "literals.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
+
+using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace impl {
@@ -92,7 +93,7 @@ namespace tremotesf {
                 parentWidget
             );
             if (error.has_value()) {
-                dialog->setText(dialog->text() % "\n\n"_l1 % *error);
+                dialog->setText(dialog->text() % "\n\n"_L1 % *error);
             }
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
