@@ -90,7 +90,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:12', 'ubuntu:24.04', 'ubuntu:25.04']
+        container-image: ['debian:trixie', 'ubuntu:25.04']
         arch: ['x86_64', 'arm64']
 
     runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
@@ -225,7 +225,7 @@ jobs:
           set -e -o pipefail
           echo '::group::Configuring CMake'
           # ASAN + LTO causes linker crash
-          cmake -S . --preset base -D TREMOTESF_QT6=ON -D TREMOTESF_WITH_HTTPLIB=bundled -D TREMOTESF_ASAN=ON -D CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=OFF
+          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=bundled -D TREMOTESF_ASAN=ON -D CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=OFF
           echo '::endgroup'
           echo '::group::Building Debug'
           cmake --build --preset base-debug -v

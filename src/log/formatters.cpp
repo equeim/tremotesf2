@@ -9,13 +9,10 @@
 // If we don't include it here we will get undefined reference link error for fmt::formatter<fmt::string_view>
 #include <fmt/format.h>
 
+#include <QAnyStringView>
 #include <QByteArray>
 #include <QLatin1String>
 #include <QStringView>
-
-#if QT_VERSION_MAJOR >= 6
-#    include <QAnyStringView>
-#endif
 
 #ifdef Q_OS_WIN
 #    include <guiddef.h>
@@ -85,7 +82,6 @@ namespace fmt {
         return formatter<string_view>::format(toFmtStringView(array), ctx);
     }
 
-#if QT_VERSION_MAJOR >= 6
     format_context::iterator
     formatter<QUtf8StringView>::format(const QUtf8StringView& string, format_context& ctx) const {
         return formatter<string_view>::format(string_view(string.data(), static_cast<size_t>(string.size())), ctx);
@@ -95,7 +91,6 @@ namespace fmt {
     formatter<QAnyStringView>::format(const QAnyStringView& string, format_context& ctx) const {
         return formatter<QString>::format(string.toString(), ctx);
     }
-#endif
 
     format_context::iterator formatter<std::exception>::format(const std::exception& e, format_context& ctx) const {
         const auto type = tremotesf::typeName(e);

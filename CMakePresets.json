@@ -20,7 +20,6 @@
       "inherits": "base",
       "hidden": true,
       "cacheVariables": {
-        "TREMOTESF_QT6": "ON",
         "TREMOTESF_WITH_HTTPLIB": "system",
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
         "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-packages-after-build",

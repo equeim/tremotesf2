@@ -586,7 +586,7 @@ namespace tremotesf {
                               "}")
         );
         if (response.success) {
-            co_return toInt64(response.arguments.value("download-dir-free-space"_l1));
+            co_return response.arguments.value("download-dir-free-space"_l1).toInteger();
         }
         co_return std::nullopt;
     }
@@ -607,7 +607,7 @@ namespace tremotesf {
         QJsonObject arguments{{"path"_l1, path}};
         const auto response = co_await mRequestRouter->postRequest("free-space"_l1, std::move(arguments));
         if (response.success) {
-            co_return toInt64(response.arguments.value("size-bytes"_l1));
+            co_return response.arguments.value("size-bytes"_l1).toInteger();
         }
         co_return std::nullopt;
     }

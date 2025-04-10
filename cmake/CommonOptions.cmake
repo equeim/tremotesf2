@@ -2,17 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-if (NOT DEFINED TREMOTESF_QT6)
-    message(FATAL_ERROR "TREMOTESF_QT6 is not defined")
-endif()
-
-if (TREMOTESF_QT6)
-    set(TREMOTESF_QT_VERSION_MAJOR 6)
-    set(TREMOTESF_MINIMUM_QT_VERSION 6.6.0)
-else()
-    set(TREMOTESF_QT_VERSION_MAJOR 5)
-    set(TREMOTESF_MINIMUM_QT_VERSION 5.15.0)
-endif()
+set(TREMOTESF_MINIMUM_QT_VERSION 6.6.0)
 
 if (UNIX AND NOT APPLE)
     set(TREMOTESF_UNIX_FREEDESKTOP ON)
@@ -214,11 +204,7 @@ function(append_qt_disable_deprecated_macro common_compile_definitions_var)
     list(GET min_qt_version_components 1 minor)
     list(GET min_qt_version_components 2 patch)
     math(EXPR macro_value "(${major}<<16)|(${minor}<<8)|(${patch})" OUTPUT_FORMAT HEXADECIMAL)
-    if (TREMOTESF_QT6)
-        list(APPEND "${common_compile_definitions_var}" "QT_DISABLE_DEPRECATED_UP_TO=${macro_value}")
-    else()
-        list(APPEND "${common_compile_definitions_var}" "QT_DISABLE_DEPRECATED_BEFORE=${macro_value}")
-    endif()
+    list(APPEND "${common_compile_definitions_var}" "QT_DISABLE_DEPRECATED_UP_TO=${macro_value}")
     return(PROPAGATE "${common_compile_definitions_var}")
 endfunction()
 

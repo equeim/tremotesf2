@@ -147,11 +147,12 @@ namespace tremotesf {
 
 #ifndef Q_OS_MACOS
         bool isAllowedToHide(const QWidget* window) {
-            static constexpr std::array classNames{// Managed by QFileDialog
-                                                   "KDEPlatformFileDialog"_l1,
-                                                   "KDirSelectDialog"_l1,
-                                                   // Managed by QSystemTrayIcon
-                                                   "QSystemTrayIconSys"_l1
+            static constexpr std::array classNames{
+                // Managed by QFileDialog
+                "KDEPlatformFileDialog"_l1,
+                "KDirSelectDialog"_l1,
+                // Managed by QSystemTrayIcon
+                "QSystemTrayIconSys"_l1
             };
             auto* const metaObject = window->metaObject();
             return metaObject &&
@@ -185,7 +186,6 @@ namespace tremotesf {
         void activeWindowOnWayland(
             [[maybe_unused]] QWidget* window, [[maybe_unused]] const std::optional<QByteArray>& xdgActivationToken
         ) {
-#    if QT_VERSION_MAJOR >= 6
             if (xdgActivationToken.has_value()) {
                 info().log("Activating window with token {}", *xdgActivationToken);
                 // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
@@ -193,17 +193,6 @@ namespace tremotesf {
                 qputenv(xdgActivationTokenEnvVariable, *xdgActivationToken);
             }
             window->activateWindow();
-#    else
-            if (xdgActivationToken.has_value()) {
-                info().log("Activating window with token {}", *xdgActivationToken);
-                KWindowSystem::setCurrentXdgActivationToken(*xdgActivationToken);
-            }
-            if (const auto handle = window->windowHandle(); handle) {
-                KWindowSystem::activateWindow(handle);
-            } else {
-                warning().log("This window's QWidget::windowHandle() is null");
-            }
-#    endif
         }
 #endif
 
@@ -405,12 +394,10 @@ namespace tremotesf {
          * @return true if event should be ignored, false otherwise
          */
         bool onCloseEvent() {
-#if QT_VERSION_MAJOR >= 6
             if (mAppQuitEventFilter.isQuittingApplication) {
                 debug().log("Received close event on main window while quitting app, just close window");
                 return false;
             }
-#endif
             // Do stuff at the next event loop iteration since we are in the middle of event handling
             if (mTrayIcon.isVisible() && QSystemTrayIcon::isSystemTrayAvailable()) {
                 info().log("Closed main window but tray icon is active, hide windows without quitting app");
@@ -437,14 +424,6 @@ namespace tremotesf {
                 mTorrentPropertiesWidget->saveState();
             }
         }
-
-#if defined(TREMOTESF_UNIX_FREEDESKTOP)
-        void activateMainWindowOnWayland() {
-            if (KWindowSystem::isPlatformWayland()) {
-                activeWindowOnWayland(mWindow, {});
-            }
-        }
-#endif
 
     private:
         MainWindow* mWindow;
@@ -506,9 +485,7 @@ namespace tremotesf {
 #endif
 
         SaveWindowStateHandler mSaveStateHandler{mWindow, [this] { saveState(); }};
-#if QT_VERSION_MAJOR >= 6
         ApplicationQuitEventFilter mAppQuitEventFilter{};
-#endif
 
         void setupActions() {
             updateShowHideAction();
@@ -626,14 +603,8 @@ namespace tremotesf {
                 removeSelectedTorrents(false);
             });
 
-            const auto removeTorrentWithFilesShortcut = new QShortcut(
-#if QT_VERSION_MAJOR >= 6
-                QKeyCombination(Qt::ShiftModifier, Qt::Key_Delete),
-#else
-                QKeySequence(static_cast<int>(Qt::ShiftModifier) | static_cast<int>(Qt::Key_Delete)),
-#endif
-                mWindow
-            );
+            const auto removeTorrentWithFilesShortcut =
+                new QShortcut(QKeyCombination(Qt::ShiftModifier, Qt::Key_Delete), mWindow);
             QObject::connect(removeTorrentWithFilesShortcut, &QShortcut::activated, this, [this] {
                 removeSelectedTorrents(true);
             });
@@ -852,11 +823,7 @@ namespace tremotesf {
                 this
             );
             if constexpr (targetOs == TargetOs::Windows) {
-#if QT_VERSION_MAJOR >= 6
                 action->setShortcut(QKeyCombination(Qt::ControlModifier, Qt::Key_Q));
-#else
-                action->setShortcut(QKeySequence(static_cast<int>(Qt::ControlModifier) | static_cast<int>(Qt::Key_Q)));
-#endif
             } else {
                 action->setShortcuts(QKeySequence::Quit);
             }
@@ -1028,8 +995,10 @@ namespace tremotesf {
             switch (Settings::instance()->get_torrentDoubleClickAction()) {
             case Settings::TorrentDoubleClickAction::OpenPropertiesDialog:
                 if (Settings::instance()->get_showTorrentPropertiesInMainWindow()) {
-                    warning().log("torrentDoubleClickAction is OpenPropertiesDialog, but "
-                                  "showTorrentPropertiesInMainWindow is true");
+                    warning().log(
+                        "torrentDoubleClickAction is OpenPropertiesDialog, but "
+                        "showTorrentPropertiesInMainWindow is true"
+                    );
                 } else {
                     showTorrentsPropertiesDialogs();
                 }
@@ -1304,7 +1273,8 @@ namespace tremotesf {
                 Settings::instance()->set_torrentDoubleClickAction(action);
             });
             QObject::connect(Settings::instance(), &Settings::showTorrentPropertiesInMainWindowChanged, this, [=] {
-                torrentPropertiesWidgetAction->setChecked(Settings::instance()->get_showTorrentPropertiesInMainWindow()
+                torrentPropertiesWidgetAction->setChecked(
+                    Settings::instance()->get_showTorrentPropertiesInMainWindow()
                 );
             });
 
@@ -1538,8 +1508,8 @@ namespace tremotesf {
                 return;
             }
 
-#    if defined(TREMOTESF_UNIX_FREEDESKTOP) && QT_VERSION_MAJOR >= 6
-            // With Qt 6 and Wayland we need to set XDG_ACTIVATION_TOKEN environment variable before show()
+#    if defined(TREMOTESF_UNIX_FREEDESKTOP)
+            // With Wayland we need to set XDG_ACTIVATION_TOKEN environment variable before show()
             // so that Qt handles activation automatically
             if (windowActivationToken.has_value() && KWindowSystem::isPlatformWayland()) {
                 info().log("Showing window with token {}", *windowActivationToken);
@@ -1766,11 +1736,6 @@ namespace tremotesf {
     void MainWindow::initialShow(bool minimized) {
         if (!(minimized && Settings::instance()->get_showTrayIcon() && QSystemTrayIcon::isSystemTrayAvailable())) {
             show();
-#if defined(TREMOTESF_UNIX_FREEDESKTOP)
-            // On Wayland we need to explicitly activate our window to consume XDG_ACTIVATION_TOKEN environment variable
-            // possible set by whoever launched us, both in Qt 6 and Qt 5 (KWindowSystem) paths
-            mImpl->activateMainWindowOnWayland();
-#endif
         }
     }
 

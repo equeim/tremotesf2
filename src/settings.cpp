@@ -10,10 +10,6 @@
 #include <QMetaEnum>
 #include <QSettings>
 
-#if QT_VERSION_MAJOR < 6
-#    include <QDataStream>
-#endif
-
 #include "log/log.h"
 #include "literals.h"
 #include "target_os.h"
@@ -173,13 +169,6 @@ namespace tremotesf {
         qRegisterMetaType<TorrentsProxyModel::StatusFilter>();
         qRegisterMetaType<Settings::DarkThemeMode>();
         qRegisterMetaType<Settings::TorrentDoubleClickAction>();
-#if QT_VERSION_MAJOR < 6
-        qRegisterMetaTypeStreamOperators<Qt::ToolButtonStyle>();
-        qRegisterMetaTypeStreamOperators<TorrentData::Priority>();
-        qRegisterMetaTypeStreamOperators<TorrentsProxyModel::StatusFilter>();
-        qRegisterMetaTypeStreamOperators<Settings::DarkThemeMode>();
-        qRegisterMetaTypeStreamOperators<Settings::TorrentDoubleClickAction>();
-#endif
     }
 
     void Settings::sync() { mSettings->sync(); }

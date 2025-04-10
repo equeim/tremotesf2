@@ -13,7 +13,6 @@ endif ()
 
 project(tremotesf VERSION 2.8.2 LANGUAGES ${languages})
 
-option(TREMOTESF_QT6 "Build with Qt 6" ON)
 option(TREMOTESF_ASAN "Build with AddressSanitizer" OFF)
 
 set(TREMOTESF_WITH_HTTPLIB "auto" CACHE STRING "Where to find cpp-httplib dependency for unit tests. Possible values are: auto, system, bundled, none")
@@ -28,7 +27,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(cmake/CommonOptions.cmake)
 
-find_package(Qt${TREMOTESF_QT_VERSION_MAJOR} ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core)
+find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core)
 
 set(QRC_FILES "")
 if (APPLE)

@@ -7,11 +7,7 @@
 
 #include <memory>
 
-#if __has_include(<QtClassHelperMacros>)
-#    include <QtClassHelperMacros>
-#else
-#    include <QtGlobal>
-#endif
+#include <QtClassHelperMacros>
 
 namespace tremotesf {
     class SignalHandler final {

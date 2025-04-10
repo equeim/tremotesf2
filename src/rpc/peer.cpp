@@ -6,7 +6,6 @@
 
 #include <QJsonObject>
 
-#include "jsonutils.h"
 #include "literals.h"
 #include "stdutils.h"
 
@@ -20,8 +19,8 @@ namespace tremotesf {
 
     bool Peer::update(const QJsonObject& peerJson) {
         bool changed = false;
-        setChanged(downloadSpeed, toInt64(peerJson.value("rateToClient"_l1)), changed);
-        setChanged(uploadSpeed, toInt64(peerJson.value("rateToPeer"_l1)), changed);
+        setChanged(downloadSpeed, peerJson.value("rateToClient"_l1).toInteger(), changed);
+        setChanged(uploadSpeed, peerJson.value("rateToPeer"_l1).toInteger(), changed);
         setChanged(progress, peerJson.value("progress"_l1).toDouble(), changed);
         setChanged(flags, peerJson.value("flagStr"_l1).toString(), changed);
         return changed;

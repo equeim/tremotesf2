@@ -5,7 +5,6 @@
 #include "listplaceholder.h"
 
 #include <QAbstractItemView>
-#include <QGuiApplication>
 #include <QLabel>
 #include <QVBoxLayout>
 
@@ -15,17 +14,6 @@ namespace tremotesf {
         auto* const label = new QLabel(text);
         label->setForegroundRole(QPalette::PlaceholderText);
         label->setTextInteractionFlags(Qt::NoTextInteraction);
-#if QT_VERSION_MAJOR < 6
-        const auto setPalette = [label] {
-            auto palette = label->palette();
-            auto brush = QGuiApplication::palette().placeholderText();
-            brush.setStyle(Qt::SolidPattern);
-            palette.setBrush(QPalette::PlaceholderText, brush);
-            label->setPalette(palette);
-        };
-        setPalette();
-        QObject::connect(qApp, &QGuiApplication::paletteChanged, label, setPalette);
-#endif
         return label;
     }
 

@@ -47,12 +47,9 @@ namespace tremotesf {
             ;
 
         template<typename T>
-        concept IsQStringView = std::same_as<std::remove_cvref_t<T>, QStringView>
-#if QT_VERSION_MAJOR >= 6
-                                || std::same_as<std::remove_cvref_t<T>, QUtf8StringView> ||
-                                std::same_as<std::remove_cvref_t<T>, QAnyStringView>
-#endif
-            ;
+        concept IsQStringView = std::same_as<std::remove_cvref_t<T>, QStringView> ||
+                                std::same_as<std::remove_cvref_t<T>, QUtf8StringView> ||
+                                std::same_as<std::remove_cvref_t<T>, QAnyStringView>;
 
         template<std::convertible_to<QString> T>
         ALWAYS_INLINE QString convertToQString(const T& string) {
@@ -155,11 +152,7 @@ namespace tremotesf {
             if (isEnabled()) {
                 auto message = formatToQString(fmt, fmt::make_format_args(args...));
                 message += '\n';
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
                 message += formatExceptionRecursively(e);
-#else
-                message += formatExceptionRecursively(e).c_str();
-#endif
                 logImpl(message);
             }
         }

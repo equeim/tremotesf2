@@ -301,16 +301,16 @@ namespace tremotesf {
             setChanged(queuePosition, value.toInt(), changed);
             return;
         case TorrentData::UpdateKey::TotalSize:
-            setChanged(totalSize, toInt64(value), changed);
+            setChanged(totalSize, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::CompletedSize:
-            setChanged(completedSize, toInt64(value), changed);
+            setChanged(completedSize, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::LeftUntilDone:
-            setChanged(leftUntilDone, toInt64(value), changed);
+            setChanged(leftUntilDone, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::SizeWhenDone:
-            setChanged(sizeWhenDone, toInt64(value), changed);
+            setChanged(sizeWhenDone, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::PercentDone:
             setChanged(percentDone, value.toDouble(), changed);
@@ -325,10 +325,10 @@ namespace tremotesf {
             setChanged(metadataComplete, value.toInt() == 1, changed);
             return;
         case TorrentData::UpdateKey::DownloadSpeed:
-            setChanged(downloadSpeed, toInt64(value), changed);
+            setChanged(downloadSpeed, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::UploadSpeed:
-            setChanged(uploadSpeed, toInt64(value), changed);
+            setChanged(uploadSpeed, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::DownloadSpeedLimited:
             setChanged(downloadSpeedLimited, value.toBool(), changed);
@@ -343,10 +343,10 @@ namespace tremotesf {
             setChanged(uploadSpeedLimit, value.toInt(), changed);
             return;
         case TorrentData::UpdateKey::TotalDownloaded:
-            setChanged(totalDownloaded, toInt64(value), changed);
+            setChanged(totalDownloaded, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::TotalUploaded:
-            setChanged(totalUploaded, toInt64(value), changed);
+            setChanged(totalUploaded, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::Ratio:
             setChanged(ratio, value.toDouble(), changed);

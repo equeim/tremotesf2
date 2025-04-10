@@ -90,16 +90,8 @@ namespace tremotesf::impl {
         return array;
     }
 
-    inline qint64 toInt64(const QJsonValue& value) {
-#if QT_VERSION_MAJOR > 5
-        return value.toInteger();
-#else
-        return static_cast<qint64>(value.toDouble());
-#endif
-    }
-
     inline void updateDateTime(QDateTime& dateTime, const QJsonValue& value, bool& changed) {
-        const auto newDateTime = toInt64(value);
+        const auto newDateTime = value.toInteger();
         if (newDateTime > 0) {
             if (!dateTime.isValid() || newDateTime != dateTime.toSecsSinceEpoch()) {
                 dateTime.setSecsSinceEpoch(newDateTime);

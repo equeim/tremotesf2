@@ -15,9 +15,7 @@
 #include <QMetaEnum>
 #include <QObject>
 #include <QString>
-#if QT_VERSION_MAJOR >= 6
-#    include <QUtf8StringView>
-#endif
+#include <QUtf8StringView>
 
 #if FMT_VERSION_MAJOR >= 11
 #    include <fmt/base.h>
@@ -54,7 +52,6 @@ struct fmt::formatter<QByteArray> : formatter<string_view> {
     format_context::iterator format(const QByteArray& array, format_context& ctx) const;
 };
 
-#if QT_VERSION_MAJOR >= 6
 template<>
 struct fmt::formatter<QUtf8StringView> : formatter<string_view> {
     format_context::iterator format(const QUtf8StringView& string, format_context& ctx) const;
@@ -65,7 +62,6 @@ template<>
 struct fmt::formatter<QAnyStringView> : formatter<QString> {
     format_context::iterator format(const QAnyStringView& string, format_context& ctx) const;
 };
-#endif
 
 namespace tremotesf::impl {
     inline constexpr auto singleArgumentFormatString = "{}";
