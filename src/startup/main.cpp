@@ -48,7 +48,6 @@ namespace {
     std::pair<QStringList, QStringList> receiveFileOpenEvents(int& argc, char** argv) {
         std::pair<QStringList, QStringList> filesAndUrls{};
         info().log("Waiting for file open events");
-        const QGuiApplication app(argc, argv);
         const FileOpenEventHandler handler{};
         QObject::connect(
             &handler,
@@ -68,9 +67,7 @@ namespace {
     }
 #endif
 
-    bool shouldExitBecauseAnotherInstanceIsRunning(
-        [[maybe_unused]] int& argc, [[maybe_unused]] char** argv, const CommandLineArgs& args
-    ) {
+    bool shouldExitBecauseAnotherInstanceIsRunning(const CommandLineArgs& args) {
         const auto client = IpcClient::createInstance();
         if (!client->isConnected()) {
             return false;
@@ -89,7 +86,7 @@ namespace {
         };
 #ifdef Q_OS_MACOS
         if (args.files.isEmpty() && args.urls.isEmpty()) {
-            const auto [files, urls] = receiveFileOpenEvents(argc, argv);
+            const auto [files, urls] = receiveFileOpenEvents();
             activateOtherInstance(files, urls);
             return true;
         }
@@ -166,10 +163,6 @@ int main(int argc, char** argv) {
     // Setup handler for UNIX signals or Windows console handler
     const SignalHandler signalHandler{};
 
-    if (shouldExitBecauseAnotherInstanceIsRunning(argc, argv, args)) {
-        return EXIT_SUCCESS;
-    }
-
 #ifdef Q_OS_WIN
     const WinrtApartment apartment{};
 #endif
@@ -182,6 +175,11 @@ int main(int argc, char** argv) {
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
     const QApplication app(argc, argv);
+
+    if (shouldExitBecauseAnotherInstanceIsRunning(args)) {
+        return EXIT_SUCCESS;
+    }
+
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
     // Workaround for application quitting when creating QFileDialog in KDE
