@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Not working file dialogs when installed through Flatpak
+
 ## [2.8.0] - 2025-04-09
 ### Added
 - Option to show torrent properties in a panel in the main window instead of dialog
