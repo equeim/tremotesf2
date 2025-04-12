@@ -1,0 +1,60 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Alexey Rochev <equeim@gmail.com>
+# This file is distributed under the same license as the tremotesf package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Steve, 2024
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: tremotesf\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-31 19:28+0300\n"
+"PO-Revision-Date: 2018-08-31 13:48+0000\n"
+"Last-Translator: Steve, 2024\n"
+"Language-Team: German (https://app.transifex.com/equeim/teams/72280/de/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: tmp.desktop.in:4 ../org.equeim.Tremotesf.appdata.xml.in:7
+msgid "Tremotesf"
+msgstr "Tremotesf"
+
+#: tmp.desktop.in:5 ../org.equeim.Tremotesf.appdata.xml.in:8
+msgid "Remote GUI for Transmission BitTorrent client"
+msgstr "Remote-GUI für den Transmission BitTorrent-Client"
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:11
+msgid ""
+"Tremotesf is a remote GUI for Transmission BitTorrent client. You can fully "
+"control your transmission-daemon instance, manage torrents, set Transmission"
+" settings, view server statistics."
+msgstr ""
+"Tremotesf ist eine Remote-GUI für den Transmission BitTorrent-Client. Sie "
+"können Ihre Transmission-Daemon-Instanz vollständig steuern, Torrents "
+"verwalten, Übertragungseinstellungen festlegen und Serverstatistiken "
+"anzeigen."
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:14
+msgid ""
+"You can add several servers profiles and switch between them (only one can "
+"be connected at a time). Tremotesf has support of HTTPS, including self-"
+"signed certificates and client certificate authentication. You can set "
+"mounted directories for servers and quickly open torrents' files and choose "
+"download directory from file dialog."
+msgstr ""
+"Sie können mehrere Serverprofile hinzufügen und zwischen ihnen wechseln (es "
+"kann immer nur ein Server verbunden sein). Tremotesf unterstützt HTTPS, "
+"einschließlich selbstsignierter Zertifikate und Client-"
+"Zertifikatauthentifizierung. Sie können bereitgestellte Verzeichnisse für "
+"Server festlegen, Torrent-Dateien schnell öffnen und im Dateidialog ein "
+"Download-Verzeichnis auswählen."
+
+#: ../org.equeim.Tremotesf.appdata.xml.in:41
+msgid "Alexey Rochev"
+msgstr "Alexey Rochev"
