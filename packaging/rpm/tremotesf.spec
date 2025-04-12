@@ -13,7 +13,7 @@
 %endif
 
 Name:       tremotesf
-Version:    2.8.0
+Version:    2.8.1
 Release:    1%{!?suse_version:%{?dist}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
@@ -117,6 +117,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %{_metainfodir}/%{app_id}.appdata.xml
 
 %changelog
+* Sat Apr 12 2025 Alexey Rochev <equeim@gmail.com> - 2.8.1-1
+- tremotesf-2.8.1
+
 * Wed Apr 09 2025 Alexey Rochev <equeim@gmail.com> - 2.8.0-1
 - tremotesf-2.8.0
 
