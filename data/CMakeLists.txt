@@ -2,10 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-list(
-    APPEND QRC_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/icons/status/status.qrc"
-)
+target_sources(tremotesf_objects PRIVATE icons/status/status.qrc)
 
 if (TREMOTESF_UNIX_FREEDESKTOP)
     find_package(Gettext 0.21 REQUIRED)
@@ -39,9 +36,6 @@ if (TREMOTESF_UNIX_FREEDESKTOP)
     install(FILES "${appdata_path}" DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo")
 elseif (WIN32 OR APPLE)
     message(STATUS "Building for Windows or macOS, deploying icon themes")
-
-    set(TREMOTESF_BUNDLED_ICON_THEME "breeze")
-    set(TREMOTESF_BUNDLED_ICON_THEME ${TREMOTESF_BUNDLED_ICON_THEME} PARENT_SCOPE)
 
     install(DIRECTORY "icons/hicolor" DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons" PATTERN ".DS_Store" EXCLUDE)
 
@@ -87,10 +81,11 @@ elseif (WIN32 OR APPLE)
     install(CODE "set(breeze_extracted_path [=[${breeze_extracted_path}]=])")
     install(CODE "set(TREMOTESF_EXTERNAL_RESOURCES_PATH [=[${TREMOTESF_EXTERNAL_RESOURCES_PATH}]=])")
     install(SCRIPT InstallBreezeIcons.cmake)
+
+    target_compile_definitions(tremotesf PRIVATE TREMOTESF_BUNDLED_ICON_THEME="breeze")
 endif()
 
 if (APPLE)
     install(FILES icons/macos/tremotesf.icns DESTINATION "${TREMOTESF_EXTERNAL_RESOURCES_PATH}")
 endif ()
 
-set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)
