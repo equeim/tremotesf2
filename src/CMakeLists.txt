@@ -25,8 +25,6 @@ else ()
     pkg_check_modules(libpsl REQUIRED IMPORTED_TARGET "libpsl >= 0.21.2")
 endif ()
 
-list(APPEND QRC_FILES resources.qrc)
-
 add_library(tremotesf_objects OBJECT)
 
 target_sources(tremotesf_objects
@@ -110,7 +108,7 @@ target_sources(tremotesf_objects
     ui/widgets/torrentfilesview.cpp
     ui/widgets/torrentremotedirectoryselectionwidget.cpp
 
-    ${QRC_FILES}
+    resources.qrc
 
     PRIVATE FILE_SET HEADERS
     FILES
@@ -419,7 +417,6 @@ if (WIN32 OR APPLE)
     target_compile_definitions(
         tremotesf
         PUBLIC
-        TREMOTESF_BUNDLED_ICON_THEME="${TREMOTESF_BUNDLED_ICON_THEME}"
         TREMOTESF_USE_BUNDLED_QT_TRANSLATIONS
         QT_STATICPLUGIN
     )
