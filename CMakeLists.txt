@@ -38,6 +38,6 @@ elseif (WIN32)
 endif ()
 
 add_subdirectory("data")
-add_subdirectory("translations")
 add_subdirectory("src")
+add_subdirectory("translations")
 add_subdirectory("packaging")

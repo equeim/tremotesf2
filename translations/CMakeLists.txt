@@ -4,48 +4,34 @@
 
 find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS LinguistTools)
 
-add_custom_target(
-    update_source_ts
-    COMMAND $<TARGET_FILE:Qt::lupdate> "${CMAKE_SOURCE_DIR}/src" -no-obsolete -ts source.ts
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+qt_add_lupdate(
+    TS_FILES source.ts
+    SOURCE_TARGETS tremotesf_objects tremotesf
 )
 
-set(
-    ts_files
-    de.ts
-    en.ts
-    es.ts
-    es_ES.ts
-    fr.ts
-    it_IT.ts
-    nl_BE.ts
-    nl.ts
-    pl.ts
-    ru.ts
-    tr.ts
-    zh_CN.ts
+qt_add_lrelease(
+    TS_FILES
+        de.ts
+        en.ts
+        es.ts
+        es_ES.ts
+        fr.ts
+        it_IT.ts
+        nl_BE.ts
+        nl.ts
+        pl.ts
+        ru.ts
+        tr.ts
+        zh_CN.ts
+    QM_FILES_OUTPUT_VARIABLE qm_files
 )
 
-qt_add_translation(qm_files ${ts_files})
-add_custom_target(translations ALL DEPENDS ${qm_files})
-
-set(translations_qrc_content "<RCC>\n<qresource prefix=\"/translations\">")
-foreach(qm_file IN LISTS qm_files)
-    string(FIND "${qm_file}" "/" last_separator_index REVERSE)
-    if (last_separator_index EQUAL -1)
-        message(FATAL_ERROR "Did not find last separator in path ${qm_file}")
-    endif()
-    string(SUBSTRING "${qm_file}" "${last_separator_index}" -1 qm_file)
-    string(SUBSTRING "${qm_file}" 1 -1 qm_file)
-    string(APPEND translations_qrc_content "\n<file><![CDATA[${qm_file}]]></file>")
-endforeach()
-string(APPEND translations_qrc_content "\n</qresource>\n</RCC>")
-
-set(translations_qrc "${CMAKE_CURRENT_BINARY_DIR}/translations.qrc")
-file(WRITE "${translations_qrc}" "${translations_qrc_content}")
-
-list(APPEND QRC_FILES "${translations_qrc}")
-set(QRC_FILES ${QRC_FILES} PARENT_SCOPE)
+qt_add_resources(
+    tremotesf_objects "translations"
+    PREFIX "/translations"
+    FILES ${qm_files}
+    BASE "${CMAKE_CURRENT_BINARY_DIR}"
+)
 
 if (WIN32 OR APPLE)
     message(STATUS "Building for Windows or macOS, deploying Qt translations")
