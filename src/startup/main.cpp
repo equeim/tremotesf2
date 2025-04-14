@@ -15,7 +15,6 @@
 
 #include "commandlineparser.h"
 #include "signalhandler.h"
-#include "target_os.h"
 #include "ipc/ipcclient.h"
 #include "log/log.h"
 #include "ui/iconthemesetup.h"
