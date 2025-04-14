@@ -147,13 +147,13 @@ namespace tremotesf {
         if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
             warning().log("Error setting URL port: {}", error);
         }
-        if (auto i = configuration.apiPath.indexOf('?'); i != -1) {
-            requestsConfig.serverUrl.setPath(configuration.apiPath.mid(0, i));
+        if (auto queryIndex = configuration.apiPath.indexOf('?'); queryIndex != -1) {
+            requestsConfig.serverUrl.setPath(configuration.apiPath.sliced(0, queryIndex));
             if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
                 warning().log("Error setting URL path: {}", error);
             }
-            if ((i + 1) < configuration.apiPath.size()) {
-                requestsConfig.serverUrl.setQuery(configuration.apiPath.mid(i + 1));
+            if ((queryIndex + 1) < configuration.apiPath.size()) {
+                requestsConfig.serverUrl.setQuery(configuration.apiPath.sliced(queryIndex + 1));
                 if (auto error = requestsConfig.serverUrl.errorString(); !error.isEmpty()) {
                     warning().log("Error setting URL query: {}", error);
                 }
