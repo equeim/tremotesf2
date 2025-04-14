@@ -106,23 +106,6 @@ namespace {
         debug().log("Territory: {}", locale.territory());
         debug().log("UI languages: {}", locale.uiLanguages());
     }
-
-    bool
-    loadTranslation(QTranslator& translator, const QString& filename, const QString& prefix, const QString& directory) {
-        // https://bugreports.qt.io/browse/QTBUG-129434
-        static const bool applyWorkaround = [] {
-            const bool apply = (QLibraryInfo::version() == QVersionNumber(6, 7, 3));
-            debug().log("Applying QTranslator workaround for Qt 6.7.3");
-            return apply;
-        }();
-        QLocale locale{};
-        if (applyWorkaround) {
-            QString actualFilename = filename + prefix + locale.name();
-            return translator.load(actualFilename, directory);
-        } else {
-            return translator.load(locale, filename, prefix, directory);
-        }
-    }
 }
 
 int main(int argc, char** argv) {
@@ -203,7 +186,7 @@ int main(int argc, char** argv) {
 #else
             QLibraryInfo::path(QLibraryInfo::TranslationsPath);
 #endif
-        if (loadTranslation(qtTranslator, "qt"_L1, "_"_L1, qtTranslationsPath)) {
+        if (qtTranslator.load(QLocale{}, "qt"_L1, "_"_L1, qtTranslationsPath)) {
             info().log("Loaded Qt translation {}", qtTranslator.filePath());
             qApp->installTranslator(&qtTranslator);
         } else {
@@ -212,7 +195,7 @@ int main(int argc, char** argv) {
     }
 
     QTranslator appTranslator;
-    if (loadTranslation(appTranslator, {}, {}, ":/translations/"_L1)) {
+    if (appTranslator.load(QLocale{}, {}, {}, ":/translations/"_L1)) {
         info().log("Loaded Tremotesf translation {}", appTranslator.filePath());
         qApp->installTranslator(&appTranslator);
     } else {
