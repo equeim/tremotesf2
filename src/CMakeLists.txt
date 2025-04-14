@@ -13,7 +13,7 @@ find_package(fmt 9.1 REQUIRED)
 find_package(cxxopts 3.1.1 REQUIRED)
 find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
 
-set(minimum_kf_version 6.6.0)
+set(minimum_kf_version 6.11.0)
 find_package(KF6WidgetsAddons ${minimum_kf_version} REQUIRED)
 
 find_package(PkgConfig REQUIRED)
