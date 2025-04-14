@@ -37,7 +37,13 @@ namespace tremotesf {
             T value = settings->value(key, defaultValue).value<T>();
             if constexpr (std::is_enum_v<T>) {
                 const auto meta = QMetaEnum::fromType<T>();
-                if (!meta.valueToKey(static_cast<int>(value))) {
+                const auto named =
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+                    meta.valueToKey(static_cast<quint64>(value));
+#else
+                    meta.valueToKey(static_cast<int>(value));
+#endif
+                if (!named) {
                     warning().log("Settings: key {} has invalid value {}, returning default value", key, value);
                     return defaultValue.value<T>();
                 }
