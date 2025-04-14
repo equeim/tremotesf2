@@ -18,8 +18,8 @@
 #include "rpc/serversettings.h"
 
 namespace tremotesf {
-    void
-    TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories(std::vector<ComboBoxItem> comboBoxItems
+    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::saveDirectories(
+        std::vector<ComboBoxItem> comboBoxItems
     ) {
         if (mPath.isEmpty()) {
             return;
@@ -113,7 +113,7 @@ namespace tremotesf {
             updateItems
         );
 
-        QObject::connect(comboBox, qOverload<int>(&QComboBox::activated), this, [=](int index) {
+        QObject::connect(comboBox, &QComboBox::activated, this, [=](int index) {
             if (index != -1) {
                 viewModel->onComboBoxItemSelected(comboBox->itemData(index).toString(), comboBox->itemText(index));
             }
