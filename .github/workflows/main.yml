@@ -19,11 +19,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:41', 'opensuse/tumbleweed:latest']
+        container-image: ['fedora:41', 'fedora:42', 'opensuse/tumbleweed:latest']
         compiler: ['gcc', 'clang']
         arch: ['x86_64', 'arm64']
         exclude:
         - container-image: 'opensuse/tumbleweed:latest'
+          compiler: clang
+        # Bug in Clang 20, possibly https://github.com/llvm/llvm-project/issues/104525
+        - container-image: 'fedora:42'
           compiler: clang
 
     runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
