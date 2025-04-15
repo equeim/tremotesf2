@@ -169,7 +169,7 @@ namespace {
             mServer.handle([&](const httplib::Request& req, httplib::Response& res) {
                 const auto json = QJsonDocument::fromJson(req.body.c_str());
                 const auto expectedJson =
-                    QJsonDocument(QJsonObject{{"method"_L1, method}, {"arguments"_L1, arguments}});
+                    QJsonDocument(QJsonObject{{u"method"_s, method}, {u"arguments"_s, arguments}});
                 if (json == expectedJson) {
                     success(res);
                 } else {
