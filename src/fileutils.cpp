@@ -302,7 +302,7 @@ namespace tremotesf {
             }();
         }
 
-        bool isTransmissionSessionIdFileExists(const QByteArray& sessionId) {
+        bool isTransmissionSessionIdFileExists(QByteArrayView sessionId) {
             const auto file = QStandardPaths::locate(sessionIdFileLocation, sessionIdFilePrefix % sessionId);
             if (!file.isEmpty()) {
                 info().log(

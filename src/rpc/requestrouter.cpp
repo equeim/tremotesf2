@@ -9,6 +9,7 @@
 #include "requestrouter.h"
 
 #include <optional>
+#include <ranges>
 
 #include <QJsonDocument>
 #include <QObject>
@@ -104,8 +105,7 @@ namespace tremotesf::impl {
     };
 
     namespace {
-        const auto sessionIdHeader = "X-Transmission-Session-Id"_ba;
-        const auto authorizationHeader = "Authorization"_ba;
+        constexpr auto sessionIdHeader = "X-Transmission-Session-Id"_L1;
 
         QJsonObject getReplyArguments(const QJsonObject& parseResult) {
             return parseResult.value("arguments"_L1).toObject();
@@ -156,11 +156,12 @@ namespace tremotesf::impl {
                         reply->attribute(QNetworkRequest::ConnectionEncryptedAttribute).toBool()
                     )
                 );
-                if (!reply->rawHeaderPairs().isEmpty()) {
+                const auto headers = reply->headers();
+                if (!headers.isEmpty()) {
                     detailedErrorMessage += "\nReply headers:"_L1;
-                    for (const QNetworkReply::RawHeaderPair& pair : reply->rawHeaderPairs()) {
+                    for (auto i : std::views::iota(qsizetype{0}, headers.size())) {
                         detailedErrorMessage +=
-                            QString::fromStdString(fmt::format("\n  {}: {}", pair.first, pair.second));
+                            QString::fromStdString(fmt::format("\n  {}: {}", headers.nameAt(i), headers.valueAt(i)));
                     }
                 }
             } else {
@@ -185,7 +186,7 @@ namespace tremotesf::impl {
             return detailedErrorMessage;
         }
 
-        QNetworkRequest takeRequest(NetworkReplyUniquePtr reply) { return reply->request(); }
+        QNetworkRequest getOriginalRequestAndDeleteReply(NetworkReplyUniquePtr reply) { return reply->request(); }
     }
 
     struct RpcRequestMetadata {
@@ -209,6 +210,9 @@ namespace tremotesf::impl {
         debug().log("Setting requests configuration");
 
         mConfiguration = std::move(configuration);
+
+        mRequestHeaders.clear();
+        mRequestHeaders.append(QHttpHeaders::WellKnownHeader::ContentType, "application/json"_L1);
 
         mNetwork->setProxy(mConfiguration->proxy);
         mNetwork->clearAccessCache();
@@ -247,7 +251,7 @@ namespace tremotesf::impl {
                                              .normalized(QString::NormalizationForm_C)
                                              .toUtf8()
                                              .toBase64();
-                mAuthorizationHeaderValue = QByteArray("Basic ").append(base64Credentials);
+                mRequestHeaders.append(QHttpHeaders::WellKnownHeader::Authorization, "Basic "_ba + base64Credentials);
             }
             if (https) {
                 debug().log(" - Available TLS backends: {}", QSslSocket::availableBackends());
@@ -269,8 +273,11 @@ namespace tremotesf::impl {
     void RequestRouter::resetConfiguration() {
         debug().log("Resetting requests configuration");
         mConfiguration.reset();
+        mRequestHeaders.clear();
         mNetwork->clearAccessCache();
     }
+
+    QByteArrayView RequestRouter::sessionId() const { return mRequestHeaders.value(sessionIdHeader); }
 
     Coroutine<RequestRouter::Response> RequestRouter::postRequest(QLatin1String method, QJsonObject arguments) {
         co_return co_await postRequest(method, makeRequestData(method, std::move(arguments)));
@@ -280,13 +287,8 @@ namespace tremotesf::impl {
         if (!mConfiguration.has_value()) {
             throw std::runtime_error("Requests configuration is not set");
         }
-
         QNetworkRequest request(mConfiguration->serverUrl);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json"_L1);
-        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-        if (mConfiguration->authentication) {
-            request.setRawHeader(authorizationHeader, mAuthorizationHeaderValue);
-        }
+        request.setHeaders(mRequestHeaders);
         request.setSslConfiguration(mSslConfiguration);
         request.setTransferTimeout(mConfiguration->timeout);
         NetworkRequestMetadata metadata{};
@@ -303,7 +305,7 @@ namespace tremotesf::impl {
             }
         }
         mNetwork->clearConnectionCache();
-        mSessionId.clear();
+        mRequestHeaders.removeAll(sessionIdHeader);
     }
 
     QByteArray RequestRouter::makeRequestData(QLatin1String method, QJsonObject arguments) {
@@ -318,9 +320,6 @@ namespace tremotesf::impl {
 
     Coroutine<RequestRouter::Response>
     RequestRouter::performRequest(QNetworkRequest request, NetworkRequestMetadata metadata) {
-        if (!mSessionId.isEmpty()) {
-            request.setRawHeader(sessionIdHeader, mSessionId);
-        }
         NetworkReplyUniquePtr reply(mNetwork->post(request, metadata.postData));
 
         auto expectedSslErrors = mExpectedSslErrors;
@@ -377,18 +376,16 @@ namespace tremotesf::impl {
     Coroutine<RequestRouter::Response> RequestRouter::onRequestError(
         NetworkReplyUniquePtr reply, QList<QSslError> sslErrors, NetworkRequestMetadata metadata
     ) {
-        if (reply->error() == QNetworkReply::ContentConflictError && reply->hasRawHeader(sessionIdHeader)) {
-            QByteArray newSessionId = reply->rawHeader(sessionIdHeader);
-            // Check against session id of request instead of current session id,
-            // to handle case when current session id have already been overwritten by another failed request
-            if (newSessionId != reply->request().rawHeader(sessionIdHeader)) {
-                if (!mSessionId.isEmpty()) {
-                    info().log("Session id changed");
-                }
+        if (reply->error() == QNetworkReply::ContentConflictError) {
+            const auto replyHeaders = reply->headers();
+            const auto newSessionId = replyHeaders.value(sessionIdHeader);
+            if (!newSessionId.isEmpty() && newSessionId != reply->request().headers().value(sessionIdHeader)) {
                 debug().log("Session id is {}, retrying '{}' request", newSessionId, metadata.rpcMetadata.method);
-                mSessionId = std::move(newSessionId);
+                mRequestHeaders.replaceOrAppend(sessionIdHeader, newSessionId);
                 // Retry without incrementing retryAttempts
-                co_return co_await performRequest(takeRequest(std::move(reply)), metadata);
+                auto request = getOriginalRequestAndDeleteReply(std::move(reply));
+                request.setHeaders(mRequestHeaders);
+                co_return co_await performRequest(std::move(request), metadata);
             }
         }
 
@@ -420,7 +417,7 @@ namespace tremotesf::impl {
             metadata.retryAttempts++;
             warning()
                 .log("Retrying '{}' request, retry attempts = {}", metadata.rpcMetadata.method, metadata.retryAttempts);
-            co_return co_await performRequest(takeRequest(std::move(reply)), metadata);
+            co_return co_await performRequest(getOriginalRequestAndDeleteReply(std::move(reply)), metadata);
         }
         emit requestFailed(error, reply->errorString(), detailedErrorMessage);
         cancelCoroutine();
