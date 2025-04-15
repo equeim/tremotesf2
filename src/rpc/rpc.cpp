@@ -580,16 +580,16 @@ namespace tremotesf {
     Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpaceImpl() {
         const auto response = co_await mRequestRouter->postRequest(
             "download-dir-free-space"_L1,
-            QByteArrayLiteral(
-                "{"
-                "\"arguments\":{"
-                "\"fields\":["
-                "\"download-dir-free-space\""
-                "]"
-                "},"
-                "\"method\":\"session-get\""
-                "}"
-            )
+
+            "{"
+            "\"arguments\":{"
+            "\"fields\":["
+            "\"download-dir-free-space\""
+            "]"
+            "},"
+            "\"method\":\"session-get\""
+            "}"_ba
+
         );
         if (response.success) {
             co_return response.arguments.value("download-dir-free-space"_L1).toInteger();
@@ -723,8 +723,7 @@ namespace tremotesf {
     }
 
     Coroutine<> Rpc::getServerSettings() {
-        const auto response =
-            co_await mRequestRouter->postRequest("session-get"_L1, QByteArrayLiteral("{\"method\":\"session-get\"}"));
+        const auto response = co_await mRequestRouter->postRequest("session-get"_L1, "{\"method\":\"session-get\"}"_ba);
         if (response.success) {
             mServerSettings->update(response.arguments);
             if (mServerSettings->data().hasTableMode()) {
@@ -917,10 +916,8 @@ namespace tremotesf {
     }
 
     Coroutine<> Rpc::getServerStats() {
-        const auto response = co_await mRequestRouter->postRequest(
-            "session-stats"_L1,
-            QByteArrayLiteral("{\"method\":\"session-stats\"}")
-        );
+        const auto response =
+            co_await mRequestRouter->postRequest("session-stats"_L1, "{\"method\":\"session-stats\"}"_ba);
         if (response.success) {
             mServerStats->update(response.arguments);
         }

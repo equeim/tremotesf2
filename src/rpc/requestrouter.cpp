@@ -104,8 +104,8 @@ namespace tremotesf::impl {
     };
 
     namespace {
-        const auto sessionIdHeader = QByteArrayLiteral("X-Transmission-Session-Id");
-        const auto authorizationHeader = QByteArrayLiteral("Authorization");
+        const auto sessionIdHeader = "X-Transmission-Session-Id"_ba;
+        const auto authorizationHeader = "Authorization"_ba;
 
         QJsonObject getReplyArguments(const QJsonObject& parseResult) {
             return parseResult.value("arguments"_L1).toObject();
