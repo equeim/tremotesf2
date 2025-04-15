@@ -274,6 +274,9 @@ namespace tremotesf::impl {
         debug().log("Resetting requests configuration");
         mConfiguration.reset();
         mRequestHeaders.clear();
+        mSslConfiguration = {};
+        mExpectedSslErrors.clear();
+        mNetwork->setProxy(QNetworkProxy::NoProxy);
         mNetwork->clearAccessCache();
     }
 
