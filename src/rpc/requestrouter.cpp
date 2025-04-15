@@ -273,7 +273,7 @@ namespace tremotesf::impl {
     }
 
     Coroutine<RequestRouter::Response> RequestRouter::postRequest(QLatin1String method, QJsonObject arguments) {
-        co_return co_await postRequest(method, makeRequestData(method, arguments));
+        co_return co_await postRequest(method, makeRequestData(method, std::move(arguments)));
     }
 
     Coroutine<RequestRouter::Response> RequestRouter::postRequest(QLatin1String method, QByteArray data) {
@@ -311,8 +311,8 @@ namespace tremotesf::impl {
     QByteArray RequestRouter::makeRequestData(QLatin1String method, QJsonObject arguments) {
         return QJsonDocument(
                    QJsonObject{
-                       {QStringLiteral("method"), QJsonValue(QString(method))},
-                       {QStringLiteral("arguments"), QJsonValue(std::move(arguments))},
+                       {u"method"_s, method},
+                       {u"arguments"_s, std::move(arguments)},
                    }
         )
             .toJson(QJsonDocument::Compact);
