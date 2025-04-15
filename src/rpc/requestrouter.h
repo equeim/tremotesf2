@@ -69,7 +69,7 @@ namespace tremotesf::impl {
 
         Coroutine<Response> postRequest(QLatin1String method, QByteArray data);
 
-        const QByteArray& sessionId() const { return mSessionId; };
+        QByteArrayView sessionId() const;
 
         void abortNetworkRequestsAndClearSessionId();
 
@@ -84,10 +84,8 @@ namespace tremotesf::impl {
         QNetworkAccessManager* mNetwork{};
         QThreadPool* mThreadPool{};
 
-        QByteArray mSessionId{};
-        QByteArray mAuthorizationHeaderValue{};
-
         std::optional<RequestsConfiguration> mConfiguration{};
+        QHttpHeaders mRequestHeaders{};
         QSslConfiguration mSslConfiguration{};
         QList<QSslError> mExpectedSslErrors{};
 
