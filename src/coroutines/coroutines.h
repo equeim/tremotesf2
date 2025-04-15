@@ -210,21 +210,30 @@ namespace tremotesf {
         };
 
         template<typename Promise>
+            requires(!std::same_as<Promise, void>)
         [[nodiscard]] bool startAwaiting(std::coroutine_handle<Promise> handle) {
             if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
-                auto& promise = handle.promise();
-                return promise.onStartedAwaiting(CoroutinePromiseBase::JustCompleteCancellation{});
+                return handle.promise().onStartedAwaiting(CoroutinePromiseBase::JustCompleteCancellation{});
             } else {
                 return true;
             }
         }
 
-        template<typename Promise>
-        void resume(std::coroutine_handle<Promise> handle) {
-            if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
-                handle.promise().onAboutToResume();
+        inline void resume(std::coroutine_handle<> handle, CoroutinePromiseBase* promise) {
+            if (promise) {
+                promise->onAboutToResume();
             }
             handle.resume();
+        }
+
+        template<typename Promise>
+            requires(!std::same_as<Promise, void>)
+        void resume(std::coroutine_handle<Promise> handle) {
+            CoroutinePromiseBase* promise{};
+            if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
+                promise = &handle.promise();
+            }
+            resume(handle, promise);
         }
 
         class StandaloneCoroutine {

@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Crash when failing to parse server response as JSON
+
 ## [2.8.1] - 2025-04-12
 ### Fixed
 - Not working file dialogs when installed through Flatpak

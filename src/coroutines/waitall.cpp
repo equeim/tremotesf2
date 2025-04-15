@@ -67,7 +67,7 @@ namespace tremotesf::impl {
         if (mParentCoroutinePromise && mParentCoroutinePromise->owningStandaloneCoroutine()->completeCancellation()) {
             return;
         }
-        resume(mParentCoroutineHandle);
+        resume(mParentCoroutineHandle, mParentCoroutinePromise);
     }
 
     void MultipleCoroutinesAwaiter::cancelAll() {

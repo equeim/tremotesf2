@@ -40,6 +40,9 @@ namespace tremotesf {
                 }
                 mSharedData = std::make_shared<SharedData>();
                 mSharedData->coroutineHandle = handle;
+                if constexpr (std::derived_from<Promise, CoroutinePromiseBase>) {
+                    mSharedData->coroutinePromise = &handle.promise();
+                }
                 mThreadPool->start(new Runnable(std::move(mFunction), mSharedData));
             }
 
@@ -62,6 +65,7 @@ namespace tremotesf {
                 std::optional<ResultValue> result{};
                 std::exception_ptr unhandledException{};
                 std::coroutine_handle<> coroutineHandle{};
+                CoroutinePromiseBase* coroutinePromise{};
             };
 
             class Runnable : public QRunnable {
@@ -92,7 +96,7 @@ namespace tremotesf {
                     }
                     QMetaObject::invokeMethod(&(mSharedData->receiver), [sharedData = mSharedData] {
                         if (!sharedData->cancelled) {
-                            sharedData->coroutineHandle.resume();
+                            resume(sharedData->coroutineHandle, sharedData->coroutinePromise);
                         }
                     });
                 }
