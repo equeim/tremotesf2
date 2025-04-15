@@ -461,7 +461,9 @@ namespace {
 
             std::variant<RequestRouter::Response, RpcError, std::monostate> responseOrError = std::monostate{};
             CoroutineScope scope{};
-            scope.launch(waitForResponseOrErrorCoroutine(mRouter.postRequest("foo"_l1, QByteArray{}), responseOrError));
+            const auto connection = connectToErrorSignal(responseOrError, scope);
+            const auto connectionGuard = QScopeGuard([=] { QObject::disconnect(connection); });
+            scope.launch(waitForResponseCoroutine(mRouter.postRequest("foo"_l1, QByteArray{}), responseOrError));
 
             QTest::qWait(100);
             mRouter.abortNetworkRequestsAndClearSessionId();
@@ -485,30 +487,39 @@ namespace {
         }
 
     private:
-        Coroutine<> waitForResponseOrErrorCoroutine(
+        Coroutine<> waitForResponseCoroutine(
             Coroutine<RequestRouter::Response> requestCoroutine,
-            std::variant<RequestRouter::Response, RpcError, std::monostate>& destination
+            std::variant<RequestRouter::Response, RpcError, std::monostate>& responseOrError
         ) {
-            const auto connection = QObject::connect(
+            responseOrError = co_await requestCoroutine;
+        }
+
+        QMetaObject::Connection connectToErrorSignal(
+            std::variant<RequestRouter::Response, RpcError, std::monostate>& responseOrError, CoroutineScope& scope
+        ) {
+            return QObject::connect(
                 &mRouter,
                 &RequestRouter::requestFailed,
                 this,
                 [&](RpcError error,
                     [[maybe_unused]] const QString& errorMessage,
-                    [[maybe_unused]] const QString& detailedErrorMessage) { destination = error; },
+                    [[maybe_unused]] const QString& detailedErrorMessage) {
+                    responseOrError = error;
+                    scope.cancelAll();
+                },
                 Qt::DirectConnection
             );
-            const auto connectionGuard = QScopeGuard([connection] { QObject::disconnect(connection); });
-            destination = co_await requestCoroutine;
         }
 
         template<typename... Args>
         std::variant<RequestRouter::Response, RpcError, std::monostate> waitForResponseOrError(const Args&... args) {
             std::variant<RequestRouter::Response, RpcError, std::monostate> responseOrError = std::monostate{};
             CoroutineScope scope{};
-            scope.launch(waitForResponseOrErrorCoroutine(mRouter.postRequest(args...), responseOrError));
+            const auto connection = connectToErrorSignal(responseOrError, scope);
+            const auto connectionGuard = QScopeGuard([=] { QObject::disconnect(connection); });
+            scope.launch(waitForResponseCoroutine(mRouter.postRequest(args...), responseOrError));
             const bool ok = QTest::qWaitFor(
-                [&] { return !std::holds_alternative<std::monostate>(responseOrError); },
+                [&] { return scope.coroutinesCount() == 0; },
                 static_cast<int>(
                     duration_cast<milliseconds>(testTimeout * (mRouter.configuration().value().retryAttempts + 1) + 1s)
                         .count()
