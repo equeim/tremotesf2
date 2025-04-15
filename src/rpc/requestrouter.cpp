@@ -288,9 +288,7 @@ namespace tremotesf::impl {
             request.setRawHeader(authorizationHeader, mAuthorizationHeaderValue);
         }
         request.setSslConfiguration(mSslConfiguration);
-        request.setTransferTimeout(
-            static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(mConfiguration->timeout).count())
-        );
+        request.setTransferTimeout(mConfiguration->timeout);
         NetworkRequestMetadata metadata{};
         metadata.postData = data;
         metadata.rpcMetadata = {method};
