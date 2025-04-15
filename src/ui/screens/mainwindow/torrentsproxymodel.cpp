@@ -32,8 +32,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setSearchString(const QString& string) {
         if (string != mSearchString) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mSearchString = string;
-            invalidateFilter();
+            invalidateRowsFilter();
         }
     }
 
@@ -41,8 +44,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setStatusFilterEnabled(bool enabled) {
         if (enabled != mStatusFilterEnabled) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mStatusFilterEnabled = enabled;
-            invalidateFilter();
+            invalidateRowsFilter();
             Settings::instance()->set_torrentsStatusFilterEnabled(mStatusFilterEnabled);
         }
     }
@@ -51,8 +57,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setStatusFilter(TorrentsProxyModel::StatusFilter filter) {
         if (filter != mStatusFilter) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mStatusFilter = filter;
-            invalidateFilter();
+            invalidateRowsFilter();
             emit statusFilterChanged();
             Settings::instance()->set_torrentsStatusFilter(mStatusFilter);
         }
@@ -62,8 +71,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setLabelFilterEnabled(bool enabled) {
         if (enabled != mLabelFilterEnabled) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mLabelFilterEnabled = enabled;
-            invalidateFilter();
+            invalidateRowsFilter();
             Settings::instance()->set_torrentsLabelFilterEnabled(mLabelFilterEnabled);
         }
     }
@@ -72,8 +84,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setLabelFilter(const QString& filter) {
         if (filter != mLabelFilter) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mLabelFilter = filter;
-            invalidateFilter();
+            invalidateRowsFilter();
             emit labelFilterChanged();
             Settings::instance()->set_torrentsLabelFilter(mLabelFilter);
         }
@@ -83,8 +98,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setTrackerFilterEnabled(bool enabled) {
         if (enabled != mTrackerFilterEnabled) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mTrackerFilterEnabled = enabled;
-            invalidateFilter();
+            invalidateRowsFilter();
             Settings::instance()->set_torrentsTrackerFilterEnabled(mTrackerFilterEnabled);
         }
     }
@@ -93,8 +111,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setTrackerFilter(const QString& filter) {
         if (filter != mTrackerFilter) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mTrackerFilter = filter;
-            invalidateFilter();
+            invalidateRowsFilter();
             emit trackerFilterChanged();
             Settings::instance()->set_torrentsTrackerFilter(mTrackerFilter);
         }
@@ -104,8 +125,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setDownloadDirectoryFilterEnabled(bool enabled) {
         if (enabled != mDownloadDirectoryFilterEnabled) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mDownloadDirectoryFilterEnabled = enabled;
-            invalidateFilter();
+            invalidateRowsFilter();
             Settings::instance()->set_torrentsDownloadDirectoryFilterEnabled(mDownloadDirectoryFilterEnabled);
         }
     }
@@ -114,8 +138,11 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setDownloadDirectoryFilter(const QString& filter) {
         if (filter != mDownloadDirectoryFilter) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            beginFilterChange();
+#endif
             mDownloadDirectoryFilter = filter;
-            invalidateFilter();
+            invalidateRowsFilter();
             emit downloadDirectoryFilterChanged();
             Settings::instance()->set_torrentsDownloadDirectoryFilter(mDownloadDirectoryFilter);
         }
