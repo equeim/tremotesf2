@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <algorithm>
-#include <exception>
 #include <optional>
 #include <set>
+
+#define QTEST_THROW_ON_FAIL
 
 #include <QTest>
 
@@ -34,18 +35,6 @@ namespace fmt {
         }
     };
 }
-
-class AbortTest : public std::exception {};
-
-#define QVERIFY_THROW(statement)                                                                                  \
-    do {                                                                                                          \
-        if (!QTest::qVerify(static_cast<bool>(statement), #statement, "", __FILE__, __LINE__)) throw AbortTest(); \
-    } while (false)
-
-#define QCOMPARE_THROW(actual, expected)                                                                   \
-    do {                                                                                                   \
-        if (!QTest::qCompare(actual, expected, #actual, #expected, __FILE__, __LINE__)) throw AbortTest(); \
-    } while (false)
 
 namespace tremotesf {
     class Updater final : public tremotesf::ItemListUpdater<Item> {
@@ -252,11 +241,7 @@ namespace tremotesf {
             std::ranges::sort(newList);
             do {
                 info().log(" - to {}", newList);
-                try {
-                    checkUpdateInner(oldList, newList);
-                } catch (const AbortTest&) {
-                    break;
-                }
+                checkUpdateInner(oldList, newList);
             } while (std::ranges::next_permutation(newList).found);
         }
 
@@ -265,12 +250,12 @@ namespace tremotesf {
             Updater updater;
             updater.update(directlyUpdatedList, std::vector(newList));
 
-            QVERIFY_THROW(updater.aboutToRemoveIndexRanges == updater.removedIndexRanges);
-            QVERIFY_THROW(updater.aboutToAddCount == updater.addedCount);
+            QVERIFY(updater.aboutToRemoveIndexRanges == updater.removedIndexRanges);
+            QVERIFY(updater.aboutToAddCount == updater.addedCount);
 
-            QCOMPARE_THROW(directlyUpdatedList.size(), newList.size());
+            QCOMPARE(directlyUpdatedList.size(), newList.size());
             checkThatItemsAreUnique(directlyUpdatedList);
-            QCOMPARE_THROW(
+            QCOMPARE(
                 std::set(directlyUpdatedList.begin(), directlyUpdatedList.end()),
                 std::set(newList.begin(), newList.end())
             );
@@ -306,12 +291,12 @@ namespace tremotesf {
                 );
             }
 
-            QCOMPARE_THROW(indirectlyUpdatedList, directlyUpdatedList);
+            QCOMPARE(indirectlyUpdatedList, directlyUpdatedList);
         }
 
         void checkThatItemsAreUnique(const std::vector<Item>& list) {
             const auto set = std::set(list.begin(), list.end());
-            QCOMPARE_THROW(set.size(), list.size());
+            QCOMPARE(set.size(), list.size());
         }
     };
 }

@@ -31,12 +31,6 @@ using namespace Qt::StringLiterals;
 using namespace tremotesf;
 using namespace tremotesf::impl;
 
-#define QFAIL_THROW(message)                                                 \
-    do {                                                                     \
-        QTest::qFail(static_cast<const char*>(message), __FILE__, __LINE__); \
-        throw std::exception();                                              \
-    } while (false)
-
 // NOLINTBEGIN(bugprone-unchecked-optional-access)
 
 namespace {
