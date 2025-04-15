@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.8.2] - 2025-04-16
 ### Fixed
 - Crash when failing to parse server response as JSON
 

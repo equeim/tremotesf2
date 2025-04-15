@@ -54,6 +54,14 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2025-04-16" version="2.8.2">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Crash when failing to parse server response as JSON</li>
+        </ul>
+      </description>
+    </release>
     <release date="2025-04-12" version="2.8.1">
       <description>
         <p>Fixed</p>
