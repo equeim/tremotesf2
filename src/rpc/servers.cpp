@@ -129,8 +129,8 @@ namespace tremotesf {
         const QVariantMap map = var.toMap();
         std::vector<MountedDirectory> dirs{};
         dirs.reserve(static_cast<size_t>(map.size()));
-        for (auto i = map.begin(), end = map.end(); i != end; ++i) {
-            dirs.push_back({.localPath = normalizePath(i.key(), localPathOs), .remotePath = i.value().toString()});
+        for (const auto& [key, value] : map.asKeyValueRange()) {
+            dirs.push_back({.localPath = normalizePath(key, localPathOs), .remotePath = value.toString()});
         }
         return dirs;
     }
