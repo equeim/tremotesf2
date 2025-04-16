@@ -37,7 +37,7 @@ namespace tremotesf {
         //: Dialog title
         setWindowTitle(qApp->translate("tremotesf", "Connection Settings"));
 
-        mProxyModel->sort();
+        mProxyModel->sort(0);
 
         auto layout = new QGridLayout(this);
 

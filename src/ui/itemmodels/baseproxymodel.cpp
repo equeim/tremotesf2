@@ -24,11 +24,6 @@ namespace tremotesf {
         return indexes;
     }
 
-    void BaseProxyModel::sort(int column, Qt::SortOrder order) {
-        QSortFilterProxyModel::sort(column, order);
-        emit sortOrderChanged();
-    }
-
     bool BaseProxyModel::lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const {
         std::partial_ordering ord = compare(source_left, source_right);
         if (ord == std::partial_ordering::equivalent && mFallbackColumn.has_value() &&
