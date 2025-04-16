@@ -39,13 +39,13 @@ namespace tremotesf {
         const auto role = sortRole();
         const QVariant leftData = source_left.data(role);
         const QVariant rightData = source_right.data(role);
-        if (leftData.userType() == QMetaType::QString && rightData.userType() == QMetaType::QString) {
+        if (leftData.typeId() == QMetaType::QString && rightData.typeId() == QMetaType::QString) {
             return mCollator.compare(leftData.toString(), rightData.toString()) <=> 0;
         }
         if (QSortFilterProxyModel::lessThan(source_left, source_right)) {
             return std::partial_ordering::less;
         }
-        if (leftData.userType() == rightData.userType() && leftData == rightData) {
+        if (leftData.typeId() == rightData.typeId() && leftData == rightData) {
             return std::partial_ordering::equivalent;
         }
         return std::partial_ordering::unordered;
