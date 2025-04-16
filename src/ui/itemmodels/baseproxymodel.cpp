@@ -10,7 +10,7 @@ namespace tremotesf {
     )
         : QSortFilterProxyModel(parent), mFallbackColumn(fallbackColumn) {
         setSourceModel(sourceModel);
-        QSortFilterProxyModel::setSortRole(sortRole);
+        setSortRole(sortRole);
         mCollator.setCaseSensitivity(Qt::CaseInsensitive);
         mCollator.setNumericMode(true);
     }
