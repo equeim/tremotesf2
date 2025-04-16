@@ -647,7 +647,7 @@ namespace tremotesf {
                 const auto indexes = mTorrentsView.selectionModel()->selectedRows();
                 if (indexes.size() == 1) {
                     const auto torrent =
-                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(indexes.first()));
+                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(indexes.first()));
                     const auto id = torrent->data().id;
                     const auto name = torrent->data().name;
                     TorrentFilesView::showFileRenameDialog(name, mWindow, [id, name, this](const auto& newName) {
@@ -922,7 +922,7 @@ namespace tremotesf {
             const auto updateCurrentTorrent = [this] {
                 const auto currentIndex = mTorrentsView.selectionModel()->currentIndex();
                 if (currentIndex.isValid()) {
-                    auto source = mTorrentsProxyModel.sourceIndex(currentIndex);
+                    auto source = mTorrentsProxyModel.mapToSource(currentIndex);
                     mTorrentPropertiesWidget->setTorrent(mTorrentsModel.torrentAtIndex(source));
                 } else {
                     mTorrentPropertiesWidget->setTorrent(nullptr);
@@ -957,7 +957,7 @@ namespace tremotesf {
             const QModelIndexList selectedRows = mTorrentsView.selectionModel()->selectedRows();
             if (selectedRows.size() == 1) {
                 const auto torrent =
-                    mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(selectedRows.first()));
+                    mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(selectedRows.first()));
                 if (torrent->data().status == TorrentData::Status::Paused) {
                     mPauseTorrentAction->setEnabled(false);
                 } else {
@@ -982,7 +982,7 @@ namespace tremotesf {
             bool localOrMounted = true;
             if (!mViewModel.rpc()->isLocal()) {
                 for (const QModelIndex& index : selectedRows) {
-                    Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
+                    Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
                     if (!isServerLocalOrTorrentIsMounted(mViewModel.rpc(), torrent)) {
                         localOrMounted = false;
                         break;
@@ -1021,7 +1021,7 @@ namespace tremotesf {
         void showTorrentsPropertiesDialogs() {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             for (const auto& index : selectedRows) {
-                auto* const torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
+                auto* const torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
                 const auto hashString = torrent->data().hashString;
                 const auto existingDialog = mTorrentPropertiesDialogs.find(hashString);
                 if (existingDialog != mTorrentPropertiesDialogs.end()) {
@@ -1576,7 +1576,7 @@ namespace tremotesf {
                 desktoputils::openFile(
                     localTorrentRootFilePath(
                         mViewModel.rpc(),
-                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index))
+                        mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index))
                     ),
                     mWindow
                 );
@@ -1588,7 +1588,7 @@ namespace tremotesf {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             files.reserve(static_cast<size_t>(selectedRows.size()));
             for (const QModelIndex& index : selectedRows) {
-                Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.sourceIndex(index));
+                Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
                 files.push_back(localTorrentRootFilePath(mViewModel.rpc(), torrent));
             }
             launchFileManagerAndSelectFiles(files, mWindow);

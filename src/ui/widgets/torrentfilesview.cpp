@@ -65,8 +65,8 @@ namespace tremotesf {
         }
 
         QObject::connect(this, &TorrentFilesView::activated, this, [=, this](const auto& index) {
-            const QModelIndex sourceIndex(mProxyModel->sourceIndex(index));
-            auto entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->sourceIndex(index).internalPointer());
+            const QModelIndex sourceIndex(mProxyModel->mapToSource(index));
+            auto entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->mapToSource(index).internalPointer());
             if (!entry->isDirectory() &&
                 isServerLocalOrTorrentIsMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
                 entry->wantedState() != TorrentFilesModelEntry::Unwanted) {

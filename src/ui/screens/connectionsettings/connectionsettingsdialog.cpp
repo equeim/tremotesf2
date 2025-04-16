@@ -131,7 +131,7 @@ namespace tremotesf {
     void ConnectionSettingsDialog::showEditDialogs() {
         const QModelIndexList indexes(mServersView->selectionModel()->selectedIndexes());
         for (const QModelIndex& index : indexes) {
-            auto dialog = new ServerEditDialog(mModel, mProxyModel->sourceIndex(index).row(), this);
+            auto dialog = new ServerEditDialog(mModel, mProxyModel->mapToSource(index).row(), this);
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
         }
@@ -140,7 +140,7 @@ namespace tremotesf {
     void ConnectionSettingsDialog::removeServers() {
         while (mServersView->selectionModel()->hasSelection()) {
             mModel->removeServerAtIndex(
-                mProxyModel->sourceIndex(mServersView->selectionModel()->selectedIndexes().first())
+                mProxyModel->mapToSource(mServersView->selectionModel()->selectedIndexes().first())
             );
         }
     }
