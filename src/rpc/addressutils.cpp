@@ -23,7 +23,7 @@ namespace tremotesf {
         for (const auto& address : addresses) {
             info().log("isLocalIpAddress: - {}", address);
         }
-        if (QNetworkInterface::allAddresses().contains(ipAddress)) {
+        if (addresses.contains(ipAddress)) {
             info().log("isLocalIpAddress: address is this machine's IP address, return true");
             return true;
         }
