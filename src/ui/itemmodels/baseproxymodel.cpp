@@ -15,10 +15,6 @@ namespace tremotesf {
         mCollator.setNumericMode(true);
     }
 
-    QModelIndex BaseProxyModel::sourceIndex(const QModelIndex& proxyIndex) const { return mapToSource(proxyIndex); }
-
-    QModelIndex BaseProxyModel::sourceIndex(int proxyRow) const { return mapToSource(index(proxyRow, 0)); }
-
     QModelIndexList BaseProxyModel::sourceIndexes(const QModelIndexList& proxyIndexes) const {
         QModelIndexList indexes;
         indexes.reserve(proxyIndexes.size());

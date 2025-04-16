@@ -26,8 +26,6 @@ namespace tremotesf {
             QObject* parent = nullptr
         );
 
-        QModelIndex sourceIndex(const QModelIndex& proxyIndex) const;
-        QModelIndex sourceIndex(int proxyRow) const;
         QModelIndexList sourceIndexes(const QModelIndexList& proxyIndexes) const;
 
         void sort(int column = 0, Qt::SortOrder order = Qt::AscendingOrder) override;

@@ -173,7 +173,7 @@ namespace tremotesf {
     void TrackersViewWidget::showEditDialogs() {
         const QModelIndexList indexes(mTrackersView->selectionModel()->selectedRows());
         for (const QModelIndex& index : indexes) {
-            const Tracker& tracker = mModel->trackerAtIndex(mProxyModel->sourceIndex(index));
+            const Tracker& tracker = mModel->trackerAtIndex(mProxyModel->mapToSource(index));
             const int id = tracker.id();
             auto dialog = new TextInputDialog(
                 //: Dialog title
