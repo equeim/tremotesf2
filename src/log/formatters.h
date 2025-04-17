@@ -15,7 +15,7 @@
 #include <QMetaEnum>
 #include <QObject>
 #include <QString>
-#include <QUtf8StringView>
+#include <qstringfwd.h>
 
 #if FMT_VERSION_MAJOR >= 11
 #    include <fmt/base.h>
@@ -34,19 +34,16 @@ struct fmt::formatter<QString> : formatter<string_view> {
     format_context::iterator format(const QString& string, format_context& ctx) const;
 };
 
-class QStringView;
 template<>
 struct fmt::formatter<QStringView> : formatter<string_view> {
     format_context::iterator format(const QStringView& string, format_context& ctx) const;
 };
 
-class QLatin1String;
 template<>
 struct fmt::formatter<QLatin1String> : formatter<string_view> {
     format_context::iterator format(const QLatin1String& string, format_context& ctx) const;
 };
 
-class QByteArray;
 template<>
 struct fmt::formatter<QByteArray> : formatter<string_view> {
     format_context::iterator format(const QByteArray& array, format_context& ctx) const;
@@ -57,7 +54,6 @@ struct fmt::formatter<QUtf8StringView> : formatter<string_view> {
     format_context::iterator format(const QUtf8StringView& string, format_context& ctx) const;
 };
 
-class QAnyStringView;
 template<>
 struct fmt::formatter<QAnyStringView> : formatter<QString> {
     format_context::iterator format(const QAnyStringView& string, format_context& ctx) const;
