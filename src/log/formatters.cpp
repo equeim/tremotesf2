@@ -70,11 +70,11 @@ namespace fmt {
         return formatter<string_view>::format(toFmtStringView(string.toUtf8()), ctx);
     }
 
-    format_context::iterator formatter<QStringView>::format(const QStringView& string, format_context& ctx) const {
+    format_context::iterator formatter<QStringView>::format(QStringView string, format_context& ctx) const {
         return formatter<string_view>::format(toFmtStringView(string.toUtf8()), ctx);
     }
 
-    format_context::iterator formatter<QLatin1String>::format(const QLatin1String& string, format_context& ctx) const {
+    format_context::iterator formatter<QLatin1String>::format(QLatin1String string, format_context& ctx) const {
         return formatter<string_view>::format(std::string_view(string.data(), static_cast<size_t>(string.size())), ctx);
     }
 
@@ -82,13 +82,11 @@ namespace fmt {
         return formatter<string_view>::format(toFmtStringView(array), ctx);
     }
 
-    format_context::iterator
-    formatter<QUtf8StringView>::format(const QUtf8StringView& string, format_context& ctx) const {
+    format_context::iterator formatter<QUtf8StringView>::format(QUtf8StringView string, format_context& ctx) const {
         return formatter<string_view>::format(string_view(string.data(), static_cast<size_t>(string.size())), ctx);
     }
 
-    format_context::iterator
-    formatter<QAnyStringView>::format(const QAnyStringView& string, format_context& ctx) const {
+    format_context::iterator formatter<QAnyStringView>::format(QAnyStringView string, format_context& ctx) const {
         return formatter<QString>::format(string.toString(), ctx);
     }
 
