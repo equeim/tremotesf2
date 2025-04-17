@@ -49,7 +49,7 @@ namespace tremotesf::impl {
 }
 
 namespace {
-    fmt::string_view toFmtStringView(const QByteArray& str) { return {str.data(), static_cast<size_t>(str.size())}; }
+    fmt::string_view toFmtStringView(QByteArrayView str) { return {str.data(), static_cast<size_t>(str.size())}; }
 
     fmt::format_context::iterator
     formatSystemError(std::string_view type, const std::system_error& e, fmt::format_context& ctx) {
@@ -82,8 +82,12 @@ namespace fmt {
         return formatter<string_view>::format(toFmtStringView(array), ctx);
     }
 
+    format_context::iterator formatter<QByteArrayView>::format(QByteArrayView array, format_context& ctx) const {
+        return formatter<string_view>::format(toFmtStringView(array), ctx);
+    }
+
     format_context::iterator formatter<QUtf8StringView>::format(QUtf8StringView string, format_context& ctx) const {
-        return formatter<string_view>::format(string_view(string.data(), static_cast<size_t>(string.size())), ctx);
+        return formatter<string_view>::format(toFmtStringView(string), ctx);
     }
 
     format_context::iterator formatter<QAnyStringView>::format(QAnyStringView string, format_context& ctx) const {

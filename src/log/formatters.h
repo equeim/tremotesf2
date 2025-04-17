@@ -50,6 +50,11 @@ struct fmt::formatter<QByteArray> : formatter<string_view> {
 };
 
 template<>
+struct fmt::formatter<QByteArrayView> : formatter<string_view> {
+    format_context::iterator format(QByteArrayView array, format_context& ctx) const;
+};
+
+template<>
 struct fmt::formatter<QUtf8StringView> : formatter<string_view> {
     format_context::iterator format(QUtf8StringView string, format_context& ctx) const;
 };
