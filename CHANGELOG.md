@@ -2,9 +2,14 @@
 
 ## [Unreleased]
 ### Changed
-- Minimum dependencies baseline is raised to Debian 13 (trixie):
+- Minimum dependencies baseline has been raised:
   - Qt 6.8 (Qt 5 support is removed)
   - KDE Frameworks 6.11
+  - fmt 10.1.0
+  - cxxopts 3.2.1
+  - cpp-httplib 0.18.7
+  - gettext 0.22.5
+- Clarified dependency on cpp-httplib with OpenSSL support enabled, not OpenSSL itself
 
 ### Removed
 - Qt 5 support

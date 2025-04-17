@@ -19,21 +19,20 @@ Table of Contents
 ## Installation
 ### Dependencies
 - C++ compiler with partial C++20 support. Minimum tested versions of GCC and Clang toolchains:
-  1. GCC 12
-  2. Clang 17 with libstdc++ 13
-  3. Clang 17 with libc++ 17
+  1. GCC 14
+  2. Clang 19 with libstdc++ 14
+  3. Clang 19 with libc++ 17
 - CMake 3.25 or newer
-- Qt 6.6 or newer (Core, Network, Gui, Widgets modules)
-- fmt 9.1 or newer
-- KWidgetsAddons 6.6 or newer
+- Qt 6.8 or newer (Core, Network, Gui, Widgets modules)
+- fmt 10.1.0 or newer
+- KWidgetsAddons 6.11 or newer
 - libpsl 0.21.2 or newer
-- cxxopts 3.1.1 or newer
+- cxxopts 3.2.1 or newer
 - Qt Test module (for tests only)
-- OpenSSL 3.0.0 or newer (for tests only)
-- cpp-httplib 0.11.0 or newer (for tests only, optional)
+- cpp-httplib 0.18.7 or newer, with OpenSSL support (for tests only, optional)
 
 On GNU/Linux and BSD, also:
-- Gettext 0.21 or newer
+- Gettext 0.22.5 or newer
 - Qt D-Bus module
 - KWindowSystem
 - Qt's SVG image format plugin as a runtime dependency (usually located somewhere at /usr/lib64/qt6/plugins/imageformats/libqsvg.so)
