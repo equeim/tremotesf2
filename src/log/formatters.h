@@ -36,12 +36,12 @@ struct fmt::formatter<QString> : formatter<string_view> {
 
 template<>
 struct fmt::formatter<QStringView> : formatter<string_view> {
-    format_context::iterator format(const QStringView& string, format_context& ctx) const;
+    format_context::iterator format(QStringView string, format_context& ctx) const;
 };
 
 template<>
 struct fmt::formatter<QLatin1String> : formatter<string_view> {
-    format_context::iterator format(const QLatin1String& string, format_context& ctx) const;
+    format_context::iterator format(QLatin1String string, format_context& ctx) const;
 };
 
 template<>
@@ -51,12 +51,12 @@ struct fmt::formatter<QByteArray> : formatter<string_view> {
 
 template<>
 struct fmt::formatter<QUtf8StringView> : formatter<string_view> {
-    format_context::iterator format(const QUtf8StringView& string, format_context& ctx) const;
+    format_context::iterator format(QUtf8StringView string, format_context& ctx) const;
 };
 
 template<>
 struct fmt::formatter<QAnyStringView> : formatter<QString> {
-    format_context::iterator format(const QAnyStringView& string, format_context& ctx) const;
+    format_context::iterator format(QAnyStringView string, format_context& ctx) const;
 };
 
 namespace tremotesf::impl {
