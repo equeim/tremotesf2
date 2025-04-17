@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Minimum dependencies baseline is raised to Debian 13 (trixie):
+  - Qt 6.8 (Qt 5 support is removed)
+  - KDE Frameworks 6.11
+
+### Removed
+- Qt 5 support
+- Native packages for Debian older than 13 and Ubuntu older than 25.04 (and other distros with outdated packages)
+  User of these distros can still install Tremotesf through Flatpak
+
 ## [2.8.2] - 2025-04-16
 ### Fixed
 - Crash when failing to parse server response as JSON
