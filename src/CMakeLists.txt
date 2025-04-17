@@ -9,8 +9,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Threads REQUIRED)
-find_package(fmt 9.1 REQUIRED)
-find_package(cxxopts 3.1.1 REQUIRED)
+find_package(fmt 10.1.0 REQUIRED)
+find_package(cxxopts 3.2.1 REQUIRED)
 find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core Network Widgets)
 
 set(minimum_kf_version 6.11.0)
