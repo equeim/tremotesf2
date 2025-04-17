@@ -93,16 +93,6 @@ macro(check_if_stdlib_is_libcpp)
     check_cxx_symbol_exists("_LIBCPP_VERSION" "version" TREMOTESF_STDLIB_IS_LIBCPP)
 endmacro()
 
-macro(check_if_libcpp_18_or_newer)
-    include(CheckCXXSourceCompiles)
-    set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
-    # Can't use CMAKE_CXX_COMPILER_VERSION here because it may not correspond to the actual version of libc++ (e.g. with Apple Clang)
-    check_cxx_source_compiles([=[
-        #include <version>
-        static_assert(_LIBCPP_VERSION >= 180000);
-    ]=] TREMOTESF_LIBCPP_IS_18_OR_NEWER)
-endmacro()
-
 macro(apply_hardening_options common_compile_options_var common_compile_definitions_var)
     if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # Not Microsofts's cl.exe, but allowing LLVM's clang-cl.exe on Windows
         include(CheckCXXCompilerFlag)
@@ -152,10 +142,7 @@ macro(apply_hardening_options common_compile_options_var common_compile_definiti
             else()
                 check_if_stdlib_is_libcpp()
                 if (TREMOTESF_STDLIB_IS_LIBCPP)
-                    check_if_libcpp_18_or_newer()
-                    if (TREMOTESF_LIBCPP_IS_18_OR_NEWER)
-                        list(APPEND "${common_compile_definitions_var}" _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST)
-                    endif()
+                    list(APPEND "${common_compile_definitions_var}" _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST)
                 else()
                     message(WARNING "Unknown C++ standard library implementation")
                 endif()
@@ -181,19 +168,6 @@ macro(apply_asan_options common_compile_options_var common_compile_definitions_v
         else()
             list(APPEND "${common_compile_options_var}" -fsanitize=address)
             list(APPEND "${common_link_options_var}" -fsanitize=address)
-        endif()
-    endif()
-endmacro()
-
-# Needed for std::views::join
-macro(apply_old_libcpp_workaround common_compile_options_var)
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT MSVC)
-        check_if_stdlib_is_libcpp()
-        if (TREMOTESF_STDLIB_IS_LIBCPP)
-            check_if_libcpp_18_or_newer()
-            if (NOT TREMOTESF_LIBCPP_IS_18_OR_NEWER)
-                list(APPEND "${common_compile_options_var}" -fexperimental-library)
-            endif()
         endif()
     endif()
 endmacro()
@@ -239,7 +213,6 @@ function(set_common_options_on_targets)
     if (TREMOTESF_ASAN)
         apply_asan_options(common_compile_options common_compile_definitions common_link_options)
     endif()
-    apply_old_libcpp_workaround(common_compile_options)
 
     list(
         APPEND common_compile_definitions
