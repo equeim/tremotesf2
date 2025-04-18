@@ -23,8 +23,9 @@
 #include "ui/screens/addtorrent/localtorrentfilesmodel.h"
 #include "ui/screens/torrentproperties/torrentfilesmodel.h"
 
-#include "commondelegate.h"
+#include "progressbardelegate.h"
 #include "textinputdialog.h"
+#include "tooltipwhenelideddelegate.h"
 
 using namespace Qt::StringLiterals;
 
@@ -38,7 +39,7 @@ namespace tremotesf {
           )),
           mRpc(rpc) {
         init();
-        setItemDelegate(new CommonDelegate(this));
+        setItemDelegate(new TooltipWhenElidedDelegate(this));
         if (!header()->restoreState(Settings::instance()->get_localTorrentFilesViewHeaderState())) {
             sortByColumn(static_cast<int>(LocalTorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }
@@ -53,13 +54,11 @@ namespace tremotesf {
           )),
           mRpc(rpc) {
         init();
-        setItemDelegate(new CommonDelegate(
-            {
-                .progressBarColumn = static_cast<int>(TorrentFilesModel::Column::ProgressBar),
-                .progressRole = TorrentFilesModel::SortRole,
-            },
-            this
-        ));
+        setItemDelegate(new TooltipWhenElidedDelegate(this));
+        setItemDelegateForColumn(
+            static_cast<int>(TorrentFilesModel::Column::ProgressBar),
+            new ProgressBarDelegate(TorrentFilesModel::SortRole, this)
+        );
         if (!header()->restoreState(Settings::instance()->get_torrentFilesViewHeaderState())) {
             sortByColumn(static_cast<int>(TorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }

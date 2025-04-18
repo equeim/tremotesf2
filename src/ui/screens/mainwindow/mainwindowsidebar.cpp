@@ -16,9 +16,10 @@
 #include "rpc/rpc.h"
 #include "rpc/serversettings.h"
 #include "ui/stylehelpers.h"
-#include "ui/widgets/commondelegate.h"
+#include "ui/widgets/tooltipwhenelideddelegate.h"
 #include "alltrackersmodel.h"
 #include "downloaddirectoriesmodel.h"
+#include "downloaddirectorydelegate.h"
 #include "labelsmodel.h"
 #include "statusfiltersmodel.h"
 #include "torrentsproxymodel.h"
@@ -32,14 +33,19 @@ namespace tremotesf {
             explicit BaseListView(
                 TorrentsProxyModel* torrentsProxyModel,
                 BaseTorrentsFiltersSettingsModel* model,
-                std::optional<int> alwaysShowTooltipRole,
-                QWidget* parent = nullptr
+                QAbstractItemDelegate* delegate,
+                QWidget* parent
             )
                 : QListView(parent), mTorrentsProxyModel(torrentsProxyModel), mModel(model) {
                 mModel->setParent(this);
                 setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
                 setIconSize(QSize(16, 16));
-                setItemDelegate(new CommonDelegate({.alwaysShowTooltipRole = alwaysShowTooltipRole}, this));
+                if (delegate) {
+                    delegate->setParent(this);
+                    setItemDelegate(delegate);
+                } else {
+                    setItemDelegate(new TooltipWhenElidedDelegate(this));
+                }
                 setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
                 setTextElideMode(Qt::ElideMiddle);
                 setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -144,7 +150,7 @@ namespace tremotesf {
 
         public:
             StatusFiltersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(torrentsModel, new StatusFiltersModel(), {}, parent) {
+                : BaseListView(torrentsModel, new StatusFiltersModel(), nullptr, parent) {
                 init(rpc);
                 QObject::connect(torrentsModel, &TorrentsProxyModel::statusFilterChanged, this, [=, this] {
                     updateCurrentIndex();
@@ -168,7 +174,7 @@ namespace tremotesf {
 
         public:
             LabelsListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(torrentsModel, new LabelsModel(), {}, parent) {
+                : BaseListView(torrentsModel, new LabelsModel(), nullptr, parent) {
                 init(rpc, LabelsModel::LabelRole);
                 QObject::connect(torrentsModel, &TorrentsProxyModel::labelFilterChanged, this, [=, this] {
                     updateCurrentIndex();
@@ -190,7 +196,7 @@ namespace tremotesf {
 
         public:
             TrackersListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(torrentsModel, new AllTrackersModel(), {}, parent) {
+                : BaseListView(torrentsModel, new AllTrackersModel(), nullptr, parent) {
                 init(rpc, AllTrackersModel::TrackerRole);
                 QObject::connect(torrentsModel, &TorrentsProxyModel::trackerFilterChanged, this, [=, this] {
                     updateCurrentIndex();
@@ -212,12 +218,7 @@ namespace tremotesf {
 
         public:
             DirectoriesListView(Rpc* rpc, TorrentsProxyModel* torrentsModel, QWidget* parent = nullptr)
-                : BaseListView(
-                      torrentsModel,
-                      new DownloadDirectoriesModel(),
-                      static_cast<int>(DownloadDirectoriesModel::Role::AlwaysShowTooltip),
-                      parent
-                  ) {
+                : BaseListView(torrentsModel, new DownloadDirectoriesModel(), new DownloadDirectoryDelegate(), parent) {
                 init(rpc, static_cast<int>(DownloadDirectoriesModel::Role::Directory));
                 QObject::connect(torrentsModel, &TorrentsProxyModel::downloadDirectoryFilterChanged, this, [=, this] {
                     updateCurrentIndex();

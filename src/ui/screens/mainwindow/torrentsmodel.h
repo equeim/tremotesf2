@@ -51,7 +51,7 @@ namespace tremotesf {
         };
         Q_ENUM(Column)
 
-        enum class Role { Sort = Qt::UserRole, TextElideMode, AlwaysShowTooltip };
+        enum class Role { Sort = Qt::UserRole };
 
         explicit TorrentsModel(Rpc* rpc = nullptr, QObject* parent = nullptr);
 

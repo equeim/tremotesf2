@@ -79,6 +79,7 @@ target_sources(tremotesf_objects
     ui/screens/mainwindow/alltrackersmodel.cpp
     ui/screens/mainwindow/basetorrentsfilterssettingsmodel.cpp
     ui/screens/mainwindow/downloaddirectoriesmodel.cpp
+    ui/screens/mainwindow/downloaddirectorydelegate.cpp
     ui/screens/mainwindow/editlabelsdialog.cpp
     ui/screens/mainwindow/labelsmodel.cpp
     ui/screens/mainwindow/mainwindow.cpp
@@ -100,11 +101,13 @@ target_sources(tremotesf_objects
     ui/screens/torrentproperties/trackersviewwidget.cpp
     ui/stylehelpers.cpp
     ui/widgets/basetreeview.cpp
-    ui/widgets/commondelegate.cpp
+
     ui/widgets/editlabelswidget.cpp
     ui/widgets/listplaceholder.cpp
+    ui/widgets/progressbardelegate.cpp
     ui/widgets/remotedirectoryselectionwidget.cpp
     ui/widgets/textinputdialog.cpp
+    ui/widgets/tooltipwhenelideddelegate.cpp
     ui/widgets/torrentfilesview.cpp
     ui/widgets/torrentremotedirectoryselectionwidget.cpp
 
@@ -184,6 +187,7 @@ target_sources(tremotesf_objects
     ui/screens/mainwindow/alltrackersmodel.h
     ui/screens/mainwindow/basetorrentsfilterssettingsmodel.h
     ui/screens/mainwindow/downloaddirectoriesmodel.h
+    ui/screens/mainwindow/downloaddirectorydelegate.h
     ui/screens/mainwindow/editlabelsdialog.h
     ui/screens/mainwindow/labelsmodel.h
     ui/screens/mainwindow/mainwindow.h
@@ -206,11 +210,13 @@ target_sources(tremotesf_objects
     ui/stylehelpers.h
     ui/systemcolorsprovider.h
     ui/widgets/basetreeview.h
-    ui/widgets/commondelegate.h
+
     ui/widgets/editlabelswidget.h
     ui/widgets/listplaceholder.h
+    ui/widgets/progressbardelegate.h
     ui/widgets/remotedirectoryselectionwidget.h
     ui/widgets/textinputdialog.h
+    ui/widgets/tooltipwhenelideddelegate.h
     ui/widgets/torrentfilesview.h
     ui/widgets/torrentremotedirectoryselectionwidget.h
 )

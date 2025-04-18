@@ -7,7 +7,8 @@
 #include <set>
 #include <QHeaderView>
 
-#include "ui/widgets/commondelegate.h"
+#include "ui/widgets/progressbardelegate.h"
+#include "downloaddirectorydelegate.h"
 #include "settings.h"
 #include "torrentsmodel.h"
 #include "torrentsproxymodel.h"
@@ -15,13 +16,15 @@
 namespace tremotesf {
     TorrentsView::TorrentsView(TorrentsProxyModel* model, QWidget* parent) : BaseTreeView(parent) {
         setContextMenuPolicy(Qt::CustomContextMenu);
-        setItemDelegate(new CommonDelegate(
-            {.progressBarColumn = static_cast<int>(TorrentsModel::Column::ProgressBar),
-             .progressRole = static_cast<int>(TorrentsModel::Role::Sort),
-             .textElideModeRole = static_cast<int>(TorrentsModel::Role::TextElideMode),
-             .alwaysShowTooltipRole = static_cast<int>(TorrentsModel::Role::AlwaysShowTooltip)},
-            this
-        ));
+        setItemDelegate(new TooltipWhenElidedDelegate(this));
+        setItemDelegateForColumn(
+            static_cast<int>(TorrentsModel::Column::ProgressBar),
+            new ProgressBarDelegate(static_cast<int>(TorrentsModel::Role::Sort), this)
+        );
+        setItemDelegateForColumn(
+            static_cast<int>(TorrentsModel::Column::DownloadDirectory),
+            new DownloadDirectoryDelegate(this)
+        );
         setModel(model);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setRootIsDecorated(false);
