@@ -29,7 +29,6 @@
 
 #include "desktoputils.h"
 #include "formatutils.h"
-#include "log/log.h"
 #include "peersmodel.h"
 #include "settings.h"
 #include "stdutils.h"
@@ -42,7 +41,8 @@
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/itemmodels/stringlistmodel.h"
 #include "ui/stylehelpers.h"
-#include "ui/widgets/commondelegate.h"
+#include "ui/widgets/progressbardelegate.h"
+#include "ui/widgets/tooltipwhenelideddelegate.h"
 #include "ui/widgets/torrentfilesview.h"
 
 using namespace Qt::StringLiterals;
@@ -289,11 +289,11 @@ namespace tremotesf {
         auto peersTabLayout = new QVBoxLayout(peersTab);
 
         mPeersView = new BaseTreeView(this);
-        mPeersView->setItemDelegate(new CommonDelegate(
-            {.progressBarColumn = static_cast<int>(PeersModel::Column::ProgressBar),
-             .progressRole = PeersModel::SortRole},
-            this
-        ));
+        mPeersView->setItemDelegate(new TooltipWhenElidedDelegate(this));
+        mPeersView->setItemDelegateForColumn(
+            static_cast<int>(PeersModel::Column::ProgressBar),
+            new ProgressBarDelegate(PeersModel::SortRole, this)
+        );
         mPeersView->setModel(peersProxyModel);
         mPeersView->setRootIsDecorated(false);
         mPeersView->header()->restoreState(Settings::instance()->get_peersViewHeaderState());

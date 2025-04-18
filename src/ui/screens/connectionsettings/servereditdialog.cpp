@@ -35,7 +35,7 @@
 #include "rpc/pathutils.h"
 #include "stdutils.h"
 #include "target_os.h"
-#include "ui/widgets/commondelegate.h"
+#include "ui/widgets/tooltipwhenelideddelegate.h"
 #include "rpc/servers.h"
 #include "serversmodel.h"
 
@@ -68,7 +68,7 @@ namespace tremotesf {
             : QTableWidget(rows, columns, parent) {
             setMinimumHeight(192);
             setSelectionMode(QAbstractItemView::SingleSelection);
-            setItemDelegate(new CommonDelegate(this));
+            setItemDelegate(new TooltipWhenElidedDelegate(this));
             setHorizontalHeaderLabels(
                 {//: Column title in the list of mounted directories
                  qApp->translate("tremotesf", "Local directory"),

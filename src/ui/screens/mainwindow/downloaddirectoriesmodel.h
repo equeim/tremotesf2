@@ -14,7 +14,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        enum class Role { Directory = Qt::UserRole, AlwaysShowTooltip };
+        enum class Role { Directory = Qt::UserRole };
 
         explicit DownloadDirectoriesModel(QObject* parent = nullptr);
 
