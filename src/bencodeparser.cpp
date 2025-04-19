@@ -177,7 +177,7 @@ namespace tremotesf::bencode {
                         fmt::format(
                             "std::from_chars() failed with: {} (error code {} ({:#x}))",
                             std::make_error_condition(result.ec).message(),
-                            static_cast<std::underlying_type_t<std::errc>>(result.ec),
+                            std::to_underlying(result.ec),
                             static_cast<std::make_unsigned_t<std::underlying_type_t<std::errc>>>(result.ec)
                         )
                     );
