@@ -386,8 +386,6 @@ if (WIN32)
         target_sources(tremotesf PRIVATE tremotesf.manifest.rc)
     endif ()
     if (MSVC)
-        # For C++23's std::stacktrace
-        set_source_files_properties(startup/windowsfatalerrorhandlers.cpp PROPERTIES COMPILE_OPTIONS "/std:c++latest")
         target_link_options(tremotesf PRIVATE "/PDBALTPATH:%_PDB%")
     endif()
     set_target_properties(tremotesf PROPERTIES WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>)
