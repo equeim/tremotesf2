@@ -7,7 +7,7 @@
 
 #include <concepts>
 #include <cstdint>
-#include <stdexcept>
+#include <exception>
 #include <system_error>
 #include <type_traits>
 
