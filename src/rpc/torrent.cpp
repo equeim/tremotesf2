@@ -277,11 +277,9 @@ namespace tremotesf {
         const Rpc* rpc
     ) {
         bool changed = false;
-        const auto count = std::min(keys.size(), static_cast<size_t>(values.size()));
-        for (size_t i = 0; i < count; ++i) {
-            const auto key = keys[i];
+        for (const auto& [key, value] : std::views::zip(keys, values)) {
             if (key.has_value()) {
-                updateProperty(*key, values[static_cast<QJsonArray::size_type>(i)], changed, firstTime, rpc);
+                updateProperty(*key, value, changed, firstTime, rpc);
             }
         }
         applyTrackerErrorWorkaround(changed);
