@@ -11,7 +11,6 @@
 #include "editlabelsdialog.h"
 #include "rpc/rpc.h"
 #include "rpc/torrent.h"
-#include "stdutils.h"
 #include "ui/widgets/editlabelswidget.h"
 
 namespace tremotesf {
@@ -33,8 +32,9 @@ namespace tremotesf {
         auto editLabelsWidget = new EditLabelsWidget(enabledLabels, rpc, this);
         layout->addWidget(editLabelsWidget);
 
-        auto torrentIds =
-            toContainer<std::vector>(selectedTorrents | std::views::transform([](Torrent* t) { return t->data().id; }));
+        auto torrentIds = selectedTorrents
+                          | std::views::transform([](Torrent* t) { return t->data().id; })
+                          | std::ranges::to<std::vector>();
 
         const auto saveLabels = [=, torrentIds = std::move(torrentIds)] {
             rpc->setTorrentsLabels(torrentIds, editLabelsWidget->enabledLabels());

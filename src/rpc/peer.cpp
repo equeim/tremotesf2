@@ -11,8 +11,6 @@
 using namespace Qt::StringLiterals;
 
 namespace tremotesf {
-    using namespace impl;
-
     Peer::Peer(QString&& address, const QJsonObject& peerJson)
         : address(std::move(address)), client(peerJson.value("clientName"_L1).toString()) {
         update(peerJson);

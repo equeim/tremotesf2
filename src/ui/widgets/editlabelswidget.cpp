@@ -17,7 +17,6 @@
 
 #include "rpc/rpc.h"
 #include "rpc/torrent.h"
-#include "stdutils.h"
 
 using namespace Qt::StringLiterals;
 
@@ -119,10 +118,9 @@ namespace tremotesf {
     bool EditLabelsWidget::comboBoxHasFocus() const { return mComboBox->hasFocus(); }
 
     std::vector<QString> EditLabelsWidget::enabledLabels() const {
-        return toContainer<std::vector>(
-            std::views::iota(0, mLabelsList->count()) |
-            std::views::transform([this](int i) { return mLabelsList->item(i)->text(); })
-        );
+        return std::views::iota(0, mLabelsList->count())
+               | std::views::transform([this](int i) { return mLabelsList->item(i)->text(); })
+               | std::ranges::to<std::vector>();
     }
 
     void EditLabelsWidget::updateComboBoxLabels() {
@@ -130,9 +128,11 @@ namespace tremotesf {
         if (!mRpc->isConnected()) {
             return;
         }
-        const auto allLabels = toContainer<std::set>(
-            mRpc->torrents() | std::views::transform([](const auto& t) { return t->data().labels; }) | std::views::join
-        );
+        const auto allLabels = mRpc->torrents()
+                               | std::views::transform([](const auto& t) { return t->data().labels; })
+                               | std::views::join
+                               | std::views::common // For some reason GCC 14 requies views::common here
+                               | std::ranges::to<std::set>();
         for (const auto& label : allLabels) {
             mComboBox->addItem(tagIcon(), label);
         }

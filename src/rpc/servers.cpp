@@ -4,13 +4,14 @@
 
 #include "servers.h"
 
+#include <ranges>
+
 #include <QCoreApplication>
 #include <QSettings>
 #include <QStringBuilder>
 
 #include "rpc/pathutils.h"
 #include "rpc/serversettings.h"
-#include "stdutils.h"
 #include "target_os.h"
 
 using namespace Qt::StringLiterals;
@@ -136,14 +137,16 @@ namespace tremotesf {
     }
 
     QVariant LastTorrents::toVariant() const {
-        return toContainer<QVariantList>(torrents | std::views::transform([](const LastTorrents::Torrent& torrent) {
-                                             return QVariant(
-                                                 QVariantMap{
-                                                     {lastTorrentsHashStringKey, torrent.hashString},
-                                                     {lastTorrentsFinishedKey, torrent.finished}
-                                                 }
-                                             );
-                                         }));
+        return torrents
+               | std::views::transform([](const LastTorrents::Torrent& torrent) {
+                     return QVariant(
+                         QVariantMap{
+                             {lastTorrentsHashStringKey, torrent.hashString},
+                             {lastTorrentsFinishedKey, torrent.finished}
+                         }
+                     );
+                 })
+               | std::ranges::to<QVariantList>();
     }
 
     LastTorrents LastTorrents::fromVariant(const QVariant& var) {
@@ -152,13 +155,15 @@ namespace tremotesf {
         }
         return {
             .saved = true,
-            .torrents = toContainer<std::vector>(var.toList() | std::views::transform([](const QVariant& torrentVar) {
-                                                     const QVariantMap map = torrentVar.toMap();
-                                                     return LastTorrents::Torrent{
-                                                         .hashString = map[lastTorrentsHashStringKey].toString(),
-                                                         .finished = map[lastTorrentsFinishedKey].toBool()
-                                                     };
-                                                 }))
+            .torrents = var.toList()
+                        | std::views::transform([](const QVariant& torrentVar) {
+                              const QVariantMap map = torrentVar.toMap();
+                              return LastTorrents::Torrent{
+                                  .hashString = map[lastTorrentsHashStringKey].toString(),
+                                  .finished = map[lastTorrentsFinishedKey].toBool()
+                              };
+                          })
+                        | std::ranges::to<std::vector>()
         };
     }
 
@@ -254,12 +259,14 @@ namespace tremotesf {
         }
         mSettings->beginGroup(currentServerName());
         LastTorrents torrents{};
-        torrents.torrents = toContainer<std::vector>(rpc->torrents() | std::views::transform([](const auto& torrent) {
-                                                         return LastTorrents::Torrent{
-                                                             .hashString = torrent->data().hashString,
-                                                             .finished = torrent->data().isFinished()
-                                                         };
-                                                     }));
+        torrents.torrents = rpc->torrents()
+                            | std::views::transform([](const auto& torrent) {
+                                  return LastTorrents::Torrent{
+                                      .hashString = torrent->data().hashString,
+                                      .finished = torrent->data().isFinished()
+                                  };
+                              })
+                            | std::ranges::to<std::vector>();
         mSettings->setValue(lastTorrentsKey, torrents.toVariant());
         mSettings->endGroup();
     }
@@ -267,12 +274,11 @@ namespace tremotesf {
     QStringList Servers::currentServerLastDownloadDirectories(const ServerSettings* serverSettings) const {
         QStringList directories{};
         mSettings->beginGroup(currentServerName());
-        directories = toContainer<QStringList>(
-            mSettings->value(lastDownloadDirectoriesKey).toStringList() |
-            std::views::transform([serverSettings](const QString& dir) {
-                return normalizePath(dir, serverSettings->data().pathOs);
-            })
-        );
+        directories = mSettings->value(lastDownloadDirectoriesKey).toStringList()
+                      | std::views::transform([serverSettings](const QString& dir) {
+                            return normalizePath(dir, serverSettings->data().pathOs);
+                        })
+                      | std::ranges::to<QStringList>();
         mSettings->endGroup();
         return directories;
     }
