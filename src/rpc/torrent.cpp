@@ -80,6 +80,10 @@ namespace tremotesf {
     };
 
     namespace {
+        constexpr auto allUpdateKeys =
+            std::views::iota(0, static_cast<int>(TorrentData::UpdateKey::Count))
+            | std::views::transform([](int key) { return static_cast<TorrentData::UpdateKey>(key); });
+
         constexpr QLatin1String updateKeyString(TorrentData::UpdateKey key) {
             switch (key) {
             case TorrentData::UpdateKey::Id:
@@ -183,8 +187,7 @@ namespace tremotesf {
         std::optional<TorrentData::UpdateKey> mapUpdateKey(const QString& stringKey) {
             static const auto mapping = [] {
                 std::map<QLatin1String, TorrentData::UpdateKey, std::less<>> map{};
-                for (int i = 0; i < static_cast<int>(TorrentData::UpdateKey::Count); ++i) {
-                    const auto key = static_cast<TorrentData::UpdateKey>(i);
+                for (auto key : allUpdateKeys) {
                     map.emplace(updateKeyString(key), key);
                 }
                 return map;
@@ -519,8 +522,7 @@ namespace tremotesf {
 
     QJsonArray Torrent::updateFields(const ServerSettings* serverSettings) {
         QJsonArray fields{};
-        for (int i = 0; i < static_cast<int>(TorrentData::UpdateKey::Count); ++i) {
-            const auto key = static_cast<TorrentData::UpdateKey>(i);
+        for (auto key : allUpdateKeys) {
             if (key == TorrentData::UpdateKey::FileCount && !serverSettings->data().hasFileCountProperty()) {
                 continue;
             }
