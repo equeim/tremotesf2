@@ -18,10 +18,10 @@ Table of Contents
 
 ## Installation
 ### Dependencies
-- C++ compiler with partial C++20 support. Minimum tested versions of GCC and Clang toolchains:
+- C++ compiler with partial C++23 support. Minimum tested versions of GCC and Clang toolchains:
   1. GCC 14
   2. Clang 19 with libstdc++ 14
-  3. Clang 19 with libc++ 17
+  3. Clang 19 with libc++ 19
 - CMake 3.25 or newer
 - Qt 6.8 or newer (Core, Network, Gui, Widgets modules)
 - fmt 10.1.0 or newer

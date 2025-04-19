@@ -243,7 +243,7 @@ function(set_common_options_on_targets)
         list(APPEND common_compile_definitions TREMOTESF_UNIX_FREEDESKTOP)
     endif()
 
-    set(common_public_compile_features cxx_std_20)
+    set(common_public_compile_features cxx_std_23)
     set(common_target_properties CXX_EXTENSIONS OFF CXX_SCAN_FOR_MODULES OFF)
 
     get_directory_property(targets BUILDSYSTEM_TARGETS)
