@@ -13,9 +13,9 @@ namespace tremotesf {
     inline constexpr TargetOs targetOs =
 #if defined(TREMOTESF_UNIX_FREEDESKTOP)
         TargetOs::UnixFreedesktop;
-#elif defined(Q_OS_MACOS)
+#elifdef Q_OS_MACOS
         TargetOs::UnixMacOS;
-#elif defined(Q_OS_WIN)
+#elifdef Q_OS_WIN
         TargetOs::Windows;
 #else
     // We shouldn't even get here since we will fail at CMake configuration step
