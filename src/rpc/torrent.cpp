@@ -659,8 +659,7 @@ namespace tremotesf {
                 if (tier.empty()) continue;
                 // Transmission adds each announce URL to each own tier when using trackerAdd property, so take first URL from each tier
                 const auto& first = *tier.begin();
-                const auto existingTracker = std::ranges::find(existingTrackers, first, &Tracker::announce);
-                if (existingTracker == existingTrackers.end()) {
+                if (!std::ranges::contains(existingTrackers, first, &Tracker::announce)) {
                     trackersToAdd.push_back(first);
                 }
             }
@@ -729,9 +728,8 @@ namespace tremotesf {
             return;
         }
         auto trackers = mData.trackers;
-        const auto erased = std::erase_if(trackers, [ids](const auto& tracker) {
-            return std::ranges::find(ids, tracker.id()) != ids.end();
-        });
+        const auto erased =
+            std::erase_if(trackers, [ids](const auto& tracker) { return std::ranges::contains(ids, tracker.id()); });
         if (erased == 0) {
             return;
         }

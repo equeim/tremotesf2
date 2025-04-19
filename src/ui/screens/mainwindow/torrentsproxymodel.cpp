@@ -192,15 +192,13 @@ namespace tremotesf {
         }
 
         if (mLabelFilterEnabled && !mLabelFilter.isEmpty()) {
-            const auto matchingLabel = std::ranges::find(torrent->data().labels, mLabelFilter);
-            if (matchingLabel == torrent->data().labels.end()) {
+            if (!std::ranges::contains(torrent->data().labels, mLabelFilter)) {
                 return false;
             }
         }
 
         if (mTrackerFilterEnabled && !mTrackerFilter.isEmpty()) {
-            const auto matchingTracker = std::ranges::find(torrent->data().trackers, mTrackerFilter, &Tracker::site);
-            if (matchingTracker == torrent->data().trackers.end()) {
+            if (!std::ranges::contains(torrent->data().trackers, mTrackerFilter, &Tracker::site)) {
                 return false;
             }
         }

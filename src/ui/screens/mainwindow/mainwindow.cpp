@@ -157,8 +157,7 @@ namespace tremotesf {
                 "QSystemTrayIconSys"_L1
             };
             auto* const metaObject = window->metaObject();
-            return metaObject &&
-                   std::ranges::find(classNames, QLatin1String(metaObject->className())) == classNames.end();
+            return metaObject && !std::ranges::contains(classNames, QLatin1String(metaObject->className()));
         }
 
         [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(const QWidgetList& widgets) {

@@ -28,7 +28,7 @@ namespace tremotesf {
             for (const QString& filePath : files) {
                 QString dirPath = QFileInfo(filePath).path();
 
-                if (std::ranges::find(nonExistentDirectories, dirPath) != nonExistentDirectories.end()) {
+                if (std::ranges::contains(nonExistentDirectories, dirPath)) {
                     continue;
                 }
                 if (!QFileInfo::exists(dirPath)) {
