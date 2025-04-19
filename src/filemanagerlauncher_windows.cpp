@@ -9,7 +9,10 @@
 #include <QPointer>
 #include <QWidget>
 
+// Workarounds for winrt headers
+#include <exception>
 #include <guiddef.h>
+
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Storage.h>
