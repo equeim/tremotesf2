@@ -181,8 +181,7 @@ namespace tremotesf {
             } else {
                 const auto selectedName = action->data().toString();
                 const auto servers = Servers::instance()->servers();
-                const auto found = std::ranges::find(servers, selectedName, &Server::name);
-                if (found != servers.end()) {
+                if (std::ranges::contains(servers, selectedName, &Server::name)) {
                     Servers::instance()->setCurrentServer(selectedName);
                 } else {
                     warning().log("Selected server {} which no longer exists", selectedName);
