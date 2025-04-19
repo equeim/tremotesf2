@@ -81,22 +81,19 @@ namespace tremotesf {
         )("torrents", "", cxxopts::value(torrents));
         opts.parse_positional("torrents");
         opts.positional_help("torrents");
-        try {
-            const auto result(opts.parse(argc, argv));
-            if (result["help"].as<bool>()) {
-                printlnStdout(opts.help());
-                args.exit = true;
-                return args;
-            }
-            if (result["version"].as<bool>()) {
-                printlnStdout(versionString);
-                args.exit = true;
-                return args;
-            }
-            parsePositionals(torrents, args);
-        } catch (const std::exception& e) {
-            throw std::runtime_error(e.what());
+
+        const auto result(opts.parse(argc, argv));
+        if (result["help"].as<bool>()) {
+            printlnStdout(opts.help());
+            args.exit = true;
+            return args;
         }
+        if (result["version"].as<bool>()) {
+            printlnStdout(versionString);
+            args.exit = true;
+            return args;
+        }
+        parsePositionals(torrents, args);
 
         return args;
     }
