@@ -113,7 +113,7 @@ namespace tremotesf {
         }
 
         const auto lineEdit = lineEditFromTextField();
-        const auto updateLineEdit = [=, this]() { lineEdit->setText(mViewModel->displayPath()); };
+        const auto updateLineEdit = [=, this] { lineEdit->setText(mViewModel->displayPath()); };
         updateLineEdit();
         QObject::connect(mViewModel, &RemoteDirectorySelectionWidgetViewModel::pathChanged, this, updateLineEdit);
         QObject::connect(
