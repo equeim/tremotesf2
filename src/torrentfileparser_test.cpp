@@ -11,7 +11,6 @@
 
 #include "log/formatters.h"
 #include "torrentfileparser.h"
-#include "stdutils.h"
 
 using namespace Qt::StringLiterals;
 
@@ -71,10 +70,11 @@ namespace tremotesf {
             QCOMPARE(torrentFile.isSingleFile(), false);
             QCOMPARE(torrentFile.rootFileName, "Fedora-Workstation-Live-x86_64-34"_L1);
 
-            const auto files =
-                toContainer<std::set>(torrentFile.files() | std::views::transform([](TorrentMetainfoFile::File file) {
-                                          return std::pair{file.size, toContainer<std::vector>(file.path())};
-                                      }));
+            const auto files = torrentFile.files()
+                               | std::views::transform([](TorrentMetainfoFile::File file) {
+                                     return std::pair{file.size, std::ranges::to<std::vector>(file.path())};
+                                 })
+                               | std::ranges::to<std::set>();
             const std::set<std::pair<bencode::Integer, std::vector<QString>>> expected{
                 {1062, {"Fedora-Workstation-34-1.2-x86_64-CHECKSUM"_L1}},
                 {2007367680, {"Fedora-Workstation-Live-x86_64-34-1.2.iso"_L1}}
@@ -92,10 +92,11 @@ namespace tremotesf {
             QCOMPARE(torrentFile.isSingleFile(), false);
             QCOMPARE(torrentFile.rootFileName, "bittorrent-v1-v2-hybrid-test"_L1);
 
-            const auto files =
-                toContainer<std::set>(torrentFile.files() | std::views::transform([](TorrentMetainfoFile::File file) {
-                                          return std::pair{file.size, toContainer<std::vector>(file.path())};
-                                      }));
+            const auto files = torrentFile.files()
+                               | std::views::transform([](TorrentMetainfoFile::File file) {
+                                     return std::pair{file.size, std::ranges::to<std::vector>(file.path())};
+                                 })
+                               | std::ranges::to<std::set>();
             const std::set<std::pair<bencode::Integer, std::vector<QString>>> expected{
                 {129434, {".pad"_L1, "129434"_L1}},
                 {227380, {".pad"_L1, "227380"_L1}},

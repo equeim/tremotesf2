@@ -27,7 +27,6 @@
 #include "ui/notificationscontroller.h"
 #include "magnetlinkparser.h"
 #include "settings.h"
-#include "stdutils.h"
 #include "torrentfileparser.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
@@ -214,9 +213,11 @@ namespace tremotesf {
     ) {
         std::vector<std::pair<QString, TorrentMetainfoFile>> torrentFiles{};
         torrentFiles.reserve(static_cast<size_t>(files.size()));
-        co_await waitAll(toContainer<std::vector>(files | std::views::transform([&](const QString& filePath) {
-                                                      return parseTorrentFile(filePath, torrentFiles);
-                                                  })));
+        co_await waitAll(
+            files
+            | std::views::transform([&](const QString& filePath) { return parseTorrentFile(filePath, torrentFiles); })
+            | std::ranges::to<std::vector>()
+        );
 
         std::vector<std::pair<Torrent*, std::vector<std::set<QString>>>> existingTorrents{};
 

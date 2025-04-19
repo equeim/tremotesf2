@@ -9,6 +9,7 @@
 #include <array>
 #include <cmath>
 #include <functional>
+#include <ranges>
 #include <unordered_map>
 
 #include <QAction>
@@ -71,7 +72,6 @@
 #include "mainwindowstatusbar.h"
 #include "mainwindowviewmodel.h"
 #include "settings.h"
-#include "stdutils.h"
 #include "target_os.h"
 #include "torrentsmodel.h"
 #include "torrentsproxymodel.h"
@@ -157,8 +157,7 @@ namespace tremotesf {
                 "QSystemTrayIconSys"_L1
             };
             auto* const metaObject = window->metaObject();
-            return metaObject &&
-                   std::ranges::find(classNames, QLatin1String(metaObject->className())) == classNames.end();
+            return metaObject && !std::ranges::contains(classNames, QLatin1String(metaObject->className()));
         }
 
         [[nodiscard]] std::vector<QPointer<QWidget>> toQPointers(const QWidgetList& widgets) {
@@ -663,12 +662,12 @@ namespace tremotesf {
             );
             QObject::connect(editLabelsAction, &QAction::triggered, this, [this] {
                 if (mTorrentsView.selectionModel()->hasSelection()) {
-                    const auto selectedTorrents = toContainer<std::vector>(
-                        mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows()) |
-                        std::views::transform([this](const QModelIndex& index) {
-                            return mTorrentsModel.torrentAtIndex(index);
-                        })
-                    );
+                    const auto selectedTorrents =
+                        mTorrentsProxyModel.sourceIndexes(mTorrentsView.selectionModel()->selectedRows())
+                        | std::views::transform([this](const QModelIndex& index) {
+                              return mTorrentsModel.torrentAtIndex(index);
+                          })
+                        | std::ranges::to<std::vector>();
                     auto dialog = new EditLabelsDialog(selectedTorrents, mViewModel.rpc(), mWindow);
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
                     dialog->show();

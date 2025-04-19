@@ -10,7 +10,6 @@
 #include <fmt/ranges.h>
 
 #include "magnetlinkparser.h"
-#include "stdutils.h"
 
 using namespace Qt::StringLiterals;
 
@@ -36,10 +35,9 @@ namespace tremotesf {
         }
         auto infoHashV1 = infoHashV1Value->mid(xtValuePrefix.size()).toLower();
 
-        auto trackers = toContainer<std::vector>(
-            query.allQueryItemValues(trKey, QUrl::FullyDecoded) |
-            std::views::transform([](auto tracker) { return std::set{tracker}; })
-        );
+        auto trackers = query.allQueryItemValues(trKey, QUrl::FullyDecoded)
+                        | std::views::transform([](auto tracker) { return std::set{tracker}; })
+                        | std::ranges::to<std::vector>();
 
         return {.infoHashV1 = std::move(infoHashV1), .trackers = std::move(trackers)};
     }

@@ -62,11 +62,7 @@ namespace fmt {
                 return std::string_view{};
             }();
             if (string.empty()) {
-                return fmt::format_to(
-                    ctx.out(),
-                    "QFileDevice::FileError::<unnamed value {}>",
-                    static_cast<std::underlying_type_t<decltype(e)>>(e)
-                );
+                return fmt::format_to(ctx.out(), "QFileDevice::FileError::<unnamed value {}>", std::to_underlying(e));
             }
             return fmt::format_to(ctx.out(), "QFileDevice::FileError::{}", string);
         }

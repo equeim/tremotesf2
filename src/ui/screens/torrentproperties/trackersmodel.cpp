@@ -11,11 +11,9 @@
 #include <QTimer>
 
 #include "ui/itemmodels/modelutils.h"
-#include "formatutils.h"
-
-#include "stdutils.h"
 #include "rpc/torrent.h"
 #include "rpc/tracker.h"
+#include "formatutils.h"
 
 namespace tremotesf {
     using std::chrono::seconds;
@@ -158,9 +156,11 @@ namespace tremotesf {
     }
 
     std::vector<int> TrackersModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        return toContainer<std::vector>(indexes | std::views::transform([this](const QModelIndex& index) {
-                                            return mTrackers.at(static_cast<size_t>(index.row())).tracker.id();
-                                        }));
+        return indexes
+               | std::views::transform([this](const QModelIndex& index) {
+                     return mTrackers.at(static_cast<size_t>(index.row())).tracker.id();
+                 })
+               | std::ranges::to<std::vector>();
     }
 
     const Tracker& TrackersModel::trackerAtIndex(const QModelIndex& index) const {
@@ -204,7 +204,7 @@ namespace tremotesf {
         TrackersModelUpdater updater(*this);
         updater.update(
             mTrackers,
-            toContainer<std::vector>(mTrackers | std::views::transform(&TrackerItem::withUpdatedEta))
+            mTrackers | std::views::transform(&TrackerItem::withUpdatedEta) | std::ranges::to<std::vector>()
         );
     }
 }

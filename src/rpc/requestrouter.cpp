@@ -90,11 +90,7 @@ namespace fmt {
             if (str) {
                 return fmt::format_to(ctx.out(), tremotesf::impl::singleArgumentFormatString, *str);
             }
-            return fmt::format_to(
-                ctx.out(),
-                tremotesf::impl::singleArgumentFormatString,
-                static_cast<std::underlying_type_t<QSsl::SslProtocol>>(protocol)
-            );
+            return fmt::format_to(ctx.out(), tremotesf::impl::singleArgumentFormatString, std::to_underlying(protocol));
         }
     };
 }

@@ -16,11 +16,11 @@
 #include "log/log.h"
 #include "tremotesf_dbus_generated/org.freedesktop.FileManager1.h"
 #include "desktoputils.h"
-#include "stdutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QDBusError)
 
 using namespace std::views;
+using std::ranges::to;
 using namespace Qt::StringLiterals;
 
 namespace tremotesf {
@@ -48,11 +48,13 @@ namespace tremotesf {
                     QDBusConnection::sessionBus()
                 );
                 interface.setTimeout(desktoputils::defaultDbusTimeout);
-                const auto uris = toContainer<QStringList>(
-                    filesToSelect | transform(&FilesInDirectory::files) | join | transform([](const QString& path) {
-                        return QUrl::fromLocalFile(path).toString(QUrl::FullyEncoded);
-                    })
-                );
+                const auto uris = filesToSelect
+                                  | transform(&FilesInDirectory::files)
+                                  | join
+                                  | transform([](const QString& path) {
+                                        return QUrl::fromLocalFile(path).toString(QUrl::FullyEncoded);
+                                    })
+                                  | to<QStringList>();
                 info().log(
                     "FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call "
                     "with: uris = {}",

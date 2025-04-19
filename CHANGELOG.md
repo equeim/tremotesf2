@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Minimum dependencies baseline has been raised:
+  - GCC 14 or Clang 19 (MSVC and Apple Clang are always required to be the latest available versions)
   - Qt 6.8 (Qt 5 support is removed)
   - KDE Frameworks 6.11
   - fmt 10.1.0

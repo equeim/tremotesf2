@@ -80,6 +80,10 @@ namespace tremotesf {
     };
 
     namespace {
+        constexpr auto allUpdateKeys =
+            std::views::iota(0, static_cast<int>(TorrentData::UpdateKey::Count))
+            | std::views::transform([](int key) { return static_cast<TorrentData::UpdateKey>(key); });
+
         constexpr QLatin1String updateKeyString(TorrentData::UpdateKey key) {
             switch (key) {
             case TorrentData::UpdateKey::Id:
@@ -183,8 +187,7 @@ namespace tremotesf {
         std::optional<TorrentData::UpdateKey> mapUpdateKey(const QString& stringKey) {
             static const auto mapping = [] {
                 std::map<QLatin1String, TorrentData::UpdateKey, std::less<>> map{};
-                for (int i = 0; i < static_cast<int>(TorrentData::UpdateKey::Count); ++i) {
-                    const auto key = static_cast<TorrentData::UpdateKey>(i);
+                for (auto key : allUpdateKeys) {
                     map.emplace(updateKeyString(key), key);
                 }
                 return map;
@@ -277,11 +280,9 @@ namespace tremotesf {
         const Rpc* rpc
     ) {
         bool changed = false;
-        const auto count = std::min(keys.size(), static_cast<size_t>(values.size()));
-        for (size_t i = 0; i < count; ++i) {
-            const auto key = keys[i];
+        for (const auto& [key, value] : std::views::zip(keys, values)) {
             if (key.has_value()) {
-                updateProperty(*key, values[static_cast<QJsonArray::size_type>(i)], changed, firstTime, rpc);
+                updateProperty(*key, value, changed, firstTime, rpc);
             }
         }
         applyTrackerErrorWorkaround(changed);
@@ -378,9 +379,9 @@ namespace tremotesf {
         case TorrentData::UpdateKey::WebSeeders: {
             setChanged(
                 webSeeders,
-                toContainer<std::vector>(value.toArray() | std::views::transform([](auto value) {
-                                             return value.toString();
-                                         })),
+                value.toArray() | std::views::transform([](auto value) {
+                    return value.toString();
+                }) | std::ranges::to<std::vector>(),
                 changed
             );
             return;
@@ -471,9 +472,9 @@ namespace tremotesf {
         case TorrentData::UpdateKey::Labels: {
             setChanged(
                 labels,
-                toContainer<std::vector>(value.toArray() | std::views::transform([](auto value) {
-                                             return value.toString();
-                                         })),
+                value.toArray() | std::views::transform([](auto value) {
+                    return value.toString();
+                }) | std::ranges::to<std::vector>(),
                 changed
             );
             return;
@@ -521,8 +522,7 @@ namespace tremotesf {
 
     QJsonArray Torrent::updateFields(const ServerSettings* serverSettings) {
         QJsonArray fields{};
-        for (int i = 0; i < static_cast<int>(TorrentData::UpdateKey::Count); ++i) {
-            const auto key = static_cast<TorrentData::UpdateKey>(i);
+        for (auto key : allUpdateKeys) {
             if (key == TorrentData::UpdateKey::FileCount && !serverSettings->data().hasFileCountProperty()) {
                 continue;
             }
@@ -548,9 +548,9 @@ namespace tremotesf {
     }
 
     std::vector<std::optional<TorrentData::UpdateKey>> Torrent::mapUpdateKeys(const QJsonArray& stringKeys) {
-        return toContainer<std::vector>(stringKeys | std::views::transform([](auto value) {
-                                            return mapUpdateKey(value.toString());
-                                        }));
+        return stringKeys
+               | std::views::transform([](auto value) { return mapUpdateKey(value.toString()); })
+               | std::ranges::to<std::vector>();
     }
 
     void Torrent::setDownloadSpeedLimited(bool limited) {
@@ -626,7 +626,7 @@ namespace tremotesf {
             for (const auto& tracker : trackers) {
                 tiered[tracker.id()].insert(tracker.announce());
             }
-            return moveToContainer<std::vector>(std::views::values(tiered));
+            return std::views::values(tiered) | std::views::as_rvalue | std::ranges::to<std::vector>();
         }
 
         QString toTrackerList(std::span<const std::set<QString>> tieredAnnounceUrls) {
@@ -659,8 +659,7 @@ namespace tremotesf {
                 if (tier.empty()) continue;
                 // Transmission adds each announce URL to each own tier when using trackerAdd property, so take first URL from each tier
                 const auto& first = *tier.begin();
-                const auto existingTracker = std::ranges::find(existingTrackers, first, &Tracker::announce);
-                if (existingTracker == existingTrackers.end()) {
+                if (!std::ranges::contains(existingTrackers, first, &Tracker::announce)) {
                     trackersToAdd.push_back(first);
                 }
             }
@@ -729,9 +728,8 @@ namespace tremotesf {
             return;
         }
         auto trackers = mData.trackers;
-        const auto erased = std::erase_if(trackers, [ids](const auto& tracker) {
-            return std::ranges::find(ids, tracker.id()) != ids.end();
-        });
+        const auto erased =
+            std::erase_if(trackers, [ids](const auto& tracker) { return std::ranges::contains(ids, tracker.id()); });
         if (erased == 0) {
             return;
         }

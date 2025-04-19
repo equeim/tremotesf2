@@ -5,6 +5,7 @@
 #include "trackersviewwidget.h"
 
 #include <array>
+#include <ranges>
 
 #include <QCoreApplication>
 #include <QHBoxLayout>
@@ -19,7 +20,6 @@
 
 #include "rpc/torrent.h"
 #include "rpc/tracker.h"
-#include "stdutils.h"
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/widgets/basetreeview.h"
 #include "ui/widgets/textinputdialog.h"
@@ -163,9 +163,11 @@ namespace tremotesf {
         );
         QObject::connect(dialog, &TextInputDialog::accepted, this, [=, this] {
             auto lines = dialog->text().split('\n', Qt::SkipEmptyParts);
-            mTorrent->addTrackers(toContainer<std::vector>(lines | std::views::transform([](QString& announceUrl) {
-                                                               return std::set{std::move(announceUrl)};
-                                                           })));
+            mTorrent->addTrackers(
+                lines
+                | std::views::transform([](QString& announceUrl) { return std::set{std::move(announceUrl)}; })
+                | std::ranges::to<std::vector>()
+            );
         });
         dialog->show();
     }

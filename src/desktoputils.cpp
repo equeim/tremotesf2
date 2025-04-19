@@ -70,9 +70,7 @@ namespace tremotesf::desktoputils {
         }
         }
 
-        throw std::logic_error(
-            fmt::format("Unknown StatusIcon value {}", static_cast<std::underlying_type_t<StatusIcon>>(icon))
-        );
+        throw std::logic_error(fmt::format("Unknown StatusIcon value {}", std::to_underlying(icon)));
     }
 
     const QIcon& standardFileIcon() {

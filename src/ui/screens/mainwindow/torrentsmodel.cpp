@@ -5,6 +5,7 @@
 #include "torrentsmodel.h"
 
 #include <limits>
+#include <ranges>
 
 #include <QCoreApplication>
 #include <QIcon>
@@ -17,7 +18,6 @@
 #include "desktoputils.h"
 #include "formatutils.h"
 #include "settings.h"
-#include "stdutils.h"
 
 namespace tremotesf {
     TorrentsModel::TorrentsModel(Rpc* rpc, QObject* parent) : QAbstractTableModel(parent), mRpc(nullptr) {
@@ -418,8 +418,8 @@ namespace tremotesf {
     Torrent* TorrentsModel::torrentAtRow(int row) const { return mRpc->torrents()[static_cast<size_t>(row)].get(); }
 
     std::vector<int> TorrentsModel::idsFromIndexes(const QModelIndexList& indexes) const {
-        return toContainer<std::vector>(indexes | std::views::transform([this](const QModelIndex& index) {
-                                            return torrentAtIndex(index)->data().id;
-                                        }));
+        return indexes
+               | std::views::transform([this](const QModelIndex& index) { return torrentAtIndex(index)->data().id; })
+               | std::ranges::to<std::vector>();
     }
 }

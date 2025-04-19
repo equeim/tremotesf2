@@ -25,7 +25,6 @@
 #include "requestrouter.h"
 #include "serversettings.h"
 #include "serverstats.h"
-#include "stdutils.h"
 #include "torrent.h"
 
 using namespace Qt::StringLiterals;
@@ -396,11 +395,11 @@ namespace tremotesf {
     ) {
         const int priorityInt = TorrentData::priorityToInt(bandwidthPriority);
         co_await waitAll(
-            toContainer<std::vector>(
-                links | std::views::transform([&](QString& link) {
-                    return addTorrentLinkImpl(std::move(link), downloadDirectory, priorityInt, start, labels);
-                })
-            )
+            links
+            | std::views::transform([&](QString& link) {
+                  return addTorrentLinkImpl(std::move(link), downloadDirectory, priorityInt, start, labels);
+              })
+            | std::ranges::to<std::vector>()
         );
         mBackgroundRequestsCoroutineScope.launch(updateData());
     }
