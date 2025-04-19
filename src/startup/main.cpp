@@ -122,8 +122,8 @@ int main(int argc, char** argv) {
         if (args.exit) {
             return EXIT_SUCCESS;
         }
-    } catch (const std::runtime_error& e) {
-        warning().log("Failed to parse command line arguments: {}", e.what());
+    } catch (const std::exception& e) {
+        warning().logWithException(e, "Failed to parse command line arguments");
         return EXIT_FAILURE;
     }
 
