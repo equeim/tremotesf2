@@ -41,57 +41,6 @@ namespace tremotesf {
         );
     }
 
-    namespace impl {
-        template<typename NewContainer, typename FromRange>
-        inline NewContainer toContainer(FromRange&& from) {
-            if constexpr (std::ranges::common_range<FromRange>) {
-                return {std::ranges::begin(from), std::ranges::end(from)};
-            } else {
-                auto common = std::views::common(std::forward<FromRange>(from));
-                return {std::ranges::begin(common), std::ranges::end(common)};
-            }
-        }
-
-        template<typename NewContainer, typename FromRange>
-        inline NewContainer moveToContainer(FromRange&& from) {
-            if constexpr (std::ranges::common_range<FromRange>) {
-                return {std::move_iterator(std::ranges::begin(from)), std::move_iterator(std::ranges::end(from))};
-            } else {
-                auto common = std::views::common(std::forward<FromRange>(from));
-                return {std::move_iterator(std::ranges::begin(common)), std::move_iterator(std::ranges::end(common))};
-            }
-        }
-    }
-
-    template<template<typename...> typename NewContainer, std::ranges::input_range FromRange>
-    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
-    inline auto toContainer(FromRange&& from) {
-        return impl::toContainer<NewContainer<std::ranges::range_value_t<FromRange>>, FromRange>(
-            std::forward<FromRange>(from)
-        );
-    }
-
-    template<typename NewContainer, std::ranges::input_range FromRange>
-        requires(std::ranges::common_range<FromRange>)
-    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
-    inline auto toContainer(FromRange&& from) {
-        return impl::toContainer<NewContainer, FromRange>(std::forward<FromRange>(from));
-    }
-
-    template<template<typename...> typename NewContainer, std::ranges::forward_range FromRange>
-    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
-    inline auto moveToContainer(FromRange&& from) {
-        return impl::moveToContainer<NewContainer<std::ranges::range_value_t<FromRange>>, FromRange>(
-            std::forward<FromRange>(from)
-        );
-    }
-
-    template<typename NewContainer, std::ranges::forward_range FromRange>
-    // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
-    inline auto moveToContainer(FromRange&& from) {
-        return impl::moveToContainer<NewContainer, FromRange>(std::forward<FromRange>(from));
-    }
-
     /**
      * T1 is always deduced as value type, T2 may be a reference
      */

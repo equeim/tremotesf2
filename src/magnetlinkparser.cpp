@@ -10,7 +10,6 @@
 #include <fmt/ranges.h>
 
 #include "magnetlinkparser.h"
-#include "stdutils.h"
 
 using namespace Qt::StringLiterals;
 

@@ -378,9 +378,9 @@ namespace tremotesf {
         case TorrentData::UpdateKey::WebSeeders: {
             setChanged(
                 webSeeders,
-                toContainer<std::vector>(value.toArray() | std::views::transform([](auto value) {
-                                             return value.toString();
-                                         })),
+                value.toArray() | std::views::transform([](auto value) {
+                    return value.toString();
+                }) | std::ranges::to<std::vector>(),
                 changed
             );
             return;
@@ -471,9 +471,9 @@ namespace tremotesf {
         case TorrentData::UpdateKey::Labels: {
             setChanged(
                 labels,
-                toContainer<std::vector>(value.toArray() | std::views::transform([](auto value) {
-                                             return value.toString();
-                                         })),
+                value.toArray() | std::views::transform([](auto value) {
+                    return value.toString();
+                }) | std::ranges::to<std::vector>(),
                 changed
             );
             return;
@@ -548,9 +548,9 @@ namespace tremotesf {
     }
 
     std::vector<std::optional<TorrentData::UpdateKey>> Torrent::mapUpdateKeys(const QJsonArray& stringKeys) {
-        return toContainer<std::vector>(stringKeys | std::views::transform([](auto value) {
-                                            return mapUpdateKey(value.toString());
-                                        }));
+        return stringKeys
+               | std::views::transform([](auto value) { return mapUpdateKey(value.toString()); })
+               | std::ranges::to<std::vector>();
     }
 
     void Torrent::setDownloadSpeedLimited(bool limited) {
@@ -626,7 +626,7 @@ namespace tremotesf {
             for (const auto& tracker : trackers) {
                 tiered[tracker.id()].insert(tracker.announce());
             }
-            return moveToContainer<std::vector>(std::views::values(tiered));
+            return std::views::values(tiered) | std::views::as_rvalue | std::ranges::to<std::vector>();
         }
 
         QString toTrackerList(std::span<const std::set<QString>> tieredAnnounceUrls) {
