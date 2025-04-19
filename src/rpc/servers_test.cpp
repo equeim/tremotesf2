@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <array>
+#include <ranges>
 
 #include <QTest>
 #include <QSettings>
@@ -34,8 +35,8 @@ namespace tremotesf {
     createMountedDirectories(std::span<const QString> localDirs, std::span<const QString> remoteDirs) {
         std::vector<MountedDirectory> dirs{};
         dirs.reserve(localDirs.size());
-        for (size_t i = 0; i < localDirs.size(); ++i) {
-            dirs.push_back({.localPath = localDirs[i], .remotePath = remoteDirs[i]});
+        for (const auto& [local, remote] : std::views::zip(localDirs, remoteDirs)) {
+            dirs.push_back({.localPath = local, .remotePath = remote});
         }
         return dirs;
     }
@@ -306,18 +307,18 @@ namespace tremotesf {
         void checkFromLocalToRemoteDirectory(
             std::span<const QString> localPaths, PathOs remotePathOs, std::span<const QString> expectedRemotePaths
         ) {
-            for (size_t i = 0; i < localPaths.size(); ++i) {
-                info().log("Converting {} to remote path when server is {}", localPaths[i], remotePathOs);
-                QCOMPARE(mServers.fromLocalToRemoteDirectory(localPaths[i], remotePathOs), expectedRemotePaths[i]);
+            for (const auto& [localPath, expectedRemotePath] : std::views::zip(localPaths, expectedRemotePaths)) {
+                info().log("Converting {} to remote path when server is {}", localPath, remotePathOs);
+                QCOMPARE(mServers.fromLocalToRemoteDirectory(localPath, remotePathOs), expectedRemotePath);
             }
         }
 
         void checkFromRemoteToLocalDirectory(
             std::span<const QString> remotePaths, PathOs remotePathOs, std::span<const QString> expectedLocalPaths
         ) {
-            for (size_t i = 0; i < remotePaths.size(); ++i) {
-                info().log("Converting {} to local path when server is {}", remotePaths[i], remotePathOs);
-                QCOMPARE(mServers.fromRemoteToLocalDirectory(remotePaths[i], remotePathOs), expectedLocalPaths[i]);
+            for (const auto& [remotePath, expectedLocalPath] : std::views::zip(remotePaths, expectedLocalPaths)) {
+                info().log("Converting {} to local path when server is {}", remotePath, remotePathOs);
+                QCOMPARE(mServers.fromRemoteToLocalDirectory(remotePath, remotePathOs), expectedLocalPath);
             }
         }
 
