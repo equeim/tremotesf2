@@ -6,6 +6,7 @@
 
 #include <array>
 #include <charconv>
+#include <exception>
 #include <limits>
 #include <system_error>
 
