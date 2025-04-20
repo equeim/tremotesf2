@@ -152,7 +152,6 @@ jobs:
 
     - name: Set up Flatpak
       run: |
-        sudo add-apt-repository -y ppa:flatpak/stable
         sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install flatpak flatpak-builder
         flatpak remote-add --user --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
 
