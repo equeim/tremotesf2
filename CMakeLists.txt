@@ -5,10 +5,14 @@
 cmake_minimum_required(VERSION 3.25)
 cmake_policy(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION}...3.31)
 
+include(cmake/VcpkgHostTriplet.cmake)
+
 set(languages CXX)
 if (APPLE)
-    include(cmake/MacOSInitialSetup.cmake)
     list(APPEND languages OBJCXX)
+    include(cmake/MacOSDeploymentTarget.cmake)
+    message(STATUS "Setting CMAKE_OSX_DEPLOYMENT_TARGET to ${TREMOTESF_MACOS_DEPLOYMENT_TARGET}")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "${TREMOTESF_MACOS_DEPLOYMENT_TARGET}")
 endif ()
 
 project(tremotesf VERSION 2.8.2 LANGUAGES ${languages})
