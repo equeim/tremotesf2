@@ -152,26 +152,25 @@ namespace tremotesf {
         switch (filter) {
         case Active:
             return (
-                (torrent->data().status == TorrentData::Status::Downloading && !torrent->data().isDownloadingStalled()
-                ) ||
-                (torrent->data().status == TorrentData::Status::Seeding && !torrent->data().isSeedingStalled())
+                (torrent->data().status == TorrentData::Status::Downloading && !torrent->data().isDownloadingStalled())
+                || (torrent->data().status == TorrentData::Status::Seeding && !torrent->data().isSeedingStalled())
             );
         case Downloading:
             return (
-                torrent->data().status == TorrentData::Status::Downloading ||
-                torrent->data().status == TorrentData::Status::QueuedForDownloading
+                torrent->data().status == TorrentData::Status::Downloading
+                || torrent->data().status == TorrentData::Status::QueuedForDownloading
             );
         case Seeding:
             return (
-                torrent->data().status == TorrentData::Status::Seeding ||
-                torrent->data().status == TorrentData::Status::QueuedForSeeding
+                torrent->data().status == TorrentData::Status::Seeding
+                || torrent->data().status == TorrentData::Status::QueuedForSeeding
             );
         case Paused:
             return torrent->data().status == TorrentData::Status::Paused;
         case Checking:
             return (
-                torrent->data().status == TorrentData::Status::Checking ||
-                torrent->data().status == TorrentData::Status::QueuedForChecking
+                torrent->data().status == TorrentData::Status::Checking
+                || torrent->data().status == TorrentData::Status::QueuedForChecking
             );
         case Errored:
             return torrent->data().hasError();

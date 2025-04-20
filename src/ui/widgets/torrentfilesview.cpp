@@ -66,9 +66,9 @@ namespace tremotesf {
         QObject::connect(this, &TorrentFilesView::activated, this, [=, this](const auto& index) {
             const QModelIndex sourceIndex(mProxyModel->mapToSource(index));
             auto entry = static_cast<const TorrentFilesModelEntry*>(mProxyModel->mapToSource(index).internalPointer());
-            if (!entry->isDirectory() &&
-                isServerLocalOrTorrentIsMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent()) &&
-                entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
+            if (!entry->isDirectory()
+                && isServerLocalOrTorrentIsMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent())
+                && entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
                 desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
             }
         });
@@ -134,8 +134,8 @@ namespace tremotesf {
         if (!mLocalFile) {
             bool show = true;
             for (const QModelIndex& index : sourceIndexes) {
-                if (static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() ==
-                    TorrentFilesModelEntry::Unwanted) {
+                if (static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState()
+                    == TorrentFilesModelEntry::Unwanted) {
                     show = false;
                     break;
                 }

@@ -75,7 +75,7 @@ namespace tremotesf {
                 writeSocket = sockets[0];
                 const int readSocket = sockets[1];
 
-                struct sigaction action {};
+                struct sigaction action{};
                 action.sa_handler = signalHandler;
                 action.sa_flags |= SA_RESTART;
                 for (auto [signal, _] : expectedSignals) {

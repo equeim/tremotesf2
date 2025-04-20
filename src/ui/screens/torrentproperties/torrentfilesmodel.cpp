@@ -187,8 +187,8 @@ namespace tremotesf {
         if (!index.isValid()) {
             return true;
         }
-        return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState() !=
-               TorrentFilesModelEntry::Unwanted;
+        return static_cast<const TorrentFilesModelEntry*>(index.internalPointer())->wantedState()
+               != TorrentFilesModelEntry::Unwanted;
     }
 
     void TorrentFilesModel::update(std::span<const int> changed) {

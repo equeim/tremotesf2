@@ -57,8 +57,8 @@ namespace tremotesf::impl {
         }
         if (mCoroutines.empty()) {
             onAllCoroutinesCompleted();
-        } else if ((mUnhandledException || mCancelAfterFirst) &&
-                   !mCancelledCoroutinesAndWaitingForCompletionCallbacks) {
+        } else if ((mUnhandledException || mCancelAfterFirst)
+                   && !mCancelledCoroutinesAndWaitingForCompletionCallbacks) {
             cancelAll();
         }
     }

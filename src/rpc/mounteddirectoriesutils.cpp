@@ -44,8 +44,9 @@ namespace tremotesf {
             return {};
         }
         const auto& torrentName = torrent->data().name;
-        if (torrent->data().singleFile && torrent->data().leftUntilDone > 0 &&
-            rpc->serverSettings()->data().renameIncompleteFiles) {
+        if (torrent->data().singleFile
+            && torrent->data().leftUntilDone > 0
+            && rpc->serverSettings()->data().renameIncompleteFiles) {
             return downloadDirectoryPath % '/' % torrentName % ".part"_L1;
         }
         return downloadDirectoryPath % '/' % torrentName;

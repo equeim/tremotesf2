@@ -489,8 +489,8 @@ namespace tremotesf {
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             [idleSeedingLimitSpinBox](int index) {
-                if (index ==
-                    indexOfCasted<int>(idleSeedingLimitComboBoxItems, TorrentData::IdleSeedingLimitMode::Single)) {
+                if (index
+                    == indexOfCasted<int>(idleSeedingLimitComboBoxItems, TorrentData::IdleSeedingLimitMode::Single)) {
                     idleSeedingLimitSpinBox->show();
                 } else {
                     idleSeedingLimitSpinBox->hide();

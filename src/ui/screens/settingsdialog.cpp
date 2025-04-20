@@ -125,12 +125,12 @@ namespace tremotesf {
                 "Properties dialog won't be shown because torrent properties are shown in the main window"
             ));
             const auto updateDialogWarningMessage = [=] {
-                if (showTorrentPropertiesInMainWindowCheckBox->isChecked() &&
-                    torrentDoubleClickActionComboBox->currentIndex() ==
-                        indexOfCasted<int>(
-                            torrentDoubleClickActionComboBoxValues,
-                            Settings::TorrentDoubleClickAction::OpenPropertiesDialog
-                        )) {
+                if (showTorrentPropertiesInMainWindowCheckBox->isChecked()
+                    && torrentDoubleClickActionComboBox->currentIndex()
+                           == indexOfCasted<int>(
+                               torrentDoubleClickActionComboBoxValues,
+                               Settings::TorrentDoubleClickAction::OpenPropertiesDialog
+                           )) {
                     dialogWarningMessage->animatedShow();
                 } else {
                     dialogWarningMessage->animatedHide();

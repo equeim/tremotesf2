@@ -599,8 +599,8 @@ namespace tremotesf {
 
         const auto days = settings->data().alternativeSpeedLimitsDays;
         for (int i = 0, max = mLimitScheduleDaysComboBox->count(); i < max; i++) {
-            if (mLimitScheduleDaysComboBox->itemData(i).value<ServerSettingsData::AlternativeSpeedLimitsDays>() ==
-                days) {
+            if (mLimitScheduleDaysComboBox->itemData(i).value<ServerSettingsData::AlternativeSpeedLimitsDays>()
+                == days) {
                 mLimitScheduleDaysComboBox->setCurrentIndex(i);
                 break;
             }

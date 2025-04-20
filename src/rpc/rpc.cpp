@@ -786,8 +786,10 @@ namespace tremotesf {
                 // Don't emit torrentFinished() if torrent's size became smaller
                 // since there is high chance that it happened because user unselected some files
                 // and torrent immediately became finished. We don't want notification in that case
-                if (!wasFinished && torrent->data().isFinished() && !wasPaused &&
-                    torrent->data().sizeWhenDone >= oldSizeWhenDone) {
+                if (!wasFinished
+                    && torrent->data().isFinished()
+                    && !wasPaused
+                    && torrent->data().sizeWhenDone >= oldSizeWhenDone) {
                     emit mRpc.torrentFinished(torrent.get());
                 }
                 if (!metadataWasComplete && torrent->data().metadataComplete) {
@@ -948,8 +950,9 @@ namespace tremotesf {
 
     Coroutine<> Rpc::checkIfServerIsLocal() {
         info().log("checkIfServerIsLocal() called");
-        if (mServerSettings->data().hasSessionIdFile() && !mRequestRouter->sessionId().isEmpty() &&
-            isTransmissionSessionIdFileExists(mRequestRouter->sessionId())) {
+        if (mServerSettings->data().hasSessionIdFile()
+            && !mRequestRouter->sessionId().isEmpty()
+            && isTransmissionSessionIdFileExists(mRequestRouter->sessionId())) {
             mServerIsLocal = true;
             info().log("checkIfServerIsLocal: server is running locally: true");
             co_return;

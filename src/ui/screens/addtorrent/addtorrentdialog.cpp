@@ -466,7 +466,8 @@ namespace tremotesf {
         const auto initialParameters = getInitialAddTorrentParameters(rpc);
         downloadDirectoryWidget->updatePath(initialParameters.downloadDirectory);
         // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-        priorityComboBox->setCurrentIndex(indexOfCasted<int>(priorityComboBoxItems, initialParameters.priority).value()
+        priorityComboBox->setCurrentIndex(
+            indexOfCasted<int>(priorityComboBoxItems, initialParameters.priority).value()
         );
         startTorrentCheckBox->setChecked(initialParameters.startAfterAdding);
         if (deleteTorrentFileGroupBox) {
