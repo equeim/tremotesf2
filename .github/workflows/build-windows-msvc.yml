@@ -26,10 +26,10 @@ jobs:
         arch:
           - msvc-arch: amd64
             cmake-preset-arch: x86_64
-          - msvc-arch: amd64_arm64
+          - msvc-arch: arm64
             cmake-preset-arch: arm64
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.arch.cmake-preset-arch == 'arm64' && 'windows-11-arm' || 'windows-2025' }}
 
     steps:
     - name: Checkout
@@ -66,7 +66,6 @@ jobs:
       with:
         cmake-arguments: --preset windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && inputs.toolchain == 'msvc' && 'ON' || 'OFF' }}
         package: true
-        test: ${{ matrix.arch.cmake-preset-arch == 'x86_64' }}
 
     - name: Archive packages
       if: inputs.release-tag == ''
