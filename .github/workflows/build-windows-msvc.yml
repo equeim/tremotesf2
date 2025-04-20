@@ -26,16 +26,20 @@ jobs:
         arch:
           - msvc-arch: amd64
             cmake-preset-arch: x86_64
-          - msvc-arch: amd64_arm64
+          - msvc-arch: arm64
             cmake-preset-arch: arm64
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.arch.cmake-preset-arch == 'arm64' && 'windows-11-arm' || 'windows-2025' }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
+
+    - name: What
+      run: |
+        echo $env:PROCESSOR_ARCHITECTURE
 
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1
@@ -55,13 +59,17 @@ jobs:
         save-cache: ${{ github.event_name != 'pull_request' && inputs.toolchain == 'msvc' }}
         cache-key-tag: ${{ matrix.arch.cmake-preset-arch }}
 
+    - name: What
+      run: |
+        echo $env:PROCESSOR_ARCHITECTURE
+        dumpbin /headers (Get-Command cmake.exe).Path
+
     - name: Build Tremotesf with ${{ inputs.toolchain }} toolchain for ${{ matrix.arch.cmake-preset-arch }} architecture
       id: build
       uses: equeim/action-cmake-build@v10
       with:
         cmake-arguments: --preset windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && inputs.toolchain == 'msvc' && 'ON' || 'OFF' }}
         package: true
-        test: ${{ matrix.arch.cmake-preset-arch == 'x86_64' }}
 
     - name: Archive packages
       if: inputs.release-tag == ''
