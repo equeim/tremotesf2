@@ -14,6 +14,11 @@ if (NOT WIN32 AND NOT APPLE)
     message(FATAL_ERROR "Building with vcpkg is not supported on this platform")
 endif()
 
+if (WIN32)
+    message("PROCESSOR_ARCHITECHTURE is $ENV{PROCESSOR_ARCHITECTURE}")
+    execute_process(COMMAND systeminfo.exe)
+endif()
+
 message(STATUS "Automatically selecting host triplet")
 cmake_host_system_information(RESULT platform QUERY OS_PLATFORM)
 message(STATUS "Host platform is ${platform}")

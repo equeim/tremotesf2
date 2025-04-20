@@ -37,6 +37,10 @@ jobs:
       with:
         submodules: 'recursive'
 
+    - name: What
+      run: |
+        echo $env:PROCESSOR_ARCHITECTURE
+
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@v1
       with:
@@ -54,6 +58,11 @@ jobs:
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
         save-cache: ${{ github.event_name != 'pull_request' && inputs.toolchain == 'msvc' }}
         cache-key-tag: ${{ matrix.arch.cmake-preset-arch }}
+
+    - name: What
+      run: |
+        echo $env:PROCESSOR_ARCHITECTURE
+        dumpbin /headers (Get-Command cmake.exe).Path
 
     - name: Build Tremotesf with ${{ inputs.toolchain }} toolchain for ${{ matrix.arch.cmake-preset-arch }} architecture
       id: build
