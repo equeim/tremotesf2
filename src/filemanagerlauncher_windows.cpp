@@ -61,8 +61,9 @@ namespace tremotesf {
                     const auto nativeFilePath = winrt::hstring(QDir::toNativeSeparators(filePath).toStdWString());
                     if (QFileInfo(filePath).isDir()) {
                         try {
-                            options.ItemsToSelect().Append(co_await StorageFolder::GetFolderFromPathAsync(nativeFilePath
-                            ));
+                            options.ItemsToSelect().Append(
+                                co_await StorageFolder::GetFolderFromPathAsync(nativeFilePath)
+                            );
                         } catch (const winrt::hresult_canceled&) {
                             throw;
                         } catch (const winrt::hresult_error& e) {

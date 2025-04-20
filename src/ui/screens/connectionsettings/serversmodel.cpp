@@ -148,41 +148,43 @@ namespace tremotesf {
         } else {
             row = static_cast<int>(mServers.size());
             beginInsertRows(QModelIndex(), row, row);
-            mServers.push_back(Server{
-                .name = name,
-                .connectionConfiguration =
-                    ConnectionConfiguration{
-                        address,
-                        port,
-                        apiPath,
+            mServers.push_back(
+                Server{
+                    .name = name,
+                    .connectionConfiguration =
+                        ConnectionConfiguration{
+                            address,
+                            port,
+                            apiPath,
 
-                        proxyType,
-                        proxyHostname,
-                        proxyPort,
-                        proxyUser,
-                        proxyPassword,
+                            proxyType,
+                            proxyHostname,
+                            proxyPort,
+                            proxyUser,
+                            proxyPassword,
 
-                        https,
-                        selfSignedCertificateEnabled,
-                        selfSignedCertificate,
-                        clientCertificateEnabled,
-                        clientCertificate,
+                            https,
+                            selfSignedCertificateEnabled,
+                            selfSignedCertificate,
+                            clientCertificateEnabled,
+                            clientCertificate,
 
-                        authentication,
-                        username,
-                        password,
+                            authentication,
+                            username,
+                            password,
 
-                        updateInterval,
-                        timeout,
+                            updateInterval,
+                            timeout,
 
-                        autoReconnectEnabled,
-                        autoReconnectInterval
-                    },
-                .mountedDirectories = mountedDirectories,
-                .lastTorrents = {},
-                .lastDownloadDirectories = {},
-                .lastDownloadDirectory = {}
-            });
+                            autoReconnectEnabled,
+                            autoReconnectInterval
+                        },
+                    .mountedDirectories = mountedDirectories,
+                    .lastTorrents = {},
+                    .lastDownloadDirectories = {},
+                    .lastDownloadDirectory = {}
+                }
+            );
             endInsertRows();
             if (row == 0) {
                 mCurrentServer = name;

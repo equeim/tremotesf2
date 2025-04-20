@@ -47,9 +47,9 @@ namespace tremotesf {
             ;
 
         template<typename T>
-        concept IsQStringView = std::same_as<std::remove_cvref_t<T>, QStringView> ||
-                                std::same_as<std::remove_cvref_t<T>, QUtf8StringView> ||
-                                std::same_as<std::remove_cvref_t<T>, QAnyStringView>;
+        concept IsQStringView = std::same_as<std::remove_cvref_t<T>, QStringView>
+                                || std::same_as<std::remove_cvref_t<T>, QUtf8StringView>
+                                || std::same_as<std::remove_cvref_t<T>, QAnyStringView>;
 
         template<std::convertible_to<QString> T>
         ALWAYS_INLINE QString convertToQString(const T& string) {
@@ -69,8 +69,8 @@ namespace tremotesf {
         }
 
         template<typename T>
-        concept CanConvertToQString = !std::same_as<std::remove_cvref_t<T>, QString> &&
-                                      requires(T string) { tremotesf::impl::convertToQString(string); };
+        concept CanConvertToQString = !std::same_as<std::remove_cvref_t<T>, QString>
+                                      && requires(T string) { tremotesf::impl::convertToQString(string); };
 
         inline void printNewline(FILE* stream) { std::fwrite("\n", 1, 1, stream); }
     }

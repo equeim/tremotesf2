@@ -16,7 +16,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        inline explicit BaseTorrentsFiltersSettingsModel(QObject* parent = nullptr) : QAbstractListModel(parent){};
+        inline explicit BaseTorrentsFiltersSettingsModel(QObject* parent = nullptr) : QAbstractListModel(parent) {};
 
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);

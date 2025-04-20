@@ -12,8 +12,9 @@ namespace tremotesf {
         Q_OBJECT
     public:
         explicit RecoloringSvgIconStyle(QObject* parent);
-        void drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget)
-            const override;
+        void drawControl(
+            ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget
+        ) const override;
     };
 }
 

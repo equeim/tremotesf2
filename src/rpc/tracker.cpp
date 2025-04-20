@@ -45,8 +45,8 @@ namespace tremotesf {
         setChanged(mTier, trackerMap.value("tier"_L1).toInt(), changed);
 
         const bool announceError =
-            (!trackerMap.value("lastAnnounceSucceeded"_L1).toBool() &&
-             trackerMap.value("lastAnnounceTime"_L1).toInt() != 0);
+            (!trackerMap.value("lastAnnounceSucceeded"_L1).toBool()
+             && trackerMap.value("lastAnnounceTime"_L1).toInt() != 0);
         if (announceError) {
             setChanged(mErrorMessage, trackerMap.value("lastAnnounceResult"_L1).toString(), changed);
         } else {
