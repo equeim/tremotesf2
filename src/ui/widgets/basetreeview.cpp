@@ -15,6 +15,7 @@ namespace tremotesf {
         setUniformRowHeights(true);
 
         header()->setContextMenuPolicy(Qt::CustomContextMenu);
+        header()->setFirstSectionMovable(true);
 
         QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, [=, this](QPoint pos) {
             if (!model()) {
