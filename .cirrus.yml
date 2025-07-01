@@ -8,7 +8,7 @@ build_freebsd_task:
   freebsd_instance:
     matrix:
     - image_family: freebsd-13-5
-    - image_family: freebsd-14-2
+    - image_family: freebsd-14-3
 
   packages_cache:
     folder: /var/cache/pkg
