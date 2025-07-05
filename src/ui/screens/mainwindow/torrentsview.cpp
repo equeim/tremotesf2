@@ -61,6 +61,7 @@ namespace tremotesf {
                 header->visualIndex(static_cast<int>(C::AddedDate)) + 1
             );
             sortByColumn(static_cast<int>(TorrentsModel::Column::AddedDate), Qt::DescendingOrder);
+            header->setFirstSectionMovable(true);
         }
     }
 
