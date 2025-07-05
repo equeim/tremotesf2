@@ -30,6 +30,7 @@ namespace tremotesf {
         setRootIsDecorated(false);
 
         const auto header = this->header();
+        header->setFirstSectionMovable(true);
         if (!header->restoreState(Settings::instance()->get_torrentsViewHeaderState())) {
             using C = TorrentsModel::Column;
             const std::set defaultColumns{
