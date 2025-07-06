@@ -32,36 +32,36 @@ namespace tremotesf {
 
         const auto header = this->header();
         if (!header->restoreState(Settings::instance()->get_torrentsViewHeaderState())) {
-            using C = TorrentsModel::Column;
+            using enum TorrentsModel::Column;
             const std::set defaultColumns{
-                C::Name,
-                C::TotalSize,
-                C::ProgressBar,
-                C::Status,
-                C::Seeders,
-                C::Leechers,
-                C::PeersSendingToUs,
-                C::PeersGettingFromUs,
-                C::DownloadSpeed,
-                C::UploadSpeed,
-                C::Eta,
-                C::Ratio,
-                C::AddedDate,
+                Name,
+                TotalSize,
+                ProgressBar,
+                Status,
+                Seeders,
+                Leechers,
+                PeersSendingToUs,
+                PeersGettingFromUs,
+                DownloadSpeed,
+                UploadSpeed,
+                Eta,
+                Ratio,
+                AddedDate,
             };
             for (int i = 0, max = header->count(); i < max; ++i) {
-                if (!defaultColumns.contains(static_cast<C>(i))) {
+                if (!defaultColumns.contains(static_cast<TorrentsModel::Column>(i))) {
                     header->hideSection(i);
                 }
             }
             header->moveSection(
-                header->visualIndex(static_cast<int>(C::AddedDate)),
-                header->visualIndex(static_cast<int>(C::Status)) + 1
+                header->visualIndex(static_cast<int>(AddedDate)),
+                header->visualIndex(static_cast<int>(Status)) + 1
             );
             header->moveSection(
-                header->visualIndex(static_cast<int>(C::Eta)),
-                header->visualIndex(static_cast<int>(C::AddedDate)) + 1
+                header->visualIndex(static_cast<int>(Eta)),
+                header->visualIndex(static_cast<int>(AddedDate)) + 1
             );
-            sortByColumn(static_cast<int>(TorrentsModel::Column::AddedDate), Qt::DescendingOrder);
+            sortByColumn(static_cast<int>(AddedDate), Qt::DescendingOrder);
         }
     }
 
