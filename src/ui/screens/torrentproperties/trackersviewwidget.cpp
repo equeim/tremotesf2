@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTreeView>
 #include <QVBoxLayout>
 
 #include "rpc/torrent.h"
@@ -31,15 +32,15 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
-        class EnterEatingTreeView final : public BaseTreeView {
+        class EnterEatingTreeView final : public QTreeView {
             Q_OBJECT
 
         public:
-            explicit EnterEatingTreeView(QWidget* parent = nullptr) : BaseTreeView(parent) {}
+            explicit EnterEatingTreeView(QWidget* parent = nullptr) : QTreeView(parent) {}
 
         protected:
             void keyPressEvent(QKeyEvent* event) override {
-                BaseTreeView::keyPressEvent(event);
+                QTreeView::keyPressEvent(event);
                 switch (event->key()) {
                 case Qt::Key_Enter:
                 case Qt::Key_Return:
@@ -61,10 +62,10 @@ namespace tremotesf {
           mTrackersView(new EnterEatingTreeView(this)) {
         auto layout = new QHBoxLayout(this);
 
+        setCommonTreeViewProperties(mTrackersView, true);
         mTrackersView->setContextMenuPolicy(Qt::CustomContextMenu);
         mTrackersView->setModel(mProxyModel);
         mTrackersView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-        mTrackersView->setRootIsDecorated(false);
         mTrackersView->header()->restoreState(Settings::instance()->get_trackersViewHeaderState());
         QObject::connect(mTrackersView, &EnterEatingTreeView::activated, this, &TrackersViewWidget::showEditDialogs);
 

@@ -7,7 +7,7 @@
 
 #include <functional>
 
-#include "basetreeview.h"
+#include <QTreeView>
 
 namespace tremotesf {
     class BaseTorrentFilesModel;
@@ -16,7 +16,7 @@ namespace tremotesf {
     class TorrentFilesModel;
     class TorrentFilesProxyModel;
 
-    class TorrentFilesView final : public BaseTreeView {
+    class TorrentFilesView final : public QTreeView {
         Q_OBJECT
 
     public:

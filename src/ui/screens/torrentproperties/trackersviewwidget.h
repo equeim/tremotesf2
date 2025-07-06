@@ -7,13 +7,14 @@
 
 #include <QWidget>
 
+class QTreeView;
+
 namespace tremotesf {
     class Torrent;
 }
 
 namespace tremotesf {
     class BaseProxyModel;
-    class BaseTreeView;
     class Rpc;
     class TrackersModel;
 
@@ -36,7 +37,7 @@ namespace tremotesf {
         Rpc* mRpc{};
         TrackersModel* mModel{};
         BaseProxyModel* mProxyModel{};
-        BaseTreeView* mTrackersView{};
+        QTreeView* mTrackersView{};
     };
 }
 
