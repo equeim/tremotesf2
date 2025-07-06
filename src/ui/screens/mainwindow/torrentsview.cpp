@@ -7,6 +7,7 @@
 #include <set>
 #include <QHeaderView>
 
+#include "ui/widgets/basetreeview.h"
 #include "ui/widgets/progressbardelegate.h"
 #include "downloaddirectorydelegate.h"
 #include "settings.h"
@@ -14,7 +15,8 @@
 #include "torrentsproxymodel.h"
 
 namespace tremotesf {
-    TorrentsView::TorrentsView(TorrentsProxyModel* model, QWidget* parent) : BaseTreeView(parent) {
+    TorrentsView::TorrentsView(TorrentsProxyModel* model, QWidget* parent) : QTreeView(parent) {
+        setCommonTreeViewProperties(this, true);
         setContextMenuPolicy(Qt::CustomContextMenu);
         setItemDelegate(new TooltipWhenElidedDelegate(this));
         setItemDelegateForColumn(
@@ -27,10 +29,8 @@ namespace tremotesf {
         );
         setModel(model);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
-        setRootIsDecorated(false);
 
         const auto header = this->header();
-        header->setFirstSectionMovable(true);
         if (!header->restoreState(Settings::instance()->get_torrentsViewHeaderState())) {
             using C = TorrentsModel::Column;
             const std::set defaultColumns{

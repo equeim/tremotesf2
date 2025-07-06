@@ -9,8 +9,9 @@
 
 #include <QTabWidget>
 
+class QTreeView;
+
 namespace tremotesf {
-    class BaseTreeView;
     class PeersModel;
     class Rpc;
     class StringListModel;
@@ -43,7 +44,7 @@ namespace tremotesf {
         TorrentFilesModel* mFilesModel{};
         TorrentFilesView* mFilesView{};
         TrackersViewWidget* mTrackersViewWidget{};
-        BaseTreeView* mPeersView{};
+        QTreeView* mPeersView{};
         PeersModel* mPeersModel{};
         StringListModel* mWebSeedersModel{};
 

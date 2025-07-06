@@ -14,6 +14,7 @@
 #include "rpc/mounteddirectoriesutils.h"
 #include "rpc/serversettings.h"
 
+#include "basetreeview.h"
 #include "desktoputils.h"
 #include "filemanagerlauncher.h"
 #include "settings.h"
@@ -31,7 +32,7 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     TorrentFilesView::TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent)
-        : BaseTreeView(parent),
+        : QTreeView(parent),
           mLocalFile(true),
           mModel(model),
           mProxyModel(new TorrentFilesProxyModel(
@@ -46,7 +47,7 @@ namespace tremotesf {
     }
 
     TorrentFilesView::TorrentFilesView(TorrentFilesModel* model, Rpc* rpc, QWidget* parent)
-        : BaseTreeView(parent),
+        : QTreeView(parent),
           mLocalFile(false),
           mModel(model),
           mProxyModel(new TorrentFilesProxyModel(
@@ -101,6 +102,7 @@ namespace tremotesf {
     }
 
     void TorrentFilesView::init() {
+        setCommonTreeViewProperties(this, false);
         setContextMenuPolicy(Qt::CustomContextMenu);
         setModel(mProxyModel);
         setSelectionMode(QAbstractItemView::ExtendedSelection);

@@ -5,12 +5,12 @@
 #ifndef TREMOTESF_TORRENTSVIEW_H
 #define TREMOTESF_TORRENTSVIEW_H
 
-#include "ui/widgets/basetreeview.h"
+#include <QTreeView>
 
 namespace tremotesf {
     class TorrentsProxyModel;
 
-    class TorrentsView final : public BaseTreeView {
+    class TorrentsView final : public QTreeView {
         Q_OBJECT
     public:
         TorrentsView(TorrentsProxyModel* model, QWidget* parent = nullptr);

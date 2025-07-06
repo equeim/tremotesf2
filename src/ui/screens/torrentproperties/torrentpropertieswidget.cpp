@@ -41,6 +41,7 @@
 #include "ui/itemmodels/baseproxymodel.h"
 #include "ui/itemmodels/stringlistmodel.h"
 #include "ui/stylehelpers.h"
+#include "ui/widgets/basetreeview.h"
 #include "ui/widgets/progressbardelegate.h"
 #include "ui/widgets/tooltipwhenelideddelegate.h"
 #include "ui/widgets/torrentfilesview.h"
@@ -288,14 +289,14 @@ namespace tremotesf {
         auto peersTab = new QWidget(this);
         auto peersTabLayout = new QVBoxLayout(peersTab);
 
-        mPeersView = new BaseTreeView(this);
+        mPeersView = new QTreeView(this);
+        setCommonTreeViewProperties(mPeersView, true);
         mPeersView->setItemDelegate(new TooltipWhenElidedDelegate(this));
         mPeersView->setItemDelegateForColumn(
             static_cast<int>(PeersModel::Column::ProgressBar),
             new ProgressBarDelegate(PeersModel::SortRole, this)
         );
         mPeersView->setModel(peersProxyModel);
-        mPeersView->setRootIsDecorated(false);
         mPeersView->header()->restoreState(Settings::instance()->get_peersViewHeaderState());
         overrideBreezeFramelessScrollAreaHeuristic(mPeersView, true);
 
@@ -312,10 +313,10 @@ namespace tremotesf {
         auto webSeedersTab = new QWidget(this);
         auto webSeedersTabLayout = new QVBoxLayout(webSeedersTab);
 
-        auto webSeedersView = new BaseTreeView(this);
+        auto webSeedersView = new QTreeView(this);
+        setCommonTreeViewProperties(webSeedersView, true);
         webSeedersView->header()->setContextMenuPolicy(Qt::DefaultContextMenu);
         webSeedersView->setModel(webSeedersProxyModel);
-        webSeedersView->setRootIsDecorated(false);
         overrideBreezeFramelessScrollAreaHeuristic(webSeedersView, true);
 
         webSeedersTabLayout->addWidget(webSeedersView);
