@@ -55,8 +55,7 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-windows-static",
-        "VCPKG_HOST_TRIPLET": "x64-windows-release"
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-static"
       }
     },
     {
@@ -67,8 +66,7 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
-        "VCPKG_HOST_TRIPLET": "x64-windows-static"
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static"
       }
     },
     {
