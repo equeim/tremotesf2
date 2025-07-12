@@ -8,6 +8,7 @@
 #include <chrono>
 #include <memory>
 #include <optional>
+#include <variant>
 
 #include <QJsonObject>
 #include <QList>
@@ -44,9 +45,18 @@ namespace tremotesf::impl {
         explicit RequestRouter(QObject* parent = nullptr);
 
         struct RequestsConfiguration {
+            struct SelfSignedCertificate {
+                QSslCertificate certificate{};
+            };
+
+            struct CustomRoot {
+                QSslCertificate rootCertificate{};
+                QSslCertificate leafCertificate{};
+            };
+
             QUrl serverUrl{};
             QNetworkProxy proxy{QNetworkProxy::applicationProxy()};
-            QList<QSslCertificate> serverCertificateChain{};
+            std::variant<std::monostate, SelfSignedCertificate, CustomRoot> serverCertificate{};
             QSslCertificate clientCertificate{};
             QSslKey clientPrivateKey{};
             std::chrono::milliseconds timeout{};
