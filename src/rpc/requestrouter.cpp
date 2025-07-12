@@ -130,7 +130,11 @@ namespace tremotesf::impl {
             return status;
         }
 
-        QString makeDetailedErrorMessage(QNetworkReply* reply, const QList<QSslError>& sslErrors) {
+        QString makeDetailedErrorMessage(
+            QNetworkReply* reply,
+            const QList<QSslError>& sslErrors,
+            const RequestRouter::RequestsConfiguration& configuration
+        ) {
             auto detailedErrorMessage =
                 QString::fromStdString(fmt::format("{}: {}", reply->error(), reply->errorString()));
             if (reply->url() == reply->request().url()) {
@@ -169,17 +173,32 @@ namespace tremotesf::impl {
                 for (const QSslError& sslError : sslErrors) {
                     detailedErrorMessage += QString::fromStdString(
                         fmt::format(
-                            "\n\n {}. {}: {} on certificate:\n - {}",
+                            "\n\n{}. {}: {}\n{}",
                             i,
                             sslError.error(),
                             sslError.errorString(),
                             sslError.certificate()
                         )
                     );
+                    if (!configuration.serverCertificateChain.contains(sslError.certificate())) {
+                        detailedErrorMessage += "\nCertificate is not specified in connection configuration.\n";
+                    }
                     ++i;
                 }
             }
             return detailedErrorMessage;
+        }
+
+        bool isCertificateIssuedBy(const QSslCertificate& cert, const QSslCertificate& potentialCa) {
+            if (cert == potentialCa) return false;
+            const auto issuerAttrs = cert.issuerInfoAttributes();
+            if (issuerAttrs.isEmpty()) return false;
+            for (const auto& attr : issuerAttrs) {
+                if (cert.issuerInfo(attr) != potentialCa.subjectInfo(attr)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         QNetworkRequest getOriginalRequestAndDeleteReply(NetworkReplyUniquePtr reply) { return reply->request(); }
@@ -224,12 +243,70 @@ namespace tremotesf::impl {
                 mSslConfiguration.setPrivateKey(mConfiguration->clientPrivateKey);
             }
             mExpectedSslErrors.clear();
-            mExpectedSslErrors.reserve(mConfiguration->serverCertificateChain.size() * 4);
-            for (const auto& certificate : mConfiguration->serverCertificateChain) {
-                mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, certificate));
-                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, certificate));
-                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificateInChain, certificate));
-                mExpectedSslErrors.push_back(QSslError(QSslError::CertificateUntrusted, certificate));
+
+            if (mConfiguration->serverCertificateChain.size() > 1) {
+                debug().log(
+                    "Multiple certificates are specified in connection configuration. One of them is expected to "
+                    "be the root CA certificate, and another should be the leaf certificate that server "
+                    "will be using (signed by that root certificate, possibly through intermediaries)"
+                );
+                if (mConfiguration->serverCertificateChain.size() != 2) {
+                    warning().log(
+                        "Number of certificates specified in connection configuration is {}. Only 2 certificates (root "
+                        "CA certificate and leaf certificate that server will be using) are necessary",
+                        mConfiguration->serverCertificateChain.size()
+                    );
+                }
+                // Find the root
+                if (const auto root =
+                        std::ranges::find_if(mConfiguration->serverCertificateChain, &QSslCertificate::isSelfSigned);
+                    root != mConfiguration->serverCertificateChain.end()) {
+                    debug().log("Root certificate:\n{}", *root);
+                    // Using setCaCertificates instead of addCaCertificate since the latter one can confuse Windows schannel TLS backend
+                    // We don't need system CA certificates here anyway
+                    mSslConfiguration.setCaCertificates({*root});
+                } else {
+                    warning().log("Did not find a root CA certificate in connection configuration");
+                }
+                // We only care about leaf certificate that server will be using
+                // First, find first non self-signed certificate
+                auto leaf =
+                    std::ranges::find_if(mConfiguration->serverCertificateChain, [](const QSslCertificate& cert) {
+                        return !cert.isSelfSigned();
+                    });
+                if (leaf != mConfiguration->serverCertificateChain.end()) {
+                    // Go up the chain to skip any intermediary certificates if they are present (we don't need them here but user can add them too)
+                    while (true) {
+                        auto issued = std::ranges::find_if(
+                            mConfiguration->serverCertificateChain,
+                            [&](const QSslCertificate& cert) { return isCertificateIssuedBy(cert, *leaf); }
+                        );
+                        if (issued != mConfiguration->serverCertificateChain.end()) {
+                            leaf = issued;
+                        } else {
+                            break;
+                        }
+                    }
+                    debug().log("Leaf certificate:\n{}", *leaf);
+                    mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, *leaf));
+                } else {
+                    warning().log(
+                        "Multiple certificates are specified in connection configuration. One of them is expected to "
+                        "be the root self-signed CA certificate, but it was not found"
+                    );
+                }
+            } else if (mConfiguration->serverCertificateChain.size() == 1) {
+                const auto& cert = mConfiguration->serverCertificateChain.first();
+                debug().log("Certificate:\n{}", cert);
+                if (!cert.isSelfSigned()) {
+                    warning().log(
+                        "Certificate is not self signed. You should also specify your root CA certificate, otherwise "
+                        "the chain will not be verified"
+                    );
+                }
+                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, cert));
+                mExpectedSslErrors.push_back(QSslError(QSslError::CertificateUntrusted, cert));
+                mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, cert));
             }
         }
 
@@ -388,7 +465,8 @@ namespace tremotesf::impl {
             }
         }
 
-        const QString detailedErrorMessage = makeDetailedErrorMessage(reply.get(), sslErrors);
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+        const QString detailedErrorMessage = makeDetailedErrorMessage(reply.get(), sslErrors, mConfiguration.value());
         warning().log("HTTP request for method '{}' failed:\n{}", metadata.rpcMetadata.method, detailedErrorMessage);
 
         RpcError error{};
