@@ -50,6 +50,7 @@ target_sources(tremotesf_objects
     rpc/mounteddirectoriesutils.cpp
     rpc/pathutils.cpp
     rpc/peer.cpp
+    rpc/qsslcertificateformatter.cpp
     rpc/requestrouter.cpp
     rpc/rpc.cpp
     rpc/servers.cpp
@@ -155,6 +156,7 @@ target_sources(tremotesf_objects
     rpc/mounteddirectoriesutils.h
     rpc/pathutils.h
     rpc/peer.h
+    rpc/qsslcertificateformatter.h
     rpc/requestrouter.h
     rpc/rpc.h
     rpc/servers.h

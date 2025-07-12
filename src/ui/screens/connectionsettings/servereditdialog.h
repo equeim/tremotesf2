@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_SERVEREDITDIALOG_H
 #define TREMOTESF_SERVEREDITDIALOG_H
 
+#include <functional>
 #include <QDialog>
 
 class QCheckBox;
@@ -13,10 +14,10 @@ class QDialogButtonBox;
 class QFormLayout;
 class QGroupBox;
 class QLineEdit;
-class QPlainTextEdit;
 class QSpinBox;
 
 namespace tremotesf {
+    class CertificateTextField;
     class MountedDirectoriesWidget;
     class ServersModel;
 
@@ -28,11 +29,8 @@ namespace tremotesf {
         void accept() override;
 
     private:
-        void setupUi();
-        void setProxyFieldsVisible();
-        void canAcceptUpdate();
+        std::function<void()> setupUi();
         void setServer();
-        void loadCertificateFromFile(QPlainTextEdit* target);
 
         ServersModel* mServersModel;
         QString mServerName;
@@ -42,7 +40,6 @@ namespace tremotesf {
         QSpinBox* mPortSpinBox = nullptr;
         QLineEdit* mApiPathLineEdit = nullptr;
 
-        QFormLayout* mProxyLayout = nullptr;
         QComboBox* mProxyTypeComboBox = nullptr;
         QLineEdit* mProxyHostnameLineEdit = nullptr;
         QSpinBox* mProxyPortSpinBox = nullptr;
@@ -50,10 +47,12 @@ namespace tremotesf {
         QLineEdit* mProxyPasswordLineEdit = nullptr;
 
         QGroupBox* mHttpsGroupBox = nullptr;
-        QCheckBox* mSelfSignedCertificateCheckBox = nullptr;
-        QPlainTextEdit* mSelfSignedCertificateEdit = nullptr;
+
+        QComboBox* mServerCertificateModeComboBox = nullptr;
+        CertificateTextField* mServerRootCertificateField = nullptr;
+        CertificateTextField* mServerLeafCertificateField = nullptr;
         QCheckBox* mClientCertificateCheckBox = nullptr;
-        QPlainTextEdit* mClientCertificateEdit = nullptr;
+        CertificateTextField* mClientCertificateField = nullptr;
 
         QGroupBox* mAuthenticationGroupBox = nullptr;
         QLineEdit* mUsernameLineEdit = nullptr;

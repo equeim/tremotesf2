@@ -39,6 +39,9 @@ namespace tremotesf {
         enum class ProxyType { Default, Http, Socks5, None };
         Q_ENUM(ProxyType)
 
+        enum class ServerCertificateMode { None, SelfSigned, CustomRoot };
+        Q_ENUM(ServerCertificateMode)
+
         QString address{};
         int port{};
         QString apiPath{};
@@ -50,8 +53,11 @@ namespace tremotesf {
         QString proxyPassword{};
 
         bool https{};
-        bool selfSignedCertificateEnabled{};
-        QByteArray selfSignedCertificate{};
+
+        ServerCertificateMode serverCertificateMode{};
+        QByteArray serverRootCertificate{};
+        QByteArray serverLeafCertificate{};
+
         bool clientCertificateEnabled{};
         QByteArray clientCertificate{};
 

@@ -59,33 +59,8 @@ namespace tremotesf {
     void ServersModel::setServer(
         const QString& oldName,
         const QString& name,
-        const QString& address,
-        int port,
-        const QString& apiPath,
-
-        ConnectionConfiguration::ProxyType proxyType,
-        const QString& proxyHostname,
-        int proxyPort,
-        const QString& proxyUser,
-        const QString& proxyPassword,
-
-        bool https,
-        bool selfSignedCertificateEnabled,
-        const QByteArray& selfSignedCertificate,
-        bool clientCertificateEnabled,
-        const QByteArray& clientCertificate,
-
-        bool authentication,
-        const QString& username,
-        const QString& password,
-
-        int updateInterval,
-        int timeout,
-
-        bool autoReconnectEnabled,
-        int autoReconnectInterval,
-
-        const std::vector<MountedDirectory>& mountedDirectories
+        ConnectionConfiguration connectionConfiguration,
+        std::vector<MountedDirectory> mountedDirectories
     ) {
         const int oldRow = serverRow(oldName);
         int row = serverRow(name);
@@ -104,33 +79,8 @@ namespace tremotesf {
             // Overwrite an existing server
 
             server->name = name;
-            server->connectionConfiguration.address = address;
-            server->connectionConfiguration.port = port;
-            server->connectionConfiguration.apiPath = apiPath;
-
-            server->connectionConfiguration.proxyType = proxyType;
-            server->connectionConfiguration.proxyHostname = proxyHostname;
-            server->connectionConfiguration.proxyPort = proxyPort;
-            server->connectionConfiguration.proxyUser = proxyUser;
-            server->connectionConfiguration.proxyPassword = proxyPassword;
-
-            server->connectionConfiguration.https = https;
-            server->connectionConfiguration.selfSignedCertificateEnabled = selfSignedCertificateEnabled;
-            server->connectionConfiguration.selfSignedCertificate = selfSignedCertificate;
-            server->connectionConfiguration.clientCertificateEnabled = clientCertificateEnabled;
-            server->connectionConfiguration.clientCertificate = clientCertificate;
-
-            server->connectionConfiguration.authentication = authentication;
-            server->connectionConfiguration.username = username;
-            server->connectionConfiguration.password = password;
-
-            server->connectionConfiguration.updateInterval = updateInterval;
-            server->connectionConfiguration.timeout = timeout;
-
-            server->connectionConfiguration.autoReconnectEnabled = autoReconnectEnabled;
-            server->connectionConfiguration.autoReconnectInterval = autoReconnectInterval;
-
-            server->mountedDirectories = mountedDirectories;
+            server->connectionConfiguration = std::move(connectionConfiguration);
+            server->mountedDirectories = std::move(mountedDirectories);
 
             const QModelIndex modelIndex(index(oldRow));
             emit dataChanged(modelIndex, modelIndex);
@@ -151,35 +101,8 @@ namespace tremotesf {
             mServers.push_back(
                 Server{
                     .name = name,
-                    .connectionConfiguration =
-                        ConnectionConfiguration{
-                            address,
-                            port,
-                            apiPath,
-
-                            proxyType,
-                            proxyHostname,
-                            proxyPort,
-                            proxyUser,
-                            proxyPassword,
-
-                            https,
-                            selfSignedCertificateEnabled,
-                            selfSignedCertificate,
-                            clientCertificateEnabled,
-                            clientCertificate,
-
-                            authentication,
-                            username,
-                            password,
-
-                            updateInterval,
-                            timeout,
-
-                            autoReconnectEnabled,
-                            autoReconnectInterval
-                        },
-                    .mountedDirectories = mountedDirectories,
+                    .connectionConfiguration = std::move(connectionConfiguration),
+                    .mountedDirectories = std::move(mountedDirectories),
                     .lastTorrents = {},
                     .lastDownloadDirectories = {},
                     .lastDownloadDirectory = {}

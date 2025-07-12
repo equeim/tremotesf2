@@ -81,33 +81,8 @@ namespace tremotesf {
         void setServer(
             const QString& oldName,
             const QString& name,
-            const QString& address,
-            int port,
-            const QString& apiPath,
-
-            ConnectionConfiguration::ProxyType proxyType,
-            const QString& proxyHostname,
-            int proxyPort,
-            const QString& proxyUser,
-            const QString& proxyPassword,
-
-            bool https,
-            bool selfSignedCertificateEnabled,
-            const QByteArray& selfSignedCertificate,
-            bool clientCertificateEnabled,
-            const QByteArray& clientCertificate,
-
-            bool authentication,
-            const QString& username,
-            const QString& password,
-
-            int updateInterval,
-            int timeout,
-
-            bool autoReconnectEnabled,
-            int autoReconnectInterval,
-
-            const std::vector<MountedDirectory>& mountedDirectories
+            ConnectionConfiguration connectionConfiguration,
+            std::vector<MountedDirectory> mountedDirectories
         );
 
         void saveServers(const std::vector<Server>& servers, const QString& current);
@@ -117,6 +92,9 @@ namespace tremotesf {
     private:
         Server getServer(const QString& name) const;
         void updateMountedDirectories();
+        void migrateClientCertificateSettings();
+        void migrateServerCertificateSettings();
+        void setValueVerbose(QLatin1String key, QVariant value);
 
         QSettings* mSettings{};
         std::vector<MountedDirectory> mCurrentServerMountedDirectories{};
