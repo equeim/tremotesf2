@@ -19,6 +19,7 @@
 #include <QIcon>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
@@ -58,7 +59,76 @@ namespace tremotesf {
             }
             return proxyTypeComboBoxValues.at(static_cast<size_t>(index));
         }
+
+        constexpr std::array serverCertificateModeComboBoxValues{
+            ConnectionConfiguration::ServerCertificateMode::None,
+            ConnectionConfiguration::ServerCertificateMode::SelfSigned,
+            ConnectionConfiguration::ServerCertificateMode::CustomRoot
+        };
+
+        ConnectionConfiguration::ServerCertificateMode serverCertificateModeFromComboBoxIndex(int index) {
+            if (index == -1) {
+                return ConnectionConfiguration::ServerCertificateMode::None;
+            }
+            return serverCertificateModeComboBoxValues.at(static_cast<size_t>(index));
+        }
     }
+
+    class CertificateTextField final : public QWidget {
+        Q_OBJECT
+    public:
+        explicit CertificateTextField(QString labelText = {}, QWidget* parent = nullptr) : QWidget(parent) {
+            auto layout = new QVBoxLayout(this);
+            layout->setContentsMargins({});
+
+            layout->addWidget(&label);
+            layout->addWidget(&textEdit);
+            layout->addWidget(&mLoadFromFileButton);
+
+            label.setText(labelText);
+            textEdit.setMinimumHeight(192);
+
+            QObject::connect(
+                &mLoadFromFileButton,
+                &QPushButton::clicked,
+                this,
+                &CertificateTextField::loadCertificateFromFile
+            );
+        }
+
+        QLabel label;
+        QPlainTextEdit textEdit;
+
+    private:
+        void loadCertificateFromFile() {
+            auto* fileDialog = new QFileDialog(
+                nativeParentWidget(),
+                //: File chooser dialog title
+                qApp->translate("tremotesf", "Select Files")
+            );
+            fileDialog->setAttribute(Qt::WA_DeleteOnClose);
+            fileDialog->setFileMode(QFileDialog::ExistingFile);
+            fileDialog->setMimeTypeFilters({"application/x-pem-file"_L1});
+
+            QObject::connect(fileDialog, &QFileDialog::accepted, this, [=, this] {
+                try {
+                    textEdit.setPlainText(readFile(fileDialog->selectedFiles().first()));
+                } catch (const QFileError& e) {
+                    warning().logWithException(e, "Failed to read certificate from file");
+                }
+            });
+
+            if constexpr (targetOs == TargetOs::Windows) {
+                fileDialog->open();
+            } else {
+                fileDialog->show();
+            }
+        }
+
+        QPushButton mLoadFromFileButton{//: Button
+                                        qApp->translate("tremotesf", "Load from file...")
+        };
+    };
 
     class MountedDirectoriesWidget final : public QTableWidget {
         Q_OBJECT
@@ -155,7 +225,8 @@ namespace tremotesf {
 
     ServerEditDialog::ServerEditDialog(ServersModel* serversModel, int row, QWidget* parent)
         : QDialog(parent), mServersModel(serversModel) {
-        setupUi();
+        const auto setInitialDependentState = setupUi();
+
         resize(sizeHint().expandedTo(QSize(384, 512)));
 
         if (row == -1) {
@@ -169,6 +240,13 @@ namespace tremotesf {
                 indexOfCasted<int>(proxyTypeComboBoxValues, ConnectionConfiguration::ProxyType::Default).value()
             );
             mHttpsGroupBox->setChecked(false);
+            mServerCertificateModeComboBox->setCurrentIndex(
+                indexOfCasted<int>(
+                    serverCertificateModeComboBoxValues,
+                    ConnectionConfiguration::ServerCertificateMode::None
+                )
+                    .value()
+            );
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
             mTimeoutSpinBox->setValue(30);
@@ -195,10 +273,17 @@ namespace tremotesf {
             mProxyPasswordLineEdit->setText(server.connectionConfiguration.proxyPassword);
 
             mHttpsGroupBox->setChecked(server.connectionConfiguration.https);
-            mSelfSignedCertificateCheckBox->setChecked(server.connectionConfiguration.selfSignedCertificateEnabled);
-            mSelfSignedCertificateEdit->setPlainText(server.connectionConfiguration.selfSignedCertificate);
+            mServerCertificateModeComboBox->setCurrentIndex(
+                indexOfCasted<int>(
+                    serverCertificateModeComboBoxValues,
+                    server.connectionConfiguration.serverCertificateMode
+                )
+                    .value()
+            );
+            mServerRootCertificateField->textEdit.setPlainText(server.connectionConfiguration.serverRootCertificate);
+            mServerLeafCertificateField->textEdit.setPlainText(server.connectionConfiguration.serverLeafCertificate);
             mClientCertificateCheckBox->setChecked(server.connectionConfiguration.clientCertificateEnabled);
-            mClientCertificateEdit->setPlainText(server.connectionConfiguration.clientCertificate);
+            mClientCertificateField->textEdit.setPlainText(server.connectionConfiguration.clientCertificate);
 
             mAuthenticationGroupBox->setChecked(server.connectionConfiguration.authentication);
             mUsernameLineEdit->setText(server.connectionConfiguration.username);
@@ -215,7 +300,7 @@ namespace tremotesf {
             }
         }
 
-        setProxyFieldsVisible();
+        setInitialDependentState();
     }
 
     void ServerEditDialog::accept() {
@@ -242,7 +327,7 @@ namespace tremotesf {
         QDialog::accept();
     }
 
-    void ServerEditDialog::setupUi() {
+    std::function<void()> ServerEditDialog::setupUi() {
         auto topLayout = new QVBoxLayout(this);
         auto scrollArea = new QScrollArea(this);
         scrollArea->setFrameShape(QFrame::NoFrame);
@@ -257,13 +342,11 @@ namespace tremotesf {
 
         mNameLineEdit = new QLineEdit(this);
         mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(R"(^\S.*)"), this));
-        QObject::connect(mNameLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Name:"), mNameLineEdit);
 
         mAddressLineEdit = new QLineEdit(this);
         auto addressValidator = new QRegularExpressionValidator(QRegularExpression(R"(^\S+)"), this);
         mAddressLineEdit->setValidator(addressValidator);
-        QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, &ServerEditDialog::canAcceptUpdate);
         formLayout->addRow(qApp->translate("tremotesf", "Address:"), mAddressLineEdit);
 
         mPortSpinBox = new QSpinBox(this);
@@ -275,8 +358,8 @@ namespace tremotesf {
         formLayout->addRow(qApp->translate("tremotesf", "API path:"), mApiPathLineEdit);
 
         auto proxyGroupBox = new QGroupBox(qApp->translate("tremotesf", "Proxy"), this);
-        mProxyLayout = new QFormLayout(proxyGroupBox);
-        mProxyLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+        auto proxyLayout = new QFormLayout(proxyGroupBox);
+        proxyLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mProxyTypeComboBox = new QComboBox(this);
         mProxyTypeComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -300,89 +383,137 @@ namespace tremotesf {
                 break;
             }
         }
-        QObject::connect(
-            mProxyTypeComboBox,
-            &QComboBox::currentTextChanged,
-            this,
-            &ServerEditDialog::setProxyFieldsVisible
-        );
-        mProxyLayout->addRow(qApp->translate("tremotesf", "Proxy type:"), mProxyTypeComboBox);
+        proxyLayout->addRow(qApp->translate("tremotesf", "Proxy type:"), mProxyTypeComboBox);
 
         mProxyHostnameLineEdit = new QLineEdit(this);
         mProxyHostnameLineEdit->setValidator(addressValidator);
-        mProxyLayout->addRow(qApp->translate("tremotesf", "Address:"), mProxyHostnameLineEdit);
+        proxyLayout->addRow(qApp->translate("tremotesf", "Address:"), mProxyHostnameLineEdit);
 
         mProxyPortSpinBox = new QSpinBox(this);
         mProxyPortSpinBox->setMaximum(maxPort);
-        mProxyLayout->addRow(qApp->translate("tremotesf", "Port:"), mProxyPortSpinBox);
+        proxyLayout->addRow(qApp->translate("tremotesf", "Port:"), mProxyPortSpinBox);
 
         mProxyUserLineEdit = new QLineEdit(this);
-        mProxyLayout->addRow(qApp->translate("tremotesf", "Username:"), mProxyUserLineEdit);
+        proxyLayout->addRow(qApp->translate("tremotesf", "Username:"), mProxyUserLineEdit);
         mProxyPasswordLineEdit = new QLineEdit(this);
         mProxyPasswordLineEdit->setEchoMode(QLineEdit::Password);
-        mProxyLayout->addRow(qApp->translate("tremotesf", "Password:"), mProxyPasswordLineEdit);
+        proxyLayout->addRow(qApp->translate("tremotesf", "Password:"), mProxyPasswordLineEdit);
 
         formLayout->addRow(proxyGroupBox);
+
+        const auto updateProxyFieldsVisibility = [=, this] {
+            bool visible{};
+            switch (proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex())) {
+            case ConnectionConfiguration::ProxyType::Default:
+            case ConnectionConfiguration::ProxyType::None:
+                visible = false;
+                break;
+            default:
+                visible = true;
+            }
+            for (int i = 1, max = proxyLayout->rowCount(); i < max; ++i) {
+                proxyLayout->itemAt(i, QFormLayout::LabelRole)->widget()->setVisible(visible);
+                proxyLayout->itemAt(i, QFormLayout::FieldRole)->widget()->setVisible(visible);
+            }
+        };
+        QObject::connect(mProxyTypeComboBox, &QComboBox::currentTextChanged, this, updateProxyFieldsVisibility);
 
         mHttpsGroupBox = new QGroupBox(qApp->translate("tremotesf", "HTTPS"), this);
         mHttpsGroupBox->setCheckable(true);
 
-        auto httpsGroupBoxLayout = new QVBoxLayout(mHttpsGroupBox);
+        auto httpsGroupBoxLayout = new QFormLayout(mHttpsGroupBox);
+        httpsGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
-        mSelfSignedCertificateCheckBox = new QCheckBox(
-            //: Check box label
-            qApp->translate("tremotesf", "Server uses self-signed certificate"),
+        mServerCertificateModeComboBox = new QComboBox(this);
+        mServerCertificateModeComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        for (const auto type : serverCertificateModeComboBoxValues) {
+            switch (type) {
+            case ConnectionConfiguration::ServerCertificateMode::None:
+                //: Server does not use custom certificates
+                mServerCertificateModeComboBox->addItem(qApp->translate("tremotesf", "No"));
+                break;
+            case ConnectionConfiguration::ServerCertificateMode::SelfSigned:
+                mServerCertificateModeComboBox->addItem(qApp->translate("tremotesf", "Self-signed certificate"));
+                break;
+            case ConnectionConfiguration::ServerCertificateMode::CustomRoot:
+                mServerCertificateModeComboBox->addItem(qApp->translate("tremotesf", "Custom CA root certificate"));
+                break;
+            }
+        }
+
+        httpsGroupBoxLayout->addRow(
+            qApp->translate("tremotesf", "Server uses custom certificates:"),
+            mServerCertificateModeComboBox
+        );
+
+        mServerRootCertificateField = new CertificateTextField({}, this);
+        httpsGroupBoxLayout->addRow(mServerRootCertificateField);
+
+        auto serverLeafCertificateNotice = new QLabel(
+            qApp->translate(
+                "tremotesf",
+                "If server's leaf certificate does not have correct host name, you need to provide it too for "
+                "certificate validation to pass"
+            ),
             this
         );
-        httpsGroupBoxLayout->addWidget(mSelfSignedCertificateCheckBox);
-        mSelfSignedCertificateEdit = new QPlainTextEdit(this);
-        mSelfSignedCertificateEdit->setMinimumHeight(192);
-        mSelfSignedCertificateEdit->setPlaceholderText(
-            //: Text field placeholder
-            qApp->translate("tremotesf", "Server's certificate in PEM format")
+        serverLeafCertificateNotice->setWordWrap(true);
+        httpsGroupBoxLayout->addRow(serverLeafCertificateNotice);
+
+        mServerLeafCertificateField =
+            new CertificateTextField(qApp->translate("tremotesf", "Server's leaf certificate in PEM format:"), this);
+        httpsGroupBoxLayout->addRow(mServerLeafCertificateField);
+
+        const auto updateServerCertificateFieldsState = [=, this] {
+            switch (serverCertificateModeFromComboBoxIndex(mServerCertificateModeComboBox->currentIndex())) {
+            case ConnectionConfiguration::ServerCertificateMode::SelfSigned:
+                mServerRootCertificateField->label.setText(
+                    qApp->translate("tremotesf", "Server's leaf certificate in PEM format:")
+                );
+                mServerRootCertificateField->show();
+                serverLeafCertificateNotice->hide();
+                mServerLeafCertificateField->hide();
+                break;
+            case ConnectionConfiguration::ServerCertificateMode::CustomRoot:
+                mServerRootCertificateField->label.setText(
+                    qApp->translate("tremotesf", "Server's CA root certificate in PEM format:")
+                );
+                mServerRootCertificateField->show();
+                serverLeafCertificateNotice->show();
+                mServerLeafCertificateField->show();
+                break;
+            case ConnectionConfiguration::ServerCertificateMode::None:
+            default:
+                mServerRootCertificateField->hide();
+                serverLeafCertificateNotice->hide();
+                mServerLeafCertificateField->hide();
+                break;
+            }
+        };
+
+        QObject::connect(
+            mServerCertificateModeComboBox,
+            &QComboBox::currentTextChanged,
+            this,
+            updateServerCertificateFieldsState
         );
-        mSelfSignedCertificateEdit->setVisible(false);
-        httpsGroupBoxLayout->addWidget(mSelfSignedCertificateEdit);
-        auto* selfSignedCertificateLoadFromFile = new QPushButton(
-            //: Button
-            qApp->translate("tremotesf", "Load from file..."),
-            this
-        );
-        selfSignedCertificateLoadFromFile->setVisible(false);
-        QObject::connect(selfSignedCertificateLoadFromFile, &QPushButton::clicked, this, [this] {
-            loadCertificateFromFile(mSelfSignedCertificateEdit);
-        });
-        httpsGroupBoxLayout->addWidget(selfSignedCertificateLoadFromFile);
-        QObject::connect(mSelfSignedCertificateCheckBox, &QCheckBox::toggled, this, [=, this](bool checked) {
-            mSelfSignedCertificateEdit->setVisible(checked);
-            selfSignedCertificateLoadFromFile->setVisible(checked);
-        });
 
         mClientCertificateCheckBox = new QCheckBox(
             //: Check box label
             qApp->translate("tremotesf", "Use client certificate authentication"),
             this
         );
-        httpsGroupBoxLayout->addWidget(mClientCertificateCheckBox);
-        mClientCertificateEdit = new QPlainTextEdit(this);
-        mClientCertificateEdit->setMinimumHeight(192);
-        mClientCertificateEdit->setPlaceholderText(
-            //: Text field placeholder
-            qApp->translate("tremotesf", "Certificate in PEM format with private key")
+        httpsGroupBoxLayout->addRow(mClientCertificateCheckBox);
+        mClientCertificateField = new CertificateTextField(
+            qApp->translate("tremotesf", "Client certificate with private key in PEM format:"),
+            this
         );
-        mClientCertificateEdit->setVisible(false);
-        httpsGroupBoxLayout->addWidget(mClientCertificateEdit);
-        //: Button
-        auto* clientCertificateLoadFromFile = new QPushButton(qApp->translate("tremotesf", "Load from file..."), this);
-        clientCertificateLoadFromFile->setVisible(false);
-        QObject::connect(clientCertificateLoadFromFile, &QPushButton::clicked, this, [this] {
-            loadCertificateFromFile(mClientCertificateEdit);
-        });
-        httpsGroupBoxLayout->addWidget(clientCertificateLoadFromFile);
-        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, this, [=, this](bool checked) {
-            mClientCertificateEdit->setVisible(checked);
-            clientCertificateLoadFromFile->setVisible(checked);
-        });
+        httpsGroupBoxLayout->addRow(mClientCertificateField);
+
+        const auto updateClientCertificateFieldVisibility = [this] {
+            mClientCertificateField->setVisible(mClientCertificateCheckBox->isChecked());
+        };
+        QObject::connect(mClientCertificateCheckBox, &QCheckBox::toggled, this, updateClientCertificateFieldVisibility);
 
         formLayout->addRow(mHttpsGroupBox);
 
@@ -462,31 +593,24 @@ namespace tremotesf {
 
         scrollArea->setWidget(widget);
 
-        mDialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-        QObject::connect(mDialogButtonBox, &QDialogButtonBox::accepted, this, &ServerEditDialog::accept);
-        QObject::connect(mDialogButtonBox, &QDialogButtonBox::rejected, this, &ServerEditDialog::reject);
-        topLayout->addWidget(mDialogButtonBox);
-    }
+        auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+        QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &ServerEditDialog::accept);
+        QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &ServerEditDialog::reject);
+        topLayout->addWidget(dialogButtonBox);
 
-    void ServerEditDialog::setProxyFieldsVisible() {
-        bool visible{};
-        switch (proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex())) {
-        case ConnectionConfiguration::ProxyType::Default:
-        case ConnectionConfiguration::ProxyType::None:
-            visible = false;
-            break;
-        default:
-            visible = true;
-        }
-        for (int i = 1, max = mProxyLayout->rowCount(); i < max; ++i) {
-            mProxyLayout->itemAt(i, QFormLayout::LabelRole)->widget()->setVisible(visible);
-            mProxyLayout->itemAt(i, QFormLayout::FieldRole)->widget()->setVisible(visible);
-        }
-    }
+        const auto updateAcceptButtonState = [=, this] {
+            dialogButtonBox->button(QDialogButtonBox::Ok)
+                ->setEnabled(mNameLineEdit->hasAcceptableInput() && mAddressLineEdit->hasAcceptableInput());
+        };
+        QObject::connect(mNameLineEdit, &QLineEdit::textChanged, this, updateAcceptButtonState);
+        QObject::connect(mAddressLineEdit, &QLineEdit::textChanged, this, updateAcceptButtonState);
 
-    void ServerEditDialog::canAcceptUpdate() {
-        mDialogButtonBox->button(QDialogButtonBox::Ok)
-            ->setEnabled(mNameLineEdit->hasAcceptableInput() && mAddressLineEdit->hasAcceptableInput());
+        return [=] {
+            updateProxyFieldsVisibility();
+            updateServerCertificateFieldsState();
+            updateClientCertificateFieldVisibility();
+            updateAcceptButtonState();
+        };
     }
 
     void ServerEditDialog::setServer() {
@@ -502,98 +626,52 @@ namespace tremotesf {
                 mountedDirectories.push_back({.localPath = localDirectory, .remotePath = remoteDirectory});
             }
         }
+        ConnectionConfiguration connectionConfiguration{
+            .address = mAddressLineEdit->text(),
+            .port = mPortSpinBox->value(),
+            .apiPath = mApiPathLineEdit->text(),
+
+            .proxyType = proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()),
+            .proxyHostname = mProxyHostnameLineEdit->text(),
+            .proxyPort = mProxyPortSpinBox->value(),
+            .proxyUser = mProxyUserLineEdit->text(),
+            .proxyPassword = mProxyPasswordLineEdit->text(),
+
+            .https = mHttpsGroupBox->isChecked(),
+
+            .serverCertificateMode =
+                serverCertificateModeFromComboBoxIndex(mServerCertificateModeComboBox->currentIndex()),
+            .serverRootCertificate = mServerRootCertificateField->textEdit.toPlainText().toUtf8(),
+            .serverLeafCertificate = mServerLeafCertificateField->textEdit.toPlainText().toUtf8(),
+
+            .clientCertificateEnabled = mClientCertificateCheckBox->isChecked(),
+            .clientCertificate = mClientCertificateField->textEdit.toPlainText().toUtf8(),
+
+            .authentication = mAuthenticationGroupBox->isChecked(),
+            .username = mUsernameLineEdit->text(),
+            .password = mPasswordLineEdit->text(),
+
+            .updateInterval = mUpdateIntervalSpinBox->value(),
+            .timeout = mTimeoutSpinBox->value(),
+
+            .autoReconnectEnabled = mAutoReconnectGroupBox->isChecked(),
+            .autoReconnectInterval = mAutoReconnectSpinBox->value(),
+        };
 
         if (mServersModel) {
             mServersModel->setServer(
                 mServerName,
                 mNameLineEdit->text(),
-                mAddressLineEdit->text(),
-                mPortSpinBox->value(),
-                mApiPathLineEdit->text(),
-
-                proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()),
-                mProxyHostnameLineEdit->text(),
-                mProxyPortSpinBox->value(),
-                mProxyUserLineEdit->text(),
-                mProxyPasswordLineEdit->text(),
-
-                mHttpsGroupBox->isChecked(),
-                mSelfSignedCertificateCheckBox->isChecked(),
-                mSelfSignedCertificateEdit->toPlainText().toLatin1(),
-                mClientCertificateCheckBox->isChecked(),
-                mClientCertificateEdit->toPlainText().toLatin1(),
-
-                mAuthenticationGroupBox->isChecked(),
-                mUsernameLineEdit->text(),
-                mPasswordLineEdit->text(),
-
-                mUpdateIntervalSpinBox->value(),
-                mTimeoutSpinBox->value(),
-
-                mAutoReconnectGroupBox->isChecked(),
-                mAutoReconnectSpinBox->value(),
-
-                mountedDirectories
+                std::move(connectionConfiguration),
+                std::move(mountedDirectories)
             );
         } else {
             Servers::instance()->setServer(
                 mServerName,
                 mNameLineEdit->text(),
-                mAddressLineEdit->text(),
-                mPortSpinBox->value(),
-                mApiPathLineEdit->text(),
-
-                proxyTypeFromComboBoxIndex(mProxyTypeComboBox->currentIndex()),
-                mProxyHostnameLineEdit->text(),
-                mProxyPortSpinBox->value(),
-                mProxyUserLineEdit->text(),
-                mProxyPasswordLineEdit->text(),
-
-                mHttpsGroupBox->isChecked(),
-                mSelfSignedCertificateCheckBox->isChecked(),
-                mSelfSignedCertificateEdit->toPlainText().toLatin1(),
-                mClientCertificateCheckBox->isChecked(),
-                mClientCertificateEdit->toPlainText().toLatin1(),
-
-                mAuthenticationGroupBox->isChecked(),
-                mUsernameLineEdit->text(),
-                mPasswordLineEdit->text(),
-
-                mUpdateIntervalSpinBox->value(),
-                mTimeoutSpinBox->value(),
-
-                mAutoReconnectGroupBox->isChecked(),
-                mAutoReconnectSpinBox->value(),
-
-                mountedDirectories
+                std::move(connectionConfiguration),
+                std::move(mountedDirectories)
             );
-        }
-    }
-
-    void ServerEditDialog::loadCertificateFromFile(QPlainTextEdit* target) {
-        auto* fileDialog = new QFileDialog(
-            this,
-            //: File chooser dialog title
-            qApp->translate("tremotesf", "Select Files"),
-            {},
-            /*qApp->translate("tremotesf", "Torrent Files (*.torrent)")*/ {}
-        );
-        fileDialog->setAttribute(Qt::WA_DeleteOnClose);
-        fileDialog->setFileMode(QFileDialog::ExistingFile);
-        fileDialog->setMimeTypeFilters({"application/x-pem-file"_L1});
-
-        QObject::connect(fileDialog, &QFileDialog::accepted, this, [=] {
-            try {
-                target->setPlainText(readFile(fileDialog->selectedFiles().first()));
-            } catch (const QFileError& e) {
-                warning().logWithException(e, "Failed to read certificate from file");
-            }
-        });
-
-        if constexpr (targetOs == TargetOs::Windows) {
-            fileDialog->open();
-        } else {
-            fileDialog->show();
         }
     }
 }

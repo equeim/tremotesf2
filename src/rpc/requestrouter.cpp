@@ -25,6 +25,7 @@
 #include "coroutines/threadpool.h"
 #include "log/log.h"
 #include "pragmamacros.h"
+#include "qsslcertificateformatter.h"
 #include "rpc.h"
 
 using namespace Qt::StringLiterals;
@@ -35,18 +36,6 @@ SPECIALIZE_FORMATTER_FOR_QDEBUG(QNetworkProxy)
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QSslError)
 
 namespace fmt {
-    template<>
-    struct formatter<QSslCertificate> : tremotesf::SimpleFormatter {
-        fmt::format_context::iterator format(const QSslCertificate& certificate, fmt::format_context& ctx) const {
-            // QSslCertificate::toText is implemented only for OpenSSL backend
-            static const bool isOpenSSL = (QSslSocket::activeBackend() == "openssl"_L1);
-            if (!isOpenSSL) {
-                return tremotesf::impl::QDebugFormatter<QSslCertificate>{}.format(certificate, ctx);
-            }
-            return fmt::formatter<QString>{}.format(certificate.toText(), ctx);
-        }
-    };
-
     template<>
     struct formatter<QSsl::SslProtocol> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(QSsl::SslProtocol protocol, fmt::format_context& ctx) const {
@@ -169,7 +158,7 @@ namespace tremotesf::impl {
                 for (const QSslError& sslError : sslErrors) {
                     detailedErrorMessage += QString::fromStdString(
                         fmt::format(
-                            "\n\n {}. {}: {} on certificate:\n - {}",
+                            "\n\n{}. {}: {}\n{}",
                             i,
                             sslError.error(),
                             sslError.errorString(),
@@ -224,13 +213,49 @@ namespace tremotesf::impl {
                 mSslConfiguration.setPrivateKey(mConfiguration->clientPrivateKey);
             }
             mExpectedSslErrors.clear();
-            mExpectedSslErrors.reserve(mConfiguration->serverCertificateChain.size() * 4);
-            for (const auto& certificate : mConfiguration->serverCertificateChain) {
-                mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, certificate));
-                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, certificate));
-                mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificateInChain, certificate));
-                mExpectedSslErrors.push_back(QSslError(QSslError::CertificateUntrusted, certificate));
-            }
+
+            std::visit(
+                [&](const auto& settings) {
+                    using T = std::remove_cvref_t<decltype(settings)>;
+                    if constexpr (std::same_as<T, RequestsConfiguration::SelfSignedCertificate>) {
+                        if (settings.certificate.isNull()) {
+                            warning().log("Server's self-signed certificate is null");
+                            return;
+                        }
+                        debug().log("Server's self-signed certificate:\n{}", settings.certificate);
+                        if (!settings.certificate.isSelfSigned()) {
+                            warning().log("Server's self-signed certificate is not actually self signed");
+                            return;
+                        }
+                        mExpectedSslErrors.push_back(QSslError(QSslError::SelfSignedCertificate, settings.certificate));
+                        mExpectedSslErrors.push_back(QSslError(QSslError::CertificateUntrusted, settings.certificate));
+                        mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, settings.certificate));
+                    } else if constexpr (std::same_as<T, RequestsConfiguration::CustomRoot>) {
+                        if (settings.rootCertificate.isNull()) {
+                            warning().log("Server's root certificate is null");
+                            return;
+                        }
+                        debug().log("Server's root certificate:\n{}", settings.rootCertificate);
+                        if (!settings.rootCertificate.isSelfSigned()) {
+                            // Using setCaCertificates instead of addCaCertificate since the latter one can confuse Windows schannel TLS backend
+                            // We don't need system CA certificates here anyway
+                            warning().log("Server's root certificate is not self-signed");
+                            return;
+                        }
+                        mSslConfiguration.setCaCertificates({settings.rootCertificate});
+                        if (settings.leafCertificate.isNull()) {
+                            warning().log(
+                                "Server's leaf certificate is null. Certificate validation might fail if its host name "
+                                "is not configured correctly"
+                            );
+                            return;
+                        }
+                        debug().log("Server's leaf certificate:\n{}", settings.leafCertificate);
+                        mExpectedSslErrors.push_back(QSslError(QSslError::HostNameMismatch, settings.leafCertificate));
+                    }
+                },
+                mConfiguration->serverCertificate
+            );
         }
 
         if (!mConfiguration->serverUrl.isEmpty()) {
@@ -255,8 +280,20 @@ namespace tremotesf::impl {
                 debug().log(" - Supported TLS protocols: {}", QSslSocket::supportedProtocols());
                 debug().log(" - TLS library version: {}", QSslSocket::sslLibraryVersionString());
                 debug().log(
-                    " - Manually validating server's certificate chain: {}",
-                    !mConfiguration->serverCertificateChain.isEmpty()
+                    " - Server's certificate settings: {}",
+                    std::visit(
+                        [&](const auto& settings) {
+                            using T = std::remove_cvref_t<decltype(settings)>;
+                            if constexpr (std::same_as<T, RequestsConfiguration::SelfSignedCertificate>) {
+                                return "self-signed certificate";
+                            } else if constexpr (std::same_as<T, RequestsConfiguration::CustomRoot>) {
+                                return "custom CA root";
+                            } else {
+                                return "none";
+                            }
+                        },
+                        mConfiguration->serverCertificate
+                    )
                 );
                 debug().log(
                     " - Client certificate authentication: {}",

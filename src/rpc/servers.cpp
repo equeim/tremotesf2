@@ -8,13 +8,18 @@
 
 #include <QCoreApplication>
 #include <QSettings>
+#include <QSslCertificate>
 #include <QStringBuilder>
 
+#include "log/log.h"
 #include "rpc/pathutils.h"
+#include "rpc/qsslcertificateformatter.h"
 #include "rpc/serversettings.h"
 #include "target_os.h"
 
 using namespace Qt::StringLiterals;
+
+SPECIALIZE_FORMATTER_FOR_QDEBUG(QVariant)
 
 namespace tremotesf {
     namespace {
@@ -40,8 +45,18 @@ namespace tremotesf {
         constexpr auto proxyPasswordKey = "proxyPassword"_L1;
 
         constexpr auto httpsKey = "https"_L1;
+
         constexpr auto selfSignedCertificateEnabledKey = "selfSignedCertificateEnabled"_L1;
         constexpr auto selfSignedCertificateKey = "selfSignedCertificate"_L1;
+
+        constexpr auto serverCertificateModeKey = "serverCertificateMode"_L1;
+        constexpr auto serverCertificateModeNone = "none"_L1;
+        constexpr auto serverCertificateModeSelfSigned = "selfSigned"_L1;
+        constexpr auto serverCertificateModeCustomRoot = "customRoot"_L1;
+
+        constexpr auto serverRootCertificateKey = "serverRootCertificate"_L1;
+        constexpr auto serverLeafCertificateKey = "serverLeafCertificate"_L1;
+
         constexpr auto clientCertificateEnabledKey = "clientCertificateEnabled"_L1;
         constexpr auto clientCertificateKey = "clientCertificate"_L1;
 
@@ -87,7 +102,7 @@ namespace tremotesf {
             return ConnectionConfiguration::ProxyType::Default;
         }
 
-        QLatin1String proxyTypeToSettings(ConnectionConfiguration::ProxyType type) {
+        constexpr QLatin1String proxyTypeToSettings(ConnectionConfiguration::ProxyType type) {
             switch (type) {
             case ConnectionConfiguration::ProxyType::Default:
                 return proxyTypeDefault;
@@ -99,6 +114,31 @@ namespace tremotesf {
                 return proxyTypeNone;
             }
             return proxyTypeDefault;
+        }
+
+        ConnectionConfiguration::ServerCertificateMode serverCertificateModeFromSettings(const QString& value) {
+            if (value.isEmpty() || value == serverCertificateModeNone) {
+                return ConnectionConfiguration::ServerCertificateMode::None;
+            }
+            if (value == serverCertificateModeSelfSigned) {
+                return ConnectionConfiguration::ServerCertificateMode::SelfSigned;
+            }
+            if (value == serverCertificateModeCustomRoot) {
+                return ConnectionConfiguration::ServerCertificateMode::CustomRoot;
+            }
+            return ConnectionConfiguration::ServerCertificateMode::None;
+        }
+
+        constexpr QLatin1String serverCertificateModeToSettings(ConnectionConfiguration::ServerCertificateMode mode) {
+            switch (mode) {
+            case ConnectionConfiguration::ServerCertificateMode::None:
+                return serverCertificateModeNone;
+            case ConnectionConfiguration::ServerCertificateMode::SelfSigned:
+                return serverCertificateModeSelfSigned;
+            case ConnectionConfiguration::ServerCertificateMode::CustomRoot:
+                return serverCertificateModeCustomRoot;
+            }
+            return serverCertificateModeNone;
         }
 
         bool isPathUnderThisDirectory(QStringView path, QStringView directory) {
@@ -306,33 +346,8 @@ namespace tremotesf {
     void Servers::setServer(
         const QString& oldName,
         const QString& name,
-        const QString& address,
-        int port,
-        const QString& apiPath,
-
-        ConnectionConfiguration::ProxyType proxyType,
-        const QString& proxyHostname,
-        int proxyPort,
-        const QString& proxyUser,
-        const QString& proxyPassword,
-
-        bool https,
-        bool selfSignedCertificateEnabled,
-        const QByteArray& selfSignedCertificate,
-        bool clientCertificateEnabled,
-        const QByteArray& clientCertificate,
-
-        bool authentication,
-        const QString& username,
-        const QString& password,
-
-        int updateInterval,
-        int timeout,
-
-        bool autoReconnectEnabled,
-        int autoReconnectInterval,
-
-        const std::vector<MountedDirectory>& mountedDirectories
+        ConnectionConfiguration connectionConfiguration,
+        std::vector<MountedDirectory> mountedDirectories
     ) {
         bool currentChanged = false;
         const QString current(currentServerName());
@@ -356,31 +371,37 @@ namespace tremotesf {
 
         mSettings->beginGroup(name);
 
-        mSettings->setValue(addressKey, address);
-        mSettings->setValue(portKey, port);
-        mSettings->setValue(apiPathKey, apiPath);
+        mSettings->setValue(addressKey, connectionConfiguration.address);
+        mSettings->setValue(portKey, connectionConfiguration.port);
+        mSettings->setValue(apiPathKey, connectionConfiguration.apiPath);
 
-        mSettings->setValue(proxyTypeKey, proxyTypeToSettings(proxyType));
-        mSettings->setValue(proxyHostnameKey, proxyHostname);
-        mSettings->setValue(proxyPortKey, proxyPort);
-        mSettings->setValue(proxyUserKey, proxyUser);
-        mSettings->setValue(proxyPasswordKey, proxyPassword);
+        mSettings->setValue(proxyTypeKey, proxyTypeToSettings(connectionConfiguration.proxyType));
+        mSettings->setValue(proxyHostnameKey, connectionConfiguration.proxyHostname);
+        mSettings->setValue(proxyPortKey, connectionConfiguration.proxyPort);
+        mSettings->setValue(proxyUserKey, connectionConfiguration.proxyUser);
+        mSettings->setValue(proxyPasswordKey, connectionConfiguration.proxyPassword);
 
-        mSettings->setValue(httpsKey, https);
-        mSettings->setValue(selfSignedCertificateEnabledKey, selfSignedCertificateEnabled);
-        mSettings->setValue(selfSignedCertificateKey, selfSignedCertificate);
-        mSettings->setValue(clientCertificateEnabledKey, clientCertificateEnabled);
-        mSettings->setValue(clientCertificateKey, clientCertificate);
+        mSettings->setValue(httpsKey, connectionConfiguration.https);
 
-        mSettings->setValue(authenticationKey, authentication);
-        mSettings->setValue(usernameKey, username);
-        mSettings->setValue(passwordKey, password);
+        mSettings->setValue(
+            serverCertificateModeKey,
+            serverCertificateModeToSettings(connectionConfiguration.serverCertificateMode)
+        );
+        mSettings->setValue(serverRootCertificateKey, connectionConfiguration.serverRootCertificate);
+        mSettings->setValue(serverLeafCertificateKey, connectionConfiguration.serverLeafCertificate);
 
-        mSettings->setValue(updateIntervalKey, updateInterval);
-        mSettings->setValue(timeoutKey, timeout);
+        mSettings->setValue(clientCertificateEnabledKey, connectionConfiguration.clientCertificateEnabled);
+        mSettings->setValue(clientCertificateKey, connectionConfiguration.clientCertificate);
 
-        mSettings->setValue(autoReconnectEnabledKey, autoReconnectEnabled);
-        mSettings->setValue(autoReconnectEnabledKey, autoReconnectInterval);
+        mSettings->setValue(authenticationKey, connectionConfiguration.authentication);
+        mSettings->setValue(usernameKey, connectionConfiguration.username);
+        mSettings->setValue(passwordKey, connectionConfiguration.password);
+
+        mSettings->setValue(updateIntervalKey, connectionConfiguration.updateInterval);
+        mSettings->setValue(timeoutKey, connectionConfiguration.timeout);
+
+        mSettings->setValue(autoReconnectEnabledKey, connectionConfiguration.autoReconnectEnabled);
+        mSettings->setValue(autoReconnectEnabledKey, connectionConfiguration.autoReconnectInterval);
 
         mSettings->setValue(mountedDirectoriesKey, MountedDirectory::toVariant(mountedDirectories));
         mSettings->setValue(lastDownloadDirectoriesKey, lastDownloadDirectories);
@@ -419,10 +440,12 @@ namespace tremotesf {
 
             mSettings->setValue(httpsKey, server.connectionConfiguration.https);
             mSettings->setValue(
-                selfSignedCertificateEnabledKey,
-                server.connectionConfiguration.selfSignedCertificateEnabled
+                serverCertificateModeKey,
+                serverCertificateModeToSettings(server.connectionConfiguration.serverCertificateMode)
             );
-            mSettings->setValue(selfSignedCertificateKey, server.connectionConfiguration.selfSignedCertificate);
+            mSettings->setValue(serverRootCertificateKey, server.connectionConfiguration.serverRootCertificate);
+            mSettings->setValue(serverLeafCertificateKey, server.connectionConfiguration.serverLeafCertificate);
+
             mSettings->setValue(clientCertificateEnabledKey, server.connectionConfiguration.clientCertificateEnabled);
             mSettings->setValue(clientCertificateKey, server.connectionConfiguration.clientCertificate);
 
@@ -479,14 +502,8 @@ namespace tremotesf {
         const QStringList groups(mSettings->childGroups());
         for (const QString& group : groups) {
             mSettings->beginGroup(group);
-            if (mSettings->contains(localCertificateKey)) {
-                const QByteArray localCertificate(mSettings->value(localCertificateKey).toByteArray());
-                if (!localCertificate.isEmpty()) {
-                    mSettings->setValue(clientCertificateEnabledKey, true);
-                    mSettings->setValue(clientCertificateKey, localCertificate);
-                }
-                mSettings->remove(localCertificateKey);
-            }
+            migrateClientCertificateSettings();
+            migrateServerCertificateSettings();
             mSettings->endGroup();
         }
 
@@ -498,31 +515,35 @@ namespace tremotesf {
         Server server{
             mSettings->group(),
             ConnectionConfiguration{
-                mSettings->value(addressKey).toString(),
-                mSettings->value(portKey).toInt(),
-                mSettings->value(apiPathKey).toString(),
+                .address = mSettings->value(addressKey).toString(),
+                .port = mSettings->value(portKey).toInt(),
+                .apiPath = mSettings->value(apiPathKey).toString(),
 
-                proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
-                mSettings->value(proxyHostnameKey).toString(),
-                mSettings->value(proxyPortKey).toInt(),
-                mSettings->value(proxyUserKey).toString(),
-                mSettings->value(proxyPasswordKey).toString(),
+                .proxyType = proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
+                .proxyHostname = mSettings->value(proxyHostnameKey).toString(),
+                .proxyPort = mSettings->value(proxyPortKey).toInt(),
+                .proxyUser = mSettings->value(proxyUserKey).toString(),
+                .proxyPassword = mSettings->value(proxyPasswordKey).toString(),
 
-                mSettings->value(httpsKey, false).toBool(),
-                mSettings->value(selfSignedCertificateEnabledKey, false).toBool(),
-                mSettings->value(selfSignedCertificateKey).toByteArray(),
-                mSettings->value(clientCertificateEnabledKey, false).toBool(),
-                mSettings->value(clientCertificateKey).toByteArray(),
+                .https = mSettings->value(httpsKey, false).toBool(),
 
-                mSettings->value(authenticationKey, false).toBool(),
-                mSettings->value(usernameKey).toString(),
-                mSettings->value(passwordKey).toString(),
+                .serverCertificateMode =
+                    serverCertificateModeFromSettings(mSettings->value(serverCertificateModeKey).toString()),
+                .serverRootCertificate = mSettings->value(serverRootCertificateKey).toByteArray(),
+                .serverLeafCertificate = mSettings->value(serverLeafCertificateKey).toByteArray(),
 
-                mSettings->value(updateIntervalKey, 5).toInt(),
-                mSettings->value(timeoutKey, 30).toInt(),
+                .clientCertificateEnabled = mSettings->value(clientCertificateEnabledKey, false).toBool(),
+                .clientCertificate = mSettings->value(clientCertificateKey).toByteArray(),
 
-                mSettings->value(autoReconnectEnabledKey, false).toBool(),
-                mSettings->value(autoReconnectIntervalKey, 30).toInt()
+                .authentication = mSettings->value(authenticationKey, false).toBool(),
+                .username = mSettings->value(usernameKey).toString(),
+                .password = mSettings->value(passwordKey).toString(),
+
+                .updateInterval = mSettings->value(updateIntervalKey, 5).toInt(),
+                .timeout = mSettings->value(timeoutKey, 30).toInt(),
+
+                .autoReconnectEnabled = mSettings->value(autoReconnectEnabledKey, false).toBool(),
+                .autoReconnectInterval = mSettings->value(autoReconnectIntervalKey, 30).toInt()
             },
             MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
             LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
@@ -537,6 +558,120 @@ namespace tremotesf {
         mSettings->beginGroup(currentServerName());
         mCurrentServerMountedDirectories = MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey));
         mSettings->endGroup();
+    }
+
+    void Servers::migrateClientCertificateSettings() {
+        if (!mSettings->contains(localCertificateKey)) {
+            return;
+        }
+        info().log("Migrating legacy client certificate settings for server {}", mSettings->group());
+        const auto localCertificateValue = mSettings->value(localCertificateKey);
+        const auto localCertificate = localCertificateValue.toByteArray();
+        info().log("{} = {}", localCertificateKey, localCertificateValue);
+        info().log("Parsed certificate:\n{}", QSslCertificate(localCertificate, QSsl::Pem));
+        if (!localCertificate.isEmpty()) {
+            setValueVerbose(clientCertificateEnabledKey, true);
+            setValueVerbose(clientCertificateKey, localCertificate);
+        } else {
+            warning().log("{} is empty", localCertificateKey);
+        }
+        mSettings->remove(localCertificateKey);
+    }
+
+    namespace {
+        bool isCertificateIssuedBy(const QSslCertificate& cert, const QSslCertificate& potentialCa) {
+            if (cert == potentialCa) return false;
+            const auto issuerAttrs = cert.issuerInfoAttributes();
+            if (issuerAttrs.isEmpty()) return false;
+            for (const auto& attr : issuerAttrs) {
+                if (cert.issuerInfo(attr) != potentialCa.subjectInfo(attr)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        std::optional<QSslCertificate> findLeafCertificate(std::span<const QSslCertificate> chain) {
+            // First, find first non self-signed certificate
+            auto maybeLeaf =
+                std::ranges::find_if(chain, [](const QSslCertificate& cert) { return !cert.isSelfSigned(); });
+            if (maybeLeaf == chain.end()) {
+                return std::nullopt;
+            }
+            // Go up the chain to skip any intermediary certificates if they are present (we don't need them here but user can add them too)
+            while (true) {
+                auto issued = std::ranges::find_if(chain, [&](const QSslCertificate& cert) {
+                    return isCertificateIssuedBy(cert, *maybeLeaf);
+                });
+                if (issued != chain.end()) {
+                    maybeLeaf = issued;
+                } else {
+                    break;
+                }
+            }
+            if (maybeLeaf == chain.end()) {
+                return std::nullopt;
+            }
+            return *maybeLeaf;
+        }
+    }
+
+    void Servers::migrateServerCertificateSettings() {
+        if (!mSettings->contains(selfSignedCertificateEnabledKey)) {
+            return;
+        }
+        info().log("Migrating legacy server certificate settings for server {}", mSettings->group());
+        const auto selfSignedCertificateValue = mSettings->value(selfSignedCertificateKey);
+        info().log("{} = {}", selfSignedCertificateKey, selfSignedCertificateValue);
+        const auto certs = QSslCertificate::fromData(selfSignedCertificateValue.toByteArray());
+        info().log("Parsed {} certificates from {}", certs.size(), selfSignedCertificateKey);
+        for (const auto& cert : certs) {
+            info().log(cert);
+        }
+        if (!certs.isEmpty()) {
+            const bool enabled = mSettings->value(selfSignedCertificateEnabledKey, false).toBool();
+            if (!enabled) {
+                setValueVerbose(
+                    serverCertificateModeKey,
+                    serverCertificateModeToSettings(ConnectionConfiguration::ServerCertificateMode::None)
+                );
+            }
+            if (certs.size() == 1) {
+                if (enabled) {
+                    setValueVerbose(
+                        serverCertificateModeKey,
+                        serverCertificateModeToSettings(ConnectionConfiguration::ServerCertificateMode::SelfSigned)
+                    );
+                }
+                setValueVerbose(serverRootCertificateKey, selfSignedCertificateValue);
+            } else {
+                if (enabled) {
+                    setValueVerbose(
+                        serverCertificateModeKey,
+                        serverCertificateModeToSettings(ConnectionConfiguration::ServerCertificateMode::CustomRoot)
+                    );
+                }
+                // Find the root
+                if (const auto root = std::ranges::find_if(certs, &QSslCertificate::isSelfSigned);
+                    root != certs.end()) {
+                    debug().log("Root certificate:\n{}", *root);
+                    setValueVerbose(serverRootCertificateKey, root->toPem());
+                } else {
+                    warning().log("Did not find a root CA certificate in connection configuration");
+                }
+                if (const auto leaf = findLeafCertificate(certs); leaf.has_value()) {
+                    debug().log("Leaf certificate:\n{}", *leaf);
+                    setValueVerbose(serverLeafCertificateKey, leaf->toPem());
+                }
+            }
+        }
+        mSettings->remove(selfSignedCertificateEnabledKey);
+        mSettings->remove(selfSignedCertificateKey);
+    }
+
+    void Servers::setValueVerbose(QLatin1String key, QVariant value) {
+        info().log("Setting {} to {}", key, value);
+        mSettings->setValue(key, value);
     }
 
     void Servers::sync() { mSettings->sync(); }

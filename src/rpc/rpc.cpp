@@ -193,9 +193,22 @@ namespace tremotesf {
             break;
         }
 
-        if (configuration.https && configuration.selfSignedCertificateEnabled) {
-            requestsConfig.serverCertificateChain =
-                QSslCertificate::fromData(configuration.selfSignedCertificate, QSsl::Pem);
+        if (configuration.https) {
+            switch (configuration.serverCertificateMode) {
+            case ConnectionConfiguration::ServerCertificateMode::SelfSigned:
+                requestsConfig.serverCertificate = RequestRouter::RequestsConfiguration::SelfSignedCertificate(
+                    QSslCertificate(configuration.serverRootCertificate, QSsl::Pem)
+                );
+                break;
+            case ConnectionConfiguration::ServerCertificateMode::CustomRoot:
+                requestsConfig.serverCertificate = RequestRouter::RequestsConfiguration::CustomRoot{
+                    .rootCertificate = QSslCertificate(configuration.serverRootCertificate, QSsl::Pem),
+                    .leafCertificate = QSslCertificate(configuration.serverLeafCertificate, QSsl::Pem)
+                };
+                break;
+            case ConnectionConfiguration::ServerCertificateMode::None:
+                break;
+            }
         }
 
         if (configuration.clientCertificateEnabled) {

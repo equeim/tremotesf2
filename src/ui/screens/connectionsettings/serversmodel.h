@@ -30,33 +30,8 @@ namespace tremotesf {
         void setServer(
             const QString& oldName,
             const QString& name,
-            const QString& address,
-            int port,
-            const QString& apiPath,
-
-            ConnectionConfiguration::ProxyType proxyType,
-            const QString& proxyHostname,
-            int proxyPort,
-            const QString& proxyUser,
-            const QString& proxyPassword,
-
-            bool https,
-            bool selfSignedCertificateEnabled,
-            const QByteArray& selfSignedCertificate,
-            bool clientCertificateEnabled,
-            const QByteArray& clientCertificate,
-
-            bool authentication,
-            const QString& username,
-            const QString& password,
-
-            int updateInterval,
-            int timeout,
-
-            bool autoReconnectEnabled,
-            int autoReconnectInterval,
-
-            const std::vector<MountedDirectory>& mountedDirectories
+            ConnectionConfiguration connectionConfiguration,
+            std::vector<MountedDirectory> mountedDirectories
         );
         void removeServerAtIndex(const QModelIndex& index);
         void removeServerAtRow(int row);

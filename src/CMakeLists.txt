@@ -50,6 +50,7 @@ target_sources(tremotesf_objects
     rpc/mounteddirectoriesutils.cpp
     rpc/pathutils.cpp
     rpc/peer.cpp
+    rpc/qsslcertificateformatter.cpp
     rpc/requestrouter.cpp
     rpc/rpc.cpp
     rpc/servers.cpp
@@ -155,6 +156,7 @@ target_sources(tremotesf_objects
     rpc/mounteddirectoriesutils.h
     rpc/pathutils.h
     rpc/peer.h
+    rpc/qsslcertificateformatter.h
     rpc/requestrouter.h
     rpc/rpc.h
     rpc/servers.h
@@ -473,6 +475,11 @@ if (BUILD_TESTING)
     add_executable(servers_test rpc/servers_test.cpp)
     add_test(NAME servers_test COMMAND servers_test)
     target_link_libraries(servers_test PRIVATE tremotesf_objects Qt::Test)
+
+    add_executable(servers_migration_test rpc/servers_migration_test.cpp)
+    target_compile_definitions(servers_migration_test PRIVATE TEST_DATA_PATH="${CMAKE_CURRENT_SOURCE_DIR}/rpc/test-data")
+    add_test(NAME servers_migration_test COMMAND servers_migration_test)
+    target_link_libraries(servers_migration_test PRIVATE tremotesf_objects Qt::Test)
 
     add_executable(coroutines_test coroutines/coroutines_test.cpp)
     add_test(NAME coroutines_test COMMAND coroutines_test)
