@@ -61,6 +61,8 @@ jobs:
       with:
         cmake-arguments: --preset windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && inputs.toolchain == 'msvc' && 'ON' || 'OFF' }}
         package: true
+      env:
+        QT_FORCE_STDERR_LOGGING: 1
 
     - name: Archive packages
       if: inputs.release-tag == ''
