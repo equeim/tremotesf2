@@ -235,6 +235,8 @@ jobs:
           echo '::group::Testing Release'
           ctest --preset base-release
           echo '::endgroup'
+      env:
+        QT_FORCE_STDERR_LOGGING: 1
 
   build-macos:
     uses: ./.github/workflows/build-macos.yml
