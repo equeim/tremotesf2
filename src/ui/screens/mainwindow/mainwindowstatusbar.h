@@ -6,7 +6,6 @@
 #define TREMOTESF_MAINWINDOWSTATUSBAR_H
 
 #include <QStatusBar>
-#include "coroutines/scope.h"
 
 class QLabel;
 
@@ -19,16 +18,15 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        explicit MainWindowStatusBar(Rpc* rpc, QWidget* parent = nullptr);
+        explicit MainWindowStatusBar(const Rpc* rpc, QWidget* parent = nullptr);
 
     private:
         void updateLayout();
         void updateServerLabel();
         void updateStatusLabels();
         void showContextMenu(QPoint pos);
-        void updateFreeSpaceLabel();
 
-        Rpc* mRpc{};
+        const Rpc* mRpc{};
         QLabel* mNoServersErrorImage{};
         QLabel* mServerLabel{};
         StatusBarSeparator* mFirstSeparator{};
@@ -40,7 +38,6 @@ namespace tremotesf {
         QLabel* mUploadSpeedImage{};
         QLabel* mUploadSpeedLabel{};
         QLabel* mFreeSpaceLabel{};
-        CoroutineScope mFreeSpaceCoroutineScope{};
 
     signals:
         void showConnectionSettingsDialog();

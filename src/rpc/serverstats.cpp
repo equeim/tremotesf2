@@ -23,4 +23,6 @@ namespace tremotesf {
         mTotal.update(serverStats.value("cumulative-stats"_L1).toObject());
         emit updated();
     }
+
+    void ServerStats::setFreeSpace(const qint64 freeSpace) { mFreeSpace = freeSpace; }
 }
