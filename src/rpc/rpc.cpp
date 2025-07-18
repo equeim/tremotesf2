@@ -922,6 +922,13 @@ namespace tremotesf {
         if (response.success) {
             mServerStats->update(response.arguments);
         }
+
+        if (isConnected()) {
+            const auto freeSpace = co_await getDownloadDirFreeSpace();
+            if (freeSpace) {
+                mServerStats->setFreeSpace(*freeSpace);
+            }
+        }
     }
 
     Coroutine<> Rpc::connectAndPerformDataUpdates() {
