@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mainwindowstatusbar.h"
+#include "coroutines/coroutines.h"
 
 #include <QActionGroup>
 #include <QCoreApplication>
@@ -11,6 +12,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QPainter>
+#include <QPointer>
 #include <QStyleOption>
 
 #include "log/log.h"
@@ -22,7 +24,7 @@
 using namespace Qt::StringLiterals;
 
 namespace tremotesf {
-    MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
+    MainWindowStatusBar::MainWindowStatusBar(Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
         setSizeGripEnabled(false);
 
         setContextMenuPolicy(Qt::CustomContextMenu);
@@ -72,6 +74,10 @@ namespace tremotesf {
         mUploadSpeedLabel = new QLabel(this);
         layout->addWidget(mUploadSpeedLabel);
 
+        mFreeSpaceLabel = new QLabel(this);
+        mFreeSpaceLabel->setContentsMargins(8, 0, 0, 0);
+        layout->addWidget(mFreeSpaceLabel);
+
         updateLayout();
         QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindowStatusBar::updateLayout);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
@@ -112,6 +118,8 @@ namespace tremotesf {
                 mThirdSeparator->show();
                 mUploadSpeedImage->show();
                 mUploadSpeedLabel->show();
+                mFreeSpaceLabel->show();
+                updateFreeSpaceLabel();
             } else {
                 mSecondSeparator->hide();
                 mDownloadSpeedImage->hide();
@@ -119,6 +127,7 @@ namespace tremotesf {
                 mThirdSeparator->hide();
                 mUploadSpeedImage->hide();
                 mUploadSpeedLabel->hide();
+                mFreeSpaceLabel->hide();
             }
         } else {
             mNoServersErrorImage->show();
@@ -131,6 +140,7 @@ namespace tremotesf {
             mThirdSeparator->hide();
             mUploadSpeedImage->hide();
             mUploadSpeedLabel->hide();
+            mFreeSpaceLabel->hide();
         }
     }
 
@@ -189,6 +199,26 @@ namespace tremotesf {
             }
         });
         menu->popup(mapToGlobal(pos));
+    }
+
+    void MainWindowStatusBar::updateFreeSpaceLabel() {
+        mFreeSpaceLabel->setText(tr("Free space: ..."));
+        if (mRpc && mRpc->isConnected()) {
+            mFreeSpaceCoroutineScope.cancelAll();
+            mFreeSpaceCoroutineScope.launch([this]() -> Coroutine<> {
+                QPointer<MainWindowStatusBar> that = this;
+                QPointer<QLabel> label = mFreeSpaceLabel;
+                if (!that || !label) co_return;
+                auto freeSpace = co_await that->mRpc->getDownloadDirFreeSpace();
+                if (!that || !label) co_return;
+                if (freeSpace) {
+                    label->setText(QObject::tr("Free space: %1").arg(formatutils::formatByteSize(*freeSpace)));
+                } else {
+                    label->setText(QObject::tr("Free space: ?"));
+                }
+                co_return;
+            }());
+        }
     }
 
     StatusBarSeparator::StatusBarSeparator(QWidget* parent) : QWidget(parent) {
