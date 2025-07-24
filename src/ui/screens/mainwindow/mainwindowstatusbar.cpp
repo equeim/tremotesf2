@@ -72,6 +72,9 @@ namespace tremotesf {
         mUploadSpeedLabel = new QLabel(this);
         layout->addWidget(mUploadSpeedLabel);
 
+        mFourthSeparator = new StatusBarSeparator(this);
+        layout->addWidget(mFourthSeparator);
+
         mFreeSpaceLabel = new QLabel(this);
         mFreeSpaceLabel->setContentsMargins(8, 0, 0, 0);
         layout->addWidget(mFreeSpaceLabel);
@@ -119,6 +122,7 @@ namespace tremotesf {
                 mThirdSeparator->show();
                 mUploadSpeedImage->show();
                 mUploadSpeedLabel->show();
+                mFourthSeparator->show();
                 mFreeSpaceLabel->show();
             } else {
                 mSecondSeparator->hide();
@@ -127,6 +131,7 @@ namespace tremotesf {
                 mThirdSeparator->hide();
                 mUploadSpeedImage->hide();
                 mUploadSpeedLabel->hide();
+                mFourthSeparator->hide();
                 mFreeSpaceLabel->hide();
             }
         } else {

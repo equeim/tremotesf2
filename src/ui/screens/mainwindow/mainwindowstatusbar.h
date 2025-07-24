@@ -37,6 +37,7 @@ namespace tremotesf {
         StatusBarSeparator* mThirdSeparator{};
         QLabel* mUploadSpeedImage{};
         QLabel* mUploadSpeedLabel{};
+        StatusBarSeparator* mFourthSeparator{};
         QLabel* mFreeSpaceLabel{};
 
     signals:
