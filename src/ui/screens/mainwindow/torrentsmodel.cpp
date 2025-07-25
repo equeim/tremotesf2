@@ -68,6 +68,16 @@ namespace tremotesf {
                 case TorrentData::Status::QueuedForChecking:
                     return statusIcon(CheckingIcon);
                 }
+            } else if (static_cast<Column>(index.column()) == Column::Priority) {
+                using namespace desktoputils;
+                switch (torrent->data().bandwidthPriority) {
+                case TorrentData::Priority::High:
+                    return priorityIcon(HighPriorityIcon);
+                case TorrentData::Priority::Normal:
+                    return priorityIcon(NormalPriorityIcon);
+                case TorrentData::Priority::Low:
+                    return priorityIcon(LowPriorityIcon);
+                }
             }
             break;
         case Qt::DisplayRole:
