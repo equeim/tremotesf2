@@ -21,8 +21,14 @@ namespace tremotesf {
         return {
             .downloadDirectory =
                 [&] {
-                    const auto lastDir = Servers::instance()->currentServerLastDownloadDirectory(serverSettings);
-                    return !lastDir.isEmpty() ? lastDir : serverSettings->data().downloadDirectory;
+                    const auto rememberAddTorrentParameters = settings->get_rememberAddTorrentParameters();
+                    if (rememberAddTorrentParameters) {
+                        const auto lastDir = Servers::instance()->currentServerLastDownloadDirectory(serverSettings);
+                        if (!lastDir.isEmpty()) {
+                            return lastDir;
+                        }
+                    }
+                    return serverSettings->data().downloadDirectory;
                 }(),
             .priority = settings->get_lastAddTorrentPriority(),
             .startAfterAdding = settings->get_lastAddTorrentStartAfterAdding(),
