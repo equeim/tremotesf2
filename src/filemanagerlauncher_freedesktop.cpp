@@ -11,6 +11,9 @@
 #include <QDBusPendingReply>
 #include <QWidget>
 
+#include <KWaylandExtras>
+#include <KWindowSystem>
+
 #include "coroutines/dbus.h"
 #include "coroutines/scope.h"
 #include "log/log.h"
@@ -25,6 +28,42 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
+        class ActivationTokenAwaitable final {
+        public:
+            inline explicit ActivationTokenAwaitable(QWindow* window) : mWindow(window) {}
+            Q_DISABLE_COPY_MOVE(ActivationTokenAwaitable)
+
+            inline bool await_ready() { return false; }
+
+            template<typename Promise>
+            inline void await_suspend(std::coroutine_handle<Promise> handle) {
+                if (!startAwaiting(handle)) {
+                    return;
+                }
+                const auto requestedSerial = KWaylandExtras::lastInputSerial(mWindow);
+                QObject::connect(
+                    KWaylandExtras::self(),
+                    &KWaylandExtras::xdgActivationTokenArrived,
+                    &mReceiver,
+                    [=, this](int serial, const QString& token) {
+                        if (static_cast<quint32>(serial) == requestedSerial) {
+                            mToken = token;
+                            resume(handle);
+                        }
+                    }
+                );
+                KWaylandExtras::requestXdgActivationToken(mWindow, requestedSerial, {});
+            }
+
+            // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+            inline QString await_resume() { return std::move(mToken).value(); };
+
+        private:
+            QWindow* mWindow;
+            QObject mReceiver{};
+            std::optional<QString> mToken{};
+        };
+
         class FreedesktopFileManagerLauncher final : public impl::FileManagerLauncher {
             Q_OBJECT
 
@@ -42,12 +81,6 @@ namespace tremotesf {
             Coroutine<> launchFileManagerAndSelectFilesImpl(
                 std::vector<FilesInDirectory> filesToSelect, QPointer<QWidget> parentWidget
             ) {
-                OrgFreedesktopFileManager1Interface interface(
-                    "org.freedesktop.FileManager1"_L1,
-                    "/org/freedesktop/FileManager1"_L1,
-                    QDBusConnection::sessionBus()
-                );
-                interface.setTimeout(desktoputils::defaultDbusTimeout);
                 const auto uris = filesToSelect
                                   | transform(&FilesInDirectory::files)
                                   | join
@@ -55,12 +88,36 @@ namespace tremotesf {
                                         return QUrl::fromLocalFile(path).toString(QUrl::FullyEncoded);
                                     })
                                   | to<QStringList>();
+
+                QString startupId{};
+                if (KWindowSystem::isPlatformWayland()) {
+                    info().log("FreedesktopFileManagerLauncher: requesting XDG activation token");
+                    const auto window = parentWidget.data() ? parentWidget.data()->windowHandle() : nullptr;
+                    if (window) {
+                        startupId = co_await ActivationTokenAwaitable(window);
+                        info().log("FreedesktopFileManagerLauncher: received XDG activation token '{}'", startupId);
+                    } else {
+                        warning().log(
+                            "FreedesktopFileManagerLauncher: platform window is null, can't request XDG activation "
+                            "token"
+                        );
+                    }
+                }
+
                 info().log(
                     "FreedesktopFileManagerLauncher: executing org.freedesktop.FileManager1.ShowItems() D-Bus call "
-                    "with: uris = {}",
-                    uris
+                    "with: uris = {}, startupId = {}",
+                    uris,
+                    startupId
                 );
-                const auto reply = co_await interface.ShowItems(uris, {});
+
+                OrgFreedesktopFileManager1Interface interface(
+                    "org.freedesktop.FileManager1"_L1,
+                    "/org/freedesktop/FileManager1"_L1,
+                    QDBusConnection::sessionBus()
+                );
+                interface.setTimeout(desktoputils::defaultDbusTimeout);
+                const auto reply = co_await interface.ShowItems(uris, startupId);
                 if (!reply.isError()) {
                     info().log(
                         "FreedesktopFileManagerLauncher: executed org.freedesktop.FileManager1.ShowItems() D-Bus call"
