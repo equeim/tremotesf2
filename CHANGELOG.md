@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Fixed opening torrent's directory when torrent has a single file in a directory (thanks @keizie)
+
 ### Changed
 - Minimum dependencies baseline has been raised:
   - GCC 14 or Clang 19 (MSVC and Apple Clang are always required to be the latest available versions)
@@ -11,11 +14,11 @@
   - cpp-httplib 0.18.7
   - gettext 0.22.5
 - Clarified dependency on cpp-httplib with OpenSSL support enabled, not OpenSSL itself
+- The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)
 
 ### Removed
 - Qt 5 support
-- Native packages for Debian older than 13 and Ubuntu older than 25.04 (and other distros with outdated packages)
-  User of these distros can still install Tremotesf through Flatpak
+- Native packages for Debian older than 13 and Ubuntu older than 25.04 (and other distros with outdated packages). Users of these distros can still install Tremotesf through Flatpak
 
 ## [2.8.2] - 2025-04-16
 ### Fixed
