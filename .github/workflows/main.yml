@@ -175,9 +175,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #toolchain: ['msvc', 'msvc-clang']
-        # Enable clang after fmt in vcpkg is updated to 11.1
-        toolchain: ['msvc']
+        toolchain: ['msvc', 'msvc-clang']
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
       toolchain: ${{ matrix.toolchain  }}
