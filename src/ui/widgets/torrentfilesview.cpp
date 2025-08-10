@@ -70,7 +70,10 @@ namespace tremotesf {
             if (!entry->isDirectory()
                 && isServerLocalOrTorrentIsMounted(mRpc, static_cast<const TorrentFilesModel*>(mModel)->torrent())
                 && entry->wantedState() != TorrentFilesModelEntry::Unwanted) {
-                desktoputils::openFile(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex), this);
+                desktoputils::openFile(
+                    static_cast<const TorrentFilesModel*>(mModel)->localFilePath(sourceIndex),
+                    nativeParentWidget()
+                );
             }
         });
     }
@@ -155,7 +158,7 @@ namespace tremotesf {
                     for (const QModelIndex& index : sourceIndexes) {
                         desktoputils::openFile(
                             static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index),
-                            this
+                            nativeParentWidget()
                         );
                     }
                 });
@@ -172,7 +175,7 @@ namespace tremotesf {
                     for (const QModelIndex& index : sourceIndexes) {
                         files.push_back(static_cast<const TorrentFilesModel*>(mModel)->localFilePath(index));
                     }
-                    launchFileManagerAndSelectFiles(files, this);
+                    launchFileManagerAndSelectFiles(files, nativeParentWidget());
                 });
             }
         }
