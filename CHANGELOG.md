@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Fixed opening torrent's directory when torrent has a single file in a directory (thanks @keizie)
+- Fixed window activation when opening torrent's file or its download directory on Linux/Wayland
 
 ### Changed
 - Minimum dependencies baseline has been raised:
