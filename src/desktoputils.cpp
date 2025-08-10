@@ -20,6 +20,17 @@
 #include <QTextDocumentFragment>
 #include <QUrl>
 
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
+#    include <QPointer>
+#    include <KWindowSystem>
+#    include <fmt/chrono.h>
+#    include "coroutines/coroutines.h"
+#    include "coroutines/qobjectsignal.h"
+#    include "coroutines/scope.h"
+#    include "coroutines/timer.h"
+#    include "coroutines/waitall.h"
+#endif
+
 #include <fmt/format.h>
 
 #include "log/log.h"
@@ -83,8 +94,8 @@ namespace tremotesf::desktoputils {
         return icon;
     }
 
-    void openFile(const QString& filePath, QWidget* parent) {
-        const auto showDialogOnError = [&](std::optional<QString> error) {
+    namespace {
+        void showOpenFileError(const QString& filePath, std::optional<QString> error, QWidget* parent) {
             auto dialog = new QMessageBox(
                 QMessageBox::Warning,
                 //: Dialog title
@@ -99,20 +110,73 @@ namespace tremotesf::desktoputils {
             }
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             dialog->show();
-        };
+        }
 
+        void openFileImpl(const QString& filePath, QWidget* parent) {
+            const auto url = QUrl::fromLocalFile(filePath);
+            info().log("Executing QDesktopServices::openUrl() for {}", url);
+            if (!QDesktopServices::openUrl(url)) {
+                warning().log("QDesktopServices::openUrl() failed for {}", url);
+                showOpenFileError(filePath, {}, parent);
+            }
+        }
+
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
+        class DelayedUrlOpener : public QObject {
+            Q_OBJECT
+        public:
+            using QObject::QObject;
+
+            static DelayedUrlOpener* instance() {
+                static const auto instance = new DelayedUrlOpener(qApp);
+                return instance;
+            }
+
+            void openUrlAfterFocusWindowChange(QString filePath, QPointer<QWidget> parent) {
+                mScope.launch(openUrlAfterFocusWindowChangeImpl(std::move(filePath), std::move(parent)));
+            }
+
+        private:
+            Coroutine<> openUrlAfterFocusWindowChangeImpl(QString filePath, QPointer<QWidget> parent) {
+                co_await waitAny(
+                    []() -> Coroutine<> {
+                        debug().log("Waiting for focusWindowChanged signal");
+                        co_await waitForSignal(qApp, &QGuiApplication::focusWindowChanged);
+                        debug().log("Received focusWindowChanged signal");
+                    }(),
+                    []() -> Coroutine<> {
+                        using namespace std::chrono_literals;
+                        constexpr auto timeout = 100ms;
+                        co_await waitFor(timeout);
+                        debug().log("Did not receive focusWindowChanged signal in {}", timeout);
+                    }()
+                );
+                openFileImpl(filePath, parent);
+            }
+
+            CoroutineScope mScope;
+        };
+#endif
+    }
+
+    void openFile(const QString& filePath, QWidget* parent) {
         if (!QFile::exists(filePath)) {
             warning().log("Can't open file {}, it does not exist", filePath);
-            showDialogOnError(qApp->translate("tremotesf", "This file/directory does not exist"));
+            showOpenFileError(filePath, qApp->translate("tremotesf", "This file/directory does not exist"), parent);
             return;
         }
-
-        const auto url = QUrl::fromLocalFile(filePath);
-        info().log("Executing QDesktopServices::openUrl() for {}", url);
-        if (!QDesktopServices::openUrl(url)) {
-            warning().log("QDesktopServices::openUrl() failed for {}", url);
-            showDialogOnError({});
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
+        // If focusWindow returns null in this moment (which is possible when we've just closed a context menu) then Qt will not pass activation token to launched app:
+        // https://bugreports.qt.io/browse/QTBUG-138892
+        // Wait for QGuiApplication::focusWindowChanged signal first so that token is requested and passed along
+        if (KWindowSystem::isPlatformWayland() && !QGuiApplication::focusWindow()) {
+            DelayedUrlOpener::instance()->openUrlAfterFocusWindowChange(filePath, parent);
+        } else {
+            openFileImpl(filePath, parent);
         }
+#else
+        openFileImpl(filePath, parent);
+#endif
     }
 
     namespace {
@@ -147,3 +211,5 @@ namespace tremotesf::desktoputils {
         }
     }
 }
+
+#include "desktoputils.moc"
