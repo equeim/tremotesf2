@@ -113,7 +113,6 @@ namespace tremotesf {
 
                 auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, [this] {
-                    mDirectoryWidget->saveDirectories();
                     accept();
                 });
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
