@@ -1,78 +1,75 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2015-2025 Alexey Rochev
 
 SPDX-License-Identifier: CC0-1.0
 -->
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
     <Fragment>
-        <DirectoryRef Id="TARGETDIR">
-            <Component Id="TorrentFileTypeRegistration" Guid="d24510b5-e983-4510-bdb0-cb3317b9f39d" NeverOverwrite="yes" Permanent="yes">
+            <Component Id="TorrentFileTypeRegistration" Guid="d24510b5-e983-4510-bdb0-cb3317b9f39d" NeverOverwrite="yes" Permanent="yes" Directory="INSTALL_ROOT">
                 <RegistryKey Root="HKCU" Key="Software\Classes\.torrent">
-                    <RegistryValue Type="string" Name="Content Type" Value="application/x-bittorrent" KeyPath="yes"/>
+                    <RegistryValue Type="string" Name="Content Type" Value="application/x-bittorrent" KeyPath="yes" />
                 </RegistryKey>
             </Component>
 
-            <Component Id="MagnetProtocolRegistration" Guid="425a4847-c965-4468-bb85-e0c03c229c4b" NeverOverwrite="yes" Permanent="yes">
+            <Component Id="MagnetProtocolRegistration" Guid="425a4847-c965-4468-bb85-e0c03c229c4b" NeverOverwrite="yes" Permanent="yes" Directory="INSTALL_ROOT">
                 <RegistryKey Root="HKCU" Key="Software\Classes\magnet">
-                    <RegistryValue Type="string" Value="URL:Magnet link" KeyPath="yes"/>
-                    <RegistryValue Type="string" Name="URL Protocol" Value=""/>
+                    <RegistryValue Type="string" Value="URL:Magnet link" KeyPath="yes" />
+                    <RegistryValue Type="string" Name="URL Protocol" Value="" />
                 </RegistryKey>
             </Component>
 
-            <Component Id="FileAssociationRegistration" Guid="ea9576ef-8e47-4993-9814-3529a7de3a6d">
+            <Component Id="FileAssociationRegistration" Guid="ea9576ef-8e47-4993-9814-3529a7de3a6d" Directory="INSTALL_ROOT">
                 <RegistryKey Root="HKCU" Key="Software\Classes\Tremotesf.TorrentFile.1">
-                    <RegistryValue Type="string" Value="Torrent file"/>
-                    <RegistryValue Type="string" Name="FriendlyTypeName" Value="@&quot;[#CM_FP_tremotesf.exe]&quot;,0"/>
+                    <RegistryValue Type="string" Value="Torrent file" />
+                    <RegistryValue Type="string" Name="FriendlyTypeName" Value="@&quot;[#CM_FP_tremotesf.exe]&quot;,0" />
                     <RegistryKey Key="DefaultIcon">
-                        <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot;,0"/>
+                        <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot;,0" />
                     </RegistryKey>
                     <RegistryKey Key="Shell">
                         <RegistryKey Key="Open">
                             <RegistryKey Key="command">
-                                <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot; &quot;%1&quot;"/>
+                                <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot; &quot;%1&quot;" />
                             </RegistryKey>
                         </RegistryKey>
                     </RegistryKey>
                 </RegistryKey>
 
                 <RegistryKey Root="HKCU" Key="Software\Classes\.torrent\OpenWithProgids">
-                    <RegistryValue Type="string" Name="Tremotesf.TorrentFile.1" Value=""/>
+                    <RegistryValue Type="string" Name="Tremotesf.TorrentFile.1" Value="" />
                 </RegistryKey>
 
                 <RegistryKey Root="HKCU" Key="Software\Classes\Tremotesf.MagnetLink.1">
-                    <RegistryValue Type="string" Value="Magnet link"/>
-                    <RegistryValue Type="string" Name="FriendlyTypeName" Value="@&quot;[#CM_FP_tremotesf.exe]&quot;,1"/>
+                    <RegistryValue Type="string" Value="Magnet link" />
+                    <RegistryValue Type="string" Name="FriendlyTypeName" Value="@&quot;[#CM_FP_tremotesf.exe]&quot;,1" />
                     <RegistryKey Key="DefaultIcon">
-                        <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot;,0"/>
+                        <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot;,0" />
                     </RegistryKey>
                     <RegistryKey Key="Shell">
                         <RegistryKey Key="Open">
                             <RegistryKey Key="command">
-                                <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot; &quot;%1&quot;"/>
+                                <RegistryValue Type="string" Value="&quot;[#CM_FP_tremotesf.exe]&quot; &quot;%1&quot;" />
                             </RegistryKey>
                         </RegistryKey>
                     </RegistryKey>
                 </RegistryKey>
 
                 <RegistryKey Root="HKCU" Key="Software\Tremotesf\Tremotesf\Capabilities">
-                    <RegistryValue Type="string" Name="ApplicationName" Value="Tremotesf"/>
-                    <RegistryValue Type="string" Name="ApplicationDescription" Value="Tremotesf - Remote GUI for transmission-daemon"/>
+                    <RegistryValue Type="string" Name="ApplicationName" Value="Tremotesf" />
+                    <RegistryValue Type="string" Name="ApplicationDescription" Value="Tremotesf - Remote GUI for transmission-daemon" />
                     <RegistryKey Key="FileAssociations">
-                        <RegistryValue Type="string" Name=".torrent" Value="Tremotesf.TorrentFile.1"/>
+                        <RegistryValue Type="string" Name=".torrent" Value="Tremotesf.TorrentFile.1" />
                     </RegistryKey>
                     <RegistryKey Key="MimeAssociations">
-                        <RegistryValue Type="string" Name="application/x-bittorrent" Value="Tremotesf.TorrentFile.1"/>
+                        <RegistryValue Type="string" Name="application/x-bittorrent" Value="Tremotesf.TorrentFile.1" />
                     </RegistryKey>
                     <RegistryKey Key="UrlAssociations">
-                        <RegistryValue Type="string" Name="magnet" Value="Tremotesf.MagnetLink.1"/>
+                        <RegistryValue Type="string" Name="magnet" Value="Tremotesf.MagnetLink.1" />
                     </RegistryKey>
                 </RegistryKey>
 
                 <RegistryKey Root="HKCU" Key="Software\RegisteredApplications">
-                    <RegistryValue Type="string" Name="Tremotesf" Value="Software\Tremotesf\Tremotesf\Capabilities"/>
+                    <RegistryValue Type="string" Name="Tremotesf" Value="Software\Tremotesf\Tremotesf\Capabilities" />
                 </RegistryKey>
             </Component>
-        </DirectoryRef>
-    </Fragment>
+        </Fragment>
 </Wix>

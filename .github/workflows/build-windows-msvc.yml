@@ -37,15 +37,15 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Set up MSVC environment
-      uses: equeim/action-setup-msvc-environment@v1
-      with:
-        arch: ${{ matrix.arch.msvc-arch }}
-
     - name: Upgrade LLVM
       if: inputs.toolchain == 'msvc-clang'
       run: |
         choco upgrade llvm
+
+    - name: Install WiX
+      run: |
+        dotnet tool install --global wix
+        wix extension add --global WixToolset.UI.wixext
 
     - name: Set up vcpkg
       uses: equeim/action-setup-vcpkg@v6
@@ -54,6 +54,11 @@ jobs:
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
         save-cache: ${{ github.event_name != 'pull_request' && inputs.toolchain == 'msvc' }}
         cache-key-tag: ${{ matrix.arch.cmake-preset-arch }}
+
+    - name: Set up MSVC environment
+      uses: equeim/action-setup-msvc-environment@v1
+      with:
+        arch: ${{ matrix.arch.msvc-arch }}
 
     - name: Build Tremotesf with ${{ inputs.toolchain }} toolchain for ${{ matrix.arch.cmake-preset-arch }} architecture
       id: build
