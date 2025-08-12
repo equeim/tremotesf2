@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2015-2025 Alexey Rochev
 
 SPDX-License-Identifier: CC0-1.0
 -->
 <CPackWiXPatch>
     <CPackWiXFragment Id="#PRODUCTFEATURE">
-        <ComponentRef Id="TorrentFileTypeRegistration"/>
-        <ComponentRef Id="MagnetProtocolRegistration"/>
-        <ComponentRef Id="FileAssociationRegistration"/>
+        <ComponentRef Id="TorrentFileTypeRegistration" />
+        <ComponentRef Id="MagnetProtocolRegistration" />
+        <ComponentRef Id="FileAssociationRegistration" />
     </CPackWiXFragment>
 </CPackWiXPatch>
