@@ -37,11 +37,6 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Upgrade LLVM
-      if: inputs.toolchain == 'msvc-clang'
-      run: |
-        choco upgrade llvm
-
     - name: Install WiX
       run: |
         dotnet tool install --global wix
