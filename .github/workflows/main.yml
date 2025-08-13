@@ -90,7 +90,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:trixie', 'ubuntu:25.04']
+        container-image: ['debian:13', 'ubuntu:25.04']
         arch: ['x86_64', 'arm64']
 
     runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
