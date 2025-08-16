@@ -642,6 +642,7 @@ namespace tremotesf {
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "&Rename")
             );
+            mRenameTorrentAction->setShortcuts(QKeySequence::listFromString("F2"));
             QObject::connect(mRenameTorrentAction, &QAction::triggered, this, [this] {
                 const auto indexes = mTorrentsView.selectionModel()->selectedRows();
                 if (indexes.size() == 1) {
