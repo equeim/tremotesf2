@@ -43,7 +43,7 @@ jobs:
         wix extension add --global WixToolset.UI.wixext
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@v6
+      uses: equeim/action-setup-vcpkg@v7
       with:
         vcpkg-root: ${{ github.workspace }}\vcpkg
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
