@@ -22,7 +22,7 @@
       "cacheVariables": {
         "TREMOTESF_WITH_HTTPLIB": "system",
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
-        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-packages-after-build",
+        "VCPKG_INSTALL_OPTIONS": "--disable-metrics;--clean-buildtrees-after-build;--clean-packages-after-build",
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-overlay-triplets"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
