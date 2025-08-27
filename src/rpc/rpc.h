@@ -214,7 +214,6 @@ namespace tremotesf {
 
         Coroutine<> getServerSettings();
         Coroutine<> getTorrents();
-        Coroutine<> checkTorrentsSingleFile(std::vector<int> torrentIds);
         Coroutine<> getServerStats();
 
         Coroutine<> connectAndPerformDataUpdates();

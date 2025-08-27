@@ -752,7 +752,6 @@ namespace tremotesf {
         std::vector<std::pair<int, int>> removedIndexRanges{};
         std::vector<std::pair<int, int>> changedIndexRanges{};
         int addedCount{};
-        std::vector<int> metadataCompletedIds{};
 
     protected:
         std::vector<NewTorrent>::iterator
@@ -774,7 +773,6 @@ namespace tremotesf {
             const bool wasFinished = torrent->data().isFinished();
             const bool wasPaused = (torrent->data().status == TorrentData::Status::Paused);
             const auto oldSizeWhenDone = torrent->data().sizeWhenDone;
-            const bool metadataWasComplete = torrent->data().metadataComplete;
 
             bool changed{};
             if (keys) {
@@ -791,9 +789,6 @@ namespace tremotesf {
                     && !wasPaused
                     && torrent->data().sizeWhenDone >= oldSizeWhenDone) {
                     emit mRpc.torrentFinished(torrent.get());
-                }
-                if (!metadataWasComplete && torrent->data().metadataComplete) {
-                    metadataCompletedIds.push_back(newTorrent.id);
                 }
             }
 
@@ -815,9 +810,6 @@ namespace tremotesf {
             }
             if (mRpc.isConnected()) {
                 emit mRpc.torrentAdded(torrent.get());
-            }
-            if (torrent->data().metadataComplete) {
-                metadataCompletedIds.push_back(newTorrent.id);
             }
             return torrent;
         }
@@ -870,9 +862,6 @@ namespace tremotesf {
         }
 
         std::vector<Coroutine<>> additionalRequests{};
-        if (!mServerSettings->data().hasFileCountProperty() && !updater.metadataCompletedIds.empty()) {
-            additionalRequests.push_back(checkTorrentsSingleFile(std::move(updater.metadataCompletedIds)));
-        }
         QJsonArray getFilesIds{};
         QJsonArray getPeersIds{};
         for (const auto& torrent : mTorrents) {
@@ -896,23 +885,6 @@ namespace tremotesf {
         const bool wasConnecting = connectionState() == ConnectionState::Connecting;
         if (!wasConnecting) {
             emit torrentsUpdated();
-        }
-    }
-
-    Coroutine<> Rpc::checkTorrentsSingleFile(std::vector<int> torrentIds) {
-        QJsonObject arguments{{u"fields"_s, QJsonArray{"id"_L1, "priorities"_L1}}, {u"ids"_s, toJsonArray(torrentIds)}};
-        const auto response = co_await mRequestRouter->postRequest("torrent-get"_L1, std::move(arguments));
-        if (!response.success) co_return;
-        const auto torrentJsons = response.arguments.value(torrentsKey).toArray();
-        for (const auto& torrentJson : torrentJsons) {
-            const auto object = torrentJson.toObject();
-            const auto torrentId = Torrent::idFromJson(object);
-            if (torrentId.has_value()) {
-                Torrent* torrent = torrentById(*torrentId);
-                if (torrent) {
-                    torrent->checkSingleFile(object);
-                }
-            }
         }
     }
 

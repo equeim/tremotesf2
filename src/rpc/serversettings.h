@@ -40,7 +40,6 @@ namespace tremotesf {
         [[nodiscard]] bool hasSessionIdFile() const;
         [[nodiscard]] bool hasTableMode() const;
         [[nodiscard]] bool hasTrackerListProperty() const;
-        [[nodiscard]] bool hasFileCountProperty() const;
         [[nodiscard]] bool hasLabelsProperty() const;
 
         int rpcVersion = 0;
