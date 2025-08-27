@@ -120,8 +120,6 @@ namespace tremotesf {
 
         std::vector<QString> labels{};
 
-        bool singleFile = true;
-
         std::vector<Tracker> trackers{};
 
         [[nodiscard]] bool hasError() const { return error != Error::None; }
@@ -195,8 +193,6 @@ namespace tremotesf {
         update(std::span<const std::optional<TorrentData::UpdateKey>> keys, const QJsonArray& values);
         void updateFiles(const QJsonObject& torrentMap);
         void updatePeers(const QJsonObject& torrentMap);
-
-        void checkSingleFile(const QJsonObject& torrentMap);
 
     private:
         Rpc* mRpc{};

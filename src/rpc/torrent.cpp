@@ -73,7 +73,6 @@ namespace tremotesf {
         CreationDate,
         Comment,
         TrackerStats,
-        FileCount,
         Labels,
 
         Count
@@ -174,8 +173,6 @@ namespace tremotesf {
                 return "comment"_L1;
             case TorrentData::UpdateKey::TrackerStats:
                 return "trackerStats"_L1;
-            case TorrentData::UpdateKey::FileCount:
-                return "file-count"_L1;
             case TorrentData::UpdateKey::Labels:
                 return "labels"_L1;
             case TorrentData::UpdateKey::Count:
@@ -200,7 +197,6 @@ namespace tremotesf {
             return static_cast<TorrentData::UpdateKey>(foundKey->second);
         }
 
-        constexpr auto prioritiesKey = "priorities"_L1;
         constexpr auto wantedFilesKey = "files-wanted"_L1;
         constexpr auto unwantedFilesKey = "files-unwanted"_L1;
 
@@ -466,9 +462,6 @@ namespace tremotesf {
             setChanged(totalLeechersFromTrackersCount, newTotalLeechers, changed);
             return;
         }
-        case TorrentData::UpdateKey::FileCount:
-            setChanged(singleFile, value.toInt() == 1, changed);
-            return;
         case TorrentData::UpdateKey::Labels: {
             setChanged(
                 labels,
@@ -523,9 +516,6 @@ namespace tremotesf {
     QJsonArray Torrent::updateFields(const ServerSettings* serverSettings) {
         QJsonArray fields{};
         for (auto key : allUpdateKeys) {
-            if (key == TorrentData::UpdateKey::FileCount && !serverSettings->data().hasFileCountProperty()) {
-                continue;
-            }
             if (key == TorrentData::UpdateKey::Labels && !serverSettings->data().hasLabelsProperty()) {
                 continue;
             }
@@ -899,10 +889,6 @@ namespace tremotesf {
         updater.update(mPeers, std::move(newPeers));
 
         emit peersUpdated(updater.removedIndexRanges, updater.changedIndexRanges, updater.addedCount);
-    }
-
-    void Torrent::checkSingleFile(const QJsonObject& torrentMap) {
-        mData.singleFile = (torrentMap.value(prioritiesKey).toArray().size() == 1);
     }
 }
 
