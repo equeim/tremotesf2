@@ -72,6 +72,13 @@ namespace tremotesf {
         mUploadSpeedLabel = new QLabel(this);
         layout->addWidget(mUploadSpeedLabel);
 
+        mFourthSeparator = new StatusBarSeparator(this);
+        layout->addWidget(mFourthSeparator);
+
+        mFreeSpaceLabel = new QLabel(this);
+        mFreeSpaceLabel->setContentsMargins(8, 0, 0, 0);
+        layout->addWidget(mFreeSpaceLabel);
+
         updateLayout();
         QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindowStatusBar::updateLayout);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
@@ -96,6 +103,9 @@ namespace tremotesf {
         QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=, this] {
             mDownloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
             mUploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
+            mFreeSpaceLabel->setText(
+                QObject::tr("Free space: %1").arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace()))
+            );
         });
     }
 
@@ -112,6 +122,8 @@ namespace tremotesf {
                 mThirdSeparator->show();
                 mUploadSpeedImage->show();
                 mUploadSpeedLabel->show();
+                mFourthSeparator->show();
+                mFreeSpaceLabel->show();
             } else {
                 mSecondSeparator->hide();
                 mDownloadSpeedImage->hide();
@@ -119,6 +131,8 @@ namespace tremotesf {
                 mThirdSeparator->hide();
                 mUploadSpeedImage->hide();
                 mUploadSpeedLabel->hide();
+                mFourthSeparator->hide();
+                mFreeSpaceLabel->hide();
             }
         } else {
             mNoServersErrorImage->show();
@@ -131,6 +145,7 @@ namespace tremotesf {
             mThirdSeparator->hide();
             mUploadSpeedImage->hide();
             mUploadSpeedLabel->hide();
+            mFreeSpaceLabel->hide();
         }
     }
 
