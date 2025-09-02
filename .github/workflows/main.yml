@@ -54,7 +54,7 @@ jobs:
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: 'recursive'
 
@@ -105,7 +105,7 @@ jobs:
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git python3 cmake
 
     - name: Check out sources
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: 'recursive'
 
@@ -116,7 +116,7 @@ jobs:
         .github/workflows/make-source-archive.py --output-directory .. --debian gzip
 
     - name: Check out Debian sources
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         repository: equeim/tremotesf-debian
         path: tremotesf-debian
@@ -156,7 +156,7 @@ jobs:
         flatpak remote-add --user --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: 'recursive'
 
@@ -187,7 +187,7 @@ jobs:
 
     steps:
     - name: Checkout Tremotesf
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: 'recursive'
 
@@ -246,7 +246,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Check REUSE compliance
       run: |
