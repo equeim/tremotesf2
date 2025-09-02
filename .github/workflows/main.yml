@@ -25,9 +25,6 @@ jobs:
         exclude:
         - container-image: 'opensuse/tumbleweed:latest'
           compiler: clang
-        # Bug in Clang 20, possibly https://github.com/llvm/llvm-project/issues/104525
-        - container-image: 'fedora:42'
-          compiler: clang
 
     runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
     container: ${{ startsWith(matrix.container-image, 'fedora') && 'registry.fedoraproject.org' || 'registry.opensuse.org' }}/${{ matrix.container-image }}
