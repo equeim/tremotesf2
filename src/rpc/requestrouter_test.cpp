@@ -245,8 +245,8 @@ namespace {
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
         void checkSelfSignedCertificateError() {
             TestHttpServer<httplib::SSLServer> server(
-                TEST_DATA_PATH "/root-certificate.pem",
-                TEST_DATA_PATH "/root-certificate-key.pem"
+                TEST_DATA_PATH "/server-certs/self-signed.pem",
+                TEST_DATA_PATH "/server-certs/self-signed-key.pem"
             );
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
@@ -262,16 +262,17 @@ namespace {
 
         void checkSelfSignedCertificateSuccess() {
             TestHttpServer<httplib::SSLServer> server(
-                TEST_DATA_PATH "/root-certificate.pem",
-                TEST_DATA_PATH "/root-certificate-key.pem"
+                TEST_DATA_PATH "/server-certs/self-signed.pem",
+                TEST_DATA_PATH "/server-certs/self-signed-key.pem"
             );
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
                 config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
-                config.serverCertificateChain =
-                    QSslCertificate::fromPath(TEST_DATA_PATH "/root-certificate.pem", QSsl::Pem);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::SelfSignedCertificate(
+                    QSslCertificate::fromPath(TEST_DATA_PATH "/server-certs/self-signed.pem", QSsl::Pem).first()
+                );
                 mRouter.setConfiguration(std::move(config));
             }
             const auto response = waitForResponse("foo"_L1, QByteArray{});
@@ -279,17 +280,124 @@ namespace {
             QCOMPARE(response->success, true);
         }
 
-        void checkSelfSignedCertificateChainSuccess() {
+        void checkCertificateSignedWithCustomRootSuccess() {
+            // Server returns signed certificate with its (self-signed) root
             TestHttpServer<httplib::SSLServer> server(
-                TEST_DATA_PATH "/chain.pem",
-                TEST_DATA_PATH "/signed-certificate-key.pem"
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/without-intermediate/leaf.pem",
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/without-intermediate/leaf-key.pem"
             );
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
                 config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
-                config.serverCertificateChain = QSslCertificate::fromPath(TEST_DATA_PATH "/chain.pem", QSsl::Pem);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::CustomRoot{
+                    .rootCertificate = QSslCertificate::fromPath(
+                                           TEST_DATA_PATH "/server-certs/signed-with-custom-root/root.pem",
+                                           QSsl::Pem
+                    )
+                                           .first(),
+                    .leafCertificate =
+                        QSslCertificate::fromPath(
+                            TEST_DATA_PATH "/server-certs/signed-with-custom-root/without-intermediate/leaf.pem",
+                            QSsl::Pem
+                        )
+                            .first()
+                };
+                mRouter.setConfiguration(std::move(config));
+            }
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
+            QCOMPARE(response.has_value(), true);
+            QCOMPARE(response->success, true);
+        }
+
+        void checkCertificateSignedWithCustomRootAndServerReturnsWholeChainSuccess() {
+            // Server returns signed certificate with its (self-signed) root
+            TestHttpServer<httplib::SSLServer> server(
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/without-intermediate/leaf-with-root.pem",
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/without-intermediate/leaf-key.pem"
+            );
+            server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
+            {
+                RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
+                config.serverUrl.setScheme("https"_L1);
+                config.serverUrl.setPort(server.port);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::CustomRoot{
+                    .rootCertificate = QSslCertificate::fromPath(
+                                           TEST_DATA_PATH "/server-certs/signed-with-custom-root/root.pem",
+                                           QSsl::Pem
+                    )
+                                           .first(),
+                    .leafCertificate =
+                        QSslCertificate::fromPath(
+                            TEST_DATA_PATH "/server-certs/signed-with-custom-root/without-intermediate/leaf.pem",
+                            QSsl::Pem
+                        )
+                            .first()
+                };
+                mRouter.setConfiguration(std::move(config));
+            }
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
+            QCOMPARE(response.has_value(), true);
+            QCOMPARE(response->success, true);
+        }
+
+        void checkCertificateSignedWithCustomRootAndIntermediateSuccess() {
+            // Server returns signed certificate with its (self-signed) root
+            TestHttpServer<httplib::SSLServer> server(
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/with-intermediate/leaf-with-intermediate.pem",
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/with-intermediate/leaf-key.pem"
+            );
+            server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
+            {
+                RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
+                config.serverUrl.setScheme("https"_L1);
+                config.serverUrl.setPort(server.port);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::CustomRoot{
+                    .rootCertificate = QSslCertificate::fromPath(
+                                           TEST_DATA_PATH "/server-certs/signed-with-custom-root/root.pem",
+                                           QSsl::Pem
+                    )
+                                           .first(),
+                    .leafCertificate =
+                        QSslCertificate::fromPath(
+                            TEST_DATA_PATH "/server-certs/signed-with-custom-root/with-intermediate/leaf.pem",
+                            QSsl::Pem
+                        )
+                            .first()
+                };
+                mRouter.setConfiguration(std::move(config));
+            }
+            const auto response = waitForResponse("foo"_L1, QByteArray{});
+            QCOMPARE(response.has_value(), true);
+            QCOMPARE(response->success, true);
+        }
+
+        void checkCertificateSignedWithCustomRootAndIntermediateAndServerReturnsWholeChainSuccess() {
+            // Server returns signed certificate with its (self-signed) root
+            TestHttpServer<httplib::SSLServer> server(
+                TEST_DATA_PATH
+                "/server-certs/signed-with-custom-root/with-intermediate/leaf-with-intermediate-and-root.pem",
+                TEST_DATA_PATH "/server-certs/signed-with-custom-root/with-intermediate/leaf-key.pem"
+            );
+            server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
+            {
+                RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
+                config.serverUrl.setScheme("https"_L1);
+                config.serverUrl.setPort(server.port);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::CustomRoot{
+                    .rootCertificate = QSslCertificate::fromPath(
+                                           TEST_DATA_PATH "/server-certs/signed-with-custom-root/root.pem",
+                                           QSsl::Pem
+                    )
+                                           .first(),
+                    .leafCertificate =
+                        QSslCertificate::fromPath(
+                            TEST_DATA_PATH "/server-certs/signed-with-custom-root/with-intermediate/leaf.pem",
+                            QSsl::Pem
+                        )
+                            .first()
+                };
                 mRouter.setConfiguration(std::move(config));
             }
             const auto response = waitForResponse("foo"_L1, QByteArray{});
@@ -299,17 +407,18 @@ namespace {
 
         void checkClientCertificateError() {
             TestHttpServer<httplib::SSLServer> server(
-                TEST_DATA_PATH "/root-certificate.pem",
-                TEST_DATA_PATH "/root-certificate-key.pem",
-                TEST_DATA_PATH "/client-certificate-and-key.pem"
+                TEST_DATA_PATH "/server-certs/self-signed.pem",
+                TEST_DATA_PATH "/server-certs/self-signed-key.pem",
+                TEST_DATA_PATH "/client-certs/client-certificate-and-key.pem"
             );
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
                 config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
-                config.serverCertificateChain =
-                    QSslCertificate::fromPath(TEST_DATA_PATH "/root-certificate.pem", QSsl::Pem);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::SelfSignedCertificate(
+                    QSslCertificate::fromPath(TEST_DATA_PATH "/server-certs/self-signed.pem", QSsl::Pem).first()
+                );
                 mRouter.setConfiguration(std::move(config));
             }
             const auto error = waitForError("foo"_L1, QByteArray{});
@@ -324,21 +433,23 @@ namespace {
 
         void checkClientCertificateSuccess() {
             TestHttpServer<httplib::SSLServer> server(
-                TEST_DATA_PATH "/root-certificate.pem",
-                TEST_DATA_PATH "/root-certificate-key.pem",
-                TEST_DATA_PATH "/client-certificate-and-key.pem"
+                TEST_DATA_PATH "/server-certs/self-signed.pem",
+                TEST_DATA_PATH "/server-certs/self-signed-key.pem",
+                TEST_DATA_PATH "/client-certs/client-certificate-and-key.pem"
             );
             server.handle([&](const httplib::Request&, httplib::Response& res) { success(res); });
             {
                 RequestRouter::RequestsConfiguration config = mRouter.configuration().value();
                 config.serverUrl.setScheme("https"_L1);
                 config.serverUrl.setPort(server.port);
-                config.serverCertificateChain =
-                    QSslCertificate::fromPath(TEST_DATA_PATH "/root-certificate.pem", QSsl::Pem);
+                config.serverCertificate = RequestRouter::RequestsConfiguration::SelfSignedCertificate(
+                    QSslCertificate::fromPath(TEST_DATA_PATH "/server-certs/self-signed.pem", QSsl::Pem).first()
+                );
                 config.clientCertificate =
-                    QSslCertificate::fromPath(TEST_DATA_PATH "/client-certificate-and-key.pem", QSsl::Pem).first();
+                    QSslCertificate::fromPath(TEST_DATA_PATH "/client-certs/client-certificate-and-key.pem", QSsl::Pem)
+                        .first();
                 {
-                    QFile file(TEST_DATA_PATH "/client-certificate-and-key.pem");
+                    QFile file(TEST_DATA_PATH "/client-certs/client-certificate-and-key.pem");
                     openFile(file, QIODevice::ReadOnly);
                     config.clientPrivateKey = QSslKey(&file, QSsl::Rsa);
                 }
