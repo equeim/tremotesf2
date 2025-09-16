@@ -56,5 +56,12 @@
             "platform": "windows",
             "host": true
         }
+    ],
+    "overrides": [
+        {
+            "name": "double-conversion",
+            "version": "3.3.0",
+            "port-version": 1
+        }
     ]
 }
