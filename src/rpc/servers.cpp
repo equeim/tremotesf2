@@ -513,42 +513,43 @@ namespace tremotesf {
     Server Servers::getServer(const QString& name) const {
         mSettings->beginGroup(name);
         Server server{
-            mSettings->group(),
-            ConnectionConfiguration{
-                .address = mSettings->value(addressKey).toString(),
-                .port = mSettings->value(portKey).toInt(),
-                .apiPath = mSettings->value(apiPathKey).toString(),
+            .name = mSettings->group(),
+            .connectionConfiguration =
+                ConnectionConfiguration{
+                    .address = mSettings->value(addressKey).toString(),
+                    .port = mSettings->value(portKey).toInt(),
+                    .apiPath = mSettings->value(apiPathKey).toString(),
 
-                .proxyType = proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
-                .proxyHostname = mSettings->value(proxyHostnameKey).toString(),
-                .proxyPort = mSettings->value(proxyPortKey).toInt(),
-                .proxyUser = mSettings->value(proxyUserKey).toString(),
-                .proxyPassword = mSettings->value(proxyPasswordKey).toString(),
+                    .proxyType = proxyTypeFromSettings(mSettings->value(proxyTypeKey).toString()),
+                    .proxyHostname = mSettings->value(proxyHostnameKey).toString(),
+                    .proxyPort = mSettings->value(proxyPortKey).toInt(),
+                    .proxyUser = mSettings->value(proxyUserKey).toString(),
+                    .proxyPassword = mSettings->value(proxyPasswordKey).toString(),
 
-                .https = mSettings->value(httpsKey, false).toBool(),
+                    .https = mSettings->value(httpsKey, false).toBool(),
 
-                .serverCertificateMode =
-                    serverCertificateModeFromSettings(mSettings->value(serverCertificateModeKey).toString()),
-                .serverRootCertificate = mSettings->value(serverRootCertificateKey).toByteArray(),
-                .serverLeafCertificate = mSettings->value(serverLeafCertificateKey).toByteArray(),
+                    .serverCertificateMode =
+                        serverCertificateModeFromSettings(mSettings->value(serverCertificateModeKey).toString()),
+                    .serverRootCertificate = mSettings->value(serverRootCertificateKey).toByteArray(),
+                    .serverLeafCertificate = mSettings->value(serverLeafCertificateKey).toByteArray(),
 
-                .clientCertificateEnabled = mSettings->value(clientCertificateEnabledKey, false).toBool(),
-                .clientCertificate = mSettings->value(clientCertificateKey).toByteArray(),
+                    .clientCertificateEnabled = mSettings->value(clientCertificateEnabledKey, false).toBool(),
+                    .clientCertificate = mSettings->value(clientCertificateKey).toByteArray(),
 
-                .authentication = mSettings->value(authenticationKey, false).toBool(),
-                .username = mSettings->value(usernameKey).toString(),
-                .password = mSettings->value(passwordKey).toString(),
+                    .authentication = mSettings->value(authenticationKey, false).toBool(),
+                    .username = mSettings->value(usernameKey).toString(),
+                    .password = mSettings->value(passwordKey).toString(),
 
-                .updateInterval = mSettings->value(updateIntervalKey, 5).toInt(),
-                .timeout = mSettings->value(timeoutKey, 30).toInt(),
+                    .updateInterval = mSettings->value(updateIntervalKey, 5).toInt(),
+                    .timeout = mSettings->value(timeoutKey, 30).toInt(),
 
-                .autoReconnectEnabled = mSettings->value(autoReconnectEnabledKey, false).toBool(),
-                .autoReconnectInterval = mSettings->value(autoReconnectIntervalKey, 30).toInt()
-            },
-            MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
-            LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
-            mSettings->value(lastDownloadDirectoriesKey).toStringList(),
-            mSettings->value(lastDownloadDirectoryKey).toString()
+                    .autoReconnectEnabled = mSettings->value(autoReconnectEnabledKey, false).toBool(),
+                    .autoReconnectInterval = mSettings->value(autoReconnectIntervalKey, 30).toInt()
+                },
+            .mountedDirectories = MountedDirectory::fromVariant(mSettings->value(mountedDirectoriesKey)),
+            .lastTorrents = LastTorrents::fromVariant(mSettings->value(lastTorrentsKey)),
+            .lastDownloadDirectories = mSettings->value(lastDownloadDirectoriesKey).toStringList(),
+            .lastDownloadDirectory = mSettings->value(lastDownloadDirectoryKey).toString()
         };
         mSettings->endGroup();
         return server;

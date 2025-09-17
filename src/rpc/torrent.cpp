@@ -881,7 +881,7 @@ namespace tremotesf {
             for (const auto& i : peers) {
                 QJsonObject json = i.toObject();
                 QString address(json.value(Peer::addressKey).toString());
-                newPeers.push_back(NewPeer{std::move(json), std::move(address)});
+                newPeers.push_back(NewPeer{.json = std::move(json), .address = std::move(address)});
             }
         }
 
