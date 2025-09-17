@@ -149,6 +149,7 @@ namespace tremotesf {
     }
 
     bool TorrentsProxyModel::statusFilterAcceptsTorrent(const Torrent* torrent, StatusFilter filter) {
+        using enum StatusFilter;
         switch (filter) {
         case Active:
             return (

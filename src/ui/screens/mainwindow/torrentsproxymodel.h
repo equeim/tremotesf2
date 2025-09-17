@@ -18,7 +18,7 @@ namespace tremotesf {
         Q_OBJECT
 
     public:
-        enum StatusFilter { All, Active, Downloading, Seeding, Paused, Checking, Errored, StatusFilterCount };
+        enum class StatusFilter { All, Active, Downloading, Seeding, Paused, Checking, Errored };
         Q_ENUM(StatusFilter)
 
         explicit TorrentsProxyModel(TorrentsModel* sourceModel, QObject* parent = nullptr);

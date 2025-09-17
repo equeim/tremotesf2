@@ -26,12 +26,13 @@ namespace tremotesf {
         switch (role) {
         case Qt::CheckStateRole:
             if (column == Column::Name) {
+                using enum TorrentFilesModelEntry::WantedState;
                 switch (entry->wantedState()) {
-                case TorrentFilesModelEntry::Wanted:
+                case Wanted:
                     return Qt::Checked;
-                case TorrentFilesModelEntry::Unwanted:
+                case Unwanted:
                     return Qt::Unchecked;
-                case TorrentFilesModelEntry::MixedWanted:
+                case Mixed:
                     return Qt::PartiallyChecked;
                 }
             }
@@ -69,7 +70,7 @@ namespace tremotesf {
             case Column::Progress:
                 return entry->progress();
             case Column::Priority:
-                return entry->priority();
+                return QVariant::fromValue(entry->priority());
             default:
                 return data(index, Qt::DisplayRole);
             }
