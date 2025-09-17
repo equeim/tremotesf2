@@ -58,13 +58,13 @@ namespace tremotesf {
                 fmt::format_to(std::back_insert_iterator(out), "\nCaused by: unknown exception");
             }
         }
-    }
 
-    template<impl::IsException E>
-    std::string formatExceptionRecursivelyImpl(const E& e) {
-        std::string out = fmt::format(singleArgumentFormatString, e);
-        appendNestedExceptions(out, e);
-        return out;
+        template<impl::IsException E>
+        std::string formatExceptionRecursivelyImpl(const E& e) {
+            std::string out = fmt::format(singleArgumentFormatString, e);
+            appendNestedExceptions(out, e);
+            return out;
+        }
     }
 
     std::string formatExceptionRecursively(const std::exception& e) { return formatExceptionRecursivelyImpl(e); }

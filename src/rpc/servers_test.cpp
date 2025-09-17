@@ -31,14 +31,16 @@ namespace fmt {
 }
 
 namespace tremotesf {
-    std::vector<MountedDirectory>
-    createMountedDirectories(std::span<const QString> localDirs, std::span<const QString> remoteDirs) {
-        std::vector<MountedDirectory> dirs{};
-        dirs.reserve(localDirs.size());
-        for (const auto& [local, remote] : std::views::zip(localDirs, remoteDirs)) {
-            dirs.push_back({.localPath = local, .remotePath = remote});
+    namespace {
+        std::vector<MountedDirectory>
+        createMountedDirectories(std::span<const QString> localDirs, std::span<const QString> remoteDirs) {
+            std::vector<MountedDirectory> dirs{};
+            dirs.reserve(localDirs.size());
+            for (const auto& [local, remote] : std::views::zip(localDirs, remoteDirs)) {
+                dirs.push_back({.localPath = local, .remotePath = remote});
+            }
+            return dirs;
         }
-        return dirs;
     }
 
     class ServersTest final : public QObject {
