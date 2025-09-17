@@ -43,12 +43,8 @@
         "cxxopts",
         {
             "name": "cpp-httplib",
-            "default-features": false,
             "features": [
-                {
-                    "name": "openssl",
-                    "platform": "!(windows & arm64)"
-                }
+                "openssl"
             ]
         },
         {
