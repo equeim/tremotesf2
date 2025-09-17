@@ -140,7 +140,7 @@ namespace tremotesf {
                 }
                 break;
             }
-            if (int signal = receivedSignal; signal != notReceivedSignal) {
+            if (const int signal = receivedSignal; signal != notReceivedSignal) {
                 if (const auto name = signalName(signal); name.has_value()) {
                     info().log("signalhandler: received signal {}", *name);
                 } else {

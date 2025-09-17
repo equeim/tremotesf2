@@ -22,7 +22,7 @@ namespace tremotesf {
 
         auto enabledLabels = selectedTorrents.at(0)->data().labels;
         if (!enabledLabels.empty() && selectedTorrents.size() > 1) {
-            for (Torrent* torrent : std::views::drop(selectedTorrents, 1)) {
+            for (const Torrent* torrent : std::views::drop(selectedTorrents, 1)) {
                 if (torrent->data().labels != enabledLabels) {
                     enabledLabels.clear();
                     break;

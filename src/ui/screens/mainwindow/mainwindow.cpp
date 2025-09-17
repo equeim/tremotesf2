@@ -574,7 +574,7 @@ namespace tremotesf {
 
             mTorrentMenu->addSeparator();
 
-            QAction* copyMagnetLinkAction = mTorrentMenu->addAction(
+            const auto* const copyMagnetLinkAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("edit-copy"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Copy &Magnet Link")
@@ -607,7 +607,7 @@ namespace tremotesf {
                 removeSelectedTorrents(true);
             });
 
-            QAction* setLocationAction = mTorrentMenu->addAction(
+            const auto* const setLocationAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("mark-location"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Set &Location")
@@ -653,7 +653,7 @@ namespace tremotesf {
                 }
             });
 
-            QAction* editLabelsAction = mTorrentMenu->addAction(
+            const auto* const editLabelsAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("tag"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Edi&t Labels")
@@ -695,7 +695,7 @@ namespace tremotesf {
 
             mTorrentMenu->addSeparator();
 
-            QAction* checkTorrentAction = mTorrentMenu->addAction(
+            const auto* const checkTorrentAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("document-preview"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "&Check Local Data")
@@ -706,7 +706,7 @@ namespace tremotesf {
                 ));
             });
 
-            QAction* reannounceAction = mTorrentMenu->addAction(
+            const auto* const reannounceAction = mTorrentMenu->addAction(
                 QIcon::fromTheme("view-refresh"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Reanno&unce")
@@ -719,12 +719,12 @@ namespace tremotesf {
 
             mTorrentMenu->addSeparator();
 
-            QMenu* queueMenu = mTorrentMenu->addMenu(
+            auto* const queueMenu = mTorrentMenu->addMenu(
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "&Queue")
             );
 
-            QAction* moveTorrentToTopAction = queueMenu->addAction(
+            const auto* const moveTorrentToTopAction = queueMenu->addAction(
                 QIcon::fromTheme("go-top"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Move To &Top")
@@ -735,7 +735,7 @@ namespace tremotesf {
                 ));
             });
 
-            QAction* moveTorrentUpAction = queueMenu->addAction(
+            const auto* const moveTorrentUpAction = queueMenu->addAction(
                 QIcon::fromTheme("go-up"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Move &Up")
@@ -746,7 +746,7 @@ namespace tremotesf {
                 ));
             });
 
-            QAction* moveTorrentDownAction = queueMenu->addAction(
+            const auto* const moveTorrentDownAction = queueMenu->addAction(
                 QIcon::fromTheme("go-down"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Move &Down")
@@ -757,7 +757,7 @@ namespace tremotesf {
                 ));
             });
 
-            QAction* moveTorrentToBottomAction = queueMenu->addAction(
+            const auto* const moveTorrentToBottomAction = queueMenu->addAction(
                 QIcon::fromTheme("go-bottom"_L1),
                 //: Torrent's context menu item
                 qApp->translate("tremotesf", "Move To &Bottom")
@@ -979,7 +979,7 @@ namespace tremotesf {
             bool localOrMounted = true;
             if (!mViewModel.rpc()->isLocal()) {
                 for (const QModelIndex& index : selectedRows) {
-                    Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
+                    const auto* const torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
                     if (!isServerLocalOrTorrentIsMounted(mViewModel.rpc(), torrent)) {
                         localOrMounted = false;
                         break;
@@ -1203,21 +1203,21 @@ namespace tremotesf {
                     }
                 });
             }
-            const auto quitAction = createQuitAction();
+            auto* const quitAction = createQuitAction();
             quitAction->setMenuRole(QAction::QuitRole);
             mFileMenu->addAction(quitAction);
 
             //: Menu bar item
-            QMenu* editMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
+            auto* const editMenu = mWindow->menuBar()->addMenu(qApp->translate("tremotesf", "&Edit"));
 
-            QAction* selectAllAction = editMenu->addAction(
+            auto* const selectAllAction = editMenu->addAction(
                 QIcon::fromTheme("edit-select-all"_L1),
                 qApp->translate("tremotesf", "Select &All")
             );
             selectAllAction->setShortcut(QKeySequence::SelectAll);
             QObject::connect(selectAllAction, &QAction::triggered, &mTorrentsView, &TorrentsView::selectAll);
 
-            QAction* invertSelectionAction = editMenu->addAction(
+            const auto* const invertSelectionAction = editMenu->addAction(
                 QIcon::fromTheme("edit-select-invert"_L1),
                 qApp->translate("tremotesf", "&Invert Selection")
             );
@@ -1416,7 +1416,7 @@ namespace tremotesf {
 
                 contextMenu.addActions(group.actions());
 
-                QAction* action = contextMenu.exec(mToolBar.mapToGlobal(pos));
+                const auto* const action = contextMenu.exec(mToolBar.mapToGlobal(pos));
                 if (action) {
                     const auto style = static_cast<Qt::ToolButtonStyle>(contextMenu.actions().indexOf(action));
                     mWindow->setToolButtonStyle(style);
@@ -1585,7 +1585,7 @@ namespace tremotesf {
             const QModelIndexList selectedRows(mTorrentsView.selectionModel()->selectedRows());
             files.reserve(static_cast<size_t>(selectedRows.size()));
             for (const QModelIndex& index : selectedRows) {
-                Torrent* torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
+                const auto* const torrent = mTorrentsModel.torrentAtIndex(mTorrentsProxyModel.mapToSource(index));
                 files.push_back(localTorrentRootFilePath(mViewModel.rpc(), torrent));
             }
             launchFileManagerAndSelectFiles(files, mWindow);

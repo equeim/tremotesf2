@@ -141,7 +141,7 @@ namespace tremotesf {
         if (!child.isValid()) {
             return {};
         }
-        TorrentFilesModelDirectory* parentDirectory =
+        const auto* const parentDirectory =
             static_cast<TorrentFilesModelEntry*>(child.internalPointer())->parentDirectory();
         if (parentDirectory == mRootDirectory.get()) {
             return {};

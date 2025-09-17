@@ -76,7 +76,7 @@ namespace tremotesf::desktoputils {
         }
 
         case StalledSeedingIcon: {
-            static QIcon qicon(":/stalled-seeding.svg"_L1);
+            static const QIcon qicon(":/stalled-seeding.svg"_L1);
             return qicon;
         }
         }

@@ -13,8 +13,8 @@
 
 namespace tremotesf {
     namespace {
-        [[maybe_unused]] QStyle* fusionStyle() {
-            static QStyle* const style = [] {
+        [[maybe_unused]] const QStyle* fusionStyle() {
+            static const auto* const style = [] {
                 const auto s = QStyleFactory::create("fusion");
                 if (!s) {
                     throw std::runtime_error("Failed to create Fusion style");
@@ -31,7 +31,7 @@ namespace tremotesf {
         QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
 
-        auto* style = opt.widget ? opt.widget->style() : QApplication::style();
+        const auto* style = opt.widget ? opt.widget->style() : QApplication::style();
         if constexpr (targetOs == TargetOs::UnixMacOS) {
             if (determineStyle(style) == KnownStyle::macOS) {
                 style = fusionStyle();
