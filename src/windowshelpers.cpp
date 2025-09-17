@@ -29,7 +29,7 @@ namespace tremotesf {
             const char* name() const noexcept override { return "Win32Category"; }
 
             std::string message(int code) const override {
-                wchar_t* wstr{};
+                const wchar_t* wstr{};
                 const auto size = FormatMessageW(
                     FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                     nullptr,

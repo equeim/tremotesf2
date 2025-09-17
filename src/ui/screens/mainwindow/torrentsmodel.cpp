@@ -40,7 +40,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return {};
         }
-        Torrent* torrent = mRpc->torrents().at(static_cast<size_t>(index.row())).get();
+        const auto* const torrent = mRpc->torrents().at(static_cast<size_t>(index.row())).get();
         switch (role) {
         case Qt::DecorationRole:
             if (static_cast<Column>(index.column()) == Column::Name) {

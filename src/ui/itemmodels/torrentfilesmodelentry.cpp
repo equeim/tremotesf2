@@ -50,7 +50,7 @@ namespace tremotesf {
 
     QString TorrentFilesModelEntry::path() const {
         QString path(mName);
-        TorrentFilesModelDirectory* parent = mParentDirectory;
+        const auto* parent = mParentDirectory;
         while (parent && !parent->name().isEmpty()) {
             path.prepend('/');
             path.prepend(parent->name());

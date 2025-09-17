@@ -173,7 +173,7 @@ namespace tremotesf {
 
                 QMenu contextMenu;
 
-                QAction* selectAction = nullptr;
+                const QAction* selectAction = nullptr;
                 if (index.column() == 0) {
                     //: Context menu item to open directory chooser
                     selectAction = contextMenu.addAction(qApp->translate("tremotesf", "&Select..."));

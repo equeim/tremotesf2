@@ -98,7 +98,7 @@ namespace {
         if (!tremotesfLoggingCategory().isDebugEnabled()) {
             return;
         }
-        QLocale locale{};
+        const QLocale locale{};
         debug().log("Current locale is: {}", locale.name());
         debug().log("Language: {}", locale.language());
         debug().log("Script: {}", locale.script());

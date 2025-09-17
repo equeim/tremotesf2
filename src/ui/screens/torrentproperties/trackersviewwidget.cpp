@@ -82,7 +82,7 @@ namespace tremotesf {
         QObject::connect(mTrackersView, &EnterEatingTreeView::customContextMenuRequested, this, [=, this](QPoint pos) {
             if (mTrackersView->indexAt(pos).isValid()) {
                 QMenu contextMenu;
-                QAction* editAction = contextMenu.addAction(
+                const auto* const editAction = contextMenu.addAction(
                     QIcon::fromTheme("document-properties"_L1),
                     //: Tracker's context menu item
                     qApp->translate("tremotesf", "&Edit...")
