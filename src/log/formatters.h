@@ -64,7 +64,7 @@ struct fmt::formatter<QAnyStringView> : formatter<QString> {
     format_context::iterator format(QAnyStringView string, format_context& ctx) const;
 };
 
-namespace tremotesf::impl {
+namespace tremotesf {
     inline constexpr auto singleArgumentFormatString = "{}";
 
     template<typename T>
@@ -95,27 +95,27 @@ namespace fmt {
             QString buffer{};
             QDebug stream(&buffer);
             stream.nospace() << &object;
-            return fmt::format_to(ctx.out(), tremotesf::impl::singleArgumentFormatString, buffer);
+            return fmt::format_to(ctx.out(), tremotesf::singleArgumentFormatString, buffer);
         }
     };
 
-    template<tremotesf::impl::QEnum T>
+    template<tremotesf::QEnum T>
     struct formatter<T> : tremotesf::SimpleFormatter {
         fmt::format_context::iterator format(T t, fmt::format_context& ctx) const {
             const auto meta = QMetaEnum::fromType<T>();
             if constexpr (std::signed_integral<std::underlying_type_t<T>>) {
-                return tremotesf::impl::formatQEnum(meta, static_cast<std::intmax_t>(t), ctx);
+                return tremotesf::formatQEnum(meta, static_cast<std::intmax_t>(t), ctx);
             } else {
-                return tremotesf::impl::formatQEnum(meta, static_cast<std::uintmax_t>(t), ctx);
+                return tremotesf::formatQEnum(meta, static_cast<std::uintmax_t>(t), ctx);
             }
         }
     };
 }
 
-#define SPECIALIZE_FORMATTER_FOR_QDEBUG(Class)                                \
-    namespace fmt {                                                           \
-        template<>                                                            \
-        struct formatter<Class> : tremotesf::impl::QDebugFormatter<Class> {}; \
+#define SPECIALIZE_FORMATTER_FOR_QDEBUG(Class)                          \
+    namespace fmt {                                                     \
+        template<>                                                      \
+        struct formatter<Class> : tremotesf::QDebugFormatter<Class> {}; \
     }
 
 #define DISABLE_RANGE_FORMATTING(Class)                          \

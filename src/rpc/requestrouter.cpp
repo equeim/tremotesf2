@@ -77,9 +77,9 @@ namespace fmt {
                 return std::nullopt;
             }();
             if (str) {
-                return fmt::format_to(ctx.out(), tremotesf::impl::singleArgumentFormatString, *str);
+                return fmt::format_to(ctx.out(), tremotesf::singleArgumentFormatString, *str);
             }
-            return fmt::format_to(ctx.out(), tremotesf::impl::singleArgumentFormatString, std::to_underlying(protocol));
+            return fmt::format_to(ctx.out(), tremotesf::singleArgumentFormatString, std::to_underlying(protocol));
         }
     };
 }

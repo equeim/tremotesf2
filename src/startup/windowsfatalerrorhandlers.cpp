@@ -89,13 +89,13 @@ namespace tremotesf {
                 } catch (const std::exception& e) {
                     fmt::format_to(
                         std::back_insert_iterator(report),
-                        impl::singleArgumentFormatString,
+                        singleArgumentFormatString,
                         formatExceptionRecursively(e)
                     );
                 } catch (const winrt::hresult_error& e) {
                     fmt::format_to(
                         std::back_insert_iterator(report),
-                        impl::singleArgumentFormatString,
+                        singleArgumentFormatString,
                         formatExceptionRecursively(e)
                     );
                 } catch (...) {

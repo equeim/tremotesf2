@@ -44,7 +44,7 @@ namespace tremotesf {
 
     QDebug operator<<(QDebug debug, const TorrentMagnetLink& magnetLink) {
         const QDebugStateSaver saver(debug);
-        debug.noquote() << fmt::format(impl::singleArgumentFormatString, magnetLink).c_str();
+        debug.noquote() << fmt::format(singleArgumentFormatString, magnetLink).c_str();
         return debug;
     }
 

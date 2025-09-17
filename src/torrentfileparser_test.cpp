@@ -16,7 +16,7 @@ using namespace Qt::StringLiterals;
 
 QDebug operator<<(QDebug debug, const std::vector<std::set<QString>>& trackers) {
     const QDebugStateSaver saver(debug);
-    debug.noquote() << fmt::format(tremotesf::impl::singleArgumentFormatString, trackers).c_str();
+    debug.noquote() << fmt::format(tremotesf::singleArgumentFormatString, trackers).c_str();
     return debug;
 }
 
