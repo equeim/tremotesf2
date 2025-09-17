@@ -735,7 +735,7 @@ namespace tremotesf {
     }
 
     Coroutine<> Rpc::getServerSettings() {
-        const auto response = co_await mRequestRouter->postRequest("session-get"_L1, "{\"method\":\"session-get\"}"_ba);
+        const auto response = co_await mRequestRouter->postRequest("session-get"_L1, R"({"method":"session-get"})"_ba);
         if (response.success) {
             mServerSettings->update(response.arguments);
             if (mServerSettings->data().hasTableMode()) {
@@ -903,7 +903,7 @@ namespace tremotesf {
 
     Coroutine<> Rpc::getServerStats() {
         const auto response =
-            co_await mRequestRouter->postRequest("session-stats"_L1, "{\"method\":\"session-stats\"}"_ba);
+            co_await mRequestRouter->postRequest("session-stats"_L1, R"({"method":"session-stats"})"_ba);
         if (response.success) {
             mServerStats->update(response.arguments);
         }

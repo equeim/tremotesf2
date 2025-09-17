@@ -39,7 +39,11 @@ namespace {
     constexpr auto testRetryAttempts = 0;
 
     const auto contentType = "application/json"s;
+    // Moc can't handle raw string literals lol
+    // https://bugreports.qt.io/browse/QTBUG-55962
+    // NOLINTNEXTLINE(modernize-raw-string-literal)
     const auto successResponse = "{\"result\":\"success\"}"s;
+    // NOLINTNEXTLINE(modernize-raw-string-literal)
     const auto invalidJsonResponse = "{\"result\":\"success}"s;
     const auto sessionIdHeader = "X-Transmission-Session-Id"s;
 
