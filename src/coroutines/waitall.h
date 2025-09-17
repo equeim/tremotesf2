@@ -44,7 +44,8 @@ namespace tremotesf {
 
         private:
             void awaitSuspendImpl();
-            void onCoroutineCompleted(impl::StandaloneCoroutine* coroutine, std::exception_ptr unhandledException);
+            void
+            onCoroutineCompleted(impl::StandaloneCoroutine* coroutine, const std::exception_ptr& unhandledException);
             void onAllCoroutinesCompleted();
             void cancelAll();
 

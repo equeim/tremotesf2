@@ -14,7 +14,7 @@
 #include "ui/widgets/editlabelswidget.h"
 
 namespace tremotesf {
-    EditLabelsDialog::EditLabelsDialog(const std::vector<Torrent*> selectedTorrents, Rpc* rpc, QWidget* parent)
+    EditLabelsDialog::EditLabelsDialog(const std::vector<Torrent*>& selectedTorrents, Rpc* rpc, QWidget* parent)
         : QDialog(parent) {
         setWindowTitle(qApp->translate("tremotesf", "Edit Labels"));
 

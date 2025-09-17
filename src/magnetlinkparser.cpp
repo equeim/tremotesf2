@@ -36,7 +36,7 @@ namespace tremotesf {
         auto infoHashV1 = infoHashV1Value->mid(xtValuePrefix.size()).toLower();
 
         auto trackers = query.allQueryItemValues(trKey, QUrl::FullyDecoded)
-                        | std::views::transform([](auto tracker) { return std::set{tracker}; })
+                        | std::views::transform([](auto tracker) { return std::set{std::move(tracker)}; })
                         | std::ranges::to<std::vector>();
 
         return {.infoHashV1 = std::move(infoHashV1), .trackers = std::move(trackers)};

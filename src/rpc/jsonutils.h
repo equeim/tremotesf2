@@ -84,7 +84,7 @@ namespace tremotesf::impl {
 
     template<std::ranges::input_range FromRange>
         requires std::convertible_to<std::ranges::range_value_t<FromRange>, QJsonValue>
-    inline QJsonArray toJsonArray(FromRange&& from) {
+    inline QJsonArray toJsonArray(const FromRange& from) {
         QJsonArray array{};
         std::ranges::copy(from, std::back_insert_iterator(array));
         return array;

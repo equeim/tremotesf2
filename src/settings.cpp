@@ -51,10 +51,10 @@ namespace tremotesf {
         }
 
         template<typename T>
-        bool setValue(QSettings* settings, QLatin1String key, T newValue, const QVariant& defaultValue) {
+        bool setValue(QSettings* settings, QLatin1String key, T&& newValue, const QVariant& defaultValue) {
             const auto currentValue = getValue<T>(settings, key, defaultValue);
             if (newValue != currentValue) {
-                settings->setValue(key, QVariant::fromValue<T>(newValue));
+                settings->setValue(key, QVariant::fromValue<T>(std::forward<T>(newValue)));
                 return true;
             }
             return false;

@@ -421,7 +421,7 @@ namespace tremotesf::impl {
                 // Retry without incrementing retryAttempts
                 auto request = getOriginalRequestAndDeleteReply(std::move(reply));
                 request.setHeaders(mRequestHeaders);
-                co_return co_await performRequest(std::move(request), metadata);
+                co_return co_await performRequest(request, metadata);
             }
         }
 

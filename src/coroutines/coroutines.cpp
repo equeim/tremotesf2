@@ -51,7 +51,7 @@ namespace tremotesf::impl {
         // Completion callback will destroy Coroutine<> object, but coroutine itself will be destroyed later by compiler's injected machinery
         // because CoroutinePromiseFinalSuspendAwaiter::await_ready will return false
         // Pass true for coroutineWillBeDestroyedAutomatically parameter here so that Coroutine<>'s destructor won't destroy coroutine resulting in double free
-        mOwningStandaloneCoroutine->invokeCompletionCallback(std::move(mUnhandledException), true);
+        mOwningStandaloneCoroutine->invokeCompletionCallback(mUnhandledException, true);
     }
 
     void StandaloneCoroutine::cancel() {
@@ -77,15 +77,15 @@ namespace tremotesf::impl {
     }
 
     void StandaloneCoroutine::invokeCompletionCallback(
-        std::exception_ptr&& unhandledException, bool coroutineWillBeDestroyedAutomatically
+        const std::exception_ptr& unhandledException, bool coroutineWillBeDestroyedAutomatically
     ) {
         if (coroutineWillBeDestroyedAutomatically) {
             mCoroutine.mHandle = nullptr;
         }
-        mCompletionCallback(std::move(unhandledException));
+        mCompletionCallback(unhandledException);
     }
 
-    void StandaloneCoroutine::setCompletionCallback(std::function<void(std::exception_ptr)>&& callback) {
+    void StandaloneCoroutine::setCompletionCallback(std::function<void(const std::exception_ptr&)>&& callback) {
         mCompletionCallback = std::move(callback);
     }
 }

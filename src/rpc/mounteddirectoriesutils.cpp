@@ -45,7 +45,7 @@ namespace tremotesf {
             return {};
         }
         const auto& torrentName = torrent->data().name;
-        const QString rootFilePath = downloadDirectoryPath % '/' % torrentName;
+        QString rootFilePath = downloadDirectoryPath % '/' % torrentName;
 
         if (rpc->serverSettings()->data().renameIncompleteFiles && torrent->data().leftUntilDone > 0) {
             const QString incompleteRootFilePath = rootFilePath % ".part"_L1;
