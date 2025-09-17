@@ -112,9 +112,7 @@ namespace tremotesf {
                 layout->addWidget(mMoveFilesCheckBox);
 
                 auto dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-                QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, [this] {
-                    accept();
-                });
+                QObject::connect(dialogButtonBox, &QDialogButtonBox::accepted, this, [this] { accept(); });
                 QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &SetLocationDialog::reject);
 
                 QObject::connect(
@@ -1598,11 +1596,10 @@ namespace tremotesf {
         ) {
             if (!files.isEmpty()) {
                 showAddTorrentFileDialogs(files, std::move(windowActivationToken));
-                // NOLINTNEXTLINE(bugprone-use-after-move)
-                windowActivationToken.reset();
+                windowActivationToken = std::nullopt;
             }
             if (!urls.isEmpty()) {
-                showAddTorrentLinksDialog(urls, std::move(windowActivationToken));
+                showAddTorrentLinksDialog(urls, windowActivationToken);
             }
         }
 
@@ -1629,7 +1626,8 @@ namespace tremotesf {
             return dialog;
         }
 
-        void showAddTorrentLinksDialog(const QStringList& urls, std::optional<QByteArray> windowActivationToken) {
+        void
+        showAddTorrentLinksDialog(const QStringList& urls, const std::optional<QByteArray>& windowActivationToken) {
             auto* const dialog = new AddTorrentDialog(
                 mViewModel.rpc(),
                 AddTorrentDialog::UrlParams{urls},

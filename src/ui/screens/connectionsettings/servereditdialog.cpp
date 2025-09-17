@@ -77,7 +77,7 @@ namespace tremotesf {
     class CertificateTextField final : public QWidget {
         Q_OBJECT
     public:
-        explicit CertificateTextField(QString labelText = {}, QWidget* parent = nullptr) : QWidget(parent) {
+        explicit CertificateTextField(const QString& labelText = {}, QWidget* parent = nullptr) : QWidget(parent) {
             auto layout = new QVBoxLayout(this);
             layout->setContentsMargins({});
 
@@ -666,12 +666,8 @@ namespace tremotesf {
                 std::move(mountedDirectories)
             );
         } else {
-            Servers::instance()->setServer(
-                mServerName,
-                mNameLineEdit->text(),
-                std::move(connectionConfiguration),
-                std::move(mountedDirectories)
-            );
+            Servers::instance()
+                ->setServer(mServerName, mNameLineEdit->text(), connectionConfiguration, std::move(mountedDirectories));
         }
     }
 }

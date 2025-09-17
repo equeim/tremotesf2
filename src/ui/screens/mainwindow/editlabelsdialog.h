@@ -16,7 +16,7 @@ namespace tremotesf {
     class EditLabelsDialog : public QDialog {
         Q_OBJECT
     public:
-        explicit EditLabelsDialog(const std::vector<Torrent*> selectedTorrents, Rpc* rpc, QWidget* parent);
+        explicit EditLabelsDialog(const std::vector<Torrent*>& selectedTorrents, Rpc* rpc, QWidget* parent);
     };
 }
 

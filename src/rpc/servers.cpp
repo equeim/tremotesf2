@@ -346,7 +346,7 @@ namespace tremotesf {
     void Servers::setServer(
         const QString& oldName,
         const QString& name,
-        ConnectionConfiguration connectionConfiguration,
+        const ConnectionConfiguration& connectionConfiguration,
         std::vector<MountedDirectory> mountedDirectories
     ) {
         bool currentChanged = false;
@@ -410,7 +410,7 @@ namespace tremotesf {
         mSettings->endGroup();
 
         if (currentChanged) {
-            mCurrentServerMountedDirectories = mountedDirectories;
+            mCurrentServerMountedDirectories = std::move(mountedDirectories);
             emit currentServerChanged();
         }
 
@@ -670,7 +670,7 @@ namespace tremotesf {
         mSettings->remove(selfSignedCertificateKey);
     }
 
-    void Servers::setValueVerbose(QLatin1String key, QVariant value) {
+    void Servers::setValueVerbose(QLatin1String key, const QVariant& value) {
         info().log("Setting {} to {}", key, value);
         mSettings->setValue(key, value);
     }

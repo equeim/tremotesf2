@@ -81,7 +81,7 @@ namespace tremotesf {
         void setServer(
             const QString& oldName,
             const QString& name,
-            ConnectionConfiguration connectionConfiguration,
+            const ConnectionConfiguration& connectionConfiguration,
             std::vector<MountedDirectory> mountedDirectories
         );
 
@@ -94,7 +94,7 @@ namespace tremotesf {
         void updateMountedDirectories();
         void migrateClientCertificateSettings();
         void migrateServerCertificateSettings();
-        void setValueVerbose(QLatin1String key, QVariant value);
+        void setValueVerbose(QLatin1String key, const QVariant& value);
 
         QSettings* mSettings{};
         std::vector<MountedDirectory> mCurrentServerMountedDirectories{};
