@@ -113,7 +113,7 @@ namespace tremotesf {
 
     QDebug operator<<(QDebug debug, const TorrentMetainfoFile& torrentFile) {
         const QDebugStateSaver saver(debug);
-        debug.noquote() << fmt::format(impl::singleArgumentFormatString, torrentFile).c_str();
+        debug.noquote() << fmt::format(singleArgumentFormatString, torrentFile).c_str();
         return debug;
     }
 }

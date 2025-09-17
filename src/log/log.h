@@ -117,7 +117,7 @@ namespace tremotesf {
         ALWAYS_INLINE void log(const T& value) const {
             if (isEnabled()) {
                 logWithFormatArgs(
-                    fmt::format_string<const T&>(impl::singleArgumentFormatString),
+                    fmt::format_string<const T&>(singleArgumentFormatString),
                     fmt::make_format_args(value)
                 );
             }
@@ -190,7 +190,7 @@ namespace tremotesf {
 
     template<typename T>
     ALWAYS_INLINE void printlnStdout(const T& value) {
-        fmt::print(stdout, fmt::format_string<const T&>(impl::singleArgumentFormatString), value);
+        fmt::print(stdout, fmt::format_string<const T&>(singleArgumentFormatString), value);
         impl::printNewline(stdout);
     }
 

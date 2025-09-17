@@ -21,7 +21,7 @@
 
 #include "demangle.h"
 
-namespace tremotesf::impl {
+namespace tremotesf {
     template<std::integral Integer>
     fmt::format_context::iterator formatQEnumImpl(const QMetaEnum& meta, Integer value, fmt::format_context& ctx) {
         const auto named =

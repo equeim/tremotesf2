@@ -15,7 +15,7 @@ namespace fmt {
         // QSslCertificate::toText is implemented only for OpenSSL backend
         static const bool isOpenSSL = (QSslSocket::activeBackend() == "openssl"_L1);
         if (!isOpenSSL) {
-            return tremotesf::impl::QDebugFormatter<QSslCertificate>{}.format(certificate, ctx);
+            return tremotesf::QDebugFormatter<QSslCertificate>{}.format(certificate, ctx);
         }
         return formatter<QString>{}.format(certificate.toText(), ctx);
     }

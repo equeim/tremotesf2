@@ -62,7 +62,7 @@ namespace tremotesf {
 
     template<impl::IsException E>
     std::string formatExceptionRecursivelyImpl(const E& e) {
-        std::string out = fmt::format(impl::singleArgumentFormatString, e);
+        std::string out = fmt::format(singleArgumentFormatString, e);
         appendNestedExceptions(out, e);
         return out;
     }
