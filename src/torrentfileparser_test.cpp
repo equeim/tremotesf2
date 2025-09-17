@@ -7,18 +7,9 @@
 #include <QDir>
 #include <QTest>
 
-#include <fmt/ranges.h>
-
-#include "log/formatters.h"
 #include "torrentfileparser.h"
 
 using namespace Qt::StringLiterals;
-
-QDebug operator<<(QDebug debug, const std::vector<std::set<QString>>& trackers) {
-    const QDebugStateSaver saver(debug);
-    debug.noquote() << fmt::format(tremotesf::singleArgumentFormatString, trackers).c_str();
-    return debug;
-}
 
 namespace tremotesf {
     class TorrentFileParserTest final : public QObject {
@@ -42,7 +33,6 @@ namespace tremotesf {
             );
             QCOMPARE(torrentFile.infoHashV1, "80fb3b384728e950f2fd09e5929970d3d576270d"_L1);
 
-            qInfo() << torrentFile.trackers;
             const std::vector<std::set<QString>> expectedTrackers{
                 {"http://tracker.opentrackr.org:1337/announce"_L1},
                 {"udp://tracker.opentrackr.org:1337"_L1},
