@@ -16,9 +16,11 @@
 using namespace Qt::StringLiterals;
 
 #define SETTINGS_PROPERTY_DEF(type, name, key, defaultValue)                                                 \
-    const QVariant& name##_defaultValue() {                                                                  \
-        static const auto v = QVariant::fromValue<type>(defaultValue);                                       \
-        return v;                                                                                            \
+    namespace {                                                                                              \
+        const QVariant& name##_defaultValue() {                                                              \
+            static const auto v = QVariant::fromValue<type>(defaultValue);                                   \
+            return v;                                                                                        \
+        }                                                                                                    \
     }                                                                                                        \
     type Settings::get_##name() const { return getValue<type>(mSettings, key##_L1, name##_defaultValue()); } \
     void Settings::set_##name(type value) {                                                                  \
