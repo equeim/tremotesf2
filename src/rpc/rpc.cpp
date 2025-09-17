@@ -855,7 +855,7 @@ namespace tremotesf {
                         for (const auto& json : torrentsJsons | std::views::drop(1)) {
                             const auto array = json.toArray();
                             if (static_cast<size_t>(array.size()) == keys.size()) {
-                                newTorrents.push_back(NewTorrent{array[*idKeyIndex].toInt(), json});
+                                newTorrents.push_back(NewTorrent{.id = array[*idKeyIndex].toInt(), .json = json});
                             }
                         }
                         updater.keys = &keys;
@@ -867,7 +867,7 @@ namespace tremotesf {
                 for (const auto& torrentJson : torrentsJsons) {
                     const auto id = Torrent::idFromJson(torrentJson.toObject());
                     if (id.has_value()) {
-                        newTorrents.push_back(NewTorrent{*id, torrentJson});
+                        newTorrents.push_back(NewTorrent{.id = *id, .json = torrentJson});
                     }
                 }
                 updater.update(mTorrents, std::move(newTorrents));
@@ -970,7 +970,12 @@ namespace tremotesf {
     }
 
     void Rpc::onRequestFailed(RpcError error, const QString& errorMessage, const QString& detailedErrorMessage) {
-        setStatus({RpcConnectionState::Disconnected, error, errorMessage, detailedErrorMessage});
+        setStatus(
+            {.connectionState = RpcConnectionState::Disconnected,
+             .error = error,
+             .errorMessage = errorMessage,
+             .detailedErrorMessage = detailedErrorMessage}
+        );
     }
 
     Coroutine<> Rpc::autoReconnect() {

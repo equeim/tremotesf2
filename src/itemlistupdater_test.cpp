@@ -101,7 +101,7 @@ namespace tremotesf {
 
         void addedMultipleItemsToEmptyList() { checkUpdate({}, {{42, "666"}, {1, "Foo"}}); }
 
-        void addedSingleItemToNonEmptyList() { checkUpdate({{42, "666"}}, {Item{42, "666"}, {1, "Foo"}}); }
+        void addedSingleItemToNonEmptyList() { checkUpdate({{42, "666"}}, {{42, "666"}, {1, "Foo"}}); }
 
         void addedMultipleItemsToNonEmptyList() { checkUpdate({{42, "666"}}, {{42, "666"}, {1, "Foo"}, {11, "Bar"}}); }
 
