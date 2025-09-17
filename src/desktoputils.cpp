@@ -41,41 +41,42 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf::desktoputils {
     const QIcon& statusIcon(StatusIcon icon) {
+        using enum StatusIcon;
         switch (icon) {
-        case ActiveIcon: {
+        case Active: {
             static const QIcon qicon(":/active.svg"_L1);
             return qicon;
         }
-        case CheckingIcon: {
+        case Checking: {
             static const QIcon qicon(":/checking.svg"_L1);
             return qicon;
         }
-        case DownloadingIcon: {
+        case Downloading: {
             static const QIcon qicon(":/downloading.svg"_L1);
             return qicon;
         }
-        case ErroredIcon: {
+        case Errored: {
             static const QIcon qicon(":/errored.svg"_L1);
             return qicon;
         }
-        case PausedIcon: {
+        case Paused: {
             static const QIcon qicon(":/paused.svg"_L1);
             return qicon;
         }
-        case QueuedIcon: {
+        case Queued: {
             static const QIcon qicon(":/queued.svg"_L1);
             return qicon;
         }
-        case SeedingIcon: {
+        case Seeding: {
             static const QIcon qicon(":/seeding.svg"_L1);
             return qicon;
         }
-        case StalledDownloadingIcon: {
+        case StalledDownloading: {
             static const QIcon qicon(":/stalled-downloading.svg"_L1);
             return qicon;
         }
 
-        case StalledSeedingIcon: {
+        case StalledSeeding: {
             static const QIcon qicon(":/stalled-seeding.svg"_L1);
             return qicon;
         }

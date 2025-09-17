@@ -20,10 +20,10 @@ namespace tremotesf {
     class TorrentFilesModelEntry {
         Q_GADGET
     public:
-        enum WantedState { Wanted, Unwanted, MixedWanted };
+        enum class WantedState { Wanted, Unwanted, Mixed };
         Q_ENUM(WantedState)
 
-        enum Priority { LowPriority, NormalPriority, HighPriority, MixedPriority };
+        enum class Priority { Low, Normal, High, Mixed };
         Q_ENUM(Priority)
 
         static Priority fromFilePriority(TorrentFile::Priority priority);

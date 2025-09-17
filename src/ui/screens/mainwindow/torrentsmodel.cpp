@@ -45,28 +45,30 @@ namespace tremotesf {
         case Qt::DecorationRole:
             if (static_cast<Column>(index.column()) == Column::Name) {
                 using namespace desktoputils;
+                using enum desktoputils::StatusIcon;
+
                 if (torrent->data().error != TorrentData::Error::None) {
-                    return statusIcon(ErroredIcon);
+                    return statusIcon(Errored);
                 }
                 switch (torrent->data().status) {
                 case TorrentData::Status::Paused:
-                    return statusIcon(PausedIcon);
+                    return statusIcon(Paused);
                 case TorrentData::Status::Seeding:
                     if (torrent->data().isSeedingStalled()) {
-                        return statusIcon(StalledSeedingIcon);
+                        return statusIcon(StalledSeeding);
                     }
-                    return statusIcon(SeedingIcon);
+                    return statusIcon(Seeding);
                 case TorrentData::Status::Downloading:
                     if (torrent->data().isDownloadingStalled()) {
-                        return statusIcon(StalledDownloadingIcon);
+                        return statusIcon(StalledDownloading);
                     }
-                    return statusIcon(DownloadingIcon);
+                    return statusIcon(Downloading);
                 case TorrentData::Status::QueuedForDownloading:
                 case TorrentData::Status::QueuedForSeeding:
-                    return statusIcon(QueuedIcon);
+                    return statusIcon(Queued);
                 case TorrentData::Status::Checking:
                 case TorrentData::Status::QueuedForChecking:
-                    return statusIcon(CheckingIcon);
+                    return statusIcon(Checking);
                 }
             }
             break;

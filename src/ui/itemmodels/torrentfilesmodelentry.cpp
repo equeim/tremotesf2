@@ -14,23 +14,23 @@ namespace tremotesf {
     TorrentFilesModelEntry::Priority TorrentFilesModelEntry::fromFilePriority(TorrentFile::Priority priority) {
         switch (priority) {
         case TorrentFile::Priority::Low:
-            return LowPriority;
+            return Priority::Low;
         case TorrentFile::Priority::Normal:
-            return NormalPriority;
+            return Priority::Normal;
         case TorrentFile::Priority::High:
-            return HighPriority;
+            return Priority::High;
         default:
-            return NormalPriority;
+            return Priority::Normal;
         }
     }
 
     TorrentFile::Priority TorrentFilesModelEntry::toFilePriority(TorrentFilesModelEntry::Priority priority) {
         switch (priority) {
-        case LowPriority:
+        case Priority::Low:
             return TorrentFile::Priority::Low;
-        case NormalPriority:
+        case Priority::Normal:
             return TorrentFile::Priority::Normal;
-        case HighPriority:
+        case Priority::High:
             return TorrentFile::Priority::High;
         default:
             return TorrentFile::Priority::Normal;
@@ -61,16 +61,16 @@ namespace tremotesf {
 
     QString TorrentFilesModelEntry::priorityString() const {
         switch (priority()) {
-        case LowPriority:
+        case Priority::Low:
             //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Low");
-        case NormalPriority:
+        case Priority::Normal:
             //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Normal");
-        case HighPriority:
+        case Priority::High:
             //: Torrent's file loading priority
             return qApp->translate("tremotesf", "High");
-        case MixedPriority:
+        case Priority::Mixed:
             //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Mixed");
         }
@@ -113,7 +113,7 @@ namespace tremotesf {
         if (mChildren.size() > 1) {
             for (const auto& child : mChildren | std::views::drop(1)) {
                 if (child->wantedState() != first) {
-                    return MixedWanted;
+                    return WantedState::Mixed;
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace tremotesf {
         if (mChildren.size() > 1) {
             for (const auto& child : mChildren | std::views::drop(1)) {
                 if (child->priority() != first) {
-                    return MixedPriority;
+                    return Priority::Mixed;
                 }
             }
         }
@@ -205,8 +205,8 @@ namespace tremotesf {
         : TorrentFilesModelEntry(row, parentDirectory, name),
           mSize(size),
           mCompletedSize(0),
-          mWantedState(Unwanted),
-          mPriority(NormalPriority),
+          mWantedState(WantedState::Unwanted),
+          mPriority(Priority::Normal),
           mId(id),
           mInitializedIcon(false),
           mChanged(false) {}
@@ -229,9 +229,9 @@ namespace tremotesf {
     void TorrentFilesModelFile::setWanted(bool wanted) {
         WantedState wantedState{};
         if (wanted) {
-            wantedState = Wanted;
+            wantedState = WantedState::Wanted;
         } else {
-            wantedState = Unwanted;
+            wantedState = WantedState::Unwanted;
         }
         if (wantedState != mWantedState) {
             mWantedState = wantedState;

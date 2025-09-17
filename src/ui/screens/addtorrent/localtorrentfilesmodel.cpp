@@ -22,7 +22,7 @@ namespace tremotesf {
             if (torrentFile.isSingleFile()) {
                 auto* file = rootDirectory->addFile(0, torrentFile.rootFileName, torrentFile.singleFileSize());
                 file->setWanted(true);
-                file->setPriority(TorrentFilesModelEntry::NormalPriority);
+                file->setPriority(TorrentFilesModelEntry::Priority::Normal);
                 file->setChanged(false);
                 files.push_back(file);
             } else {
@@ -48,7 +48,7 @@ namespace tremotesf {
                         if (partIndex == lastPartIndex) {
                             auto* childFile = currentDirectory->addFile(fileIndex, part, file.size);
                             childFile->setWanted(true);
-                            childFile->setPriority(TorrentFilesModelEntry::NormalPriority);
+                            childFile->setPriority(TorrentFilesModelEntry::Priority::Normal);
                             childFile->setChanged(false);
                             files.push_back(childFile);
                         } else {
@@ -90,7 +90,7 @@ namespace tremotesf {
     std::vector<int> LocalTorrentFilesModel::unwantedFiles() const {
         std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->wantedState() == TorrentFilesModelEntry::Unwanted) {
+            if (file->wantedState() == TorrentFilesModelEntry::WantedState::Unwanted) {
                 files.push_back(file->id());
             }
         }
@@ -100,7 +100,7 @@ namespace tremotesf {
     std::vector<int> LocalTorrentFilesModel::highPriorityFiles() const {
         std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::HighPriority) {
+            if (file->priority() == TorrentFilesModelEntry::Priority::High) {
                 files.push_back(file->id());
             }
         }
@@ -110,7 +110,7 @@ namespace tremotesf {
     std::vector<int> LocalTorrentFilesModel::lowPriorityFiles() const {
         std::vector<int> files;
         for (const TorrentFilesModelFile* file : mFiles) {
-            if (file->priority() == TorrentFilesModelEntry::LowPriority) {
+            if (file->priority() == TorrentFilesModelEntry::Priority::Low) {
                 files.push_back(file->id());
             }
         }

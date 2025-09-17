@@ -16,56 +16,61 @@
 
 namespace tremotesf {
     QVariant StatusFiltersModel::data(const QModelIndex& index, int role) const {
+        using StatusFilter = TorrentsProxyModel::StatusFilter;
+
         if (!index.isValid()) {
             return {};
         }
         const Item& item = mItems.at(static_cast<size_t>(index.row()));
         switch (role) {
         case FilterRole:
-            return item.filter;
-        case Qt::DecorationRole:
+            return QVariant::fromValue(item.filter);
+        case Qt::DecorationRole: {
+            using enum desktoputils::StatusIcon;
+
             switch (item.filter) {
-            case TorrentsProxyModel::All: {
+            case StatusFilter::All: {
                 return desktoputils::standardDirIcon();
             }
-            case TorrentsProxyModel::Active:
-                return desktoputils::statusIcon(desktoputils::ActiveIcon);
-            case TorrentsProxyModel::Downloading:
-                return desktoputils::statusIcon(desktoputils::DownloadingIcon);
-            case TorrentsProxyModel::Seeding:
-                return desktoputils::statusIcon(desktoputils::SeedingIcon);
-            case TorrentsProxyModel::Paused:
-                return desktoputils::statusIcon(desktoputils::PausedIcon);
-            case TorrentsProxyModel::Checking:
-                return desktoputils::statusIcon(desktoputils::CheckingIcon);
-            case TorrentsProxyModel::Errored:
-                return desktoputils::statusIcon(desktoputils::ErroredIcon);
+            case StatusFilter::Active:
+                return desktoputils::statusIcon(Active);
+            case StatusFilter::Downloading:
+                return desktoputils::statusIcon(Downloading);
+            case StatusFilter::Seeding:
+                return desktoputils::statusIcon(Seeding);
+            case StatusFilter::Paused:
+                return desktoputils::statusIcon(Paused);
+            case StatusFilter::Checking:
+                return desktoputils::statusIcon(Checking);
+            case StatusFilter::Errored:
+                return desktoputils::statusIcon(Errored);
             default:
                 break;
             }
             break;
+        }
         case Qt::DisplayRole:
         case Qt::ToolTipRole:
             switch (item.filter) {
-            case TorrentsProxyModel::All:
+            case StatusFilter::All:
                 //: Filter option of torrents list's status filter. %L1 is total number of torrents
                 return qApp->translate("tremotesf", "All (%L1)").arg(item.torrents);
-            case TorrentsProxyModel::Active:
+            case StatusFilter::Active:
                 //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Active (%L1)").arg(item.torrents);
-            case TorrentsProxyModel::Downloading:
+            case StatusFilter::Downloading:
                 //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Downloading (%L1)").arg(item.torrents);
-            case TorrentsProxyModel::Seeding:
+            case StatusFilter::Seeding:
                 //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Seeding (%L1)").arg(item.torrents);
-            case TorrentsProxyModel::Paused:
+            case StatusFilter::Paused:
                 //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Paused (%L1)").arg(item.torrents);
-            case TorrentsProxyModel::Checking:
+            case StatusFilter::Checking:
                 //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Checking (%L1)").arg(item.torrents);
-            case TorrentsProxyModel::Errored:
+            case StatusFilter::Errored:
                 //: Filter option of torrents list's status filter. %L1 is a number of torrents with that status
                 return qApp->translate("tremotesf", "Errored (%L1)").arg(item.torrents);
             default:
@@ -96,7 +101,7 @@ namespace tremotesf {
 
     void StatusFiltersModel::resetTorrentsProxyModelFilter() const {
         if (torrentsProxyModel()) {
-            torrentsProxyModel()->setStatusFilter(TorrentsProxyModel::All);
+            torrentsProxyModel()->setStatusFilter(TorrentsProxyModel::StatusFilter::All);
         }
     }
 
@@ -136,14 +141,15 @@ namespace tremotesf {
     };
 
     void StatusFiltersModel::update() {
+        using enum TorrentsProxyModel::StatusFilter;
         std::map<TorrentsProxyModel::StatusFilter, int> items{
-            {TorrentsProxyModel::All, rpc()->torrentsCount()},
-            {TorrentsProxyModel::Active, 0},
-            {TorrentsProxyModel::Downloading, 0},
-            {TorrentsProxyModel::Seeding, 0},
-            {TorrentsProxyModel::Paused, 0},
-            {TorrentsProxyModel::Checking, 0},
-            {TorrentsProxyModel::Errored, 0}
+            {All, rpc()->torrentsCount()},
+            {Active, 0},
+            {Downloading, 0},
+            {Seeding, 0},
+            {Paused, 0},
+            {Checking, 0},
+            {Errored, 0}
         };
 
         const auto processFilter = [&](Torrent* torrent, TorrentsProxyModel::StatusFilter filter) {
@@ -153,12 +159,12 @@ namespace tremotesf {
         };
 
         for (const auto& torrent : rpc()->torrents()) {
-            processFilter(torrent.get(), TorrentsProxyModel::Active);
-            processFilter(torrent.get(), TorrentsProxyModel::Downloading);
-            processFilter(torrent.get(), TorrentsProxyModel::Seeding);
-            processFilter(torrent.get(), TorrentsProxyModel::Paused);
-            processFilter(torrent.get(), TorrentsProxyModel::Checking);
-            processFilter(torrent.get(), TorrentsProxyModel::Errored);
+            processFilter(torrent.get(), Active);
+            processFilter(torrent.get(), Downloading);
+            processFilter(torrent.get(), Seeding);
+            processFilter(torrent.get(), Checking);
+            processFilter(torrent.get(), Paused);
+            processFilter(torrent.get(), Errored);
         }
 
         StatusFiltersModelUpdater updater(*this);
