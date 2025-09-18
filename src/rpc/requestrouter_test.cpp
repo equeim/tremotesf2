@@ -598,6 +598,7 @@ namespace {
     private:
         Coroutine<> waitForResponseCoroutine(
             Coroutine<RequestRouter::Response> requestCoroutine,
+            // NOLINTNEXTLINE(cppcoreguidelines-avoid-reference-coroutine-parameters)
             std::variant<RequestRouter::Response, RpcError, std::monostate>& responseOrError
         ) {
             responseOrError = co_await requestCoroutine;

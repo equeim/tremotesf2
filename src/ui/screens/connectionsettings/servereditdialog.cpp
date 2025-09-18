@@ -241,11 +241,13 @@ namespace tremotesf {
             );
             mHttpsGroupBox->setChecked(false);
             mServerCertificateModeComboBox->setCurrentIndex(
+                // NOLINTBEGIN(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(
                     serverCertificateModeComboBoxValues,
                     ConnectionConfiguration::ServerCertificateMode::None
                 )
                     .value()
+                // NOLINTEND(bugprone-unchecked-optional-access)
             );
             mAuthenticationGroupBox->setChecked(false);
             mUpdateIntervalSpinBox->setValue(5);
@@ -274,11 +276,13 @@ namespace tremotesf {
 
             mHttpsGroupBox->setChecked(server.connectionConfiguration.https);
             mServerCertificateModeComboBox->setCurrentIndex(
+                // NOLINTBEGIN(bugprone-unchecked-optional-access)
                 indexOfCasted<int>(
                     serverCertificateModeComboBoxValues,
                     server.connectionConfiguration.serverCertificateMode
                 )
                     .value()
+                // NOLINTEND(bugprone-unchecked-optional-access)
             );
             mServerRootCertificateField->textEdit.setPlainText(server.connectionConfiguration.serverRootCertificate);
             mServerLeafCertificateField->textEdit.setPlainText(server.connectionConfiguration.serverLeafCertificate);

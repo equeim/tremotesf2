@@ -35,6 +35,7 @@ namespace tremotesf {
                     nullptr,
                     static_cast<DWORD>(code),
                     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
                     reinterpret_cast<wchar_t*>(&wstr),
                     0,
                     nullptr
