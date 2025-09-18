@@ -42,6 +42,11 @@ jobs:
         dotnet tool install --global wix
         wix extension add --global WixToolset.UI.wixext
 
+    - name: Set up MSVC environment
+      uses: equeim/action-setup-msvc-environment@v1
+      with:
+        arch: ${{ matrix.arch.msvc-arch }}
+
     - name: Set up vcpkg
       uses: equeim/action-setup-vcpkg@v7
       with:
@@ -49,11 +54,6 @@ jobs:
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
         save-cache: ${{ github.event_name != 'pull_request' && inputs.toolchain == 'msvc' }}
         cache-key-tag: ${{ matrix.arch.cmake-preset-arch }}
-
-    - name: Set up MSVC environment
-      uses: equeim/action-setup-msvc-environment@v1
-      with:
-        arch: ${{ matrix.arch.msvc-arch }}
 
     - name: Build Tremotesf with ${{ inputs.toolchain }} toolchain for ${{ matrix.arch.cmake-preset-arch }} architecture
       id: build
