@@ -1508,7 +1508,7 @@ namespace tremotesf {
                 return;
             }
 
-#    if defined(TREMOTESF_UNIX_FREEDESKTOP)
+#    ifdef TREMOTESF_UNIX_FREEDESKTOP
             // With Wayland we need to set XDG_ACTIVATION_TOKEN environment variable before show()
             // so that Qt handles activation automatically
             if (windowActivationToken.has_value() && KWindowSystem::isPlatformWayland()) {

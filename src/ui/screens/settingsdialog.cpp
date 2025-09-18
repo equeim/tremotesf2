@@ -186,7 +186,7 @@ namespace tremotesf {
                 settings->set_showTorrentPropertiesInMainWindow(showTorrentPropertiesInMainWindowCheckBox->isChecked());
                 if (const auto index = torrentDoubleClickActionComboBox->currentIndex(); index != -1) {
                     settings->set_torrentDoubleClickAction(
-                        torrentDoubleClickActionComboBoxValues[static_cast<size_t>(index)]
+                        torrentDoubleClickActionComboBoxValues.at(static_cast<size_t>(index))
                     );
                 }
                 settings->set_connectOnStartup(connectOnStartupCheckBox->isChecked());

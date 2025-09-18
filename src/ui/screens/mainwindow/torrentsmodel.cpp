@@ -375,7 +375,7 @@ namespace tremotesf {
         }
     }
 
-    int TorrentsModel::rowCount(const QModelIndex&) const { return static_cast<int>(mRpc->torrentsCount()); }
+    int TorrentsModel::rowCount(const QModelIndex&) const { return mRpc->torrentsCount(); }
 
     Rpc* TorrentsModel::rpc() const { return mRpc; }
 

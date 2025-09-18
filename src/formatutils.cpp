@@ -245,12 +245,11 @@ namespace tremotesf::formatutils {
                 if (minutesToNow <= 1) {
                     //: Relative time
                     return qApp->translate("tremotesf", "Just now");
-                } else {
-                    //: @item:intext %1 is a whole number
-                    //~ singular %n minute ago
-                    //~ plural %n minutes ago
-                    return qApp->translate("tremotesf", "%n minute(s) ago", nullptr, minutesToNow);
                 }
+                //: @item:intext %1 is a whole number
+                //~ singular %n minute ago
+                //~ plural %n minutes ago
+                return qApp->translate("tremotesf", "%n minute(s) ago", nullptr, minutesToNow);
             }
             return addTimeToDate(formatRelativeDate(dateTime.date(), format, locale), dateTime.time(), format, locale);
         }

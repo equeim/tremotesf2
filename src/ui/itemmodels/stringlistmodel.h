@@ -30,6 +30,8 @@ namespace tremotesf {
                     return *mDecoration;
                 }
                 break;
+            default:
+                break;
             }
             return {};
         };
