@@ -373,6 +373,7 @@ namespace tremotesf {
             }
         }
 
+        ~Impl() = default;
         Q_DISABLE_COPY_MOVE(Impl)
 
         void updateShowHideAction() {
