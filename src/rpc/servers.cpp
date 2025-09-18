@@ -584,12 +584,9 @@ namespace tremotesf {
             if (cert == potentialCa) return false;
             const auto issuerAttrs = cert.issuerInfoAttributes();
             if (issuerAttrs.isEmpty()) return false;
-            for (const auto& attr : issuerAttrs) {
-                if (cert.issuerInfo(attr) != potentialCa.subjectInfo(attr)) {
-                    return false;
-                }
-            }
-            return true;
+            return std::ranges::all_of(issuerAttrs, [&](const QByteArray& attr) {
+                return cert.issuerInfo(attr) == potentialCa.subjectInfo(attr);
+            });
         }
 
         std::optional<QSslCertificate> findLeafCertificate(std::span<const QSslCertificate> chain) {

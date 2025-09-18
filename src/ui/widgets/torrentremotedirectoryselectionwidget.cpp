@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <algorithm>
 #include <ranges>
 
 #include <QAbstractItemView>
@@ -58,7 +59,7 @@ namespace tremotesf {
         collator.setCaseSensitivity(Qt::CaseInsensitive);
         collator.setNumericMode(true);
         // QStringList is not compatibly with std::ranges::sort in Qt 5
-        std::sort(directories.begin(), directories.end(), [&collator](const auto& first, const auto& second) {
+        std::ranges::sort(directories, [&collator](const QString& first, const QString& second) {
             return collator.compare(first, second) < 0;
         });
 
