@@ -31,6 +31,7 @@ namespace tremotesf {
         class ActivationTokenAwaitable final {
         public:
             inline explicit ActivationTokenAwaitable(QWindow* window) : mWindow(window) {}
+            ~ActivationTokenAwaitable() = default;
             Q_DISABLE_COPY_MOVE(ActivationTokenAwaitable)
 
             inline bool await_ready() { return false; }

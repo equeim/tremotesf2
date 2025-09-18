@@ -22,6 +22,7 @@ namespace tremotesf {
         Q_ENUM(StatusFilter)
 
         explicit TorrentsProxyModel(TorrentsModel* sourceModel, QObject* parent = nullptr);
+        ~TorrentsProxyModel() = default;
         Q_DISABLE_COPY_MOVE(TorrentsProxyModel)
 
         QString searchString() const;

@@ -31,11 +31,13 @@ namespace tremotesf {
             Q_OBJECT
 
         public:
+            WindowsFileManagerLauncher() = default;
             ~WindowsFileManagerLauncher() override {
                 if (mCoroutine) {
                     mCoroutine.Cancel();
                 }
             }
+            Q_DISABLE_COPY_MOVE(WindowsFileManagerLauncher)
 
         protected:
             void launchFileManagerAndSelectFiles(

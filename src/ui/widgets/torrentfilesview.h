@@ -22,6 +22,7 @@ namespace tremotesf {
     public:
         explicit TorrentFilesView(LocalTorrentFilesModel* model, Rpc* rpc, QWidget* parent = nullptr);
         explicit TorrentFilesView(TorrentFilesModel* model, Rpc* rpc, QWidget* parent = nullptr);
+        ~TorrentFilesView() = default;
         Q_DISABLE_COPY_MOVE(TorrentFilesView)
 
         static void showFileRenameDialog(

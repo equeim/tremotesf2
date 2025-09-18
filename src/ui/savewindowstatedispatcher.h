@@ -25,6 +25,7 @@ namespace tremotesf {
     public:
         explicit ApplicationQuitEventFilter(QObject* parent = nullptr);
         ~ApplicationQuitEventFilter() override;
+        Q_DISABLE_COPY_MOVE(ApplicationQuitEventFilter);
         bool eventFilter(QObject* watched, QEvent* event) override;
         bool isQuittingApplication{};
     };

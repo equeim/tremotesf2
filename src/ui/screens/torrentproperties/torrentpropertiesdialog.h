@@ -19,6 +19,7 @@ namespace tremotesf {
 
     public:
         explicit TorrentPropertiesDialog(Torrent* torrent, Rpc* rpc, QWidget* parent = nullptr);
+        ~TorrentPropertiesDialog() = default;
         Q_DISABLE_COPY_MOVE(TorrentPropertiesDialog)
 
     private:

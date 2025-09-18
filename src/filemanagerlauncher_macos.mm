@@ -17,6 +17,7 @@ namespace tremotesf {
 
         public:
             MacosFileManagerLauncher() = default;
+            Q_DISABLE_COPY_MOVE(MacosFileManagerLauncher)
 
         protected:
             void launchFileManagerAndSelectFiles(
