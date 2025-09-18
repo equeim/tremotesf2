@@ -210,6 +210,7 @@ namespace tremotesf::formatutils {
                 return locale.toString(date, format);
             }
 
+            // NOLINTNEXTLINE(bugprone-switch-missing-default-case)
             switch (daysTo) {
             case 0:
                 return qApp->translate("tremotesf", "Today");

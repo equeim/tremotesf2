@@ -42,10 +42,12 @@ namespace tremotesf {
             return std::nullopt;
         }
 
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
         int writeSocket{};
 
-        // Not using std::atomic<std::optional<int>> because Clang might require linking to libatomic
         constexpr int notReceivedSignal = std::numeric_limits<int>::min();
+        // Not using std::atomic<std::optional<int>> because Clang might require linking to libatomic
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
         std::atomic_int receivedSignal{notReceivedSignal};
         static_assert(std::atomic_int::is_always_lock_free, "std::atomic_int must be lock-free");
 

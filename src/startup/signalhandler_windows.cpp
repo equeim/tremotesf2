@@ -14,6 +14,7 @@
 
 namespace tremotesf {
     namespace {
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
         std::atomic_bool exitRequested{};
 
         BOOL WINAPI consoleHandler(DWORD dwCtrlType) {

@@ -14,6 +14,7 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
         thread_local bool drawingSelectedMenuItem = false;
 
         constexpr auto overrideStyleEnvVariable = "QT_STYLE_OVERRIDE";

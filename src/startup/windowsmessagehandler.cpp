@@ -152,7 +152,7 @@ namespace tremotesf {
                     writeBytes(file, message.toUtf8());
                     static constexpr std::array<char, 1> lineTerminator{'\n'};
                     writeBytes(file, lineTerminator);
-                } catch ([[maybe_unused]] const QFileError& e) {}
+                } catch ([[maybe_unused]] const QFileError& e) {} // NOLINT(bugprone-empty-catch)
             }
 
             MessageQueue mQueue{};
@@ -172,6 +172,7 @@ namespace tremotesf {
             }
         }
 
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
         std::unique_ptr<FileLogger> globalFileLogger{};
 
         [[maybe_unused]] void releaseMessageHandler(QString message) {

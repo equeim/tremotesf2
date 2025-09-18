@@ -465,9 +465,10 @@ namespace tremotesf {
     void AddTorrentDialog::AddTorrentParametersWidgets::reset(Rpc* rpc) const {
         const auto initialParameters = getInitialAddTorrentParameters(rpc);
         downloadDirectoryWidget->updatePath(initialParameters.downloadDirectory);
-        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
         priorityComboBox->setCurrentIndex(
+            // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
             indexOfCasted<int>(priorityComboBoxItems, initialParameters.priority).value()
+
         );
         startTorrentCheckBox->setChecked(initialParameters.startAfterAdding);
         if (deleteTorrentFileGroupBox) {
