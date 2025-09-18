@@ -72,8 +72,8 @@ namespace tremotesf {
     public:
         Impl() {
             try {
-                int sockets[2]{};
-                checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, static_cast<int*>(sockets)), "socketpair");
+                std::array<int, 2> sockets{};
+                checkPosixError(socketpair(AF_UNIX, SOCK_STREAM, 0, sockets.data()), "socketpair");
                 writeSocket = sockets[0];
                 const int readSocket = sockets[1];
 

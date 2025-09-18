@@ -4,8 +4,10 @@
 
 #include "torrentpropertieswidget.h"
 
-#include <fmt/format.h>
+#include <array>
 #include <limits>
+
+#include <fmt/format.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -50,17 +52,17 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
-        constexpr TorrentData::Priority priorityComboBoxItems[] = {
+        constexpr std::array priorityComboBoxItems{
             TorrentData::Priority::High, TorrentData::Priority::Normal, TorrentData::Priority::Low
         };
 
-        constexpr TorrentData::RatioLimitMode ratioLimitComboBoxItems[] = {
+        constexpr std::array ratioLimitComboBoxItems{
             TorrentData::RatioLimitMode::Global,
             TorrentData::RatioLimitMode::Unlimited,
             TorrentData::RatioLimitMode::Single
         };
 
-        constexpr TorrentData::IdleSeedingLimitMode idleSeedingLimitComboBoxItems[] = {
+        constexpr std::array idleSeedingLimitComboBoxItems{
             TorrentData::IdleSeedingLimitMode::Global,
             TorrentData::IdleSeedingLimitMode::Unlimited,
             TorrentData::IdleSeedingLimitMode::Single
@@ -564,7 +566,7 @@ namespace tremotesf {
             this,
             [this](int index) {
                 if (!mUpdatingLimits && mTorrent) {
-                    mTorrent->setBandwidthPriority(priorityComboBoxItems[index]);
+                    mTorrent->setBandwidthPriority(priorityComboBoxItems.at(static_cast<size_t>(index)));
                 }
             }
         );
@@ -574,7 +576,7 @@ namespace tremotesf {
             this,
             [this](int index) {
                 if (!mUpdatingLimits && mTorrent) {
-                    mTorrent->setRatioLimitMode(ratioLimitComboBoxItems[index]);
+                    mTorrent->setRatioLimitMode(ratioLimitComboBoxItems.at(static_cast<size_t>(index)));
                 }
             }
         );
@@ -594,7 +596,7 @@ namespace tremotesf {
             this,
             [this](int index) {
                 if (!mUpdatingLimits && mTorrent) {
-                    mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems[index]);
+                    mTorrent->setIdleSeedingLimitMode(idleSeedingLimitComboBoxItems.at(static_cast<size_t>(index)));
                 }
             }
         );
