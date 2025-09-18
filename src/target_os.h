@@ -11,7 +11,7 @@ namespace tremotesf {
     enum class TargetOs { UnixFreedesktop, UnixMacOS, Windows };
 
     inline constexpr TargetOs targetOs =
-#if defined(TREMOTESF_UNIX_FREEDESKTOP)
+#ifdef TREMOTESF_UNIX_FREEDESKTOP
         TargetOs::UnixFreedesktop;
 #elifdef Q_OS_MACOS
         TargetOs::UnixMacOS;

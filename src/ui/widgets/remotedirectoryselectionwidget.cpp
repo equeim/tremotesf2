@@ -128,7 +128,7 @@ namespace tremotesf {
         });
 
         QObject::connect(
-            static_cast<RemoteDirectorySelectionWidgetViewModel*>(mViewModel),
+            mViewModel,
             &RemoteDirectorySelectionWidgetViewModel::showMountedDirectoryError,
             this,
             [=, this] {
