@@ -21,8 +21,8 @@
   - cpp-httplib 0.18.7
   - gettext 0.22.5
 - Clarified dependency on cpp-httplib with OpenSSL support enabled, not OpenSSL itself
-- If your server uses HTTPS certificate chain with custom root CA then you need to specify the root certificate in the connection settings,
-  and optionally leaf certificate if it doesn't have correct host name
+- If your server uses HTTPS certificate chain with custom root CA (instead of single self-signed certificate),
+  then you need to specify the root certificate in the connection settings, and optionally the leaf certificate if it doesn't have correct host name
 
 ### Removed
 - Qt 5 support
