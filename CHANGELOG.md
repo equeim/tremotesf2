@@ -1,9 +1,15 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)
+- Torrents can be renamed using F2 shortcut (thanks @keizie)
+
 ### Fixed
 - Fixed opening torrent's directory when torrent has a single file in a directory (thanks @keizie)
 - Fixed window activation when opening torrent's file or its download directory on Linux/Wayland
+- Relocating the torrent does not save the directory for use in "Add torrent" dialog (thanks @keizie)
+- Improved support of servers that use HTTPS certificate chain with custom root CA
 
 ### Changed
 - Minimum dependencies baseline has been raised:
@@ -15,7 +21,8 @@
   - cpp-httplib 0.18.7
   - gettext 0.22.5
 - Clarified dependency on cpp-httplib with OpenSSL support enabled, not OpenSSL itself
-- The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)
+- If your server uses HTTPS certificate chain with custom root CA then you need to specify the root certificate in the connection settings,
+  and optionally leaf certificate if it doesn't have correct host name
 
 ### Removed
 - Qt 5 support
