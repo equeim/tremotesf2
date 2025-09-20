@@ -38,10 +38,7 @@ namespace tremotesf {
             break;
         case Qt::DecorationRole:
             if (column == Column::Name) {
-                if (entry->isDirectory()) {
-                    return desktoputils::standardDirIcon();
-                }
-                return desktoputils::standardFileIcon();
+                return entry->icon();
             }
             break;
         case Qt::DisplayRole:

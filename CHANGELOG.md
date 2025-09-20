@@ -4,6 +4,7 @@
 ### Added
 - The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)
 - Torrents can be renamed using F2 shortcut (thanks @keizie)
+- Torrent's file list show appropriate file icons based on file extensions
 
 ### Fixed
 - Fixed opening torrent's directory when torrent has a single file in a directory (thanks @keizie)

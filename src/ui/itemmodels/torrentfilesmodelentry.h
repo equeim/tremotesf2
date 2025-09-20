@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 #include <QObject>
+#include <QIcon>
 
 #include "rpc/torrentfile.h"
 
@@ -54,6 +55,8 @@ namespace tremotesf {
         QString priorityString() const;
         virtual void setPriority(Priority priority) = 0;
 
+        virtual QIcon icon() const = 0;
+
         virtual bool isChanged() const = 0;
 
     private:
@@ -87,6 +90,8 @@ namespace tremotesf {
         void clearChildren();
         std::vector<int> childrenIds() const;
 
+        QIcon icon() const override;
+
         bool isChanged() const override;
 
     private:
@@ -110,6 +115,7 @@ namespace tremotesf {
         void setWanted(bool wanted) override;
         Priority priority() const override;
         void setPriority(Priority priority) override;
+        QIcon icon() const override;
 
         bool isChanged() const override;
         void setChanged(bool changed);
@@ -123,7 +129,9 @@ namespace tremotesf {
         long long mCompletedSize;
         WantedState mWantedState;
         Priority mPriority;
+        mutable QIcon mIcon;
         int mId;
+        mutable bool mInitializedIcon;
 
         bool mChanged;
     };
