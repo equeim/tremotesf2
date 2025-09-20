@@ -59,6 +59,18 @@ set(bundled_icon_files
     view-refresh.svg
     view-statistics.svg
     window-close.svg
+
+    audio-x-generic.svg
+    video-x-generic.svg
+    image-x-generic.svg
+    text-x-generic.svg
+    application-x-cue.svg
+    text-x-ssa.svg
+    application-x-subrip.svg
+    font-x-generic.svg
+    package-x-generic.svg
+    application-x-executable.svg
+    x-office-document.svg
 )
 
 # Replacement for file(REAL_PATH) that doesn't work on Windows

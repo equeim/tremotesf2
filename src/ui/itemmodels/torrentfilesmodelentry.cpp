@@ -4,9 +4,11 @@
 
 #include <ranges>
 
-#include "torrentfilesmodelentry.h"
-
 #include <QCoreApplication>
+#include <QMimeDatabase>
+
+#include "desktoputils.h"
+#include "torrentfilesmodelentry.h"
 
 namespace tremotesf {
     TorrentFilesModelEntry::Priority TorrentFilesModelEntry::fromFilePriority(TorrentFile::Priority priority) {
@@ -186,6 +188,8 @@ namespace tremotesf {
         return ids;
     }
 
+    QIcon tremotesf::TorrentFilesModelDirectory::icon() const { return desktoputils::standardDirIcon(); }
+
     bool TorrentFilesModelDirectory::isChanged() const {
         return std::ranges::any_of(mChildren, [](const auto& child) { return child->isChanged(); });
     }
@@ -204,6 +208,7 @@ namespace tremotesf {
           mWantedState(Unwanted),
           mPriority(NormalPriority),
           mId(id),
+          mInitializedIcon(false),
           mChanged(false) {}
 
     bool TorrentFilesModelFile::isDirectory() const { return false; }
@@ -240,6 +245,31 @@ namespace tremotesf {
         if (priority != mPriority) {
             mPriority = priority;
         }
+    }
+
+    namespace {
+        QIcon determineFileIcon(const QString& fileName) {
+            static const QMimeDatabase mimeDb{};
+            const auto mimeType = mimeDb.mimeTypeForFile(fileName, QMimeDatabase::MatchExtension);
+            if (!mimeType.isValid()) {
+                return desktoputils::standardFileIcon();
+            }
+            if (const auto icon = QIcon::fromTheme(mimeType.iconName()); !icon.isNull()) {
+                return icon;
+            }
+            if (const auto icon = QIcon::fromTheme(mimeType.genericIconName()); !icon.isNull()) {
+                return icon;
+            }
+            return desktoputils::standardFileIcon();
+        }
+    }
+
+    QIcon TorrentFilesModelFile::icon() const {
+        if (!mInitializedIcon) {
+            mIcon = determineFileIcon(name());
+            mInitializedIcon = true;
+        }
+        return mIcon;
     }
 
     bool TorrentFilesModelFile::isChanged() const { return mChanged; }
