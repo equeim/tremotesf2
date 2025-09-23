@@ -23,7 +23,7 @@
 
 namespace {
     template<std::integral Integer>
-    fmt::format_context::iterator formatQEnumImpl(const QMetaEnum& meta, Integer value, fmt::format_context& ctx) {
+    fmt::format_context::iterator formatQEnumImpl(QMetaEnum meta, Integer value, fmt::format_context& ctx) {
         const auto named =
 #if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
             meta.valueToKey(static_cast<quint64>(value));
@@ -41,11 +41,11 @@ namespace {
 }
 
 namespace tremotesf {
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::intmax_t value, fmt::format_context& ctx) {
+    fmt::format_context::iterator formatQEnum(QMetaEnum meta, std::intmax_t value, fmt::format_context& ctx) {
         return formatQEnumImpl(meta, value, ctx);
     }
 
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::uintmax_t value, fmt::format_context& ctx) {
+    fmt::format_context::iterator formatQEnum(QMetaEnum meta, std::uintmax_t value, fmt::format_context& ctx) {
         return formatQEnumImpl(meta, value, ctx);
     }
 }

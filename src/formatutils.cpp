@@ -200,7 +200,7 @@ namespace tremotesf::formatutils {
     namespace {
         // Adapted from KCoreAddons' KFormat
 
-        QString formatRelativeDate(const QDate& date, QLocale::FormatType format, const QLocale& locale) {
+        QString formatRelativeDate(QDate date, QLocale::FormatType format, const QLocale& locale) {
             if (!date.isValid()) {
                 return {};
             }

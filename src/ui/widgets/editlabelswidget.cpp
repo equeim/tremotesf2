@@ -61,7 +61,7 @@ namespace tremotesf {
         QObject::connect(removeAction, &QAction::triggered, this, [this] { qDeleteAll(mLabelsList->selectedItems()); });
 
         mLabelsList->setContextMenuPolicy(Qt::CustomContextMenu);
-        QObject::connect(mLabelsList, &QWidget::customContextMenuRequested, this, [=, this](const QPoint& pos) {
+        QObject::connect(mLabelsList, &QWidget::customContextMenuRequested, this, [=, this](QPoint pos) {
             if (mLabelsList->selectionModel()->hasSelection() && mLabelsList->indexAt(pos).isValid()) {
                 const auto menu = new QMenu(this);
                 menu->addAction(removeAction);
