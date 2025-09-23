@@ -93,7 +93,7 @@ namespace tremotesf {
                 QString startupId{};
                 if (KWindowSystem::isPlatformWayland()) {
                     info().log("FreedesktopFileManagerLauncher: requesting XDG activation token");
-                    const auto window = parentWidget.data() ? parentWidget.data()->windowHandle() : nullptr;
+                    const auto window = parentWidget.data() ? parentWidget->windowHandle() : nullptr;
                     if (window) {
                         startupId = co_await ActivationTokenAwaitable(window);
                         info().log("FreedesktopFileManagerLauncher: received XDG activation token '{}'", startupId);
