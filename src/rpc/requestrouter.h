@@ -107,7 +107,7 @@ namespace tremotesf::impl {
          * @param errorMessage Short error message
          * @param detailedErrorMessage Detailed error message
          */
-        void requestFailed(RpcError error, const QString& errorMessage, const QString& detailedErrorMessage);
+        void requestFailed(tremotesf::RpcError error, const QString& errorMessage, const QString& detailedErrorMessage);
     };
 }
 
