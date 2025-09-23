@@ -50,31 +50,24 @@ namespace {
     template<std::derived_from<httplib::Server> Server = httplib::Server>
     class TestHttpServer {
     public:
-        template<typename... Args>
-        explicit TestHttpServer(Args&&... args) : mServer(std::forward<Args>(args)...) {
-            info().log("Server is valid = {}", mServer.is_valid());
-            mServer.set_keep_alive_max_count(1);
-            mServer.set_keep_alive_timeout(1);
-            port = mServer.bind_to_any_port(host.toStdString());
-            info().log("Bound to port {}", port);
-            mServer.Post(testApiPath.data(), [=, this](const httplib::Request& req, httplib::Response& res) {
-                httplib::Server::Handler handler{};
-                {
-                    const std::unique_lock lock(mHandlerMutex);
-                    handler = mHandler;
-                }
-                if (handler) {
-                    handler(req, res);
-                } else {
-                    res.status = 500;
-                }
-            });
+        TestHttpServer()
+            requires std::same_as<Server, httplib::Server>
+        {
+            initServer();
+        }
 
-            mListenFuture = std::async([=, this] {
-                info().log("Starting listening on address {} and port {}", host, port);
-                const bool ok = mServer.listen_after_bind();
-                info().log("Stopped listening, ok = {}", ok);
-            });
+        TestHttpServer(
+            const char* cert_path,
+            const char* private_key_path,
+            const char* client_ca_cert_file_path = nullptr,
+            const char* client_ca_cert_dir_path = nullptr,
+            const char* private_key_password = nullptr
+        )
+            requires std::same_as<Server, httplib::SSLServer>
+            : mServer{
+                  cert_path, private_key_path, client_ca_cert_file_path, client_ca_cert_dir_path, private_key_password
+              } {
+            initServer();
         }
 
         ~TestHttpServer() {
@@ -108,6 +101,32 @@ namespace {
         }
 
     private:
+        void initServer() {
+            info().log("Server is valid = {}", mServer.is_valid());
+            mServer.set_keep_alive_max_count(1);
+            mServer.set_keep_alive_timeout(1);
+            port = mServer.bind_to_any_port(host.toStdString());
+            info().log("Bound to port {}", port);
+            mServer.Post(testApiPath.data(), [=, this](const httplib::Request& req, httplib::Response& res) {
+                httplib::Server::Handler handler{};
+                {
+                    const std::unique_lock lock(mHandlerMutex);
+                    handler = mHandler;
+                }
+                if (handler) {
+                    handler(req, res);
+                } else {
+                    res.status = 500;
+                }
+            });
+
+            mListenFuture = std::async([=, this] {
+                info().log("Starting listening on address {} and port {}", host, port);
+                const bool ok = mServer.listen_after_bind();
+                info().log("Stopped listening, ok = {}", ok);
+            });
+        }
+
         Server mServer{};
         std::future<void> mListenFuture{};
         httplib::Server::Handler mHandler{};
