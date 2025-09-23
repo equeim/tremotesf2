@@ -14,7 +14,7 @@ namespace tremotesf {
         Q_OBJECT
     public:
         TorrentsView(TorrentsProxyModel* model, QWidget* parent = nullptr);
-        ~TorrentsView() = default;
+        ~TorrentsView() override = default;
         Q_DISABLE_COPY_MOVE(TorrentsView)
 
         void saveState();
