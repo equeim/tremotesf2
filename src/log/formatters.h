@@ -84,8 +84,8 @@ namespace tremotesf {
     template<typename T>
     concept QEnum = std::is_enum_v<T> && requires { qt_getEnumMetaObject(T{}); };
 
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::intmax_t value, fmt::format_context& ctx);
-    fmt::format_context::iterator formatQEnum(const QMetaEnum& meta, std::uintmax_t value, fmt::format_context& ctx);
+    fmt::format_context::iterator formatQEnum(QMetaEnum meta, std::intmax_t value, fmt::format_context& ctx);
+    fmt::format_context::iterator formatQEnum(QMetaEnum meta, std::uintmax_t value, fmt::format_context& ctx);
 }
 
 namespace fmt {
