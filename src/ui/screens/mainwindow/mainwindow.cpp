@@ -1264,13 +1264,8 @@ namespace tremotesf {
             torrentPropertiesWidgetAction->setChecked(Settings::instance()->get_showTorrentPropertiesInMainWindow());
             QObject::connect(torrentPropertiesWidgetAction, &QAction::triggered, this, [](bool checked) {
                 Settings::instance()->set_showTorrentPropertiesInMainWindow(checked);
-                Settings::TorrentDoubleClickAction action;
-                if (checked) {
-                    action = Settings::TorrentDoubleClickAction::OpenTorrentFile;
-                } else {
-                    action = Settings::TorrentDoubleClickAction::OpenPropertiesDialog;
-                }
-                Settings::instance()->set_torrentDoubleClickAction(action);
+                using enum Settings::TorrentDoubleClickAction;
+                Settings::instance()->set_torrentDoubleClickAction(checked ? OpenTorrentFile : OpenPropertiesDialog);
             });
             QObject::connect(Settings::instance(), &Settings::showTorrentPropertiesInMainWindowChanged, this, [=] {
                 torrentPropertiesWidgetAction->setChecked(
