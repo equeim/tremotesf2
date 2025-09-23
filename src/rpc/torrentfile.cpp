@@ -25,7 +25,7 @@ namespace tremotesf {
 
     TorrentFile::TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
         : id(id), size(fileMap.value("length"_L1).toInteger()) {
-        auto p = fileMap.value("name"_L1).toString().split(QLatin1Char('/'), Qt::SkipEmptyParts);
+        auto p = fileMap.value("name"_L1).toString().split('/', Qt::SkipEmptyParts);
         path.reserve(static_cast<size_t>(p.size()));
         for (QString& part : p) {
             path.push_back(std::move(part));

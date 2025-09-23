@@ -137,7 +137,7 @@ namespace tremotesf {
     void MainWindowStatusBar::updateServerLabel() {
         if (Servers::instance()->hasServers()) {
             mServerLabel->setText(
-                QString::fromLatin1("%1 (%2)")
+                QString("%1 (%2)"_L1)
                     .arg(Servers::instance()->currentServerName(), Servers::instance()->currentServerAddress())
             );
         } else {
