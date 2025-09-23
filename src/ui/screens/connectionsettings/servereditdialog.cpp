@@ -112,7 +112,7 @@ namespace tremotesf {
 
             QObject::connect(fileDialog, &QFileDialog::accepted, this, [=, this] {
                 try {
-                    textEdit.setPlainText(readFile(fileDialog->selectedFiles().first()));
+                    textEdit.setPlainText(readFile(fileDialog->selectedFiles().constFirst()));
                 } catch (const QFileError& e) {
                     warning().logWithException(e, "Failed to read certificate from file");
                 }
