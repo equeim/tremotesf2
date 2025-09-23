@@ -11,11 +11,13 @@
 #include "ui/stylehelpers.h"
 #include "target_os.h"
 
+using namespace Qt::StringLiterals;
+
 namespace tremotesf {
     namespace {
         [[maybe_unused]] const QStyle* fusionStyle() {
             static const auto* const style = [] {
-                const auto s = QStyleFactory::create("fusion");
+                const auto s = QStyleFactory::create("fusion"_L1);
                 if (!s) {
                     throw std::runtime_error("Failed to create Fusion style");
                 }

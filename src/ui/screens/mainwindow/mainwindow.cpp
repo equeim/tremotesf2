@@ -1338,7 +1338,7 @@ namespace tremotesf {
             toolsMenu->addAction(serverStatsAction);
 
             auto shutdownServerAction = new QAction(
-                QIcon::fromTheme("system-shutdown"),
+                QIcon::fromTheme("system-shutdown"_L1),
                 qApp->translate("tremotesf", "S&hutdown Server"),
                 this
             );
@@ -1352,7 +1352,7 @@ namespace tremotesf {
                     mWindow
                 );
                 auto okButton = dialog->button(QMessageBox::Ok);
-                okButton->setIcon(QIcon::fromTheme("system-shutdown"));
+                okButton->setIcon(QIcon::fromTheme("system-shutdown"_L1));
                 //: Dialog confirmation button
                 okButton->setText(qApp->translate("tremotesf", "Shutdown"));
                 dialog->setAttribute(Qt::WA_DeleteOnClose);

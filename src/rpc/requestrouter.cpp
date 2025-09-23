@@ -267,7 +267,7 @@ namespace tremotesf::impl {
             debug().log(" - Timeout: {}", mConfiguration->timeout);
             debug().log(" - HTTP Basic access authentication: {}", mConfiguration->authentication);
             if (mConfiguration->authentication) {
-                auto base64Credentials = QString("%1:%2")
+                auto base64Credentials = QString("%1:%2"_L1)
                                              .arg(mConfiguration->username, mConfiguration->password)
                                              .normalized(QString::NormalizationForm_C)
                                              .toUtf8()

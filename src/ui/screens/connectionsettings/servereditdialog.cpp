@@ -345,11 +345,11 @@ namespace tremotesf {
         formLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mNameLineEdit = new QLineEdit(this);
-        mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(R"(^\S.*)"), this));
+        mNameLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression(R"(^\S.*)"_L1), this));
         formLayout->addRow(qApp->translate("tremotesf", "Name:"), mNameLineEdit);
 
         mAddressLineEdit = new QLineEdit(this);
-        auto addressValidator = new QRegularExpressionValidator(QRegularExpression(R"(^\S+)"), this);
+        auto addressValidator = new QRegularExpressionValidator(QRegularExpression(R"(^\S+)"_L1), this);
         mAddressLineEdit->setValidator(addressValidator);
         formLayout->addRow(qApp->translate("tremotesf", "Address:"), mAddressLineEdit);
 
