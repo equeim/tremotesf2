@@ -26,6 +26,7 @@ namespace tremotesf {
         constexpr auto flatpakEnvVariable = "FLATPAK_ID";
 
         class PortalNotificationsController final : public NotificationsController {
+            Q_OBJECT
         public:
             explicit PortalNotificationsController(QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent = nullptr)
                 : NotificationsController(trayIcon, rpc, parent) {
@@ -85,6 +86,7 @@ namespace tremotesf {
         };
 
         class LegacyFreedesktopNotificationsController final : public NotificationsController {
+            Q_OBJECT
         public:
             explicit LegacyFreedesktopNotificationsController(
                 QSystemTrayIcon* trayIcon, const Rpc* rpc, QObject* parent = nullptr
@@ -169,3 +171,5 @@ namespace tremotesf {
         return new LegacyFreedesktopNotificationsController(trayIcon, rpc, parent);
     }
 }
+
+#include "notificationscontroller_freedesktop.moc"
