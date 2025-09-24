@@ -16,6 +16,7 @@
                 "network",
                 "pcre2",
                 "png",
+                "shared-mime-info",
                 "testlib",
                 "thread",
                 "widgets",
