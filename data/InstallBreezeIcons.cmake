@@ -15,7 +15,7 @@ file(READ "${breeze_extracted_path}/commonthemeinfo.theme.in" commonthemeinfo)
 file(APPEND "${breeze_icons_destination}/index.theme" "${commonthemeinfo}")
 
 # Keep in sync with QIcon::fromTheme() calls in source code
-set(bundled_icon_files
+set(icon_files_to_bundle
     application-exit.svg
     applications-utilities.svg
     configure.svg
@@ -89,7 +89,7 @@ set(files_to_install "")
 file(GLOB_RECURSE all_icon_files LIST_DIRECTORIES OFF "${breeze_extracted_path}/icons/**/*.svg")
 foreach (icon_path IN LISTS all_icon_files)
     cmake_path(GET icon_path FILENAME icon_filename)
-    if (icon_filename IN_LIST bundled_icon_files)
+    if (icon_filename IN_LIST icon_files_to_bundle)
         cmake_path(GET icon_path PARENT_PATH icon_dir)
         cmake_path(RELATIVE_PATH icon_dir BASE_DIRECTORY "${breeze_extracted_path}/icons" OUTPUT_VARIABLE relative_icon_dir)
         set(destination "${breeze_icons_destination}/${relative_icon_dir}")
@@ -105,8 +105,16 @@ foreach (icon_path IN LISTS all_icon_files)
         else()
             file(INSTALL "${icon_path}" DESTINATION "${destination}")
         endif()
+        list(REMOVE_ITEM icon_files_to_bundle "${icon_filename}")
+        if (NOT icon_files_to_bundle)
+            break()
+        endif()
     endif()
 endforeach()
+
+if (icon_files_to_bundle)
+    message(FATAL_ERROR "Did not find icons: ${icon_files_to_bundle}")
+endif()
 
 file(GLOB size_dirs LIST_DIRECTORIES ON "${breeze_extracted_path}/icons/*/*")
 foreach (size_dir IN LISTS size_dirs)
