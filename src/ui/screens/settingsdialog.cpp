@@ -177,7 +177,7 @@ namespace tremotesf {
             return [=] {
 #ifdef Q_OS_WIN
                 if (const auto index = darkThemeComboBox->currentIndex(); index != -1) {
-                    settings->set_darkThemeMode(darkThemeComboBoxValues[static_cast<size_t>(index)]);
+                    settings->set_darkThemeMode(darkThemeComboBoxValues.at(static_cast<size_t>(index)));
                 }
                 if (systemAccentColorCheckBox) {
                     settings->set_useSystemAccentColor(systemAccentColorCheckBox->isChecked());
