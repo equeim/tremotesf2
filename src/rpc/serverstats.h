@@ -34,15 +34,18 @@ namespace tremotesf {
 
         [[nodiscard]] qint64 downloadSpeed() const { return mDownloadSpeed; };
         [[nodiscard]] qint64 uploadSpeed() const { return mUploadSpeed; };
+        [[nodiscard]] qint64 freeSpace() const { return mFreeSpace; };
 
         [[nodiscard]] SessionStats currentSession() const { return mCurrentSession; };
         [[nodiscard]] SessionStats total() const { return mTotal; };
 
         void update(const QJsonObject& serverStats);
+        void setFreeSpace(const qint64 freeSpace);
 
     private:
         qint64 mDownloadSpeed{};
         qint64 mUploadSpeed{};
+        qint64 mFreeSpace{};
         SessionStats mCurrentSession{};
         SessionStats mTotal{};
     signals:
