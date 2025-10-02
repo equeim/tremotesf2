@@ -85,6 +85,24 @@ namespace tremotesf::desktoputils {
         throw std::logic_error(fmt::format("Unknown StatusIcon value {}", std::to_underlying(icon)));
     }
 
+    const QIcon& priorityIcon(PriorityIcon icon) {
+        switch (icon) {
+        case HighPriorityIcon: {
+            static const QIcon qicon(":/priority-high.svg"_L1);
+            return qicon;
+        }
+        case NormalPriorityIcon: {
+            static const QIcon qicon(":/priority-normal.svg"_L1);
+            return qicon;
+        }
+        case LowPriorityIcon: {
+            static const QIcon qicon(":/priority-low.svg"_L1);
+            return qicon;
+        }
+        }
+        throw std::logic_error(fmt::format("Unknown PriorityIcon value {}", static_cast<int>(icon)));
+    }
+
     const QIcon& standardFileIcon() {
         static const auto icon = qApp->style()->standardIcon(QStyle::SP_FileIcon);
         return icon;
