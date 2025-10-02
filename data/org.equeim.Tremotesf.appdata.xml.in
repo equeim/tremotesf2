@@ -54,6 +54,27 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2025-10-03" version="2.9.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)</li>
+          <li>Torrents can be renamed using F2 shortcut (thanks @keizie)</li>
+          <li>Torrent's file list show appropriate file icons based on file extensions</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Fixed opening torrent's directory when torrent has a single file in a directory (thanks @keizie)</li>
+          <li>Fixed window activation when opening torrent's file or its download directory on Linux/Wayland</li>
+          <li>Relocating the torrent does not save the directory for use in "Add torrent" dialog (thanks @keizie)</li>
+          <li>Improved support of servers that use HTTPS certificate chain with custom root CA</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>If your server uses HTTPS certificate chain with custom root CA (instead of single self-signed certificate), then you need to specify the root certificate in the connection settings, and optionally the leaf certificate if it doesn't have correct host name</li>
+        </ul>
+      </description>
+    </release>
     <release date="2025-04-16" version="2.8.2">
       <description>
         <p>Fixed</p>

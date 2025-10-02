@@ -7,7 +7,7 @@
 %global app_id org.equeim.Tremotesf
 
 Name:       tremotesf
-Version:    2.8.2
+Version:    2.9.0
 Release:    1%{!?suse_version:%{?dist}}
 Summary:    Remote GUI for transmission-daemon
 %if %{defined suse_version}
@@ -105,6 +105,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %{_metainfodir}/%{app_id}.appdata.xml
 
 %changelog
+* Fri Oct 03 2025 Alexey Rochev <equeim@gmail.com> - 2.9.0-1
+- tremotesf-2.9.0
+
 * Wed Apr 16 2025 Alexey Rochev <equeim@gmail.com> - 2.8.2-1
 - tremotesf-2.8.2
 

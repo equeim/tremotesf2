@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.9.0] - 2025-10-03
 ### Added
 - The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)
 - Torrents can be renamed using F2 shortcut (thanks @keizie)
