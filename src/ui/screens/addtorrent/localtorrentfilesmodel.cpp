@@ -12,12 +12,12 @@
 namespace tremotesf {
     namespace {
         struct CreateTreeResult {
-            std::shared_ptr<TorrentFilesModelDirectory> rootDirectory;
+            std::unique_ptr<TorrentFilesModelDirectory> rootDirectory;
             std::vector<TorrentFilesModelFile*> files;
         };
 
         CreateTreeResult createTree(TorrentMetainfoFile torrentFile) {
-            auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
+            auto rootDirectory = std::make_unique<TorrentFilesModelDirectory>();
             if (torrentFile.isSingleFile() == 1) {
                 auto* const file = rootDirectory->addFile(
                     0,
