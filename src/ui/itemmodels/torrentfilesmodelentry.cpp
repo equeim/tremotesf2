@@ -152,9 +152,11 @@ namespace tremotesf {
         return mChildrenHash;
     }
 
-    TorrentFilesModelFile* TorrentFilesModelDirectory::addFile(int id, const QString& name, long long size) {
+    TorrentFilesModelFile* TorrentFilesModelDirectory::addFile(
+        int id, const QString& name, long long size, long long completedSize, bool wanted, Priority priority
+    ) {
         const int row = static_cast<int>(mChildren.size());
-        auto file = std::make_unique<TorrentFilesModelFile>(row, this, id, name, size);
+        auto file = std::make_unique<TorrentFilesModelFile>(row, this, id, name, size, completedSize, wanted, priority);
         auto* filePtr = file.get();
         addChild(std::move(file));
         return filePtr;
@@ -200,13 +202,20 @@ namespace tremotesf {
     }
 
     TorrentFilesModelFile::TorrentFilesModelFile(
-        int row, TorrentFilesModelDirectory* parentDirectory, int id, const QString& name, long long size
+        int row,
+        TorrentFilesModelDirectory* parentDirectory,
+        int id,
+        const QString& name,
+        long long size,
+        long long completedSize,
+        bool wanted,
+        Priority priority
     )
         : TorrentFilesModelEntry(row, parentDirectory, name),
           mSize(size),
-          mCompletedSize(0),
-          mWantedState(WantedState::Unwanted),
-          mPriority(Priority::Normal),
+          mCompletedSize(completedSize),
+          mWantedState(wanted ? WantedState::Wanted : WantedState::Unwanted),
+          mPriority(priority),
           mId(id),
           mInitializedIcon(false),
           mChanged(false) {}

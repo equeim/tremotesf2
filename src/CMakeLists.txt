@@ -177,6 +177,7 @@ target_sources(tremotesf_objects
     ui/itemmodels/stringlistmodel.h
     ui/itemmodels/torrentfilesmodelentry.h
     ui/itemmodels/torrentfilesproxymodel.h
+    ui/itemmodels/torrentfilestreebuilder.h
     ui/notificationscontroller.h
     ui/savewindowstatedispatcher.h
     ui/screens/aboutdialog.h

@@ -84,7 +84,14 @@ namespace tremotesf {
         const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const;
         const std::unordered_map<QString, TorrentFilesModelEntry*>& childrenHash() const;
 
-        TorrentFilesModelFile* addFile(int id, const QString& name, long long size);
+        TorrentFilesModelFile* addFile(
+            int id,
+            const QString& name,
+            long long size,
+            long long completedSize,
+            bool wanted,
+            TorrentFilesModelEntry::Priority priority
+        );
         TorrentFilesModelDirectory* addDirectory(const QString& name);
 
         void clearChildren();
@@ -104,7 +111,14 @@ namespace tremotesf {
     class TorrentFilesModelFile final : public TorrentFilesModelEntry {
     public:
         explicit TorrentFilesModelFile(
-            int row, TorrentFilesModelDirectory* parentDirectory, int id, const QString& name, long long size
+            int row,
+            TorrentFilesModelDirectory* parentDirectory,
+            int id,
+            const QString& name,
+            long long size,
+            long long completedSize,
+            bool wanted,
+            TorrentFilesModelEntry::Priority priority
         );
 
         bool isDirectory() const override;
