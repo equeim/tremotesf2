@@ -142,7 +142,11 @@ namespace tremotesf {
         TorrentFilesModelEntry* entry = mRootDirectory.get();
         const auto parts = path.split('/', Qt::SkipEmptyParts);
         for (const QString& part : parts) {
-            entry = static_cast<const TorrentFilesModelDirectory*>(entry)->childrenHash().at(part);
+            if (!entry->isDirectory()) return;
+            const auto& children = static_cast<const TorrentFilesModelDirectory*>(entry)->children();
+            const auto found = std::ranges::find(children, part, &TorrentFilesModelEntry::name);
+            if (found == children.end()) return;
+            entry = found->get();
         }
         BaseTorrentFilesModel::fileRenamed(entry, newName);
     }

@@ -7,6 +7,7 @@
 
 #include <ranges>
 #include <vector>
+#include <QHash>
 
 #include "torrentfilesmodelentry.h"
 
@@ -35,6 +36,7 @@ namespace tremotesf {
             TorrentFilesModelEntry::Priority priority
         ) {
             TorrentFilesModelDirectory* currentDirectory = rootDirectory;
+            DirectoryCacheEntry* currentDirectoryCacheEntry = &mRootDirectoryCacheEntry;
 
             const auto lastPartIndex = pathParts.size() - 1;
 
@@ -44,12 +46,17 @@ namespace tremotesf {
                     files.push_back(file);
                     ++mFileId;
                 } else {
-                    const auto& childrenHash = currentDirectory->childrenHash();
-                    const auto found = childrenHash.find(part);
-                    if (found != childrenHash.end()) {
-                        currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
+                    const auto found = currentDirectoryCacheEntry->childDirectoriesCache.find(part);
+                    if (found != currentDirectoryCacheEntry->childDirectoriesCache.constEnd()) {
+                        currentDirectory = found.value().directory;
+                        currentDirectoryCacheEntry = &found.value();
                     } else {
                         currentDirectory = currentDirectory->addDirectory(part);
+                        const auto inserted = currentDirectoryCacheEntry->childDirectoriesCache.emplace(
+                            part,
+                            DirectoryCacheEntry{.directory = currentDirectory}
+                        );
+                        currentDirectoryCacheEntry = &inserted.value();
                     }
                 }
             }
@@ -59,6 +66,12 @@ namespace tremotesf {
         std::vector<TorrentFilesModelFile*> files{};
 
     private:
+        struct DirectoryCacheEntry {
+            TorrentFilesModelDirectory* directory;
+            QHash<QString, DirectoryCacheEntry> childDirectoriesCache{};
+        };
+        DirectoryCacheEntry mRootDirectoryCacheEntry{};
+
         int mFileId{};
     };
 }
