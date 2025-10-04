@@ -53,9 +53,9 @@ namespace tremotesf {
             return ids;
         }
 
-        std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
+        std::pair<std::unique_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
         doCreateTree(const std::vector<TorrentFile>& files) {
-            auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
+            auto rootDirectory = std::make_unique<TorrentFilesModelDirectory>();
             TorrentFilesTreeBuilder builder(rootDirectory.get(), files.size());
             for (const TorrentFile& file : files) {
                 builder.addFile(

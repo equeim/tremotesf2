@@ -42,7 +42,7 @@ namespace tremotesf {
     protected:
         void updateDirectoryChildren(const QModelIndex& parent = QModelIndex());
 
-        std::shared_ptr<TorrentFilesModelDirectory> mRootDirectory;
+        std::unique_ptr<TorrentFilesModelDirectory> mRootDirectory;
 
     private:
         const std::vector<Column> mColumns;
