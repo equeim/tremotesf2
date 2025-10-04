@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
 
 #include <QObject>
 #include <QIcon>
@@ -82,7 +81,6 @@ namespace tremotesf {
         void setPriority(Priority priority) override;
 
         const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const;
-        const std::unordered_map<QString, TorrentFilesModelEntry*>& childrenHash() const;
 
         TorrentFilesModelFile* addFile(
             int id,
@@ -105,7 +103,6 @@ namespace tremotesf {
         void addChild(std::unique_ptr<TorrentFilesModelEntry>&& child);
 
         std::vector<std::unique_ptr<TorrentFilesModelEntry>> mChildren;
-        std::unordered_map<QString, TorrentFilesModelEntry*> mChildrenHash;
     };
 
     class TorrentFilesModelFile final : public TorrentFilesModelEntry {

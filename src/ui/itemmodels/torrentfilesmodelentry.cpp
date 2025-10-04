@@ -148,10 +148,6 @@ namespace tremotesf {
         return mChildren;
     }
 
-    const std::unordered_map<QString, TorrentFilesModelEntry*>& TorrentFilesModelDirectory::childrenHash() const {
-        return mChildrenHash;
-    }
-
     TorrentFilesModelFile* TorrentFilesModelDirectory::addFile(
         int id, const QString& name, long long size, long long completedSize, bool wanted, Priority priority
     ) {
@@ -170,10 +166,7 @@ namespace tremotesf {
         return directoryPtr;
     }
 
-    void TorrentFilesModelDirectory::clearChildren() {
-        mChildren.clear();
-        mChildrenHash.clear();
-    }
+    void TorrentFilesModelDirectory::clearChildren() { mChildren.clear(); }
 
     std::vector<int> TorrentFilesModelDirectory::childrenIds() const {
         std::vector<int> ids{};
@@ -197,7 +190,6 @@ namespace tremotesf {
     }
 
     void TorrentFilesModelDirectory::addChild(std::unique_ptr<TorrentFilesModelEntry>&& child) {
-        mChildrenHash.emplace(child->name(), child.get());
         mChildren.push_back(std::move(child));
     }
 
