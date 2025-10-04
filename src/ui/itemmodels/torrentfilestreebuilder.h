@@ -12,6 +12,14 @@
 #include "torrentfilesmodelentry.h"
 
 namespace tremotesf {
+    namespace impl {
+        template<typename T>
+        concept QStringOrView = std::same_as<QString, T> || std::same_as<QStringView, T>;
+
+        inline QString toString(QStringView view) { return view.toString(); }
+        inline const QString& toString(const QString& string) { return string; }
+    }
+
     class TorrentFilesTreeBuilder final {
     public:
         explicit TorrentFilesTreeBuilder(TorrentFilesModelDirectory* rootDirectory, size_t reserveFilesCount)
@@ -23,9 +31,7 @@ namespace tremotesf {
         Q_DISABLE_COPY_MOVE(TorrentFilesTreeBuilder)
 
         template<typename PathParts>
-            requires(
-                std::ranges::input_range<PathParts> && std::same_as<QString, std::ranges::range_value_t<PathParts>>
-            )
+            requires(std::ranges::input_range<PathParts> && impl::QStringOrView<std::ranges::range_value_t<PathParts>>)
         void addFile(
             PathParts&& pathParts,
             long long size,
@@ -47,16 +53,18 @@ namespace tremotesf {
                         currentDirectory = found.value().directory;
                         currentDirectoryCacheEntry = &found.value();
                     } else {
-                        currentDirectory = currentDirectory->addDirectory(part);
+                        const auto& partString = impl::toString(part);
+                        currentDirectory = currentDirectory->addDirectory(partString);
                         const auto inserted = currentDirectoryCacheEntry->childDirectoriesCache.emplace(
-                            part,
+                            partString,
                             DirectoryCacheEntry{.directory = currentDirectory}
                         );
                         currentDirectoryCacheEntry = &inserted.value();
                     }
                 } else {
                     // This was the last part, therefore a file name
-                    auto* const file = currentDirectory->addFile(mFileId, part, size, completedSize, wanted, priority);
+                    auto* const file =
+                        currentDirectory->addFile(mFileId, impl::toString(part), size, completedSize, wanted, priority);
                     files.push_back(file);
                     ++mFileId;
                     break;
