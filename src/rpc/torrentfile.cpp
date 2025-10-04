@@ -23,8 +23,8 @@ namespace tremotesf {
         );
     }
 
-    TorrentFile::TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
-        : id(id), path(fileMap.value("name"_L1).toString()), size(fileMap.value("length"_L1).toInteger()) {
+    TorrentFile::TorrentFile(const QJsonObject& fileMap, const QJsonObject& fileStatsMap)
+        : path(fileMap.value("name"_L1).toString()), size(fileMap.value("length"_L1).toInteger()) {
         update(fileStatsMap);
     }
 

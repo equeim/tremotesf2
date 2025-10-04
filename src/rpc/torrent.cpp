@@ -802,7 +802,7 @@ namespace tremotesf {
                     mFiles.reserve(static_cast<size_t>(count));
                     changed.reserve(static_cast<size_t>(count));
                     for (QJsonArray::size_type i = 0; i < count; ++i) {
-                        mFiles.emplace_back(i, fileJsons[i].toObject(), fileStats[i].toObject());
+                        mFiles.emplace_back(fileJsons[i].toObject(), fileStats[i].toObject());
                         changed.push_back(static_cast<int>(i));
                     }
                 } else {
