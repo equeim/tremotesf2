@@ -6,6 +6,7 @@
 
 #include "coroutines/threadpool.h"
 #include "ui/itemmodels/torrentfilesmodelentry.h"
+#include "ui/itemmodels/torrentfilestreebuilder.h"
 #include "torrentfileparser.h"
 
 namespace tremotesf {
@@ -17,54 +18,24 @@ namespace tremotesf {
 
         CreateTreeResult createTree(TorrentMetainfoFile torrentFile) {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
-            std::vector<TorrentFilesModelFile*> files;
-
-            if (torrentFile.isSingleFile()) {
-                auto* file = rootDirectory->addFile(0, torrentFile.rootFileName, torrentFile.singleFileSize());
-                file->setWanted(true);
-                file->setPriority(TorrentFilesModelEntry::Priority::Normal);
-                file->setChanged(false);
-                files.push_back(file);
-            } else {
-                const auto torrentDirectoryName = torrentFile.rootFileName;
-
-                auto* torrentDirectory = rootDirectory->addDirectory(torrentDirectoryName);
-
-                auto torrentFiles = torrentFile.files();
-                files.reserve(torrentFiles.size());
-                int fileIndex = -1;
-                for (TorrentMetainfoFile::File file : torrentFiles) {
-                    ++fileIndex;
-
-                    TorrentFilesModelDirectory* currentDirectory = torrentDirectory;
-
-                    auto pathParts = file.path();
-
-                    int partIndex = -1;
-                    const int lastPartIndex = static_cast<int>(pathParts.size()) - 1;
-
-                    for (const QString& part : pathParts) {
-                        ++partIndex;
-                        if (partIndex == lastPartIndex) {
-                            auto* childFile = currentDirectory->addFile(fileIndex, part, file.size);
-                            childFile->setWanted(true);
-                            childFile->setPriority(TorrentFilesModelEntry::Priority::Normal);
-                            childFile->setChanged(false);
-                            files.push_back(childFile);
-                        } else {
-                            const auto& childrenHash = currentDirectory->childrenHash();
-                            const auto found = childrenHash.find(part);
-                            if (found != childrenHash.end()) {
-                                currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
-                            } else {
-                                currentDirectory = currentDirectory->addDirectory(part);
-                            }
-                        }
-                    }
-                }
+            if (torrentFile.isSingleFile() == 1) {
+                auto* const file = rootDirectory->addFile(
+                    0,
+                    torrentFile.rootFileName,
+                    torrentFile.singleFileSize(),
+                    0,
+                    true,
+                    TorrentFilesModelEntry::Priority::Normal
+                );
+                return {.rootDirectory = std::move(rootDirectory), .files = {file}};
             }
 
-            return {.rootDirectory = std::move(rootDirectory), .files = std::move(files)};
+            const auto files = torrentFile.files();
+            TorrentFilesTreeBuilder builder(rootDirectory->addDirectory(torrentFile.rootFileName), files.size());
+            for (TorrentMetainfoFile::File file : files) {
+                builder.addFile(file.path(), file.size, 0, true, TorrentFilesModelEntry::Priority::Normal);
+            }
+            return {.rootDirectory = std::move(rootDirectory), .files = std::move(builder.files)};
         }
     }
 

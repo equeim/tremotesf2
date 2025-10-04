@@ -12,6 +12,7 @@
 #include "rpc/torrent.h"
 #include "rpc/serversettings.h"
 #include "rpc/rpc.h"
+#include "ui/itemmodels/torrentfilestreebuilder.h"
 
 using namespace Qt::StringLiterals;
 
@@ -55,39 +56,17 @@ namespace tremotesf {
         std::pair<std::shared_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
         doCreateTree(const std::vector<TorrentFile>& files) {
             auto rootDirectory = std::make_shared<TorrentFilesModelDirectory>();
-            std::vector<TorrentFilesModelFile*> treeFiles;
-            treeFiles.reserve(files.size());
-
-            for (size_t fileIndex = 0, filesCount = files.size(); fileIndex < filesCount; ++fileIndex) {
-                const TorrentFile& file = files[fileIndex];
-
-                TorrentFilesModelDirectory* currentDirectory = rootDirectory.get();
-
-                const std::vector<QString> parts(file.path);
-
-                for (size_t partIndex = 0, partsCount = parts.size(), lastPartIndex = partsCount - 1;
-                     partIndex < partsCount;
-                     ++partIndex) {
-                    const QString& part = parts[partIndex];
-
-                    if (partIndex == lastPartIndex) {
-                        auto* childFile = currentDirectory->addFile(static_cast<int>(fileIndex), part, file.size);
-                        updateFile(childFile, file);
-                        childFile->setChanged(false);
-                        treeFiles.push_back(childFile);
-                    } else {
-                        const auto& childrenHash = currentDirectory->childrenHash();
-                        const auto found = childrenHash.find(part);
-                        if (found != childrenHash.end()) {
-                            currentDirectory = static_cast<TorrentFilesModelDirectory*>(found->second);
-                        } else {
-                            currentDirectory = currentDirectory->addDirectory(part);
-                        }
-                    }
-                }
+            TorrentFilesTreeBuilder builder(rootDirectory.get(), files.size());
+            for (const TorrentFile& file : files) {
+                builder.addFile(
+                    file.path,
+                    file.size,
+                    file.completedSize,
+                    file.wanted,
+                    TorrentFilesModelEntry::fromFilePriority(file.priority)
+                );
             }
-
-            return {std::move(rootDirectory), std::move(treeFiles)};
+            return {std::move(rootDirectory), std::move(builder.files)};
         }
     }
 
