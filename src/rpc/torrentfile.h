@@ -17,10 +17,8 @@ namespace tremotesf {
         enum class Priority { Low, Normal, High };
         Q_ENUM(Priority)
 
-        explicit TorrentFile(int id, const QJsonObject& fileMap, const QJsonObject& fileStatsMap);
+        explicit TorrentFile(const QJsonObject& fileMap, const QJsonObject& fileStatsMap);
         bool update(const QJsonObject& fileStatsMap);
-
-        int id{};
 
         QString path{};
         qint64 size{};
