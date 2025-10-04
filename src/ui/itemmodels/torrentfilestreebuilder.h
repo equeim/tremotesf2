@@ -24,9 +24,7 @@ namespace tremotesf {
 
         template<typename PathParts>
             requires(
-                std::ranges::forward_range<PathParts>
-                && std::ranges::sized_range<PathParts>
-                && std::same_as<QString, std::ranges::range_value_t<PathParts>>
+                std::ranges::input_range<PathParts> && std::same_as<QString, std::ranges::range_value_t<PathParts>>
             )
         void addFile(
             PathParts&& pathParts,
@@ -38,14 +36,12 @@ namespace tremotesf {
             TorrentFilesModelDirectory* currentDirectory = rootDirectory;
             DirectoryCacheEntry* currentDirectoryCacheEntry = &mRootDirectoryCacheEntry;
 
-            const auto lastPartIndex = pathParts.size() - 1;
-
-            for (auto&& [index, part] : pathParts | std::views::enumerate) {
-                if (static_cast<decltype(lastPartIndex)>(index) == lastPartIndex) {
-                    auto* const file = currentDirectory->addFile(mFileId, part, size, completedSize, wanted, priority);
-                    files.push_back(file);
-                    ++mFileId;
-                } else {
+            auto iter = pathParts.begin();
+            while (true) {
+                auto part = *iter;
+                ++iter;
+                if (iter != pathParts.end()) {
+                    // This was not the last part, therefore a directory name
                     const auto found = currentDirectoryCacheEntry->childDirectoriesCache.find(part);
                     if (found != currentDirectoryCacheEntry->childDirectoriesCache.constEnd()) {
                         currentDirectory = found.value().directory;
@@ -58,6 +54,12 @@ namespace tremotesf {
                         );
                         currentDirectoryCacheEntry = &inserted.value();
                     }
+                } else {
+                    // This was the last part, therefore a file name
+                    auto* const file = currentDirectory->addFile(mFileId, part, size, completedSize, wanted, priority);
+                    files.push_back(file);
+                    ++mFileId;
+                    break;
                 }
             }
         }
