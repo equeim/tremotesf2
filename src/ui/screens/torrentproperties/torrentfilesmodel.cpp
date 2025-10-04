@@ -59,7 +59,7 @@ namespace tremotesf {
             TorrentFilesTreeBuilder builder(rootDirectory.get(), files.size());
             for (const TorrentFile& file : files) {
                 builder.addFile(
-                    file.path,
+                    file.pathParts(),
                     file.size,
                     file.completedSize,
                     file.wanted,

@@ -5,7 +5,6 @@
 #ifndef TREMOTESF_RPC_TORRENTFILE_H
 #define TREMOTESF_RPC_TORRENTFILE_H
 
-#include <vector>
 #include <QObject>
 #include <QString>
 
@@ -23,11 +22,13 @@ namespace tremotesf {
 
         int id{};
 
-        std::vector<QString> path{};
+        QString path{};
         qint64 size{};
         qint64 completedSize{};
         Priority priority{};
         bool wanted{};
+
+        auto pathParts() const { return path.tokenize(u'/', Qt::SkipEmptyParts); }
     };
 }
 
