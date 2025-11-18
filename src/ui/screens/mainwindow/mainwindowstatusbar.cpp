@@ -103,9 +103,8 @@ namespace tremotesf {
         QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=, this] {
             mDownloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
             mUploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
-            mFreeSpaceLabel->setText(
-                QObject::tr("Free space: %1").arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace()))
-            );
+            mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1")
+                                         .arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace())));
         });
     }
 
