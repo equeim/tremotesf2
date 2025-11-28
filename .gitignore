@@ -23,6 +23,8 @@
 /*.user
 /*.user.*
 
+/.qtcreator
+
 /.idea
 /cmake-build*
 
