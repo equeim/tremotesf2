@@ -179,8 +179,6 @@ jobs:
 
   build-windows-mingw:
     runs-on: windows-latest
-    # https://gitlab.kitware.com/cmake/cmake/-/issues/27152
-    if: false
 
     steps:
     - name: Checkout Tremotesf
