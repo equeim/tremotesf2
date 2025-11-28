@@ -33,7 +33,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
       with:
         submodules: 'recursive'
 
@@ -48,7 +48,7 @@ jobs:
         arch: ${{ matrix.arch.msvc-arch }}
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@ee4e4882f5d857900b56e5a6b000930d99cca824
+      uses: equeim/action-setup-vcpkg@b973e4a3c3a7a6e35e1686034dedc46086639be4
       with:
         vcpkg-root: ${{ github.workspace }}\vcpkg
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
@@ -57,7 +57,7 @@ jobs:
 
     - name: Build Tremotesf with ${{ inputs.toolchain }} toolchain for ${{ matrix.arch.cmake-preset-arch }} architecture
       id: build
-      uses: equeim/action-cmake-build@ad8fb686c1e3e022cc3044377a966a027f5678e4
+      uses: equeim/action-cmake-build@72a6a248408085b42fe81c6045cee41bb4853396
       with:
         cmake-arguments: --preset windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && inputs.toolchain == 'msvc' && 'ON' || 'OFF' }}
         package: true
@@ -66,7 +66,7 @@ jobs:
 
     - name: Archive packages
       if: inputs.release-tag == ''
-      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
       with:
         name: 'windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-packages'
         retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
@@ -84,7 +84,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Archive build logs
-      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
       if: always()
       with:
         name: 'windows-${{ matrix.arch.cmake-preset-arch }}-${{ inputs.toolchain }}-build-logs'
