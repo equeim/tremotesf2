@@ -7,7 +7,6 @@ only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_BASE_BRANCH == 'master' || $CIRRU
 build_freebsd_task:
   freebsd_instance:
     matrix:
-    - image_family: freebsd-13-5
     - image_family: freebsd-14-3
 
   packages_cache:
@@ -16,21 +15,13 @@ build_freebsd_task:
   install_dependencies_script: |
     set -e -o pipefail
     sudo pkg update -f
-    sudo pkg install -y cmake ninja pkgconf libpsl libfmt qt6-base qt6-tools kf6-kwidgetsaddons kf6-kwindowsystem gettext-tools cxxopts
-    if [ "$(freebsd-version -u | cut -d . -f 1)" -eq 14 ]; then
-        sudo pkg install -y cpp-httplib
-    fi
+    sudo pkg install -y cmake ninja pkgconf libpsl libfmt qt6-base qt6-tools kf6-kwidgetsaddons kf6-kwindowsystem gettext-tools cxxopts cpp-httplib
 
   cmake_build_script: |
     set -e -o pipefail
     echo 'Configuring CMake'
-    if [ "$(freebsd-version -u | cut -d . -f 1)" -eq 14 ]; then
-        httplib=system
-    else
-        httplib=none
-    fi
     # Not enabling ASAN since it causes weird issues with tests that use openssl
-    cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB="$httplib" -D TREMOTESF_ASAN=OFF
+    cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=system -D TREMOTESF_ASAN=OFF
     echo 'Building Debug'
     cmake --build --preset base-debug -v
     echo 'Testing Debug'
