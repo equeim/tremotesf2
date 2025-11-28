@@ -41,6 +41,12 @@ namespace tremotesf {
                 if (!startAwaiting(handle)) {
                     return;
                 }
+#if KWINDOWSYSTEM_VERSION >= QT_VERSION_CHECK(6, 19, 0)
+                KWaylandExtras::xdgActivationToken(mWindow, {}).then(&mReceiver, [=, this](QString token) {
+                    mToken = std::move(token);
+                    resume(handle);
+                });
+#else
                 const auto requestedSerial = KWaylandExtras::lastInputSerial(mWindow);
                 QObject::connect(
                     KWaylandExtras::self(),
@@ -54,6 +60,7 @@ namespace tremotesf {
                     }
                 );
                 KWaylandExtras::requestXdgActivationToken(mWindow, requestedSerial, {});
+#endif
             }
 
             // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
