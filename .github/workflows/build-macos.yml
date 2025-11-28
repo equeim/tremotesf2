@@ -44,7 +44,7 @@ jobs:
 
       - name: Install host dependencies
         run: |
-          brew install autoconf automake libtool ninja
+          brew install autoconf autoconf-archive automake libtool
 
       - name: Build Tremotesf for ${{ matrix.architecture }} architecture
         id: build
