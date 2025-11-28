@@ -33,10 +33,7 @@ jobs:
       - name: Use latest Xcode
         uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
-          # xcode-version: latest-stable
-          # https://bugreports.qt.io/browse/QTBUG-137687
-          # Switch back to latest-stable after Qt in vcpkg is updated to 6.9.2 or newer
-          xcode-version: 16.4
+          xcode-version: latest-stable
 
       - name: Set up vcpkg
         uses: equeim/action-setup-vcpkg@ee4e4882f5d857900b56e5a6b000930d99cca824
