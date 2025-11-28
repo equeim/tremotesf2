@@ -14,6 +14,8 @@ namespace tremotesf {
 namespace tremotesf {
     class TorrentsModel;
 
+    class SortFilterProxyModelHelper;
+
     class TorrentsProxyModel final : public BaseProxyModel {
         Q_OBJECT
 
@@ -71,6 +73,9 @@ namespace tremotesf {
 
         bool mDownloadDirectoryFilterEnabled;
         QString mDownloadDirectoryFilter;
+
+        friend class SortFilterProxyModelHelper;
+
     signals:
         void statusFilterChanged();
         void labelFilterChanged();

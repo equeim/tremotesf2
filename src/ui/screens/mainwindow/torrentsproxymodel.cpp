@@ -12,6 +12,22 @@
 #include "torrentsmodel.h"
 
 namespace tremotesf {
+    class SortFilterProxyModelHelper final {
+    public:
+        template<std::invocable Func>
+        static void changeRowsFilter(TorrentsProxyModel* model, Func&& func) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+            model->beginFilterChange();
+#endif
+            func();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+            model->endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#else
+            model->invalidateRowsFilter();
+#endif
+        }
+    };
+
     TorrentsProxyModel::TorrentsProxyModel(TorrentsModel* sourceModel, QObject* parent)
         : BaseProxyModel(
               sourceModel,
@@ -32,11 +48,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setSearchString(const QString& string) {
         if (string != mSearchString) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mSearchString = string;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mSearchString = string; });
         }
     }
 
@@ -44,11 +56,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setStatusFilterEnabled(bool enabled) {
         if (enabled != mStatusFilterEnabled) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mStatusFilterEnabled = enabled;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mStatusFilterEnabled = enabled; });
             Settings::instance()->set_torrentsStatusFilterEnabled(mStatusFilterEnabled);
         }
     }
@@ -57,11 +65,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setStatusFilter(TorrentsProxyModel::StatusFilter filter) {
         if (filter != mStatusFilter) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mStatusFilter = filter;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mStatusFilter = filter; });
             emit statusFilterChanged();
             Settings::instance()->set_torrentsStatusFilter(mStatusFilter);
         }
@@ -71,11 +75,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setLabelFilterEnabled(bool enabled) {
         if (enabled != mLabelFilterEnabled) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mLabelFilterEnabled = enabled;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mLabelFilterEnabled = enabled; });
             Settings::instance()->set_torrentsLabelFilterEnabled(mLabelFilterEnabled);
         }
     }
@@ -84,11 +84,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setLabelFilter(const QString& filter) {
         if (filter != mLabelFilter) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mLabelFilter = filter;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mLabelFilter = filter; });
             emit labelFilterChanged();
             Settings::instance()->set_torrentsLabelFilter(mLabelFilter);
         }
@@ -98,11 +94,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setTrackerFilterEnabled(bool enabled) {
         if (enabled != mTrackerFilterEnabled) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mTrackerFilterEnabled = enabled;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mTrackerFilterEnabled = enabled; });
             Settings::instance()->set_torrentsTrackerFilterEnabled(mTrackerFilterEnabled);
         }
     }
@@ -111,11 +103,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setTrackerFilter(const QString& filter) {
         if (filter != mTrackerFilter) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mTrackerFilter = filter;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mTrackerFilter = filter; });
             emit trackerFilterChanged();
             Settings::instance()->set_torrentsTrackerFilter(mTrackerFilter);
         }
@@ -125,11 +113,9 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setDownloadDirectoryFilterEnabled(bool enabled) {
         if (enabled != mDownloadDirectoryFilterEnabled) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mDownloadDirectoryFilterEnabled = enabled;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] {
+                mDownloadDirectoryFilterEnabled = enabled;
+            });
             Settings::instance()->set_torrentsDownloadDirectoryFilterEnabled(mDownloadDirectoryFilterEnabled);
         }
     }
@@ -138,11 +124,7 @@ namespace tremotesf {
 
     void TorrentsProxyModel::setDownloadDirectoryFilter(const QString& filter) {
         if (filter != mDownloadDirectoryFilter) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-            beginFilterChange();
-#endif
-            mDownloadDirectoryFilter = filter;
-            invalidateRowsFilter();
+            SortFilterProxyModelHelper::changeRowsFilter(this, [&, this] { mDownloadDirectoryFilter = filter; });
             emit downloadDirectoryFilterChanged();
             Settings::instance()->set_torrentsDownloadDirectoryFilter(mDownloadDirectoryFilter);
         }
