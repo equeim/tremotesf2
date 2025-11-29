@@ -218,8 +218,9 @@ jobs:
       run: |
           set -e -o pipefail
           echo '::group::Configuring CMake'
+          # cpp-httplib doesn't compile with MinGW due to missing function (GetAddrInfoExCancel) in system headers
           # ASAN + LTO causes linker crash
-          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=bundled -D TREMOTESF_ASAN=ON -D CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=OFF
+          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=none -D TREMOTESF_ASAN=ON -D CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=OFF
           echo '::endgroup'
           echo '::group::Building Debug'
           cmake --build --preset base-debug -v
