@@ -9,9 +9,9 @@ cmake_policy(SET CMP0177 NEW)
 
 set(breeze_icons_destination "${CMAKE_INSTALL_PREFIX}/${TREMOTESF_EXTERNAL_RESOURCES_PATH}/icons/breeze")
 
-file(INSTALL "${breeze_extracted_path}/icons/index.theme.in" DESTINATION "${breeze_icons_destination}")
-file(RENAME "${breeze_icons_destination}/index.theme.in" "${breeze_icons_destination}/index.theme")
-file(READ "${breeze_extracted_path}/commonthemeinfo.theme.in" commonthemeinfo)
+file(INSTALL "${breeze_extracted_path}/icons/breeze.theme.in" DESTINATION "${breeze_icons_destination}")
+file(RENAME "${breeze_icons_destination}/breeze.theme.in" "${breeze_icons_destination}/index.theme")
+file(READ "${breeze_extracted_path}/icons/commonthemeinfo.theme.in" commonthemeinfo)
 file(APPEND "${breeze_icons_destination}/index.theme" "${commonthemeinfo}")
 
 # Keep in sync with QIcon::fromTheme() calls in source code
