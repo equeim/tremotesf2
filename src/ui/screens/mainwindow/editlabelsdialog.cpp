@@ -52,5 +52,7 @@ namespace tremotesf {
         QObject::connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
         editLabelsWidget->setFocusOnComboBox();
+
+        resize(sizeHint().expandedTo(QSize(512, 0)));
     }
 }
