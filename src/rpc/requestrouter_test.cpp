@@ -428,6 +428,8 @@ namespace {
             QCOMPARE(response->success, true);
         }
 
+        // schannel backend crashes if client certificate doesn't have common name: https://qt-project.atlassian.net/browse/QTBUG-142324
+#    ifndef Q_OS_WIN
         void checkClientCertificateError() {
             TestHttpServer<httplib::SSLServer> server(
                 TEST_DATA_PATH "/server-certs/self-signed.pem",
@@ -482,6 +484,7 @@ namespace {
             QCOMPARE(response.has_value(), true);
             QCOMPARE(response->success, true);
         }
+#    endif
 #endif
 
         void checkInvalidJsonIsHandled() {
