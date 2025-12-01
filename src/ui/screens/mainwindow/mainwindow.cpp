@@ -132,7 +132,7 @@ namespace tremotesf {
                     }
                 });
 
-                resize(sizeHint().expandedTo(QSize(320, 0)));
+                resize(sizeHint().expandedTo(QSize(720, 0)));
             }
 
             [[nodiscard]] QString downloadDirectory() const { return mDirectoryWidget->path(); }
