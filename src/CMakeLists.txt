@@ -154,6 +154,7 @@ target_sources(tremotesf_objects
     rpc/addressutils.h
     rpc/jsonutils.h
     rpc/mounteddirectoriesutils.h
+    rpc/numbervaluerange.h
     rpc/pathutils.h
     rpc/peer.h
     rpc/qsslcertificateformatter.h

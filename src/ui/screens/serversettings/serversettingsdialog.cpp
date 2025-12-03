@@ -5,7 +5,6 @@
 #include "serversettingsdialog.h"
 
 #include <array>
-#include <limits>
 
 #include <QCoreApplication>
 #include <QDialogButtonBox>
@@ -26,9 +25,10 @@
 #include <KPageModel>
 #include <KPageWidget>
 
-#include "rpc/serversettings.h"
 #include "stdutils.h"
+#include "rpc/numbervaluerange.h"
 #include "rpc/rpc.h"
+#include "rpc/serversettings.h"
 #include "ui/widgets/remotedirectoryselectionwidget.h"
 
 using namespace Qt::StringLiterals;
@@ -118,8 +118,9 @@ namespace tremotesf {
         settings->setAlternativeSpeedLimitsEndTime(mLimitScheduleEndTimeEdit->time());
 
         settings->setAlternativeSpeedLimitsDays(
-            static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(mLimitScheduleDaysComboBox->currentData().toInt(
-            ))
+            static_cast<ServerSettingsData::AlternativeSpeedLimitsDays>(
+                mLimitScheduleDaysComboBox->currentData().toInt()
+            )
         );
 
         settings->setPeerPort(mPeerPortSpinBox->value());
@@ -222,7 +223,7 @@ namespace tremotesf {
 
         mRatioLimitSpinBox = new QDoubleSpinBox(this);
         mRatioLimitSpinBox->setEnabled(false);
-        mRatioLimitSpinBox->setMaximum(std::numeric_limits<int>::max());
+        setSpinBoxLimits(mRatioLimitSpinBox, nonNegativeDecimalsRange);
         QObject::connect(mRatioLimitCheckBox, &QCheckBox::toggled, mRatioLimitSpinBox, &QSpinBox::setEnabled);
         seedingPageLayout->addWidget(mRatioLimitSpinBox, 1, 1, Qt::AlignTop);
 
@@ -231,7 +232,7 @@ namespace tremotesf {
 
         mIdleSeedingLimitSpinBox = new QSpinBox(this);
         mIdleSeedingLimitSpinBox->setEnabled(false);
-        mIdleSeedingLimitSpinBox->setMaximum(9999);
+        setSpinBoxLimits(mIdleSeedingLimitSpinBox, minutesRange);
         //: Suffix that is added to input field with number of minuts, e.g. "5 min"
         mIdleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
         QObject::connect(
@@ -263,7 +264,7 @@ namespace tremotesf {
 
         mMaximumActiveDownloadsSpinBox = new QSpinBox(this);
         mMaximumActiveDownloadsSpinBox->setEnabled(false);
-        mMaximumActiveDownloadsSpinBox->setMaximum(std::numeric_limits<int>::max());
+        setSpinBoxLimits(mMaximumActiveDownloadsSpinBox, nonNegativeIntegersRange);
         QObject::connect(
             mMaximumActiveDownloadsCheckBox,
             &QCheckBox::toggled,
@@ -277,7 +278,7 @@ namespace tremotesf {
 
         mMaximumActiveUploadsSpinBox = new QSpinBox(this);
         mMaximumActiveUploadsSpinBox->setEnabled(false);
-        mMaximumActiveUploadsSpinBox->setMaximum(std::numeric_limits<int>::max());
+        setSpinBoxLimits(mMaximumActiveUploadsSpinBox, nonNegativeIntegersRange);
         QObject::connect(
             mMaximumActiveUploadsCheckBox,
             &QCheckBox::toggled,
@@ -292,7 +293,7 @@ namespace tremotesf {
 
         mIdleQueueLimitSpinBox = new QSpinBox(this);
         mIdleQueueLimitSpinBox->setEnabled(false);
-        mIdleQueueLimitSpinBox->setMaximum(9999);
+        setSpinBoxLimits(mIdleQueueLimitSpinBox, minutesRange);
         //: Suffix that is added to input field with number of minuts, e.g. "5 min"
         mIdleQueueLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
         QObject::connect(mIdleQueueLimitCheckBox, &QCheckBox::toggled, mIdleQueueLimitSpinBox, &QSpinBox::setEnabled);
@@ -317,7 +318,6 @@ namespace tremotesf {
         auto speedLimitsGroupBox = new QGroupBox(qApp->translate("tremotesf", "Limits"), this);
         auto speedLimitsGroupBoxLayout = new QGridLayout(speedLimitsGroupBox);
 
-        const int maxSpeedLimit = static_cast<int>(std::numeric_limits<uint>::max() / 1024);
         //: Suffix that is added to input field with download/upload speed limit, e.g. "5000 kB/s". 'k' prefix means SI prefix, i.e kB = 1000 bytes
         const QString suffix(qApp->translate("tremotesf", " kB/s"));
 
@@ -327,7 +327,7 @@ namespace tremotesf {
 
         mDownloadSpeedLimitSpinBox = new QSpinBox(this);
         mDownloadSpeedLimitSpinBox->setEnabled(false);
-        mDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
+        setSpinBoxLimits(mDownloadSpeedLimitSpinBox, speedLimitKbpsRange);
         mDownloadSpeedLimitSpinBox->setSuffix(suffix);
         QObject::connect(
             mDownloadSpeedLimitCheckBox,
@@ -343,7 +343,7 @@ namespace tremotesf {
 
         mUploadSpeedLimitSpinBox = new QSpinBox(this);
         mUploadSpeedLimitSpinBox->setEnabled(false);
-        mUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
+        setSpinBoxLimits(mUploadSpeedLimitSpinBox, speedLimitKbpsRange);
         mUploadSpeedLimitSpinBox->setSuffix(suffix);
         QObject::connect(
             mUploadSpeedLimitCheckBox,
@@ -368,7 +368,7 @@ namespace tremotesf {
         enableAlternativeLimitsGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mAlternativeDownloadSpeedLimitSpinBox = new QSpinBox(this);
-        mAlternativeDownloadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
+        setSpinBoxLimits(mAlternativeDownloadSpeedLimitSpinBox, speedLimitKbpsRange);
         mAlternativeDownloadSpeedLimitSpinBox->setSuffix(suffix);
         enableAlternativeLimitsGroupBoxLayout->addRow(
             //: Download speed limit input field label
@@ -376,7 +376,7 @@ namespace tremotesf {
             mAlternativeDownloadSpeedLimitSpinBox
         );
         mAlternativeUploadSpeedLimitSpinBox = new QSpinBox(this);
-        mAlternativeUploadSpeedLimitSpinBox->setMaximum(maxSpeedLimit);
+        setSpinBoxLimits(mAlternativeUploadSpeedLimitSpinBox, speedLimitKbpsRange);
         mAlternativeUploadSpeedLimitSpinBox->setSuffix(suffix);
         enableAlternativeLimitsGroupBoxLayout->addRow(
             //: Upload speed limit input field label
@@ -482,7 +482,7 @@ namespace tremotesf {
         connectionGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mPeerPortSpinBox = new QSpinBox(this);
-        mPeerPortSpinBox->setMaximum(65535);
+        setSpinBoxLimits(mPeerPortSpinBox, portsRange);
         connectionGroupBoxLayout->addRow(qApp->translate("tremotesf", "Peer port:"), mPeerPortSpinBox);
 
         //: Check box label
@@ -536,14 +536,14 @@ namespace tremotesf {
         peerLimitsGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         mTorrentPeerLimitSpinBox = new QSpinBox(this);
-        mTorrentPeerLimitSpinBox->setMaximum(std::numeric_limits<int>::max());
+        setSpinBoxLimits(mTorrentPeerLimitSpinBox, peersLimitRange);
         peerLimitsGroupBoxLayout->addRow(
             qApp->translate("tremotesf", "Maximum peers per torrent:"),
             mTorrentPeerLimitSpinBox
         );
 
         mGlobalPeerLimitSpinBox = new QSpinBox(this);
-        mGlobalPeerLimitSpinBox->setMaximum(std::numeric_limits<int>::max());
+        setSpinBoxLimits(mGlobalPeerLimitSpinBox, peersLimitRange);
         peerLimitsGroupBoxLayout->addRow(
             qApp->translate("tremotesf", "Maximum peers globally:"),
             mGlobalPeerLimitSpinBox
