@@ -36,6 +36,7 @@
 #include "stdutils.h"
 #include "torrentfilesmodel.h"
 #include "trackersviewwidget.h"
+#include "rpc/numbervaluerange.h"
 #include "rpc/pathutils.h"
 #include "rpc/rpc.h"
 #include "rpc/serversettings.h"
@@ -363,7 +364,7 @@ namespace tremotesf {
         speedGroupBoxLayout->addRow(downloadSpeedSpinBoxLayout);
         auto downloadSpeedSpinBox = new QSpinBox(this);
         downloadSpeedSpinBox->setEnabled(false);
-        downloadSpeedSpinBox->setMaximum(maxSpeedLimit);
+        setSpinBoxLimits(downloadSpeedSpinBox, speedLimitKbpsRange);
         //: Suffix that is added to input field with download/upload speed limit, e.g. "5000 kB/s". 'k' prefix means SI prefix, i.e kB = 1000 bytes
         downloadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " kB/s"));
 
@@ -380,7 +381,7 @@ namespace tremotesf {
         speedGroupBoxLayout->addRow(uploadSpeedSpinBoxLayout);
         auto uploadSpeedSpinBox = new QSpinBox(this);
         uploadSpeedSpinBox->setEnabled(false);
-        uploadSpeedSpinBox->setMaximum(maxSpeedLimit);
+        setSpinBoxLimits(uploadSpeedSpinBox, speedLimitKbpsRange);
         //: Suffix that is added to input field with download/upload speed limit, e.g. "5000 kB/s". 'k' prefix means SI prefix, i.e kB = 1000 bytes
         uploadSpeedSpinBox->setSuffix(qApp->translate("tremotesf", " kB/s"));
 
@@ -441,9 +442,8 @@ namespace tremotesf {
 
         ratioLimitLayout->addWidget(ratioLimitComboBox);
         auto ratioLimitSpinBox = new QDoubleSpinBox(this);
-        ratioLimitSpinBox->setMaximum(10000.0);
+        setSpinBoxLimits(ratioLimitSpinBox, nonNegativeDecimalsRange);
         ratioLimitSpinBox->setSingleStep(0.1);
-
         ratioLimitSpinBox->setVisible(false);
         QObject::connect(
             ratioLimitComboBox,
@@ -482,7 +482,7 @@ namespace tremotesf {
 
         idleSeedingLimitLayout->addWidget(idleSeedingLimitComboBox);
         auto idleSeedingLimitSpinBox = new QSpinBox(this);
-        idleSeedingLimitSpinBox->setMaximum(9999);
+        setSpinBoxLimits(idleSeedingLimitSpinBox, minutesRange);
         //: Suffix that is added to input field with number of minuts, e.g. "5 min"
         idleSeedingLimitSpinBox->setSuffix(qApp->translate("tremotesf", " min"));
 
@@ -513,7 +513,7 @@ namespace tremotesf {
         peersGroupBoxLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
         auto peersLimitsSpinBox = new QSpinBox(this);
-        peersLimitsSpinBox->setMaximum(9999);
+        setSpinBoxLimits(peersLimitsSpinBox, peersLimitRange);
         peersGroupBoxLayout->addRow(qApp->translate("tremotesf", "Maximum peers:"), peersLimitsSpinBox);
 
         limitsTabLayout->addWidget(peersGroupBox);
