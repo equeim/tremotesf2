@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2015-2025 Alexey Rochev
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Cleanup cache
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup-cache:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Delete caches for closed pull requet
+      run: |
+        ref="refs/pull/${{ github.event.number }}/merge"
+        ids=( $(gh cache list --json id --jq '.[].id' --ref "$ref") )
+        echo "Cache ids for ref $ref: ${ids[@]}"
+        for id in "${ids[@]}"; do
+          echo "Deleting cache with id $id"
+          gh cache delete "$id"
+        done
