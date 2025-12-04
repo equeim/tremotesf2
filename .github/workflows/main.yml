@@ -172,10 +172,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ['msvc', 'msvc-clang']
+        arch: ['x86_64', 'arm64']
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
-      toolchain: ${{ matrix.toolchain  }}
+      arch: ${{ matrix.arch }}
 
   build-windows-mingw:
     runs-on: windows-latest

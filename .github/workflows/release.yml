@@ -74,8 +74,13 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows-msvc:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ['x86_64', 'arm64']
     uses: ./.github/workflows/build-windows-msvc.yml
     with:
+      arch: ${{ matrix.arch }}
       release-tag: ${{ github.event.release.tag_name }}
 
   build-macos:
