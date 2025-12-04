@@ -21,3 +21,5 @@ jobs:
           echo "Deleting cache with id $id"
           gh cache delete "$id"
         done
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
