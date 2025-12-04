@@ -12,6 +12,11 @@ jobs:
   cleanup-cache:
     runs-on: ubuntu-latest
     steps:
+    - name: Check out sources
+      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      with:
+        submodules: 'recursive'
+
     - name: Delete caches for closed pull requet
       run: |
         ref="refs/pull/${{ github.event.number }}/merge"
