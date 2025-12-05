@@ -39,7 +39,7 @@ jobs:
         uses: equeim/action-setup-vcpkg@b973e4a3c3a7a6e35e1686034dedc46086639be4
         with:
           vcpkg-root: ${{ github.workspace }}/vcpkg
-          save-cache: ${{ github.event_name != 'pull_request' }}
+          save-cache: true
           cache-key-tag: ${{ matrix.architecture }}
 
       - name: Install host dependencies
