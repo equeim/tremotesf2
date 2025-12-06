@@ -13,12 +13,12 @@
     <message>
         <location filename="../src/ui/screens/aboutdialog.cpp" line="49"/>
         <source>Source code:</source>
-        <translation type="unfinished"/>
+        <translation>Kaynak kodu:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/aboutdialog.cpp" line="50"/>
         <source>Translations:</source>
-        <translation type="unfinished"/>
+        <translation>Çeviriler:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/aboutdialog.cpp" line="63"/>
@@ -1487,43 +1487,43 @@ Trackers list column title</extracomment>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="433"/>
         <source>No</source>
         <extracomment>Server does not use custom certificates</extracomment>
-        <translation type="unfinished"/>
+        <translation>Hayır</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="436"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"/>
+        <translation>Kendinden imzalı sertifika</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="439"/>
         <source>Custom CA root certificate</source>
-        <translation type="unfinished"/>
+        <translation>Özel CA kök sertifikası</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="445"/>
         <source>Server uses custom certificates:</source>
-        <translation type="unfinished"/>
+        <translation>Sunucu özel sertifikalar kullanır:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="453"/>
         <source>If server&apos;s leaf certificate does not have correct host name, you need to provide it too for certificate validation to pass</source>
-        <translation type="unfinished"/>
+        <translation>Sunucunun yaprak sertifikasında doğru ana bilgisayar adı yoksa, sertifika doğrulamasının geçmesi için bunu da sağlamanız gerekir.</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="464"/>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="471"/>
         <source>Server&apos;s leaf certificate in PEM format:</source>
-        <translation type="unfinished"/>
+        <translation>PEM formatında sunucu yaprak sertifikası:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="479"/>
         <source>Server&apos;s CA root certificate in PEM format:</source>
-        <translation type="unfinished"/>
+        <translation>PEM formatında sunucunun CA kök sertifikası:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="508"/>
         <source>Client certificate with private key in PEM format:</source>
-        <translation type="unfinished"/>
+        <translation>PEM formatında özel anahtara sahip istemci sertifikası:</translation>
     </message>
     <message>
         <location filename="../src/ui/screens/connectionsettings/servereditdialog.cpp" line="536"/>
