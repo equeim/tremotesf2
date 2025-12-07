@@ -5,7 +5,6 @@
 #include "torrentpropertieswidget.h"
 
 #include <array>
-#include <limits>
 
 #include <fmt/format.h>
 
@@ -353,8 +352,6 @@ namespace tremotesf {
         //: Check box label
         auto globalLimitsCheckBox = new QCheckBox(qApp->translate("tremotesf", "Honor global limits"), this);
         speedGroupBoxLayout->addRow(globalLimitsCheckBox);
-
-        const int maxSpeedLimit = static_cast<int>(std::numeric_limits<uint>::max() / 1024);
 
         //: Download speed limit input field label
         auto downloadSpeedCheckBox = new QCheckBox(qApp->translate("tremotesf", "Download:"), this);
