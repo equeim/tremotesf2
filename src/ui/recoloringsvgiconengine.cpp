@@ -78,7 +78,7 @@ public:
                 % HexString<qint8>(state)
                 % HexString<int>(size.width())
                 % HexString<int>(size.height())
-                % HexString<qint16>(qRound(scale * 1000))
+                % HexString<qint16>(static_cast<qint16>(qRound(scale * 1000)))
                 % HexString<qint64>(paletteForStylesheet().cacheKey());
     }
 
@@ -173,11 +173,11 @@ bool RecoloringSvgIconEnginePrivate::tryLoad(QSvgRenderer *renderer, QIcon::Mode
         // because since the accent color used to be the same as the highlight color, it might cause
         // icons, especially folders to "disappear" against the background
         if (actualMode == QIcon::Selected) {
-            const qreal tintRatio = 0.85;
+            const float tintRatio = 0.85f;
             const auto highlightedText = pal.highlightedText().color();
-            const qreal r = accentColor.redF() * tintRatio + highlightedText.redF() * (1.0 - tintRatio);
-            const qreal g = accentColor.greenF() * tintRatio + highlightedText.greenF() * (1.0 - tintRatio);
-            const qreal b = accentColor.blueF() * tintRatio + highlightedText.blueF() * (1.0 - tintRatio);
+            const float r = accentColor.redF() * tintRatio + highlightedText.redF() * (1.0f - tintRatio);
+            const float g = accentColor.greenF() * tintRatio + highlightedText.greenF() * (1.0f - tintRatio);
+            const float b = accentColor.blueF() * tintRatio + highlightedText.blueF() * (1.0f - tintRatio);
             accentColor.setRgbF(r, g, b, accentColor.alphaF());
         }
 
