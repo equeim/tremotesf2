@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.9.1] - 2025-12-09
+### Fixed
+- Changed maximum values of idle limits and speed limits settings to align them with Transmission limitations
+
+### Changed
+- Increased default width of some dialogs (thanks @glutenmancy)
+- Updated KDE Flatpak runtime to 6.10 branch
+- Updated translations
+
 ## [2.9.0] - 2025-10-03
 ### Added
 - The first column in torrents, trackers, and peers lists can now be reordered too (thanks @keizie)
