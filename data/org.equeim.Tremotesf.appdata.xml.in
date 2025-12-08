@@ -54,6 +54,20 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2025-12-09" version="2.9.1">
+      <description>
+        <p>Fixed</p>
+        <ul>
+          <li>Changed maximum values of idle limits and speed limits settings to align them with Transmission limitations</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>Increased default width of some dialogs (thanks @glutenmancy)</li>
+          <li>Updated KDE Flatpak runtime to 6.10 branch</li>
+          <li>Updated translations</li>
+        </ul>
+      </description>
+    </release>
     <release date="2025-10-03" version="2.9.0">
       <description>
         <p>Added</p>

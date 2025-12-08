@@ -15,7 +15,7 @@ if (APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "${TREMOTESF_MACOS_DEPLOYMENT_TARGET}")
 endif ()
 
-project(tremotesf VERSION 2.9.0 LANGUAGES ${languages})
+project(tremotesf VERSION 2.9.1 LANGUAGES ${languages})
 
 option(TREMOTESF_ASAN "Build with AddressSanitizer" OFF)
 
