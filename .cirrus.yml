@@ -13,6 +13,9 @@ build_freebsd_task:
 
   packages_cache:
     folder: /var/cache/pkg
+    fingerprint_script: freebsd-version -u
+    reupload_on_changes: true
+    optimistically_restore_on_miss: false
 
   install_dependencies_script: |
     set -e -o pipefail
