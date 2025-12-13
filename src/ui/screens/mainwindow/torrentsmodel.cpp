@@ -43,7 +43,8 @@ namespace tremotesf {
         Torrent* torrent = mRpc->torrents().at(static_cast<size_t>(index.row())).get();
         switch (role) {
         case Qt::DecorationRole:
-            if (static_cast<Column>(index.column()) == Column::Name) {
+            switch (static_cast<Column>(index.column())) {
+            case Column::Name: {
                 using namespace desktoputils;
                 if (torrent->data().error != TorrentData::Error::None) {
                     return statusIcon(ErroredIcon);
@@ -68,16 +69,21 @@ namespace tremotesf {
                 case TorrentData::Status::QueuedForChecking:
                     return statusIcon(CheckingIcon);
                 }
-            } else if (static_cast<Column>(index.column()) == Column::Priority) {
+                break;
+            }
+            case Column::Priority: {
                 using namespace desktoputils;
                 switch (torrent->data().bandwidthPriority) {
                 case TorrentData::Priority::High:
-                    return priorityIcon(HighPriorityIcon);
+                    return priorityIcon(Priority::High);
                 case TorrentData::Priority::Normal:
-                    return priorityIcon(NormalPriorityIcon);
+                    return priorityIcon(Priority::Normal);
                 case TorrentData::Priority::Low:
-                    return priorityIcon(LowPriorityIcon);
+                    return priorityIcon(Priority::Low);
                 }
+            }
+            default:
+                break;
             }
             break;
         case Qt::DisplayRole:
