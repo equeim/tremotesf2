@@ -26,8 +26,8 @@ namespace tremotesf::desktoputils {
     };
     const QIcon& statusIcon(StatusIcon icon);
 
-    enum PriorityIcon { HighPriorityIcon, NormalPriorityIcon, LowPriorityIcon };
-    const QIcon& priorityIcon(PriorityIcon icon);
+    enum class Priority { High, Normal, Low };
+    const QIcon& priorityIcon(Priority priority);
 
     const QIcon& standardFileIcon();
     const QIcon& standardDirIcon();
