@@ -100,14 +100,18 @@ namespace tremotesf {
 
         const auto viewModel = qobject_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel);
         const auto comboBox = qobject_cast<QComboBox*>(mTextField);
+        comboBox->setCompleter(0);
 
         const auto updateItems = [=] {
             const auto items = viewModel->initialComboBoxItems();
+            int cursorPosition = comboBox->lineEdit()->cursorPosition();
             comboBox->clear();
             for (const auto& [itemPath, itemDisplayPath] : items) {
                 comboBox->addItem(itemDisplayPath, itemPath);
             }
+
             comboBox->lineEdit()->setText(viewModel->displayPath());
+            comboBox->lineEdit()->setCursorPosition(cursorPosition);
         };
         updateItems();
         QObject::connect(
