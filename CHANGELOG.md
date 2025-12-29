@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Status bar displays free space in the download directory (thanks @keizie)
+- Priority column in torrents list now shows colored icon (thanks @keizie)
 
 ## [2.9.1] - 2025-12-09
 ### Fixed
