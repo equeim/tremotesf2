@@ -39,7 +39,7 @@ namespace tremotesf {
         [[nodiscard]] SessionStats currentSession() const { return mCurrentSession; };
         [[nodiscard]] SessionStats total() const { return mTotal; };
 
-        void update(const QJsonObject& serverStats);
+        void update(std::optional<QJsonObject> serverStats, std::optional<qint64> freeSpace);
         void setFreeSpace(const qint64 freeSpace);
 
     private:

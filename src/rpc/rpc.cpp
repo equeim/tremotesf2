@@ -903,18 +903,19 @@ namespace tremotesf {
     }
 
     Coroutine<> Rpc::getServerStats() {
-        const auto response =
-            co_await mRequestRouter->postRequest("session-stats"_L1, R"({"method":"session-stats"})"_ba);
-        if (response.success) {
-            mServerStats->update(response.arguments);
-        }
-
-        if (isConnected()) {
-            const auto freeSpace = co_await getDownloadDirFreeSpace();
-            if (freeSpace) {
-                mServerStats->setFreeSpace(*freeSpace);
-            }
-        }
+        RequestRouter::Response statsResponse{};
+        std::optional<qint64> freeSpace{};
+        co_await waitAll(
+            [&]() -> Coroutine<> {
+                statsResponse =
+                    co_await mRequestRouter->postRequest("session-stats"_L1, R"({"method":"session-stats"})"_ba);
+            }(),
+            [&]() -> Coroutine<> { freeSpace = co_await getDownloadDirFreeSpace(); }()
+        );
+        mServerStats->update(
+            statsResponse.success ? std::optional(std::move(statsResponse.arguments)) : std::nullopt,
+            freeSpace
+        );
     }
 
     Coroutine<> Rpc::connectAndPerformDataUpdates() {
