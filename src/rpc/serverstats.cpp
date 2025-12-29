@@ -16,11 +16,16 @@ namespace tremotesf {
         mSessionCount = stats.value("sessionCount"_L1).toInt();
     }
 
-    void ServerStats::update(const QJsonObject& serverStats) {
-        mDownloadSpeed = serverStats.value("downloadSpeed"_L1).toInteger();
-        mUploadSpeed = serverStats.value("uploadSpeed"_L1).toInteger();
-        mCurrentSession.update(serverStats.value("current-stats"_L1).toObject());
-        mTotal.update(serverStats.value("cumulative-stats"_L1).toObject());
+    void ServerStats::update(std::optional<QJsonObject> serverStats, std::optional<qint64> freeSpace) {
+        if (serverStats.has_value()) {
+            mDownloadSpeed = serverStats->value("downloadSpeed"_L1).toInteger();
+            mUploadSpeed = serverStats->value("uploadSpeed"_L1).toInteger();
+            mCurrentSession.update(serverStats->value("current-stats"_L1).toObject());
+            mTotal.update(serverStats->value("cumulative-stats"_L1).toObject());
+        }
+        if (freeSpace.has_value()) {
+            mFreeSpace = *freeSpace;
+        }
         emit updated();
     }
 
