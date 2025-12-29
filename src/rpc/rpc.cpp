@@ -583,13 +583,17 @@ namespace tremotesf {
         if (!isConnected()) {
             co_return std::nullopt;
         }
-        if (mServerSettings->data().canShowFreeSpaceForPath()) {
-            co_return co_await getFreeSpaceForPathImpl(mServerSettings->data().downloadDirectory);
-        }
         co_return co_await getDownloadDirFreeSpaceImpl();
     }
 
     Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpaceImpl() {
+        if (mServerSettings->data().canShowFreeSpaceForPath()) {
+            co_return co_await getFreeSpaceForPathImpl(mServerSettings->data().downloadDirectory);
+        }
+        co_return co_await getDownloadDirFreeSpaceLegacyMethod();
+    }
+
+    Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpaceLegacyMethod() {
         const auto response = co_await mRequestRouter->postRequest(
             "download-dir-free-space"_L1,
 
@@ -910,7 +914,7 @@ namespace tremotesf {
                 statsResponse =
                     co_await mRequestRouter->postRequest("session-stats"_L1, R"({"method":"session-stats"})"_ba);
             }(),
-            [&]() -> Coroutine<> { freeSpace = co_await getDownloadDirFreeSpace(); }()
+            [&]() -> Coroutine<> { freeSpace = co_await getDownloadDirFreeSpaceImpl(); }()
         );
         mServerStats->update(
             statsResponse.success ? std::optional(std::move(statsResponse.arguments)) : std::nullopt,
