@@ -215,6 +215,7 @@ namespace tremotesf {
         Coroutine<> getTorrentsPeers(QJsonArray ids);
         Coroutine<> renameTorrentFileImpl(int torrentId, QString filePath, QString newName);
         Coroutine<std::optional<qint64>> getDownloadDirFreeSpaceImpl();
+        Coroutine<std::optional<qint64>> getDownloadDirFreeSpaceLegacyMethod();
         Coroutine<std::optional<qint64>> getFreeSpaceForPathImpl(QString path);
         Coroutine<> shutdownServerImpl();
 
