@@ -177,7 +177,6 @@ namespace tremotesf {
 
         void renameTorrentFile(int torrentId, QString filePath, QString newName);
 
-        Coroutine<std::optional<qint64>> getDownloadDirFreeSpace();
         Coroutine<std::optional<qint64>> getFreeSpaceForPath(QString path);
 
         void shutdownServer();

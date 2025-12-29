@@ -579,13 +579,6 @@ namespace tremotesf {
         }
     }
 
-    Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpace() {
-        if (!isConnected()) {
-            co_return std::nullopt;
-        }
-        co_return co_await getDownloadDirFreeSpaceImpl();
-    }
-
     Coroutine<std::optional<qint64>> Rpc::getDownloadDirFreeSpaceImpl() {
         if (mServerSettings->data().canShowFreeSpaceForPath()) {
             co_return co_await getFreeSpaceForPathImpl(mServerSettings->data().downloadDirectory);
