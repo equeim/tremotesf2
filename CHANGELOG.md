@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Status bar displays free space in the download directory (thanks @keizie)
+
 ## [2.9.1] - 2025-12-09
 ### Fixed
 - Changed maximum values of idle limits and speed limits settings to align them with Transmission limitations
