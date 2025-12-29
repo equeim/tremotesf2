@@ -15,7 +15,6 @@
 #include <KColumnResizer>
 #include <KMessageWidget>
 
-#include "coroutines/coroutines.h"
 #include "rpc/serverstats.h"
 #include "rpc/rpc.h"
 #include "formatutils.h"
@@ -104,7 +103,7 @@ namespace tremotesf {
             sessionCountLabel->setEnabled(rpc->isConnected());
         });
 
-        auto update = [=, this] {
+        auto update = [=] {
             const SessionStats currentSessionStats(rpc->serverStats()->currentSession());
             sessionDownloadedLabel->setText(formatutils::formatByteSize(currentSessionStats.downloaded()));
             sessionUploadedLabel->setText(formatutils::formatByteSize(currentSessionStats.uploaded()));
@@ -122,17 +121,9 @@ namespace tremotesf {
             //: How many times Transmission was launched
             sessionCountLabel->setText(qApp->translate("tremotesf", "%Ln times", nullptr, totalStats.sessionCount()));
 
-            mFreeSpaceCoroutineScope.cancelAll();
-            mFreeSpaceCoroutineScope.launch(getDownloadDirFreeSpace(rpc, freeSpaceField));
+            freeSpaceField->setText(formatutils::formatByteSize(rpc->serverStats()->freeSpace()));
         };
         QObject::connect(rpc->serverStats(), &ServerStats::updated, this, update);
         update();
-    }
-
-    Coroutine<> ServerStatsDialog::getDownloadDirFreeSpace(Rpc* rpc, QLabel* freeSpaceField) {
-        const auto freeSpace = co_await rpc->getDownloadDirFreeSpace();
-        if (freeSpace) {
-            freeSpaceField->setText(formatutils::formatByteSize(*freeSpace));
-        }
     }
 }

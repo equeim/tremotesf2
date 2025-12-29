@@ -7,8 +7,6 @@
 
 #include <QDialog>
 
-#include "coroutines/scope.h"
-
 class QLabel;
 
 namespace tremotesf {
@@ -19,11 +17,6 @@ namespace tremotesf {
 
     public:
         explicit ServerStatsDialog(Rpc* rpc, QWidget* parent = nullptr);
-
-    private:
-        Coroutine<> getDownloadDirFreeSpace(Rpc* rpc, QLabel* freeSpaceField);
-
-        CoroutineScope mFreeSpaceCoroutineScope{};
     };
 }
 
