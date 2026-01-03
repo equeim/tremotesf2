@@ -8,9 +8,14 @@ build_freebsd_task:
   freebsd_instance:
     matrix:
     - image_family: freebsd-14-3
+    - image_family: freebsd-15-0-amd64-ufs
+
 
   packages_cache:
     folder: /var/cache/pkg
+    fingerprint_script: freebsd-version -u
+    reupload_on_changes: true
+    optimistically_restore_on_miss: false
 
   install_dependencies_script: |
     set -e -o pipefail
