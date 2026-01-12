@@ -340,7 +340,7 @@ namespace tremotesf {
             return qApp->translate("tremotesf", "Leechers");
         case Column::PeersSendingToUs:
             //: Torrents list column name, number of peers that we are downloading from
-            return qApp->translate("tremotesf", "Downloading to peers");
+            return qApp->translate("tremotesf", "Downloading from peers");
         case Column::PeersGettingFromUs:
             //: Torrents list column name, number of peers that we are uploading to
             return qApp->translate("tremotesf", "Uploading to peers");
