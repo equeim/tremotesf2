@@ -13,12 +13,16 @@ namespace tremotesf {
     // We can't use QDir::to/fromNativeSeparators because it checks for current OS,
     // and we need it to work regardless of OS we are running on
 
+    static const QRegularExpression schemeUrlRegex(
+        R"(^[a-zA-Z][a-zA-Z0-9+.-]+:/(?:/+)(?:[a-zA-Z0-9._~-]+)?(?::[a-zA-Z0-9._~-]*)?@?(?:[a-zA-Z0-9.-]+|\[[a-fA-F0-9:]+\]):?(?:\d+)?)"_L1
+    );
+
     namespace {
         constexpr auto windowsSeparatorChar = '\\';
         constexpr auto unixSeparatorChar = '/';
         constexpr auto unixSeparatorString = "/"_L1;
 
-        enum class PathType { Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
+        enum class PathType { Scheme, Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
 
         bool isWindowsUNCOrDOSDevicePath(QStringView path) {
             static const QRegularExpression regex(R"(^(?:\\|//).*$)"_L1);
@@ -26,6 +30,9 @@ namespace tremotesf {
         }
 
         PathType determinePathType(QStringView path, PathOs pathOs) {
+            if (isSchemeUrl(QString(path))) {
+                return PathType::Scheme;
+            }
             switch (pathOs) {
             case PathOs::Unix:
                 return PathType::Unix;
@@ -78,8 +85,10 @@ namespace tremotesf {
                     return 3; // e.g. 'C:/'
                 case PathType::WindowsUNCOrDOSDevicePath:
                     return 2; // e.g. '//'
+                case PathType::Scheme:
+                    return 6; //  e.g. aa://a
                 }
-                throw std::logic_error("Unknown PathOs value");
+                throw std::logic_error("Unknown PathType value");
             }();
             if (path.size() <= minimumLength) {
                 if (pathType == PathType::WindowsAbsoluteDOSFilePath && path.size() == 2) {
@@ -91,12 +100,27 @@ namespace tremotesf {
                 path.chop(1);
             }
         }
+
+        void normalizeSchemePrefix(QString& prefix) {
+            // Lowercase the scheme
+            const int colonPos = prefix.indexOf("://"_L1);
+            if (colonPos != -1) {
+                prefix.replace(0, colonPos, prefix.left(colonPos).toLower());
+            }
+
+            // Collapse multiple / after : to ://
+            while (prefix.contains(":///")) {
+                prefix.replace(":///", "://");
+            }
+        }
     }
 
     bool isAbsoluteWindowsDOSFilePath(QStringView path) {
         static const QRegularExpression regex(R"(^[A-Za-z]:[\\/]?.*$)"_L1);
         return regex.matchView(path).hasMatch();
     }
+
+    bool isSchemeUrl(const QString& path) { return schemeUrlRegex.matchView(path).hasMatch(); }
 
     QString normalizePath(const QString& path, PathOs pathOs) {
         if (path.isEmpty()) {
@@ -106,15 +130,27 @@ namespace tremotesf {
         if (normalized.isEmpty()) {
             return normalized;
         }
+        // we will fill it and use if path type is a scheme URL
+        QString pathPrefix;
         const auto pathType = determinePathType(normalized, pathOs);
-        if (pathType != PathType::Unix) {
+        if (pathType == PathType::Scheme) {
+            // For scheme URLs, normalize authority and the path part separately
+            auto match = schemeUrlRegex.match(normalized);
+            if (match.hasMatch()) {
+                const int originalPrefixLength = match.capturedLength();
+                pathPrefix = match.captured();
+                normalizeSchemePrefix(pathPrefix);
+                normalized = normalized.mid(originalPrefixLength);
+            }
+        }
+        if (pathType != PathType::Unix && pathType != PathType::Scheme) {
             convertFromNativeWindowsSeparators(normalized);
             if (pathType == PathType::WindowsAbsoluteDOSFilePath) {
                 capitalizeWindowsDriveLetter(normalized);
             }
         }
         collapseRepeatingSeparators(normalized, pathType);
-        dropOrAddTrailingSeparator(normalized, pathType);
+        dropOrAddTrailingSeparator(normalized.prepend(pathPrefix), pathType);
         return normalized;
     }
 
