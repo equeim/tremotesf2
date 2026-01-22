@@ -5,6 +5,9 @@
 - Status bar displays free space in the download directory (thanks @keizie)
 - Priority column in torrents list now shows colored icon (thanks @keizie)
 
+### Fixed
+- Label/directory/tracker filter lists in the sidebar now use natural sorting
+
 ## [2.9.1] - 2025-12-09
 ### Fixed
 - Changed maximum values of idle limits and speed limits settings to align them with Transmission limitations
