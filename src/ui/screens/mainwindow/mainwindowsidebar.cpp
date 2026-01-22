@@ -15,6 +15,7 @@
 
 #include "rpc/rpc.h"
 #include "rpc/serversettings.h"
+#include "ui/itemmodels/baseproxymodel.h"
 #include "ui/stylehelpers.h"
 #include "ui/widgets/tooltipwhenelideddelegate.h"
 #include "alltrackersmodel.h"
@@ -74,9 +75,7 @@ namespace tremotesf {
             void init(Rpc* rpc, std::optional<int> sortByRole = {}) {
                 QAbstractItemModel* actualModel{};
                 if (sortByRole.has_value()) {
-                    mProxyModel = new QSortFilterProxyModel(this);
-                    mProxyModel->setSourceModel(mModel);
-                    mProxyModel->setSortRole(*sortByRole);
+                    mProxyModel = new BaseProxyModel(mModel, *sortByRole, std::nullopt, this);
                     mProxyModel->sort(0);
                     actualModel = mProxyModel;
                 } else {
@@ -142,7 +141,7 @@ namespace tremotesf {
 
             TorrentsProxyModel* mTorrentsProxyModel;
             BaseTorrentsFiltersSettingsModel* mModel;
-            QSortFilterProxyModel* mProxyModel{};
+            BaseProxyModel* mProxyModel{};
         };
 
         class StatusFiltersListView final : public BaseListView {
