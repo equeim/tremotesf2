@@ -26,13 +26,7 @@ namespace tremotesf {
         };
         [[nodiscard]] std::vector<ComboBoxItem> initialComboBoxItems() const { return mInitialComboBoxItems; };
 
-        void onComboBoxItemSelected(QString path, QString displayPath) {
-            updatePathImpl(std::move(path), std::move(displayPath));
-        }
         void saveDirectories(std::vector<ComboBoxItem> comboBoxItems);
-
-    protected:
-        void updatePathImpl(QString path, QString displayPath) override;
 
     private:
         [[nodiscard]] std::vector<ComboBoxItem> createInitialComboBoxItems() const;

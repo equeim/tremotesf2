@@ -42,13 +42,21 @@ namespace tremotesf {
 
     void RemoteDirectorySelectionWidgetViewModel::updatePathProgrammatically(QString path) {
         auto displayPath = toNativeSeparators(path);
-        updatePathImpl(std::move(path), std::move(displayPath));
+        updatePathProgrammatically(std::move(path), std::move(displayPath));
+    }
+
+    void RemoteDirectorySelectionWidgetViewModel::updatePathProgrammatically(QString path, QString displayPath) {
+        if (updatePathImpl(std::move(path), std::move(displayPath))) {
+            emit pathChanged(false);
+        }
     }
 
     void RemoteDirectorySelectionWidgetViewModel::onPathEditedByUser(const QString& text) {
         auto displayPath = text.trimmed();
         auto path = normalizePath(displayPath);
-        updatePathImpl(std::move(path), std::move(displayPath));
+        if (updatePathImpl(std::move(path), std::move(displayPath))) {
+            emit pathChanged(true);
+        }
     }
 
     void RemoteDirectorySelectionWidgetViewModel::onFileDialogAccepted(QString path) {
@@ -72,12 +80,13 @@ namespace tremotesf {
         return tremotesf::toNativeSeparators(path, mRpc->serverSettings()->data().pathOs);
     }
 
-    void RemoteDirectorySelectionWidgetViewModel::updatePathImpl(QString path, QString displayPath) {
+    bool RemoteDirectorySelectionWidgetViewModel::updatePathImpl(QString path, QString displayPath) {
         if (path != mPath) {
             mPath = std::move(path);
             mDisplayPath = std::move(displayPath);
-            emit pathChanged();
+            return true;
         }
+        return false;
     }
 
     RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget(QWidget* parent) : QWidget(parent) {}
@@ -115,7 +124,16 @@ namespace tremotesf {
         const auto lineEdit = lineEditFromTextField();
         const auto updateLineEdit = [=, this] { lineEdit->setText(mViewModel->displayPath()); };
         updateLineEdit();
-        QObject::connect(mViewModel, &RemoteDirectorySelectionWidgetViewModel::pathChanged, this, updateLineEdit);
+        QObject::connect(
+            mViewModel,
+            &RemoteDirectorySelectionWidgetViewModel::pathChanged,
+            this,
+            [=](bool textFieldWasEdited) {
+                if (!textFieldWasEdited) {
+                    updateLineEdit();
+                }
+            }
+        );
         QObject::connect(
             mViewModel,
             &RemoteDirectorySelectionWidgetViewModel::pathChanged,
