@@ -568,11 +568,11 @@ namespace tremotesf {
     void ServerSettingsDialog::loadSettings() {
         const ServerSettings* settings = mRpc->serverSettings();
 
-        mDownloadDirectoryWidget->updatePath(settings->data().downloadDirectory);
+        mDownloadDirectoryWidget->resetPath(settings->data().downloadDirectory);
         mStartAddedTorrentsCheckBox->setChecked(settings->data().startAddedTorrents);
         mIncompleteFilesCheckBox->setChecked(settings->data().renameIncompleteFiles);
         mIncompleteDirectoryCheckBox->setChecked(settings->data().incompleteDirectoryEnabled);
-        mIncompleteDirectoryWidget->updatePath(settings->data().incompleteDirectory);
+        mIncompleteDirectoryWidget->resetPath(settings->data().incompleteDirectory);
 
         mRatioLimitCheckBox->setChecked(settings->data().ratioLimited);
         mRatioLimitSpinBox->setValue(settings->data().ratioLimit);

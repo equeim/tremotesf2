@@ -119,6 +119,12 @@ namespace tremotesf {
         });
     }
 
+    void TorrentDownloadDirectoryDirectorySelectionWidget::resetPath(QString path) {
+        RemoteDirectorySelectionWidget::resetPath(std::move(path));
+        qobject_cast<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel*>(mViewModel)
+            ->updateInitialComboBoxItems();
+    }
+
     void TorrentDownloadDirectoryDirectorySelectionWidget::saveDirectories() {
         auto comboBox = qobject_cast<QComboBox*>(mTextField);
         auto comboBoxItems = std::views::iota(0, comboBox->count())

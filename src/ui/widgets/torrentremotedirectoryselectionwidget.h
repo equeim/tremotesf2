@@ -25,12 +25,12 @@ namespace tremotesf {
             [[nodiscard]] bool operator==(const ComboBoxItem&) const = default;
         };
         [[nodiscard]] std::vector<ComboBoxItem> initialComboBoxItems() const { return mInitialComboBoxItems; };
+        void updateInitialComboBoxItems();
 
         void saveDirectories(std::vector<ComboBoxItem> comboBoxItems);
 
     private:
         [[nodiscard]] std::vector<ComboBoxItem> createInitialComboBoxItems() const;
-        void updateInitialComboBoxItems();
 
         std::vector<ComboBoxItem> mInitialComboBoxItems{createInitialComboBoxItems()};
 
@@ -45,6 +45,7 @@ namespace tremotesf {
         using RemoteDirectorySelectionWidget::RemoteDirectorySelectionWidget;
 
         void setup(QString path, const Rpc* rpc) override;
+        void resetPath(QString path) override;
 
         void saveDirectories();
 
