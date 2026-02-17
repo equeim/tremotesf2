@@ -72,8 +72,8 @@ jobs:
 
     - name: Install WiX
       run: |
-        dotnet tool install --global wix
-        wix extension add --global WixToolset.UI.wixext
+        dotnet tool install --global wix --version 6.0.2
+        wix extension add --global WixToolset.UI.wixext/6.0.2
 
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@5d989fa1a8d416d51b2089554f07a5233cb76a77
