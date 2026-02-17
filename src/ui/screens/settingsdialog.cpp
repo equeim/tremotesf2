@@ -306,7 +306,7 @@ namespace tremotesf {
                 if (connected) {
                     // Update parameters which initial values depend on server state
                     const auto parameters = getAddTorrentParameters(rpc);
-                    addTorrentParametersWidgets.downloadDirectoryWidget->updatePath(parameters.downloadDirectory);
+                    addTorrentParametersWidgets.downloadDirectoryWidget->resetPath(parameters.downloadDirectory);
                     addTorrentParametersWidgets.startTorrentCheckBox->setChecked(parameters.startAfterAdding);
                 }
             });

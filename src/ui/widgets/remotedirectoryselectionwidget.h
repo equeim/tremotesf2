@@ -58,7 +58,7 @@ namespace tremotesf {
 
         virtual void setup(QString path, const Rpc* rpc);
         [[nodiscard]] QString path() const { return mViewModel->path(); }
-        void updatePath(QString path) { mViewModel->updatePathProgrammatically(std::move(path)); }
+        virtual void resetPath(QString path) { mViewModel->updatePathProgrammatically(std::move(path)); }
 
     protected:
         virtual QWidget* createTextField();

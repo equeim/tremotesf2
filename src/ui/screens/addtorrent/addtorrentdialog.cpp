@@ -297,7 +297,7 @@ namespace tremotesf {
         if (enabled) {
             // Update parameters which initial values depend on server state
             const auto parameters = getAddTorrentParameters(mRpc);
-            mAddTorrentParametersWidgets.downloadDirectoryWidget->updatePath(parameters.downloadDirectory);
+            mAddTorrentParametersWidgets.downloadDirectoryWidget->resetPath(parameters.downloadDirectory);
             mAddTorrentParametersWidgets.startTorrentCheckBox->setChecked(parameters.startAfterAdding);
         }
 
@@ -464,7 +464,7 @@ namespace tremotesf {
 
     void AddTorrentDialog::AddTorrentParametersWidgets::reset(Rpc* rpc) const {
         const auto initialParameters = getInitialAddTorrentParameters(rpc);
-        downloadDirectoryWidget->updatePath(initialParameters.downloadDirectory);
+        downloadDirectoryWidget->resetPath(initialParameters.downloadDirectory);
         priorityComboBox->setCurrentIndex(
             // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
             indexOfCasted<int>(priorityComboBoxItems, initialParameters.priority).value()
