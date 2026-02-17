@@ -36,11 +36,6 @@ namespace tremotesf {
         servers->setCurrentServerLastDownloadDirectory(mPath);
     }
 
-    void TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::updatePathImpl(QString path, QString displayPath) {
-        RemoteDirectorySelectionWidgetViewModel::updatePathImpl(std::move(path), std::move(displayPath));
-        updateInitialComboBoxItems();
-    }
-
     std::vector<TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::ComboBoxItem>
     TorrentDownloadDirectoryDirectorySelectionWidgetViewModel::createInitialComboBoxItems() const {
         QStringList directories = Servers::instance()->currentServerLastDownloadDirectories(mRpc->serverSettings());
@@ -119,7 +114,7 @@ namespace tremotesf {
 
         QObject::connect(comboBox, &QComboBox::activated, this, [=](int index) {
             if (index != -1) {
-                viewModel->onComboBoxItemSelected(comboBox->itemData(index).toString(), comboBox->itemText(index));
+                viewModel->updatePathProgrammatically(comboBox->itemData(index).toString(), comboBox->itemText(index));
             }
         });
     }

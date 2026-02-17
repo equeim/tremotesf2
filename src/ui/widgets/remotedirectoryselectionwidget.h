@@ -26,14 +26,13 @@ namespace tremotesf {
         [[nodiscard]] virtual QString fileDialogDirectory();
 
         void updatePathProgrammatically(QString path);
+        void updatePathProgrammatically(QString path, QString displayPath);
         void onPathEditedByUser(const QString& text);
         void onFileDialogAccepted(QString path);
 
     protected:
         [[nodiscard]] QString normalizePath(const QString& path) const;
         [[nodiscard]] QString toNativeSeparators(const QString& path) const;
-
-        virtual void updatePathImpl(QString path, QString displayPath);
 
         const Rpc* mRpc{};
 
@@ -43,8 +42,11 @@ namespace tremotesf {
         enum class Mode { Local, RemoteMounted, Remote };
         Mode mMode{};
 
+    private:
+        [[nodiscard]] bool updatePathImpl(QString path, QString displayPath);
+
     signals:
-        void pathChanged();
+        void pathChanged(bool textFieldWasEdited);
         void showMountedDirectoryError();
     };
 
