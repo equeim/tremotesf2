@@ -11,6 +11,7 @@
 
 namespace tremotesf {
     bool isAbsoluteWindowsDOSFilePath(QStringView path);
+    bool isSchemeUrl(const QString& path);
 
     /**
      * We need to pass PathOs explicitly because we can't determing whether given path is Unix or Windows path from its string alone:
