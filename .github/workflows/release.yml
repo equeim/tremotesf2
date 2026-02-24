@@ -49,12 +49,7 @@ jobs:
       with:
         repository: equeim/tremotesf-debian
         ref: ${{ github.event.release.tag_name }}
-        path: tremotesf-debian
-
-    - name: Remove everything except debian/ directory
-      run: |
-        mv tremotesf-debian/debian debian
-        rm -rf tremotesf-debian
+        sparse-checkout: debian
 
     - name: Make source package
       run: |
