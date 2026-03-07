@@ -171,50 +171,32 @@ namespace tremotesf {
             window->raise();
         }
 
-#ifdef TREMOTESF_UNIX_FREEDESKTOP
-        void activeWindowOnX11(QWidget* window, const std::optional<QByteArray>& startupNotificationId) {
-            if (startupNotificationId.has_value()) {
-                info().log("Removing startup notification with id {}", *startupNotificationId);
-                KStartupInfo::setNewStartupId(window->windowHandle(), *startupNotificationId);
-                KStartupInfo::appStarted(*startupNotificationId);
-            }
-            window->activateWindow();
-        }
-
-        void activeWindowOnWayland(
-            [[maybe_unused]] QWidget* window, [[maybe_unused]] const std::optional<QByteArray>& xdgActivationToken
+        void consumeActivationToken(
+            [[maybe_unused]] QWidget* window, [[maybe_unused]] std::optional<QByteArray>& windowActivationToken
         ) {
-            if (xdgActivationToken.has_value()) {
-                info().log("Activating window with token {}", *xdgActivationToken);
-                // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
-                // It we be read and unset in QWidget::activateWindow() call below
-                qputenv(xdgActivationTokenEnvVariable, *xdgActivationToken);
-            }
-            window->activateWindow();
-        }
-#endif
-
-        void activateWindowCompat(
-            QWidget* window, [[maybe_unused]] const std::optional<QByteArray>& windowActivationToken = {}
-        ) {
-            info().log("Activating window {}", *window);
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
+            if (!windowActivationToken.has_value()) {
+                return;
+            }
             switch (KWindowSystem::platform()) {
             case KWindowSystem::Platform::X11:
                 debug().log("Windowing system is X11");
-                activeWindowOnX11(window, windowActivationToken);
+                info().log("Removing startup notification with id {}", *windowActivationToken);
+                KStartupInfo::setNewStartupId(window->windowHandle(), *windowActivationToken);
+                KStartupInfo::appStarted(*windowActivationToken);
                 break;
             case KWindowSystem::Platform::Wayland:
                 debug().log("Windowing system is Wayland");
-                activeWindowOnWayland(window, windowActivationToken);
+                info().log("Activating window with token {}", *windowActivationToken);
+                // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
+                // It wll be read and unset in QWidget::activateWindow() or QWidget::show()
+                qputenv(xdgActivationTokenEnvVariable, *windowActivationToken);
                 break;
             default:
                 warning().log("Unknown windowing system");
-                window->activateWindow();
                 break;
             }
-#else
-            window->activateWindow();
+            windowActivationToken.reset();
 #endif
         }
     }
@@ -1024,7 +1006,7 @@ namespace tremotesf {
                 const auto existingDialog = mTorrentPropertiesDialogs.find(hashString);
                 if (existingDialog != mTorrentPropertiesDialogs.end()) {
                     unminimizeAndRaiseWindow(existingDialog->second);
-                    activateWindowCompat(existingDialog->second);
+                    existingDialog->second->activateWindow();
                 } else {
                     auto dialog = new TorrentPropertiesDialog(torrent, mViewModel.rpc(), mWindow);
                     dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -1176,7 +1158,7 @@ namespace tremotesf {
             auto existingDialog = mWindow->findChild<Dialog*>({}, Qt::FindDirectChildrenOnly);
             if (existingDialog) {
                 unminimizeAndRaiseWindow(existingDialog);
-                activateWindowCompat(existingDialog);
+                existingDialog->activateWindow();
             } else {
                 auto dialog = createDialog();
                 dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -1493,33 +1475,21 @@ namespace tremotesf {
             } else {
                 info().log("NSApp is not hidden, activating main window");
                 unminimizeAndRaiseWindow(mWindow);
-                activateWindowCompat(mWindow);
+                mWindow->activateWindow();
             }
 #else
             if (!mWindow->isHidden()) {
                 info().log("Main window is not hidden, activating it");
                 unminimizeAndRaiseWindow(mWindow);
-                activateWindowCompat(mWindow, windowActivationToken);
+                consumeActivationToken(mWindow, windowActivationToken);
+                mWindow->activateWindow();
                 return;
             }
 
-#    ifdef TREMOTESF_UNIX_FREEDESKTOP
-            // With Wayland we need to set XDG_ACTIVATION_TOKEN environment variable before show()
-            // so that Qt handles activation automatically
-            if (windowActivationToken.has_value() && KWindowSystem::isPlatformWayland()) {
-                info().log("Showing window with token {}", *windowActivationToken);
-                // Qt gets new token from XDG_ACTIVATION_TOKEN environment variable
-                // It we be read and unset in QWidget::show() call below
-                qputenv(xdgActivationTokenEnvVariable, *windowActivationToken);
-                windowActivationToken.reset();
-            }
-#    endif
+            consumeActivationToken(mWindow, windowActivationToken);
             info().log("Showing window {}", *mWindow);
             mWindow->show();
             unminimizeAndRaiseWindow(mWindow);
-            if (windowActivationToken.has_value()) {
-                activateWindowCompat(mWindow, windowActivationToken);
-            }
             for (const auto& window : mOtherWindowsHiddenByUs) {
                 if (window) {
                     info().log("Showing window {}", *window);
@@ -1602,38 +1572,32 @@ namespace tremotesf {
         void showAddTorrentFileDialogs(const QStringList& files, std::optional<QByteArray> windowActivationToken) {
             const bool setParent = Settings::instance()->get_showMainWindowWhenAddingTorrent();
             for (const QString& filePath : files) {
-                auto* const dialog = showAddTorrentFileDialog(filePath, setParent);
-                if (windowActivationToken.has_value()) {
-                    activateWindowCompat(dialog, windowActivationToken);
-                    // Can use token only once
-                    windowActivationToken.reset();
-                }
+                showAddTorrentFileDialog(filePath, setParent, windowActivationToken);
             }
         }
 
-        QDialog* showAddTorrentFileDialog(const QString& filePath, bool setParent) {
+        void showAddTorrentFileDialog(
+            const QString& filePath, bool setParent, std::optional<QByteArray>& windowActivationToken
+        ) {
             auto* const dialog = new AddTorrentDialog(
                 mViewModel.rpc(),
                 AddTorrentDialog::FileParams{filePath},
                 setParent ? mWindow : nullptr
             );
             dialog->setAttribute(Qt::WA_DeleteOnClose);
+            consumeActivationToken(dialog, windowActivationToken);
             dialog->show();
-            return dialog;
         }
 
-        void
-        showAddTorrentLinksDialog(const QStringList& urls, const std::optional<QByteArray>& windowActivationToken) {
+        void showAddTorrentLinksDialog(const QStringList& urls, std::optional<QByteArray>& windowActivationToken) {
             auto* const dialog = new AddTorrentDialog(
                 mViewModel.rpc(),
                 AddTorrentDialog::UrlParams{urls},
                 Settings::instance()->get_showMainWindowWhenAddingTorrent() ? mWindow : nullptr
             );
             dialog->setAttribute(Qt::WA_DeleteOnClose);
+            consumeActivationToken(dialog, windowActivationToken);
             dialog->show();
-            if (windowActivationToken.has_value()) {
-                activateWindowCompat(dialog, windowActivationToken);
-            }
         }
 
         void askForMergingTrackers(
@@ -1642,13 +1606,13 @@ namespace tremotesf {
         ) {
             const bool setParent = Settings::instance()->get_showMainWindowWhenAddingTorrent();
             for (auto& [torrent, trackers] : existingTorrents) {
-                auto* const dialog =
-                    tremotesf::askForMergingTrackers(torrent, std::move(trackers), setParent ? mWindow : nullptr);
-                if (windowActivationToken.has_value()) {
-                    activateWindowCompat(dialog, windowActivationToken);
-                    // Can use token only once
-                    windowActivationToken.reset();
-                }
+                auto* const dialog = tremotesf::createAskForMergingTrackersDialog(
+                    torrent,
+                    std::move(trackers),
+                    setParent ? mWindow : nullptr
+                );
+                consumeActivationToken(dialog, windowActivationToken);
+                dialog->show();
             }
         }
 
@@ -1663,7 +1627,6 @@ namespace tremotesf {
                 dialog->setAttribute(Qt::WA_DeleteOnClose, true);
                 dialog->setModal(false);
                 dialog->show();
-                activateWindowCompat(dialog);
             };
 
             QObject::connect(mViewModel.rpc(), &Rpc::torrentAddDuplicate, this, [=] {
@@ -1681,9 +1644,7 @@ namespace tremotesf {
             });
         }
 
-        void showDelayedTorrentAddDialog(
-            const QStringList& torrents, const std::optional<QByteArray>& windowActivationToken
-        ) {
+        void showDelayedTorrentAddDialog(const QStringList& torrents, std::optional<QByteArray> windowActivationToken) {
             debug().log("MainWindow: showing delayed torrent add dialog");
             const auto dialog = new QMessageBox(
                 QMessageBox::Information,
@@ -1702,10 +1663,8 @@ namespace tremotesf {
                 detailedText += '\n';
             }
             dialog->setDetailedText(detailedText);
+            consumeActivationToken(dialog, windowActivationToken);
             dialog->show();
-            if (windowActivationToken.has_value()) {
-                activateWindowCompat(dialog, windowActivationToken);
-            }
             QObject::connect(mViewModel.rpc(), &Rpc::connectedChanged, dialog, [=, this] {
                 if (mViewModel.rpc()->isConnected()) dialog->close();
             });

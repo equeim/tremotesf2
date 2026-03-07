@@ -42,7 +42,8 @@ namespace tremotesf {
         };
     }
 
-    QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent) {
+    QDialog*
+    createAskForMergingTrackersDialog(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent) {
         auto* const settings = Settings::instance();
         QMessageBox* messageBox{};
         if (settings->get_askForMergingTrackersWhenAddingExistingTorrent()) {
@@ -95,7 +96,6 @@ namespace tremotesf {
         }
         messageBox->setAttribute(Qt::WA_DeleteOnClose);
         messageBox->setModal(false);
-        messageBox->show();
         return messageBox;
     }
 
