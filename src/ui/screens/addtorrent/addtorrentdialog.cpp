@@ -420,7 +420,7 @@ namespace tremotesf {
                 info().log("Parsed, result = {}", magnetLink);
                 auto* const torrent = mRpc->torrentByHash(magnetLink.infoHashV1);
                 if (torrent) {
-                    askForMergingTrackers(torrent, std::move(magnetLink.trackers), parentWidget());
+                    createAskForMergingTrackersDialog(torrent, std::move(magnetLink.trackers), parentWidget())->show();
                     return true;
                 }
             } catch (const std::runtime_error& e) {
@@ -438,7 +438,7 @@ namespace tremotesf {
         auto& [infoHashV1, trackers] = *mTorrentFileInfoHashAndTrackers;
         auto* const torrent = mRpc->torrentByHash(infoHashV1);
         if (torrent) {
-            askForMergingTrackers(torrent, std::move(trackers), parentWidget());
+            createAskForMergingTrackersDialog(torrent, std::move(trackers), parentWidget())->show();
             return true;
         }
         return false;

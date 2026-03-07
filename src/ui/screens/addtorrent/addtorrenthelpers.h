@@ -27,7 +27,8 @@ namespace tremotesf {
     AddTorrentParameters getAddTorrentParameters(Rpc* rpc);
     AddTorrentParameters getInitialAddTorrentParameters(Rpc* rpc);
 
-    QDialog* askForMergingTrackers(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent);
+    QDialog*
+    createAskForMergingTrackersDialog(Torrent* torrent, std::vector<std::set<QString>> trackers, QWidget* parent);
 
     QString bencodeErrorString(bencode::Error::Type type);
 }
