@@ -18,14 +18,6 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
-        std::vector<int> idsFromIndex(const QModelIndex& index) {
-            auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-            if (entry->isDirectory()) {
-                return static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
-            }
-            return {static_cast<TorrentFilesModelFile*>(entry)->id()};
-        }
-
         std::vector<int> idsFromIndexes(const QList<QModelIndex>& indexes) {
             std::vector<int> ids{};
             // at least indexes.size(), but may be more
@@ -59,6 +51,7 @@ namespace tremotesf {
                     TorrentFilesModelEntry::fromFilePriority(file.priority)
                 );
             }
+            builder.calculateDirectoriesRecursively();
             return {std::move(rootDirectory), std::move(builder.files)};
         }
     }
@@ -103,19 +96,9 @@ namespace tremotesf {
 
     void TorrentFilesModel::setRpc(Rpc* rpc) { mRpc = rpc; }
 
-    void TorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted) {
-        BaseTorrentFilesModel::setFileWanted(index, wanted);
-        mTorrent->setFilesWanted(idsFromIndex(index), wanted);
-    }
-
     void TorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted) {
         BaseTorrentFilesModel::setFilesWanted(indexes, wanted);
         mTorrent->setFilesWanted(idsFromIndexes(indexes), wanted);
-    }
-
-    void TorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority) {
-        BaseTorrentFilesModel::setFilePriority(index, priority);
-        mTorrent->setFilesPriority(idsFromIndex(index), TorrentFilesModelEntry::toFilePriority(priority));
     }
 
     void
@@ -205,12 +188,10 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::updateTree(std::span<const int> changed) {
-        const auto& torrentFiles = mTorrent->files();
-        updateFiles(changed, [&](size_t index, TorrentFilesModelFile* file) {
-            const auto& json = torrentFiles.at(index);
-            file->setCompletedSize(json.completedSize);
-            file->setWanted(json.wanted);
-            file->setPriority(TorrentFilesModelEntry::fromFilePriority(json.priority));
+        const auto& jsons = mTorrent->files();
+        updateFiles(changed, [&](size_t i, TorrentFilesModelFile* file) {
+            const auto& json = jsons.at(i);
+            file->update(json.wanted, TorrentFilesModelEntry::fromFilePriority(json.priority), json.completedSize);
         });
     }
 

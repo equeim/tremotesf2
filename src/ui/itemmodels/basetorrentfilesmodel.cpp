@@ -4,11 +4,14 @@
 
 #include "basetorrentfilesmodel.h"
 
+#include <ranges>
+
 #include <QCoreApplication>
+#include <QHash>
 #include <QIcon>
+#include <QSet>
 
 #include "desktoputils.h"
-#include "itemlistupdater.h"
 #include "formatutils.h"
 
 namespace tremotesf {
@@ -120,7 +123,7 @@ namespace tremotesf {
             return false;
         }
         if (static_cast<Column>(index.column()) == Column::Name && role == Qt::CheckStateRole) {
-            setFileWanted(index, (value.toInt() == Qt::Checked));
+            setFilesWanted({index}, (value.toInt() == Qt::Checked));
             return true;
         }
         return false;
@@ -164,37 +167,135 @@ namespace tremotesf {
         return 0;
     }
 
-    void BaseTorrentFilesModel::setFileWanted(const QModelIndex& index, bool wanted) {
-        if (index.isValid()) {
-            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
-            updateDirectoryChildren();
-        }
-    }
+    namespace {
+        class DataChangedDispatcher final {
+        public:
+            void add(const QModelIndex& parent, int row) {
+                // NOLINTNEXTLINE(clazy-detaching-member)
+                if (const auto found = mPendingSignals.find(parent); found != mPendingSignals.end()) {
+                    found->push_back(row);
+                } else {
+                    mPendingSignals.emplace(parent, std::vector{row});
+                }
+            }
+            void dispatchSignals(QAbstractItemModel& model) {
+                for (auto&& [parent, rows] : mPendingSignals.asKeyValueRange()) {
+                    if (rows.size() == 1) {
+                        const int row = rows.front();
+                        emit model.dataChanged(
+                            model.index(row, 0, parent),
+                            model.index(row, model.columnCount() - 1, parent)
+                        );
+                        continue;
+                    }
+                    std::ranges::sort(rows);
+                    int firstRow = rows.front();
+                    int lastRow = firstRow;
+                    const auto emitForRange = [&] {
+                        emit model.dataChanged(
+                            model.index(firstRow, 0, parent),
+                            model.index(lastRow, model.columnCount() - 1, parent)
+                        );
+                    };
+                    for (int row : rows | std::views::drop(1)) {
+                        if (row != (lastRow + 1)) {
+                            emitForRange();
+                            firstRow = row;
+                        }
+                        lastRow = row;
+                    }
+                    emitForRange();
+                }
+            }
 
-    void BaseTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted) {
-        for (const QModelIndex& index : indexes) {
-            if (index.isValid()) {
-                static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setWanted(wanted);
+        private:
+            QHash<QModelIndex, std::vector<int>> mPendingSignals{};
+        };
+
+        void recalculateDirectoryAndItsParents(
+            TorrentFilesModelDirectory* directory, QModelIndex index, DataChangedDispatcher& dispatcher
+        ) {
+            while (index.isValid()) {
+                if (!directory->recalculateFromChildren()) {
+                    break;
+                }
+                dispatcher.add(index.parent(), index.row());
+                directory = directory->parentDirectory();
+                index = index.parent();
             }
         }
-        updateDirectoryChildren();
-    }
 
-    void BaseTorrentFilesModel::setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority) {
-        if (index.isValid()) {
-            static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
-            updateDirectoryChildren();
+        template<std::invocable<TorrentFilesModelEntry*> UpdateState>
+            requires std::same_as<std::invoke_result_t<UpdateState, TorrentFilesModelEntry*>, bool>
+        void updateDirectoryChildrenRecursively(
+            TorrentFilesModelDirectory* directory,
+            const QModelIndex& directoryIndex,
+            UpdateState updateState,
+            BaseTorrentFilesModel& model,
+            DataChangedDispatcher& dispatcher
+        ) {
+            for (const auto& entry : directory->children()) {
+                if (updateState(entry.get())) {
+                    dispatcher.add(directoryIndex, entry->row());
+                }
+                if (entry->isDirectory()) {
+                    auto* const directory = static_cast<TorrentFilesModelDirectory*>(entry.get());
+                    updateDirectoryChildrenRecursively(
+                        directory,
+                        model.index(directory->row(), 0, directoryIndex),
+                        updateState,
+                        model,
+                        dispatcher
+                    );
+                }
+            }
         }
+
+        template<std::invocable<TorrentFilesModelEntry*> UpdateState>
+            requires std::same_as<std::invoke_result_t<UpdateState, TorrentFilesModelEntry*>, bool>
+        void
+        setWantedOrPriority(const QModelIndexList& indexes, UpdateState updateState, BaseTorrentFilesModel& model) {
+            if (indexes.empty()) return;
+            if (!std::ranges::all_of(indexes, &QModelIndex::isValid)) return;
+
+            DataChangedDispatcher dispatcher{};
+            QSet<std::pair<TorrentFilesModelDirectory*, QModelIndex>> parentDirectoriesToRecalculate{};
+
+            for (const auto& index : indexes) {
+                auto* const entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
+                if (updateState(entry)) {
+                    dispatcher.add(index.parent(), index.row());
+                    if (entry->isDirectory()) {
+                        updateDirectoryChildrenRecursively(
+                            static_cast<TorrentFilesModelDirectory*>(entry),
+                            index,
+                            updateState,
+                            model,
+                            dispatcher
+                        );
+                    }
+                    parentDirectoriesToRecalculate.insert({entry->parentDirectory(), index.parent()});
+                }
+            }
+
+            for (const auto& [directory, index] : parentDirectoriesToRecalculate) {
+                recalculateDirectoryAndItsParents(directory, index, dispatcher);
+            }
+
+            dispatcher.dispatchSignals(model);
+        }
+    }
+    void BaseTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted) {
+        setWantedOrPriority(indexes, [&](TorrentFilesModelEntry* entry) { return entry->setWanted(wanted); }, *this);
     }
 
     void
     BaseTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) {
-        for (const QModelIndex& index : indexes) {
-            if (index.isValid()) {
-                static_cast<TorrentFilesModelEntry*>(index.internalPointer())->setPriority(priority);
-            }
-        }
-        updateDirectoryChildren();
+        setWantedOrPriority(
+            indexes,
+            [&](TorrentFilesModelEntry* entry) { return entry->setPriority(priority); },
+            *this
+        );
     }
 
     void BaseTorrentFilesModel::fileRenamed(TorrentFilesModelEntry* entry, const QString& newName) {
@@ -202,58 +303,28 @@ namespace tremotesf {
         emit dataChanged(createIndex(entry->row(), 0, entry), createIndex(entry->row(), columnCount() - 1, entry));
     }
 
-    void BaseTorrentFilesModel::updateDirectoryChildren(const QModelIndex& parent) {
-        const TorrentFilesModelDirectory* directory{};
-        if (parent.isValid()) {
-            directory = static_cast<const TorrentFilesModelDirectory*>(parent.internalPointer());
-        } else if (mRootDirectory) {
-            directory = mRootDirectory.get();
-        } else {
-            return;
-        }
-
-        auto changedBatchProcessor = ItemBatchProcessor([&](size_t first, size_t last) {
-            emit dataChanged(
-                index(static_cast<int>(first), 0, parent),
-                index(static_cast<int>(last) - 1, columnCount() - 1, parent)
-            );
-        });
-
-        for (auto& child : directory->children()) {
-            if (child->isChanged()) {
-                changedBatchProcessor.nextIndex(static_cast<size_t>(child->row()));
-                if (child->isDirectory()) {
-                    updateDirectoryChildren(index(child->row(), 0, parent));
-                } else {
-                    static_cast<TorrentFilesModelFile*>(child.get())->setChanged(false);
-                }
-            }
-        }
-        changedBatchProcessor.commitIfNeeded();
-    }
-
     void BaseTorrentFilesModel::updateFiles(
         std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelFile*)>&& updateFile
     ) {
-        if (!changedFiles.empty()) {
-            auto changedIter(changedFiles.begin());
-            int changedIndex = *changedIter;
-            const auto changedEnd(changedFiles.end());
+        if (changedFiles.empty()) return;
 
-            for (int i = 0, max = static_cast<int>(mFiles.size()); i < max; ++i) {
-                const auto& file = mFiles[static_cast<size_t>(i)];
-                file->setChanged(false);
-                if (i == changedIndex) {
-                    updateFile(static_cast<size_t>(i), file);
-                    ++changedIter;
-                    if (changedIter == changedEnd) {
-                        changedIndex = -1;
-                    } else {
-                        changedIndex = *changedIter;
-                    }
+        DataChangedDispatcher dispatcher{};
+
+        for (int index : changedFiles) {
+            const auto sIndex = static_cast<size_t>(index);
+            auto* const file = mFiles.at(sIndex);
+            updateFile(sIndex, file);
+            auto* const parent = file->parentDirectory();
+            const auto parentIndex = [&] {
+                if (parent == mRootDirectory.get()) {
+                    return QModelIndex{};
                 }
-            }
-            updateDirectoryChildren();
+                return createIndex(parent->row(), 0, parent);
+            }();
+            dispatcher.add(parentIndex, file->row());
+            recalculateDirectoryAndItsParents(parent, parentIndex, dispatcher);
         }
+
+        dispatcher.dispatchSignals(*this);
     }
 }

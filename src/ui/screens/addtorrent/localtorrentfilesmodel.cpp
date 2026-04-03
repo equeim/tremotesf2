@@ -35,6 +35,7 @@ namespace tremotesf {
             for (TorrentMetainfoFile::File file : files) {
                 builder.addFile(file.path(), file.size, 0, true, TorrentFilesModelEntry::Priority::Normal);
             }
+            builder.calculateDirectoriesRecursively();
             return {.rootDirectory = std::move(rootDirectory), .files = std::move(builder.files)};
         }
     }

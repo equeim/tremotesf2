@@ -72,10 +72,36 @@ namespace tremotesf {
             }
         }
 
+        void calculateDirectoriesRecursively() { calculateFromChildrenRecursively(rootDirectory); }
+
         TorrentFilesModelDirectory* rootDirectory;
         std::vector<TorrentFilesModelFile*> files{};
 
     private:
+        void calculateFromChildrenRecursively(TorrentFilesModelDirectory* directory) {
+            const auto& children = directory->children();
+            if (children.empty()) return;
+            long long size{};
+            long long completedSize{};
+            TorrentFilesModelEntry::WantedState wantedState = children.front()->wantedState();
+            TorrentFilesModelEntry::Priority priority = children.front()->priority();
+            for (const auto& child : children) {
+                if (child->isDirectory()) {
+                    calculateFromChildrenRecursively(static_cast<TorrentFilesModelDirectory*>(child.get()));
+                }
+                size += child->size();
+                completedSize += child->completedSize();
+                if (wantedState != TorrentFilesModelEntry::WantedState::Mixed && child->wantedState() != wantedState) {
+                    wantedState = TorrentFilesModelEntry::WantedState::Mixed;
+                }
+                if (priority != TorrentFilesModelEntry::Priority::Mixed && child->priority() != priority) {
+                    priority = TorrentFilesModelEntry::Priority::Mixed;
+                }
+            }
+            directory->setSize(size);
+            directory->update(wantedState, priority, completedSize);
+        }
+
         struct DirectoryCacheEntry {
             TorrentFilesModelDirectory* directory;
             QHash<QString, DirectoryCacheEntry> childDirectoriesCache{};

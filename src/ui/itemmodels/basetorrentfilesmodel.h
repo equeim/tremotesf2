@@ -32,16 +32,13 @@ namespace tremotesf {
         QModelIndex parent(const QModelIndex& child) const override;
         int rowCount(const QModelIndex& parent = {}) const override;
 
-        virtual void setFileWanted(const QModelIndex& index, bool wanted);
         virtual void setFilesWanted(const QModelIndexList& indexes, bool wanted);
-        virtual void setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority);
         virtual void setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority);
 
         virtual void renameFile(const QModelIndex& index, const QString& newName) = 0;
         void fileRenamed(TorrentFilesModelEntry* entry, const QString& newName);
 
     protected:
-        void updateDirectoryChildren(const QModelIndex& parent = QModelIndex());
         void updateFiles(
             std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelFile*)>&& updateFile
         );

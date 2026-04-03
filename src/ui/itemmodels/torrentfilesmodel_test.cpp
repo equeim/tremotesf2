@@ -123,6 +123,7 @@ namespace tremotesf {
                     file.priority
                 );
             }
+            builder.calculateDirectoriesRecursively();
             mFiles = std::move(builder.files);
         }
 
@@ -508,14 +509,10 @@ namespace tremotesf {
             model.updateFiles(std::array{0, 1}, [](size_t index, TorrentFilesModelFile* file) {
                 switch (index) {
                 case 0:
-                    file->setWanted(true);
-                    file->setCompletedSize(0);
-                    file->setPriority(TorrentFilesModelEntry::Priority::High);
+                    file->update(true, TorrentFilesModelEntry::Priority::High, 0);
                     break;
                 case 1:
-                    file->setWanted(true);
-                    file->setCompletedSize(0);
-                    file->setPriority(TorrentFilesModelEntry::Priority::Normal);
+                    file->update(true, TorrentFilesModelEntry::Priority::Normal, 0);
                     break;
                 }
             });

@@ -6,7 +6,6 @@
 #define TREMOTESF_TORRENTFILESMODEL_H
 
 #include <span>
-#include <vector>
 
 #include "coroutines/scope.h"
 #include "ui/itemmodels/basetorrentfilesmodel.h"
@@ -29,9 +28,7 @@ namespace tremotesf {
         Rpc* rpc() const;
         void setRpc(Rpc* rpc);
 
-        void setFileWanted(const QModelIndex& index, bool wanted) override;
         void setFilesWanted(const QModelIndexList& indexes, bool wanted) override;
-        void setFilePriority(const QModelIndex& index, TorrentFilesModelEntry::Priority priority) override;
         void setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) override;
 
         void renameFile(const QModelIndex& index, const QString& newName) override;
