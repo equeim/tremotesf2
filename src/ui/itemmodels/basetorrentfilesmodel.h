@@ -5,6 +5,7 @@
 #ifndef TREMOTESF_BASETORRENTFILESMODEL_H
 #define TREMOTESF_BASETORRENTFILESMODEL_H
 
+#include <functional>
 #include <memory>
 #include <vector>
 #include <QAbstractItemModel>
@@ -41,8 +42,12 @@ namespace tremotesf {
 
     protected:
         void updateDirectoryChildren(const QModelIndex& parent = QModelIndex());
+        void updateFiles(
+            std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelFile*)>&& updateFile
+        );
 
-        std::unique_ptr<TorrentFilesModelDirectory> mRootDirectory;
+        std::unique_ptr<TorrentFilesModelDirectory> mRootDirectory{};
+        std::vector<TorrentFilesModelFile*> mFiles{};
 
     private:
         const std::vector<Column> mColumns;

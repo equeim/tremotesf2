@@ -50,7 +50,6 @@ namespace tremotesf {
 
         Torrent* mTorrent{};
         Rpc* mRpc{};
-        std::vector<TorrentFilesModelFile*> mFiles{};
         bool mCreatingTree{};
         bool mLoaded{};
         CoroutineScope mCoroutineScope{};

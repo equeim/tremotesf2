@@ -18,13 +18,6 @@ using namespace Qt::StringLiterals;
 
 namespace tremotesf {
     namespace {
-        void updateFile(TorrentFilesModelFile* treeFile, const TorrentFile& file) {
-            treeFile->setChanged(false);
-            treeFile->setCompletedSize(file.completedSize);
-            treeFile->setWanted(file.wanted);
-            treeFile->setPriority(TorrentFilesModelEntry::fromFilePriority(file.priority));
-        }
-
         std::vector<int> idsFromIndex(const QModelIndex& index) {
             auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
             if (entry->isDirectory()) {
@@ -212,29 +205,13 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::updateTree(std::span<const int> changed) {
-        if (!changed.empty()) {
-            const auto& torrentFiles = mTorrent->files();
-
-            auto changedIter(changed.begin());
-            int changedIndex = *changedIter;
-            const auto changedEnd(changed.end());
-
-            for (int i = 0, max = static_cast<int>(mFiles.size()); i < max; ++i) {
-                const auto& file = mFiles[static_cast<size_t>(i)];
-                if (i == changedIndex) {
-                    updateFile(file, torrentFiles.at(static_cast<size_t>(changedIndex)));
-                    ++changedIter;
-                    if (changedIter == changedEnd) {
-                        changedIndex = -1;
-                    } else {
-                        changedIndex = *changedIter;
-                    }
-                } else {
-                    file->setChanged(false);
-                }
-            }
-            updateDirectoryChildren();
-        }
+        const auto& torrentFiles = mTorrent->files();
+        updateFiles(changed, [&](size_t index, TorrentFilesModelFile* file) {
+            const auto& json = torrentFiles.at(index);
+            file->setCompletedSize(json.completedSize);
+            file->setWanted(json.wanted);
+            file->setPriority(TorrentFilesModelEntry::fromFilePriority(json.priority));
+        });
     }
 
     void TorrentFilesModel::setLoaded(bool loaded) { mLoaded = loaded; }
