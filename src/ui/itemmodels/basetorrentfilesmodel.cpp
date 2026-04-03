@@ -231,4 +231,29 @@ namespace tremotesf {
         }
         changedBatchProcessor.commitIfNeeded();
     }
+
+    void BaseTorrentFilesModel::updateFiles(
+        std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelFile*)>&& updateFile
+    ) {
+        if (!changedFiles.empty()) {
+            auto changedIter(changedFiles.begin());
+            int changedIndex = *changedIter;
+            const auto changedEnd(changedFiles.end());
+
+            for (int i = 0, max = static_cast<int>(mFiles.size()); i < max; ++i) {
+                const auto& file = mFiles[static_cast<size_t>(i)];
+                file->setChanged(false);
+                if (i == changedIndex) {
+                    updateFile(static_cast<size_t>(i), file);
+                    ++changedIter;
+                    if (changedIter == changedEnd) {
+                        changedIndex = -1;
+                    } else {
+                        changedIndex = *changedIter;
+                    }
+                }
+            }
+            updateDirectoryChildren();
+        }
+    }
 }

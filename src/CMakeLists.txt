@@ -494,6 +494,10 @@ if (BUILD_TESTING)
     add_executable(torrentfileparser_test torrentfileparser_test.cpp)
     add_test(NAME torrentfileparser_test COMMAND torrentfileparser_test WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test-torrents")
     target_link_libraries(torrentfileparser_test PRIVATE tremotesf_objects Qt::Test)
+
+    add_executable(torrentfilesmodel_test ui/itemmodels/torrentfilesmodel_test.cpp)
+    add_test(NAME torrentfilesmodel_test COMMAND torrentfilesmodel_test)
+    target_link_libraries(torrentfilesmodel_test PRIVATE tremotesf_objects Qt::Test)
 endif ()
 
 set_common_options_on_targets()

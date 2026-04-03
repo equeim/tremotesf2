@@ -36,7 +36,6 @@ namespace tremotesf {
         void renameFile(const QModelIndex& index, const QString& newName) override;
 
     private:
-        std::vector<TorrentFilesModelFile*> mFiles{};
         bool mLoaded{};
 
         std::map<QString, QString> mRenamedFiles{};
