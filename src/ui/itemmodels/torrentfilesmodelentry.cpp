@@ -245,6 +245,7 @@ namespace tremotesf {
     void TorrentFilesModelFile::setPriority(Priority priority) {
         if (priority != mPriority) {
             mPriority = priority;
+            mChanged = true;
         }
     }
 
