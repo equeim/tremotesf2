@@ -29,39 +29,57 @@ namespace tremotesf {
         static TorrentFile::Priority toFilePriority(Priority priority);
 
         TorrentFilesModelEntry() = default;
-        explicit TorrentFilesModelEntry(int row, TorrentFilesModelDirectory* parentDirectory, QString name);
+        explicit TorrentFilesModelEntry(
+            int row,
+            TorrentFilesModelDirectory* parentDirectory,
+            QString name,
+            long long size,
+            long long completedSize,
+            bool wanted,
+            TorrentFilesModelEntry::Priority priority
+        );
         virtual ~TorrentFilesModelEntry() = default;
         Q_DISABLE_COPY_MOVE(TorrentFilesModelEntry)
 
-        int row() const;
-        TorrentFilesModelDirectory* parentDirectory() const;
+        inline int row() const { return mRow; }
+        inline TorrentFilesModelDirectory* parentDirectory() const { return mParentDirectory; }
 
-        QString name() const;
-        void setName(const QString& name);
+        inline QString name() const { return mName; }
+        inline void setName(const QString& name) { mName = name; }
 
         QString path() const;
 
-        virtual bool isDirectory() const = 0;
+        inline long long size() const { return mSize; }
+        void setSize(long long size) { mSize = size; }
 
-        virtual long long size() const = 0;
-        virtual long long completedSize() const = 0;
-        virtual double progress() const = 0;
+        inline long long completedSize() const { return mCompletedSize; }
+        inline double progress() const {
+            return mSize > 0 ? static_cast<double>(mCompletedSize) / static_cast<double>(mSize) : 0.0;
+        }
 
-        virtual WantedState wantedState() const = 0;
-        virtual void setWanted(bool wanted) = 0;
+        inline WantedState wantedState() const { return mWantedState; }
 
-        virtual Priority priority() const = 0;
+        bool setWanted(bool wanted);
+
+        inline Priority priority() const { return mPriority; }
         QString priorityString() const;
-        virtual void setPriority(Priority priority) = 0;
 
+        bool setPriority(Priority priority);
+
+        bool update(bool wanted, Priority priority, long long completedSize);
+        bool update(WantedState wantedState, Priority priority, long long completedSize);
+
+        virtual bool isDirectory() const = 0;
         virtual QIcon icon() const = 0;
 
-        virtual bool isChanged() const = 0;
-
-    private:
-        int mRow = 0;
-        TorrentFilesModelDirectory* mParentDirectory = nullptr;
+    protected:
+        int mRow{};
+        TorrentFilesModelDirectory* mParentDirectory{};
         QString mName;
+        long long mSize;
+        long long mCompletedSize;
+        WantedState mWantedState;
+        Priority mPriority;
     };
 
     class TorrentFilesModelFile;
@@ -69,18 +87,11 @@ namespace tremotesf {
     class TorrentFilesModelDirectory final : public TorrentFilesModelEntry {
     public:
         TorrentFilesModelDirectory() = default;
-        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, const QString& name);
+        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, QString name);
 
-        bool isDirectory() const override;
-        long long size() const override;
-        long long completedSize() const override;
-        double progress() const override;
-        WantedState wantedState() const override;
-        void setWanted(bool wanted) override;
-        Priority priority() const override;
-        void setPriority(Priority priority) override;
+        inline bool isDirectory() const override { return true; }
 
-        const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const;
+        inline const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const { return mChildren; }
 
         TorrentFilesModelFile* addFile(
             int id,
@@ -97,7 +108,7 @@ namespace tremotesf {
 
         QIcon icon() const override;
 
-        bool isChanged() const override;
+        bool recalculateFromChildren();
 
     private:
         void addChild(std::unique_ptr<TorrentFilesModelEntry>&& child);
@@ -111,40 +122,23 @@ namespace tremotesf {
             int row,
             TorrentFilesModelDirectory* parentDirectory,
             int id,
-            const QString& name,
+            QString name,
             long long size,
             long long completedSize,
             bool wanted,
             TorrentFilesModelEntry::Priority priority
         );
 
-        bool isDirectory() const override;
-        long long size() const override;
-        long long completedSize() const override;
-        double progress() const override;
-        WantedState wantedState() const override;
-        void setWanted(bool wanted) override;
-        Priority priority() const override;
-        void setPriority(Priority priority) override;
+        inline bool isDirectory() const override { return false; }
+
         QIcon icon() const override;
 
-        bool isChanged() const override;
-        void setChanged(bool changed);
-
-        int id() const;
-        void setSize(long long size);
-        void setCompletedSize(long long completedSize);
+        inline int id() const { return mId; }
 
     private:
-        long long mSize;
-        long long mCompletedSize;
-        WantedState mWantedState;
-        Priority mPriority;
-        mutable QIcon mIcon;
+        mutable QIcon mIcon{};
+        mutable bool mInitializedIcon{};
         int mId;
-        mutable bool mInitializedIcon;
-
-        bool mChanged;
     };
 }
 
