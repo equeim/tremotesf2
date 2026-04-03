@@ -141,19 +141,10 @@ namespace tremotesf {
 
     void TorrentFilesModelDirectory::clearChildren() { mChildren.clear(); }
 
-    std::vector<int> TorrentFilesModelDirectory::childrenIds() const {
-        std::vector<int> ids{};
-        ids.reserve(mChildren.size());
+    void TorrentFilesModelDirectory::getFileIds(std::vector<int>& ids) const {
         for (const auto& child : mChildren) {
-            if (child->isDirectory()) {
-                const auto childrenIds = static_cast<TorrentFilesModelDirectory*>(child.get())->childrenIds();
-                ids.reserve(ids.size() + childrenIds.size());
-                ids.insert(ids.end(), childrenIds.begin(), childrenIds.end());
-            } else {
-                ids.push_back(static_cast<const TorrentFilesModelFile*>(child.get())->id());
-            }
+            child->getFileIds(ids);
         }
-        return ids;
     }
 
     QIcon tremotesf::TorrentFilesModelDirectory::icon() const { return desktoputils::standardDirIcon(); }

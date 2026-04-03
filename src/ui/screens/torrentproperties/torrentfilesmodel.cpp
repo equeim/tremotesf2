@@ -24,13 +24,7 @@ namespace tremotesf {
             ids.reserve(static_cast<size_t>(indexes.size()));
             for (const QModelIndex& index : indexes) {
                 auto entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-                if (entry->isDirectory()) {
-                    const auto childrenIds = static_cast<TorrentFilesModelDirectory*>(entry)->childrenIds();
-                    ids.reserve(ids.size() + childrenIds.size());
-                    ids.insert(ids.end(), childrenIds.begin(), childrenIds.end());
-                } else {
-                    ids.push_back(static_cast<TorrentFilesModelFile*>(entry)->id());
-                }
+                entry->getFileIds(ids);
             }
             std::ranges::sort(ids);
             const auto toErase = std::ranges::unique(ids);

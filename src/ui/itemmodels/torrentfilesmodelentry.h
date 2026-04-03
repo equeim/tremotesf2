@@ -71,6 +71,7 @@ namespace tremotesf {
 
         virtual bool isDirectory() const = 0;
         virtual QIcon icon() const = 0;
+        virtual void getFileIds(std::vector<int>& ids) const = 0;
 
     protected:
         int mRow{};
@@ -104,7 +105,7 @@ namespace tremotesf {
         TorrentFilesModelDirectory* addDirectory(const QString& name);
 
         void clearChildren();
-        std::vector<int> childrenIds() const;
+        void getFileIds(std::vector<int>& ids) const override;
 
         QIcon icon() const override;
 
@@ -134,6 +135,8 @@ namespace tremotesf {
         QIcon icon() const override;
 
         inline int id() const { return mId; }
+
+        inline void getFileIds(std::vector<int>& ids) const override { ids.push_back(mId); }
 
     private:
         mutable QIcon mIcon{};
