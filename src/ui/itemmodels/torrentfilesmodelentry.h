@@ -5,7 +5,7 @@
 #ifndef TREMOTESF_TORRENTFILESMODELENTRY_H
 #define TREMOTESF_TORRENTFILESMODELENTRY_H
 
-#include <memory>
+#include <variant>
 #include <vector>
 
 #include <QObject>
@@ -14,35 +14,23 @@
 #include "rpc/torrentfile.h"
 
 namespace tremotesf {
-    class TorrentFilesModelDirectory;
-
     class TorrentFilesModelEntry {
         Q_GADGET
+
     public:
-        enum class WantedState { Wanted, Unwanted, Mixed };
+        enum class WantedState : char { Wanted, Unwanted, Mixed };
         Q_ENUM(WantedState)
 
-        enum class Priority { Low, Normal, High, Mixed };
+        enum class Priority : char { Low, Normal, High, Mixed };
         Q_ENUM(Priority)
 
         static Priority fromFilePriority(TorrentFile::Priority priority);
         static TorrentFile::Priority toFilePriority(Priority priority);
 
-        TorrentFilesModelEntry() = default;
-        explicit TorrentFilesModelEntry(
-            int row,
-            TorrentFilesModelDirectory* parentDirectory,
-            QString name,
-            long long size,
-            long long completedSize,
-            bool wanted,
-            TorrentFilesModelEntry::Priority priority
-        );
-        virtual ~TorrentFilesModelEntry() = default;
-        Q_DISABLE_COPY_MOVE(TorrentFilesModelEntry)
-
         inline int row() const { return mRow; }
-        inline TorrentFilesModelDirectory* parentDirectory() const { return mParentDirectory; }
+
+        inline TorrentFilesModelEntry* parentDirectory() const { return mParentDirectory; }
+        inline void setParentDirectory(TorrentFilesModelEntry* directory) { mParentDirectory = directory; }
 
         inline QString name() const { return mName; }
         inline void setName(const QString& name) { mName = name; }
@@ -69,79 +57,80 @@ namespace tremotesf {
         bool update(bool wanted, Priority priority, long long completedSize);
         bool update(WantedState wantedState, Priority priority, long long completedSize);
 
-        virtual bool isDirectory() const = 0;
-        virtual QIcon icon() const = 0;
-        virtual void getFileIds(std::vector<int>& ids) const = 0;
+        QIcon icon() const;
+        void getFileIds(std::vector<int>& ids) const;
 
-    protected:
-        int mRow{};
-        TorrentFilesModelDirectory* mParentDirectory{};
-        QString mName;
-        long long mSize;
-        long long mCompletedSize;
-        WantedState mWantedState;
-        Priority mPriority;
-    };
+        inline bool isDirectory() const { return std::holds_alternative<DirectoryData>(mFileOrDirectoryData); }
 
-    class TorrentFilesModelFile;
-
-    class TorrentFilesModelDirectory final : public TorrentFilesModelEntry {
-    public:
-        TorrentFilesModelDirectory() = default;
-        explicit TorrentFilesModelDirectory(int row, TorrentFilesModelDirectory* parentDirectory, QString name);
-
-        inline bool isDirectory() const override { return true; }
-
-        inline const std::vector<std::unique_ptr<TorrentFilesModelEntry>>& children() const { return mChildren; }
-
-        TorrentFilesModelFile* addFile(
-            int id,
-            const QString& name,
-            long long size,
-            long long completedSize,
-            bool wanted,
-            TorrentFilesModelEntry::Priority priority
-        );
-        TorrentFilesModelDirectory* addDirectory(const QString& name);
-
-        void clearChildren();
-        void getFileIds(std::vector<int>& ids) const override;
-
-        QIcon icon() const override;
+        inline std::vector<TorrentFilesModelEntry>& children() {
+            return std::get<DirectoryData>(mFileOrDirectoryData).children;
+        }
+        inline const std::vector<TorrentFilesModelEntry>& children() const {
+            return std::get<DirectoryData>(mFileOrDirectoryData).children;
+        }
 
         bool recalculateFromChildren();
 
+        inline int fileId() const { return std::get<FileData>(mFileOrDirectoryData).id; }
+
+        inline static TorrentFilesModelEntry createFile(
+            int id, int row, QString name, long long size, long long completedSize, bool wanted, Priority priority
+        ) {
+            return TorrentFilesModelEntry(
+                row,
+                std::move(name),
+                size,
+                completedSize,
+                wanted,
+                priority,
+                FileData{.id = id}
+            );
+        }
+
+        inline static TorrentFilesModelEntry createDirectory(int row, QString name) {
+            return TorrentFilesModelEntry(row, std::move(name), DirectoryData{});
+        }
+
     private:
-        void addChild(std::unique_ptr<TorrentFilesModelEntry>&& child);
+        TorrentFilesModelEntry* mParentDirectory{};
+        QString mName;
+        long long mSize{};
+        long long mCompletedSize{};
+        int mRow;
+        WantedState mWantedState{};
+        Priority mPriority{};
 
-        std::vector<std::unique_ptr<TorrentFilesModelEntry>> mChildren;
-    };
+        struct FileData {
+            mutable QIcon icon{};
+            mutable bool initializedIcon{};
+            int id;
+        };
 
-    class TorrentFilesModelFile final : public TorrentFilesModelEntry {
-    public:
-        explicit TorrentFilesModelFile(
+        struct DirectoryData {
+            std::vector<TorrentFilesModelEntry> children;
+        };
+
+        std::variant<FileData, DirectoryData> mFileOrDirectoryData;
+
+        inline TorrentFilesModelEntry(
             int row,
-            TorrentFilesModelDirectory* parentDirectory,
-            int id,
             QString name,
             long long size,
             long long completedSize,
             bool wanted,
-            TorrentFilesModelEntry::Priority priority
-        );
+            Priority priority,
+            FileData data
+        )
+            : mName(std::move(name)),
+              mSize(size),
+              mCompletedSize(completedSize),
+              mRow(row),
+              mWantedState(wanted ? WantedState::Wanted : WantedState::Unwanted),
+              mPriority(priority),
+              mFileOrDirectoryData(std::move(data)) {}
 
-        inline bool isDirectory() const override { return false; }
-
-        QIcon icon() const override;
-
-        inline int id() const { return mId; }
-
-        inline void getFileIds(std::vector<int>& ids) const override { ids.push_back(mId); }
-
-    private:
-        mutable QIcon mIcon{};
-        mutable bool mInitializedIcon{};
-        int mId;
+        inline TorrentFilesModelEntry(int row, QString name, DirectoryData data)
+            : mName(std::move(name)), mRow(row), mFileOrDirectoryData(std::move(data)) {}
     };
 }
 

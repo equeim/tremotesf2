@@ -40,11 +40,11 @@ namespace tremotesf {
 
     protected:
         void updateFiles(
-            std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelFile*)>&& updateFile
+            std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelEntry*)>&& updateFile
         );
 
-        std::unique_ptr<TorrentFilesModelDirectory> mRootDirectory{};
-        std::vector<TorrentFilesModelFile*> mFiles{};
+        std::unique_ptr<TorrentFilesModelEntry> mRootEntry{};
+        std::vector<TorrentFilesModelEntry*> mFiles{};
 
     private:
         const std::vector<Column> mColumns;

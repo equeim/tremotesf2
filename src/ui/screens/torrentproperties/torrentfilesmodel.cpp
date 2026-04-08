@@ -32,13 +32,13 @@ namespace tremotesf {
             return ids;
         }
 
-        std::pair<std::unique_ptr<TorrentFilesModelDirectory>, std::vector<TorrentFilesModelFile*>>
+        std::pair<std::unique_ptr<TorrentFilesModelEntry>, std::vector<TorrentFilesModelEntry*>>
         doCreateTree(const std::vector<TorrentFile>& files) {
-            auto rootDirectory = std::make_unique<TorrentFilesModelDirectory>();
-            TorrentFilesTreeBuilder builder(rootDirectory.get(), files.size());
+            TorrentFilesTreeBuilder builder(files.size());
             for (const TorrentFile& file : files) {
                 builder.addFile(
                     file.pathParts(),
+                    true,
                     file.size,
                     file.completedSize,
                     file.wanted,
@@ -46,7 +46,7 @@ namespace tremotesf {
                 );
             }
             builder.calculateDirectoriesRecursively();
-            return {std::move(rootDirectory), std::move(builder.files)};
+            return {std::move(builder.rootEntry), std::move(builder.files)};
         }
     }
 
@@ -106,17 +106,17 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName) {
-        if (!mLoaded || !mRootDirectory) {
+        if (!mLoaded || !mRootEntry) {
             return;
         }
-        TorrentFilesModelEntry* entry = mRootDirectory.get();
+        TorrentFilesModelEntry* entry = mRootEntry.get();
         const auto parts = path.split('/', Qt::SkipEmptyParts);
         for (const QString& part : parts) {
             if (!entry->isDirectory()) return;
-            const auto& children = static_cast<const TorrentFilesModelDirectory*>(entry)->children();
+            auto& children = static_cast<TorrentFilesModelEntry*>(entry)->children();
             const auto found = std::ranges::find(children, part, &TorrentFilesModelEntry::name);
             if (found == children.end()) return;
-            entry = found->get();
+            entry = &*found;
         }
         BaseTorrentFilesModel::fileRenamed(entry, newName);
     }
@@ -157,12 +157,12 @@ namespace tremotesf {
         mCreatingTree = true;
         beginResetModel();
 
-        auto [rootDirectory, files] = co_await runOnThreadPool(
+        auto [rootEntry, files] = co_await runOnThreadPool(
             [](const std::vector<TorrentFile>& files) { return doCreateTree(files); },
             mTorrent->files()
         );
 
-        mRootDirectory = std::move(rootDirectory);
+        mRootEntry = std::move(rootEntry);
         endResetModel();
 
         mFiles = std::move(files);
@@ -174,7 +174,7 @@ namespace tremotesf {
     void TorrentFilesModel::resetTree() {
         if (mLoaded) {
             beginResetModel();
-            mRootDirectory.reset();
+            mRootEntry.reset();
             endResetModel();
             mFiles.clear();
             setLoaded(false);
@@ -183,7 +183,7 @@ namespace tremotesf {
 
     void TorrentFilesModel::updateTree(std::span<const int> changed) {
         const auto& jsons = mTorrent->files();
-        updateFiles(changed, [&](size_t i, TorrentFilesModelFile* file) {
+        updateFiles(changed, [&](size_t i, TorrentFilesModelEntry* file) {
             const auto& json = jsons.at(i);
             file->update(json.wanted, TorrentFilesModelEntry::fromFilePriority(json.priority), json.completedSize);
         });
