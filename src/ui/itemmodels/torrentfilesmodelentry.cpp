@@ -23,7 +23,7 @@ namespace tremotesf {
         }
     }
 
-    TorrentFile::Priority TorrentFilesModelEntry::toFilePriority(TorrentFilesModelEntry::Priority priority) {
+    TorrentFile::Priority TorrentFilesModelEntry::toFilePriority(Priority priority) {
         switch (priority) {
         case Priority::Low:
             return TorrentFile::Priority::Low;
@@ -35,23 +35,6 @@ namespace tremotesf {
             return TorrentFile::Priority::Normal;
         }
     }
-
-    TorrentFilesModelEntry::TorrentFilesModelEntry(
-        int row,
-        TorrentFilesModelDirectory* parentDirectory,
-        QString name,
-        long long size,
-        long long completedSize,
-        bool wanted,
-        Priority priority
-    )
-        : mRow(row),
-          mParentDirectory(parentDirectory),
-          mName(std::move(name)),
-          mSize(size),
-          mCompletedSize(completedSize),
-          mWantedState(wanted ? WantedState::Wanted : WantedState::Unwanted),
-          mPriority(priority) {}
 
     QString TorrentFilesModelEntry::path() const {
         QString path(mName);
@@ -79,7 +62,7 @@ namespace tremotesf {
     }
 
     QString TorrentFilesModelEntry::priorityString() const {
-        switch (priority()) {
+        switch (mPriority) {
         case Priority::Low:
             //: Torrent's file loading priority
             return qApp->translate("tremotesf", "Low");
@@ -116,73 +99,6 @@ namespace tremotesf {
         return changed;
     }
 
-    TorrentFilesModelDirectory::TorrentFilesModelDirectory(
-        int row, TorrentFilesModelDirectory* parentDirectory, QString name
-    )
-        : TorrentFilesModelEntry(row, parentDirectory, std::move(name), 0, 0, true, Priority::Normal) {}
-
-    TorrentFilesModelFile* TorrentFilesModelDirectory::addFile(
-        int id, const QString& name, long long size, long long completedSize, bool wanted, Priority priority
-    ) {
-        const int row = static_cast<int>(mChildren.size());
-        auto file = std::make_unique<TorrentFilesModelFile>(row, this, id, name, size, completedSize, wanted, priority);
-        auto* filePtr = file.get();
-        addChild(std::move(file));
-        return filePtr;
-    }
-
-    TorrentFilesModelDirectory* TorrentFilesModelDirectory::addDirectory(const QString& name) {
-        const int row = static_cast<int>(mChildren.size());
-        auto directory = std::make_unique<TorrentFilesModelDirectory>(row, this, name);
-        auto* directoryPtr = directory.get();
-        addChild(std::move(directory));
-        return directoryPtr;
-    }
-
-    void TorrentFilesModelDirectory::clearChildren() { mChildren.clear(); }
-
-    void TorrentFilesModelDirectory::getFileIds(std::vector<int>& ids) const {
-        for (const auto& child : mChildren) {
-            child->getFileIds(ids);
-        }
-    }
-
-    QIcon tremotesf::TorrentFilesModelDirectory::icon() const { return desktoputils::standardDirIcon(); }
-
-    bool TorrentFilesModelDirectory::recalculateFromChildren() {
-        if (mChildren.empty()) return false;
-        long long completedSize{};
-        WantedState wantedState = mChildren.front()->wantedState();
-        Priority priority = mChildren.front()->priority();
-        for (const auto& child : mChildren) {
-            completedSize += child->completedSize();
-            if (wantedState != TorrentFilesModelEntry::WantedState::Mixed && child->wantedState() != wantedState) {
-                wantedState = TorrentFilesModelEntry::WantedState::Mixed;
-            }
-            if (priority != TorrentFilesModelEntry::Priority::Mixed && child->priority() != priority) {
-                priority = TorrentFilesModelEntry::Priority::Mixed;
-            }
-        }
-        return update(wantedState, priority, completedSize);
-    }
-
-    void TorrentFilesModelDirectory::addChild(std::unique_ptr<TorrentFilesModelEntry>&& child) {
-        mChildren.push_back(std::move(child));
-    }
-
-    TorrentFilesModelFile::TorrentFilesModelFile(
-        int row,
-        TorrentFilesModelDirectory* parentDirectory,
-        int id,
-        QString name,
-        long long size,
-        long long completedSize,
-        bool wanted,
-        Priority priority
-    )
-        : TorrentFilesModelEntry(row, parentDirectory, std::move(name), size, completedSize, wanted, priority),
-          mId(id) {}
-
     namespace {
         QIcon determineFileIcon(const QString& fileName) {
             static const QMimeDatabase mimeDb{};
@@ -200,11 +116,54 @@ namespace tremotesf {
         }
     }
 
-    QIcon TorrentFilesModelFile::icon() const {
-        if (!mInitializedIcon) {
-            mIcon = determineFileIcon(name());
-            mInitializedIcon = true;
+    QIcon TorrentFilesModelEntry::icon() const {
+        return std::visit(
+            [&](auto&& data) {
+                if constexpr (std::same_as<FileData, std::remove_cvref_t<decltype(data)>>) {
+                    if (!data.initializedIcon) {
+                        data.icon = determineFileIcon(name());
+                        data.initializedIcon = true;
+                    }
+                    return data.icon;
+                } else {
+                    return desktoputils::standardDirIcon();
+                }
+            },
+            mFileOrDirectoryData
+        );
+    }
+
+    void TorrentFilesModelEntry::getFileIds(std::vector<int>& ids) const {
+        std::visit(
+            [&](auto&& data) {
+                if constexpr (std::same_as<FileData, std::remove_cvref_t<decltype(data)>>) {
+                    ids.push_back(data.id);
+                } else {
+                    for (const auto& child : data.children) {
+                        child.getFileIds(ids);
+                    }
+                }
+            },
+            mFileOrDirectoryData
+        );
+    }
+
+    bool TorrentFilesModelEntry::recalculateFromChildren() {
+        const auto& children = std::get<DirectoryData>(mFileOrDirectoryData).children;
+        if (children.empty()) return false;
+        const auto& firstChild = children.front();
+        long long completedSize = firstChild.completedSize();
+        WantedState wantedState = firstChild.wantedState();
+        Priority priority = firstChild.priority();
+        for (const auto& child : children | std::views::drop(1)) {
+            completedSize += child.completedSize();
+            if (wantedState != TorrentFilesModelEntry::WantedState::Mixed && child.wantedState() != wantedState) {
+                wantedState = TorrentFilesModelEntry::WantedState::Mixed;
+            }
+            if (priority != TorrentFilesModelEntry::Priority::Mixed && child.priority() != priority) {
+                priority = TorrentFilesModelEntry::Priority::Mixed;
+            }
         }
-        return mIcon;
+        return update(wantedState, priority, completedSize);
     }
 }

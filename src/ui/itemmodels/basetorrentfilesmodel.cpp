@@ -24,7 +24,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return {};
         }
-        const TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
+        const auto* const entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
         const Column column = mColumns.at(static_cast<size_t>(index.column()));
         switch (role) {
         case Qt::CheckStateRole:
@@ -130,39 +130,39 @@ namespace tremotesf {
     }
 
     QModelIndex BaseTorrentFilesModel::index(int row, int column, const QModelIndex& parent) const {
-        const TorrentFilesModelDirectory* parentDirectory{};
-        if (parent.isValid()) {
-            parentDirectory = static_cast<TorrentFilesModelDirectory*>(parent.internalPointer());
-        } else if (mRootDirectory) {
-            parentDirectory = mRootDirectory.get();
-        } else {
+        if (!parent.isValid()) {
+            if (row == 0 && mRootEntry) {
+                return createIndex(0, column, mRootEntry.get());
+            }
             return {};
         }
-        return createIndex(row, column, parentDirectory->children().at(static_cast<size_t>(row)).get());
+        const auto* const parentEntry = static_cast<TorrentFilesModelEntry*>(parent.internalPointer());
+        if (!parentEntry->isDirectory()) {
+            return {};
+        }
+        return createIndex(row, column, &parentEntry->children().at(static_cast<size_t>(row)));
     }
 
     QModelIndex BaseTorrentFilesModel::parent(const QModelIndex& child) const {
         if (!child.isValid()) {
             return {};
         }
-        const auto* const parentDirectory =
+        const auto* const parentDirectoryEntry =
             static_cast<TorrentFilesModelEntry*>(child.internalPointer())->parentDirectory();
-        if (parentDirectory == mRootDirectory.get()) {
+        if (!parentDirectoryEntry) {
             return {};
         }
-        return createIndex(parentDirectory->row(), 0, parentDirectory);
+        return createIndex(parentDirectoryEntry->row(), 0, parentDirectoryEntry);
     }
 
     int BaseTorrentFilesModel::rowCount(const QModelIndex& parent) const {
         if (parent.isValid()) {
-            const TorrentFilesModelEntry* entry = static_cast<TorrentFilesModelDirectory*>(parent.internalPointer());
+            const auto* const entry = static_cast<TorrentFilesModelEntry*>(parent.internalPointer());
             if (entry->isDirectory()) {
-                return static_cast<int>(static_cast<const TorrentFilesModelDirectory*>(entry)->children().size());
+                return static_cast<int>(entry->children().size());
             }
-            return 0;
-        }
-        if (mRootDirectory) {
-            return static_cast<int>(mRootDirectory->children().size());
+        } else if (mRootEntry) {
+            return 1;
         }
         return 0;
     }
@@ -213,7 +213,7 @@ namespace tremotesf {
         };
 
         void recalculateDirectoryAndItsParents(
-            TorrentFilesModelDirectory* directory, QModelIndex index, DataChangedDispatcher& dispatcher
+            TorrentFilesModelEntry* directory, QModelIndex index, DataChangedDispatcher& dispatcher
         ) {
             while (index.isValid()) {
                 if (!directory->recalculateFromChildren()) {
@@ -228,21 +228,20 @@ namespace tremotesf {
         template<std::invocable<TorrentFilesModelEntry*> UpdateState>
             requires std::same_as<std::invoke_result_t<UpdateState, TorrentFilesModelEntry*>, bool>
         void updateDirectoryChildrenRecursively(
-            TorrentFilesModelDirectory* directory,
+            TorrentFilesModelEntry* directory,
             const QModelIndex& directoryIndex,
             UpdateState updateState,
             BaseTorrentFilesModel& model,
             DataChangedDispatcher& dispatcher
         ) {
-            for (const auto& entry : directory->children()) {
-                if (updateState(entry.get())) {
-                    dispatcher.add(directoryIndex, entry->row());
+            for (auto& entry : directory->children()) {
+                if (updateState(&entry)) {
+                    dispatcher.add(directoryIndex, entry.row());
                 }
-                if (entry->isDirectory()) {
-                    auto* const directory = static_cast<TorrentFilesModelDirectory*>(entry.get());
+                if (entry.isDirectory()) {
                     updateDirectoryChildrenRecursively(
-                        directory,
-                        model.index(directory->row(), 0, directoryIndex),
+                        &entry,
+                        model.index(entry.row(), 0, directoryIndex),
                         updateState,
                         model,
                         dispatcher
@@ -259,20 +258,14 @@ namespace tremotesf {
             if (!std::ranges::all_of(indexes, &QModelIndex::isValid)) return;
 
             DataChangedDispatcher dispatcher{};
-            QSet<std::pair<TorrentFilesModelDirectory*, QModelIndex>> parentDirectoriesToRecalculate{};
+            QSet<std::pair<TorrentFilesModelEntry*, QModelIndex>> parentDirectoriesToRecalculate{};
 
             for (const auto& index : indexes) {
                 auto* const entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
                 if (updateState(entry)) {
                     dispatcher.add(index.parent(), index.row());
                     if (entry->isDirectory()) {
-                        updateDirectoryChildrenRecursively(
-                            static_cast<TorrentFilesModelDirectory*>(entry),
-                            index,
-                            updateState,
-                            model,
-                            dispatcher
-                        );
+                        updateDirectoryChildrenRecursively(entry, index, updateState, model, dispatcher);
                     }
                     parentDirectoriesToRecalculate.insert({entry->parentDirectory(), index.parent()});
                 }
@@ -304,7 +297,7 @@ namespace tremotesf {
     }
 
     void BaseTorrentFilesModel::updateFiles(
-        std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelFile*)>&& updateFile
+        std::span<const int> changedFiles, std::function<void(size_t, TorrentFilesModelEntry*)>&& updateFile
     ) {
         if (changedFiles.empty()) return;
 
@@ -316,7 +309,7 @@ namespace tremotesf {
             updateFile(sIndex, file);
             auto* const parent = file->parentDirectory();
             const auto parentIndex = [&] {
-                if (parent == mRootDirectory.get()) {
+                if (!parent) {
                     return QModelIndex{};
                 }
                 return createIndex(parent->row(), 0, parent);

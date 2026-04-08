@@ -112,11 +112,11 @@ namespace tremotesf {
                     .wanted = true
                 }
             };
-            mRootDirectory = std::make_unique<TorrentFilesModelDirectory>();
-            TorrentFilesTreeBuilder builder(mRootDirectory.get(), files.size());
+            TorrentFilesTreeBuilder builder(files.size());
             for (const File& file : files) {
                 builder.addFile(
                     file.path.tokenize(u'/', Qt::SkipEmptyParts),
+                    true,
                     file.size,
                     file.completedSize,
                     file.wanted,
@@ -124,6 +124,7 @@ namespace tremotesf {
                 );
             }
             builder.calculateDirectoriesRecursively();
+            mRootEntry = std::move(builder.rootEntry);
             mFiles = std::move(builder.files);
         }
 
@@ -506,7 +507,7 @@ namespace tremotesf {
 
             QSignalSpy dataChanged(&model, &QAbstractItemModel::dataChanged);
 
-            model.updateFiles(std::array{0, 1}, [](size_t index, TorrentFilesModelFile* file) {
+            model.updateFiles(std::array{0, 1}, [](size_t index, TorrentFilesModelEntry* file) {
                 switch (index) {
                 case 0:
                     file->update(true, TorrentFilesModelEntry::Priority::High, 0);
