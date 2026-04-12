@@ -163,6 +163,8 @@ namespace tremotesf {
         );
         auto lastActivityLabel = new QLabel(this);
         activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Last activity:"), lastActivityLabel);
+        auto seedingTimeLabel = new QLabel(this);
+        activityGroupBoxLayout->addRow(qApp->translate("tremotesf", "Seeding time:"), seedingTimeLabel);
         detailsTabLayout->addWidget(activityGroupBox);
 
         //: Torrent's details tab section
@@ -238,6 +240,13 @@ namespace tremotesf {
                 lastActivityLabel->setText(
                     formatutils::formatDateTime(mTorrent->data().activityDate.toLocalTime(), QLocale::LongFormat)
                 );
+                
+                const auto secs = mTorrent->data().secondsSeeding;
+                const auto d = secs / 86400;
+                const auto h = (secs % 86400) / 3600;
+                const auto m = (secs % 3600) / 60;
+                const auto s = secs % 60;
+                seedingTimeLabel->setText(qApp->translate("tremotesf", "%1d, %2h, %3m, %4s").arg(d).arg(h).arg(m).arg(s));
 
                 totalSizeLabel->setText(formatutils::formatByteSize(mTorrent->data().totalSize));
                 locationLabel->setText(
@@ -267,6 +276,7 @@ namespace tremotesf {
                 webSeedersSendingToUsLabel->clear();
                 peersGettingFromUsLabel->clear();
                 lastActivityLabel->clear();
+		seedingTimeLabel->clear();
                 totalSizeLabel->clear();
                 locationLabel->clear();
                 hashLabel->clear();
