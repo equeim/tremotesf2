@@ -171,7 +171,7 @@ namespace tremotesf {
         std::vector<MountedDirectory> dirs{};
         dirs.reserve(static_cast<size_t>(map.size()));
         for (const auto& [key, value] : map.asKeyValueRange()) {
-            dirs.push_back({.localPath = normalizePath(key, localPathOs), .remotePath = value.toString()});
+            dirs.push_back({.localPath = normalizeLocalPathOrNetworkShareUrl(key), .remotePath = value.toString()});
         }
         return dirs;
     }
@@ -246,7 +246,7 @@ namespace tremotesf {
     bool Servers::currentServerHasMountedDirectories() const { return !mCurrentServerMountedDirectories.empty(); }
 
     QString Servers::fromLocalToRemoteDirectory(const QString& localPath, PathOs remotePathOs) {
-        const auto localPathNormalized = normalizePath(localPath, localPathOs);
+        const auto localPathNormalized = normalizeLocalPathOrNetworkShareUrl(localPath);
         for (const auto& [localDirectory, remoteDirectory] : mCurrentServerMountedDirectories) {
             if (isPathUnderThisDirectory(localPathNormalized, localDirectory)) {
                 const auto remoteDirectoryNormalized = normalizePath(remoteDirectory, remotePathOs);
@@ -276,7 +276,9 @@ namespace tremotesf {
                 if (remoteDirectoryNormalized.endsWith('/')) {
                     relativePathIndex -= 1;
                 }
-                return normalizePath(localDirectory + remotePathNormalized.mid(relativePathIndex), localPathOs);
+                return normalizeLocalPathOrNetworkShareUrl(
+                    localDirectory + remotePathNormalized.mid(relativePathIndex)
+                );
             }
         }
         return {};
