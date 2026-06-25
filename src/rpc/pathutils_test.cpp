@@ -19,6 +19,11 @@ private:
         PathOs pathOs;
     };
 
+    struct NormalizeLocalPathOrNetworkShareUrlTestCase {
+        QString inputPathOrUrl{};
+        QString expectedNormalizedPathOrUrl{};
+    };
+
     struct NativeSeparatorsTestCase {
         QString inputPath{};
         QString expectedNativeSeparatorsPath{};
@@ -59,7 +64,6 @@ private slots:
                 .expectedNormalizedPath = "/home/foo",
                 .pathOs = PathOs::Unix
             },
-
             NormalizeTestCase{
                 .inputPath = "C:/home//foo",
                 .expectedNormalizedPath = "C:/home/foo",
@@ -122,98 +126,6 @@ private slots:
                 .inputPath = R"(c::\wtf)",
                 .expectedNormalizedPath = R"(C::/wtf)",
                 .pathOs = PathOs::Windows
-            },
-
-            // URL normalization tests
-
-
-            NormalizeTestCase{
-                .inputPath = "SMB://HOSTNAME/PATH",
-                .expectedNormalizedPath = "smb://HOSTNAME/PATH",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "smb:////hostname/path/to/share",
-                .expectedNormalizedPath = "smb://hostname/path/to/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "smb:///hostname/path/to/share",
-                .expectedNormalizedPath = "smb://hostname/path/to/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "smb://hostname//path/to/share",
-                .expectedNormalizedPath = "smb://hostname/path/to/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "ftp://hostname/path//to/share",
-                .expectedNormalizedPath = "ftp://hostname/path/to/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "z://hostname/path/to/share",
-                .expectedNormalizedPath = "Z:/hostname/path/to/share",
-                .pathOs = PathOs::Windows
-            }, // single char before :// is not a scheme url, but windows drive
-
-            // ips - untouched
-            NormalizeTestCase{
-                .inputPath = "smb://192.168.1.100/share",
-                .expectedNormalizedPath = "smb://192.168.1.100/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "ftp://[::1]:21/share",
-                .expectedNormalizedPath = "ftp://[::1]:21/share",
-                .pathOs = PathOs::Unix
-            },
-            // local network hostnames and domain names - untouched
-            NormalizeTestCase{
-                .inputPath = "nfs://localhost/share",
-                .expectedNormalizedPath = "nfs://localhost/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "smb://example.com/path",
-                .expectedNormalizedPath = "smb://example.com/path",
-                .pathOs = PathOs::Unix
-            },
-            // file protocol - untouched
-            NormalizeTestCase{
-                .inputPath = "file://local/path",
-                .expectedNormalizedPath = "file://local/path",
-                .pathOs = PathOs::Unix
-            },
-            // full RFC example with username, password and port - untouched
-            NormalizeTestCase{
-                .inputPath = "ftp://user:password@example:21/share",
-                .expectedNormalizedPath = "ftp://user:password@example:21/share",
-                .pathOs = PathOs::Unix
-            },
-            // same ipv6 - untouched
-            NormalizeTestCase{
-                .inputPath = "ftp://user:password@[::1]:21/path",
-                .expectedNormalizedPath = "ftp://user:password@[::1]:21/path",
-                .pathOs = PathOs::Unix
-            },
-            // weird paths - untouched
-            NormalizeTestCase{
-                .inputPath = "ftp://:@hostname/path/to/share",
-                .expectedNormalizedPath = "ftp://:@hostname/path/to/share",
-                .pathOs = PathOs::Unix
-            },
-            NormalizeTestCase{
-                .inputPath = "ftp://hostname:/path/to/share",
-                .expectedNormalizedPath = "ftp://hostname:/path/to/share",
-                .pathOs = PathOs::Unix
-            },
-            // weird path - collapse slashes inside
-            NormalizeTestCase{
-                .inputPath = "/path/with/http://inside",
-                .expectedNormalizedPath = "/path/with/http:/inside",
-                .pathOs = PathOs::Unix
             }
         };
 
@@ -222,46 +134,51 @@ private slots:
         }
     }
 
-    void checkSchemeDetection() {
-        // Test cases that should be detected as scheme URLs
-        const std::vector<QString> passCases = {
-            "ftp://hostname/",
-            "ftp://hostname.com/",
-            "ftp://@hostname:21/",
-            "ftp://user:@hostname:21/",
-            "ftp://user:@hostname.com:21/",
-            "ftp://user:pass@hostname:21/",
-            "ftp://user:pass@hostname:21/asdasd/asdasdasd/",
-            "ftp://user:pass@hostname:21//asdasd/asdasdasd/",
-            "ftp://user:@hostname://",
-            "ftp://user@192.168.100.1/",
-            "ftp://user:@192.168.100.1:21/",
-            "ftp://user@[::1]/",
-            "ftp://user:@[::1]:21/"
+    void checkNormalizeLocalPathOrNetworkShareUrl() {
+        const auto testCases = std::array{
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "SMB://HOSTNAME/PATH",
+                .expectedNormalizedPathOrUrl = "smb://hostname/PATH"
+            },
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "smb://hostname//path/to/share/",
+                .expectedNormalizedPathOrUrl = "smb://hostname/path/to/share"
+            },
+#ifdef Q_OS_WIN
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "c://local/path",
+                .expectedNormalizedPathOrUrl = "C:/local/path"
+            },
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "file:///c:/local//path",
+                .expectedNormalizedPathOrUrl = "C:/local/path"
+            },
+#else
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "file:///local//path/",
+                .expectedNormalizedPathOrUrl = "/local/path"
+            },
+#endif
+            // full RFC example with username, password and port - untouched
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://user:password@example:21/share",
+                .expectedNormalizedPathOrUrl = "ftp://user:password@example:21/share"
+            },
+            // same ipv6 - untouched
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://user:password@[::1]:21/path",
+                .expectedNormalizedPathOrUrl = "ftp://user:password@[::1]:21/path"
+            },
+            // weird paths - untouched
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://:@hostname/path/to/share",
+                .expectedNormalizedPathOrUrl = "ftp://:@hostname/path/to/share"
+            },
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://hostname:/path/to/share",
+                .expectedNormalizedPathOrUrl = "ftp://hostname:/path/to/share"
+            }
         };
-
-        for (const auto& url : passCases) {
-            QCOMPARE(isSchemeUrl(url), true);
-        }
-
-        // Test cases that should NOT be detected as scheme URLs
-        const std::vector<QString> failCases = {
-            "C:/",
-            "C://",
-            "C:\\",
-            "C:\\\\",
-            "C:/file",
-            "C://file/path",
-            "C:\\file",
-            "C:\\\\file",
-            "//scheme://url/insdie/some/path"
-            "user@hostname"
-            "//user@hostname"
-        };
-
-        for (const auto& input : failCases) {
-            QCOMPARE(isSchemeUrl(input), false);
-        }
     }
 
     void checkToNativeSeparators() {

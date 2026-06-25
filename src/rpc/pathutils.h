@@ -21,9 +21,8 @@ namespace tremotesf {
 
     enum class PathOs { Unix, Windows };
 
-    constexpr inline PathOs localPathOs = targetOs == TargetOs::Windows ? PathOs::Windows : PathOs::Unix;
-
     QString normalizePath(const QString& path, PathOs pathOs);
+    QString normalizeLocalPathOrNetworkShareUrl(const QString& path);
     QString toNativeSeparators(const QString& path, PathOs pathOs);
     QString lastPathSegment(const QString& path);
 }

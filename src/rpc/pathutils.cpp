@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <stdexcept>
+#include <optional>
 #include <QRegularExpression>
+#include <QUrl>
 
 #include "pathutils.h"
 
@@ -13,30 +15,35 @@ namespace tremotesf {
     // We can't use QDir::to/fromNativeSeparators because it checks for current OS,
     // and we need it to work regardless of OS we are running on
 
-    static const QRegularExpression schemeUrlRegex(
-        R"(^[a-zA-Z][a-zA-Z0-9+.-]+:/(?:/+)(?:[a-zA-Z0-9._~-]+)?(?::[a-zA-Z0-9._~-]*)?@?(?:[a-zA-Z0-9.-]+|\[[a-fA-F0-9:]+\]):?(?:\d+)?)"_L1
-    );
-
     namespace {
         constexpr auto windowsSeparatorChar = '\\';
         constexpr auto unixSeparatorChar = '/';
         constexpr auto unixSeparatorString = "/"_L1;
 
-        enum class PathType { Scheme, Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
+        constexpr PathOs localPathOs = targetOs == TargetOs::Windows ? PathOs::Windows : PathOs::Unix;
+
+        enum class PathType { Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
 
         bool isWindowsUNCOrDOSDevicePath(QStringView path) {
             static const QRegularExpression regex(R"(^(?:\\|//).*$)"_L1);
             return regex.matchView(path).hasMatch();
         }
 
-        PathType determinePathType(QStringView path, PathOs pathOs) {
-            if (isSchemeUrl(QString(path))) {
-                return PathType::Scheme;
+        std::optional<QUrl> parseUrl(const QString& path) {
+            const QUrl url = path;
+            if (url.isValid() && !url.isRelative() && !url.scheme().isEmpty() && !url.path().isEmpty()) {
+                return url;
             }
+            return std::nullopt;
+        }
+
+        PathType determinePathType(const QString& path, PathOs pathOs) {
             switch (pathOs) {
-            case PathOs::Unix:
+            case PathOs::Unix: {
                 return PathType::Unix;
+            }
             case PathOs::Windows:
+                // There can be ambiguity here so DOS file path takes precedence
                 if (isAbsoluteWindowsDOSFilePath(path)) {
                     return PathType::WindowsAbsoluteDOSFilePath;
                 }
@@ -85,8 +92,6 @@ namespace tremotesf {
                     return 3; // e.g. 'C:/'
                 case PathType::WindowsUNCOrDOSDevicePath:
                     return 2; // e.g. '//'
-                case PathType::Scheme:
-                    return 6; //  e.g. aa://a
                 }
                 throw std::logic_error("Unknown PathType value");
             }();
@@ -101,17 +106,15 @@ namespace tremotesf {
             }
         }
 
-        void normalizeSchemePrefix(QString& prefix) {
-            // Lowercase the scheme
-            const int colonPos = prefix.indexOf("://"_L1);
-            if (colonPos != -1) {
-                prefix.replace(0, colonPos, prefix.left(colonPos).toLower());
+        void normalizePathImpl(QString& path, PathType pathType) {
+            if (pathType != PathType::Unix) {
+                convertFromNativeWindowsSeparators(path);
+                if (pathType == PathType::WindowsAbsoluteDOSFilePath) {
+                    capitalizeWindowsDriveLetter(path);
+                }
             }
-
-            // Collapse multiple / after : to ://
-            while (prefix.contains(":///")) {
-                prefix.replace(":///", "://");
-            }
+            collapseRepeatingSeparators(path, pathType);
+            dropOrAddTrailingSeparator(path, pathType);
         }
     }
 
@@ -120,49 +123,56 @@ namespace tremotesf {
         return regex.matchView(path).hasMatch();
     }
 
-    bool isSchemeUrl(const QString& path) { return schemeUrlRegex.matchView(path).hasMatch(); }
-
     QString normalizePath(const QString& path, PathOs pathOs) {
         if (path.isEmpty()) {
-            return path;
+            return {};
         }
-        QString normalized = path.trimmed();
-        if (normalized.isEmpty()) {
-            return normalized;
+        QString result = path.trimmed();
+        if (result.isEmpty()) {
+            return {};
         }
-        // we will fill it and use if path type is a scheme URL
-        QString pathPrefix;
-        const auto pathType = determinePathType(normalized, pathOs);
-        if (pathType == PathType::Scheme) {
-            // For scheme URLs, normalize authority and the path part separately
-            auto match = schemeUrlRegex.match(normalized);
-            if (match.hasMatch()) {
-                const int originalPrefixLength = match.capturedLength();
-                pathPrefix = match.captured();
-                normalizeSchemePrefix(pathPrefix);
-                normalized = normalized.mid(originalPrefixLength);
+        normalizePathImpl(result, determinePathType(path, pathOs));
+        return result;
+    }
+
+    QString normalizeLocalPathOrNetworkShareUrl(const QString& path) {
+        if (path.isEmpty()) {
+            return {};
+        }
+        QString result = path.trimmed();
+        if (result.isEmpty()) {
+            return {};
+        }
+        if constexpr (localPathOs == PathOs::Windows) {
+            // Windows path can be parsed as url, handle it first
+            if (isAbsoluteWindowsDOSFilePath(result)) {
+                normalizePathImpl(result, PathType::WindowsAbsoluteDOSFilePath);
+                return result;
             }
         }
-        if (pathType != PathType::Unix && pathType != PathType::Scheme) {
-            convertFromNativeWindowsSeparators(normalized);
-            if (pathType == PathType::WindowsAbsoluteDOSFilePath) {
-                capitalizeWindowsDriveLetter(normalized);
+        if (auto url = parseUrl(result); url.has_value()) {
+            if (url->isLocalFile()) {
+                // We shouldn't have file:// urls here, but handle them just in case
+                auto localPath = url->toLocalFile();
+                normalizePathImpl(localPath, determinePathType(localPath, localPathOs));
+                return localPath;
             }
+            auto urlPath = url->path();
+            normalizePathImpl(urlPath, PathType::Unix);
+            url->setPath(urlPath);
+            return url->toString();
         }
-        collapseRepeatingSeparators(normalized, pathType);
-        dropOrAddTrailingSeparator(normalized.prepend(pathPrefix), pathType);
-        return normalized;
+        normalizePathImpl(result, determinePathType(result, localPathOs));
+        return result;
     }
 
     QString toNativeSeparators(const QString& path, PathOs pathOs) {
-        if (path.isEmpty()) {
+        if (path.isEmpty() || pathOs != PathOs::Windows) {
             return path;
         }
-        QString native = path;
-        if (determinePathType(native, pathOs) != PathType::Unix) {
-            convertToNativeWindowsSeparators(native);
-        }
-        return native;
+        QString result = path;
+        convertToNativeWindowsSeparators(result);
+        return result;
     }
 
     QString lastPathSegment(const QString& path) {
