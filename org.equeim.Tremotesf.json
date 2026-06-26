@@ -48,8 +48,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.28.0.tar.gz",
-                    "sha256": "ccb32f9832c906d571f61794f453223dbb724ba738265551e3cd28ca325b529d"
+                    "url": "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.48.0.tar.gz",
+                    "sha256": "d9ed142d319c6e19a961f477257e67f846909ce15288502188df2281941be84e"
                 }
             ]
         },
