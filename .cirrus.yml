@@ -8,7 +8,7 @@ build_freebsd_task:
   freebsd_instance:
     matrix:
     - image_family: freebsd-14-3
-    - image_family: freebsd-15-0-amd64-ufs
+    - image_family: freebsd-15-1-amd64-ufs
 
 
   packages_cache:
