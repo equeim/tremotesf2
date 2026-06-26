@@ -2,16 +2,14 @@
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
     "default-registry": {
         "kind": "builtin",
-        "baseline": "b1e2178158106eed8d58e33753839292b52d622f"
+        "baseline": "c8f45a069ad0266bc70e703c1252cb51506ddcaf"
     },
     "registries": [
         {
             "kind": "git",
             "repository": "https://github.com/equeim/vcpkg-registry.git",
-            "baseline": "7c85a9b68e710a5f792a2f20ce168ae6c1ef8a34",
+            "baseline": "3e51e21c82a7a8582a9606e4e0d8acf9d671a330",
             "packages": [
-                "kf6ecm",
-                "kf6widgetsaddons",
                 "qttools",
                 "shared-mime-info"
             ]

@@ -40,7 +40,7 @@
         },
         "qtsvg",
         "fmt",
-        "kf6widgetsaddons",
+        "kwidgetsaddons",
         "cxxopts",
         {
             "name": "cpp-httplib",
