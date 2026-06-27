@@ -160,7 +160,7 @@ macro(apply_asan_options common_compile_options_var common_compile_definitions_v
             message(WARNING "Ignoring TREMOTESF_ASAN=ON for ARM64, it is not supported")
         else()
             list(APPEND "${common_compile_options_var}" /fsanitize=address)
-            list(APPEND "${common_compile_definitions_var}" _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION)
+            list(APPEND "${common_compile_definitions_var}" _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION _DISABLE_OPTIONAL_ANNOTATION)
         endif()
     else()
         if (MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
