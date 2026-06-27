@@ -168,6 +168,42 @@ jobs:
         echo "Release Flatpak manifest:"
         cat org.equeim.Tremotesf.json
 
+  build-freebsd:
+    strategy:
+      fail-fast: false
+      matrix:
+        freebsd-version: ['14.3', '15.1']
+
+    # arm64 runner doesn't support KVM so only x86_64
+    runs-on: ubuntu-26.04
+
+    steps:
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
+
+    - name: Checkout
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      with:
+        submodules: 'recursive'
+
+    - name: Build on FreeBSD
+      uses: vmactions/freebsd-vm@4441bea20b31bfa77329a5af583199362489567e
+      with:
+        run: |
+          pkg update -f
+          pkg install -y cmake ninja pkgconf libpsl libfmt qt6-base qt6-tools kf6-kwidgetsaddons kf6-kwindowsystem gettext-tools cxxopts cpp-httplib
+          echo 'Configuring CMake'
+          # Not enabling ASAN since it causes weird issues with tests that use openssl
+          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=system -D TREMOTESF_ASAN=OFF
+          echo 'Building Debug'
+          cmake --build --preset base-debug -v
+          echo 'Testing Debug'
+          ASAN_OPTIONS=detect_leaks=0 ctest --preset base-debug
+          echo 'Building Release'
+          cmake --build --preset base-release -v
+          echo 'Testing Release'
+          ASAN_OPTIONS=detect_leaks=0 ctest --preset base-release
+
   build-windows-msvc:
     strategy:
       fail-fast: false
