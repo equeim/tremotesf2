@@ -193,8 +193,7 @@ jobs:
           pkg update -f
           pkg install -y cmake ninja pkgconf libpsl libfmt qt6-base qt6-tools kf6-kwidgetsaddons kf6-kwindowsystem gettext-tools cxxopts cpp-httplib
           echo 'Configuring CMake'
-          # Not enabling ASAN since it causes weird issues with tests that use openssl
-          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=system -D TREMOTESF_ASAN=OFF
+          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=system -D TREMOTESF_ASAN=ON
           echo 'Building Debug'
           cmake --build --preset base-debug -v
           echo 'Testing Debug'
@@ -255,8 +254,7 @@ jobs:
           set -e -o pipefail
           echo '::group::Configuring CMake'
           # cpp-httplib doesn't compile with MinGW due to missing function (GetAddrInfoExCancel) in system headers
-          # ASAN + LTO causes linker crash
-          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=none -D TREMOTESF_ASAN=ON -D CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=OFF
+          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=none -D TREMOTESF_ASAN=ON -D
           echo '::endgroup'
           echo '::group::Building Debug'
           cmake --build --preset base-debug -v
