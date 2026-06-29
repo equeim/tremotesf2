@@ -86,6 +86,7 @@ namespace tremotesf {
         const auto comboBox = new QComboBox();
         comboBox->setEditable(true);
         comboBox->setInsertPolicy(QComboBox::NoInsert);
+        comboBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
         new ComboBoxDeleteKeyEventFilter(comboBox);
         return comboBox;
     }
