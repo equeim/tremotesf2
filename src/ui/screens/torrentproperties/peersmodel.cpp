@@ -148,7 +148,7 @@ namespace tremotesf {
 
         for (const auto& [first, last] : changedIndexRanges) {
             std::ranges::copy(slice(newPeers, first, last), mPeers.begin() + first);
-            emit dataChanged(index(0, columnCount() - 1), index(last - 1, columnCount() - 1));
+            emit dataChanged(index(0, 0), index(last - 1, columnCount() - 1));
         }
 
         if (addedCount > 0) {
