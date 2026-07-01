@@ -36,7 +36,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Set up vcpkg
-        uses: equeim/action-setup-vcpkg@79d2bfeec43b0e6f58e36f1561bab506b7ea6f5d
+        uses: equeim/action-setup-vcpkg@ecba2ac2c8e1317eee041a5188e56f8311b0c29d
         with:
           vcpkg-root: ${{ github.workspace }}/vcpkg
           save-cache: true
@@ -48,7 +48,7 @@ jobs:
 
       - name: Build Tremotesf for ${{ matrix.architecture }} architecture
         id: build
-        uses: equeim/action-cmake-build@72a6a248408085b42fe81c6045cee41bb4853396
+        uses: equeim/action-cmake-build@e6217b34862c420e581c40032d76a767cd343420
         with:
           cmake-arguments: --preset macos-${{ matrix.architecture }}-vcpkg -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && 'ON' || 'OFF' }}
           package: true
