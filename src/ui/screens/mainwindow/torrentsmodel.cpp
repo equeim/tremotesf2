@@ -224,13 +224,9 @@ namespace tremotesf {
                     mUseRelativeTime
                 );
             case Column::SecondsSeeding: {
-                const auto secs = torrent->data().secondsSeeding;
-                const auto d = secs / 86400;
-                const auto h = (secs % 86400) / 3600;
-                const auto m = (secs % 3600) / 60;
-                const auto s = secs % 60;
-                //: Torrents list column data, seeding time
-                return qApp->translate("tremotesf", "%1d, %2h, %3m, %4s").arg(d).arg(h).arg(m).arg(s);
+                if (const auto formattedTime = formatutils::formatElapsedTime(torrent->data().secondsSeeding)) {
+                    return *formattedTime;
+                }
             }
             default:
                 break;
