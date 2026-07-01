@@ -223,6 +223,11 @@ namespace tremotesf {
                     QLocale::ShortFormat,
                     mUseRelativeTime
                 );
+            case Column::SecondsSeeding: {
+                if (const auto formattedTime = formatutils::formatElapsedTime(torrent->data().secondsSeeding)) {
+                    return *formattedTime;
+                }
+            }
             default:
                 break;
             }
@@ -234,6 +239,7 @@ namespace tremotesf {
             case Column::AddedDate:
             case Column::DoneDate:
             case Column::ActivityDate:
+            case Column::SecondsSeeding:
                 return data(index, Qt::DisplayRole);
             case Column::DownloadDirectory:
                 return torrent->data().downloadDirectory;
@@ -294,6 +300,8 @@ namespace tremotesf {
                 return torrent->data().completedSize;
             case Column::ActivityDate:
                 return torrent->data().activityDate;
+            case Column::SecondsSeeding:
+                return torrent->data().secondsSeeding;
             default:
                 return data(index, Qt::DisplayRole);
             }
@@ -386,6 +394,9 @@ namespace tremotesf {
         case Column::ActivityDate:
             //: Torrents list column name
             return qApp->translate("tremotesf", "Last Activity");
+        case Column::SecondsSeeding:
+            //: Torrents list column name
+            return qApp->translate("tremotesf", "Seeding Time");
         default:
             return {};
         }

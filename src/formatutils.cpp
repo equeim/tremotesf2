@@ -166,6 +166,21 @@ namespace tremotesf::formatutils {
         return formatRatio(static_cast<double>(uploaded) / static_cast<double>(downloaded));
     }
 
+    std::optional<QString> formatElapsedTime(int seconds) {
+        if (seconds < 0) {
+            return std::nullopt;
+        }
+
+        const auto d = seconds / 86400;
+        const auto h = (seconds % 86400) / 3600;
+        const auto m = (seconds % 3600) / 60;
+        const auto s = seconds % 60;
+        
+        // Use your existing translation string or the one from the PR
+        return qApp->translate("tremotesf", "%1d, %2h, %3m, %4s")
+            .arg(d).arg(h).arg(m).arg(s);
+    }
+
     QString formatEta(int seconds) {
         if (seconds < 0) {
             return "\u221E";
