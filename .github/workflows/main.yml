@@ -19,19 +19,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:42', 'fedora:43', 'opensuse/tumbleweed:latest']
+        container-image: ['fedora:43', 'fedora:44', 'opensuse/tumbleweed:latest']
         compiler: ['gcc', 'clang']
         arch: ['x86_64', 'arm64']
         exclude:
         - container-image: 'opensuse/tumbleweed:latest'
           compiler: clang
 
-    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
+    runs-on: ubuntu-26.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
     container: ${{ startsWith(matrix.container-image, 'fedora') && 'registry.fedoraproject.org' || 'registry.opensuse.org' }}/${{ matrix.container-image }}
 
     steps:
     - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@0f9c86f9e693db67dacf53986e1674de5f2e5f28
+      uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
 
     - name: Set packages install command for dnf
       if: startsWith(matrix.container-image, 'fedora')
@@ -51,7 +51,7 @@ jobs:
       run: ${{env.INSTALL_PACKAGES}} git rpm-build
 
     - name: Checkout
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         submodules: 'recursive'
 
@@ -87,22 +87,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['debian:13', 'ubuntu:25.04', 'ubuntu:25.10']
+        container-image: ['debian:13', 'ubuntu:25.10', 'ubuntu:26.04']
         arch: ['x86_64', 'arm64']
 
-    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
+    runs-on: ubuntu-26.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
     container: docker.io/library/${{ matrix.container-image }}
 
     steps:
     - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@0f9c86f9e693db67dacf53986e1674de5f2e5f28
+      uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
 
     - name: Install dependencies needed to make source archive
       run: |
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install ca-certificates git python3 cmake
 
     - name: Check out sources
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         submodules: 'recursive'
 
@@ -113,7 +113,7 @@ jobs:
         .github/workflows/make-source-archive.py --output-directory .. --debian gzip
 
     - name: Check out Debian sources
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         repository: equeim/tremotesf-debian
         path: tremotesf-debian
@@ -141,11 +141,11 @@ jobs:
       matrix:
         arch: ['x86_64', 'arm64']
 
-    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
+    runs-on: ubuntu-26.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
 
     steps:
     - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@0f9c86f9e693db67dacf53986e1674de5f2e5f28
+      uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
 
     - name: Set up Flatpak
       run: |
@@ -153,7 +153,7 @@ jobs:
         flatpak remote-add --user --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
 
     - name: Checkout
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         submodules: 'recursive'
 
@@ -167,6 +167,42 @@ jobs:
         .github/workflows/make-flatpak-manifest-for-release.py test "$archive"
         echo "Release Flatpak manifest:"
         cat org.equeim.Tremotesf.json
+
+  build-freebsd:
+    strategy:
+      fail-fast: false
+      matrix:
+        freebsd-version: ['14.3', '15.1']
+
+    # arm64 runner doesn't support KVM so only x86_64
+    runs-on: ubuntu-26.04
+
+    steps:
+    - name: Add GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
+
+    - name: Checkout
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      with:
+        submodules: 'recursive'
+
+    - name: Build on FreeBSD
+      uses: vmactions/freebsd-vm@4441bea20b31bfa77329a5af583199362489567e
+      with:
+        run: |
+          pkg update -f
+          pkg install -y cmake ninja pkgconf libpsl libfmt qt6-base qt6-tools kf6-kwidgetsaddons kf6-kwindowsystem gettext-tools cxxopts cpp-httplib
+          echo 'Configuring CMake'
+          # Not enabling ASAN since it causes weird issues with tests that use openssl
+          cmake -S . --preset base -D TREMOTESF_WITH_HTTPLIB=system -D TREMOTESF_ASAN=OFF
+          echo 'Building Debug'
+          cmake --build --preset base-debug -v
+          echo 'Testing Debug'
+          ASAN_OPTIONS=detect_leaks=0 ctest --preset base-debug
+          echo 'Building Release'
+          cmake --build --preset base-release -v
+          echo 'Testing Release'
+          ASAN_OPTIONS=detect_leaks=0 ctest --preset base-release
 
   build-windows-msvc:
     strategy:
@@ -182,12 +218,12 @@ jobs:
 
     steps:
     - name: Checkout Tremotesf
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         submodules: 'recursive'
 
     - name: Set up MSYS2
-      uses: msys2/setup-msys2@fb197b72ce45fb24f17bf3f807a388985654d1f2
+      uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884
       with:
         msystem: 'CLANG64'
         update: 'true'
@@ -211,7 +247,7 @@ jobs:
           cppwinrt -input sdk -output /clang64/include
 
     - name: Add GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@0f9c86f9e693db67dacf53986e1674de5f2e5f28
+      uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
 
     - name: Build with LLVM MinGW toolchain
       shell: msys2 {0}
@@ -244,7 +280,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
 
     - name: Check REUSE compliance
       run: |

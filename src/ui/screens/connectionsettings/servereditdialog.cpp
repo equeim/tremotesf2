@@ -623,7 +623,7 @@ namespace tremotesf {
         for (int i = 0, max = mMountedDirectoriesWidget->rowCount(); i < max; ++i) {
             const auto localItem = mMountedDirectoriesWidget->item(i, 0);
             const QString localDirectory =
-                localItem ? normalizePath(localItem->text().trimmed(), localPathOs) : QString{};
+                localItem ? normalizeLocalPathOrNetworkShareUrl(localItem->text().trimmed()) : QString{};
             const auto remoteItem = mMountedDirectoriesWidget->item(i, 1);
             const QString remoteDirectory = remoteItem ? remoteItem->text().trimmed() : QString{};
             if (!localDirectory.isEmpty() && !remoteDirectory.isEmpty()) {

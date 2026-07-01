@@ -89,7 +89,7 @@ namespace tremotesf {
           mFilesModel(isAddingFile() ? new LocalTorrentFilesModel(this) : nullptr) {
         setupUi();
 
-        QSize size(448, 0);
+        QSize size(512, 0);
         if (isAddingFile()) {
             size.setHeight(512);
         }

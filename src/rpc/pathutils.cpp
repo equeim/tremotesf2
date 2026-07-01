@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <stdexcept>
+#include <optional>
 #include <QRegularExpression>
+#include <QUrl>
 
 #include "pathutils.h"
 
@@ -18,6 +20,8 @@ namespace tremotesf {
         constexpr auto unixSeparatorChar = '/';
         constexpr auto unixSeparatorString = "/"_L1;
 
+        constexpr PathOs localPathOs = targetOs == TargetOs::Windows ? PathOs::Windows : PathOs::Unix;
+
         enum class PathType { Unix, WindowsAbsoluteDOSFilePath, WindowsUNCOrDOSDevicePath };
 
         bool isWindowsUNCOrDOSDevicePath(QStringView path) {
@@ -25,11 +29,21 @@ namespace tremotesf {
             return regex.matchView(path).hasMatch();
         }
 
-        PathType determinePathType(QStringView path, PathOs pathOs) {
+        std::optional<QUrl> parseUrl(const QString& path) {
+            const QUrl url = path;
+            if (url.isValid() && !url.isRelative() && !url.scheme().isEmpty() && !url.path().isEmpty()) {
+                return url;
+            }
+            return std::nullopt;
+        }
+
+        PathType determinePathType(const QString& path, PathOs pathOs) {
             switch (pathOs) {
-            case PathOs::Unix:
+            case PathOs::Unix: {
                 return PathType::Unix;
+            }
             case PathOs::Windows:
+                // There can be ambiguity here so DOS file path takes precedence
                 if (isAbsoluteWindowsDOSFilePath(path)) {
                     return PathType::WindowsAbsoluteDOSFilePath;
                 }
@@ -79,7 +93,7 @@ namespace tremotesf {
                 case PathType::WindowsUNCOrDOSDevicePath:
                     return 2; // e.g. '//'
                 }
-                throw std::logic_error("Unknown PathOs value");
+                throw std::logic_error("Unknown PathType value");
             }();
             if (path.size() <= minimumLength) {
                 if (pathType == PathType::WindowsAbsoluteDOSFilePath && path.size() == 2) {
@@ -91,6 +105,17 @@ namespace tremotesf {
                 path.chop(1);
             }
         }
+
+        void normalizePathImpl(QString& path, PathType pathType) {
+            if (pathType != PathType::Unix) {
+                convertFromNativeWindowsSeparators(path);
+                if (pathType == PathType::WindowsAbsoluteDOSFilePath) {
+                    capitalizeWindowsDriveLetter(path);
+                }
+            }
+            collapseRepeatingSeparators(path, pathType);
+            dropOrAddTrailingSeparator(path, pathType);
+        }
     }
 
     bool isAbsoluteWindowsDOSFilePath(QStringView path) {
@@ -100,33 +125,54 @@ namespace tremotesf {
 
     QString normalizePath(const QString& path, PathOs pathOs) {
         if (path.isEmpty()) {
-            return path;
+            return {};
         }
-        QString normalized = path.trimmed();
-        if (normalized.isEmpty()) {
-            return normalized;
+        QString result = path.trimmed();
+        if (result.isEmpty()) {
+            return {};
         }
-        const auto pathType = determinePathType(normalized, pathOs);
-        if (pathType != PathType::Unix) {
-            convertFromNativeWindowsSeparators(normalized);
-            if (pathType == PathType::WindowsAbsoluteDOSFilePath) {
-                capitalizeWindowsDriveLetter(normalized);
+        normalizePathImpl(result, determinePathType(path, pathOs));
+        return result;
+    }
+
+    QString normalizeLocalPathOrNetworkShareUrl(const QString& path) {
+        if (path.isEmpty()) {
+            return {};
+        }
+        QString result = path.trimmed();
+        if (result.isEmpty()) {
+            return {};
+        }
+        if constexpr (localPathOs == PathOs::Windows) {
+            // Windows path can be parsed as url, handle it first
+            if (isAbsoluteWindowsDOSFilePath(result)) {
+                normalizePathImpl(result, PathType::WindowsAbsoluteDOSFilePath);
+                return result;
             }
         }
-        collapseRepeatingSeparators(normalized, pathType);
-        dropOrAddTrailingSeparator(normalized, pathType);
-        return normalized;
+        if (auto url = parseUrl(result); url.has_value()) {
+            if (url->isLocalFile()) {
+                // We shouldn't have file:// urls here, but handle them just in case
+                auto localPath = url->toLocalFile();
+                normalizePathImpl(localPath, determinePathType(localPath, localPathOs));
+                return localPath;
+            }
+            auto urlPath = url->path();
+            normalizePathImpl(urlPath, PathType::Unix);
+            url->setPath(urlPath);
+            return url->toString();
+        }
+        normalizePathImpl(result, determinePathType(result, localPathOs));
+        return result;
     }
 
     QString toNativeSeparators(const QString& path, PathOs pathOs) {
-        if (path.isEmpty()) {
+        if (path.isEmpty() || pathOs != PathOs::Windows) {
             return path;
         }
-        QString native = path;
-        if (determinePathType(native, pathOs) != PathType::Unix) {
-            convertToNativeWindowsSeparators(native);
-        }
-        return native;
+        QString result = path;
+        convertToNativeWindowsSeparators(result);
+        return result;
     }
 
     QString lastPathSegment(const QString& path) {

@@ -11,6 +11,7 @@
 
 namespace tremotesf {
     bool isAbsoluteWindowsDOSFilePath(QStringView path);
+    bool isSchemeUrl(const QString& path);
 
     /**
      * We need to pass PathOs explicitly because we can't determing whether given path is Unix or Windows path from its string alone:
@@ -20,9 +21,8 @@ namespace tremotesf {
 
     enum class PathOs { Unix, Windows };
 
-    constexpr inline PathOs localPathOs = targetOs == TargetOs::Windows ? PathOs::Windows : PathOs::Unix;
-
     QString normalizePath(const QString& path, PathOs pathOs);
+    QString normalizeLocalPathOrNetworkShareUrl(const QString& path);
     QString toNativeSeparators(const QString& path, PathOs pathOs);
     QString lastPathSegment(const QString& path);
 }

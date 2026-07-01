@@ -117,7 +117,7 @@ namespace tremotesf {
         ALWAYS_INLINE void log(const T& value) const {
             if (isEnabled()) {
                 logWithFormatArgs(
-                    fmt::format_string<const T&>(singleArgumentFormatString),
+                    fmt::format_string<const T&>(singleArgumentFormatString).get(),
                     fmt::make_format_args(value)
                 );
             }
@@ -127,7 +127,7 @@ namespace tremotesf {
             requires(sizeof...(Args) != 0)
         ALWAYS_INLINE void log(fmt::format_string<Args...> fmt, const Args&... args) const {
             if (isEnabled()) {
-                logWithFormatArgs(fmt, fmt::make_format_args(args...));
+                logWithFormatArgs(fmt.get(), fmt::make_format_args(args...));
             }
         }
 
@@ -140,7 +140,7 @@ namespace tremotesf {
             if (isEnabled()) {
                 const auto formattedException = formatExceptionRecursively(e);
                 logWithFormatArgs(
-                    fmt::format_string<const T&, const std::string&>("{}\n{}"),
+                    fmt::format_string<const T&, const std::string&>("{}\n{}").get(),
                     fmt::make_format_args(value, formattedException)
                 );
             }
@@ -150,7 +150,7 @@ namespace tremotesf {
             requires(sizeof...(Args) != 0)
         ALWAYS_INLINE void logWithException(const E& e, fmt::format_string<Args...> fmt, const Args&... args) const {
             if (isEnabled()) {
-                auto message = formatToQString(fmt, fmt::make_format_args(args...));
+                auto message = formatToQString(fmt.get(), fmt::make_format_args(args...));
                 message += '\n';
                 message += formatExceptionRecursively(e);
                 logImpl(message);
@@ -190,14 +190,14 @@ namespace tremotesf {
 
     template<typename T>
     ALWAYS_INLINE void printlnStdout(const T& value) {
-        fmt::print(stdout, fmt::format_string<const T&>(singleArgumentFormatString), value);
+        fmt::print(stdout, singleArgumentFormatString, value);
         impl::printNewline(stdout);
     }
 
     template<typename... Args>
         requires(sizeof...(Args) != 0)
     ALWAYS_INLINE void printlnStdout(fmt::format_string<Args...> fmt, const Args&... args) {
-        fmt::vprint(stdout, fmt, fmt::make_format_args(args...));
+        fmt::vprint(stdout, fmt.get(), fmt::make_format_args(args...));
         impl::printNewline(stdout);
     }
 }

@@ -244,6 +244,32 @@ namespace tremotesf {
             );
         }
 
+        void Case4() {
+            check(
+                {.mountedLocalDirectories = {"smb://host/foo"},
+                 .mountedRemoteDirectoriesWhenServerIsUnix = {"/foo"_L1},
+                 .mountedRemoteDirectoriesWhenServerIsWindows = {"C:/foo"_L1},
+
+                 .localPathsToCheck =
+                     {
+                         "smb://host/foo"_L1,
+                         "smb://host/foo/"_L1,
+                         "smb://host/foo/hmm"_L1,
+                         "smb://host/foo/hmm/"_L1,
+                     },
+                 .expectedRemotePathsWhenServerIsUnix = {"/foo"_L1, "/foo"_L1, "/foo/hmm"_L1, "/foo/hmm"_L1},
+                 .expectedRemotePathsWhenServerIsWindows = {"C:/foo"_L1, "C:/foo"_L1, "C:/foo/hmm"_L1, "C:/foo/hmm"_L1},
+
+                 .remotePathsToCheckWhenServerIsUnix = {"/foo"_L1, "/foo/hmm"_L1, "/foo/hmm/"_L1},
+                 .remotePathsToCheckWhenServerIsWindows = {"C:/foo"_L1, "C:/foo/hmm"_L1, "C:/foo/hmm/"_L1},
+                 .expectedLocalPaths = {
+                     "smb://host/foo"_L1,
+                     "smb://host/foo/hmm"_L1,
+                     "smb://host/foo/hmm"_L1,
+                 }}
+            );
+        }
+
     private:
         struct TestCase {
             std::vector<QString> mountedLocalDirectories;

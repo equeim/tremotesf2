@@ -19,6 +19,11 @@ private:
         PathOs pathOs;
     };
 
+    struct NormalizeLocalPathOrNetworkShareUrlTestCase {
+        QString inputPathOrUrl{};
+        QString expectedNormalizedPathOrUrl{};
+    };
+
     struct NativeSeparatorsTestCase {
         QString inputPath{};
         QString expectedNativeSeparatorsPath{};
@@ -59,7 +64,6 @@ private slots:
                 .expectedNormalizedPath = "/home/foo",
                 .pathOs = PathOs::Unix
             },
-
             NormalizeTestCase{
                 .inputPath = "C:/home//foo",
                 .expectedNormalizedPath = "C:/home/foo",
@@ -128,6 +132,53 @@ private slots:
         for (const auto& [inputPath, expectedNormalizedPath, pathOs] : testCases) {
             QCOMPARE(normalizePath(inputPath, pathOs), expectedNormalizedPath);
         }
+    }
+
+    void checkNormalizeLocalPathOrNetworkShareUrl() {
+        const auto testCases = std::array{
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "SMB://HOSTNAME/PATH",
+                .expectedNormalizedPathOrUrl = "smb://hostname/PATH"
+            },
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "smb://hostname//path/to/share/",
+                .expectedNormalizedPathOrUrl = "smb://hostname/path/to/share"
+            },
+#ifdef Q_OS_WIN
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "c://local/path",
+                .expectedNormalizedPathOrUrl = "C:/local/path"
+            },
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "file:///c:/local//path",
+                .expectedNormalizedPathOrUrl = "C:/local/path"
+            },
+#else
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "file:///local//path/",
+                .expectedNormalizedPathOrUrl = "/local/path"
+            },
+#endif
+            // full RFC example with username, password and port - untouched
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://user:password@example:21/share",
+                .expectedNormalizedPathOrUrl = "ftp://user:password@example:21/share"
+            },
+            // same ipv6 - untouched
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://user:password@[::1]:21/path",
+                .expectedNormalizedPathOrUrl = "ftp://user:password@[::1]:21/path"
+            },
+            // weird paths - untouched
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://:@hostname/path/to/share",
+                .expectedNormalizedPathOrUrl = "ftp://:@hostname/path/to/share"
+            },
+            NormalizeLocalPathOrNetworkShareUrlTestCase{
+                .inputPathOrUrl = "ftp://hostname:/path/to/share",
+                .expectedNormalizedPathOrUrl = "ftp://hostname:/path/to/share"
+            }
+        };
     }
 
     void checkToNativeSeparators() {
