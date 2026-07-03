@@ -18,7 +18,7 @@ namespace tremotesf::formatutils {
     QString formatProgress(double progress);
     QString formatRatio(double ratio);
     QString formatRatio(long long downloaded, long long uploaded);
-
+    std::optional<QString> formatElapsedTime(int seconds);
     QString formatEta(int seconds);
 
     QString formatDateTime(const QDateTime& dateTime, QLocale::FormatType format, bool displayRelativeTime);

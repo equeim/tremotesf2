@@ -47,6 +47,7 @@ namespace tremotesf {
             LeftUntilDone,
             DownloadDirectory,
             CompletedSize,
+            SecondsSeeding,
             ActivityDate
         };
         Q_ENUM(Column)
