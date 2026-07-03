@@ -182,34 +182,7 @@ namespace tremotesf::formatutils {
     }
 
     QString formatEta(int seconds) {
-        if (seconds < 0) {
-            return "\u221E";
-        }
-
-        const int days = seconds / 86400;
-        seconds %= 86400;
-        const int hours = seconds / 3600;
-        seconds %= 3600;
-        const int minutes = seconds / 60;
-        seconds %= 60;
-
-        if (days > 0) {
-            //: Remaining time string. %L1 is days, %L2 is hours, e.g. "2 d 5 h"
-            return qApp->translate("tremotesf", "%L1 d %L2 h").arg(days).arg(hours);
-        }
-
-        if (hours > 0) {
-            //: Remaining time string. %L1 is hours, %L2 is minutes, e.g. "2 h 5 m"
-            return qApp->translate("tremotesf", "%L1 h %L2 m").arg(hours).arg(minutes);
-        }
-
-        if (minutes > 0) {
-            //: Remaining time string. %L1 is minutes, %L2 is seconds, e.g. "2 m 5 s"
-            return qApp->translate("tremotesf", "%L1 m %L2 s").arg(minutes).arg(seconds);
-        }
-
-        //: Remaining time string. %L1 is seconds, "10 s"
-        return qApp->translate("tremotesf", "%L1 s").arg(seconds);
+        return formatElapsedTime(seconds).value_or(QStringLiteral("\u221E"));
     }
 
     namespace {

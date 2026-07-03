@@ -227,6 +227,7 @@ namespace tremotesf {
                 if (const auto formattedTime = formatutils::formatElapsedTime(torrent->data().secondsSeeding)) {
                     return *formattedTime;
                 }
+		break;
             }
             default:
                 break;
