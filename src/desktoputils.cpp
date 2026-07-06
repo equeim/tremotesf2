@@ -34,6 +34,7 @@
 #include <fmt/format.h>
 
 #include "log/log.h"
+#include "rpc/pathutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
@@ -114,13 +115,14 @@ namespace tremotesf::desktoputils {
     }
 
     namespace {
-        void showOpenFileError(const QString& filePath, std::optional<QString> error, QWidget* parent) {
+        void showOpenFileError(const QUrl& url, std::optional<QString> error, QWidget* parent) {
+            const auto pathToDisplay = url.isLocalFile() ? QDir::toNativeSeparators(url.toLocalFile()) : url.toString();
             auto dialog = new QMessageBox(
                 QMessageBox::Warning,
                 //: Dialog title
                 qApp->translate("tremotesf", "Error"),
                 //: File opening error, %1 is a file path
-                qApp->translate("tremotesf", "Error opening %1").arg(QDir::toNativeSeparators(filePath)),
+                qApp->translate("tremotesf", "Error opening %1").arg(pathToDisplay),
                 QMessageBox::Close,
                 parent
             );
@@ -131,12 +133,11 @@ namespace tremotesf::desktoputils {
             dialog->show();
         }
 
-        void openFileImpl(const QString& filePath, QWidget* parent) {
-            const auto url = QUrl::fromLocalFile(filePath);
+        void openFileImpl(const QUrl& url, QWidget* parent) {
             info().log("Executing QDesktopServices::openUrl() for {}", url);
             if (!QDesktopServices::openUrl(url)) {
                 warning().log("QDesktopServices::openUrl() failed for {}", url);
-                showOpenFileError(filePath, {}, parent);
+                showOpenFileError(url, {}, parent);
             }
         }
 
@@ -151,12 +152,12 @@ namespace tremotesf::desktoputils {
                 return instance;
             }
 
-            void openUrlAfterFocusWindowChange(QString filePath, QPointer<QWidget> parent) {
-                mScope.launch(openUrlAfterFocusWindowChangeImpl(std::move(filePath), std::move(parent)));
+            void openUrlAfterFocusWindowChange(QUrl url, QPointer<QWidget> parent) {
+                mScope.launch(openUrlAfterFocusWindowChangeImpl(std::move(url), std::move(parent)));
             }
 
         private:
-            Coroutine<> openUrlAfterFocusWindowChangeImpl(QString filePath, QPointer<QWidget> parent) {
+            Coroutine<> openUrlAfterFocusWindowChangeImpl(QUrl url, QPointer<QWidget> parent) {
                 co_await waitAny(
                     []() -> Coroutine<> {
                         debug().log("Waiting for focusWindowChanged signal");
@@ -170,7 +171,7 @@ namespace tremotesf::desktoputils {
                         debug().log("Did not receive focusWindowChanged signal in {}", timeout);
                     }()
                 );
-                openFileImpl(filePath, parent);
+                openFileImpl(url, parent);
             }
 
             CoroutineScope mScope;
@@ -179,22 +180,24 @@ namespace tremotesf::desktoputils {
     }
 
     void openFile(const QString& filePath, QWidget* parent) {
-        if (!QFile::exists(filePath)) {
+        const auto parsedUrl = parsePathAsUrl(filePath);
+        if (!parsedUrl.has_value() && !QFile::exists(filePath)) {
             warning().log("Can't open file {}, it does not exist", filePath);
             showOpenFileError(filePath, qApp->translate("tremotesf", "This file/directory does not exist"), parent);
             return;
         }
+        auto url = parsedUrl.has_value() ? *parsedUrl : QUrl::fromLocalFile(filePath);
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
         // If focusWindow returns null in this moment (which is possible when we've just closed a context menu) then Qt will not pass activation token to launched app:
         // https://bugreports.qt.io/browse/QTBUG-138892
         // Wait for QGuiApplication::focusWindowChanged signal first so that token is requested and passed along
         if (KWindowSystem::isPlatformWayland() && !QGuiApplication::focusWindow()) {
-            DelayedUrlOpener::instance()->openUrlAfterFocusWindowChange(filePath, parent);
+            DelayedUrlOpener::instance()->openUrlAfterFocusWindowChange(std::move(url), parent);
         } else {
-            openFileImpl(filePath, parent);
+            openFileImpl(url, parent);
         }
 #else
-        openFileImpl(filePath, parent);
+        openFileImpl(url, parent);
 #endif
     }
 

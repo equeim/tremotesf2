@@ -3,11 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <stdexcept>
-#include <optional>
 #include <QRegularExpression>
-#include <QUrl>
 
 #include "pathutils.h"
+#include "target_os.h"
 
 using namespace Qt::StringLiterals;
 
@@ -27,14 +26,6 @@ namespace tremotesf {
         bool isWindowsUNCOrDOSDevicePath(QStringView path) {
             static const QRegularExpression regex(R"(^(?:\\|//).*$)"_L1);
             return regex.matchView(path).hasMatch();
-        }
-
-        std::optional<QUrl> parseUrl(const QString& path) {
-            const QUrl url = path;
-            if (url.isValid() && !url.isRelative() && !url.scheme().isEmpty() && !url.path().isEmpty()) {
-                return url;
-            }
-            return std::nullopt;
         }
 
         PathType determinePathType(const QString& path, PathOs pathOs) {
@@ -123,6 +114,20 @@ namespace tremotesf {
         return regex.matchView(path).hasMatch();
     }
 
+    std::optional<QUrl> parsePathAsUrl(const QString& path) {
+        if constexpr (localPathOs == PathOs::Windows) {
+            // Windows path can be parsed as url, handle it first
+            if (isAbsoluteWindowsDOSFilePath(path)) {
+                return std::nullopt;
+            }
+        }
+        const QUrl url = path;
+        if (url.isValid() && !url.isRelative() && !url.scheme().isEmpty() && !url.path().isEmpty()) {
+            return url;
+        }
+        return std::nullopt;
+    }
+
     QString normalizePath(const QString& path, PathOs pathOs) {
         if (path.isEmpty()) {
             return {};
@@ -143,14 +148,7 @@ namespace tremotesf {
         if (result.isEmpty()) {
             return {};
         }
-        if constexpr (localPathOs == PathOs::Windows) {
-            // Windows path can be parsed as url, handle it first
-            if (isAbsoluteWindowsDOSFilePath(result)) {
-                normalizePathImpl(result, PathType::WindowsAbsoluteDOSFilePath);
-                return result;
-            }
-        }
-        if (auto url = parseUrl(result); url.has_value()) {
+        if (auto url = parsePathAsUrl(result); url.has_value()) {
             if (url->isLocalFile()) {
                 // We shouldn't have file:// urls here, but handle them just in case
                 auto localPath = url->toLocalFile();
@@ -182,5 +180,4 @@ namespace tremotesf {
         }
         return path.sliced(index + 1);
     }
-
 }

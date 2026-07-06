@@ -5,13 +5,13 @@
 #ifndef TREMOTESF_RPC_PATHUTILS_H
 #define TREMOTESF_RPC_PATHUTILS_H
 
+#include <optional>
 #include <QString>
-
-#include "target_os.h"
+#include <QUrl>
 
 namespace tremotesf {
     bool isAbsoluteWindowsDOSFilePath(QStringView path);
-    bool isSchemeUrl(const QString& path);
+    std::optional<QUrl> parsePathAsUrl(const QString& path);
 
     /**
      * We need to pass PathOs explicitly because we can't determing whether given path is Unix or Windows path from its string alone:

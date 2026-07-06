@@ -14,6 +14,7 @@
 #include <QUrl>
 
 #include "log/log.h"
+#include "rpc/pathutils.h"
 
 SPECIALIZE_FORMATTER_FOR_QDEBUG(QUrl)
 
@@ -26,12 +27,20 @@ namespace tremotesf {
             std::vector<FilesInDirectory> filesToSelect{};
             std::vector<QString> nonExistentDirectories{};
             for (const QString& filePath : files) {
-                QString dirPath = QFileInfo(filePath).path();
+                const auto parsedUrl = parsePathAsUrl(filePath);
+                QString dirPath = [&] {
+                    if (parsedUrl.has_value()) {
+                        QUrl dirUrl = *parsedUrl;
+                        dirUrl.setPath(QFileInfo(dirUrl.path()).path());
+                        return dirUrl.toString();
+                    }
+                    return QFileInfo(filePath).path();
+                }();
 
                 if (std::ranges::contains(nonExistentDirectories, dirPath)) {
                     continue;
                 }
-                if (!QFileInfo::exists(dirPath)) {
+                if (!parsedUrl.has_value() && !QFileInfo::exists(dirPath)) {
                     warning().log("FileManagerLauncher: directory {} does not exist", dirPath);
                     nonExistentDirectories.push_back(dirPath);
                     continue;
