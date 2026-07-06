@@ -8,8 +8,9 @@
 #include <QTest>
 #include <QSettings>
 
-#include "servers.h"
 #include "pathutils.h"
+#include "servers.h"
+#include "target_os.h"
 #include "log/log.h"
 
 using namespace Qt::StringLiterals;

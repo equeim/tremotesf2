@@ -574,9 +574,10 @@ namespace tremotesf {
             this
         );
         QObject::connect(addDirectoriesButton, &QPushButton::clicked, this, [=, this] {
-            const QString directory(QFileDialog::getExistingDirectory(this));
-            if (!directory.isEmpty()) {
-                mMountedDirectoriesWidget->addRow(directory, QString());
+            const QUrl directory = QFileDialog::getExistingDirectoryUrl(this);
+            const auto normalized = normalizeLocalPathOrNetworkShareUrl(directory.toString());
+            if (!normalized.isEmpty()) {
+                mMountedDirectoriesWidget->addRow(normalized, QString());
             }
         });
         mountedDirectoriesLayout->addWidget(addDirectoriesButton, 1, 0);
