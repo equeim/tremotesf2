@@ -4,9 +4,17 @@
 ### Added
 - Status bar displays free space in the download directory (thanks @keizie)
 - Priority column in torrents list now shows colored icon (thanks @keizie)
+- Support for mapping remote directories to network share URLs like `smb://` (thanks @Manriel). *May not work correctly in Flatpak*.
+
+### Changed
+- Improved performance and memory usage when dealing with torrents with large amounts of files
 
 ### Fixed
 - Label/directory/tracker filter lists in the sidebar now use natural sorting
+- Jumping cursor position when editing paths
+- Issues with activation of "add torrent" dialogs on Wayland (again)
+- "Add torrent" and "Set location" dialogs being too wide when there are download directories with very long paths
+- Peers list not being updated correctly
 
 ## [2.9.1] - 2025-12-09
 ### Fixed
