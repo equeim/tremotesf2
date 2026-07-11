@@ -8,6 +8,7 @@
 
 ### Changed
 - Improved performance and memory usage when dealing with torrents with large amounts of files
+- Minimum CMake version is 3.31
 
 ### Fixed
 - Label/directory/tracker filter lists in the sidebar now use natural sorting
