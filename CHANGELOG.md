@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.10.0] - 2026-07-12
 ### Added
 - Status bar displays free space in the download directory (thanks @keizie)
 - Priority column in torrents list now shows colored icon (thanks @keizie)
