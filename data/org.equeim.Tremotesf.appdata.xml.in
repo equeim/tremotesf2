@@ -54,6 +54,29 @@ SPDX-License-Identifier: CC0-1.0
   <developer_name>Alexey Rochev</developer_name>
 
   <releases>
+    <release date="2026-07-12" version="2.10.0">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>Status bar displays free space in the download directory (thanks @keizie)</li>
+          <li>Priority column in torrents list now shows colored icon (thanks @keizie)</li>
+          <li>Support for mapping remote directories to network share URLs like <code>smb:&#47;&#47;</code> (thanks @Manriel). <em>May not work correctly in Flatpak</em>.</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>Improved performance and memory usage when dealing with torrents with large amounts of files</li>
+          <li>Minimum CMake version is 3.31</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>Label&#47;directory&#47;tracker filter lists in the sidebar now use natural sorting</li>
+          <li>Jumping cursor position when editing paths</li>
+          <li>Issues with activation of &#8220;add torrent&#8221; dialogs on Wayland (again)</li>
+          <li>&#8220;Add torrent&#8221; and &#8220;Set location&#8221; dialogs being too wide when there are download directories with very long paths</li>
+          <li>Peers list not being updated correctly</li>
+        </ul>
+      </description>
+    </release>
     <release date="2025-12-09" version="2.9.1">
       <description>
         <p>Fixed</p>
