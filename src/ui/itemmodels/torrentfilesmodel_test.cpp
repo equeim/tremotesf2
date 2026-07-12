@@ -81,7 +81,54 @@ namespace tremotesf {
             bool wanted;
         };
 
-        void populate() {
+        void populateEverythingNormal() {
+            const std::array files{
+                File{
+                    .path = "topdir/subdir1/subsubddir/file1",
+                    .size = 666,
+                    .completedSize = 0,
+                    .priority = TorrentFilesModelEntry::Priority::Normal,
+                    .wanted = true
+                },
+                File{
+                    .path = "topdir/subdir1/subsubddir/file2",
+                    .size = 100000,
+                    .completedSize = 4234,
+                    .priority = TorrentFilesModelEntry::Priority::Normal,
+                    .wanted = true
+                },
+                File{
+                    .path = "topdir/subdir2/file1",
+                    .size = 3333333,
+                    .completedSize = 0,
+                    .priority = TorrentFilesModelEntry::Priority::Normal,
+                    .wanted = true
+                },
+                File{
+                    .path = "topdir/subdir2/file2",
+                    .size = 111,
+                    .completedSize = 0,
+                    .priority = TorrentFilesModelEntry::Priority::Normal,
+                    .wanted = true
+                }
+            };
+            TorrentFilesTreeBuilder builder(files.size());
+            for (const File& file : files) {
+                builder.addFile(
+                    file.path.tokenize(u'/', Qt::SkipEmptyParts),
+                    true,
+                    file.size,
+                    file.completedSize,
+                    file.wanted,
+                    file.priority
+                );
+            }
+            builder.calculateDirectoriesRecursively();
+            mRootEntry = std::move(builder.rootEntry);
+            mFiles = std::move(builder.files);
+        }
+
+        void populateMixedState() {
             const std::array files{
                 File{
                     .path = "topdir/subdir1/subsubddir/file1",
@@ -135,9 +182,69 @@ namespace tremotesf {
         Q_OBJECT
 
     private slots:
-        void checkInitialState() {
+        void checkInitialStateNormal() {
             TestTorrentFilesModel model{};
-            model.populate();
+            model.populateEverythingNormal();
+
+            checkTree(
+                model,
+                {.name = "topdir"_L1,
+                 .size = 3434110,
+                 .progress = 4234.0 / 3434110.0,
+                 .priority = TorrentFilesModelEntry::Priority::Normal,
+                 .checkState = Qt::CheckState::Checked,
+
+                 .children = {
+                     {.name = "subdir1"_L1,
+                      .size = 100666,
+                      .progress = 4234.0 / 100666.0,
+                      .priority = TorrentFilesModelEntry::Priority::Normal,
+                      .checkState = Qt::CheckState::Checked,
+
+                      .children =
+                          {{.name = "subsubddir"_L1,
+                            .size = 100666,
+                            .progress = 4234.0 / 100666.0,
+                            .priority = TorrentFilesModelEntry::Priority::Normal,
+                            .checkState = Qt::CheckState::Checked,
+
+                            .children =
+                                {{.name = "file1"_L1,
+                                  .size = 666,
+                                  .progress = 0.0,
+                                  .priority = TorrentFilesModelEntry::Priority::Normal,
+                                  .checkState = Qt::CheckState::Checked},
+                                 {.name = "file2"_L1,
+                                  .size = 100000,
+                                  .progress = 4234.0 / 100666.0,
+                                  .priority = TorrentFilesModelEntry::Priority::Normal,
+                                  .checkState = Qt::CheckState::Checked}}}}},
+
+                     {.name = "subdir2"_L1,
+                      .size = 3333444,
+                      .progress = 0.0,
+                      .priority = TorrentFilesModelEntry::Priority::Normal,
+                      .checkState = Qt::CheckState::Checked,
+
+                      .children = {
+                          {.name = "file1"_L1,
+                           .size = 3333333,
+                           .progress = 0.0,
+                           .priority = TorrentFilesModelEntry::Priority::Normal,
+                           .checkState = Qt::CheckState::Checked},
+                          {.name = "file2"_L1,
+                           .size = 111,
+                           .progress = 0.0,
+                           .priority = TorrentFilesModelEntry::Priority::Normal,
+                           .checkState = Qt::CheckState::Checked}
+                      }}
+                 }}
+            );
+        }
+
+        void checkInitialStateMixed() {
+            TestTorrentFilesModel model{};
+            model.populateMixedState();
 
             checkTree(
                 model,
@@ -197,7 +304,7 @@ namespace tremotesf {
 
         void checkSetFilesWantedFromRoot() {
             TestTorrentFilesModel model{};
-            model.populate();
+            model.populateMixedState();
 
             QSignalSpy dataChanged(&model, &QAbstractItemModel::dataChanged);
 
@@ -275,7 +382,7 @@ namespace tremotesf {
 
         void checkSetFilesWantedFromFile() {
             TestTorrentFilesModel model{};
-            model.populate();
+            model.populateMixedState();
 
             QSignalSpy dataChanged(&model, &QAbstractItemModel::dataChanged);
 
@@ -348,7 +455,7 @@ namespace tremotesf {
 
         void checkSetFilesPriorityFromRoot() {
             TestTorrentFilesModel model{};
-            model.populate();
+            model.populateMixedState();
 
             QSignalSpy dataChanged(&model, &QAbstractItemModel::dataChanged);
 
@@ -425,7 +532,7 @@ namespace tremotesf {
 
         void checkSetFilesPriorityFromFile() {
             TestTorrentFilesModel model{};
-            model.populate();
+            model.populateMixedState();
 
             QSignalSpy dataChanged(&model, &QAbstractItemModel::dataChanged);
 
@@ -501,7 +608,7 @@ namespace tremotesf {
 
         void checkUpdateFiles() {
             TestTorrentFilesModel model{};
-            model.populate();
+            model.populateMixedState();
 
             std::array changed{TestTorrentFilesModel::File{}};
 

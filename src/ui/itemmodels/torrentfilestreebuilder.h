@@ -146,8 +146,9 @@ namespace tremotesf {
             if (children.empty()) return;
             long long size{};
             long long completedSize{};
-            TorrentFilesModelEntry::WantedState wantedState = children.front().wantedState();
-            TorrentFilesModelEntry::Priority priority = children.front().priority();
+            TorrentFilesModelEntry::WantedState wantedState{};
+            TorrentFilesModelEntry::Priority priority{};
+            bool isFirst = true;
             for (auto& child : children) {
                 child.setParentDirectory(directory);
                 if (child.isDirectory()) {
@@ -157,11 +158,18 @@ namespace tremotesf {
                 }
                 size += child.size();
                 completedSize += child.completedSize();
-                if (wantedState != TorrentFilesModelEntry::WantedState::Mixed && child.wantedState() != wantedState) {
-                    wantedState = TorrentFilesModelEntry::WantedState::Mixed;
-                }
-                if (priority != TorrentFilesModelEntry::Priority::Mixed && child.priority() != priority) {
-                    priority = TorrentFilesModelEntry::Priority::Mixed;
+                if (isFirst) {
+                    wantedState = child.wantedState();
+                    priority = child.priority();
+                    isFirst = false;
+                } else {
+                    if (wantedState != TorrentFilesModelEntry::WantedState::Mixed
+                        && child.wantedState() != wantedState) {
+                        wantedState = TorrentFilesModelEntry::WantedState::Mixed;
+                    }
+                    if (priority != TorrentFilesModelEntry::Priority::Mixed && child.priority() != priority) {
+                        priority = TorrentFilesModelEntry::Priority::Mixed;
+                    }
                 }
             }
             directory->setSize(size);
