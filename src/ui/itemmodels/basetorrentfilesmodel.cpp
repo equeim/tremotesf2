@@ -170,6 +170,14 @@ namespace tremotesf {
     namespace {
         class DataChangedDispatcher final {
         public:
+            struct ColumnAndRoles {
+                BaseTorrentFilesModel::Column column;
+                QList<int> roles;
+            };
+
+            explicit DataChangedDispatcher(std::optional<ColumnAndRoles> columnAndRoles = std::nullopt)
+                : mColumnAndRoles(std::move(columnAndRoles)) {}
+
             void add(const QModelIndex& parent, int row) {
                 // NOLINTNEXTLINE(clazy-detaching-member)
                 if (const auto found = mPendingSignals.find(parent); found != mPendingSignals.end()) {
@@ -182,20 +190,33 @@ namespace tremotesf {
                 for (auto&& [parent, rows] : mPendingSignals.asKeyValueRange()) {
                     if (rows.size() == 1) {
                         const int row = rows.front();
-                        emit model.dataChanged(
-                            model.index(row, 0, parent),
-                            model.index(row, model.columnCount() - 1, parent)
-                        );
+                        if (mColumnAndRoles.has_value()) {
+                            const auto index = model.index(row, static_cast<int>(mColumnAndRoles->column), parent);
+                            emit model.dataChanged(index, index, mColumnAndRoles->roles);
+                        } else {
+                            emit model.dataChanged(
+                                model.index(row, 0, parent),
+                                model.index(row, model.columnCount() - 1, parent)
+                            );
+                        }
                         continue;
                     }
                     std::ranges::sort(rows);
                     int firstRow = rows.front();
                     int lastRow = firstRow;
                     const auto emitForRange = [&] {
-                        emit model.dataChanged(
-                            model.index(firstRow, 0, parent),
-                            model.index(lastRow, model.columnCount() - 1, parent)
-                        );
+                        if (mColumnAndRoles.has_value()) {
+                            emit model.dataChanged(
+                                model.index(firstRow, static_cast<int>(mColumnAndRoles->column), parent),
+                                model.index(lastRow, static_cast<int>(mColumnAndRoles->column), parent),
+                                mColumnAndRoles->roles
+                            );
+                        } else {
+                            emit model.dataChanged(
+                                model.index(firstRow, 0, parent),
+                                model.index(lastRow, model.columnCount() - 1, parent)
+                            );
+                        }
                     };
                     for (int row : rows | std::views::drop(1)) {
                         if (row != (lastRow + 1)) {
@@ -209,6 +230,7 @@ namespace tremotesf {
             }
 
         private:
+            std::optional<ColumnAndRoles> mColumnAndRoles;
             QHash<QModelIndex, std::vector<int>> mPendingSignals{};
         };
 
@@ -252,12 +274,16 @@ namespace tremotesf {
 
         template<std::invocable<TorrentFilesModelEntry*> UpdateState>
             requires std::same_as<std::invoke_result_t<UpdateState, TorrentFilesModelEntry*>, bool>
-        void
-        setWantedOrPriority(const QModelIndexList& indexes, UpdateState updateState, BaseTorrentFilesModel& model) {
+        void setWantedOrPriority(
+            const QModelIndexList& indexes,
+            DataChangedDispatcher::ColumnAndRoles columnAndRoles,
+            UpdateState updateState,
+            BaseTorrentFilesModel& model
+        ) {
             if (indexes.empty()) return;
             if (!std::ranges::all_of(indexes, &QModelIndex::isValid)) return;
 
-            DataChangedDispatcher dispatcher{};
+            DataChangedDispatcher dispatcher(std::move(columnAndRoles));
             QSet<std::pair<TorrentFilesModelEntry*, QModelIndex>> parentDirectoriesToRecalculate{};
 
             for (const auto& index : indexes) {
@@ -274,18 +300,23 @@ namespace tremotesf {
             for (const auto& [directory, index] : parentDirectoriesToRecalculate) {
                 recalculateDirectoryAndItsParents(directory, index, dispatcher);
             }
-
             dispatcher.dispatchSignals(model);
         }
     }
     void BaseTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted) {
-        setWantedOrPriority(indexes, [&](TorrentFilesModelEntry* entry) { return entry->setWanted(wanted); }, *this);
+        setWantedOrPriority(
+            indexes,
+            {.column = Column::Name, .roles = {Qt::CheckStateRole}},
+            [&](TorrentFilesModelEntry* entry) { return entry->setWanted(wanted); },
+            *this
+        );
     }
 
     void
     BaseTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) {
         setWantedOrPriority(
             indexes,
+            {.column = Column::Priority, .roles = {Qt::DisplayRole, SortRole}},
             [&](TorrentFilesModelEntry* entry) { return entry->setPriority(priority); },
             *this
         );

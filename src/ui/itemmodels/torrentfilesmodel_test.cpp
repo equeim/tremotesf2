@@ -45,19 +45,64 @@ namespace tremotesf {
             return index;
         }
 
-        std::pair<QModelIndex, QModelIndex>
-        expectedDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight) {
-            return {topLeft.siblingAtColumn(0), bottomRight.siblingAtColumn(bottomRight.model()->columnCount() - 1)};
+        struct ExpectedDataChanged {
+            QModelIndex topLeft;
+            QModelIndex bottomRight{topLeft.siblingAtColumn(topLeft.model()->columnCount() - 1)};
+            QList<int> roles{};
+
+            std::strong_ordering operator<=>(const ExpectedDataChanged&) const = default;
+
+            static ExpectedDataChanged allColumnsAndRoles(QModelIndex topLeft, QModelIndex bottomRight) {
+                return {
+                    .topLeft = topLeft,
+                    .bottomRight = bottomRight.siblingAtColumn(bottomRight.model()->columnCount() - 1)
+                };
+            }
+
+            static ExpectedDataChanged allColumnsAndRoles(QModelIndex index) {
+                return allColumnsAndRoles(index, index);
+            }
+
+            static ExpectedDataChanged specificColumnAndRoles(
+                QModelIndex topLeft, QModelIndex bottomRight, BaseTorrentFilesModel::Column column, QList<int> roles
+            ) {
+                return {
+                    .topLeft = topLeft.siblingAtColumn(static_cast<int>(column)),
+                    .bottomRight = bottomRight.siblingAtColumn(static_cast<int>(column)),
+                    .roles = std::move(roles)
+                };
+            }
+
+            static ExpectedDataChanged
+            specificColumnAndRoles(QModelIndex index, BaseTorrentFilesModel::Column column, QList<int> roles) {
+                return specificColumnAndRoles(index, index, column, std::move(roles));
+            }
+        };
+
+        [[maybe_unused]]
+        QDebug operator<<(QDebug debug, const ExpectedDataChanged& dataChanged) {
+            const QDebugStateSaver saver(debug);
+            debug.nospace()
+                << "{.topLeft = "
+                << dataChanged.topLeft
+                << ", bottomRight = "
+                << dataChanged.bottomRight
+                << ", roles = "
+                << dataChanged.roles
+                << "}";
+            return debug;
         }
 
-        std::pair<QModelIndex, QModelIndex> expectedDataChanged(const QModelIndex& index) {
-            return expectedDataChanged(index, index);
-        }
-
-        std::set<std::pair<QModelIndex, QModelIndex>> actualDataChanged(QSignalSpy& spy) {
+        std::set<ExpectedDataChanged> actualDataChanged(QSignalSpy& spy) {
             return spy
                    | std::views::transform([](QList<QVariant> args) {
-                         return std::pair{args.at(0).toModelIndex(), args.at(1).toModelIndex()};
+                         return ExpectedDataChanged{
+                             .topLeft = args.at(0).toModelIndex(),
+                             .bottomRight = args.at(1).toModelIndex(),
+                             .roles = args.at(2).toList()
+                                      | std::views::transform([](const QVariant& role) { return role.toInt(); })
+                                      | std::ranges::to<QList>()
+                         };
                      })
                    | std::ranges::to<std::set>();
         }
@@ -311,15 +356,35 @@ namespace tremotesf {
             model.setFilesWanted({model.index(0, 0)}, false);
 
             const auto actualSignals = actualDataChanged(dataChanged);
+            const QList<int> expectedRoles{Qt::CheckStateRole};
             const auto expectedSignals = std::set{
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir/file1"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir"_L1, model)),
-                expectedDataChanged(
-                    indexForPath("topdir/subdir2/file1"_L1, model),
-                    indexForPath("topdir/subdir2/file2"_L1, model)
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir/file1"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
                 ),
-                expectedDataChanged(indexForPath("topdir/subdir1"_L1, model), indexForPath("topdir/subdir2"_L1, model)),
-                expectedDataChanged(indexForPath("topdir"_L1, model))
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir2/file1"_L1, model),
+                    indexForPath("topdir/subdir2/file2"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1"_L1, model),
+                    indexForPath("topdir/subdir2"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                )
             };
 
             QCOMPARE(actualSignals, expectedSignals);
@@ -389,11 +454,28 @@ namespace tremotesf {
             model.setFilesWanted({indexForPath("topdir/subdir1/subsubddir/file2"_L1, model)}, true);
 
             const auto actualSignals = actualDataChanged(dataChanged);
+            const QList<int> expectedRoles{Qt::CheckStateRole};
             const auto expectedSignals = std::set{
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir/file2"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1"_L1, model)),
-                expectedDataChanged(indexForPath("topdir"_L1, model))
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir/file2"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir"_L1, model),
+                    BaseTorrentFilesModel::Column::Name,
+                    expectedRoles
+                )
             };
             QCOMPARE(actualSignals, expectedSignals);
 
@@ -462,15 +544,35 @@ namespace tremotesf {
             model.setFilesPriority({model.index(0, 0)}, TorrentFilesModelEntry::Priority::Low);
 
             const auto actualSignals = actualDataChanged(dataChanged);
+            const QList<int> expectedRoles{Qt::DisplayRole, BaseTorrentFilesModel::SortRole};
             const auto expectedSignals = std::set{
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir/file1"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir"_L1, model)),
-                expectedDataChanged(
-                    indexForPath("topdir/subdir2/file1"_L1, model),
-                    indexForPath("topdir/subdir2/file2"_L1, model)
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir/file1"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
                 ),
-                expectedDataChanged(indexForPath("topdir/subdir1"_L1, model), indexForPath("topdir/subdir2"_L1, model)),
-                expectedDataChanged(indexForPath("topdir"_L1, model))
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir2/file1"_L1, model),
+                    indexForPath("topdir/subdir2/file2"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1"_L1, model),
+                    indexForPath("topdir/subdir2"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                )
             };
             QCOMPARE(actualSignals, expectedSignals);
 
@@ -542,11 +644,28 @@ namespace tremotesf {
             );
 
             const auto actualSignals = actualDataChanged(dataChanged);
+            const QList<int> expectedRoles{Qt::DisplayRole, BaseTorrentFilesModel::SortRole};
             const auto expectedSignals = std::set{
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir/file2"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1"_L1, model)),
-                expectedDataChanged(indexForPath("topdir"_L1, model))
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir/file2"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1/subsubddir"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir/subdir1"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                ),
+                ExpectedDataChanged::specificColumnAndRoles(
+                    indexForPath("topdir"_L1, model),
+                    BaseTorrentFilesModel::Column::Priority,
+                    expectedRoles
+                )
             };
             QCOMPARE(actualSignals, expectedSignals);
 
@@ -627,13 +746,13 @@ namespace tremotesf {
 
             const auto actualSignals = actualDataChanged(dataChanged);
             const auto expectedSignals = std::set{
-                expectedDataChanged(
+                ExpectedDataChanged::allColumnsAndRoles(
                     indexForPath("topdir/subdir1/subsubddir/file1"_L1, model),
                     indexForPath("topdir/subdir1/subsubddir/file2"_L1, model)
                 ),
-                expectedDataChanged(indexForPath("topdir/subdir1/subsubddir"_L1, model)),
-                expectedDataChanged(indexForPath("topdir/subdir1"_L1, model)),
-                expectedDataChanged(indexForPath("topdir"_L1, model))
+                ExpectedDataChanged::allColumnsAndRoles(indexForPath("topdir/subdir1/subsubddir"_L1, model)),
+                ExpectedDataChanged::allColumnsAndRoles(indexForPath("topdir/subdir1"_L1, model)),
+                ExpectedDataChanged::allColumnsAndRoles(indexForPath("topdir"_L1, model))
             };
             QCOMPARE(actualSignals, expectedSignals);
 
