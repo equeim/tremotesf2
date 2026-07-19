@@ -13,6 +13,7 @@
 
 #include "desktoputils.h"
 #include "formatutils.h"
+#include "stdutils.h"
 
 namespace tremotesf {
     BaseTorrentFilesModel::BaseTorrentFilesModel(std::vector<Column>&& columns, QObject* parent)
@@ -25,7 +26,7 @@ namespace tremotesf {
             return {};
         }
         const auto* const entry = static_cast<TorrentFilesModelEntry*>(index.internalPointer());
-        const Column column = mColumns.at(static_cast<size_t>(index.column()));
+        const Column column = fromColumnNumber(index.column());
         switch (role) {
         case Qt::CheckStateRole:
             if (column == Column::Name) {
@@ -87,7 +88,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return {};
         }
-        if (static_cast<Column>(index.column()) == Column::Name) {
+        if (fromColumnNumber(index.column()) == Column::Name) {
             return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
         }
         return QAbstractItemModel::flags(index);
@@ -97,7 +98,7 @@ namespace tremotesf {
         if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
             return {};
         }
-        switch (mColumns.at(static_cast<size_t>(section))) {
+        switch (fromColumnNumber(section)) {
         case Column::Name:
             //: Column title in torrent's file list
             return qApp->translate("tremotesf", "Name");
@@ -122,7 +123,7 @@ namespace tremotesf {
         if (!index.isValid()) {
             return false;
         }
-        if (static_cast<Column>(index.column()) == Column::Name && role == Qt::CheckStateRole) {
+        if (fromColumnNumber(index.column()) == Column::Name && role == Qt::CheckStateRole) {
             setFilesWanted({index}, (value.toInt() == Qt::Checked));
             return true;
         }
@@ -171,7 +172,7 @@ namespace tremotesf {
         class DataChangedDispatcher final {
         public:
             struct ColumnAndRoles {
-                BaseTorrentFilesModel::Column column;
+                int column;
                 QList<int> roles;
             };
 
@@ -207,8 +208,8 @@ namespace tremotesf {
                     const auto emitForRange = [&] {
                         if (mColumnAndRoles.has_value()) {
                             emit model.dataChanged(
-                                model.index(firstRow, static_cast<int>(mColumnAndRoles->column), parent),
-                                model.index(lastRow, static_cast<int>(mColumnAndRoles->column), parent),
+                                model.index(firstRow, mColumnAndRoles->column, parent),
+                                model.index(lastRow, mColumnAndRoles->column, parent),
                                 mColumnAndRoles->roles
                             );
                         } else {
@@ -306,7 +307,7 @@ namespace tremotesf {
     void BaseTorrentFilesModel::setFilesWanted(const QModelIndexList& indexes, bool wanted) {
         setWantedOrPriority(
             indexes,
-            {.column = Column::Name, .roles = {Qt::CheckStateRole}},
+            {.column = columnNumber(Column::Name), .roles = {Qt::CheckStateRole}},
             [&](TorrentFilesModelEntry* entry) { return entry->setWanted(wanted); },
             *this
         );
@@ -316,7 +317,7 @@ namespace tremotesf {
     BaseTorrentFilesModel::setFilesPriority(const QModelIndexList& indexes, TorrentFilesModelEntry::Priority priority) {
         setWantedOrPriority(
             indexes,
-            {.column = Column::Priority, .roles = {Qt::DisplayRole, SortRole}},
+            {.column = columnNumber(Column::Priority), .roles = {Qt::DisplayRole, SortRole}},
             [&](TorrentFilesModelEntry* entry) { return entry->setPriority(priority); },
             *this
         );
@@ -325,6 +326,15 @@ namespace tremotesf {
     void BaseTorrentFilesModel::fileRenamed(TorrentFilesModelEntry* entry, const QString& newName) {
         entry->setName(newName);
         emit dataChanged(createIndex(entry->row(), 0, entry), createIndex(entry->row(), columnCount() - 1, entry));
+    }
+
+    int BaseTorrentFilesModel::columnNumber(Column column) const {
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+        return indexOfCasted<int>(mColumns, column).value();
+    }
+
+    BaseTorrentFilesModel::Column BaseTorrentFilesModel::fromColumnNumber(int column) const {
+        return mColumns.at(static_cast<size_t>(column));
     }
 
     void BaseTorrentFilesModel::updateFiles(

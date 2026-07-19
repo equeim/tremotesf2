@@ -36,13 +36,13 @@ namespace tremotesf {
           mLocalFile(true),
           mModel(model),
           mProxyModel(new TorrentFilesProxyModel(
-              mModel, LocalTorrentFilesModel::SortRole, static_cast<int>(LocalTorrentFilesModel::Column::Name), this
+              mModel, LocalTorrentFilesModel::SortRole, model->columnNumber(BaseTorrentFilesModel::Column::Name), this
           )),
           mRpc(rpc) {
         init();
         setItemDelegate(new TooltipWhenElidedDelegate(this));
         if (!header()->restoreState(Settings::instance()->get_localTorrentFilesViewHeaderState())) {
-            sortByColumn(static_cast<int>(LocalTorrentFilesModel::Column::Name), Qt::AscendingOrder);
+            sortByColumn(model->columnNumber(BaseTorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }
     }
 
@@ -51,17 +51,17 @@ namespace tremotesf {
           mLocalFile(false),
           mModel(model),
           mProxyModel(new TorrentFilesProxyModel(
-              mModel, TorrentFilesModel::SortRole, static_cast<int>(TorrentFilesModel::Column::Name), this
+              mModel, TorrentFilesModel::SortRole, model->columnNumber(BaseTorrentFilesModel::Column::Name), this
           )),
           mRpc(rpc) {
         init();
         setItemDelegate(new TooltipWhenElidedDelegate(this));
         setItemDelegateForColumn(
-            static_cast<int>(TorrentFilesModel::Column::ProgressBar),
+            model->columnNumber(BaseTorrentFilesModel::Column::ProgressBar),
             new ProgressBarDelegate(TorrentFilesModel::SortRole, this)
         );
         if (!header()->restoreState(Settings::instance()->get_torrentFilesViewHeaderState())) {
-            sortByColumn(static_cast<int>(TorrentFilesModel::Column::Name), Qt::AscendingOrder);
+            sortByColumn(model->columnNumber(BaseTorrentFilesModel::Column::Name), Qt::AscendingOrder);
         }
 
         QObject::connect(this, &TorrentFilesView::activated, this, [=, this](const auto& index) {
