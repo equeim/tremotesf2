@@ -105,7 +105,7 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{app_id}.desktop
 %{_metainfodir}/%{app_id}.appdata.xml
 
 %changelog
-* Sun Jul 12 2026 Alexey Rochev <equeim@gmail.com> - 2.10.0-1
+* Mon Jul 20 2026 Alexey Rochev <equeim@gmail.com> - 2.10.0-1
 - tremotesf-2.10.0
 
 * Tue Dec 09 2025 Alexey Rochev <equeim@gmail.com> - 2.9.1-1
