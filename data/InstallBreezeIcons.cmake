@@ -25,6 +25,7 @@ set(icon_files_to_bundle
     document-preview.svg
     document-properties.svg
     download.svg
+    edit-clear.svg
     edit-copy.svg
     edit-delete.svg
     edit-delete.svg
