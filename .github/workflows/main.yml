@@ -241,11 +241,6 @@ jobs:
           mingw-w64-clang-x86_64-cxxopts
           mingw-w64-clang-x86_64-kwidgetsaddons
 
-    - name: Generate C++/WinRT headers
-      shell: msys2 {0}
-      run: |
-          cppwinrt -input sdk -output /clang64/include
-
     - name: Add GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@cb2e3f949c41b7818628f35f8484a9b0acf90cf9
 
