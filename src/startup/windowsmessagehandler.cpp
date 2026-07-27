@@ -18,6 +18,7 @@
 #include <QScopeGuard>
 #include <QStandardPaths>
 #include <QString>
+#include <QThread>
 
 #include <fmt/format.h>
 
@@ -227,6 +228,12 @@ namespace tremotesf {
             "[%{time yyyy.MM.dd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{message}"_L1
         );
 #ifndef QT_DEBUG
+        // Make sure that Qt remembers current thread as "main" thread.
+        // If logger's background thread is started before QApplication is created further in "main()"
+        // then it will be remembered as "main" thread through QFile constructor, and Bad Things Will Happen
+        // See https://qt-project.atlassian.net/browse/QTBUG-146190
+        QThread::currentThread();
+
         globalFileLogger = std::make_unique<FileLogger>();
         debug().log("FileLogger: created, starting write thread");
 #endif
