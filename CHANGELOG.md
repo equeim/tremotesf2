@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.10.1] - 2026-07-28
+### Fixed
+- Crash on startup on Windows
+- Missing icon for clearing search field on Windows and macOS
+
+### Changed
+- Flatpak KDE SDK updated to 6.11
+
 ## [2.10.0] - 2026-07-20
 ### Added
 - Status bar displays free space in the download directory (thanks @keizie)
