@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         submodules: 'recursive'
 
@@ -33,7 +33,7 @@ jobs:
         arch: ${{ inputs.arch == 'x86_64' && 'amd64' || 'arm64' }}
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@ecba2ac2c8e1317eee041a5188e56f8311b0c29d
+      uses: equeim/action-setup-vcpkg@bba03881a0772c332d953991cf1375471592aa70
       with:
         vcpkg-root: ${{ github.workspace }}\vcpkg
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
@@ -45,7 +45,7 @@ jobs:
         cmake -G Ninja -S . -B build --preset windows-${{ inputs.arch }}-msvc-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed
 
     - name: Archive vcpkg build logs
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       if: always()
       with:
         name: 'windows-${{ inputs.arch }}-vcpkg-build-logs'
@@ -66,7 +66,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         submodules: 'recursive'
 
@@ -81,7 +81,7 @@ jobs:
         arch: ${{ inputs.arch == 'x86_64' && 'amd64' || 'arm64' }}
 
     - name: Set up vcpkg
-      uses: equeim/action-setup-vcpkg@ecba2ac2c8e1317eee041a5188e56f8311b0c29d
+      uses: equeim/action-setup-vcpkg@bba03881a0772c332d953991cf1375471592aa70
       with:
         vcpkg-root: ${{ github.workspace }}\vcpkg
         binary-cache-path: ${{ github.workspace }}\vcpkg_binary_cache
@@ -90,7 +90,7 @@ jobs:
 
     - name: Build Tremotesf with ${{ matrix.toolchain }} toolchain for ${{ inputs.arch }} architecture
       id: build
-      uses: equeim/action-cmake-build@e6217b34862c420e581c40032d76a767cd343420
+      uses: equeim/action-cmake-build@f86986b62f4a9c4d4549351b8d04566368c199dd
       with:
         cmake-arguments: --preset windows-${{ inputs.arch }}-${{ matrix.toolchain }}-vcpkg -D VCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed -D VCPKG_INSTALL_OPTIONS='--disable-metrics;--only-binarycaching' -D TREMOTESF_ASAN=${{ inputs.release-tag == '' && matrix.toolchain == 'msvc' && 'ON' || 'OFF' }}
         package: true
@@ -99,7 +99,7 @@ jobs:
 
     - name: Archive packages
       if: inputs.release-tag == ''
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       with:
         name: 'windows-${{ inputs.arch }}-${{ matrix.toolchain }}-packages'
         retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
@@ -117,7 +117,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Archive build logs
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       if: always()
       with:
         name: 'windows-${{ inputs.arch }}-${{ matrix.toolchain }}-build-logs'
