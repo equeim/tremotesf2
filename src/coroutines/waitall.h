@@ -6,6 +6,7 @@
 #define TREMOTESF_COROUTINES_WAITALL_H
 
 #include <list>
+#include <vector>
 
 #include "coroutines.h"
 
