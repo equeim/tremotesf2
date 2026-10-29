@@ -87,3 +87,13 @@ jobs:
     uses: ./.github/workflows/build-macos.yml
     with:
       release-tag: ${{ github.event.release.tag_name }}
+
+  build-appimage:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ['x86_64', 'arm64']
+    uses: ./.github/workflows/build-appimage.yml
+    with:
+      arch: ${{ matrix.arch }}
+      release-tag: ${{ github.event.release.tag_name }}

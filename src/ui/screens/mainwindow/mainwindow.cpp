@@ -36,7 +36,9 @@
 #include <QToolBar>
 
 #ifdef TREMOTESF_UNIX_FREEDESKTOP
-#    include <KStartupInfo>
+#    ifdef TREMOTESF_HAVE_KSTARTUPINFO
+#        include <KStartupInfo>
+#    endif
 #    include <KWindowSystem>
 #    include "unixhelpers.h"
 #endif
@@ -181,9 +183,11 @@ namespace tremotesf {
             switch (KWindowSystem::platform()) {
             case KWindowSystem::Platform::X11:
                 debug().log("Windowing system is X11");
+#ifdef TREMOTESF_HAVE_KSTARTUPINFO
                 info().log("Removing startup notification with id {}", *windowActivationToken);
                 KStartupInfo::setNewStartupId(window->windowHandle(), *windowActivationToken);
                 KStartupInfo::appStarted(*windowActivationToken);
+#endif
                 break;
             case KWindowSystem::Platform::Wayland:
                 debug().log("Windowing system is Wayland");
