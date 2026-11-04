@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container-image: ['fedora:43', 'fedora:44', 'opensuse/tumbleweed:latest']
+        container-image: ['fedora:44', 'fedora:45', 'opensuse/tumbleweed:latest']
         compiler: ['gcc', 'clang']
         arch: ['x86_64', 'arm64']
         exclude:
