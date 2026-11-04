@@ -36,7 +36,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Set up vcpkg
-        uses: equeim/action-setup-vcpkg@bba03881a0772c332d953991cf1375471592aa70
+        uses: equeim/action-setup-vcpkg@927e9ac44aad6c76033aa61500ee31543ab205bd
         with:
           vcpkg-root: ${{ github.workspace }}/vcpkg
           save-cache: true
