@@ -4,6 +4,8 @@
 
 #include "mainwindowstatusbar.h"
 
+#include <ranges>
+
 #include <QActionGroup>
 #include <QCoreApplication>
 #include <QHBoxLayout>
@@ -29,9 +31,9 @@ namespace tremotesf {
         auto container = new QWidget(this);
         addPermanentWidget(container, 1);
 
-        auto layout = new QHBoxLayout(container);
+        mLayout = new QHBoxLayout(container);
         // Top/bottom margins are set on mServerLabel below so that they don't affect separators
-        layout->setContentsMargins(8, 0, 8, 0);
+        mLayout->setContentsMargins(8, 0, 8, 0);
 
         mServerButton = new QToolButton(this);
         mServerButton->setPopupMode(QToolButton::InstantPopup);
@@ -40,46 +42,43 @@ namespace tremotesf {
         mServerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         mServerMenu = new QMenu(this);
         mServerButton->setMenu(mServerMenu);
-        layout->addWidget(mServerButton);
+        mLayout->addWidget(mServerButton);
 
         mServerSpacer = new QWidget(this);
         mServerSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        layout->addWidget(mServerSpacer);
+        mLayout->addWidget(mServerSpacer);
 
         mFirstSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mFirstSeparator);
+        mLayout->addWidget(mFirstSeparator);
 
         mStatusLabel = new QLabel(this);
-        layout->addWidget(mStatusLabel);
+        mLayout->addWidget(mStatusLabel);
 
-        mSecondSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mSecondSeparator);
+        mLayout->addWidget(new StatusBarSeparator(this));
 
-        mDownloadSpeedImage = new QLabel(this);
-        mDownloadSpeedImage->setPixmap(QIcon::fromTheme("go-down"_L1).pixmap(16, 16));
-        mDownloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mDownloadSpeedImage);
+        auto downloadSpeedImage = new QLabel(this);
+        downloadSpeedImage->setPixmap(QIcon::fromTheme("go-down"_L1).pixmap(16, 16));
+        downloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mLayout->addWidget(downloadSpeedImage);
 
-        mDownloadSpeedLabel = new QLabel(this);
-        layout->addWidget(mDownloadSpeedLabel);
+        auto downloadSpeedLabel = new QLabel(this);
+        mLayout->addWidget(downloadSpeedLabel);
 
-        mThirdSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mThirdSeparator);
+        mLayout->addWidget(new StatusBarSeparator(this));
 
-        mUploadSpeedImage = new QLabel(this);
-        mUploadSpeedImage->setPixmap(QIcon::fromTheme("go-up"_L1).pixmap(16, 16));
-        mUploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mUploadSpeedImage);
+        auto uploadSpeedImage = new QLabel(this);
+        uploadSpeedImage->setPixmap(QIcon::fromTheme("go-up"_L1).pixmap(16, 16));
+        uploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mLayout->addWidget(uploadSpeedImage);
 
-        mUploadSpeedLabel = new QLabel(this);
-        layout->addWidget(mUploadSpeedLabel);
+        auto uploadSpeedLabel = new QLabel(this);
+        mLayout->addWidget(uploadSpeedLabel);
 
-        mFourthSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mFourthSeparator);
+        mLayout->addWidget(new StatusBarSeparator(this));
 
-        mFreeSpaceLabel = new QLabel(this);
-        mFreeSpaceLabel->setContentsMargins(8, 0, 0, 0);
-        layout->addWidget(mFreeSpaceLabel);
+        auto freeSpaceLabel = new QLabel(this);
+        freeSpaceLabel->setContentsMargins(8, 0, 0, 0);
+        mLayout->addWidget(freeSpaceLabel);
 
         updateLayout();
         QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindowStatusBar::updateLayout);
@@ -110,12 +109,21 @@ namespace tremotesf {
         updateStatusLabels();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateStatusLabels);
 
-        QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=, this] {
-            mDownloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
-            mUploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
-            mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1")
-                                         .arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace())));
-        });
+        const auto updateSpeedAndFreeSpaceLabels = [=, this] {
+            downloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
+            uploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
+            freeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1")
+                                        .arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace())));
+        };
+        updateSpeedAndFreeSpaceLabels();
+        QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, updateSpeedAndFreeSpaceLabels);
+    }
+
+    namespace {
+        auto widgetsAfter(QWidget* widget, QLayout* layout) {
+            return std::views::iota(layout->indexOf(widget) + 1, layout->count())
+                   | std::views::transform([layout](int i) { return layout->itemAt(i)->widget(); });
+        }
     }
 
     void MainWindowStatusBar::updateLayout() {
@@ -125,37 +133,20 @@ namespace tremotesf {
             mFirstSeparator->show();
             mStatusLabel->show();
             if (mRpc->connectionState() == Rpc::ConnectionState::Connected) {
-                mSecondSeparator->show();
-                mDownloadSpeedImage->show();
-                mDownloadSpeedLabel->show();
-                mThirdSeparator->show();
-                mUploadSpeedImage->show();
-                mUploadSpeedLabel->show();
-                mFourthSeparator->show();
-                mFreeSpaceLabel->show();
+                for (auto* widget : widgetsAfter(mStatusLabel, mLayout)) {
+                    widget->show();
+                }
             } else {
-                mSecondSeparator->hide();
-                mDownloadSpeedImage->hide();
-                mDownloadSpeedLabel->hide();
-                mThirdSeparator->hide();
-                mUploadSpeedImage->hide();
-                mUploadSpeedLabel->hide();
-                mFourthSeparator->hide();
-                mFreeSpaceLabel->hide();
+                for (auto* widget : widgetsAfter(mStatusLabel, mLayout)) {
+                    widget->hide();
+                }
             }
         } else {
             mServerButton->setIcon(QIcon::fromTheme("dialog-error"_L1));
             mServerSpacer->show();
-            mFirstSeparator->setVisible(false);
-            mStatusLabel->hide();
-            mSecondSeparator->hide();
-            mDownloadSpeedImage->hide();
-            mDownloadSpeedLabel->hide();
-            mThirdSeparator->hide();
-            mUploadSpeedImage->hide();
-            mUploadSpeedLabel->hide();
-            mFourthSeparator->hide();
-            mFreeSpaceLabel->hide();
+            for (auto* widget : widgetsAfter(mServerSpacer, mLayout)) {
+                widget->hide();
+            }
         }
     }
 
