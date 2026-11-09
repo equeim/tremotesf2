@@ -30,6 +30,7 @@ include(GNUInstallDirs)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(cmake/CommonOptions.cmake)
+include(cmake/StaticBuild.cmake)
 
 find_package(Qt6 ${TREMOTESF_MINIMUM_QT_VERSION} REQUIRED COMPONENTS Core)
 

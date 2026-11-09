@@ -258,6 +258,17 @@ if (UNIX)
         find_package(KF6WindowSystem ${minimum_kf_version} REQUIRED)
         target_link_libraries(tremotesf_objects PUBLIC Qt::DBus KF6::WindowSystem)
 
+        # KWindowSystem builds its X11 backend - and with it KStartupInfo - only when
+        # it is built with X11 support, which in turn requires Qt's xcb support. The
+        # fully static build (see cmake/StaticBuild.cmake) has neither, so the X11
+        # startup notification code is compiled out there.
+        option(TREMOTESF_KWINDOWSYSTEM_X11
+            "The KWindowSystem being linked against was built with its X11 backend, so KStartupInfo is available."
+            ON)
+        if (TREMOTESF_KWINDOWSYSTEM_X11)
+            target_compile_definitions(tremotesf_objects PUBLIC TREMOTESF_HAVE_KSTARTUPINFO)
+        endif ()
+
         qt_add_dbus_adaptor(
             dbus_generated
             ipc/org.freedesktop.Application.xml
@@ -366,6 +377,10 @@ endif ()
 
 add_executable(tremotesf startup/main.cpp)
 target_link_libraries(tremotesf PRIVATE tremotesf_objects)
+
+if (TREMOTESF_STATIC_BUILD)
+    tremotesf_setup_static_build(tremotesf)
+endif ()
 
 # Executable configuration on Windows
 if (WIN32)
