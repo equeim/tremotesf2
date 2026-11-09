@@ -6,6 +6,7 @@
 #define TREMOTESF_FALLBACK_ICON_THEME_H
 
 namespace tremotesf {
+    bool isPaletteDark();
     void setupIconTheme();
 }
 

@@ -62,6 +62,7 @@ target_sources(tremotesf_objects
 
     startup/commandlineparser.cpp
 
+    ui/iconthemesetup.cpp
     ui/itemmodels/baseproxymodel.cpp
     ui/itemmodels/basetorrentfilesmodel.cpp
     ui/itemmodels/stringlistmodel.cpp
