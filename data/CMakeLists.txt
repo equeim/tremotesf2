@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-target_sources(tremotesf_objects PRIVATE icons/status/status.qrc)
+target_sources(tremotesf_objects PRIVATE icons/status/status.qrc icons/turtle.qrc)
 
 if (TREMOTESF_UNIX_FREEDESKTOP)
     find_package(Gettext 0.22.5 REQUIRED)

@@ -17,6 +17,7 @@
 #include <QToolButton>
 
 #include "log/log.h"
+#include "rpc/serversettings.h"
 #include "rpc/serverstats.h"
 #include "rpc/servers.h"
 #include "rpc/rpc.h"
@@ -53,6 +54,33 @@ namespace tremotesf {
 
         mStatusLabel = new QLabel(this);
         mLayout->addWidget(mStatusLabel);
+
+        auto altSpeedLimitsButton = new QToolButton(this);
+        altSpeedLimitsButton->setAutoRaise(true);
+        altSpeedLimitsButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        auto altSpeedLimitsAction = altSpeedLimitsButton->addAction(QIcon(":/turtle.svg"), QString{});
+        altSpeedLimitsButton->setDefaultAction(altSpeedLimitsAction);
+        altSpeedLimitsAction->setCheckable(true);
+        mLayout->addWidget(altSpeedLimitsButton);
+        const auto updateAltSpeedLimitsButton = [=, this] {
+            if (mRpc->serverSettings()->data().alternativeSpeedLimitsEnabled) {
+                altSpeedLimitsAction->setChecked(true);
+                altSpeedLimitsAction->setText(
+                    qApp->translate("tremotesf", "Alternative speed limits are enabled. Click to disable")
+                );
+            } else {
+                altSpeedLimitsAction->setChecked(false);
+                altSpeedLimitsAction->setText(
+                    qApp->translate("tremotesf", "Alternative speed limits are disabled. Click to enable")
+                );
+            }
+        };
+        updateAltSpeedLimitsButton();
+        QObject::connect(mRpc->serverSettings(), &ServerSettings::changed, this, updateAltSpeedLimitsButton);
+        QObject::connect(altSpeedLimitsAction, &QAction::triggered, this, [=, this](bool checked) {
+            mRpc->serverSettings()->setAlternativeSpeedLimitsEnabled(checked);
+            updateAltSpeedLimitsButton();
+        });
 
         mLayout->addWidget(new StatusBarSeparator(this));
 
