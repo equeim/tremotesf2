@@ -101,6 +101,7 @@ namespace tremotesf {
     signals:
         void currentServerChanged();
         void hasServersChanged();
+        void serversChanged();
     };
 }
 

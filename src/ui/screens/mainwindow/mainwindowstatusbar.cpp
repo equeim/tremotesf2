@@ -4,6 +4,8 @@
 
 #include "mainwindowstatusbar.h"
 
+#include <ranges>
+
 #include <QActionGroup>
 #include <QCoreApplication>
 #include <QHBoxLayout>
@@ -12,8 +14,10 @@
 #include <QMenu>
 #include <QPainter>
 #include <QStyleOption>
+#include <QToolButton>
 
 #include "log/log.h"
+#include "rpc/serversettings.h"
 #include "rpc/serverstats.h"
 #include "rpc/servers.h"
 #include "rpc/rpc.h"
@@ -25,158 +29,174 @@ namespace tremotesf {
     MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
         setSizeGripEnabled(false);
 
-        setContextMenuPolicy(Qt::CustomContextMenu);
-        QObject::connect(this, &QWidget::customContextMenuRequested, this, &MainWindowStatusBar::showContextMenu);
-
         auto container = new QWidget(this);
         addPermanentWidget(container, 1);
 
-        auto layout = new QHBoxLayout(container);
+        mLayout = new QHBoxLayout(container);
         // Top/bottom margins are set on mServerLabel below so that they don't affect separators
-        layout->setContentsMargins(8, 0, 8, 0);
+        mLayout->setContentsMargins(8, 0, 8, 0);
 
-        mNoServersErrorImage = new QLabel(this);
-        mNoServersErrorImage->setPixmap(QIcon::fromTheme("dialog-error"_L1).pixmap(16, 16));
-        mNoServersErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mNoServersErrorImage);
+        mServerButton = new QToolButton(this);
+        mServerButton->setPopupMode(QToolButton::InstantPopup);
+        mServerButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        mServerButton->setAutoRaise(true);
+        mServerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mServerMenu = new QMenu(this);
+        mServerButton->setMenu(mServerMenu);
+        mLayout->addWidget(mServerButton);
 
-        mServerLabel = new QLabel(this);
-        mServerLabel->setContentsMargins(0, 5, 0, 5);
-        layout->addWidget(mServerLabel);
+        mServerSpacer = new QWidget(this);
+        mServerSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        mLayout->addWidget(mServerSpacer);
 
         mFirstSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mFirstSeparator);
+        mLayout->addWidget(mFirstSeparator);
 
         mStatusLabel = new QLabel(this);
-        layout->addWidget(mStatusLabel);
+        mLayout->addWidget(mStatusLabel);
 
-        mSecondSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mSecondSeparator);
+        auto altSpeedLimitsButton = new QToolButton(this);
+        altSpeedLimitsButton->setAutoRaise(true);
+        altSpeedLimitsButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        auto altSpeedLimitsAction = altSpeedLimitsButton->addAction(QIcon(":/turtle.svg"), QString{});
+        altSpeedLimitsButton->setDefaultAction(altSpeedLimitsAction);
+        altSpeedLimitsAction->setCheckable(true);
+        mLayout->addWidget(altSpeedLimitsButton);
+        const auto updateAltSpeedLimitsButton = [=, this] {
+            if (mRpc->serverSettings()->data().alternativeSpeedLimitsEnabled) {
+                altSpeedLimitsAction->setChecked(true);
+                altSpeedLimitsAction->setText(
+                    qApp->translate("tremotesf", "Alternative speed limits are enabled. Click to disable")
+                );
+            } else {
+                altSpeedLimitsAction->setChecked(false);
+                altSpeedLimitsAction->setText(
+                    qApp->translate("tremotesf", "Alternative speed limits are disabled. Click to enable")
+                );
+            }
+        };
+        updateAltSpeedLimitsButton();
+        QObject::connect(mRpc->serverSettings(), &ServerSettings::changed, this, updateAltSpeedLimitsButton);
+        QObject::connect(altSpeedLimitsAction, &QAction::triggered, this, [=, this](bool checked) {
+            mRpc->serverSettings()->setAlternativeSpeedLimitsEnabled(checked);
+            updateAltSpeedLimitsButton();
+        });
 
-        mDownloadSpeedImage = new QLabel(this);
-        mDownloadSpeedImage->setPixmap(QIcon::fromTheme("go-down"_L1).pixmap(16, 16));
-        mDownloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mDownloadSpeedImage);
+        mLayout->addWidget(new StatusBarSeparator(this));
 
-        mDownloadSpeedLabel = new QLabel(this);
-        layout->addWidget(mDownloadSpeedLabel);
+        auto downloadSpeedImage = new QLabel(this);
+        downloadSpeedImage->setPixmap(QIcon::fromTheme("go-down"_L1).pixmap(16, 16));
+        downloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mLayout->addWidget(downloadSpeedImage);
 
-        mThirdSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mThirdSeparator);
+        auto downloadSpeedLabel = new QLabel(this);
+        mLayout->addWidget(downloadSpeedLabel);
 
-        mUploadSpeedImage = new QLabel(this);
-        mUploadSpeedImage->setPixmap(QIcon::fromTheme("go-up"_L1).pixmap(16, 16));
-        mUploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mUploadSpeedImage);
+        mLayout->addWidget(new StatusBarSeparator(this));
 
-        mUploadSpeedLabel = new QLabel(this);
-        layout->addWidget(mUploadSpeedLabel);
+        auto uploadSpeedImage = new QLabel(this);
+        uploadSpeedImage->setPixmap(QIcon::fromTheme("go-up"_L1).pixmap(16, 16));
+        uploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mLayout->addWidget(uploadSpeedImage);
 
-        mFourthSeparator = new StatusBarSeparator(this);
-        layout->addWidget(mFourthSeparator);
+        auto uploadSpeedLabel = new QLabel(this);
+        mLayout->addWidget(uploadSpeedLabel);
 
-        mFreeSpaceLabel = new QLabel(this);
-        mFreeSpaceLabel->setContentsMargins(8, 0, 0, 0);
-        layout->addWidget(mFreeSpaceLabel);
+        mLayout->addWidget(new StatusBarSeparator(this));
+
+        auto freeSpaceLabel = new QLabel(this);
+        freeSpaceLabel->setContentsMargins(8, 0, 0, 0);
+        mLayout->addWidget(freeSpaceLabel);
 
         updateLayout();
         QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindowStatusBar::updateLayout);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
 
-        updateServerLabel();
+        updateServerText();
         QObject::connect(
             Servers::instance(),
             &Servers::currentServerChanged,
             this,
-            &MainWindowStatusBar::updateServerLabel
+            &MainWindowStatusBar::updateServerText
         );
         QObject::connect(
             Servers::instance(),
             &Servers::hasServersChanged,
             this,
-            &MainWindowStatusBar::updateServerLabel
+            &MainWindowStatusBar::updateServerText
         );
+        updateServerMenu();
+        QObject::connect(
+            Servers::instance(),
+            &Servers::currentServerChanged,
+            this,
+            &MainWindowStatusBar::updateServerMenu
+        );
+        QObject::connect(Servers::instance(), &Servers::serversChanged, this, &MainWindowStatusBar::updateServerMenu);
 
         updateStatusLabels();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateStatusLabels);
 
-        QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, [=, this] {
-            mDownloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
-            mUploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
-            mFreeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1")
-                                         .arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace())));
-        });
+        const auto updateSpeedAndFreeSpaceLabels = [=, this] {
+            downloadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->downloadSpeed()));
+            uploadSpeedLabel->setText(formatutils::formatByteSpeed(mRpc->serverStats()->uploadSpeed()));
+            freeSpaceLabel->setText(qApp->translate("tremotesf", "Free space: %1")
+                                        .arg(formatutils::formatByteSize(mRpc->serverStats()->freeSpace())));
+        };
+        updateSpeedAndFreeSpaceLabels();
+        QObject::connect(mRpc->serverStats(), &ServerStats::updated, this, updateSpeedAndFreeSpaceLabels);
+    }
+
+    namespace {
+        auto widgetsAfter(QWidget* widget, QLayout* layout) {
+            return std::views::iota(layout->indexOf(widget) + 1, layout->count())
+                   | std::views::transform([layout](int i) { return layout->itemAt(i)->widget(); });
+        }
     }
 
     void MainWindowStatusBar::updateLayout() {
         if (Servers::instance()->hasServers()) {
-            mNoServersErrorImage->hide();
-            mServerLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+            mServerButton->setIcon(QIcon{});
+            mServerSpacer->hide();
             mFirstSeparator->show();
             mStatusLabel->show();
             if (mRpc->connectionState() == Rpc::ConnectionState::Connected) {
-                mSecondSeparator->show();
-                mDownloadSpeedImage->show();
-                mDownloadSpeedLabel->show();
-                mThirdSeparator->show();
-                mUploadSpeedImage->show();
-                mUploadSpeedLabel->show();
-                mFourthSeparator->show();
-                mFreeSpaceLabel->show();
+                for (auto* widget : widgetsAfter(mStatusLabel, mLayout)) {
+                    widget->show();
+                }
             } else {
-                mSecondSeparator->hide();
-                mDownloadSpeedImage->hide();
-                mDownloadSpeedLabel->hide();
-                mThirdSeparator->hide();
-                mUploadSpeedImage->hide();
-                mUploadSpeedLabel->hide();
-                mFourthSeparator->hide();
-                mFreeSpaceLabel->hide();
+                for (auto* widget : widgetsAfter(mStatusLabel, mLayout)) {
+                    widget->hide();
+                }
             }
         } else {
-            mNoServersErrorImage->show();
-            mServerLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-            mFirstSeparator->hide();
-            mStatusLabel->hide();
-            mSecondSeparator->hide();
-            mDownloadSpeedImage->hide();
-            mDownloadSpeedLabel->hide();
-            mThirdSeparator->hide();
-            mUploadSpeedImage->hide();
-            mUploadSpeedLabel->hide();
-            mFreeSpaceLabel->hide();
+            mServerButton->setIcon(QIcon::fromTheme("dialog-error"_L1));
+            mServerSpacer->show();
+            for (auto* widget : widgetsAfter(mServerSpacer, mLayout)) {
+                widget->hide();
+            }
         }
     }
 
-    void MainWindowStatusBar::updateServerLabel() {
+    void MainWindowStatusBar::updateServerText() {
         if (Servers::instance()->hasServers()) {
-            mServerLabel->setText(
+            mServerButton->setText(
                 QString("%1 (%2)"_L1)
                     .arg(Servers::instance()->currentServerName(), Servers::instance()->currentServerAddress())
             );
         } else {
-            mServerLabel->setText(qApp->translate("tremotesf", "No servers"));
+            mServerButton->setText(qApp->translate("tremotesf", "No servers"));
         }
     }
 
-    void MainWindowStatusBar::updateStatusLabels() {
-        mStatusLabel->setText(mRpc->status().toString());
-        if (mRpc->error() != RpcError::NoError) {
-            mStatusLabel->setToolTip(mRpc->errorMessage());
-        } else {
-            mStatusLabel->setToolTip({});
-        }
-    }
-
-    void MainWindowStatusBar::showContextMenu(QPoint pos) {
-        auto* const menu = new QMenu(this);
-        auto* const group = new QActionGroup(menu);
+    void MainWindowStatusBar::updateServerMenu() {
+        mServerMenu->clear();
+        auto* const group = new QActionGroup(mServerMenu);
         group->setExclusive(true);
-        menu->setAttribute(Qt::WA_DeleteOnClose, true);
         const auto servers = Servers::instance()->servers();
         const auto currentServerName = Servers::instance()->currentServerName();
         for (const auto& server : servers) {
-            auto* const action = menu->addAction(server.name);
+            auto* const action = mServerMenu->addAction(server.name);
             action->setData(server.name);
             action->setCheckable(true);
             group->addAction(action);
@@ -184,12 +204,12 @@ namespace tremotesf {
                 action->setChecked(true);
             }
         }
-        menu->addSeparator();
-        auto* const connectionSettingsAction = menu->addAction(
+        mServerMenu->addSeparator();
+        auto* const connectionSettingsAction = mServerMenu->addAction(
             QIcon::fromTheme("network-server"_L1),
             qApp->translate("tremotesf", "&Connection Settings")
         );
-        QObject::connect(menu, &QMenu::triggered, this, [this, connectionSettingsAction](QAction* action) {
+        QObject::connect(mServerMenu, &QMenu::triggered, this, [this, connectionSettingsAction](QAction* action) {
             if (action == connectionSettingsAction) {
                 emit showConnectionSettingsDialog();
             } else {
@@ -202,7 +222,15 @@ namespace tremotesf {
                 }
             }
         });
-        menu->popup(mapToGlobal(pos));
+    }
+
+    void MainWindowStatusBar::updateStatusLabels() {
+        mStatusLabel->setText(mRpc->status().toString());
+        if (mRpc->error() != RpcError::NoError) {
+            mStatusLabel->setToolTip(mRpc->errorMessage());
+        } else {
+            mStatusLabel->setToolTip({});
+        }
     }
 
     StatusBarSeparator::StatusBarSeparator(QWidget* parent) : QWidget(parent) {

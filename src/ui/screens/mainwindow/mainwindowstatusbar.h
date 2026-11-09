@@ -8,6 +8,8 @@
 #include <QStatusBar>
 
 class QLabel;
+class QMenu;
+class QToolButton;
 
 namespace tremotesf {
     class Rpc;
@@ -22,23 +24,17 @@ namespace tremotesf {
 
     private:
         void updateLayout();
-        void updateServerLabel();
+        void updateServerText();
+        void updateServerMenu();
         void updateStatusLabels();
-        void showContextMenu(QPoint pos);
 
         const Rpc* mRpc{};
-        QLabel* mNoServersErrorImage{};
-        QLabel* mServerLabel{};
+        QLayout* mLayout{};
+        QToolButton* mServerButton{};
+        QMenu* mServerMenu{};
+        QWidget* mServerSpacer{};
         StatusBarSeparator* mFirstSeparator{};
         QLabel* mStatusLabel{};
-        StatusBarSeparator* mSecondSeparator{};
-        QLabel* mDownloadSpeedImage{};
-        QLabel* mDownloadSpeedLabel{};
-        StatusBarSeparator* mThirdSeparator{};
-        QLabel* mUploadSpeedImage{};
-        QLabel* mUploadSpeedLabel{};
-        StatusBarSeparator* mFourthSeparator{};
-        QLabel* mFreeSpaceLabel{};
 
     signals:
         void showConnectionSettingsDialog();

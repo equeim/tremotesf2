@@ -1,0 +1,11 @@
+<!--
+SPDX-FileCopyrightText: 2015-2025 Alexey Rochev
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+<RCC>
+    <qresource prefix="/">
+        <file>turtle.svg</file>
+    </qresource>
+</RCC>
