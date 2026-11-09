@@ -12,6 +12,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QStyleOption>
+#include <QToolButton>
 
 #include "log/log.h"
 #include "rpc/serverstats.h"
@@ -25,9 +26,6 @@ namespace tremotesf {
     MainWindowStatusBar::MainWindowStatusBar(const Rpc* rpc, QWidget* parent) : QStatusBar(parent), mRpc(rpc) {
         setSizeGripEnabled(false);
 
-        setContextMenuPolicy(Qt::CustomContextMenu);
-        QObject::connect(this, &QWidget::customContextMenuRequested, this, &MainWindowStatusBar::showContextMenu);
-
         auto container = new QWidget(this);
         addPermanentWidget(container, 1);
 
@@ -35,14 +33,18 @@ namespace tremotesf {
         // Top/bottom margins are set on mServerLabel below so that they don't affect separators
         layout->setContentsMargins(8, 0, 8, 0);
 
-        mNoServersErrorImage = new QLabel(this);
-        mNoServersErrorImage->setPixmap(QIcon::fromTheme("dialog-error"_L1).pixmap(16, 16));
-        mNoServersErrorImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        layout->addWidget(mNoServersErrorImage);
+        mServerButton = new QToolButton(this);
+        mServerButton->setPopupMode(QToolButton::InstantPopup);
+        mServerButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        mServerButton->setAutoRaise(true);
+        mServerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mServerMenu = new QMenu(this);
+        mServerButton->setMenu(mServerMenu);
+        layout->addWidget(mServerButton);
 
-        mServerLabel = new QLabel(this);
-        mServerLabel->setContentsMargins(0, 5, 0, 5);
-        layout->addWidget(mServerLabel);
+        mServerSpacer = new QWidget(this);
+        mServerSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        layout->addWidget(mServerSpacer);
 
         mFirstSeparator = new StatusBarSeparator(this);
         layout->addWidget(mFirstSeparator);
@@ -83,19 +85,27 @@ namespace tremotesf {
         QObject::connect(mRpc, &Rpc::connectionStateChanged, this, &MainWindowStatusBar::updateLayout);
         QObject::connect(Servers::instance(), &Servers::hasServersChanged, this, &MainWindowStatusBar::updateLayout);
 
-        updateServerLabel();
+        updateServerText();
         QObject::connect(
             Servers::instance(),
             &Servers::currentServerChanged,
             this,
-            &MainWindowStatusBar::updateServerLabel
+            &MainWindowStatusBar::updateServerText
         );
         QObject::connect(
             Servers::instance(),
             &Servers::hasServersChanged,
             this,
-            &MainWindowStatusBar::updateServerLabel
+            &MainWindowStatusBar::updateServerText
         );
+        updateServerMenu();
+        QObject::connect(
+            Servers::instance(),
+            &Servers::currentServerChanged,
+            this,
+            &MainWindowStatusBar::updateServerMenu
+        );
+        QObject::connect(Servers::instance(), &Servers::serversChanged, this, &MainWindowStatusBar::updateServerMenu);
 
         updateStatusLabels();
         QObject::connect(mRpc, &Rpc::statusChanged, this, &MainWindowStatusBar::updateStatusLabels);
@@ -110,8 +120,8 @@ namespace tremotesf {
 
     void MainWindowStatusBar::updateLayout() {
         if (Servers::instance()->hasServers()) {
-            mNoServersErrorImage->hide();
-            mServerLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+            mServerButton->setIcon(QIcon{});
+            mServerSpacer->hide();
             mFirstSeparator->show();
             mStatusLabel->show();
             if (mRpc->connectionState() == Rpc::ConnectionState::Connected) {
@@ -134,9 +144,9 @@ namespace tremotesf {
                 mFreeSpaceLabel->hide();
             }
         } else {
-            mNoServersErrorImage->show();
-            mServerLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-            mFirstSeparator->hide();
+            mServerButton->setIcon(QIcon::fromTheme("dialog-error"_L1));
+            mServerSpacer->show();
+            mFirstSeparator->setVisible(false);
             mStatusLabel->hide();
             mSecondSeparator->hide();
             mDownloadSpeedImage->hide();
@@ -149,35 +159,25 @@ namespace tremotesf {
         }
     }
 
-    void MainWindowStatusBar::updateServerLabel() {
+    void MainWindowStatusBar::updateServerText() {
         if (Servers::instance()->hasServers()) {
-            mServerLabel->setText(
+            mServerButton->setText(
                 QString("%1 (%2)"_L1)
                     .arg(Servers::instance()->currentServerName(), Servers::instance()->currentServerAddress())
             );
         } else {
-            mServerLabel->setText(qApp->translate("tremotesf", "No servers"));
+            mServerButton->setText(qApp->translate("tremotesf", "No servers"));
         }
     }
 
-    void MainWindowStatusBar::updateStatusLabels() {
-        mStatusLabel->setText(mRpc->status().toString());
-        if (mRpc->error() != RpcError::NoError) {
-            mStatusLabel->setToolTip(mRpc->errorMessage());
-        } else {
-            mStatusLabel->setToolTip({});
-        }
-    }
-
-    void MainWindowStatusBar::showContextMenu(QPoint pos) {
-        auto* const menu = new QMenu(this);
-        auto* const group = new QActionGroup(menu);
+    void MainWindowStatusBar::updateServerMenu() {
+        mServerMenu->clear();
+        auto* const group = new QActionGroup(mServerMenu);
         group->setExclusive(true);
-        menu->setAttribute(Qt::WA_DeleteOnClose, true);
         const auto servers = Servers::instance()->servers();
         const auto currentServerName = Servers::instance()->currentServerName();
         for (const auto& server : servers) {
-            auto* const action = menu->addAction(server.name);
+            auto* const action = mServerMenu->addAction(server.name);
             action->setData(server.name);
             action->setCheckable(true);
             group->addAction(action);
@@ -185,12 +185,12 @@ namespace tremotesf {
                 action->setChecked(true);
             }
         }
-        menu->addSeparator();
-        auto* const connectionSettingsAction = menu->addAction(
+        mServerMenu->addSeparator();
+        auto* const connectionSettingsAction = mServerMenu->addAction(
             QIcon::fromTheme("network-server"_L1),
             qApp->translate("tremotesf", "&Connection Settings")
         );
-        QObject::connect(menu, &QMenu::triggered, this, [this, connectionSettingsAction](QAction* action) {
+        QObject::connect(mServerMenu, &QMenu::triggered, this, [this, connectionSettingsAction](QAction* action) {
             if (action == connectionSettingsAction) {
                 emit showConnectionSettingsDialog();
             } else {
@@ -203,7 +203,15 @@ namespace tremotesf {
                 }
             }
         });
-        menu->popup(mapToGlobal(pos));
+    }
+
+    void MainWindowStatusBar::updateStatusLabels() {
+        mStatusLabel->setText(mRpc->status().toString());
+        if (mRpc->error() != RpcError::NoError) {
+            mStatusLabel->setToolTip(mRpc->errorMessage());
+        } else {
+            mStatusLabel->setToolTip({});
+        }
     }
 
     StatusBarSeparator::StatusBarSeparator(QWidget* parent) : QWidget(parent) {
