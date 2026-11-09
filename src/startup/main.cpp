@@ -166,6 +166,11 @@ int main(int argc, char** argv) {
 
     QGuiApplication::setDesktopFileName(TREMOTESF_APP_ID ""_L1);
     QGuiApplication::setWindowIcon(QIcon::fromTheme(TREMOTESF_APP_ID ""_L1));
+    {
+        auto font = app.font();
+        font.setFeature("tnum", 1);
+        app.setFont(font);
+    }
     //
     // End of QApplication initialization
     //
