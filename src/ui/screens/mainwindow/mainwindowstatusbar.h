@@ -29,19 +29,12 @@ namespace tremotesf {
         void updateStatusLabels();
 
         const Rpc* mRpc{};
+        QLayout* mLayout{};
         QToolButton* mServerButton{};
         QMenu* mServerMenu{};
         QWidget* mServerSpacer{};
         StatusBarSeparator* mFirstSeparator{};
         QLabel* mStatusLabel{};
-        StatusBarSeparator* mSecondSeparator{};
-        QLabel* mDownloadSpeedImage{};
-        QLabel* mDownloadSpeedLabel{};
-        StatusBarSeparator* mThirdSeparator{};
-        QLabel* mUploadSpeedImage{};
-        QLabel* mUploadSpeedLabel{};
-        StatusBarSeparator* mFourthSeparator{};
-        QLabel* mFreeSpaceLabel{};
 
     signals:
         void showConnectionSettingsDialog();
