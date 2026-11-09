@@ -419,6 +419,7 @@ namespace tremotesf {
         if (oldName.isEmpty() && mSettings->childGroups().size() == 1) {
             emit hasServersChanged();
         }
+        emit serversChanged();
     }
 
     void Servers::saveServers(const std::vector<Server>& servers, const QString& current) {
