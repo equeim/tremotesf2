@@ -144,6 +144,7 @@ namespace tremotesf {
             mThirdSeparator->hide();
             mUploadSpeedImage->hide();
             mUploadSpeedLabel->hide();
+            mFourthSeparator->hide();
             mFreeSpaceLabel->hide();
         }
     }
