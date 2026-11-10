@@ -142,10 +142,12 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::update(std::span<const int> changed) {
+        if (mFiles.size() != mTorrent->files().size()) {
+            mCoroutineScope.launch(createTree());
+            return;
+        }
         if (mLoaded) {
             updateTree(changed);
-        } else {
-            mCoroutineScope.launch(createTree());
         }
     }
 
