@@ -49,6 +49,20 @@ namespace tremotesf {
     protected:
         void paintEvent(QPaintEvent* event) override;
     };
+
+    class IconWidget final : public QWidget {
+        Q_OBJECT
+    public:
+        explicit IconWidget(QIcon icon, QWidget* parent = nullptr) : QWidget(parent), mIcon(std::move(icon)) {}
+
+        QSize sizeHint() const override;
+
+    protected:
+        void paintEvent(QPaintEvent* event) override;
+
+    private:
+        QIcon mIcon;
+    };
 }
 
 #endif // TREMOTESF_MAINWINDOWSTATUSBAR_H
