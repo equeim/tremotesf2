@@ -7,7 +7,6 @@
 
 namespace tremotesf {
     void setupIconTheme();
-    void setFallbackIconTheme();
 }
 
 #endif // TREMOTESF_FALLBACK_ICON_THEME_H
