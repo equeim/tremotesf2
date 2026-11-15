@@ -56,20 +56,18 @@ namespace tremotesf {
 
         mLayout->addWidget(new StatusBarSeparator(this));
 
-        auto downloadSpeedImage = new QLabel(this);
-        downloadSpeedImage->setPixmap(QIcon::fromTheme("go-down"_L1).pixmap(16, 16));
-        downloadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        mLayout->addWidget(downloadSpeedImage);
+        auto downloadSpeedIcon = new IconWidget(QIcon::fromTheme("go-down"_L1), this);
+        downloadSpeedIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mLayout->addWidget(downloadSpeedIcon);
 
         auto downloadSpeedLabel = new QLabel(this);
         mLayout->addWidget(downloadSpeedLabel);
 
         mLayout->addWidget(new StatusBarSeparator(this));
 
-        auto uploadSpeedImage = new QLabel(this);
-        uploadSpeedImage->setPixmap(QIcon::fromTheme("go-up"_L1).pixmap(16, 16));
-        uploadSpeedImage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        mLayout->addWidget(uploadSpeedImage);
+        auto uploadSpeedIcon = new IconWidget(QIcon::fromTheme("go-up"_L1), this);
+        uploadSpeedIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        mLayout->addWidget(uploadSpeedIcon);
 
         auto uploadSpeedLabel = new QLabel(this);
         mLayout->addWidget(uploadSpeedLabel);
@@ -223,5 +221,12 @@ namespace tremotesf {
         opt.initFrom(this);
         opt.state.setFlag(QStyle::State_Horizontal);
         style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator, &opt, &p, this);
+    }
+
+    QSize IconWidget::sizeHint() const { return {16, 16}; }
+
+    void IconWidget::paintEvent(QPaintEvent*) {
+        QPainter painter(this);
+        mIcon.paint(&painter, contentsRect());
     }
 }
