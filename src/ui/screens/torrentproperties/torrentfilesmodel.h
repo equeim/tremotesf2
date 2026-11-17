@@ -43,12 +43,9 @@ namespace tremotesf {
         void resetTree();
         void updateTree(std::span<const int> changed);
 
-        void setLoaded(bool loaded);
-
         Torrent* mTorrent{};
         Rpc* mRpc{};
         bool mCreatingTree{};
-        bool mLoaded{};
         CoroutineScope mCoroutineScope{};
     };
 }
