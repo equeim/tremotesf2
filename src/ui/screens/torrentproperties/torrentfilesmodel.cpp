@@ -75,6 +75,7 @@ namespace tremotesf {
         }
         mTorrent = torrent;
         resetTree();
+        mCoroutineScope.cancelAll();
         if (mTorrent) {
             QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
             QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
@@ -106,7 +107,7 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::fileRenamed(const QString& path, const QString& newName) {
-        if (!mLoaded || !mRootEntry) {
+        if (!mRootEntry) {
             return;
         }
         TorrentFilesModelEntry* entry = mRootEntry.get();
@@ -142,44 +143,34 @@ namespace tremotesf {
     }
 
     void TorrentFilesModel::update(std::span<const int> changed) {
-        if (mFiles.size() != mTorrent->files().size()) {
-            mCoroutineScope.launch(createTree());
-            return;
+        if (mRootEntry && mFiles.size() != mTorrent->files().size()) {
+            resetTree();
         }
-        if (mLoaded) {
+        if (mRootEntry) {
             updateTree(changed);
+        } else if (!mTorrent->files().empty()) {
+            mCoroutineScope.cancelAll();
+            mCoroutineScope.launch(createTree());
         }
     }
 
     Coroutine<> TorrentFilesModel::createTree() {
-        if (mCreatingTree) {
-            co_return;
-        }
-
-        mCreatingTree = true;
-        beginResetModel();
-
         auto [rootEntry, files] = co_await runOnThreadPool(
             [](const std::vector<TorrentFile>& files) { return doCreateTree(files); },
             mTorrent->files()
         );
-
+        beginResetModel();
         mRootEntry = std::move(rootEntry);
         endResetModel();
-
         mFiles = std::move(files);
-
-        setLoaded(true);
-        mCreatingTree = false;
     }
 
     void TorrentFilesModel::resetTree() {
-        if (mLoaded) {
+        if (mRootEntry) {
             beginResetModel();
             mRootEntry.reset();
             endResetModel();
             mFiles.clear();
-            setLoaded(false);
         }
     }
 
@@ -190,6 +181,4 @@ namespace tremotesf {
             file->update(json.wanted, TorrentFilesModelEntry::fromFilePriority(json.priority), json.completedSize);
         });
     }
-
-    void TorrentFilesModel::setLoaded(bool loaded) { mLoaded = loaded; }
 }
