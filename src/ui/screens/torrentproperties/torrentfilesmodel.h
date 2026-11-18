@@ -45,7 +45,6 @@ namespace tremotesf {
 
         Torrent* mTorrent{};
         Rpc* mRpc{};
-        bool mCreatingTree{};
         CoroutineScope mCoroutineScope{};
     };
 }

@@ -75,6 +75,7 @@ namespace tremotesf {
         }
         mTorrent = torrent;
         resetTree();
+        mCoroutineScope.cancelAll();
         if (mTorrent) {
             QObject::connect(mTorrent, &Torrent::filesUpdated, this, &TorrentFilesModel::update);
             QObject::connect(mTorrent, &Torrent::fileRenamed, this, &TorrentFilesModel::fileRenamed);
@@ -147,26 +148,21 @@ namespace tremotesf {
         }
         if (mRootEntry) {
             updateTree(changed);
-        } else if (!mCreatingTree && !mTorrent->files().empty()) {
+        } else if (!mTorrent->files().empty()) {
+            mCoroutineScope.cancelAll();
             mCoroutineScope.launch(createTree());
         }
     }
 
     Coroutine<> TorrentFilesModel::createTree() {
-        mCreatingTree = true;
-        beginResetModel();
-
         auto [rootEntry, files] = co_await runOnThreadPool(
             [](const std::vector<TorrentFile>& files) { return doCreateTree(files); },
             mTorrent->files()
         );
-
+        beginResetModel();
         mRootEntry = std::move(rootEntry);
         endResetModel();
-
         mFiles = std::move(files);
-
-        mCreatingTree = false;
     }
 
     void TorrentFilesModel::resetTree() {
