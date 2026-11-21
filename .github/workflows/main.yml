@@ -116,12 +116,7 @@ jobs:
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         repository: equeim/tremotesf-debian
-        path: tremotesf-debian
-
-    - name: Remove everything except debian/ directory
-      run: |
-        mv tremotesf-debian/debian debian
-        rm -rf tremotesf-debian
+        sparse-checkout: debian
 
     - name: Install build dependencies
       run: |
