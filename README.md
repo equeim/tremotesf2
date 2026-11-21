@@ -62,8 +62,24 @@ CMake configuration options:
   - bundled: bundled copy is used.
   - none: cpp-httplib is not used at all and tests that require it are disabled.
 
+`TREMOTESF_STATIC_BUILD` - build a fully static executable: everything, including libc, is linked statically, so the binary has no shared library dependencies at all and runs on any Linux with a Wayland compositor. Requires static builds of Qt, KDE Frameworks and all of their dependencies - this is what the Dockerfile in the repository root produces, see the AppImage section below.
+
 ### GNU/Linux
 - Flatpak - [Flathub](https://flathub.org/apps/details/org.equeim.Tremotesf)
+
+- AppImage - AppImage files are attached to the [releases of this repository](https://github.com/equeim/tremotesf2/releases) for x86_64 and arm64.
+  They are FULLY static (built with musl): the executable has no shared library dependencies at all - no libc, no Qt, no KDE Frameworks - so it runs on any x86-64/aarch64 GNU/Linux distribution, glibc or musl, without installing anything.
+  Note that such a build is Wayland only and software rendered (no OpenGL/EGL/mesa, no XCB platform plugin); D-Bus is linked in, so it picks up the KDE/Plasma theme. At runtime it needs a Wayland compositor and, unless it is run with `--appimage-extract-and-run`, `/dev/fuse` with the usual `fusermount3` helper.
+
+  Building one requires only Docker - the image compiles Qt and the KDE Frameworks from scratch, so expect it to take a while:
+
+```sh
+./docker-build.sh
+# or for another architecture:
+./docker-build.sh --platform linux/arm64
+```
+
+  The executable and the AppImage are written to the `build-out` directory.
 
 - Arch Linux - [AUR](https://aur.archlinux.org/packages/tremotesf)
 

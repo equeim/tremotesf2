@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: 2026 ds
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Build Tremotesf AppImage
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        description: Architecture (either x86_64 or arm64)
+        type: string
+        required: true
+      release-tag:
+        description: Release tag
+        type: string
+        required: false
+        default: ''
+
+jobs:
+  build-appimage:
+    # The build runs in Docker (see the Dockerfile in the repository root): a
+    # fully static executable needs static builds of Qt and KDE Frameworks,
+    # which is what the image does. The runner architecture matches the target
+    # architecture, so nothing is emulated; the image itself is built for the
+    # requested platform.
+    runs-on: ubuntu-26.04${{ inputs.arch == 'arm64' && '-arm' || '' }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        submodules: 'recursive'
+
+    - name: Build Tremotesf in Docker
+      run: ./docker-build.sh --platform linux/${{ inputs.arch == 'arm64' && 'arm64' || 'amd64' }}
+
+    - name: Name the AppImage
+      run: |
+        version="$(sed -n 's/^project(tremotesf VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)"
+        appimage="tremotesf-${version}-Linux-${{ inputs.arch }}.AppImage"
+        echo "Renaming build-out/tremotesf.appimage to $appimage"
+        mv "build-out/tremotesf.appimage" "build-out/$appimage"
+
+    - name: Archive AppImage
+      if: inputs.release-tag == ''
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: appimage-${{ inputs.arch }}
+        retention-days: ${{ github.event_name == 'push' && 7 || 3 }}
+        path: build-out/*.AppImage
+
+    - name: Upload AppImage to release
+      if: inputs.release-tag != ''
+      run: |
+        shopt -s failglob
+        files=(build-out/*.AppImage)
+        echo "Uploading AppImages ${files[@]}"
+        gh release upload '${{ inputs.release-tag }}' "${files[@]}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

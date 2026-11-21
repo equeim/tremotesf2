@@ -269,6 +269,14 @@ jobs:
   build-macos:
     uses: ./.github/workflows/build-macos.yml
 
+  build-appimage:
+    # Only x86_64 here: the Docker image builds Qt and KDE Frameworks from
+    # scratch, which takes a while. The Dockerfile is architecture-agnostic and
+    # both architectures are built for releases (see release.yml).
+    uses: ./.github/workflows/build-appimage.yml
+    with:
+      arch: x86_64
+
   reuse-lint:
     runs-on: ubuntu-latest
     steps:
