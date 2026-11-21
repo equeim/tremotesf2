@@ -92,6 +92,7 @@ namespace tremotesf {
 
         qint64 totalDownloaded{};
         qint64 totalUploaded{};
+        qint64 secondsSeeding{};
         double ratio{};
         double ratioLimit{};
         RatioLimitMode ratioLimitMode{};

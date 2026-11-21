@@ -62,6 +62,7 @@ namespace tremotesf {
         Error,
         ErrorString,
         ActivityDate,
+        SecondsSeeding,
         DoneDate,
         PeersLimit,
         HonorSessionLimits,
@@ -151,6 +152,8 @@ namespace tremotesf {
                 return "errorString"_L1;
             case TorrentData::UpdateKey::ActivityDate:
                 return "activityDate"_L1;
+            case TorrentData::UpdateKey::SecondsSeeding:
+                return "secondsSeeding"_L1;
             case TorrentData::UpdateKey::DoneDate:
                 return "doneDate"_L1;
             case TorrentData::UpdateKey::PeersLimit:
@@ -356,6 +359,9 @@ namespace tremotesf {
             return;
         case TorrentData::UpdateKey::TotalUploaded:
             setChanged(totalUploaded, value.toInteger(), changed);
+            return;
+        case TorrentData::UpdateKey::SecondsSeeding:
+            setChanged(secondsSeeding, value.toInteger(), changed);
             return;
         case TorrentData::UpdateKey::Ratio:
             setChanged(ratio, value.toDouble(), changed);
