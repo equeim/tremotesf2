@@ -150,7 +150,8 @@ namespace tremotesf {
     namespace {
         auto widgetsAfter(QWidget* widget, QLayout* layout) {
             return std::views::iota(layout->indexOf(widget) + 1, layout->count())
-                   | std::views::transform([layout](int i) { return layout->itemAt(i)->widget(); });
+                   | std::views::transform([layout](int i) { return layout->itemAt(i)->widget(); })
+                   | std::views::filter([](QWidget* w) { return w != nullptr; });
         }
     }
 
