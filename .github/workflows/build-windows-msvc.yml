@@ -75,6 +75,12 @@ jobs:
         dotnet tool install --global wix --version 6.0.2
         wix extension add --global WixToolset.UI.wixext/6.0.2
 
+    # https://github.com/actions/runner-images/issues/15367
+    - name: Upgrade LLVM
+      if: matrix.toolchain == 'msvc-clang'
+      run: |
+        choco upgrade llvm -y --no-progress
+
     - name: Set up MSVC environment
       uses: equeim/action-setup-msvc-environment@433e932212086aed3f1dfc9d4039149f44c201ab
       with:
