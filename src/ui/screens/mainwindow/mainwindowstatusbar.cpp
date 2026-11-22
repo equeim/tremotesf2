@@ -34,7 +34,7 @@ namespace tremotesf {
         addPermanentWidget(container, 1);
 
         mLayout = new QHBoxLayout(container);
-        // Top/bottom margins are set on mServerLabel below so that they don't affect separators
+        // Set top/bottom margins as zero so that separators can be full-height. mServerButton has a minimum height so status bar won't be tiny.
         mLayout->setContentsMargins(8, 0, 8, 0);
 
         mServerButton = new QToolButton(this);
