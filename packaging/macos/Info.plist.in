@@ -32,6 +32,8 @@ SPDX-License-Identifier: CC0-1.0
     <key>LSMinimumSystemVersion</key>
     <string>${TREMOTESF_MACOS_DEPLOYMENT_TARGET}</string>
     <key>CFBundleDocumentTypes</key>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Tremotesf needs local network access permission to connect to Transmission servers on local network</string>
     <array>
         <dict>
             <key>CFBundleTypeExtensions</key>
